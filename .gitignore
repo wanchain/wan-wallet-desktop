@@ -2,6 +2,10 @@
 logs
 *.log
 
+# docs
+docs
+out
+
 # webpack dist
 dist
 
