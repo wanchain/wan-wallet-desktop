@@ -1,0 +1,39 @@
+{
+  "name": "WAND",
+  "productName": "WAND",
+  "version": "1.0.0",
+  "description": "Wanchain's new multicoin wallet",
+  "main": "main.js",
+  "scripts": {
+    "start-dev-main": "electron -r @babel/register ./src/main.dev.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wanchain/wandWallet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wanchain/wandWallet/issues"
+  },
+  "homepage": "https://github.com/wanchain/wandWallet#readme",
+  "dependencies": {
+    "electron-devtools-installer": "^2.2.4",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "wanchain-js-sdk": "github:ktfc76/wanchain-js-sdk#new_wallet"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
+    "@babel/register": "^7.4.0",
+    "babel-loader": "^8.0.5",
+    "electron": "^4.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
