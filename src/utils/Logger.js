@@ -11,7 +11,7 @@ export default class Logger {
         return new transports.DailyRotateFile({
             level: 'info',
             filename: 'wandWallet-%DATE%.log',
-            datePattern: 'YYYY-MM-DD-HH',
+            datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
             maxSize: '20m',
             maxFiles: '14d',
