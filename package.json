@@ -1,11 +1,14 @@
 {
-  "name": "WAND",
+  "name": "wand",
   "productName": "WAND",
   "version": "1.0.0",
   "description": "Wanchain's new multicoin wallet",
-  "main": "main.js",
+  "main": "main.prod.js",
   "scripts": {
+    "start": "electron ./dist/main.prod.js",
     "start-dev-main": "electron -r @babel/register ./src/main.dev.js",
+    "build-renderer": "webpack --mode development --config webpack.react.config.js",
+    "build-main": "webpack --config ./config/webpack/webpack.config.main.prod.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -33,11 +36,15 @@
     "@babel/plugin-transform-regenerator": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.0",
     "@babel/preset-env": "^7.4.1",
+    "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
     "electron": "^4.1.0",
+    "electron-packager": "^13.1.1",
     "html-webpack-plugin": "^3.2.0",
+    "node-loader": "^0.6.0",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.0"
+    "webpack-cli": "^3.3.0",
+    "webpack-node-externals": "^1.7.2"
   }
 }

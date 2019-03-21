@@ -6,7 +6,7 @@ logs
 docs
 out
 
-# webpack dist
+# webpack bundle dir
 dist
 
 # Runtime data

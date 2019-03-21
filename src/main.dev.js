@@ -5,55 +5,55 @@ import Logger from './utils/Logger';
 const logger = Logger.getLogger('main');
 
 const testConfig = {
-    pwd: 'wanglu123',
-    chainType: 'WAN',
-    walletID: 1,
-    path: "m/44'/5718350'/0'/0/0",
+  pwd: 'wanglu123',
+  chainType: 'WAN',
+  walletID: 1,
+  path: "m/44'/5718350'/0'/0/0",
+}
+
+const generatePhrase = (pwd) => {
+  try {
+    const phrase = hdUtil.generateMnemonic(pwd);
+    logger.info(phrase)
+  } catch (err) {
+    logger.error(err.stack)
   }
-  
-  const generatePhrase = (pwd) => {
-    try {
-      const phrase = hdUtil.generateMnemonic(pwd);
-      logger.info(phrase)
-    } catch (err) {
-      logger.error(err.stack)
-    }
+}
+
+const revealPhrase = (pwd) => {
+  let mnemonic;
+  try {
+    mnemonic = hdUtil.revealMnemonic(pwd);
+    logger.info(mnemonic);
+  } catch (err) {
+    logger.error(err.stack);
   }
-  
-  const revealPhrase = (pwd) => {
-    let mnemonic;
-    try {
-      mnemonic = hdUtil.revealMnemonic(pwd);
-      logger.info(mnemonic);
-    } catch (err) {
-      logger.error(err.stack);
-    }
-  
-    return mnemonic;
+
+  return mnemonic;
+}
+
+const validatePhrase = (phrase) => {
+  let ret
+  try {
+    ret = hdUtil.validateMnemonic(phrase);
+    logger.info(ret)
+  } catch (err) {
+    logger.error(err.stack);
   }
-  
-  const validatePhrase = (phrase) => {
-    let ret
-    try {
-      ret = hdUtil.validateMnemonic(phrase);
-      logger.info(ret)
-    } catch (err) {
-      logger.error(err.stack);
-    }
-  
-    return ret;
-  }
-  
-  const getAddress = async (walletID, chainType, path) => {
-    let address;
-  
-    try {
-      address = await hdUtil.getAddress(walletID, chainType, path);
-    } catch (err) {
-      logger.error(err.stack);
-    } 
-  
-    return address;
+
+  return ret;
+}
+
+const getAddress = async (walletID, chainType, path) => {
+  let address;
+
+  try {
+    address = await hdUtil.getAddress(walletID, chainType, path);
+  } catch (err) {
+    logger.error(err.stack);
+  } 
+
+  return address;
 }
 
 const testHDWallet = async () => {
