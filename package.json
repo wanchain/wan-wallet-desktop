@@ -6,7 +6,7 @@
   "main": "./src/main.js",
   "scripts": {
     "start": "npm run dev:renderer && npm run dev:main",
-    "dev": "concurrently --kill-others \"npm run dev:main\" \"npm run dev:renderer\"",
+    "dev": "npm run dev:renderer",
     "dev:main": "NODE_ENV=development electron -r @babel/register ./src/main.dev.js",
     "dev:renderer": "NODE_ENV=development webpack-dev-server --progress --config ./config/webpack/webpack.config.renderer.babel.js --colors",
     "build-renderer": "webpack --mode development --config webpack.react.config.js --colors",
