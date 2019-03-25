@@ -1,8 +1,25 @@
 import { app, BrowserWindow } from 'electron'
+import Logger from './utils/Logger'
+import { walletCore, hdUtil, ccUtil } from 'wanchain-js-sdk';
+
+const logger = Logger.getLogger('main')
 
 let mainWindow
 
-function createWindow () {
+async function createWindow () {
+
+  const walletBackend = new walletCore({
+    "useLocalNode" : false,
+    "loglevel" : "debug",
+    "MIN_CONFIRM_BLKS" : 0,
+    "MAX_CONFIRM_BLKS" : 1000000,
+    "network" : "testnet"
+  });
+
+  logger.info('start init wallet backend')
+  await walletBackend.init()
+  logger.info('finish init wallet backend')
+
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -15,6 +32,10 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
 
   mainWindow.on('closed', function () {
     mainWindow = null
@@ -42,26 +63,30 @@ app.on('activate', function () {
 //   path: "m/44'/5718350'/0'/0/0",
 // }
 
-// const generatePhrase = (pwd) => {
-//   try {
-//     const phrase = hdUtil.generateMnemonic(pwd);
-//     logger.info(phrase)
-//   } catch (err) {
-//     logger.error(err.stack)
-//   }
-// }
+const generatePhrase = (targetWindow, pwd) => {
+  logger.info(pwd)
+  try {
+    const phrase = hdUtil.generateMnemonic(pwd);
+    logger.info(phrase)
+    targetWindow.webContents.send('phrase-generated', phrase)
+  } catch (err) {
+    logger.error(err.stack)
+  }
+}
 
-// const revealPhrase = (pwd) => {
-//   let mnemonic;
-//   try {
-//     mnemonic = hdUtil.revealMnemonic(pwd);
-//     logger.info(mnemonic);
-//   } catch (err) {
-//     logger.error(err.stack);
-//   }
+const revealPhrase = (pwd) => {
+  let mnemonic;
+  try {
+    mnemonic = hdUtil.revealMnemonic(pwd);
+    logger.info(mnemonic);
+  } catch (err) {
+    logger.error(err.stack);
+  }
 
-//   return mnemonic;
-// }
+  return mnemonic;
+}
+
+export { generatePhrase, revealPhrase }
 
 // const validatePhrase = (phrase) => {
 //   let ret

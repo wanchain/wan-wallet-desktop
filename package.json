@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/wanchain/wandWallet#readme",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/runtime": "^7.4.0",
     "electron-devtools-installer": "^2.2.4",
     "react": "^16.8.4",
