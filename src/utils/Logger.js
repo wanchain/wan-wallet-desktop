@@ -1,4 +1,6 @@
 import { format, transports, loggers } from 'winston';
+import { app } from 'electron';
+
 require('winston-daily-rotate-file');
 
 /** Logger class */
@@ -11,7 +13,7 @@ export default class Logger {
         return new transports.DailyRotateFile({
             level: 'info',
             filename: 'wandWallet-%DATE%.log',
-            dirname: 'logs',
+            dirname: app.getPath('logs'),
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
             maxSize: '20m',

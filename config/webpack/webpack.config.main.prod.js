@@ -14,7 +14,7 @@ const config = {
     
     output: {
         filename: 'main.prod.js',
-        path: path.join(__dirname, '..', '..', 'dist')
+        path: path.join(__dirname, '..', '..', 'build')
     },
     
     module: {
@@ -33,7 +33,7 @@ const config = {
     },
     
     resolve: {
-        extensions: ['.js', '.jsx', '.json', '.node']
+        extensions: ['.js', '.jsx', '.json']
     },
     
     node: {
