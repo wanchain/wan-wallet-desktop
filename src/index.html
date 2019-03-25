@@ -9,7 +9,20 @@
 <body>
     <div id="root"></div>
     <!-- <script src="${isProd ? STATIC_PATH : `http://localhost:${WDS_PORT}/dist`}/js/bundle.js"></script> -->
-    <script src="http://localhost:7000/dist/js/bundle.js"></script>
+    <!-- <script src="http://localhost:7000/dist/js/bundle.js"></script> -->
+    <script>
+        // dynamically insert the bundled app script into the renderer process
+        // const { isDev, WDS_PORT } = require('../config/common')
+        const scripts = []
+        scripts.push(
+            process.env.NODE_ENV === 'development' ? `http://localhost:7000/dist/js/bundle.js` : null
+        )
+        document.write(
+            scripts
+                .map(script => `<script defer src="${script}"><\/script>`)
+                .join('')
+        )
+    </script>
 </body>
 </html>
 
