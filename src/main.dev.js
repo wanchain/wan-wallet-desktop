@@ -1,8 +1,14 @@
 import { app, BrowserWindow } from 'electron'
 import Logger from './utils/Logger'
+import settings from './utils/Settings'
 import { walletCore, hdUtil } from 'wanchain-js-sdk';
 
 const logger = Logger.getLogger('main')
+settings.init()
+
+if (settings.network.includes('main')) {
+  console.log('connecting to main network')
+}
 
 let mainWindow
 
