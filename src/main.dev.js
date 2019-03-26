@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import Logger from './utils/Logger'
-import { walletCore, hdUtil, ccUtil } from 'wanchain-js-sdk';
+import { walletCore, hdUtil } from 'wanchain-js-sdk';
 
 const logger = Logger.getLogger('main')
 
@@ -13,7 +13,8 @@ async function createWindow () {
     "loglevel" : "debug",
     "MIN_CONFIRM_BLKS" : 0,
     "MAX_CONFIRM_BLKS" : 1000000,
-    "network" : "testnet"
+    "network" : "testnet",
+    "wanchain_js_testnet": true
   });
 
   logger.info('start init wallet backend')
