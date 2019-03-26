@@ -23,6 +23,7 @@ async function createWindow () {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -65,51 +66,44 @@ app.on('activate', function () {
 
 const generatePhrase = (targetWindow, pwd) => {
   try {
-    const phrase = hdUtil.generateMnemonic(pwd);
-    logger.info(phrase)
+    const phrase = hdUtil.generateMnemonic(pwd)
     targetWindow.webContents.send('phrase-generated', phrase)
   } catch (err) {
     logger.error(err.stack)
   }
 }
 
-const revealPhrase = (pwd) => {
-  let mnemonic;
+const revealPhrase = (targetWindow, pwd) => {
+  let mnemonic
   try {
-    mnemonic = hdUtil.revealMnemonic(pwd);
-    logger.info(mnemonic);
+    mnemonic = hdUtil.revealMnemonic(pwd)
+    targetWindow.webContents.send('phrase-revealed', phrase)
   } catch (err) {
-    logger.error(err.stack);
+    logger.error(err.stack)
   }
-
-  return mnemonic;
 }
 
-export { generatePhrase, revealPhrase }
+const validatePhrase = (targetWindow, phrase) => {
+  let ret
+  try {
+    ret = hdUtil.validateMnemonic(phrase)
+    targetWindow.webContents.send('phrase-valid', ret)
+  } catch (err) {
+    logger.error(err.stack)
+  }
+}
 
-// const validatePhrase = (phrase) => {
-//   let ret
-//   try {
-//     ret = hdUtil.validateMnemonic(phrase);
-//     logger.info(ret)
-//   } catch (err) {
-//     logger.error(err.stack);
-//   }
+const getAddress = async (targetWindow, walletID, chainType, path) => {
+  let address
+  try {
+    address = await hdUtil.getAddress(walletID, chainType, path)
+    targetWindow.webContents.send('address-generated', address)
+  } catch (err) {
+    logger.error(err.stack)
+  } 
+}
 
-//   return ret;
-// }
-
-// const getAddress = async (walletID, chainType, path) => {
-//   let address;
-
-//   try {
-//     address = await hdUtil.getAddress(walletID, chainType, path);
-//   } catch (err) {
-//     logger.error(err.stack);
-//   } 
-
-//   return address;
-// }
+export { generatePhrase, revealPhrase, validatePhrase, getAddress }
 
 // const testHDWallet = async () => {
 //     try {
