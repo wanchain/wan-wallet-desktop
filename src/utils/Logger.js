@@ -1,7 +1,7 @@
-import { format, transports, loggers } from 'winston';
-import { app } from 'electron';
+import { format, transports, loggers } from 'winston'
+import WalletHelper from './Helper'
 
-require('winston-daily-rotate-file');
+require('winston-daily-rotate-file')
 
 /** Logger class */
 export default class Logger {
@@ -12,8 +12,8 @@ export default class Logger {
     static fileTransport() {
         return new transports.DailyRotateFile({
             level: 'info',
-            filename: 'wandWallet-%DATE%.log',
-            dirname: app.getPath('logs'),
+            filename: 'wandWalletMain-%DATE%.log',
+            dirname: WalletHelper.getLogPath(),
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
             maxSize: '20m',

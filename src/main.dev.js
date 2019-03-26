@@ -64,7 +64,6 @@ app.on('activate', function () {
 // }
 
 const generatePhrase = (targetWindow, pwd) => {
-  logger.info(pwd)
   try {
     const phrase = hdUtil.generateMnemonic(pwd);
     logger.info(phrase)
