@@ -30,8 +30,8 @@ class WalletHelper {
         if (process.platform === 'freebsd' || process.platform === 'linux' || process.platform === 'openbsd') {
             const userDataPath = app.getPath('userData')
             logPath = userDataPath + '/Logs'
-            if (this.mkdirSync(logPath)) {
-                throw new error(`user data dir: ${logPath} does not exist`)
+            if (!this.mkdirSync(logPath)) {
+                throw new Error(`user data dir: ${logPath} does not exist`)
             }
         } else {
             logPath = app.getPath('logs')
