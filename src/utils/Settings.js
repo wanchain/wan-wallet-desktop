@@ -3,10 +3,10 @@ import fs from 'fs'
 import { app } from 'electron'
 import Logger from './Logger'
 
-const DEFAULT_NETWORK = 'main'
+const DEFAULT_NETWORK = 'testnet'
 
 class Settings {
-    init() {
+    constructor() {
         this.logger = Logger.getLogger('settings')
         this.logger.info('setting initialized')
     }
