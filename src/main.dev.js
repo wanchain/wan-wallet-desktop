@@ -31,6 +31,7 @@ async function createWindow () {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
+    logger.info('finish loading main window')
   })
 
   mainWindow.on('closed', function () {

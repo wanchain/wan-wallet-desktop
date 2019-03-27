@@ -69,5 +69,3 @@ export default class Logger {
         return loggers.get(label);
     }
 }
-
-
