@@ -1,32 +1,18 @@
 import { app, BrowserWindow } from 'electron'
 import Logger from './utils/Logger'
-import settings from './utils/Settings'
-import { walletCore, hdUtil } from 'wanchain-js-sdk';
+import setting from './utils/Settings'
+import backend from './modules'
 
 const logger = Logger.getLogger('main')
-settings.init()
 
-if (settings.network.includes('main')) {
+if (setting.network.includes('main')) {
   console.log('connecting to main network')
 }
 
 let mainWindow
 
 async function createWindow () {
-
-  const walletBackend = new walletCore({
-    "useLocalNode" : false,
-    "loglevel" : "debug",
-    "MIN_CONFIRM_BLKS" : 0,
-    "MAX_CONFIRM_BLKS" : 1000000,
-    "network" : "testnet",
-    "wanchain_js_testnet": true
-  });
-
-  logger.info('start init wallet backend')
-  await walletBackend.init()
-  logger.info('finish init wallet backend')
-
+  logger.info('creating main window')
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -50,7 +36,12 @@ async function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+async function onReady() {
+  await backend.init()
+  await createWindow()
+}
+
+app.on('ready', onReady)
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
@@ -71,46 +62,46 @@ app.on('activate', function () {
 //   path: "m/44'/5718350'/0'/0/0",
 // }
 
-const generatePhrase = (targetWindow, pwd) => {
-  try {
-    const phrase = hdUtil.generateMnemonic(pwd)
-    targetWindow.webContents.send('phrase-generated', phrase)
-  } catch (err) {
-    logger.error(err.stack)
-  }
-}
+// const generatePhrase = (targetWindow, pwd) => {
+//   try {
+//     const phrase = hdUtil.generateMnemonic(pwd)
+//     targetWindow.webContents.send('phrase-generated', phrase)
+//   } catch (err) {
+//     logger.error(err.stack)
+//   }
+// }
 
-const revealPhrase = (targetWindow, pwd) => {
-  let mnemonic
-  try {
-    mnemonic = hdUtil.revealMnemonic(pwd)
-    targetWindow.webContents.send('phrase-revealed', phrase)
-  } catch (err) {
-    logger.error(err.stack)
-  }
-}
+// const revealPhrase = (targetWindow, pwd) => {
+//   let mnemonic
+//   try {
+//     mnemonic = hdUtil.revealMnemonic(pwd)
+//     targetWindow.webContents.send('phrase-revealed', phrase)
+//   } catch (err) {
+//     logger.error(err.stack)
+//   }
+// }
 
-const validatePhrase = (targetWindow, phrase) => {
-  let ret
-  try {
-    ret = hdUtil.validateMnemonic(phrase)
-    targetWindow.webContents.send('phrase-valid', ret)
-  } catch (err) {
-    logger.error(err.stack)
-  }
-}
+// const validatePhrase = (targetWindow, phrase) => {
+//   let ret
+//   try {
+//     ret = hdUtil.validateMnemonic(phrase)
+//     targetWindow.webContents.send('phrase-valid', ret)
+//   } catch (err) {
+//     logger.error(err.stack)
+//   }
+// }
 
-const getAddress = async (targetWindow, walletID, chainType, path) => {
-  let address
-  try {
-    address = await hdUtil.getAddress(walletID, chainType, path)
-    targetWindow.webContents.send('address-generated', address)
-  } catch (err) {
-    logger.error(err.stack)
-  } 
-}
+// const getAddress = async (targetWindow, walletID, chainType, path) => {
+//   let address
+//   try {
+//     address = await hdUtil.getAddress(walletID, chainType, path)
+//     targetWindow.webContents.send('address-generated', address)
+//   } catch (err) {
+//     logger.error(err.stack)
+//   } 
+// }
 
-export { generatePhrase, revealPhrase, validatePhrase, getAddress }
+// export { generatePhrase, revealPhrase, validatePhrase, getAddress }
 
 // const testHDWallet = async () => {
 //     try {
