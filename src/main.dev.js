@@ -25,7 +25,9 @@ async function createWindow () {
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  if (process.env.NODE_ENV = 'development') {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()

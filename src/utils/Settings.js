@@ -22,18 +22,37 @@ class Settings {
     loadUserData(filename) {
         const fullPath = this.constructUserDataPath(filename)
 
-        this.logger.info(`load user data ${fullPath}`)
+        this.logger.info(`load content from file  ${fullPath}`)
 
         if (!fs.existsSync(fullPath)) {
+            this.logger.info(`{fullPath} does not exist, trying to write default ${DEFAULT_NETWORK}`)
+            this.saveUserData(filename, DEFAULT_NETWORK)
             return null
         }
 
-        // try {
-        //     fs.accessSync(fullPath, fs.R_OK)
-        // } catch (err) {
-        //     this.logger.error(`network config file does not exist ${err.stack}`)
-        // }
+        try {
+            const content = fs.readFileSync(fullPath, { encoding: 'utf8' })
+            this.logger.info(`reading ${content} from ${fullPath}`)
+        } catch (err) {
+            this.logger.error(`failed to read from ${fullPath}`)
+        }
 
+        return null
+    }
+
+    saveUserData(filename, content) {
+        if (!content) {
+            return
+        }
+
+        const fullPath = this.constructUserDataPath(filename)
+
+        try {
+            this.logger.info(`saving ${content} to file ${fullPath}`)
+            fs.writeFileSync(fullPath, content, { encoding: 'utf8' })
+        } catch (err) {
+            this.logger.error(`failed to write ${content} to file ${fullPath} with an error ${err.stack}`)
+        }
     }
 
     constructUserDataPath(filePath) {
