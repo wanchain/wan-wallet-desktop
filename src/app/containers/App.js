@@ -1,35 +1,49 @@
-import React from 'react'
+import React from 'react';
+import { Layout, Menu, Icon } from 'antd';
+import './App.css';
 
-const { remote, ipcRenderer } = window.require('electron');
-const mainProcess = remote.require('./main.dev');
-const currentWindow = remote.getCurrentWindow();
+const { Header, Sider, Content } = Layout;
 
 class App extends React.Component {
     state = {
-      phrase: 'I am just aa placeholder :-)'
+      collapsed: false,
     };
 
-    // This syntax ensures `this` is bound within handleClick.
-    // Warning: this is *experimental* syntax.
-    handleClick() {
-        console.log(mainProcess.generatePhrase)
-        mainProcess.generatePhrase(currentWindow, '123')
-    }
-
-    componentDidMount() {
-        ipcRenderer.on('phrase-generated', (event, phrase) => {
-            this.setState({phrase: phrase})
-        })
+    toggle = () => {
+      this.setState({
+        collapsed: !this.state.collapsed,
+      });
     }
   
     render() {
         return (
-            <div>
-                <h1>{this.state.phrase}</h1>
-                <button onClick={this.handleClick}>
-                Give me a phrase!!!
-                </button>
-            </div>
+          <Layout>
+          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+            <div className="logo" />
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+              <Menu.Item key="1">
+                <Icon type="user" />
+                <span>nav 1</span>
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Icon type="video-camera" />
+                <span>nav 2</span>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Icon type="upload" />
+                <span>nav 3</span>
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          <Layout>
+            <Header style={{ background: '#fff', padding: 0 }}>
+              <Icon className="trigger" type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle}/>
+            </Header>
+            <Content style={{margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,}}>
+              Content
+            </Content>
+          </Layout>
+        </Layout>
         );
     }
 }
