@@ -7,11 +7,12 @@
   "scripts": {
     "start": "npm run dev:renderer && npm run dev:main",
     "dev": "npm run dev:renderer",
-    "dev:main": "NODE_ENV=development electron -r @babel/register ./src/main.dev.js",
-    "dev:renderer": "NODE_ENV=development webpack-dev-server --progress --config ./config/webpack/webpack.config.renderer.babel.js --colors",
+    "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js",
+    "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --progress --config ./config/webpack/webpack.config.renderer.babel.js --colors",
     "build-renderer": "webpack --mode development --config webpack.react.config.js --colors",
     "build-main": "webpack --config ./config/webpack/webpack.config.main.prod.js --colors",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rebuild": "cross-env ./node_modules/.bin/electron-rebuild"
   },
   "repository": {
     "type": "git",
@@ -42,9 +43,11 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
+    "cross-env": "^5.2.0",
     "electron": "^4.1.0",
     "electron-builder": "^20.39.0",
     "electron-packager": "^13.1.1",
+    "electron-rebuild": "^1.8.4",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "prop-types": "^15.7.2",

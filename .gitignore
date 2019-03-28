@@ -32,3 +32,4 @@ node_modules
 .vscode
 .idea
 npm-debug.log.*
+package-lock.json
