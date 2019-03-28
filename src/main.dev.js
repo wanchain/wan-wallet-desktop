@@ -23,7 +23,7 @@ async function createWindow () {
     }
   })
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/app/index.html`)
 
   // Open the DevTools.
   if (process.env.NODE_ENV = 'development') {
