@@ -33,6 +33,7 @@ class Settings {
         try {
             const content = fs.readFileSync(fullPath, { encoding: 'utf8' })
             this.logger.info(`reading ${content} from ${fullPath}`)
+            return content
         } catch (err) {
             this.logger.error(`failed to read from ${fullPath}`)
         }

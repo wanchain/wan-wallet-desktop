@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
+import applicationMenu from './applicationMenu'
 import Logger from './utils/Logger'
 import setting from './utils/Settings'
 import backend from './modules'
@@ -41,6 +42,7 @@ async function createWindow () {
 
 async function onReady() {
   await backend.init()
+  Menu.setApplicationMenu(applicationMenu)
   await createWindow()
 }
 

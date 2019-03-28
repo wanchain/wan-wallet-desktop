@@ -10,7 +10,6 @@ export const generatePhrase = (targetWindow, pwd) => {
 }
 
 export const revealPhrase = (targetWindow, pwd) => {
-    let mnemonic
     try {
         mnemonic = hdUtil.revealMnemonic(pwd)
         targetWindow.webContents.send('phrase-revealed', phrase)
