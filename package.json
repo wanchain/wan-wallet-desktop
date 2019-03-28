@@ -3,7 +3,7 @@
   "productName": "WAND",
   "version": "1.0.0",
   "description": "Wanchain's new multicoin wallet",
-  "main": "./src/main.js",
+  "main": "./src/main.dev.js",
   "scripts": {
     "start": "npm run dev:renderer && npm run dev:main",
     "dev": "npm run dev:renderer",
