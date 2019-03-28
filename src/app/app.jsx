@@ -8,7 +8,7 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            phrase: 'I am just a placeholder :-)'
+            phrase: 'I am just aa placeholder :-)'
         }
     }
     // This syntax ensures `this` is bound within handleClick.
