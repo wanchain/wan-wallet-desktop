@@ -1,19 +1,17 @@
 import React from 'react'
 
-const { remote, ipcRenderer } = window.require('electron')
-const mainProcess = remote.require('./main.dev.js')
-const currentWindow = remote.getCurrentWindow()
+const { remote, ipcRenderer } = window.require('electron');
+const mainProcess = remote.require('./main.dev');
+const currentWindow = remote.getCurrentWindow();
 
 class App extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            phrase: 'I am just aa placeholder :-)'
-        }
-    }
+    state = {
+      phrase: 'I am just aa placeholder :-)'
+    };
+
     // This syntax ensures `this` is bound within handleClick.
     // Warning: this is *experimental* syntax.
-    handleClick = () => {
+    handleClick() {
         console.log(mainProcess.generatePhrase)
         mainProcess.generatePhrase(currentWindow, '123')
     }
@@ -36,4 +34,4 @@ class App extends React.Component {
     }
 }
 
-export default App
+export default App;

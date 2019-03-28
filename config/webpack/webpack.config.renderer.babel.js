@@ -10,7 +10,7 @@ export default {
     mode: 'development',
     entry: [
         'react-hot-loader/patch',
-        './src/app/index.jsx',
+        './src/app/index.js',
     ],
     output: {
         path: path.resolve(__dirname, '..', '..', 'dist'),
