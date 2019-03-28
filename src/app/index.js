@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import App from './containers/index.js';
+import Root from './containers/Root';
 
 const wrapApp = AppComponent => (
   <AppContainer>
@@ -9,11 +9,11 @@ const wrapApp = AppComponent => (
   </AppContainer>
 );
 
-render(wrapApp(App), document.getElementById('root'));
+render(wrapApp(Root), document.getElementById('root'));
 
 if (module.hot) {
-  module.hot.accept('./containers/index', () => {
-    const NextApp = require('./containers/index').default;
+  module.hot.accept('./containers/Root', () => {
+    const NextApp = require('./containers/Root').default;
 		render(wrapApp(NextApp), rootEl);
   });
 }
