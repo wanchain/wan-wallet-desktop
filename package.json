@@ -28,9 +28,12 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/runtime": "^7.4.0",
+    "antd": "^3.15.2",
     "electron-devtools-installer": "^2.2.4",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
     "wanchain-js-sdk": "github:ktfc76/wanchain-js-sdk#new_wallet",
     "winston-daily-rotate-file": "^3.8.0"
   },
