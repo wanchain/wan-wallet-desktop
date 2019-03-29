@@ -2,8 +2,29 @@ import path from 'path'
 import fs from 'fs'
 import { app } from 'electron'
 import Logger from './Logger'
+import yargs from 'yargs'
 
-const DEFAULT_NETWORK = 'testnet'
+const defaultConfig = {
+    network: 'testnet'
+}
+
+const argv = yargs
+                .options({
+                    'network': {
+                        demand: false,
+                        default: null,
+                        describe: 'Network to connect to: main or testnet',
+                        nargs: 1,
+                        type: 'string'
+                    }
+                })
+                .help('h')
+                .alias('h', 'help')
+                .argv
+
+const logger = Logger.getLogger('test')
+
+logger.warn(`NETWORK ${argv.network}`)
 
 class Settings {
     constructor() {
@@ -15,18 +36,23 @@ class Settings {
         return app.getPath('userData')
     }
 
+    // one truth of netwrok the wallect connected to
     get network() {
-        return this.loadUserData('network') || DEFAULT_NETWORK
+        if (argv.network) {
+            return argv.network
+        } 
+
+        return this.loadUserData('network') || defaultConfig.network
     }
 
     loadUserData(filename) {
         const fullPath = this.constructUserDataPath(filename)
 
-        this.logger.info(`load content from file  ${fullPath}`)
+        this.logger.info(`loading content from file  ${fullPath}`)
 
         if (!fs.existsSync(fullPath)) {
-            this.logger.info(`{fullPath} does not exist, trying to write default ${DEFAULT_NETWORK}`)
-            this.saveUserData(filename, DEFAULT_NETWORK)
+            this.logger.info(`{fullPath} does not exist, trying to write default network into ${defaultConfig.network}`)
+            this.saveUserData(filename, defaultConfig.network)
             return null
         }
 

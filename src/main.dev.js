@@ -6,10 +6,6 @@ import backend from './modules'
 
 const logger = Logger.getLogger('main')
 
-if (setting.network.includes('main')) {
-  console.log('connecting to main network')
-}
-
 let mainWindow
 
 async function createWindow () {

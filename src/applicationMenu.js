@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu, shell } from 'electron'
 import { APP_NAME } from '../config/common'
+import setting from './utils/Settings'
 
 const createApplicationMenu = () => {
     const template = [
@@ -43,20 +44,38 @@ const createApplicationMenu = () => {
             label: 'Setting',
             submenu: [
                 {
-                    label: 'network',
+                    label: 'Network',
                     submenu: [
                         {
                             label: 'main network',
-                            type: 'radio'
+                            accelerator: 'CommandOrControl+Alt+1',
+                            checked: setting.network === 'main',
+                            type: 'radio',
+                            click() {
+                                if (process.env.NODE_ENV === 'development') {
+                                    app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                                }
+                            
+                                app.exit(0)
+                            }
                         },
                         {
                             label: 'test network',
-                            type: 'radio'
+                            accelerator: 'CommandOrControl+Alt+1',
+                            checked: setting.network === 'testnet',
+                            type: 'radio',
+                            click() {
+                                if (process.env.NODE_ENV === 'development') {
+                                    app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                                }
+
+                                app.exit(0)
+                            }
                         }
                     ]
                 },
                 {
-                    label: 'mode',
+                    label: 'Mode',
                     submenu: [
                         {
                             label: 'light',
@@ -67,6 +86,11 @@ const createApplicationMenu = () => {
                             type: 'radio'
                         }
                     ]
+                },
+                { type: 'separator' },
+                {
+                    label: 'Language',
+                    submenu: []
                 }
             ],
         },
