@@ -7,7 +7,7 @@ class MBody extends Component {
   render () {
     return (
       <Layout>
-        <Content style={{margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280}}>
+        <Content style={{padding: 24, background: '#13175C', minHeight:"90vh", color:'#fff'}}>
           Content
         </Content>
       </Layout>

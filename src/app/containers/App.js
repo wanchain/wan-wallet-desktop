@@ -8,19 +8,30 @@ import MHeader from './m-header/m-header';
 import MBody from './m-body/m-body';
 
 class App extends Component {
-  
+    state = {
+      page: 'Protfolio'
+    };
+
     render() {
-        return (
-          <Row>
-            <Col span={6}>
-              <SideBar />
-            </Col>
-            <Col span={18}>
-              <MHeader />
-              <MBody />
-            </Col>
-          </Row>
-        );
+      // const { page } = this.state;
+      
+      return (
+        <Row type="flex">
+          <Col span={4}>
+            <SideBar />
+          </Col>
+          <Col span={20}>
+            <Row>
+              <Col>
+                <MHeader page={this.state.page} />
+              </Col>
+              <Col>
+                <MBody />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      );
     }
 }
 

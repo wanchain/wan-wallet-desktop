@@ -4,31 +4,32 @@ import { Layout, Menu, Icon } from 'antd';
 const { Sider } = Layout;
 
 import logo from 'static/image/logo.png';
+import './sidebar.css';
 
 class Sidebar extends Component {
   render () {
     return (
-      <Layout>
-        <Sider>
+      <Layout style={{minHeight:"100vh"}}>
+        <Sider width="100%">
           <img className="logo" src={logo} />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1">
+          <Menu theme="dark" mode="vertical" defaultSelectedKeys={['user']} style={{minHeight:"60vh"}}>
+            <Menu.Item key="user">
               <Icon type="user" />
               <span>Portfolio</span>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="Wallet">
               <Icon type="video-camera" />
               <span>Wallet</span>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="Cross Chain">
               <Icon type="upload" />
               <span>Cross Chain</span>
             </Menu.Item>
-            <Menu.Item key="4">
+            <Menu.Item key="Hardware Wallet">
               <Icon type="upload" />
               <span>Hardware Wallet</span>
             </Menu.Item>
-            <Menu.Item key="5">
+            <Menu.Item key="Settings">
               <Icon type="upload" />
               <span>Settings</span>
             </Menu.Item>
