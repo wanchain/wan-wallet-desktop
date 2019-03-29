@@ -32,8 +32,10 @@
     "electron-devtools-installer": "^2.2.4",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-redux": "^6.0.1",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
+    "redux": "^4.0.1",
     "wanchain-js-sdk": "github:ktfc76/wanchain-js-sdk#new_wallet",
     "winston-daily-rotate-file": "^3.8.0",
     "yargs": "^13.2.2"
