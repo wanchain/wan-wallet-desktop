@@ -48,7 +48,7 @@ const createApplicationMenu = () => {
                     submenu: [
                         {
                             label: 'main network',
-                            accelerator: 'CommandOrControl+Alt+1',
+                            accelerator: 'Shift+CommandOrControl+M',
                             checked: setting.network === 'main',
                             type: 'radio',
                             click() {
@@ -61,7 +61,7 @@ const createApplicationMenu = () => {
                         },
                         {
                             label: 'test network',
-                            accelerator: 'CommandOrControl+Alt+1',
+                            accelerator: 'Shift+CommandOrControl+P',
                             checked: setting.network === 'testnet',
                             type: 'radio',
                             click() {
@@ -79,18 +79,41 @@ const createApplicationMenu = () => {
                     submenu: [
                         {
                             label: 'light',
-                            type: 'radio'
+                            accelerator: 'Shift+CommandOrControl+L',
+                            checked: setting.mode === 'light',
+                            type: 'radio',
+                            click() {
+                                
+                            }
                         },
                         {
                             label: 'full',
-                            type: 'radio'
+                            accelerator: 'Shift+CommandOrControl+F',
+                            checked: setting.mode === 'full',
+                            type: 'radio',
+                            click() {
+
+                            }
                         }
                     ]
                 },
                 { type: 'separator' },
                 {
                     label: 'Language',
-                    submenu: []
+                    submenu: [
+                        {
+                            label: '简体中文',
+                            click() {
+
+                            }
+                        },
+                        {
+                            label: 'English',
+                            click() {
+                                
+                            }
+                        }
+                    ]
                 }
             ],
         },
@@ -159,7 +182,7 @@ const createApplicationMenu = () => {
                 {
                     label: `Quit ${APP_NAME}`,
                     accelerator: 'Command+Q',
-                    click() { app.quit(); }, // A
+                    click() { app.quit() }, 
                 },
             ]
         })
