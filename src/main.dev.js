@@ -8,22 +8,32 @@ import { app, BrowserWindow, Menu } from 'electron'
 import createApplicationMenu from './applicationMenu'
 import Logger from './utils/Logger'
 import setting from './utils/Settings'
+import windowStateKeeper from 'electron-window-state'
 import backend from './modules'
 
 const logger = Logger.getLogger('main')
 
 let mainWindow
-
 async function createWindow () {
   logger.info('creating main window')
+
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 1024 + 208,
+    defaultHeight: 720
+  });
+
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     show: false,
     webPreferences: {
       nodeIntegration: true
     }
   })
+
+  mainWindowState.manage(mainWindow)
 
   mainWindow.loadURL(`file://${__dirname}/app/index.html`)
 
@@ -42,12 +52,20 @@ async function createWindow () {
   })
 }
 
+// prevent crashed and close gracefully
+process.on('uncaughtException', (err) => {
+  logger.error(`UNCAUGHT EXCEPTION ${err.stack}`)
+  app.quit()
+})
+
 async function onReady() {
   await backend.init()
   createApplicationMenu()
   await createWindow()
 }
 
+// This method will be called when Electron has done everything 
+// initialization and ready for creating browser windows
 app.on('ready', onReady)
 
 app.on('window-all-closed', function () {

@@ -23,10 +23,6 @@ const argv = yargs
                 .alias('h', 'help')
                 .argv
 
-const logger = Logger.getLogger('test')
-
-logger.warn(`NETWORK ${argv.network}`)
-
 /** Setting class */
 class Settings {
     /**
