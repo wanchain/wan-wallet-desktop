@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run dev:renderer && npm run dev:main",
     "dev": "npm run dev:renderer",
-    "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js",
+    "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js --network test",
     "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --progress --config ./config/webpack/webpack.config.renderer.babel.js --colors",
     "build-renderer": "webpack --mode development --config webpack.react.config.js --colors",
     "build-main": "webpack --config ./config/webpack/webpack.config.main.prod.js --colors",
@@ -35,7 +35,8 @@
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "wanchain-js-sdk": "github:ktfc76/wanchain-js-sdk#new_wallet",
-    "winston-daily-rotate-file": "^3.8.0"
+    "winston-daily-rotate-file": "^3.8.0",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
