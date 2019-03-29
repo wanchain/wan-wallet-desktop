@@ -27,17 +27,28 @@ const logger = Logger.getLogger('test')
 
 logger.warn(`NETWORK ${argv.network}`)
 
+/** Setting class */
 class Settings {
+    /**
+     * Create an instance of Settings class, with a logger appended
+     */
     constructor() {
         this.logger = Logger.getLogger('settings')
         this.logger.info('setting initialized')
     }
 
+    /**
+     * Return application directory
+     * @return {string} applicatin data path, platform dependent
+     */
     get userDataPath() {
         return app.getPath('userData')
     }
 
-    // only truth for wallet mode: light or full mode supported
+    /**
+     * Return mode of WandWallet, light or full 
+     * @return {string} wallet mode, light or full
+     */
     get mode() {
         if (argv.mode) {
             return argv.mode
@@ -46,7 +57,10 @@ class Settings {
         return defaultConfig.mode
     }
 
-    // only truth of netwrok the wallect connected to
+    /**
+     * Return the network wallet is connected to, either main or testnet
+     * @return {string} wanchain network, either mainnet or testnet
+     */
     get network() {
         if (argv.network) {
             return argv.network

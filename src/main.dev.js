@@ -1,3 +1,9 @@
+/**
+ * This is main process of Electron, started as first thing when your 
+ * application starts. It runs through entire life of your application.
+ * Although this does not have any windows associated, you can open windows from here
+ */
+
 import { app, BrowserWindow, Menu } from 'electron'
 import createApplicationMenu from './applicationMenu'
 import Logger from './utils/Logger'
