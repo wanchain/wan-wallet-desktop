@@ -32,11 +32,24 @@ export default {
                 { loader: "style-loader" },
                 { loader: "css-loader" }
               ]
-            }
+            },
+            {
+              test: /\.(png|jpg|gif)$/,
+              use: [
+                {
+                  loader: 'file-loader',
+                  options: {},
+                }
+              ]
+            },
         ]
     },
     resolve: {
-        extensions: ['.js', '.jsx'],
+      alias: {
+        static: path.resolve(__dirname, '../../static/'),
+        components: path.resolve(__dirname, '../../src/app/components/')
+      },
+      extensions: ['.js', '.jsx'],
     },
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
