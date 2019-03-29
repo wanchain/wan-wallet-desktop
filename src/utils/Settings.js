@@ -5,6 +5,7 @@ import Logger from './Logger'
 import yargs from 'yargs'
 
 const defaultConfig = {
+    mode: 'light',
     network: 'testnet'
 }
 
@@ -36,7 +37,16 @@ class Settings {
         return app.getPath('userData')
     }
 
-    // one truth of netwrok the wallect connected to
+    // only truth for wallet mode: light or full mode supported
+    get mode() {
+        if (argv.mode) {
+            return argv.mode
+        }
+
+        return defaultConfig.mode
+    }
+
+    // only truth of netwrok the wallect connected to
     get network() {
         if (argv.network) {
             return argv.network
