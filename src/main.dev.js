@@ -5,6 +5,7 @@
  */
 
 import { app, BrowserWindow, Menu } from 'electron'
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
 import createApplicationMenu from './applicationMenu'
 import Logger from './utils/Logger'
 import setting from './utils/Settings'
@@ -39,7 +40,7 @@ async function createWindow () {
 
   // Open the DevTools.
   if (process.env.NODE_ENV = 'development') {
-    mainWindow.webContents.openDevTools()
+    installExtensions()
   }
 
   mainWindow.once('ready-to-show', () => {
@@ -50,6 +51,19 @@ async function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
+}
+
+function installExtensions() {
+  mainWindow.webContents.openDevTools()
+
+  // Install extensions
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then(name => console.log(`Added Extension:  ${name}`))
+    .catch(err => console.log('An error occurred: ', err));
+
+  installExtension(REDUX_DEVTOOLS)
+    .then(name => console.log(`Added Extension:  ${name}`))
+    .catch(err => console.log('An error occurred: ', err));
 }
 
 // prevent crashed and close gracefully
