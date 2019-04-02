@@ -1,4 +1,5 @@
 {
-  "HOME": "/",
-  "COUNTER": "/counter"
+  "PORTFOLIO": "/",
+  "WALLET": "/wallet",
+  "CROSSCHAIN": "/crosschain"
 }

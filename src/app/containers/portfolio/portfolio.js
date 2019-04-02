@@ -3,16 +3,16 @@ import { Layout } from 'antd';
 
 const { Content } = Layout;
 
-class MBody extends Component {
+class Portfolio extends Component {
   render () {
     return (
       <Layout>
         <Content style={{padding: 24, background: '#13175C', minHeight:"90vh", color:'#fff'}}>
-          Content
+          Portfolio
         </Content>
       </Layout>
     );
   }
 }
 
-export default MBody;
+export default Portfolio;

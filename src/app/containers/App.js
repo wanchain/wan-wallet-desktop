@@ -4,16 +4,15 @@ import { Row, Col } from 'antd';
 import './App.css';
 
 import SideBar from './sidebar/sidebar';
-import MHeader from './m-header/m-header';
-import MBody from './m-body/m-body';
+import MHeader from 'components/m-header/m-header';
 
 class App extends Component {
     state = {
-      page: 'Protfolio'
+      page: 'hello'
     };
 
     render() {
-      // const { page } = this.state;
+      const { children } = this.props;
       
       return (
         <Row type="flex">
@@ -24,9 +23,7 @@ class App extends Component {
             <Row>
               <Col>
                 <MHeader page={this.state.page} />
-              </Col>
-              <Col>
-                <MBody />
+                <React.Fragment>{children}</React.Fragment>
               </Col>
             </Row>
           </Col>

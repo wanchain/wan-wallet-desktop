@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Layout, Menu, Icon } from 'antd';
+import { Link } from 'react-router-dom';
 
 const { Sider } = Layout;
 
@@ -12,26 +13,36 @@ class Sidebar extends Component {
       <Layout style={{minHeight:"100vh"}}>
         <Sider width="100%">
           <img className="logo" src={logo} />
-          <Menu theme="dark" mode="vertical" defaultSelectedKeys={['user']} style={{minHeight:"60vh"}}>
-            <Menu.Item key="user">
+          <Menu theme="dark" mode="vertical" defaultSelectedKeys={['Portfolio']} style={{minHeight:"60vh"}}>
+            <Menu.Item key="Portfolio">
               <Icon type="user" />
-              <span>Portfolio</span>
+              <span>
+                <Link to="/">Portfolio</Link>              
+              </span>
             </Menu.Item>
             <Menu.Item key="Wallet">
               <Icon type="video-camera" />
-              <span>Wallet</span>
+              <span>
+                <Link to="/wallet">Wallet</Link>              
+              </span>
             </Menu.Item>
             <Menu.Item key="Cross Chain">
               <Icon type="upload" />
-              <span>Cross Chain</span>
+              <span>
+                <Link to="/crossChain">Cross Chain</Link>
+              </span>
             </Menu.Item>
             <Menu.Item key="Hardware Wallet">
               <Icon type="upload" />
-              <span>Hardware Wallet</span>
+              <span>
+                <Link to="/hardwareWallet">Hardware Wallet</Link>
+              </span>
             </Menu.Item>
             <Menu.Item key="Settings">
               <Icon type="upload" />
-              <span>Settings</span>
+              <span>
+                <Link to="/settings">Settings</Link>
+              </span>
             </Menu.Item>
           </Menu>
         </Sider>
