@@ -4,6 +4,10 @@ import webpack from 'webpack'
 import { WDS_PORT, isDev } from '../common'
 const publicPath = `http://localhost:${WDS_PORT}/dist`;
 
+function resolve (dir) {
+  return path.join(__dirname, '../../', dir)
+}
+
 export default {
     target: 'electron-renderer',
     devtool: isDev ? 'inline-source-map' : false,
@@ -45,11 +49,13 @@ export default {
         ]
     },
     resolve: {
+      extensions: ['.js', '.jsx', '.json'],
       alias: {
-        static: path.resolve(__dirname, '../../static/'),
-        components: path.resolve(__dirname, '../../src/app/components/')
-      },
-      extensions: ['.js', '.jsx'],
+        static: resolve('static/'),
+        constants: resolve('src/app/constants/'),
+        components: resolve('src/app/components/'),
+        containers: resolve('src/app/containers/')
+      }
     },
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
