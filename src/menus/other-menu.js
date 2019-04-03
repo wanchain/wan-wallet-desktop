@@ -1,8 +1,8 @@
-import { app, BrowserWindow, Menu, shell } from 'electron'
-import { APP_NAME } from '../config/common'
-import setting from './utils/Settings'
 
-const createApplicationMenu = () => {
+
+
+
+export default () => {
     const template = [
         {
             label: 'Edit',
@@ -149,55 +149,4 @@ const createApplicationMenu = () => {
             ]
         }
     ]
-    
-    if (process.platform === 'darwin') {
-        template.unshift({
-            label: `${APP_NAME}`,
-            submenu: [
-                {
-                    label: `About ${APP_NAME}`,
-                    role: 'about'
-                },
-                { type: 'separator' },
-                {
-                    label: 'Services',
-                    role: 'services',
-                },
-                { type: 'separator' },
-                {
-                    label: `Hide ${APP_NAME}`,
-                    accelerator: 'Command+H',
-                    role: 'hide',
-                },
-                {
-                    label: 'Hide Others',
-                    accelerator: 'Command+Alt+H',
-                    role: 'hideothers',
-                },
-                {
-                    label: 'Show All',
-                    role: 'unhide',
-                },
-                { type: 'separator' },
-                {
-                    label: `Quit ${APP_NAME}`,
-                    accelerator: 'Command+Q',
-                    click() { app.quit() }, 
-                },
-            ]
-        })
-
-        const windowMenu = template.find(item => item.label === 'Window')
-        windowMenu.submenu.push(
-            { type: 'separator' },
-            {
-                label: 'Bring All to Front',
-                role: 'front',
-            }
-        )
-    }
-
-    return Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
-
-export default createApplicationMenu
