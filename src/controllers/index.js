@@ -1,8 +1,12 @@
 import { hdUtil } from 'wanchain-js-sdk'
+import Logger from '../utils/Logger'
+
+const logger = Logger.getLogger('controllers')
 
 export const generatePhrase = (targetWindow, pwd) => {
+    let phrase
     try {
-      const phrase = hdUtil.generateMnemonic(pwd)
+      phrase = hdUtil.generateMnemonic(pwd)
       targetWindow.webContents.send('phrase-generated', phrase)
     } catch (err) {
       logger.error(err.stack)
@@ -10,8 +14,9 @@ export const generatePhrase = (targetWindow, pwd) => {
 }
 
 export const revealPhrase = (targetWindow, pwd) => {
+    let phrase
     try {
-        mnemonic = hdUtil.revealMnemonic(pwd)
+        phrase = hdUtil.revealMnemonic(pwd)
         targetWindow.webContents.send('phrase-revealed', phrase)
     } catch (err) {
         logger.error(err.stack)
