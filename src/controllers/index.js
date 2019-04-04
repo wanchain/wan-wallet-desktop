@@ -13,6 +13,16 @@ export const generatePhrase = (targetWindow, pwd) => {
     }
 }
 
+export const hasPhrase = (targetWindow) => {
+    let ret
+    try {
+      ret = hdUtil.hasMnemonic()
+      targetWindow.webContents.send('phrase-exist', ret)
+    } catch (err) {
+      logger.error(err.stack)
+    }
+}
+
 export const revealPhrase = (targetWindow, pwd) => {
     let phrase
     try {
