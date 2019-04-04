@@ -4,6 +4,10 @@ import { app } from 'electron'
 import Logger from './Logger'
 import yargs from 'yargs'
 
+// caches for config
+let _mode = undefined
+let _network = undefined
+
 const defaultConfig = {
     mode: 'light',
     network: 'testnet'
@@ -53,11 +57,15 @@ class Settings {
      * @return {string} wallet mode, light or full
      */
     get mode() {
-        if (argv.mode) {
-            return argv.mode
+        if (_mode) {
+            return _mode
         }
 
-        return this.loadUserData('mode') || defaultConfig.mode
+        if (argv.mode) {
+            return _mode = argv.mode
+        }
+
+        return _mode = this.loadUserData('mode') || defaultConfig.mode
     }
 
     /**
@@ -65,11 +73,15 @@ class Settings {
      * @return {string} wanchain network, either mainnet or testnet
      */
     get network() {
+        if (_network) {
+            return _network
+        }
+
         if (argv.network) {
-            return argv.network
+            return _network = argv.network
         } 
 
-        return this.loadUserData('network') || defaultConfig.network
+        return _network = this.loadUserData('network') || defaultConfig.network
     }
 
     loadUserData(filename) {
