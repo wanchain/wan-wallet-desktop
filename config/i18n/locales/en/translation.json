@@ -1,7 +1,58 @@
 {
-    "appName": "WandWallet",
-    "hideApp": "Hide WandWallet",
-    "hideOthers": "Hide Others",
-    "showAll": "Show All",
-    "quitApp": "Quit"
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{app}}",
+                "about": "About {{app}}",
+                "services": "Services",
+                "hide": "Hide {{ app }}",
+                "hideOthers": "Hide others",
+                "showAll": "Show all",
+                "quit": "Quit {{ app }}"
+            },
+            "edit": {
+                "label": "Edit",
+                "undo": "Undo",
+                "redo": "Redo",
+                "cut": "Cut",
+                "copy": "Copy",
+                "paste": "Paste",
+                "selectAll": "Select all"
+            },
+            "setting": {
+                "label": "Setting",
+                "network": {
+                    "label": "Network",
+                    "main": "Main Network",
+                    "test": "Test Network"
+                },
+                "mode": {
+                    "label": "Mode",
+                    "full": "Full Node Wallet",
+                    "light": "Light Wallet"
+                },
+                "lang": {
+                    "label": "Language",
+                    "code": {
+                        "en": "English",
+                        "zh": "普通話"
+                    }
+                }
+            },
+            "window": {
+                "label": "Window",
+                "minimize": "Minimize",
+                "close": "Close",
+                "front": "Bring All to Front"
+            },
+            "help": {
+                "label": "Help",
+                "web": "Wanchain Official Website",
+                "explorer": "Wanchain Explorer",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "Toggle Developer Tools"
+            }
+        }
+    }
 }

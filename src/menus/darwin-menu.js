@@ -1,40 +1,41 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
+import { app, shell } from 'electron'
 
-export default (app, i18n) => {
+export default (i18n) => {
     const menu = []
 
     // Mac OS menu
     const macMenu = {
-        label: `${APP_NAME}`,
+        label: i18n.t('main.applicationMenu.app.label', { app: APP_NAME }),
         submenu: [
             {
-                label: i18n.t('appName'),
+                label: i18n.t('main.applicationMenu.app.about', { app: APP_NAME }),
                 role: 'about'
             },
             { type: 'separator' },
             {
-                label: 'Services',
+                label: i18n.t('main.applicationMenu.app.services'),
                 role: 'services',
             },
             { type: 'separator' },
             {
-                label: i18n.t('hideApp'),
+                label: i18n.t('main.applicationMenu.app.hide', { app: APP_NAME }),
                 accelerator: 'Command+H',
                 role: 'hide',
             },
             {
-                label: i18n.t('hideOthers'),
+                label: i18n.t('main.applicationMenu.app.hideOthers'),
                 accelerator: 'Command+Alt+H',
                 role: 'hideothers',
             },
             {
-                label: i18n.t('showAll'),
+                label: i18n.t('main.applicationMenu.app.showAll'),
                 role: 'unhide',
             },
             { type: 'separator' },
             {
-                label: i18n.t('quitApp'),
+                label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
                 accelerator: 'Command+Q',
                 click() { app.quit() }, 
             },
@@ -44,36 +45,36 @@ export default (app, i18n) => {
 
     // Edit menu
     const editMenu = {
-        label: 'Edit',
+        label: i18n.t('main.applicationMenu.edit.label'),
         submenu: [
             {
-                label: 'Undo',
+                label: i18n.t('main.applicationMenu.edit.undo'),
                 accelerator: 'CommandOrControl+Z',
                 role: 'undo',
             },
             {
-                label: 'Redo',
+                label: i18n.t('main.applicationMenu.edit.redo'),
                 accelerator: 'Shift+CommandOrControl+Z',
                 role: 'redo',
             },
             { type: 'separator' },
             {
-                label: 'Cut',
+                label: i18n.t('main.applicationMenu.edit.cut'),
                 accelerator: 'CommandOrControl+X',
                 role: 'cut',
             },
             {
-                label: 'Copy',
+                label: i18n.t('main.applicationMenu.edit.copy'),
                 accelerator: 'CommandOrControl+C',
                 role: 'copy'
             },
             {   
-                label: 'Paste',
+                label: i18n.t('main.applicationMenu.edit.paste'),
                 accelerator: 'CommandOrControl+P',
                 role: 'paste'
             },
             {
-                label: 'Select All',
+                label: i18n.t('main.applicationMenu.edit.selectAll'),
                 accelerator: 'CommandOrControl+A',
                 role: 'selectall',
             },
@@ -84,13 +85,13 @@ export default (app, i18n) => {
 
     // Setting menu
     const settingMenu = {
-        label: 'Setting',
+        label: i18n.t('main.applicationMenu.setting.label'),
         submenu: [
             {
-                label: 'Network',
+                label: i18n.t('main.applicationMenu.setting.network.label'),
                 submenu: [
                     {
-                        label: 'main network',
+                        label: i18n.t('main.applicationMenu.setting.network.main'),
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
                         type: 'radio',
@@ -103,7 +104,7 @@ export default (app, i18n) => {
                         }
                     },
                     {
-                        label: 'test network',
+                        label: i18n.t('main.applicationMenu.setting.network.test'),
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
                         type: 'radio',
@@ -118,10 +119,10 @@ export default (app, i18n) => {
                 ]
             },
             {
-                label: 'Mode',
+                label: i18n.t('main.applicationMenu.setting.mode.label'),
                 submenu: [
                     {
-                        label: 'light',
+                        label: i18n.t('main.applicationMenu.setting.mode.full'),
                         accelerator: 'Shift+CommandOrControl+L',
                         checked: setting.mode === 'light',
                         type: 'radio',
@@ -130,7 +131,7 @@ export default (app, i18n) => {
                         }
                     },
                     {
-                        label: 'full',
+                        label: i18n.t('main.applicationMenu.setting.mode.light'),
                         accelerator: 'Shift+CommandOrControl+F',
                         checked: setting.mode === 'full',
                         type: 'radio',
@@ -147,7 +148,7 @@ export default (app, i18n) => {
     // Language menu
     const languageMenu = LANGUAGES.map((languageCode) => {
         return {
-            label: i18n.t(languageCode),
+            label: i18n.t(`main.applicationMenu.setting.lang.code.${languageCode}`),
             type: 'radio',
             checked: i18n.language === languageCode,
             click: () => {
@@ -164,21 +165,21 @@ export default (app, i18n) => {
 
     // Window menu
     const windowMenu = {
-        label: 'Window',
+        label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
             {
-                label: 'Minimize',
+                label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
                 role: 'minimize',
             },
             {
-                label: 'Close',
+                label: i18n.t('main.applicationMenu.window.close'),
                 accelerator: 'CommandOrControl+W',
                 role: 'close',
             },
             { type: 'separator' },
             {
-                label: 'Bring All to Front',
+                label: i18n.t('main.applicationMenu.window.front'),
                 role: 'front',
             }
         ],
@@ -187,17 +188,23 @@ export default (app, i18n) => {
 
     // Help menu
     const helpMenu = {
-        label: 'Help',
+        label: i18n.t('main.applicationMenu.help.label'),
         role: 'help',
         submenu: [
             {
-                label: 'Visit Wanchain Official Website',
+                label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {
-                    shell.openExternal('https://wanchain.org')
+                    shell.openExternal(i18n.t('main.applicationMenu.help.webURL'))
                 }
             },
             {
-                label: 'Toggle Developer Tools',
+                label: i18n.t('main.applicationMenu.help.explorer'),
+                click: () => {
+                    shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
+                }
+            },
+            {
+                label: i18n.t('main.applicationMenu.help.toggle'),
                 click: () => {}
             }
         ]

@@ -58,7 +58,7 @@ async function createWindow () {
   })
 
   i18n.on('languageChanged', (lng) => {
-    menuFactoryService.buildMenu(app, i18n)
+    menuFactoryService.buildMenu(i18n)
   })
 
   mainWindow.once('ready-to-show', () => {

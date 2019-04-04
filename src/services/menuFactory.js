@@ -1,16 +1,20 @@
 import { Menu } from 'electron'
 import darwinTemplate from '../menus/darwin-menu'
+import otherTemplate from '../menus/other-menu'
 
 class MenuFactoryService {
     constructor(menu) {
         this.menu = menu
     }
 
-    buildMenu(app, i18n) {
+    buildMenu(i18n) {
         if (process.platform === 'darwin') {
-            this.menu = Menu.buildFromTemplate(darwinTemplate(app, i18n))
-            Menu.setApplicationMenu(this.menu)
+            this.menu = Menu.buildFromTemplate(darwinTemplate(i18n))
+        } else {
+            this.menu = Menu.buildFromTemplate(otherTemplate(i18n))
         }
+
+        Menu.setApplicationMenu(this.menu)
     }
 }
 

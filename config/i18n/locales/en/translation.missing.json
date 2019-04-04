@@ -1,4 +1,9 @@
 {
-  "en": "en",
-  "zh": "zh"
+  "main": {
+    "applicationMenu": {
+      "help": {
+        "explorer": "main.applicationMenu.help.explorer"
+      }
+    }
+  }
 }

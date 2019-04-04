@@ -12,7 +12,9 @@ export const i18nOptions = {
         jsonIndent: 2
     },
     interpolation: {
-        escapeValue: false
+        escapeValue: false,
+        // prefix: '__', 
+        // suffix: '__'
     },
     saveMissing: true,
     fallbackLng: FALLBACK_LANG,
