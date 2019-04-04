@@ -14,7 +14,7 @@ export default {
     mode: 'development',
     entry: [
         'react-hot-loader/patch',
-        './src/app/index.js',
+        './src/app/App.js',
     ],
     output: {
         path: path.resolve(__dirname, '..', '..', 'dist'),
@@ -54,7 +54,8 @@ export default {
         static: resolve('static/'),
         constants: resolve('src/app/constants/'),
         components: resolve('src/app/components/'),
-        containers: resolve('src/app/containers/')
+        containers: resolve('src/app/containers/'),
+        utils: resolve('src/app/utils/')
       }
     },
     plugins: [

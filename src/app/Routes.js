@@ -1,15 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { withRouter, Switch, Route } from 'react-router-dom';
 import routes from 'constants/routes';
-import App from 'containers/App';
-import portfolio from 'containers/portfolio/portfolio';
+import { Layout, Portfolio, Sidebar, Wallet } from './containers';
 
-export default () => (
-  <Router>
-    <App>
-      <Switch>
-        <Route path={routes.PORTFOLIO} component={portfolio} />
-      </Switch>
-    </App>
-  </Router>
-);
+const Main = withRouter(props => <Layout {...props} />);
+
+export default () => {
+  return (
+      <Main>
+        <Switch>
+          <Route exact path={routes.PORTFOLIO} component={Portfolio} />
+          <Route path={routes.WALLET} component={Wallet} />
+        </Switch>
+      </Main>
+  );
+};

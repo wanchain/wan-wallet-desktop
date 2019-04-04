@@ -1,19 +1,31 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'antd';
+import { observer, inject } from 'mobx-react';
 
-import './App.css';
-
-import SideBar from './sidebar/sidebar';
+import './Layout.css';
+import SideBar from './Sidebar';
+import CreateMnemonic from './CreateMnemonic';
 import MHeader from 'components/m-header/m-header';
 
-class App extends Component {
+
+@inject(stores => ({
+  hasMnemonic: () => !!stores.session.hasMnemonic,
+}))
+
+@observer
+export default class Layout extends Component {
     state = {
       page: 'hello'
     };
 
     render() {
-      const { children } = this.props;
-      
+      var { hasMnemonic } = this.props;
+
+
+      if (!hasMnemonic()) {
+        return <CreateMnemonic />;
+      }
+
       return (
         <Row type="flex">
           <Col span={4}>
@@ -23,7 +35,7 @@ class App extends Component {
             <Row>
               <Col>
                 <MHeader page={this.state.page} />
-                <React.Fragment>{children}</React.Fragment>
+                {this.props.children}
               </Col>
             </Row>
           </Col>
@@ -31,5 +43,3 @@ class App extends Component {
       );
     }
 }
-
-export default App;
