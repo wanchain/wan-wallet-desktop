@@ -17,6 +17,13 @@ const argv = yargs
                         describe: 'Network to connect to: main or testnet',
                         nargs: 1,
                         type: 'string'
+                    },
+                    'mode': {
+                        demand: false,
+                        default: null,
+                        describe: 'Mode the wallet will be running on',
+                        nargs: 1,
+                        type: 'string'
                     }
                 })
                 .help('h')
@@ -50,7 +57,7 @@ class Settings {
             return argv.mode
         }
 
-        return defaultConfig.mode
+        return this.loadUserData('mode') || defaultConfig.mode
     }
 
     /**
@@ -71,8 +78,9 @@ class Settings {
         this.logger.info(`loading content from file  ${fullPath}`)
 
         if (!fs.existsSync(fullPath)) {
-            this.logger.info(`{fullPath} does not exist, trying to write default network into ${defaultConfig.network}`)
-            this.saveUserData(filename, defaultConfig.network)
+            this.logger.info(`${fullPath} does not exist, trying create a file and write default config`)
+            console.log(defaultConfig[filename])
+            this.saveUserData(filename, defaultConfig[filename])
             return null
         }
 

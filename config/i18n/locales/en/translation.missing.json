@@ -1,9 +1,0 @@
-{
-  "main": {
-    "applicationMenu": {
-      "help": {
-        "explorer": "main.applicationMenu.help.explorer"
-      }
-    }
-  }
-}

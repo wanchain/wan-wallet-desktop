@@ -122,7 +122,7 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.setting.mode.label'),
                 submenu: [
                     {
-                        label: i18n.t('main.applicationMenu.setting.mode.full'),
+                        label: i18n.t('main.applicationMenu.setting.mode.light'),
                         accelerator: 'Shift+CommandOrControl+L',
                         checked: setting.mode === 'light',
                         type: 'radio',
@@ -131,7 +131,7 @@ export default (i18n) => {
                         }
                     },
                     {
-                        label: i18n.t('main.applicationMenu.setting.mode.light'),
+                        label: i18n.t('main.applicationMenu.setting.mode.full'),
                         accelerator: 'Shift+CommandOrControl+F',
                         checked: setting.mode === 'full',
                         type: 'radio',
