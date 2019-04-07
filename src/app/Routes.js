@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, Switch, Route } from 'react-router-dom';
-import routes from 'constants/routes';
-import { Layout, Portfolio, Sidebar, Wallet } from './containers';
+import menuList from 'constants/menuConfig';
+import { Layout, Portfolio, Wallet } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -9,8 +9,8 @@ export default () => {
   return (
       <Main>
         <Switch>
-          <Route exact path={routes.PORTFOLIO} component={Portfolio} />
-          <Route path={routes.WALLET} component={Wallet} />
+          <Route exact path={menuList[0].key} component={Portfolio} />
+          <Route path={menuList[1].key} component={Wallet} />
         </Switch>
       </Main>
   );

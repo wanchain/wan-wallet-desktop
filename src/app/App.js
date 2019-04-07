@@ -5,7 +5,7 @@ import { HashRouter } from 'react-router-dom';
 import { AppContainer } from 'react-hot-loader';
 
 
-import './global.css';
+import './global.less';
 import getRoutes from './Routes';
 import stores from './stores';
 

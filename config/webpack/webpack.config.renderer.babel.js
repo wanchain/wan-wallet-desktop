@@ -1,8 +1,10 @@
-import path from 'path'
-import { spawn } from 'child_process'
-import webpack from 'webpack'
-import { WDS_PORT, isDev } from '../common'
+import path from 'path';
+import { spawn } from 'child_process';
+import webpack from 'webpack';
+import { WDS_PORT, isDev } from '../common';
+const autoprefixer = require('autoprefixer');
 const publicPath = `http://localhost:${WDS_PORT}/dist`;
+
 
 function resolve (dir) {
   return path.join(__dirname, '../../', dir)
@@ -25,16 +27,61 @@ export default {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
+                    loader: "babel-loader",
+                    options: {
+                      plugins: [
+                        ['import', {
+                          libraryName: 'antd',
+                          style: true
+                        }]
+                      ]
+                    }
                 }
+            },
+            {
+              test: /\.less$/,
+              use: [
+                'style-loader',
+                {loader: 'css-loader', options: { importLoaders: 1 }},
+                {loader: 'postcss-loader', options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9',
+                      ],
+                      flexbox: 'no-2009',
+                    }),
+                  ],
+                }},
+                'less-loader'
+              ]
             },
             {
               test: /\.css$/,
               use: [
-                { loader: "style-loader" },
-                { loader: "css-loader" }
+                'style-loader',
+                { loader: 'css-loader', options: { importLoaders: 1 } },
+                {loader: 'postcss-loader', options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9',
+                      ],
+                      flexbox: 'no-2009',
+                    }),
+                  ],
+                }},
               ]
             },
             {

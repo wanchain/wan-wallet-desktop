@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
-import './Layout.css';
+import './Layout.less';
 import SideBar from './Sidebar';
 import CreateMnemonic from './CreateMnemonic';
 import MHeader from 'components/m-header/m-header';
@@ -27,16 +27,14 @@ export default class Layout extends Component {
       }
 
       return (
-        <Row type="flex">
-          <Col span={4}>
+        <Row className="container">
+          <Col span={4} className="nav-left">
             <SideBar />
           </Col>
-          <Col span={20}>
-            <Row>
-              <Col>
-                <MHeader page={this.state.page} />
+          <Col span={20} className="main">
+            <MHeader />
+            <Row className="content">
                 {this.props.children}
-              </Col>
             </Row>
           </Col>
         </Row>
