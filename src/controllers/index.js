@@ -47,6 +47,18 @@ export const unlockHDWallet = (targetWindow, pwd) => {
     }
 }
 
+export const lockHDWallet = (targetWindow) => {
+     try {
+        hdUtil.deleteHDWallet()
+
+        targetWindow.webContents.send('wallet-locked', true)
+     } catch (err) {
+        logger.error(err.stack)
+
+        targetWindow.webContents.send('wallet-locked', false)
+     }
+}
+
 export const validatePhrase = (targetWindow, phrase) => {
     let ret
     try {
@@ -57,15 +69,15 @@ export const validatePhrase = (targetWindow, phrase) => {
     }
 }
 
-export const getAddress = async (targetWindow, walletID, chainType, path) => {
+export const getAddress = async (targetWindow, walletID, chainType, start, end) => {
     let address
     try {
-        address = await hdUtil.getAddress(walletID, chainType, path)
+        address = await hdUtil.getAddress(walletID, chainType, start, end)
         targetWindow.webContents.send('address-generated', address)
     } catch (err) {
         logger.error(err.stack)
     } 
 }
 
-export default { generatePhrase, revealPhrase, unlockHDWallet, validatePhrase, getAddress }
+export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress }
 
