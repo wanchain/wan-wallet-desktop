@@ -41,7 +41,7 @@ class Sidebar extends Component {
     return (
       <div>
         <div className="logo">
-          <img src={logo} alt="" />
+          <img src={logo} alt="Wanchain" />
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['/portfolio']}>
           { this.state.menuTreeNode }

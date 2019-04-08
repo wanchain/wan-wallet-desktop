@@ -5,7 +5,21 @@ const currentWindow = remote.getCurrentWindow();
 
 
 const helper = {
-  hasMnemonic: () =>{
+  unlockHDWallet: (pwd) =>{
+    return new Promise((resolve, reject) =>{
+      ipcRenderer.on('wallet-unlocked', (event, ret) => {
+        return resolve(ret);
+      })
+      mainProcess.unlockHDWallet(currentWindow, '123');
+    });
+  },
+  getPhrase: (pwd) => {
+    mainProcess.revealPhrase(currentWindow, pwd);
+  },
+  generatePhrase: (pwd) => {
+    mainProcess.generatePhrase(currentWindow, pwd);
+  },
+  hasMnemonic: () => {
     return new Promise((resolve, reject) =>{
       ipcRenderer.on('phrase-exist', (event, ret) => {
         return resolve(ret);
@@ -13,6 +27,9 @@ const helper = {
       mainProcess.hasPhrase(currentWindow);
     });
   },
+  createWanAccount: (targetWindow, start, end) => {
+    mainProcess.getAddress(targetWindow, 1, 'WAN', start, end);
+  }
 };
 
 export default helper;

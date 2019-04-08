@@ -71,7 +71,7 @@ export const validatePhrase = (targetWindow, phrase) => {
 
 export const getAddress = async (targetWindow, walletID, chainType, start, end) => {
     let address
-    try {
+    try {                                               
         address = await hdUtil.getAddress(walletID, chainType, start, end)
         targetWindow.webContents.send('address-generated', address)
     } catch (err) {
