@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
-import { HashRouter } from 'react-router-dom';
 import { AppContainer } from 'react-hot-loader';
 
 
 import './global.less';
-import getRoutes from './Routes';
+import Router from './Routes';
 import stores from './stores';
 
 
@@ -19,9 +18,7 @@ class App extends Component {
       return (
         <AppContainer>
           <Provider {...stores}>
-            <HashRouter ref="navigator">
-              {getRoutes()}
-            </HashRouter>
+            <Router />
           </Provider>
         </AppContainer>
       );
@@ -34,6 +31,6 @@ render(<App />, document.getElementById('root'));
 if (module.hot) {
   module.hot.accept('./Routes', () => {
     const NextApp = require('./Routes').default;
-		render(NextApp(), document.getElementById('root'));
+		render(<NextApp />, document.getElementById('root'));
   });
 }

@@ -19,15 +19,15 @@ class Sidebar extends Component {
 
   renderMenu = (data) => {
     return data.map((item) => {
-      if(item.childern) {
+      if(item.children) {
         return (
           <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
-            { this.renderMenu(item.childern) }
+            { this.renderMenu(item.children) }
           </SubMenu>
         );
       }
       return (
-        <Menu.Item key={item.key} title={item.title}>
+        <Menu.Item key={item.key}>
           <Link to={item.key}>
             <Icon type={item.icon} />
             {item.title}
@@ -43,7 +43,7 @@ class Sidebar extends Component {
         <div className="logo">
           <img src={logo} alt="" />
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['Portfolio']}>
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={['/portfolio']}>
           { this.state.menuTreeNode }
         </Menu>
       </div>

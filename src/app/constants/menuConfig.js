@@ -7,7 +7,24 @@ const menuList = [
   {
     title: 'Wallet',
     key: '/wallet',
-    icon: 'user'
+    icon: 'user',
+    children: [
+      {
+        title: 'WAN',
+        key: '/wanAccount',
+        icon: 'user'
+      },
+      {
+        title: 'BTC',
+        key: '/btcAccount',
+        icon: 'user'
+      },
+      {
+        title: 'ETH',
+        key: '/ethAccount',
+        icon: 'user'
+      },
+    ]
   },
   {
     title: 'Cross Chain',

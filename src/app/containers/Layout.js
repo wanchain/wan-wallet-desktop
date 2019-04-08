@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import './Layout.less';
 import SideBar from './Sidebar';
 import CreateMnemonic from './CreateMnemonic';
-import MHeader from 'components/m-header/m-header';
+import MHeader from 'components/MHeader';
 
 
 @inject(stores => ({
