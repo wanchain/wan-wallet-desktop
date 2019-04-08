@@ -1,6 +1,6 @@
 import path from 'path'
-import setting from '../utils/Settings'
-import WalletHelper from '../utils/Helper'
+import setting from '~/src/utils/Settings'
+import WalletHelper from '~/src/utils/Helper'
 
 const dataPathPrex = path.join(setting.userDataPath, 'Db')
 

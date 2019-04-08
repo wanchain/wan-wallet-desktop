@@ -4,15 +4,17 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
-import menuFactoryService from './services/menuFactory'
-import i18n, { i18nOptions } from'../config/i18n'
-import Logger from './utils/Logger'
+import menuFactoryService from '~/src/services/menuFactory'
+import i18n, { i18nOptions } from'~/config/i18n'
+import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import backend from './modules'
+import { walletBackend, clientBinaryManager } from '~/src/modules'
 
 const logger = Logger.getLogger('main')
+
+console.log(app.getPath('exe'))
 
 let mainWindow
 async function createWindow () {
@@ -91,7 +93,7 @@ process.on('uncaughtException', (err) => {
 })
 
 async function onReady() {
-  await backend.init()
+  await walletBackend.init()
   
   await createWindow()
 }
