@@ -33,6 +33,16 @@ export const revealPhrase = (targetWindow, pwd) => {
     }
 }
 
+export const unlockHDWallet = (targetWindow, pwd) => {
+    let ret
+    try {
+        phrase = hdUtil.revealMnemonic(pwd)
+        targetWindow.webContents.send('wallet-unlocked', !!ret)
+    } catch (err) {
+        logger.error(err.stack)
+    }
+}
+
 export const validatePhrase = (targetWindow, phrase) => {
     let ret
     try {
@@ -53,5 +63,5 @@ export const getAddress = async (targetWindow, walletID, chainType, path) => {
     } 
 }
 
-export default { generatePhrase, revealPhrase, validatePhrase, getAddress }
+export default { generatePhrase, revealPhrase, unlockHDWallet, validatePhrase, getAddress }
 
