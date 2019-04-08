@@ -36,7 +36,7 @@ export const revealPhrase = (targetWindow, pwd) => {
 export const unlockHDWallet = (targetWindow, pwd) => {
     let ret
     try {
-        phrase = hdUtil.revealMnemonic(pwd)
+        ret = hdUtil.revealMnemonic(pwd)
         targetWindow.webContents.send('wallet-unlocked', !!ret)
     } catch (err) {
         logger.error(err.stack)
