@@ -1,5 +1,6 @@
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
+const WAN_BIP44_PREFIX = "m/44'/5718350'/0'/0/"
 
 const logger = Logger.getLogger('controllers')
 
@@ -101,5 +102,30 @@ export const getBalance = async (targetWindow, chainType, addr) => {
     }
 }
 
-export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress, getBalance }
+export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
+    const input = {
+        symbol: chainType || 'WAN',
+        from: from,
+        to: to,
+        amount: amount, // in wan or eth
+        gasPrice: gasPrice || 180,
+        gasLimit: gasLimit || 1000000,
+        BIP44Path: WAN_BIP44_PREFIX.concat(addrOffset),
+        walletID: parseInt(walletID)
+    }
+
+    try {
+        const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
+        const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
+        if (ret.code) {
+            targetWindow.webContents.send('coin-normal', true)
+        }
+    } catch (err) {
+        logger.error(err.stack)
+        targetWindow.webContents.send('coin-normal', false)
+    }
+    
+}
+
+export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress, getBalance, coinNormal }
 
