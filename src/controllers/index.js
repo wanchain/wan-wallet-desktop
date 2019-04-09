@@ -1,6 +1,6 @@
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
-const WAN_BIP44_PREFIX = "m/44'/5718350'/0'/0/"
+import { CHANNELS, BIP44PATH } from '~/config/common'
 
 const logger = Logger.getLogger('controllers')
 
@@ -8,7 +8,7 @@ export const generatePhrase = (targetWindow, pwd) => {
     let phrase
     try {
       phrase = hdUtil.generateMnemonic(pwd)
-      targetWindow.webContents.send('phrase-generated', phrase)
+      targetWindow.webContents.send(CHANNELS.PHRASE_GENERATE, phrase)
     } catch (err) {
       logger.error(err.stack)
     }
@@ -18,7 +18,7 @@ export const hasPhrase = (targetWindow) => {
     let ret
     try {
       ret = hdUtil.hasMnemonic()
-      targetWindow.webContents.send('phrase-exist', ret)
+      targetWindow.webContents.send(CHANNELS.PHRASE_EXIST, ret)
     } catch (err) {
       logger.error(err.stack)
     }
@@ -28,7 +28,7 @@ export const revealPhrase = (targetWindow, pwd) => {
     let phrase
     try {
         phrase = hdUtil.revealMnemonic(pwd)
-        targetWindow.webContents.send('phrase-revealed', phrase)
+        targetWindow.webContents.send(CHANNELS.PHRASE_REVEAL, phrase)
     } catch (err) {
         logger.error(err.stack)
     }
@@ -40,11 +40,11 @@ export const unlockHDWallet = (targetWindow, pwd) => {
         phrase = hdUtil.revealMnemonic(pwd)
         hdUtil.initializeHDWallet(phrase)
 
-        targetWindow.webContents.send('wallet-unlocked', true)
+        targetWindow.webContents.send(CHANNELS.WALLET_UNLOCK, true)
     } catch (err) {
         logger.error(err.stack)
 
-        targetWindow.webContents.send('wallet-unlocked', false)
+        targetWindow.webContents.send(CHANNELS.WALLET_UNLOCK, false)
     }
 }
 
@@ -52,11 +52,11 @@ export const lockHDWallet = (targetWindow) => {
      try {
         hdUtil.deleteHDWallet()
 
-        targetWindow.webContents.send('wallet-locked', true)
+        targetWindow.webContents.send(CHANNELS.WALLET_LOCK, true)
      } catch (err) {
         logger.error(err.stack)
 
-        targetWindow.webContents.send('wallet-locked', false)
+        targetWindow.webContents.send(CHANNELS.WALLET_LOCK, false)
      }
 }
 
@@ -74,7 +74,7 @@ export const getAddress = async (targetWindow, walletID, chainType, start, end) 
     let address
     try {                                               
         address = await hdUtil.getAddress(walletID, chainType, start, end)
-        targetWindow.webContents.send('address-generated', address)
+        targetWindow.webContents.send(CHANNELS.ADDR_GOT, address)
     } catch (err) {
         logger.error(err.stack)
     } 
@@ -96,7 +96,7 @@ export const getBalance = async (targetWindow, chainType, addr) => {
                 balance = await ccUtil.getWanBalance(addr)
                 break;
         }
-        targetWindow.webContents.send('balance-got', balance)
+        targetWindow.webContents.send(CHANNELS.BALANCE_GOT, balance)
     } catch (err) {
         logger.error(err.stack)
     }
@@ -110,7 +110,7 @@ export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, 
         amount: amount, // in wan or eth
         gasPrice: gasPrice || 180,
         gasLimit: gasLimit || 1000000,
-        BIP44Path: WAN_BIP44_PREFIX.concat(addrOffset),
+        BIP44Path: BIP44PATH.WAN.concat(addrOffset),
         walletID: parseInt(walletID)
     }
 
@@ -118,11 +118,11 @@ export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, 
         const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
         const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
         if (ret.code) {
-            targetWindow.webContents.send('coin-normal', true)
+            targetWindow.webContents.send(CHANNELS.TX_NORMAL, true)
         }
     } catch (err) {
         logger.error(err.stack)
-        targetWindow.webContents.send('coin-normal', false)
+        targetWindow.webContents.send(CHANNELS.TX_NORMAL, false)
     }
     
 }
