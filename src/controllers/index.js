@@ -1,5 +1,5 @@
-import { hdUtil } from 'wanchain-js-sdk'
-import Logger from '../utils/Logger'
+import { hdUtil, ccUtil } from 'wanchain-js-sdk'
+import Logger from '~/src/utils/Logger'
 
 const logger = Logger.getLogger('controllers')
 
@@ -79,5 +79,27 @@ export const getAddress = async (targetWindow, walletID, chainType, start, end) 
     } 
 }
 
-export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress }
+export const getBalance = async (targetWindow, chainType, addr) => {
+    let balance
+    try {
+        if (!chainType) {
+            throw new Error('chainType cannot be null')
+        }
+
+        if (!addr) {
+            throw new Error('addr cannot be null')
+        }
+        
+        switch (chainType) {
+            case 'WAN':
+                balance = await ccUtil.getWanBalance(addr)
+                break;
+        }
+        targetWindow.webContents.send('balance-got', balance)
+    } catch (err) {
+        logger.error(err.stack)
+    }
+}
+
+export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress, getBalance }
 
