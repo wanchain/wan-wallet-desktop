@@ -1,45 +1,52 @@
 const menuList = [
   {
     title: 'Portfolio',
-    key: '/portfolio',
+    key: '/',
     icon: 'user'
   },
   {
     title: 'Wallet',
     key: '/wallet',
-    icon: 'user',
+    icon: 'wallet',
     children: [
       {
         title: 'WAN',
         key: '/wanAccount',
-        icon: 'user'
+        icon: 'block'
       },
       {
         title: 'BTC',
         key: '/btcAccount',
-        icon: 'user'
+        icon: 'block'
       },
       {
         title: 'ETH',
         key: '/ethAccount',
-        icon: 'user'
+        icon: 'block'
       },
     ]
   },
   {
-    title: 'Cross Chain',
-    key: '/crossChain',
-    icon: 'user'
-  },
-  {
     title: 'Hardware Wallet',
     key: '/hardwareWallet',
-    icon: 'user'
+    icon: 'credit-card',
+    children: [
+      {
+        title: 'Ledger',
+        key: '/ledger',
+        icon: 'block'
+      },
+      {
+        title: 'Trezor',
+        key: '/trezor',
+        icon: 'block'
+      }
+    ]
   },
   {
     title: 'Settings',
     key: '/settings',
-    icon: 'user'
+    icon: 'setting'
   },
 ];
 
