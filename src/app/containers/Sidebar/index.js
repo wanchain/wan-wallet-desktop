@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 
+import MFooter from 'components/MFooter';
 import menuList from 'constants/menuConfig';
 import logo from 'static/image/logo.png';
 import './index.less';
@@ -39,13 +40,16 @@ class Sidebar extends Component {
 
   render () {
     return (
-      <div>
+      <div className="sidebar">
         <div className="logo">
           <img src={logo} alt="Wanchain" />
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['/portfolio']}>
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} className="menuTreeNode">
           { this.state.menuTreeNode }
         </Menu>
+        <div className="footer">
+          <MFooter />
+        </div>
       </div>
     );
   }

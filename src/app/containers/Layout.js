@@ -9,7 +9,7 @@ import MHeader from 'components/MHeader';
 
 
 @inject(stores => ({
-  hasMnemonic: () => !!stores.session.hasMnemonic,
+  hasMnemonic: () => stores.session.getMnemonic(),
 }))
 
 @observer
