@@ -11,11 +11,11 @@ class MHeader extends Component {
     return (
       <div className="header">
         <Row className="header-top">
-            <Col span="6" className="title">
-                <span>Wallet Detail</span>
+            <Col span={6} className="title">
+              <span>Wallet Detail</span>
             </Col>
-            <Col span="18">
-                <span>{this.state.page}</span>
+            <Col span={18} className="user">
+              <span>JackLu</span>
             </Col>
         </Row>
       </div>

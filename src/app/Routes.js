@@ -1,7 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import menuList from 'constants/menuConfig';
-import { Layout, Portfolio, Wallet } from './containers';
+import { Layout, Portfolio, WanAccount } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -10,8 +9,8 @@ export default () => {
       <HashRouter>
         <Main>
           <Switch>
-            <Route exact path={menuList[0].key} component={Portfolio} />
-            <Route path={menuList[1].key} component={Wallet} />
+            <Route exact path="/portfolio" component={Portfolio} />
+            <Route path="/wanaccount" component={WanAccount} />
           </Switch>
         </Main>      
       </HashRouter>

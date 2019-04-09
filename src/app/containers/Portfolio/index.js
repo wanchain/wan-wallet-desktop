@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
-import { Layout } from 'antd';
-import path from 'path'
+import helper from 'utils/helper';
+import { ipcRenderer } from 'electron';
 
-const { Content } = Layout;
-const { remote, ipcRenderer } = require('electron');
-const mainProcess = remote.require(path.join(__dirname, '../controllers/index.js'));
-const currentWindow = remote.getCurrentWindow();
+const { getPhrase, generatePhrase } = helper;
 
 class Portfolio extends Component {
   state = {
     phrase: 'I am just a placeholder :-)',
     show: 'hello'
-  };
-
-  handleClick() {
-    mainProcess.generatePhrase(currentWindow, '123')
   }
-  getPhrase() {
-    mainProcess.revealPhrase(currentWindow, '123')
+
+  handleClick = () => {
+    generatePhrase('123');
+  }
+  getPhrase = () => {
+    getPhrase('123');
   }
   componentDidMount() {
       ipcRenderer.on('phrase-generated', (event, phrase) => {
@@ -32,8 +29,8 @@ class Portfolio extends Component {
       return (
           <div>
               <h1>{this.state.phrase}</h1>
-              <button onClick={this.handleClick.bind(this)}>Give me a phrase!!!</button>
-              <button onClick={this.getPhrase.bind(this)}>get Revaled</button>
+              <button onClick={this.handleClick}>Give me a phrase!!!</button>
+              <button onClick={this.getPhrase}>get Revaled</button>
               <h1>{this.state.show}</h1>
           </div>
       );
