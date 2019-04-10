@@ -3,15 +3,18 @@ import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import helper from 'utils/helper';
+import { accumulator } from 'utils/support';
 import { remote, ipcRenderer } from 'electron';
 
-import './index.less'
+import './index.less';
 const { createWanAccount, unlockHDWallet, getWanBalance } = helper;
 const windowCurrent = remote.getCurrentWindow();
 
 @inject(stores => ({
-  addrList: stores.wanAddress.addrList,
-  updateAddress: (newAddr) => stores.wanAddress.updateAddress(newAddr),
+  addrInfo: stores.wanAddress.addrInfo,
+  getAddrList: stores.wanAddress.getAddrList,
+  addAddress: (newAddr) => stores.wanAddress.addAddress(newAddr),
+  updateBalance: (newBalanceArr) => stores.wanAddress.updateBalance(newBalanceArr)
 }))
 
 @observer
@@ -35,13 +38,25 @@ class WanAccount extends Component {
     dataIndex: 'actions',
     render: () => <div><Button type="primary" onClick={this.sendTrans}>Instant Send</Button></div>
   }];
-  
-  componentWillMount() {
-
-  }
 
   componentDidMount() {
+    this.timer = setInterval(() => {
+      const promises = Object.keys(this.props.addrInfo).map(item => () => getWanBalance(item));
+      const series = promises.reduce(accumulator, Promise.resolve([]));
 
+      series.then(res => {
+        console.log(res);
+        if(res.length) {
+          this.props.updateBalance(res);
+        }
+      }).catch(err => {
+        console.log(err)
+      });
+    }, 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   sendTrans = (e) => {
@@ -50,19 +65,22 @@ class WanAccount extends Component {
   }
 
   creatAccount = () => {
-    const {addrList, updateAddress} = this.props;
+    const {addrInfo, addAddress} = this.props;
+    const addrLen = Object.keys(addrInfo).length;
     this.setState({
       bool: false
     });
     if(this.state.bool) {
       ipcRenderer.once('address_got', async (event, ret) => {
-        ret.addresses[0].balance = await getWanBalance(`0x${ret.addresses[0].address}`)
-        updateAddress(ret.addresses[0]);
+        console.log('ret.length:', ret.length)
+        let result = await getWanBalance(`0x${ret.addresses[0].address}`);
+        ret.addresses[0].balance = result[`0x${ret.addresses[0].address}`];
+        addAddress(ret.addresses[0]);
         this.setState({
           bool: true
         });
       })
-      createWanAccount(windowCurrent, addrList.length, addrList.length + 1);
+      createWanAccount(windowCurrent, addrLen, addrLen + 1);
     }
 
   }
@@ -85,7 +103,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={this.props.addrList} />
+            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={this.props.getAddrList} />
           </Col>
         </Row>
       </div>

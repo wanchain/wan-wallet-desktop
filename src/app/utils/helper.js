@@ -33,7 +33,9 @@ const helper = {
   getWanBalance: (addr) => {
     return new Promise((resolve, reject) =>{
       ipcRenderer.once('balance_got', (event, ret) => {
-        return resolve(ret);
+        return resolve({
+          [addr]:ret
+        });
       })
       mainProcess.getBalance(currentWindow, 'WAN', addr);
     });
