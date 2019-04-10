@@ -13,17 +13,7 @@ const menuList = [
         title: 'WAN',
         key: '/wanAccount',
         icon: 'block'
-      },
-      {
-        title: 'BTC',
-        key: '/btcAccount',
-        icon: 'block'
-      },
-      {
-        title: 'ETH',
-        key: '/ethAccount',
-        icon: 'block'
-      },
+      }
     ]
   },
   {

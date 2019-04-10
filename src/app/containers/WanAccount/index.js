@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col } from 'antd';
+import { remote, ipcRenderer } from 'electron';
 import { observer, inject } from 'mobx-react';
 
 import helper from 'utils/helper';
 import { accumulator } from 'utils/support';
-import { remote, ipcRenderer } from 'electron';
+import SendNormalTrans from 'containers/SendNormalTrans';
 
 import './index.less';
 const { createWanAccount, unlockHDWallet, getWanBalance } = helper;
@@ -21,7 +22,7 @@ const windowCurrent = remote.getCurrentWindow();
 @observer
 class WanAccount extends Component {
   state = {
-    bool: true,
+    bool: true
   }
 
   columns = [{
@@ -37,7 +38,7 @@ class WanAccount extends Component {
   }, {
     title: 'Actions',
     dataIndex: 'actions',
-    render: () => <div><Button type="primary" onClick={this.sendTrans}>Instant Send</Button></div>
+    render: () => <div><SendNormalTrans /></div>
   }];
 
   componentDidMount() {
@@ -61,8 +62,9 @@ class WanAccount extends Component {
   }
 
   sendTrans = (e) => {
-    console.log(e.target)
-    alert('oooooooooooo')
+    this.setState({
+      visible: true
+    })
   }
 
   creatAccount = () => {
@@ -73,7 +75,6 @@ class WanAccount extends Component {
     });
     if(this.state.bool) {
       ipcRenderer.once('address_got', async (event, ret) => {
-        console.log('ret.length:', ret.length)
         let result = await getWanBalance(`0x${ret.addresses[0].address}`);
         ret.addresses[0].balance = result[`0x${ret.addresses[0].address}`];
         addAddress(ret.addresses[0]);
@@ -100,7 +101,7 @@ class WanAccount extends Component {
           <Col span={4}>WAN ( wanchain )</Col>
           <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8}>
-            <Button type="primary" size="large" onClick={this.unlockHD}>unlockHD</Button>
+            <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
           </Col>
         </Row>

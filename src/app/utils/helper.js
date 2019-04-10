@@ -31,10 +31,14 @@ const helper = {
     mainProcess.getAddress(targetWindow, 1, 'WAN', start, end);
   },
   getWanBalance: (addr) => {
+    let currAddr = addr;
     return new Promise((resolve, reject) =>{
       ipcRenderer.once('balance_got', (event, ret) => {
+        console.log({
+          [currAddr]:ret
+        }, 'ffffffffffffjfffffffffff')
         return resolve({
-          [addr]:ret
+          [currAddr]:ret
         });
       })
       mainProcess.getBalance(currentWindow, 'WAN', addr);
