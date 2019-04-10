@@ -12,6 +12,7 @@ const windowCurrent = remote.getCurrentWindow();
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  getAmount: stores.wanAddress.getAmount,
   getAddrList: stores.wanAddress.getAddrList,
   addAddress: (newAddr) => stores.wanAddress.addAddress(newAddr),
   updateBalance: (newBalanceArr) => stores.wanAddress.updateBalance(newBalanceArr)
@@ -91,11 +92,13 @@ class WanAccount extends Component {
   }
 
   render() {
+    const { getAmount } = this.props;
+
     return (
       <div className="account">
         <Row className="title">
           <Col span={4}>WAN ( wanchain )</Col>
-          <Col span={4}>Total: 11560</Col>
+          <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8}>
             <Button type="primary" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>

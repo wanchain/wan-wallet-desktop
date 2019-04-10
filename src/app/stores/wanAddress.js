@@ -5,6 +5,7 @@ import { getBalanceObj } from 'utils/support';
 
 class WanAddress {
     @observable addrInfo = {};
+    @observable amount = 0;
 
     @action addAddress(newAddr) {
       const addrLen = Object.keys(self.addrInfo).length;
@@ -35,6 +36,10 @@ class WanAddress {
         });
       });
       return addrList;
+    }
+
+    @computed get getAmount() {
+      return Object.keys(self.addrInfo).reduce((prev, curr) => prev + (self.addrInfo[curr].balance - 0), 0);
     }
 }
 
