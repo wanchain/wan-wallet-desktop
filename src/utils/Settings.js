@@ -1,5 +1,7 @@
 import path from 'path'
 import fs from 'fs'
+import low from 'lowdb'
+import FileSync from 'lowdb/adapters/FileSync'
 import { app } from 'electron'
 import Logger from './Logger'
 import yargs from 'yargs'
@@ -7,10 +9,13 @@ import yargs from 'yargs'
 // caches for config
 let _mode = undefined
 let _network = undefined
+let _lang = undefined
+let _isDev = undefined
 
 const defaultConfig = {
     mode: 'light',
-    network: 'testnet'
+    network: 'testnet',
+    lang: 'en'
 }
 
 const argv = yargs
@@ -40,8 +45,19 @@ class Settings {
      * Create an instance of Settings class, with a logger appended
      */
     constructor() {
-        this.logger = Logger.getLogger('settings')
-        this.logger.info('setting initialized')
+        this._logger = Logger.getLogger('settings')
+        this._logger.info('setting initialized')
+        this._db = low(new FileSync(app.getPath('userData') + '/config.json'))
+
+
+    }
+
+    get isDev() {
+        if (_isDev) {
+            return _isDev
+        }
+
+        return _isDev = process.env.NODE_ENV === 'development'
     }
 
     /**
@@ -65,7 +81,7 @@ class Settings {
             return _mode = argv.mode
         }
 
-        return _mode = this.loadUserData('mode') || defaultConfig.mode
+        return _mode = this._get('mode') || defaultConfig.mode
     }
 
     /**
@@ -81,16 +97,42 @@ class Settings {
             return _network = argv.network
         } 
 
-        return _network = this.loadUserData('network') || defaultConfig.network
+        return _network = this._get('network') || defaultConfig.network
+    }
+
+    get language() {
+        if (_lang) {
+            return _lang
+        }
+
+        if (argv.lang) {
+            return _lang = argv._lang
+        }
+        
+        return _lang = this._get('lang') || defaultConfig.lang
+    }
+
+    _get(key) {
+        let val = this._db.get(key).value()
+
+        if (!val) {
+            this._set(key, defaultConfig[key])
+        }
+
+        return val
+    }
+
+    _set(key, value) {
+        this._db.set(key, value).write()
     }
 
     loadUserData(filename) {
         const fullPath = this.constructUserDataPath(filename)
 
-        this.logger.info(`loading content from file  ${fullPath}`)
+        this._logger.info(`loading content from file  ${fullPath}`)
 
         if (!fs.existsSync(fullPath)) {
-            this.logger.info(`${fullPath} does not exist, trying create a file and write default config`)
+            this._logger.info(`${fullPath} does not exist, trying create a file and write default config`)
             console.log(defaultConfig[filename])
             this.saveUserData(filename, defaultConfig[filename])
             return null
@@ -98,10 +140,10 @@ class Settings {
 
         try {
             const content = fs.readFileSync(fullPath, { encoding: 'utf8' })
-            this.logger.info(`reading ${content} from ${fullPath}`)
+            this._logger.info(`reading ${content} from ${fullPath}`)
             return content
         } catch (err) {
-            this.logger.error(`failed to read from ${fullPath}`)
+            this._logger.error(`failed to read from ${fullPath}`)
         }
 
         return null
@@ -115,10 +157,10 @@ class Settings {
         const fullPath = this.constructUserDataPath(filename)
 
         try {
-            this.logger.info(`saving ${content} to file ${fullPath}`)
+            this._logger.info(`saving ${content} to file ${fullPath}`)
             fs.writeFileSync(fullPath, content, { encoding: 'utf8' })
         } catch (err) {
-            this.logger.error(`failed to write ${content} to file ${fullPath} with an error ${err.stack}`)
+            this._logger.error(`failed to write ${content} to file ${fullPath} with an error ${err.stack}`)
         }
     }
 

@@ -96,7 +96,7 @@ export const getBalance = async (targetWindow, chainType, addr) => {
                 balance = await ccUtil.getWanBalance(addr)
                 break;
         }
-        targetWindow.webContents.send(CHANNELS.BALANCE_GOT, balance)
+        targetWindow.webContents.send(CHANNELS.BALANCE_GOT, { addr: balance })
     } catch (err) {
         logger.error(err.stack)
     }

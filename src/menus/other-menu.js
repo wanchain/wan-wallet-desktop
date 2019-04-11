@@ -58,7 +58,7 @@ export default (i18n) => {
                         checked: setting.network === 'main',
                         type: 'radio',
                         click: () => {
-                            if (process.env.NODE_ENV === 'development') {
+                            if (setting.isDev) {
                                 app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
                             }
                         
@@ -71,7 +71,7 @@ export default (i18n) => {
                         checked: setting.network === 'testnet',
                         type: 'radio',
                         click: () => {
-                            if (process.env.NODE_ENV === 'development') {
+                            if (setting.isDev) {
                                 app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
                             }
     

@@ -6,17 +6,25 @@
 
 import { app, BrowserWindow } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
+import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from'~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import { walletBackend, clientBinaryManager } from '~/src/modules'
+import { walletBackend } from '~/src/modules'
 
 const logger = Logger.getLogger('main')
 
 console.log(app.getPath('exe'))
+console.log(app.getVersion())
+const isDevelopment = app.getPath('exe').indexOf('electron') !== -1;
+
+console.log(isDevelopment)
+
+logger.warn(setting.isDev)
 
 let mainWindow
+
 async function createWindow () {
   logger.info('creating main window')
 
@@ -32,13 +40,15 @@ async function createWindow () {
     height: mainWindowState.height,
     show: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      webSecurity: false
     }
   })
 
   mainWindowState.manage(mainWindow)
 
   mainWindow.loadURL(`file://${__dirname}/app/index.html`)
+  // mainWindow.loadURL(`file://${__dirname}/../index.html`)
 
   // Open the DevTools.
   if (process.env.NODE_ENV = 'development') {
@@ -93,8 +103,9 @@ process.on('uncaughtException', (err) => {
 })
 
 async function onReady() {
+  // windowsManager.init()
   await walletBackend.init()
-  
+  // await clientBinaryManager.init()
   await createWindow()
 }
 
