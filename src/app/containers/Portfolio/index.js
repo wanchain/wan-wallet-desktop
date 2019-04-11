@@ -32,7 +32,7 @@ class Portfolio extends Component {
           <div>
               <h1 className="portfolio">{this.state.phrase}</h1>
               <Button type="primary" onClick={this.handleClick}>Give me a phrase!!!</Button>
-              <Button type="primary" onClick={this.getPhrase}>get Revaled</Button>
+              <Button type="primary" onClick={this.getPhrase}>get Revealed</Button>
               <h1 className="portfolio">{this.state.show}</h1>
           </div>
       );
