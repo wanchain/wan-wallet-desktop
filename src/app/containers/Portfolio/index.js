@@ -13,18 +13,21 @@ class Portfolio extends Component {
   }
 
   handleClick = () => {
+    ipcRenderer.once('phrase_generated', (event, phrase) => {
+      this.setState({
+        phrase: phrase
+      })
+    })
     generatePhrase('123');
   }
+
   getPhrase = () => {
-    getPhrase('123');
-  }
-  componentDidMount() {
-      ipcRenderer.on('phrase_generated', (event, phrase) => {
-          this.setState({phrase: phrase})
+    ipcRenderer.once('phrase_revealed', (event, phrase) => {
+      this.setState({
+        show: phrase
       })
-      ipcRenderer.on('phrase_revealed', (event, phrase) => {
-        this.setState({show: phrase})
     })
+    getPhrase('123');
   }
 
   render() {

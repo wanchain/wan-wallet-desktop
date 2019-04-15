@@ -47,7 +47,6 @@ class WanAccount extends Component {
       const series = promises.reduce(accumulator, Promise.resolve([]));
 
       series.then(res => {
-        console.log(res);
         if(res.length) {
           this.props.updateBalance(res);
         }
@@ -68,27 +67,27 @@ class WanAccount extends Component {
   }
 
   creatAccount = () => {
-    const {addrInfo, addAddress} = this.props;
+    const { addrInfo, addAddress } = this.props;
     const addrLen = Object.keys(addrInfo).length;
     this.setState({
       bool: false
     });
     if(this.state.bool) {
       ipcRenderer.once('address_got', async (event, ret) => {
-        let result = await getWanBalance(`0x${ret.addresses[0].address}`);
-        ret.addresses[0].balance = result[`0x${ret.addresses[0].address}`];
-        addAddress(ret.addresses[0]);
+        let addressInfo = ret.addresses[0];
+        let result = await getWanBalance(`0x${addressInfo.address}`);
+        addressInfo.balance = result[`0x${addressInfo.address}`];
+        addAddress(addressInfo);
         this.setState({
           bool: true
         });
       })
       createWanAccount(windowCurrent, addrLen, addrLen + 1);
     }
-
   }
 
   unlockHD = async () => {
-    let isUnlock = await unlockHDWallet('123')
+    let isUnlock = await unlockHDWallet('123');
     console.log(isUnlock, 'isUnlock')
   }
 

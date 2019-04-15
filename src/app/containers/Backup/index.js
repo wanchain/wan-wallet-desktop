@@ -8,14 +8,11 @@ const { getPhrase } = helper;
 
 
 class Backup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false,
-      showMnemonic: false,
-      mnemonic: '',
-      pwd: ''
-    }
+  state = {
+    visible: false,
+    showMnemonic: false,
+    mnemonic: '',
+    pwd: ''
   }
 
   resetStateVal = () => {
@@ -52,6 +49,9 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
+    ipcRenderer.once('phrase_revealed', (event, phrase) => {
+      this.handlePhraseResult(phrase);
+    })
     getPhrase(pwd);
   }
 
@@ -65,20 +65,14 @@ class Backup extends Component {
     message.success('Copy successfully');
   }
 
-  componentDidMount() {
-    /* TODO: handle if password is wrong */
-    ipcRenderer.on('phrase_revealed', (event, phrase) => {
-      this.handlePhraseResult(phrase);
-    })
-  }
-
   render() {
     return (
       <div>
         <Card title="Reveal Mnemonic Sentence">
-          <p>If you install a new wallet, you will need this mnemonic sentence to access your assets.
-             Save them somewhere safe and secret.</p>
-          <br />
+          <p>
+            If you install a new wallet, you will need this mnemonic sentence to access your assets.
+            Save them somewhere safe and secret.
+          </p>
           <Button type="primary" onClick={this.showModal}>REVEAL MNEMONIC SENTENCE</Button>
           <Modal
             destroyOnClose={true}
@@ -88,7 +82,6 @@ class Backup extends Component {
             onCancel={this.handleCancel}
           >
             <p>WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
-            <br />
             {
               this.state.showMnemonic ? (
                 <div>

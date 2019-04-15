@@ -34,12 +34,7 @@ const helper = {
     let currAddr = addr;
     return new Promise((resolve, reject) =>{
       ipcRenderer.once('balance_got', (event, ret) => {
-        console.log({
-          [currAddr]:ret
-        }, 'ffffffffffffjfffffffffff')
-        return resolve({
-          [currAddr]:ret
-        });
+        return resolve(ret);
       })
       mainProcess.getBalance(currentWindow, 'WAN', addr);
     });
