@@ -5,7 +5,8 @@ import { observer, inject } from 'mobx-react';
 
 import helper from 'utils/helper';
 import { accumulator } from 'utils/support';
-import SendNormalTrans from 'containers/SendNormalTrans';
+import SendNormalTrans from 'components/SendNormalTrans';
+import CopyAndQrcode from 'components/CopyAndQrcode';
 
 import './index.less';
 const { createWanAccount, unlockHDWallet, getWanBalance } = helper;
@@ -22,24 +23,30 @@ const windowCurrent = remote.getCurrentWindow();
 @observer
 class WanAccount extends Component {
   state = {
-    bool: true
+    bool: true,
   }
 
-  columns = [{
-    title: 'Name',
-    dataIndex: 'name',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-  }, {
-    title: 'Balance',
-    dataIndex: 'balance',
-    sorter: (a, b) => a.balance - b.balance,
-  }, {
-    title: 'Actions',
-    dataIndex: 'actions',
-    render: () => <div><SendNormalTrans /></div>
-  }];
+  columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    }, 
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      render: text => <div>{text}<CopyAndQrcode addr={text}/></div>
+    }, 
+    {
+      title: 'Balance',
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    }, 
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      render: text => <div><SendNormalTrans addr={text}/></div>
+    }
+  ];
 
   componentDidMount() {
     this.timer = setInterval(() => {
@@ -100,6 +107,7 @@ class WanAccount extends Component {
           <Col span={4}>WAN ( wanchain )</Col>
           <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8}>
+            <Button type="primary" shape="round" size="large" onClick={this.createQrCode}>Qr Code</Button>
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
           </Col>
