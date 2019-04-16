@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Tabs } from 'antd';
 import Backup from 'containers/Backup';
 
-const TabPane = Tabs.TabPane;
+const { TabPane } = Tabs;
 
 class Settings extends Component {
 
@@ -16,15 +16,22 @@ class Settings extends Component {
     content: 'Restore phrase'
   }];
 
+  componentWillMount() {
+    const tabTreeNode = this.renderTab(this.tabs);
+
+    this.setState({
+      tabTreeNode
+    });
+  }
+
+  renderTab = (data) => {
+    return data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);
+  }
 
   render() {
     return (
       <Tabs>
-        {
-          this.tabs.map(item => {
-            return (<TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);
-          })
-        }
+        { this.state.tabTreeNode }
       </Tabs>
     );
   }

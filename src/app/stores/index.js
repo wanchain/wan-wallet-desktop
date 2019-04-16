@@ -1,10 +1,12 @@
 
 import session from './session';
 import wanAddress from './wanAddress';
+import sendTransParams from './sendTransParams';
 
 const stores = {
     session,
-    wanAddress
+    wanAddress,
+    sendTransParams
 };
 
 export default stores;

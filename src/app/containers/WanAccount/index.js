@@ -5,7 +5,8 @@ import { observer, inject } from 'mobx-react';
 
 import helper from 'utils/helper';
 import { accumulator } from 'utils/support';
-import SendNormalTrans from 'containers/SendNormalTrans';
+import SendNormalTrans from 'components/SendNormalTrans';
+import CopyAndQrcode from 'components/CopyAndQrcode';
 
 import './index.less';
 const { createWanAccount, unlockHDWallet, getWanBalance } = helper;
@@ -22,24 +23,30 @@ const windowCurrent = remote.getCurrentWindow();
 @observer
 class WanAccount extends Component {
   state = {
-    bool: true
+    bool: true,
   }
 
-  columns = [{
-    title: 'Name',
-    dataIndex: 'name',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-  }, {
-    title: 'Balance',
-    dataIndex: 'balance',
-    sorter: (a, b) => a.balance - b.balance,
-  }, {
-    title: 'Actions',
-    dataIndex: 'actions',
-    render: () => <div><SendNormalTrans /></div>
-  }];
+  columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    }, 
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      render: text => <div>{text}<CopyAndQrcode addr={text}/></div>
+    }, 
+    {
+      title: 'Balance',
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    }, 
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      render: text => <div><SendNormalTrans addr={text}/></div>
+    }
+  ];
 
   componentDidMount() {
     this.timer = setInterval(() => {
@@ -47,7 +54,6 @@ class WanAccount extends Component {
       const series = promises.reduce(accumulator, Promise.resolve([]));
 
       series.then(res => {
-        console.log(res);
         if(res.length) {
           this.props.updateBalance(res);
         }
@@ -68,27 +74,27 @@ class WanAccount extends Component {
   }
 
   creatAccount = () => {
-    const {addrInfo, addAddress} = this.props;
+    const { addrInfo, addAddress } = this.props;
     const addrLen = Object.keys(addrInfo).length;
     this.setState({
       bool: false
     });
     if(this.state.bool) {
       ipcRenderer.once('address_got', async (event, ret) => {
-        let result = await getWanBalance(`0x${ret.addresses[0].address}`);
-        ret.addresses[0].balance = result[`0x${ret.addresses[0].address}`];
-        addAddress(ret.addresses[0]);
+        let addressInfo = ret.addresses[0];
+        let result = await getWanBalance(`0x${addressInfo.address}`);
+        addressInfo.balance = result[`0x${addressInfo.address}`];
+        addAddress(addressInfo);
         this.setState({
           bool: true
         });
       })
       createWanAccount(windowCurrent, addrLen, addrLen + 1);
     }
-
   }
 
   unlockHD = async () => {
-    let isUnlock = await unlockHDWallet('123')
+    let isUnlock = await unlockHDWallet('123');
     console.log(isUnlock, 'isUnlock')
   }
 
@@ -101,6 +107,7 @@ class WanAccount extends Component {
           <Col span={4}>WAN ( wanchain )</Col>
           <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8}>
+            <Button type="primary" shape="round" size="large" onClick={this.createQrCode}>Qr Code</Button>
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
           </Col>

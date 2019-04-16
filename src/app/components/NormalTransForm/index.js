@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, Input, Radio } from 'antd';
+import { Button, Modal, Form, Input, Icon, Slider } from 'antd';
+
+import './index.less';
 
 class NormalTransForm extends Component {
   render() {
-    const {
-      visible, loading, onCancel, onSend, form
-    } = this.props;
+    const { visible, loading, onCancel, onSend, form } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
+      destroyOnClose={true}
+        closable={false}
         visible={visible}
         title="Transcation"
         onCancel={onCancel}
@@ -18,26 +20,15 @@ class NormalTransForm extends Component {
           <Button key="back" onClick={onCancel}>Cancel</Button>,
         ]}
       >
-        <Form layout="vertical">
-          <Form.Item label="Title">
-            {getFieldDecorator('title', {
-              rules: [{ required: true, message: 'Please input the title of collection!' }],
-            })(
-              <Input />
-            )}
+        <Form layout="vertical" className="transForm">
+          <Form.Item label="To">
+            {getFieldDecorator('To', { rules: [{ required: true, message: 'Please input the public address!' }] })(<Input placeholder="Please paste public address here" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </Form.Item>
-          <Form.Item label="Description">
-            {getFieldDecorator('description')(<Input type="textarea" />)}
+          <Form.Item label="Amount">
+          {getFieldDecorator('Amount', { rules: [{ required: true, message: 'Please input the right amount!' }] })(<Input placeholder="0.0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
           </Form.Item>
-          <Form.Item className="collection-create-form_last-form-item">
-            {getFieldDecorator('modifier', {
-              initialValue: 'public',
-            })(
-              <Radio.Group>
-                <Radio value="public">Public</Radio>
-                <Radio value="private">Private</Radio>
-              </Radio.Group>
-            )}
+          <Form.Item label="Amount">
+            <Slider defaultValue={30} />
           </Form.Item>
         </Form>
       </Modal>
