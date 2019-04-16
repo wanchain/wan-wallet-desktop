@@ -48,6 +48,7 @@
     "react-router-dom": "^5.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "trezor-connect": "^7.0.2",
     "wanchain-js-sdk": "github:ktfc76/wanchain-js-sdk#new_wallet",
     "winston-daily-rotate-file": "^3.8.0",
     "yargs": "^13.2.2"
