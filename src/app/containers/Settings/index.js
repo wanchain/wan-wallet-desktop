@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Tabs, Icon } from 'antd';
+import { Tabs } from 'antd';
 import Backup from 'containers/Backup';
 
 const TabPane = Tabs.TabPane;

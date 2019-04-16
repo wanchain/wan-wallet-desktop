@@ -40,8 +40,9 @@ async function createWindow () {
     height: mainWindowState.height,
     show: false,
     webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false
+      nodeIntegration: true, // dev settings to be able to use "require" in main.js, could be set to false in production build
+      nativeWindowOpen: false, // needs to be set to "false" otherwise popup will not to able to communicate with index.js (PopupManager)
+      // webSecurity: false,
     }
   })
 
