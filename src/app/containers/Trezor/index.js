@@ -33,34 +33,55 @@ class Trezor extends Component {
     this.wanPath = "m/44'/5718350'/0'/0";
     this.columns = [{ title: "Address", dataIndex: "address" }, { title: "Balance", dataIndex: "balance" }];
     this.pageSize = 5;
+    this.page = 0;
     this.state = {
       visible: false,
-      showMnemonic: false,
-      mnemonic: '',
-      pwd: '',
-      addresses: []
+      addresses: [],
     };
   }
 
   resetStateVal = () => {
+    this.page = 0;
     this.setState({
       visible: false,
-      showMnemonic: false,
-      mnemonic: '',
-      pwd: ''
+      addresses: [],
     });
   }
 
-  getAddressesFromHd = (start, limit) => {
+  handleOk = () => {
+    this.resetStateVal();
+  }
+
+  handleCancel = () => {
+    this.resetStateVal();
+  }
+
+  showDefaultPageAddrsFromHd = () => {
     TrezorConnect.getPublicKey({
       path: this.wanPath
     }).then((result) => {
       this.publicKey = result.payload.publicKey;
       this.chainCode = result.payload.chainCode;
-      this.deriveAddresses(start, limit);
+      let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
+      this.setState({ visible: true, addresses: addresses });
     }).catch(error => {
       console.error('get public key error', error)
     });
+  }
+
+  showNextPageAddrs = () => {
+    this.page++;
+    let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
+    this.setState({ addresses: addresses });
+  }
+
+  showPreviousPageAddrs = () => {
+    if (this.page === 0) {
+      return;
+    }
+    this.page--;
+    let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
+    this.setState({ addresses: addresses });
   }
 
   deriveAddresses = (start, limit) => {
@@ -70,45 +91,43 @@ class Trezor extends Component {
     HdKeys.forEach(address => {
       addresses.push({ key: address.address, address: address.address, balance: 0 });
     });
-    this.setState({ visible: true, addresses: addresses });
+    return addresses;
   }
 
-rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-};
+  rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+  };
 
-// pageChange = (page, pageSize) => {
-//   console.log("page", page);
-//   console.log('size:', pageSize);
-//   this.getAddressesFromHd((page - 1) * pageSize, pageSize);
-// }
 
-render() {
-  return (
-    <div>
-      <Card title="Connect a Trezor Wallet" bordered={false}>
-        <p>Please connect your Trezor wallet directly to your computer</p>
-        <br />
-        <Button type="primary" onClick={ () => this.getAddressesFromHd(0, this.pageSize) }>Continue</Button>
-        <Modal
-          destroyOnClose={true}
-          title="Please select the addresses"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <div>
-            {/* <Table rowSelection={this.rowSelection} pagination={{defaultPageSize: this.pageSize, onChange: this.pageChange}} columns={this.columns} dataSource={this.state.addresses}></Table> */}
-            <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.state.addresses}></Table>
-            <p>More addresses</p>
-          </div>
-        </Modal>
-      </Card>
-    </div>
-  );
-}
+  render() {
+    return (
+      <div>
+        <Card title="Connect a Trezor Wallet" bordered={false}>
+          <p>Please connect your Trezor wallet directly to your computer</p>
+          <br />
+          <Button type="primary" onClick={() => this.showDefaultPageAddrsFromHd()}>Continue</Button>
+          <Modal
+            destroyOnClose={true}
+            title="Please select the addresses"
+            visible={this.state.visible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+          >
+            <div>
+              {/* <Table rowSelection={this.rowSelection} pagination={{defaultPageSize: this.pageSize, onChange: this.pageChange}} columns={this.columns} dataSource={this.state.addresses}></Table> */}
+              <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.state.addresses}></Table>
+              <div className='rollPage'>
+                {this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">Previous addresses</p> : ''}
+                <p onClick={this.showNextPageAddrs} className="nextPage">Next addresses</p>
+              </div>
+            </div>
+          </Modal>
+        </Card>
+      </div>
+    );
+  }
 }
 
 export default Trezor;
