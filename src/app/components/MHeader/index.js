@@ -15,7 +15,7 @@ class MHeader extends Component {
               <span>Wallet Detail</span>
             </Col>
             <Col span={18} className="user">
-              <span>JackLu</span>
+              <span>Log Out</span>
             </Col>
         </Row>
       </div>

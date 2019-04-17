@@ -1,58 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Input, message } from 'antd';
+import { Button, Card, Modal, Input, Checkbox, Table } from 'antd';
 import './index.less';
-import helper from 'utils/helper';
-import { ipcRenderer, clipboard } from 'electron';
-import { func } from 'prop-types';
 import TrezorConnect from 'trezor-connect';
 const { TRANSPORT_EVENT, UI, UI_EVENT, DEVICE_EVENT, DEVICE } = require('trezor-connect');
-
-const { getPhrase } = helper;
-
-// UI.RESPONSE helper (used with "popup: false")
-function showUiResponse(data) {
-  const response = document.getElementById('response');
-  response.style.display = 'block';
-  const respInput = document.getElementById('ui-response');
-  const respButton = document.getElementById('ui-response-button');
-  respInput.value = JSON.stringify(data, null, 2);
-  respButton.onclick = () => {
-    TrezorConnect.uiResponse(JSON.parse(respInput.value));
-    response.style.display = 'none';
-  }
-}
-
-// Listen to TRANSPORT_EVENT
-// This event will be emitted only in "popup: false" mode
-TrezorConnect.on(TRANSPORT_EVENT, event => {
-  // console.log("TRANSPORT_EVENT", event)
-  // console.log(event);
-});
-
-// Listen to DEVICE_EVENT
-// When "popup: true" is set this event will be emitted only after user grants permission to communicate wit this app
-// When "popup: false" it will be emitted without user permissions (user will never be be asked for them)
-TrezorConnect.on(DEVICE_EVENT, event => {
-  // console.log("DEVICE_EVENT", event)
-  // console.log(event);
-});
-
-// When "popup: true" this event will be emitted occasionally
-// When "popup: false" this event will be emitted for every interaction
-TrezorConnect.on(UI_EVENT, event => {
-  console.log("UI_EVENT", event)
-  console.log(event);
-
-  if (event.type === UI.REQUEST_PIN) {
-    // this is an example how to respond to pin request
-    showUiResponse({ type: UI.RECEIVE_PIN, payload: '1234' })
-  }
-
-  if (event.type === UI.REQUEST_PASSPHRASE) {
-    // this is an example how to respond to passphrase request
-    showUiResponse({ type: UI.RECEIVE_PASSPHRASE, payload: { value: 'type your passphrase here' } })
-  }
-});
+import HwWallet from 'utils/HwWallet';
+const CheckboxGroup = Checkbox.Group;
 
 // Initialize TrezorConnect 
 TrezorConnect.init({
@@ -78,11 +30,15 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
+    this.wanPath = "m/44'/5718350'/0'/0";
+    this.columns = [{ title: "Address", dataIndex: "address" }, { title: "Balance", dataIndex: "balance" }];
+    this.pageSize = 5;
     this.state = {
       visible: false,
       showMnemonic: false,
       mnemonic: '',
-      pwd: ''
+      pwd: '',
+      addresses: []
     };
   }
 
@@ -95,65 +51,64 @@ class Trezor extends Component {
     });
   }
 
-  getAddresses = () => {
-    console.log("***********")
-    // var TrezorConnect = require('trezor-connect').default;
-    // TrezorConnect.manifest({
-    //   email: 'guowu@wanchain.org',
-    //   appUrl: 'https://github.com/wanchain/wandWallet'
-    // })
-    // const result = await TrezorConnect.getPublicKey({
-    //     path: "m/49'/0'/4'",
-    //     coin: "btc"
-    //   });
+  getAddressesFromHd = (start, limit) => {
     TrezorConnect.getPublicKey({
-      path: "m/49'/0'/0'",
-      coin: "btc"
-    }).then(function (result) {
-      console.log(result);
+      path: this.wanPath
+    }).then((result) => {
+      this.publicKey = result.payload.publicKey;
+      this.chainCode = result.payload.chainCode;
+      this.deriveAddresses(start, limit);
     }).catch(error => {
       console.error('get public key error', error)
     });
   }
 
-
-  render() {
-    return (
-      <div>
-        <Card title="Connect a Trezor Wallet" bordered={false}>
-          <p>Please connect your Trezor wallet directly to your computer</p>
-          <br />
-          <Button type="primary" onClick={this.getAddresses}>Continue</Button>
-          <Modal
-            destroyOnClose={true}
-            title="Mnemonic Sentence"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <p>WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
-            <br />
-            {
-              this.state.showMnemonic ? (
-                <div>
-                  <p> Your private mnemonic sentence</p>
-                  <Card >
-                    <p>{this.state.mnemonic}</p>
-                  </Card>
-                  <Button type="primary" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>Copy to clipboard</Button>
-                </div>
-              ) : (
-                  <div>
-                    <p> Enter password to continue</p>
-                    <Input.Password placeholder="Input password" onChange={this.inputChanged} onPressEnter={this.pressEnter} />
-                  </div>
-                )
-            }
-          </Modal>
-        </Card>
-      </div>
-    );
+  deriveAddresses = (start, limit) => {
+    let wallet = new HwWallet(this.publicKey, this.chainCode, this.wanPath);
+    let HdKeys = wallet.getHdKeys(start, limit);
+    let addresses = [];
+    HdKeys.forEach(address => {
+      addresses.push({ key: address.address, address: address.address, balance: 0 });
+    });
+    this.setState({ visible: true, addresses: addresses });
   }
+
+rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+};
+
+// pageChange = (page, pageSize) => {
+//   console.log("page", page);
+//   console.log('size:', pageSize);
+//   this.getAddressesFromHd((page - 1) * pageSize, pageSize);
+// }
+
+render() {
+  return (
+    <div>
+      <Card title="Connect a Trezor Wallet" bordered={false}>
+        <p>Please connect your Trezor wallet directly to your computer</p>
+        <br />
+        <Button type="primary" onClick={ () => this.getAddressesFromHd(0, this.pageSize) }>Continue</Button>
+        <Modal
+          destroyOnClose={true}
+          title="Please select the addresses"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <div>
+            {/* <Table rowSelection={this.rowSelection} pagination={{defaultPageSize: this.pageSize, onChange: this.pageChange}} columns={this.columns} dataSource={this.state.addresses}></Table> */}
+            <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.state.addresses}></Table>
+            <p>More addresses</p>
+          </div>
+        </Modal>
+      </Card>
+    </div>
+  );
+}
 }
 
 export default Trezor;
