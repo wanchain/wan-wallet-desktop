@@ -41,10 +41,12 @@ class Connect extends Component {
     TrezorConnect.getPublicKey({
       path: this.wanPath
     }).then((result) => {
-      this.publicKey = result.payload.publicKey;
-      this.chainCode = result.payload.chainCode;
-      let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
-      this.setState({ visible: true, addresses: addresses });
+      if (result.success) {
+        this.publicKey = result.payload.publicKey;
+        this.chainCode = result.payload.chainCode;
+        let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
+        this.setState({ visible: true, addresses: addresses });
+      }
     }).catch(error => {
       console.error('get public key error', error)
     });
