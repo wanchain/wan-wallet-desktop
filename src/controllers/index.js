@@ -1,86 +1,93 @@
-import { hdUtil, ccUtil } from 'wanchain-js-sdk'
-import Logger from '~/src/utils/Logger'
-import { CHANNELS, BIP44PATH } from '~/config/common'
+import { hdUtil, ccUtil } from 'wanchain-js-sdk';
+import Logger from '~/src/utils/Logger';
+import { BIP44PATH } from '~/config/common';
 
-const logger = Logger.getLogger('controllers')
+const logger = Logger.getLogger('controllers');
 
-export const generatePhrase = (targetWindow, pwd) => {
-    let phrase
+export const generateMnemonic = pwd => {
     try {
-      phrase = hdUtil.generateMnemonic(pwd)
-      targetWindow.webContents.send(CHANNELS.PHRASE_GENERATE, phrase)
+      let mnemonic = hdUtil.generateMnemonic(pwd);
+      return {
+        code: true,
+        result: mnemonic
+      }
+    } catch (err) {
+      logger.error(err.stack);
+      return {
+        code: false,
+        result: 'Generate Failure'
+      }
+    }
+}
+
+export const hasMnemonic = () => {
+    try {
+      return hdUtil.hasMnemonic()
     } catch (err) {
       logger.error(err.stack)
     }
 }
 
-export const hasPhrase = (targetWindow) => {
-    let ret
+export const revealMnemonic = pwd => {
     try {
-      ret = hdUtil.hasMnemonic()
-      targetWindow.webContents.send(CHANNELS.PHRASE_EXIST, ret)
-    } catch (err) {
-      logger.error(err.stack)
-    }
-}
-
-export const revealPhrase = (targetWindow, pwd) => {
-    let phrase
-    try {
-        phrase = hdUtil.revealMnemonic(pwd)
-        targetWindow.webContents.send(CHANNELS.PHRASE_REVEAL, phrase)
+        return hdUtil.revealMnemonic(pwd)
     } catch (err) {
         logger.error(err.stack)
     }
 }
 
-export const unlockHDWallet = (targetWindow, pwd) => {
+export const unlockHDWallet = pwd => {
     let phrase
     try {
         phrase = hdUtil.revealMnemonic(pwd)
         hdUtil.initializeHDWallet(phrase)
-
-        targetWindow.webContents.send(CHANNELS.WALLET_UNLOCK, true)
+        return true
     } catch (err) {
         logger.error(err.stack)
-
-        targetWindow.webContents.send(CHANNELS.WALLET_UNLOCK, false)
     }
 }
 
-export const lockHDWallet = (targetWindow) => {
+export const lockHDWallet = () => {
      try {
-        hdUtil.deleteHDWallet()
+      hdUtil.deleteHDWallet()
 
-        targetWindow.webContents.send(CHANNELS.WALLET_LOCK, true)
+        return true
      } catch (err) {
         logger.error(err.stack)
 
-        targetWindow.webContents.send(CHANNELS.WALLET_LOCK, false)
+        return false
      }
 }
 
-export const validatePhrase = (targetWindow, phrase) => {
-    let ret
+export const validateMnemonic = (phrase) => {
     try {
-        ret = hdUtil.validateMnemonic(phrase)
-        targetWindow.webContents.send('phrase-valid', ret)
+        return hdUtil.validateMnemonic(phrase) 
     } catch (err) {
         logger.error(err.stack)
     }
 }
 
-export const getAddress = async (targetWindow, walletID, chainType, start, end) => {
-    let address
-    try {                                               
-        address = await hdUtil.getAddress(walletID, chainType, start, end)
-        targetWindow.webContents.send(CHANNELS.ADDR_GOT, address)
-    } catch (err) {
-        logger.error(err.stack)
-    } 
-}
+export const createAddress = (start, end) => {
+  return hdUtil.getAddress(1, 'WAN', start, end).then(ret => {
+    console.log(ret)
+    let code = hdUtil.createUserAccount(1, `${BIP44PATH.WAN}${start}`, {
+      name: `Account${start+1}`,
+      addr: `0x${ret.addresses[0].address}`
+    });
+    return {
+      code: code,
+      result: ret
+    }
+  }).catch(err => {
+    logger.error(err.stack);
+    return {
+      code: false,
+      result: 'failure'
+    }
+  })
+};
 
-export const getBalance = async (targetWindow, chainType, addr) => {
+export const getBalance = async (chainType, addr) => {
     let balance
     try {
         if (!chainType) {
@@ -96,13 +103,29 @@ export const getBalance = async (targetWindow, chainType, addr) => {
                 balance = await ccUtil.getWanBalance(addr)
                 break;
         }
-        targetWindow.webContents.send(CHANNELS.BALANCE_GOT, { [addr]: balance })
+        return { [addr]: balance };
     } catch (err) {
         logger.error(err.stack)
     }
 }
 
-export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
+export const getUserAccountFromDB = () => {
+  try {
+    let accounts = hdUtil.getUserAccountForChain(5718350);
+    return {
+      code: true,
+      result: accounts
+    };
+  } catch (err) {
+    logger.error(err.stack);
+    return {
+      code: false,
+      result: 'failure'
+    }
+  }
+};
+
+export const coinNormal = async (walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
     const input = {
         symbol: chainType || 'WAN',
         from: from,
@@ -118,14 +141,24 @@ export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, 
         const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
         const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
         if (ret.code) {
-            targetWindow.webContents.send(CHANNELS.TX_NORMAL, true)
+            return true;
         }
     } catch (err) {
         logger.error(err.stack)
-        targetWindow.webContents.send(CHANNELS.TX_NORMAL, false)
+        return false;
     }
     
 }
 
-export default { generatePhrase, revealPhrase, unlockHDWallet, lockHDWallet, validatePhrase, getAddress, getBalance, coinNormal }
-
+export default {
+  generateMnemonic,
+  hasMnemonic,
+  revealMnemonic,
+  unlockHDWallet,
+  lockHDWallet,
+  validateMnemonic,
+  createAddress,
+  getBalance,
+  getUserAccountFromDB,
+  coinNormal
+};

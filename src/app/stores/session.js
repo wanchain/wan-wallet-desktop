@@ -1,17 +1,18 @@
 
 import { observable, action } from 'mobx';
+import { remote } from 'electron';
 
-import helper from 'utils/helper';
 // import storage from 'utils/storage';
+const { hasMnemonic } = remote.require('./controllers')
 
 class Session {
-    @observable hasMnemonic;
+    @observable hasMnemonicOrNot;
 
-    @action async getMnemonic () {
-        let hasMnemonic = await helper.hasMnemonic();
+    @action getMnemonic () {
+        let result = hasMnemonic();
         // await storage.set('hasMnemonic', hasMnemonic);
-        self.hasMnemonic = hasMnemonic;
-        return hasMnemonic;
+        self.hasMnemonicOrNot = result;
+        return result;
     }
 
 }

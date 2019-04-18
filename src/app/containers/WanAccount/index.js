@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col } from 'antd';
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 import { observer, inject } from 'mobx-react';
 
-import helper from 'utils/helper';
+import './index.less';
 import { accumulator } from 'utils/support';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 
-import './index.less';
-const { createWanAccount, unlockHDWallet, getWanBalance } = helper;
-const windowCurrent = remote.getCurrentWindow();
+const { unlockHDWallet, createAddress, getBalance } = remote.require('./controllers')
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -48,23 +46,29 @@ class WanAccount extends Component {
     }
   ];
 
-  componentDidMount() {
-    this.timer = setInterval(() => {
-      const promises = Object.keys(this.props.addrInfo).map(item => () => getWanBalance(item));
-      const series = promises.reduce(accumulator, Promise.resolve([]));
+  componentWillMount() {
+    this.updateBalance()
+  }
 
-      series.then(res => {
-        if(res.length) {
-          this.props.updateBalance(res);
-        }
-      }).catch(err => {
-        console.log(err)
-      });
-    }, 5000)
+  componentDidMount() {
+    this.timer = setInterval(() => this.updateBalance(), 5000)
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  updateBalance = () => {
+    const promises = Object.keys(this.props.addrInfo).map(item => () => getBalance('WAN', item));
+    const series = promises.reduce(accumulator, Promise.resolve([]));
+
+    series.then(res => {
+      if(res.length) {
+        this.props.updateBalance(res);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   sendTrans = (e) => {
@@ -76,25 +80,29 @@ class WanAccount extends Component {
   creatAccount = () => {
     const { addrInfo, addAddress } = this.props;
     const addrLen = Object.keys(addrInfo).length;
+
     this.setState({
       bool: false
     });
     if(this.state.bool) {
-      ipcRenderer.once('address_got', async (event, ret) => {
-        let addressInfo = ret.addresses[0];
-        let result = await getWanBalance(`0x${addressInfo.address}`);
-        addressInfo.balance = result[`0x${addressInfo.address}`];
-        addAddress(addressInfo);
-        this.setState({
-          bool: true
-        });
-      })
-      createWanAccount(windowCurrent, addrLen, addrLen + 1);
+      createAddress(addrLen, addrLen + 1).then(async ret => {
+        if(ret.code) {
+          let addressInfo = ret.result.addresses[0];
+          let balance = await getBalance('WAN', `0x${addressInfo.address}`);
+          addressInfo.start = addressInfo.index;
+          addressInfo.wanaddr = `0x${addressInfo.address}`;
+          addressInfo.balance = balance[addressInfo.wanaddr];
+          addAddress(addressInfo);
+          this.setState({
+            bool: true
+          });
+        }
+      });
     }
   }
 
-  unlockHD = async () => {
-    let isUnlock = await unlockHDWallet('123');
+  unlockHD = () => {
+    let isUnlock = unlockHDWallet('123');
     console.log(isUnlock, 'isUnlock')
   }
 
@@ -106,8 +114,7 @@ class WanAccount extends Component {
         <Row className="title">
           <Col span={4}>WAN ( wanchain )</Col>
           <Col span={4}>Total: { getAmount }</Col>
-          <Col span={8} offset={8} className="title-right">
-            <Button type="primary" shape="round" size="large" onClick={this.createQrCode}>Qr Code</Button>
+          <Col span={8} offset={8}>
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
           </Col>

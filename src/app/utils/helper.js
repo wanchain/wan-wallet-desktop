@@ -1,24 +1,13 @@
 import path from 'path';
 import { remote, ipcRenderer } from 'electron';
 const mainProcess = remote.require(path.join(__dirname, '../controllers/index.js'));
+const { unlockHDWallet, revealPhrase } = remote.require('./controllers');
 const currentWindow = remote.getCurrentWindow();
 
-
 const helper = {
-  unlockHDWallet: (pwd) =>{
-    return new Promise((resolve, reject) =>{
-      ipcRenderer.once('wallet_unlocked', (event, ret) => {
-        return resolve(ret);
-      })
-      mainProcess.unlockHDWallet(currentWindow, pwd);
-    });
-  },
-  getPhrase: (pwd) => {
-    mainProcess.revealPhrase(currentWindow, pwd);
-  },
-  generatePhrase: (pwd) => {
-    mainProcess.generatePhrase(currentWindow, pwd);
-  },
+  unlockHDWallet,
+  getPhrase: pwd => revealPhrase(currentWindow, pwd),
+  generatePhrase: pwd => generatePhrase(currentWindow, pwd),
   hasMnemonic: () => {
     return new Promise((resolve, reject) =>{
       ipcRenderer.once('phrase_exist', (event, ret) => {

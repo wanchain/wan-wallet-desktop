@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import helper from 'utils/helper';
-import { ipcRenderer } from 'electron';
 import { Button } from 'antd';
+import { remote } from 'electron';
 
 import './index.less';
-const { getPhrase, generatePhrase } = helper;
+
+const { revealMnemonic, generateMnemonic } = remote.require('./controllers');
 
 class Portfolio extends Component {
   state = {
@@ -13,21 +13,17 @@ class Portfolio extends Component {
   }
 
   handleClick = () => {
-    ipcRenderer.once('phrase_generated', (event, phrase) => {
-      this.setState({
-        phrase: phrase
-      })
+    let phrase = generateMnemonic('123');
+    this.setState({
+      phrase: phrase
     })
-    generatePhrase('123');
   }
 
-  getPhrase = () => {
-    ipcRenderer.once('phrase_revealed', (event, phrase) => {
-      this.setState({
-        show: phrase
-      })
+  revealPhrase = () => {
+    let phrase = revealMnemonic('123');
+    this.setState({
+      show: phrase
     })
-    getPhrase('123');
   }
 
   render() {
@@ -35,7 +31,7 @@ class Portfolio extends Component {
           <div>
               <h1 className="portfolio">{this.state.phrase}</h1>
               <Button type="primary" onClick={this.handleClick}>Give me a phrase!!!</Button>
-              <Button type="primary" onClick={this.getPhrase}>get Revealed</Button>
+              <Button type="primary" onClick={this.revealPhrase}>get Revealed</Button>
               <h1 className="portfolio">{this.state.show}</h1>
           </div>
       );

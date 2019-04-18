@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
 import './index.less';
-import helper from 'utils/helper';
-import { ipcRenderer, clipboard } from 'electron';
+import { clipboard, remote } from 'electron';
 
-const { getPhrase } = helper;
-
+const { revealMnemonic } = remote.require('./controllers')
 
 class Backup extends Component {
   state = {
@@ -49,10 +47,7 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
-    ipcRenderer.once('phrase_revealed', (event, phrase) => {
-      this.handlePhraseResult(phrase);
-    })
-    getPhrase(pwd);
+    this.handlePhraseResult(revealMnemonic(pwd));
   }
 
   handlePhraseResult = (phrase) => {

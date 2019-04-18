@@ -1,17 +1,21 @@
 
 import { observable, action, computed } from 'mobx';
+import { remote } from 'electron';
 
 import { getBalanceObj } from 'utils/support';
+
+const { getUserAccountFromDB } = remote.require('./controllers');
 
 class WanAddress {
     @observable addrInfo = {};
     @observable amount = 0;
 
     @action addAddress(newAddr) {
-      const addrLen = Object.keys(self.addrInfo).length;
-      self.addrInfo[`0x${newAddr.address}`] = {
-        name: `Account${addrLen + 1}`,
-        balance: `${newAddr.balance}`
+      console.log(newAddr)
+      self.addrInfo[newAddr.wanaddr] = {
+        name: `Account${newAddr.start + 1}`,
+        balance: `${newAddr.balance}`,
+        path: newAddr.start
       };
     }
 
@@ -23,6 +27,20 @@ class WanAddress {
           self.addrInfo[item].balance = balaObj[item]
         }
       })
+    }
+
+    @action getUserAccountFromDB() {
+      let ret = getUserAccountFromDB();
+      if(ret.code && Object.keys(ret.result).length) {
+        let info = ret.result.accounts;
+        Object.keys(info).forEach((item) => {
+          self.addrInfo[info[item]['1']['addr']] = {
+            name: info[item]['1']['name'],
+            balance: 0,
+            path: item.substr(item.lastIndexOf('\/')+1)
+          }
+        })
+      }
     }
 
     @computed get getAddrList() {

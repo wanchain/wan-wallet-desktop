@@ -3,15 +3,14 @@ import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
 import { AppContainer } from 'react-hot-loader';
 
-
 import './global.less';
 import Router from './Routes';
 import stores from './stores';
 
-
 class App extends Component {
-  async componentWillMount() {
-    await stores.session.getMnemonic();
+  componentWillMount() {
+    stores.session.getMnemonic();
+    stores.wanAddress.getUserAccountFromDB();
   }
   
   render() {
