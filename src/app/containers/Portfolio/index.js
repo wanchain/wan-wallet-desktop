@@ -14,9 +14,11 @@ class Portfolio extends Component {
 
   handleClick = () => {
     let phrase = generateMnemonic('123');
-    this.setState({
-      phrase: phrase
-    })
+    if(phrase.code) {
+      this.setState({
+        phrase: phrase.result
+      })
+    }
   }
 
   revealPhrase = () => {

@@ -9,7 +9,7 @@ import MHeader from 'components/MHeader';
 
 
 @inject(stores => ({
-  hasMnemonic: () => stores.session.getMnemonic(),
+  hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
 }))
 
 @observer
@@ -19,12 +19,12 @@ export default class Layout extends Component {
     };
 
     render() {
-      var { hasMnemonic } = this.props;
+      var { hasMnemonicOrNot } = this.props;
 
 
-      if (!hasMnemonic()) {
-        return <CreateMnemonic />;
-      }
+      // if (!hasMnemonicOrNot) {
+      //   return <CreateMnemonic />;
+      // }
 
       return (
         <Row className="container">
