@@ -3,7 +3,8 @@ import { Button, Card, Modal, Input, Checkbox, Table } from 'antd';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
 const { TRANSPORT_EVENT, UI, UI_EVENT, DEVICE_EVENT, DEVICE } = require('trezor-connect');
-import HwWallet from 'utils/HwWallet';
+import Connect from './Connect';
+import Accounts from './Accounts';
 const CheckboxGroup = Checkbox.Group;
 
 // Initialize TrezorConnect 
@@ -30,10 +31,6 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
-    this.wanPath = "m/44'/5718350'/0'/0";
-    this.columns = [{ title: "Address", dataIndex: "address" }, { title: "Balance", dataIndex: "balance" }];
-    this.pageSize = 5;
-    this.page = 0;
     this.state = {
       visible: false,
       addresses: [],
@@ -41,90 +38,22 @@ class Trezor extends Component {
   }
 
   resetStateVal = () => {
-    this.page = 0;
     this.setState({
       visible: false,
       addresses: [],
     });
   }
 
-  handleOk = () => {
-    this.resetStateVal();
-  }
-
-  handleCancel = () => {
-    this.resetStateVal();
-  }
-
-  showDefaultPageAddrsFromHd = () => {
-    TrezorConnect.getPublicKey({
-      path: this.wanPath
-    }).then((result) => {
-      this.publicKey = result.payload.publicKey;
-      this.chainCode = result.payload.chainCode;
-      let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
-      this.setState({ visible: true, addresses: addresses });
-    }).catch(error => {
-      console.error('get public key error', error)
-    });
-  }
-
-  showNextPageAddrs = () => {
-    this.page++;
-    let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
+  setAddresses = (addresses) => {
     this.setState({ addresses: addresses });
   }
-
-  showPreviousPageAddrs = () => {
-    if (this.page === 0) {
-      return;
-    }
-    this.page--;
-    let addresses = this.deriveAddresses(this.page * this.pageSize, this.pageSize);
-    this.setState({ addresses: addresses });
-  }
-
-  deriveAddresses = (start, limit) => {
-    let wallet = new HwWallet(this.publicKey, this.chainCode, this.wanPath);
-    let HdKeys = wallet.getHdKeys(start, limit);
-    let addresses = [];
-    HdKeys.forEach(address => {
-      addresses.push({ key: address.address, address: address.address, balance: 0 });
-    });
-    return addresses;
-  }
-
-  rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-  };
-
 
   render() {
     return (
       <div>
-        <Card title="Connect a Trezor Wallet" bordered={false}>
-          <p>Please connect your Trezor wallet directly to your computer</p>
-          <br />
-          <Button type="primary" onClick={() => this.showDefaultPageAddrsFromHd()}>Continue</Button>
-          <Modal
-            destroyOnClose={true}
-            title="Please select the addresses"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <div>
-              {/* <Table rowSelection={this.rowSelection} pagination={{defaultPageSize: this.pageSize, onChange: this.pageChange}} columns={this.columns} dataSource={this.state.addresses}></Table> */}
-              <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.state.addresses}></Table>
-              <div className='rollPage'>
-                {this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">Previous addresses</p> : ''}
-                <p onClick={this.showNextPageAddrs} className="nextPage">Next addresses</p>
-              </div>
-            </div>
-          </Modal>
-        </Card>
+        {
+          this.state.addresses.length === 0 ? <Connect setAddresses={this.setAddresses} /> : <Accounts addresses={this.state.addresses} />
+        }
       </div>
     );
   }
