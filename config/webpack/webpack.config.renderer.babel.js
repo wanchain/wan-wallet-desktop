@@ -1,5 +1,4 @@
 import path from 'path';
-import { spawn } from 'child_process';
 import webpack from 'webpack';
 import { WDS_PORT, isDev } from '../common';
 const autoprefixer = require('autoprefixer');
@@ -17,6 +16,7 @@ export default {
     entry: [
         'react-hot-loader/patch',
         './src/app/App.js',
+        // './src/app.js',
     ],
     output: {
         path: path.resolve(__dirname, '..', '..', 'dist'),
@@ -131,17 +131,17 @@ export default {
         port: WDS_PORT,
         compress: true,
         hot: true,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        after: function() {
-            if (process.env.NODE_ENV === 'development') {
-                spawn('npm', ['run', 'dev:main'], {
-                    shell: true,
-                    env: process.env,
-                    stdio: 'inherit'
-                  })
-                    .on('close', code => process.exit(code))
-                    .on('error', spawnError => console.error(spawnError));
-            }
-        }
+        headers: { 'Access-Control-Allow-Origin': '*' }
+        // after: function() {
+        //     if (process.env.NODE_ENV === 'development') {
+        //         spawn('npm', ['run', 'dev:main'], {
+        //             shell: true,
+        //             env: process.env,
+        //             stdio: 'inherit'
+        //           })
+        //             .on('close', code => process.exit(code))
+        //             .on('error', spawnError => console.error(spawnError));
+        //     }
+        // }
     }
 }

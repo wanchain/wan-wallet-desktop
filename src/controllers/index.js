@@ -1,164 +1,152 @@
-import { hdUtil, ccUtil } from 'wanchain-js-sdk';
-import Logger from '~/src/utils/Logger';
-import { BIP44PATH } from '~/config/common';
+import _ from 'lodash'
+import { ipcMain } from 'electron'
+import { hdUtil, ccUtil } from 'wanchain-js-sdk'
+import Logger from '~/src/utils/Logger'
+import { CHANNELS, BIP44PATH } from '~/config/common'
+import { Windows } from '~/src/modules'
 
-const logger = Logger.getLogger('controllers');
+const logger = Logger.getLogger('controllers')
+const ipc = ipcMain
 
-export const generateMnemonic = pwd => {
-    try {
-      let mnemonic = hdUtil.generateMnemonic(pwd);
-      return {
-        code: true,
-        result: mnemonic
-      }
-    } catch (err) {
-      logger.error(err.stack);
-      return {
-        code: false,
-        result: 'Generate Failure'
-      }
+const ROUTE_PHRASE = 'phrase'
+const ROUTE_WALLET = 'wallet'
+const ROUTE_ADDRESS = 'address'
+
+ipc.on(ROUTE_PHRASE, (event, action, payload) => {
+    let err, phrase, ret
+    switch (action) {
+        case 'generate':
+            try {
+                phrase = hdUtil.generateMnemonic(payload.pwd)
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            
+            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: phrase })
+
+            break
+        case 'has':
+            try {
+                ret = hdUtil.hasMnemonic()
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
+
+            break
+        case 'reveal': 
+            try {
+                phrase = hdUtil.revealMnemonic(payload.pwd)
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            
+            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: phrase })
+
+            break
+        case 'delete': 
+
+            break
     }
+})
+
+ipc.on(ROUTE_WALLET, (event, action, payload) => {
+    let err
+
+    switch (action) {
+        case 'lock':
+            try {
+                hdUtil.deleteHDWallet()
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: false })
+            }
+
+            break
+        case 'unlock':
+            let phrase
+            try {
+                phrase = hdUtil.revealMnemonic(payload.pwd)
+                hdUtil.initializeHDWallet(phrase)
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: false })
+            }
+
+            break
+    }
+})
+
+ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
+    let err, address
+
+    switch (action) {
+        case 'get':
+            try {
+                address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.start, payload.end)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+           
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: address })
+            break
+        case 'balance':
+            let balance
+            try {
+                logger.info(`address request balance is: 0x${payload.addr}` )
+                balance = await ccUtil.getWanBalance('0x'+payload.addr)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
+            break
+    }
+})
+
+function sendResponse(endpoint, e, payload) {
+    const id = e.sender.id
+    const senderWindow = Windows.getById(id)
+    senderWindow.send('renderer_windowMessage', endpoint, payload)
 }
 
-export const hasMnemonic = () => {
-    try {
-      return hdUtil.hasMnemonic()
-    } catch (err) {
-      logger.error(err.stack)
-    }
-}
+// export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
+//     const input = {
+//         symbol: chainType || 'WAN',
+//         from: from,
+//         to: to,
+//         amount: amount, // in wan or eth
+//         gasPrice: gasPrice || 180,
+//         gasLimit: gasLimit || 1000000,
+//         BIP44Path: BIP44PATH.WAN.concat(addrOffset),
+//         walletID: parseInt(walletID)
+//     }
 
-export const revealMnemonic = pwd => {
-    try {
-        return hdUtil.revealMnemonic(pwd)
-    } catch (err) {
-        logger.error(err.stack)
-    }
-}
-
-export const unlockHDWallet = pwd => {
-    let phrase
-    try {
-        phrase = hdUtil.revealMnemonic(pwd)
-        hdUtil.initializeHDWallet(phrase)
-        return true
-    } catch (err) {
-        logger.error(err.stack)
-    }
-}
-
-export const lockHDWallet = () => {
-     try {
-      hdUtil.deleteHDWallet()
-
-        return true
-     } catch (err) {
-        logger.error(err.stack)
-
-        return false
-     }
-}
-
-export const validateMnemonic = (phrase) => {
-    try {
-        return hdUtil.validateMnemonic(phrase) 
-    } catch (err) {
-        logger.error(err.stack)
-    }
-}
-
-export const createAddress = (start, end) => {
-  return hdUtil.getAddress(1, 'WAN', start, end).then(ret => {
-    console.log(ret)
-    let code = hdUtil.createUserAccount(1, `${BIP44PATH.WAN}${start}`, {
-      name: `Account${start+1}`,
-      addr: `0x${ret.addresses[0].address}`
-    });
-    return {
-      code: code,
-      result: ret
-    }
-  }).catch(err => {
-    logger.error(err.stack);
-    return {
-      code: false,
-      result: 'failure'
-    }
-  })
-};
-
-export const getBalance = async (chainType, addr) => {
-    let balance
-    try {
-        if (!chainType) {
-            throw new Error('chainType cannot be null')
-        }
-
-        if (!addr) {
-            throw new Error('addr cannot be null')
-        }
-        
-        switch (chainType) {
-            case 'WAN':
-                balance = await ccUtil.getWanBalance(addr)
-                break;
-        }
-        return { [addr]: balance };
-    } catch (err) {
-        logger.error(err.stack)
-    }
-}
-
-export const getUserAccountFromDB = () => {
-  try {
-    let accounts = hdUtil.getUserAccountForChain(5718350);
-    return {
-      code: true,
-      result: accounts
-    };
-  } catch (err) {
-    logger.error(err.stack);
-    return {
-      code: false,
-      result: 'failure'
-    }
-  }
-};
-
-export const coinNormal = async (walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
-    const input = {
-        symbol: chainType || 'WAN',
-        from: from,
-        to: to,
-        amount: amount, // in wan or eth
-        gasPrice: gasPrice || 180,
-        gasLimit: gasLimit || 1000000,
-        BIP44Path: BIP44PATH.WAN.concat(addrOffset),
-        walletID: parseInt(walletID)
-    }
-
-    try {
-        const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
-        const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
-        if (ret.code) {
-            return true;
-        }
-    } catch (err) {
-        logger.error(err.stack)
-        return false;
-    }
+//     try {
+//         const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
+//         const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
+//         if (ret.code) {
+//             targetWindow.webContents.send(CHANNELS.TX_NORMAL, true)
+//         }
+//     } catch (err) {
+//         logger.error(err.stack)
+//         targetWindow.webContents.send(CHANNELS.TX_NORMAL, false)
+//     }
     
-}
+// }
 
-export default {
-  generateMnemonic,
-  hasMnemonic,
-  revealMnemonic,
-  unlockHDWallet,
-  lockHDWallet,
-  validateMnemonic,
-  createAddress,
-  getBalance,
-  getUserAccountFromDB,
-  coinNormal
-};
