@@ -4,8 +4,128 @@ body {
   font-size: 16px;
   font-family: RobotoCondensed-Bold;
   font-weight: bold;
-
   ul,li{
     list-style: none;
+  }
+  
+  // base
+@content-right-bg: #1A1B2C;
+@com-modal-bg: #272840;
+@modal-input-bg: #1F2034;
+@com-white-color: #FFFFFF;
+@modal-input-focus: #414EDD;
+@button-blue-primary: linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+@button-gray-cancel: linear-gradient(90deg,#4A4C72 0%,#3D3E5F 100%);
+@button-blue-primary-hover: linear-gradient(90deg,#3D3E5F 0%,#4A4C72 100%);
+@button-gray-cancel-hover: linear-gradient(90deg,#3D3E5F 0%,#4A4C72 100%);
+  .ant-table-thead > tr > th{
+    background: none;
+  }
+  .ant-table-thead > tr > th .ant-table-header-column .ant-table-column-sorters::before{
+    background: @content-right-bg;
+  }
+  .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters:hover{
+      background: @content-right-bg;
+    }
+  .ant-table-thead > tr > th{
+    border: none;
+  }
+  .ant-table-tbody > tr > td{
+    border: none;
+  }
+  .ant-table-tbody > tr{
+    height:80px;
+    background:rgba(31,32,52,1);
+    border-radius:4px;
+  }
+  // button
+  .ant-btn-primary{
+    background: @button-blue-primary;
+    border: none;
+  }
+  // cancel button
+  .cancel{
+    weight: 150px;
+    height:40px;
+    background: @button-gray-cancel;
+    border-radius:20px;
+    border: none;
+  }
+  .cancel:hover, .cancel:focus{
+    color: @com-white-color;
+    background: @button-gray-cancel-hover;
+  }
+  .ant-btn-primary:hover, .ant-btn-primary:focus{
+    color: @com-white-color;
+    background: @button-blue-primary-hover;
+  }
+  // ant-modal-content
+  .ant-modal-mask{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    height: 100%;
+    
+  }
+  .ant-modal-content{
+    width: 640px;
+    border-radius: 6px;
+    background: @com-modal-bg;
+  }
+  .ant-modal-header{
+    background: @com-modal-bg;
+  }
+  .ant-input-affix-wrapper{
+    width:480px;
+  }
+  .ant-input{
+    width:480px;
+    height:40px;
+    border-radius:20px;
+    border: none;
+    font-size: 16px;
+    color: @com-white-color;
+    background: @modal-input-bg;
+  }
+  .ant-input:focus{
+    border: 2px solid @modal-input-focus!important;
+  }
+  .ant-modal-header{
+    border: none;
+    padding: 48px 0!important;
+  }
+  .ant-modal-title{
+    color: @com-white-color;
+    font-size:24px;
+    text-align: center;
+    font-weight:bold;
+  }
+  .ant-modal-footer{
+    padding: 40px 0 52px 0!important;
+    text-align: center!important;
+    border-top: none!important;
+    button{
+      width:150px;
+      height:40px;
+      border-radius:20px;
+      margin: 0 10px;
+      font-size: 18px;
+      font-weight: Bold;
+      color: @com-white-color;
+    }
+    .ant-btn{
+      weight: 150px;
+      height:40px;
+      background: @button-gray-cancel;
+      border-radius:20px;
+      border: none;
+    }
+    .ant-btn:hover, .ant-btn:focus{
+      color: @com-white-color;
+      background: @button-gray-cancel-hover;
+    }
   }
 }

@@ -106,7 +106,7 @@ class WanAccount extends Component {
         <Row className="title">
           <Col span={4}>WAN ( wanchain )</Col>
           <Col span={4}>Total: { getAmount }</Col>
-          <Col span={8} offset={8}>
+          <Col span={8} offset={8} className="title-right">
             <Button type="primary" shape="round" size="large" onClick={this.createQrCode}>Qr Code</Button>
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>

@@ -75,11 +75,13 @@ class Backup extends Component {
           </p>
           <Button type="primary" onClick={this.showModal}>REVEAL MNEMONIC SENTENCE</Button>
           <Modal
-            destroyOnClose={true}
+            destroyOnClose={false}
             title="Mnemonic Sentence"
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
+            okText="Send"
+            closable={false}
           >
             <p>WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
             {

@@ -1,5 +1,7 @@
+@content-right-bg: #1A1B2C;
+@com-line: #4453FF;
 .header{
-    background-color: #131740;
+    background-color: @content-right-bg;
     vertical-align: -webkit-baseline-middle;
     font-size: 1.5rem;
     color: #fff;
@@ -10,6 +12,14 @@
         .title {
           text-align: left;
           padding-left: 40px;
+          .comLine{
+            width:3px;
+            height:16px;
+            display: inline-block;
+            margin-right: 15px;
+            background: @com-line;
+            border-radius:1px;
+          }
         }
         .user {
           text-align: right;

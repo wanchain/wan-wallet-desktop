@@ -1,8 +1,7 @@
 .sidebar {
   .logo {
     height: 115px;
-    line-height: 115px;
-    text-align: center;
+    margin: 28px 0 0 30px;
     vertical-align: -webkit-baseline-middle;
   
     img {
@@ -13,14 +12,29 @@
   .menuTreeNode {
     color: #A1A2A8;
   }
-
+  .ant-menu-dark.ant-menu-inline .ant-menu-item, .ant-menu-dark.ant-menu-inline .ant-menu-submenu-title{
+    font-size: 16px;
+  }
+  .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
+    background: linear-gradient(90deg,#4e5cf4 0%,#272d68 100%)!important;
+  }
+  .ant-menu-item{
+    // margin: 0 15px!important;
+    height: 60px!important;
+    line-height: 60px!important;
+    border-radius:6px!important;
+    padding-left: 30px!important;
+  }
   .footer {
     left: 0;
     bottom: 0px;
     position: fixed;
-    min-height: 100px;
+    text-align: left;
+    font-size:10px;
+    color:rgba(255,255,255,0.4);
+    margin: 40px 0 0 35px;
     z-index: 9999;
-    text-align: center;
+    background: #121320;
   }
 }
 

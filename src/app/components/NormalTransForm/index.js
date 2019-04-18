@@ -17,7 +17,7 @@ class NormalTransForm extends Component {
         onOk={onSend}
         footer={[
           <Button key="submit" type="primary" loading={loading} onClick={onSend}>Send</Button>,
-          <Button key="back" onClick={onCancel}>Cancel</Button>,
+          <Button key="back" className="cancel" onClick={onCancel}>Cancel</Button>,
         ]}
       >
         <Form layout="vertical" className="transForm">
