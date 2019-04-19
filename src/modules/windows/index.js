@@ -37,11 +37,7 @@ class Window extends EventEmitter {
             }
         }
 
-        console.log('main window options: ', electronOptions)
-
         electronOptions = _.merge(electronOptions, opts.electronOptions)
-
-        console.log('electron options: ', electronOptions)
 
         this._logger.debug('Creating browser window')
 
@@ -124,7 +120,6 @@ class Windows {
     init() {
         ipc.on('main_setWindowId', (e) => {
             // const sourceWindow = e.sender.getOwnerBrowserWindow()
-            // console.log('window id', sourceWindow.id)
             const id = e.sender.id
             logger.info(`Set window id, ${id}`)
             const bwnd = BrowserWindow.fromWebContents(e.sender)
