@@ -122,7 +122,7 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
 
 ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
     let err, ret
-    switch(action) {
+    switch (action) {
         case 'create':
             try {
                 ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta)
@@ -180,7 +180,34 @@ ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
 })
 
 ipc.on(ROUTE_TX, async (event, action, payload) => {
+    let ret, err
+    switch (action) {
+        case 'normal':
+            try {
+                const { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit } = payload
+                const from = await hdUtil.getAddress(walletID, chainType, path)
 
+                let input = {
+                    "symbol" : symbol,
+                    "from" : '0x' + from.address,
+                    "to" : to,
+                    "amount" : amount,
+                    "gasPrice" : gasPrice,
+                    "gasLimit" : gasLimit,
+                    "BIP44Path" : path,
+                    "walletID" : walletID
+                }
+
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
+            break
+    }
 })
 
 function sendResponse(endpoint, e, payload) {

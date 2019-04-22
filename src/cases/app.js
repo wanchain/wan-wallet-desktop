@@ -17,13 +17,17 @@ class App extends React.Component {
             balance: 0,
             accountCreateResult: '',
             accountName: '',
-            accountNumber: ''
+            accountNumber: '',
+            txWanNormalResult: ''
         }
     }
 
     generatePhrase = () => {
         wand.request('phrase_generate', {pwd: 'wanglu123'}, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 phrase: val
             })
@@ -33,7 +37,10 @@ class App extends React.Component {
 
     hasPhrase = () => {
         wand.request('phrase_has', function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 has: val === true ? 'Yes' : 'No'
             })
@@ -43,7 +50,10 @@ class App extends React.Component {
 
     revealPhrase = () => {
         wand.request('phrase_reveal', {pwd: 'wanglu123'}, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 phrase: val
             })
@@ -53,7 +63,10 @@ class App extends React.Component {
 
     lockWallet = () => {
         wand.request('wallet_lock', function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 status: val === true ? 'Locked' : ''
             })
@@ -62,7 +75,10 @@ class App extends React.Component {
 
     unlockWallet = () => {
         wand.request('wallet_unlock', { pwd: 'wanglu123' }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err, err.message)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 status: val === true ? 'Unlocked' : 'Locked'
             })
@@ -71,7 +87,10 @@ class App extends React.Component {
 
     getAddress = () => {
         wand.request('address_get', { walletID: 1, chainType: 'WAN', start: 0, end: 2 }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             console.log(val)
             const address = val.addresses[0].address
             this.setState({
@@ -82,7 +101,10 @@ class App extends React.Component {
 
     getBalance = () => {
         wand.request('address_balance', { addr: this.state.address }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 balance: val
             })
@@ -91,7 +113,10 @@ class App extends React.Component {
 
     createAccount = () => {
         wand.request('account_create', { walletID: 1, path: `${BIP44PATH.WAN}${addrOffset}`, meta: {name: `WanAccount_${addrOffset}`} }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 accountCreateResult: val === false ? 'Failed': 'Succeed'
             })
@@ -100,7 +125,10 @@ class App extends React.Component {
 
     getAccount = () => {
         wand.request('account_get', { walletID: 1, path: `${BIP44PATH.WAN}${addrOffset}` }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 accountName: val.name 
             })
@@ -109,7 +137,10 @@ class App extends React.Component {
 
     getAccounts = () => {
         wand.request('account_getAll', { chainID: 5718350 }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             console.log(val)
             this.setState({
                 accountNumber: val.length
@@ -120,7 +151,10 @@ class App extends React.Component {
     updateAccount = () => {
 
         wand.request('account_update', { walletID: 1, path: `${BIP44PATH.WAN}${addrOffset}`, meta: {name: `I have a new name again`} }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             this.setState({
                 accountCreateResult: val === false ? 'Failed': 'Succeed'
             })
@@ -129,10 +163,38 @@ class App extends React.Component {
 
     deleteAccount = () => {
         wand.request('account_delete', { walletID: 1, path: `${BIP44PATH.WAN}${addrOffset}` }, function(err, val) {
-            if (err) console.log('error printed inside callback: ', err)
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
             console.log(val)
             this.setState({
                 accountDeleteResult: val === false ? 'Failed': 'Succeed'
+            })
+        }.bind(this))
+    }
+
+    txNormal = () => {
+        wand.request('transaction_normal', { 
+            walletID: 1, 
+            chainType: 'WAN',
+            symbol: 'WAN',  
+            path: `${BIP44PATH.WAN}${0}`,
+            // from: '0xa1e7f6c21b7441626e0b37d40d352475b17c425a', 
+            to: '0xe8adbf32deb5899763c57e45f8edc70b218bd904', 
+            amount: 0.02, 
+            gasPrice: 180, 
+            gasLimit: 1000000 
+        }, function(err, val) {
+            console.log('here')
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
+            console.log(val)
+            this.setState({
+                txWanNormalResult: val.code === false ? 'Failed': 'Succeed',
+                txWanNormalHash: val.result
             })
         }.bind(this))
     }
@@ -148,6 +210,8 @@ class App extends React.Component {
                 <h1>AccountCreateResult: {this.state.accountCreateResult}</h1>
                 <h1>AccountUpdateResult: {this.state.accountUpdateResult}</h1>
                 <h1>AccountDeleteResult: {this.state.accountDeleteResult}</h1>
+                <h1>TxWanNormalResult: {this.state.txWanNormalResult}</h1>
+                <h1>TxWanNormalHash: {this.state.txWanNormalHash}</h1>
                 <h1>Account name: {this.state.accountName}</h1>
                 <button onClick={this.generatePhrase}>Generate a phrase !!!</button>
                 <button onClick={this.revealPhrase}>Reveal my phrase !!!</button>
@@ -161,6 +225,7 @@ class App extends React.Component {
                 <button onClick={this.updateAccount}>Update account name !!!</button>
                 <button onClick={this.deleteAccount}>Delete an account !!!</button>
                 <button onClick={this.getBalance}>Show my balance !!!</button>
+                <button onClick={this.txNormal}>Send wan coin !!!</button>
             </div>
         );
     }
