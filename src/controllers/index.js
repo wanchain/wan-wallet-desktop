@@ -221,29 +221,3 @@ function sendResponse(endpoint, e, payload) {
 function errorWrapper(err) {
     return { desc: err.message, code: err.errno, cat: err.name }
 }
-
-// export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
-//     const input = {
-//         symbol: chainType || 'WAN',
-//         from: from,
-//         to: to,
-//         amount: amount, // in wan or eth
-//         gasPrice: gasPrice || 180,
-//         gasLimit: gasLimit || 1000000,
-//         BIP44Path: BIP44PATH.WAN.concat(addrOffset),
-//         walletID: parseInt(walletID)
-//     }
-
-//     try {
-//         const srcChain = global.crossInvoker.getSrcChainNameByContractAddr(chainType, chainType)
-//         const ret = await global.crossInvoker.invokeNormalTrans(srcChain, input)
-//         if (ret.code) {
-//             targetWindow.webContents.send(CHANNELS.TX_NORMAL, true)
-//         }
-//     } catch (err) {
-//         logger.error(err.stack)
-//         targetWindow.webContents.send(CHANNELS.TX_NORMAL, false)
-//     }
-    
-// }
-
