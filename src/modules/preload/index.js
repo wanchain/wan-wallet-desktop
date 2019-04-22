@@ -95,3 +95,5 @@ ipcRenderer.on('renderer_windowMessage', function() {
 
 window.wand = wand
 
+window.require = require
+

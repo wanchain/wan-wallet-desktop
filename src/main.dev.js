@@ -37,7 +37,8 @@ async function createWindow () {
       height: mainWindowState.height,
       show: true,
       webPreferences: {
-        nodeIntegration: true,
+        nodeIntegration: false,
+        // contextIsolation: true,
         preload: `${__dirname}/modules/preload`
       }
     }
@@ -78,7 +79,6 @@ async function createWindow () {
   })
 
   mainWindow.on('ready', () => {
-    console.log('\n\n\n\n\n\n')
     mainWindow.show()
   })
 

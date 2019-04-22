@@ -14,9 +14,9 @@
         // dynamically insert the bundled app script into the renderer process
         // const { isDev, WDS_PORT } = require('../config/common')
         const scripts = []
-        console.log('env: ', wand.isDev)
         scripts.push(
-            wand.isDev ? 'http://localhost:7000/dist/js/bundle.js' : './dist/renderer.prod.js'
+            // process.end.NODE_ENV === 'development' ? 'http://localhost:7000/dist/js/bundle.js' : './dist/renderer.prod.js'
+            'http://localhost:7000/dist/js/bundle.js'
         )
         document.write(
             scripts
@@ -27,3 +27,4 @@
 </body>
 </html>
 
+ 

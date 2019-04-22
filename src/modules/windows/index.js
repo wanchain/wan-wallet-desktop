@@ -29,7 +29,6 @@ class Window extends EventEmitter {
             acceptFirstMouse: true,
             darkTheme: true,
             webPreferences: {
-                nodeIntegration: false,
                 webaudio: true,
                 webgl: false,
                 webSecurity: false,

@@ -11,6 +11,8 @@ const ipc = ipcMain
 const ROUTE_PHRASE = 'phrase'
 const ROUTE_WALLET = 'wallet'
 const ROUTE_ADDRESS = 'address'
+const ROUTE_ACCOUNT = 'account'
+const ROUTE_TX = 'transaction'
 
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
@@ -119,10 +121,81 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
     }
 })
 
+ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
+    let err, ret
+    switch(action) {
+        case 'create':
+            try {
+                ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
+            break  
+
+        case 'get':
+            try {
+                ret = hdUtil.getUserAccount(payload.walletID, payload.path)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getAll':
+            try {
+                ret = hdUtil.getUserAccountForChain(payload.chainID)
+                console.log(ret)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
+            break
+        case 'update':
+            try {
+                ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'delete':
+            try {
+                ret = hdUtil.deleteUserAccount(payload.walletID, payload.path)
+                console.log(ret)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
+            break
+    }
+})
+
+ipc.on(ROUTE_TX, async (event, action, payload) => {
+
+})
+
 function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
     const senderWindow = Windows.getById(id)
+    const { err } = payload
+    if (!_.isEmpty(err)) payload.err = errorWrapper(err)
     senderWindow.send('renderer_windowMessage', endpoint, payload)
+}
+
+function errorWrapper(err) {
+    return { desc: err.message, code: err.errno, cat: err.name }
 }
 
 // export const coinNormal = async (targetWindow, walletID, addrOffset, chainType, from, to, amount, gasPrice, gasLimit) => {
