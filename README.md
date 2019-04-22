@@ -1,4 +1,4 @@
-### WandWallet
+### Wan Wallet Desktop
 
-WandWallet is [Wanchain](https://wanchain.org)'s new multicoin crypto wallet. 
+This is [Wanchain](https://wanchain.org)'s new multicoin crypto wallet, desktop version of course. 
 It will feature multiple crypto assets cross-chain transactions in a secure way.
