@@ -41,7 +41,7 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { loading, onCancel, onSend, form, visible, gasPrice, gasLimit, minGasPrice } = this.props;
+    const { loading, onCancel, onSend, form, visible, gasPrice, gasLimit, minGasPrice, from } = this.props;
     const { getFieldDecorator } = form;
     const AdvancedOptionForm = this.advancedOptionForm;
     let averageFee = new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9));
@@ -50,7 +50,7 @@ class NormalTransForm extends Component {
     let savedFee;
 
     if (this.state.advanced) {
-      savedFee =  new BigNumber(Math.max(minGasPrice, this.state.gasPrice)).times(this.state.gasLimit).div(BigNumber(10).pow(9));
+      savedFee = new BigNumber(Math.max(minGasPrice, this.state.gasPrice)).times(this.state.gasLimit).div(BigNumber(10).pow(9));
     }
 
     return (
@@ -68,21 +68,25 @@ class NormalTransForm extends Component {
           ]}
         >
           <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} className="transForm">
+            <Form.Item label="From">
+              {getFieldDecorator('from', { initialValue: from }, { rules: [{ required: true, message: 'Address is incorrect' }] })
+                (<Input disabled={true} placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+            </Form.Item>
             <Form.Item label="To">
-              {getFieldDecorator('To', { rules: [{ required: true, message: 'Address is incorrect' }] })(<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect' }] })(<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="Amount">
-              {getFieldDecorator('Amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })(<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })(<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="Fee">
-              {getFieldDecorator('fee', { initialValue: this.state.advanced ? savedFee.toString(10):'', rules: [{ required: true, message: "Please select transaction fee" }] })(
+              {getFieldDecorator('fee', { initialValue: this.state.advanced ? savedFee.toString(10) : '', rules: [{ required: true, message: "Please select transaction fee" }] })(
                 this.state.advanced ?
-                <Input disabled={true} style={{ color: 'rgba(0,0,0,.25)' }} /> :
-                <Radio.Group>
-                  <Radio.Button value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                  <Radio.Button value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                  <Radio.Button value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
-                </Radio.Group>
+                  <Input disabled={true} style={{ color: 'rgba(0,0,0,.25)' }} /> :
+                  <Radio.Group>
+                    <Radio.Button value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
+                    <Radio.Button value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
+                    <Radio.Button value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
+                  </Radio.Group>
               )}
             </Form.Item>
             <p onClick={this.onAdvanced}>Advanced Options</p>
@@ -90,9 +94,9 @@ class NormalTransForm extends Component {
         </Modal>
         <AdvancedOptionForm
           visible={this.state.advancedVisible}
-          minGasPrice = {minGasPrice}
-          gasPrice = {gasPrice}
-          gasLimit = {gasLimit}
+          minGasPrice={minGasPrice}
+          gasPrice={gasPrice}
+          gasLimit={gasLimit}
           onCancel={this.handleCancel}
           onSave={this.handleSave}
         />

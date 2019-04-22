@@ -11,7 +11,7 @@ class Accounts extends Component {
       { title: "Name", dataIndex: "name" },
       { title: "Address", dataIndex: "address" },
       { title: "Balance", dataIndex: "balance" },
-      { title: "Action", render: (text) => <div> <SendNormalTrans addr={text} /> </div> }
+      { title: "Action", render: (record) => <div> <SendNormalTrans from={record.address} /> </div> }
     ];
     this.state = {
       addresses: []
