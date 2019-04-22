@@ -2,7 +2,6 @@ import _ from 'lodash'
 import { ipcMain } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
-import { CHANNELS, BIP44PATH } from '~/config/common'
 import { Windows } from '~/src/modules'
 
 const logger = Logger.getLogger('controllers')
@@ -149,7 +148,6 @@ ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
         case 'getAll':
             try {
                 ret = hdUtil.getUserAccountForChain(payload.chainID)
-                console.log(ret)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -171,7 +169,6 @@ ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
         case 'delete':
             try {
                 ret = hdUtil.deleteUserAccount(payload.walletID, payload.path)
-                console.log(ret)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

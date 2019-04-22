@@ -25,7 +25,6 @@ class Window extends EventEmitter {
             width: 1100,
             height: 720,
             titleBarStyle: 'hiddenInset',
-            // backgroundColor: '#2E2C29',
             acceptFirstMouse: true,
             darkTheme: true,
             webPreferences: {
@@ -49,6 +48,14 @@ class Window extends EventEmitter {
 
         this.webContents = this.window.webContents
 
+        this.window.once('closed', () => {
+            this._logger.debug('Closed')
+            this.isShown = false
+            this.isClosed = true
+            this.isContentReady = false
+            this.emit('closed')
+        })
+
         this.webContents.once('did-finish-load', () => {
             this.isContentReady = true
 
@@ -70,8 +77,6 @@ class Window extends EventEmitter {
                 this.show()
             }
 
-            console.log('inside window constructor')
-
             this.emit('ready')
         })
 
@@ -88,6 +93,16 @@ class Window extends EventEmitter {
         // this._logger.debug(`Sending data ${arguments.toString()}`)
 
         this.webContents.send(...Array.prototype.slice.call(arguments))
+    }
+
+    hide() {
+        if (this.isClosed) {
+            return
+        }
+
+        this._logger.debug('Hide')
+        this.window.hide()
+        this.isShown = false
     }
 
     load(url) {
@@ -113,6 +128,10 @@ class Window extends EventEmitter {
     }
 
     close() {
+        if (this.isClosed) {
+            return
+        }
+
         this._logger.debug('Close')
         this.window.close()
     }
@@ -190,7 +209,7 @@ class Windows {
             
         })
 
-        if (!anyOpen) {
+        if (!anyOpen && process.platform !== 'darwin') {
             logger.info('All primary windows closed/invisible, so quitting app...')
 
             app.quit()
