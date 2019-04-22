@@ -71,6 +71,8 @@ class Window extends EventEmitter {
                 this.show()
             }
 
+            console.log('inside window constructor')
+
             this.emit('ready')
         })
 
@@ -109,6 +111,11 @@ class Window extends EventEmitter {
         this.window.show()
 
         this.isShown = true
+    }
+
+    close() {
+        this._logger.debug('Close')
+        this.window.close()
     }
 }
 

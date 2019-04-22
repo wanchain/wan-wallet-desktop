@@ -16,7 +16,7 @@ export default {
     entry: [
         'react-hot-loader/patch',
         './src/app/App.js',
-        // './src/app.js',
+        // './src/cases/app.js',
     ],
     output: {
         path: path.resolve(__dirname, '..', '..', 'dist'),

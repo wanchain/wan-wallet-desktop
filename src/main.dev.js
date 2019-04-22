@@ -20,10 +20,11 @@ autoUpdater.logger = logger
 
 let mainWindow
 
+
 async function createWindow () {
   logger.info('creating main window')
 
-  let mainWindowState = windowStateKeeper({
+  const mainWindowState = windowStateKeeper({
     defaultWidth: 1024 + 208,
     defaultHeight: 720
   });
@@ -42,12 +43,14 @@ async function createWindow () {
     }
   })
 
-  mainWindowState.manage(mainWindow)
+  mainWindowState.manage(mainWindow.window)
 
   mainWindow.load(`file://${__dirname}/app/index.html`)
   
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.loadURL(`file://${__dirname}/index.html#v${app.getVersion()}`)
+
+  // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
   
   // Open the DevTools.
   if (setting.isDev) {
@@ -74,14 +77,21 @@ async function createWindow () {
     menuFactoryService.buildMenu(i18n)
   })
 
-  mainWindow.once('ready-to-show', () => {
+  mainWindow.on('ready', () => {
+    console.log('\n\n\n\n\n\n')
     mainWindow.show()
-    logger.info('finish loading main window')
-  
-    if (!setting.isDev) {
-      registerAutoUpdaterHandlersAndRun()
-    }
   })
+
+
+  // mainWindow.once('ready-to-show', () => {
+  //   console.log('\n\n\n\n')
+  //   mainWindow.window.show()
+  //   logger.info('finish loading main window')
+  
+  //   if (!setting.isDev) {
+  //     registerAutoUpdaterHandlersAndRun()
+  //   }
+  // })
 
   mainWindow.on('closed', function () {
     mainWindow = null
@@ -161,14 +171,16 @@ async function onReady() {
 app.on('ready', onReady)
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
+  // if (process.platform !== 'darwin') {
     app.quit()
-  }
+  // }
 })
 
-app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
+// app.on('activate', async function () {
+//   console.log('there')
+//   if (mainWindow === null) {
+//     console.log('here')
+//     await createWindow()
+//   }
+// })
 
