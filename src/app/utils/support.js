@@ -4,7 +4,6 @@ export function accumulator(promise, func) {
   });
 };
 
-
 export function getBalanceObj(arr) {
   let newArr = {};
   arr.forEach((item) => {
@@ -13,3 +12,4 @@ export function getBalanceObj(arr) {
   });
   return newArr;
 }
+

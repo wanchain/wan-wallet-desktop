@@ -4,61 +4,64 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import { app, BrowserWindow } from 'electron'
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
+import { app, ipcMain as ipc } from 'electron'
+import { autoUpdater } from 'electron-updater'
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
+'electron-devtools-installer'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from'~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import { walletBackend } from '~/src/modules'
+import { walletBackend, Windows } from '~/src/modules'
 
 const logger = Logger.getLogger('main')
-
-console.log(app.getPath('exe'))
-console.log(app.getVersion())
-const isDevelopment = app.getPath('exe').indexOf('electron') !== -1;
-
-console.log(isDevelopment)
-
-logger.warn(setting.isDev)
+autoUpdater.logger = logger
 
 let mainWindow
+
 
 async function createWindow () {
   logger.info('creating main window')
 
-  let mainWindowState = windowStateKeeper({
+  const mainWindowState = windowStateKeeper({
     defaultWidth: 1024 + 208,
     defaultHeight: 720
   });
 
-  mainWindow = new BrowserWindow({
-    x: mainWindowState.x,
-    y: mainWindowState.y,
-    width: mainWindowState.width,
-    height: mainWindowState.height,
-    show: false,
-    webPreferences: {
-      nodeIntegration: true, // dev settings to be able to use "require" in main.js, could be set to false in production build
-      nativeWindowOpen: false, // needs to be set to "false" otherwise popup will not to able to communicate with index.js (PopupManager)
-      // webSecurity: false,
+  mainWindow = Windows.create('main', {
+    electronOptions: {
+      x: mainWindowState.x,
+      y: mainWindowState.y,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
+      show: true,
+      webPreferences: {
+        nodeIntegration: false,
+        // contextIsolation: true,
+        preload: `${__dirname}/modules/preload`
+      }
     }
   })
 
-  mainWindowState.manage(mainWindow)
+  mainWindowState.manage(mainWindow.window)
 
-  mainWindow.loadURL(`file://${__dirname}/app/index.html`)
-  // mainWindow.loadURL(`file://${__dirname}/../index.html`)
+  // mainWindow.load(`file://${__dirname}/app/index.html`)
+  
+  // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
+  // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
+  mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  
   // Open the DevTools.
-  if (process.env.NODE_ENV = 'development') {
+  if (setting.isDev) {
     installExtensions()
   }
 
   const cb = (err) => { 
-    if (err) 
-      logger.error(err.stack)
+    if (err) {
+      logger.error('i18n change language error')
+    }
   }
 
   if (!i18n.isIintialized) {
@@ -74,9 +77,12 @@ async function createWindow () {
     menuFactoryService.buildMenu(i18n)
   })
 
-  mainWindow.once('ready-to-show', () => {
+  mainWindow.on('ready', () => {
+    logger.info('showing main window')
     mainWindow.show()
-    logger.info('finish loading main window')
+    if (!setting.isDev) {
+      registerAutoUpdaterHandlersAndRun()
+    }
   })
 
   mainWindow.on('closed', function () {
@@ -84,17 +90,55 @@ async function createWindow () {
   })
 }
 
+function registerAutoUpdaterHandlersAndRun() {
+  autoUpdater.on('checking-for-update', () => {
+    logger.info('checking-for-update')
+    sendStatusToWindow('Checking for update...')
+  })
+  
+  autoUpdater.on('update-available', (info) => {
+    logger.info('update-available')
+    sendStatusToWindow('Update available.')
+  })
+  
+  autoUpdater.on('update-not-available', (info) => {
+    logger.info('update-not-available')
+    sendStatusToWindow('Update not available.')
+  })
+  
+  autoUpdater.on('error', (err) => {
+    logger.info('erro in auto-updater')
+    sendStatusToWindow('Error in auto-updater. ' + err)
+  })
+  
+  autoUpdater.on('download-progress', (progressObj) => {
+    logger.info('download-progress')
+    let log_message = 'Download speed: ' + progressObj.bytesPerSecond
+    log_message = log_message + ' - Download ' + progressObj.percent + '%'
+    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+    sendStatusToWindow(log_message)
+  })
+  
+  autoUpdater.on('update-downloaded', (info) => {
+    logger.info('update-downloaded')
+    sendStatusToWindow('Update downloaded')
+    autoUpdater.quitAndInstall()
+  })
+
+  autoUpdater.checkForUpdates()
+}
+
 function installExtensions() {
   mainWindow.webContents.openDevTools()
 
   // Install extensions
   installExtension(REACT_DEVELOPER_TOOLS)
-    .then(name => console.log(`Added Extension:  ${name}`))
-    .catch(err => console.log('An error occurred: ', err));
+    .then(name => logger.debug(`Added Extension:  ${name}`))
+    .catch(err => logger.debug('An error occurred: ', err));
 
   installExtension(REDUX_DEVTOOLS)
-    .then(name => console.log(`Added Extension:  ${name}`))
-    .catch(err => console.log('An error occurred: ', err));
+    .then(name => logger.debug(`Added Extension:  ${name}`))
+    .catch(err => logger.debug('An error occurred: ', err));
 }
 
 // prevent crashed and close gracefully
@@ -104,9 +148,8 @@ process.on('uncaughtException', (err) => {
 })
 
 async function onReady() {
-  // windowsManager.init()
+  Windows.init()
   await walletBackend.init()
-  // await clientBinaryManager.init()
   await createWindow()
 }
 
@@ -120,8 +163,9 @@ app.on('window-all-closed', function () {
   }
 })
 
-app.on('activate', function () {
+app.on('activate', async function () {
   if (mainWindow === null) {
-    createWindow()
+    await createWindow()
   }
 })
+

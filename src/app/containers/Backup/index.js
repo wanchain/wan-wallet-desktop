@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
 import './index.less';
-import helper from 'utils/helper';
-import { ipcRenderer, clipboard } from 'electron';
-
-const { getPhrase } = helper;
-
+import { clipboard, remote } from 'electron';
 
 class Backup extends Component {
   state = {
@@ -49,10 +45,11 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
-    ipcRenderer.once('phrase_revealed', (event, phrase) => {
-      this.handlePhraseResult(phrase);
-    })
-    getPhrase(pwd);
+    wand.request('phrase_reveal', {pwd: pwd}, function(err, val) {
+      console.log(val)
+      if (err) console.log('error printed inside callback: ', err)
+      this.handlePhraseResult(val);
+    }.bind(this))
   }
 
   handlePhraseResult = (phrase) => {

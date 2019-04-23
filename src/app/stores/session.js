@@ -1,19 +1,22 @@
-
 import { observable, action } from 'mobx';
 
-import helper from 'utils/helper';
-// import storage from 'utils/storage';
-
 class Session {
-    @observable hasMnemonic;
+  @observable pageTitle = 'Wanchain Wallet';
+  @observable hasMnemonicOrNot = false;
 
-    @action async getMnemonic () {
-        let hasMnemonic = await helper.hasMnemonic();
-        // await storage.set('hasMnemonic', hasMnemonic);
-        self.hasMnemonic = hasMnemonic;
-        return hasMnemonic;
-    }
+  @action getMnemonic(ret) {
+    wand.request('phrase_has', null, function(err, val) {
+      if (!err) {
+        self.hasMnemonicOrNot = val
+      } else {
+        self.hasMnemonicOrNot = false;
+      }
+    }.bind(this));
+  }
 
+  @action changeTitle(newTitle) {
+    self.pageTitle = newTitle;
+  }
 }
 
 const self = new Session();

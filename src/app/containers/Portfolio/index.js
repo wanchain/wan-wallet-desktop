@@ -1,44 +1,63 @@
 import React, { Component } from 'react';
-import helper from 'utils/helper';
-import { ipcRenderer } from 'electron';
-import { Button } from 'antd';
+import { Table } from 'antd';
+import { observer, inject } from 'mobx-react';
 
 import './index.less';
-const { getPhrase, generatePhrase } = helper;
 
+@inject(stores => ({
+  portfolioList: stores.portfolio.portfolioList,
+  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateCoinPrice: () => stores.portfolio.updateCoinPrice()
+}))
+
+@observer
 class Portfolio extends Component {
-  state = {
-    phrase: 'I am just a placeholder :-)',
-    show: 'hello world'
+  
+  columns = [
+    {
+      title: 'NAME',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <div><img /><a>{text}</a></div>,
+    }, {
+      title: 'PRICE',
+      dataIndex: 'price',
+      key: 'price',
+    }, {
+      title: 'BALANCE',
+      dataIndex: 'balance',
+      key: 'balance',
+    }, {
+      title: 'VALUE',
+      dataIndex: 'value',
+      key: 'value'
+    }, {
+      title: 'PORTFOLIO',
+      dataIndex: 'portfolio',
+      key: 'portfolio',
+    }
+  ]
+
+  componentWillMount() {
+    this.props.changeTitle('Account Information');
   }
 
-  handleClick = () => {
-    ipcRenderer.once('phrase_generated', (event, phrase) => {
-      this.setState({
-        phrase: phrase
-      })
-    })
-    generatePhrase('123');
+  componentDidMount() {
+    this.timer = setInterval(() =>{
+      this.props.updateCoinPrice();
+    }, 5000)
   }
 
-  getPhrase = () => {
-    ipcRenderer.once('phrase_revealed', (event, phrase) => {
-      this.setState({
-        show: phrase
-      })
-    })
-    getPhrase('123');
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   render() {
-      return (
-          <div>
-              <h1 className="portfolio">{this.state.phrase}</h1>
-              <Button type="primary" onClick={this.handleClick}>Give me a phrase!!!</Button>
-              <Button type="primary" onClick={this.getPhrase}>get Revealed</Button>
-              <h1 className="portfolio">{this.state.show}</h1>
-          </div>
-      );
+    return (
+        <div>
+            <Table columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
+        </div>
+    );
   }
 }
 
