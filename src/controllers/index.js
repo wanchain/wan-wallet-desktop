@@ -92,7 +92,7 @@ ipc.on(ROUTE_WALLET, (event, action, payload) => {
 })
 
 ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
-    let err, address
+    let err, address, nonce
 
     switch (action) {
         case 'get':
@@ -104,6 +104,17 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
             }
            
             sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: address })
+            break
+
+        case 'getNonce':
+            try {
+                nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: nonce })
             break
         case 'balance':
             let balance

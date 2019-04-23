@@ -15,6 +15,7 @@ class App extends React.Component {
             status: '',
             address: '',
             balance: 0,
+            nonce: '',
             accountCreateResult: '',
             accountName: '',
             accountNumber: '',
@@ -111,6 +112,18 @@ class App extends React.Component {
         }.bind(this))
     }
 
+    getNonce = () => {
+        wand.request('address_getNonce', { addr: `0x${this.state.address}`, chainType: 'WAN' }, function(err, val) {
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
+            this.setState({
+                nonce: val
+            })
+        }.bind(this))
+    }
+
     createAccount = () => {
         wand.request('account_create', { walletID: 1, path: `${BIP44PATH.WAN}${addrOffset}`, meta: {name: `WanAccount_${addrOffset}`} }, function(err, val) {
             if (err) { 
@@ -183,8 +196,8 @@ class App extends React.Component {
             // from: '0xa1e7f6c21b7441626e0b37d40d352475b17c425a', 
             to: '0xe8adbf32deb5899763c57e45f8edc70b218bd904', 
             amount: 0.02, 
-            gasPrice: 180, 
-            gasLimit: 1000000 
+            gasPrice: 200, 
+            gasLimit: 200000 
         }, function(err, val) {
             console.log('here')
             if (err) { 
@@ -207,6 +220,7 @@ class App extends React.Component {
                 <h1>Wallet Status: {this.state.status}</h1>
                 <h1>Wallet addresses: {this.state.address}</h1>
                 <h1>Balance: {this.state.balance}</h1>
+                <h1>Nonce: {this.state.nonce}</h1>
                 <h1>AccountCreateResult: {this.state.accountCreateResult}</h1>
                 <h1>AccountUpdateResult: {this.state.accountUpdateResult}</h1>
                 <h1>AccountDeleteResult: {this.state.accountDeleteResult}</h1>
@@ -219,6 +233,7 @@ class App extends React.Component {
                 <button onClick={this.lockWallet}>Lock my wallet !!!</button>
                 <button onClick={this.unlockWallet}>Unlock my wallet !!!</button>
                 <button onClick={this.getAddress}>Give me address !!!</button>
+                <button onClick={this.getNonce}>Show my nonce !!!</button>
                 <button onClick={this.createAccount}>Create account !!!</button>
                 <button onClick={this.getAccount}>Show my account detail !!!</button>
                 <button onClick={this.getAccounts}>Show my accounts !!!</button>
