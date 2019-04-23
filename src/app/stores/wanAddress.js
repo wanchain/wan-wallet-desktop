@@ -1,17 +1,14 @@
 
 import { observable, action, computed } from 'mobx';
-import { remote } from 'electron';
 
 import { getBalanceObj } from 'utils/support';
 
-const { getUserAccountFromDB } = remote.require('./controllers');
+const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
     @observable addrInfo = {};
-    @observable amount = 0;
 
     @action addAddress(newAddr) {
-      console.log(newAddr)
       self.addrInfo[newAddr.wanaddr] = {
         name: `Account${newAddr.start + 1}`,
         balance: `${newAddr.balance}`,
@@ -29,18 +26,30 @@ class WanAddress {
       })
     }
 
+    @action updateName(arr) {
+      const path = self.addrInfo[arr["address"]]["path"];
+
+      wand.request('account_update', { walletID: 1, path: `${WAN}${path}`, meta: {name: arr.name, addr: arr.address} }, (err, val) => {
+        if(!err && val) {
+          self.addrInfo[arr["address"]]["name"] = arr.name;
+        }
+      })
+    }
+
     @action getUserAccountFromDB() {
-      let ret = getUserAccountFromDB();
-      if(ret.code && Object.keys(ret.result).length) {
-        let info = ret.result.accounts;
-        Object.keys(info).forEach((item) => {
-          self.addrInfo[info[item]['1']['addr']] = {
-            name: info[item]['1']['name'],
-            balance: 0,
-            path: item.substr(item.lastIndexOf('\/')+1)
-          }
-        })
-      }
+      wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+        if (err) console.log('error printed inside callback: ', err)
+        if(Object.keys(ret.accounts).length) {
+          let info = ret.accounts;
+          Object.keys(info).forEach((item) => {
+            self.addrInfo[info[item]['1']['addr']] = {
+              name: info[item]['1']['name'],
+              balance: 0,
+              path: item.substr(item.lastIndexOf('\/')+1)
+            }
+          })
+        }
+      })
     }
 
     @computed get getAddrList() {

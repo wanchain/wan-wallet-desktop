@@ -1,42 +1,63 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
-import { remote } from 'electron';
+import { Table } from 'antd';
+import { observer, inject } from 'mobx-react';
 
 import './index.less';
 
-const { revealMnemonic, generateMnemonic } = remote.require('./controllers');
+@inject(stores => ({
+  portfolioList: stores.portfolio.portfolioList,
+  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateCoinPrice: () => stores.portfolio.updateCoinPrice()
+}))
 
+@observer
 class Portfolio extends Component {
-  state = {
-    phrase: 'I am just a placeholder :-)',
-    show: 'hello world'
-  }
-
-  handleClick = () => {
-    let phrase = generateMnemonic('123');
-    if(phrase.code) {
-      this.setState({
-        phrase: phrase.result
-      })
+  
+  columns = [
+    {
+      title: 'NAME',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <div><img /><a>{text}</a></div>,
+    }, {
+      title: 'PRICE',
+      dataIndex: 'price',
+      key: 'price',
+    }, {
+      title: 'BALANCE',
+      dataIndex: 'balance',
+      key: 'balance',
+    }, {
+      title: 'VALUE',
+      dataIndex: 'value',
+      key: 'value'
+    }, {
+      title: 'PORTFOLIO',
+      dataIndex: 'portfolio',
+      key: 'portfolio',
     }
+  ]
+
+  componentWillMount() {
+    this.props.changeTitle('Account Information');
   }
 
-  revealPhrase = () => {
-    let phrase = revealMnemonic('123');
-    this.setState({
-      show: phrase
-    })
+  componentDidMount() {
+    this.timer = setInterval(() =>{
+      this.props.updateCoinPrice();
+    }, 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   render() {
-      return (
-          <div>
-              <h1 className="portfolio">{this.state.phrase}</h1>
-              <Button type="primary" onClick={this.handleClick}>Give me a phrase!!!</Button>
-              <Button type="primary" onClick={this.revealPhrase}>get Revealed</Button>
-              <h1 className="portfolio">{this.state.show}</h1>
-          </div>
-      );
+    return (
+        <div>
+            <Table columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
+        </div>
+    );
   }
 }
 
