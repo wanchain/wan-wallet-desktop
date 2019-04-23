@@ -1,5 +1,7 @@
 const _ = require('lodash')
-const { ipcRenderer } = require('electron')
+
+const { ipcRenderer, remote: { Menu } } = require('electron')
+
 const ENDPOINTs = require('./routes')
 
 ipcRenderer.send('main_setWindowId');
@@ -52,6 +54,18 @@ window.addEventListener('message', function(event) {
         }
     }
 
+})
+
+window.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    Menu
+        .buildFromTemplate([
+            { label: 'Cut', role: 'cut' },
+            { label: 'Copy', role: 'copy' },
+            { label: 'Paste', role: 'paste' },
+            { label: 'Select All', role: 'selectall' },
+        ])
+        .popup()
 })
 
 const wand = {
