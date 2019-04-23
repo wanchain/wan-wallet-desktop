@@ -39,7 +39,7 @@ class WanAddress {
     @action getUserAccountFromDB() {
       wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
         if (err) console.log('error printed inside callback: ', err)
-        if(Object.keys(ret.accounts).length) {
+        if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           Object.keys(info).forEach((item) => {
             self.addrInfo[info[item]['1']['addr']] = {
