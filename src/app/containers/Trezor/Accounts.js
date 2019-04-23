@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button, Table } from "antd";
+import { Table } from "antd";
 import "./index.less";
+import SendNormalTrans from 'components/SendNormalTrans';
 
 
 class Accounts extends Component {
@@ -10,15 +11,11 @@ class Accounts extends Component {
       { title: "Name", dataIndex: "name" },
       { title: "Address", dataIndex: "address" },
       { title: "Balance", dataIndex: "balance" },
-      { title: "Action", render: () => <a href="javascript:;">Send</a> }
+      { title: "Action", render: (record) => <div> <SendNormalTrans from={record.address} /> </div> }
     ];
     this.state = {
       addresses: []
     }
-  }
-
-  setAddresses = (addresses) => {
-    this.setState({ addresses: addresses });
   }
 
   render() {

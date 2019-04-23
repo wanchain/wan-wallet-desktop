@@ -9,7 +9,10 @@ class SendNormalTrans extends Component {
     super(props);
     this.state = {
       loading: false,
-      visible: false
+      visible: false,
+      minGasPrice: 180,
+      gasPrice: 200,
+      gasLimit: 21000,
     }
   }
   CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
@@ -26,27 +29,32 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = () => {
-    const form = this.formRef.props.form;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
-      form.resetFields();
-      this.setState({ loading: true });
-      setTimeout(() => {
-        this.setState({ loading: false, visible: false });
-      }, 3000);
-    });
+  handleSend = (params) => {
+    console.log("send normal", params)
+    this.setState({ visible: false });
+
   }
 
   render() {
     const CollectionCreateForm = this.CollectionCreateForm;
+    const from = this.props.from;
     
+    let gasLimit = 300000;
+    let gasPrice = this.state.gasPrice;
+
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>Send</Button>
-        <CollectionCreateForm wrappedComponentRef={this.saveFormRef} visible={this.state.visible} loading={this.state.loading} onCancel={this.handleCancel} onSend={this.handleSend}/>
+        <CollectionCreateForm
+        wrappedComponentRef={this.saveFormRef}
+        visible={this.state.visible}
+        minGasPrice={this.state.minGasPrice}
+        maxGasPrice={gasPrice * 2}
+        gasPrice={gasPrice}
+        gasLimit={gasLimit}
+        from={from}
+        onCancel={this.handleCancel}
+        onSend={this.handleSend}/>
       </div>
     );
   }

@@ -11,6 +11,7 @@ class App extends Component {
   componentWillMount() {
     stores.session.getMnemonic();
     stores.wanAddress.getUserAccountFromDB();
+    stores.portfolio.updateCoinPrice()
   }
   
   render() {

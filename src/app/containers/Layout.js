@@ -6,7 +6,7 @@ import './Layout.less';
 import SideBar from './Sidebar';
 import CreateMnemonic from './CreateMnemonic';
 import MHeader from 'components/MHeader';
-
+import MFooter from 'components/MFooter';
 
 @inject(stores => ({
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
@@ -14,30 +14,26 @@ import MHeader from 'components/MHeader';
 
 @observer
 export default class Layout extends Component {
-    state = {
-      page: 'hello'
-    };
-
-    render() {
-      var { hasMnemonicOrNot } = this.props;
-
-
-      // if (!hasMnemonicOrNot) {
-      //   return <CreateMnemonic />;
-      // }
-
-      return (
-        <Row className="container">
-          <Col span={4} className="nav-left">
-            <SideBar />
-          </Col>
-          <Col span={20} className="main">
-            <MHeader />
-            <Row className="content">
-                {this.props.children}
-            </Row>
-          </Col>
-        </Row>
-      );
+  render() {
+    const { hasMnemonicOrNot } = this.props;
+    console.log( hasMnemonicOrNot )
+    if (!hasMnemonicOrNot) {
+      return <CreateMnemonic />;
     }
+
+    return (
+      <Row className="container">
+        <Col span={4} className="nav-left">
+          <SideBar />
+        </Col>
+        <Col span={20} className="main">
+          <MHeader />
+          <Row className="content">
+              {this.props.children}
+          </Row>
+          <MFooter />
+        </Col>
+      </Row>
+    );
+  }
 }

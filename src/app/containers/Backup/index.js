@@ -3,8 +3,6 @@ import { Button, Card, Modal, Input, message } from 'antd';
 import './index.less';
 import { clipboard, remote } from 'electron';
 
-const { revealMnemonic } = remote.require('./controllers')
-
 class Backup extends Component {
   state = {
     visible: false,
@@ -47,7 +45,11 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
-    this.handlePhraseResult(revealMnemonic(pwd));
+    wand.request('phrase_reveal', {pwd: pwd}, function(err, val) {
+      console.log(val)
+      if (err) console.log('error printed inside callback: ', err)
+      this.handlePhraseResult(val);
+    }.bind(this))
   }
 
   handlePhraseResult = (phrase) => {
