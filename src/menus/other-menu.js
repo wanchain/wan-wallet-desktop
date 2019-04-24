@@ -1,6 +1,7 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { app, shell } from 'electron'
+import { updater } from '~/src/modules'
 
 export default (i18n) => {
     const menu = []
@@ -130,6 +131,14 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
             {
+                label: i18n.t(
+                    'main.applicationMenu.window.toggle'
+                ),
+                accelerator: 'Alt+CommandOrControl+I',
+                role: 'toggledevtools'
+            },
+            { type: 'separator' },
+            {
                 label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
                 role: 'minimize',
@@ -154,6 +163,10 @@ export default (i18n) => {
         role: 'help',
         submenu: [
             {
+                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+                click: updater.run
+            },
+            {
                 label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.webURL'))
@@ -164,10 +177,6 @@ export default (i18n) => {
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
                 }
-            },
-            {
-                label: i18n.t('main.applicationMenu.help.toggle'),
-                click: () => {}
             }
         ]
     }

@@ -82,9 +82,9 @@ async function createWindow () {
   mainWindow.on('ready', () => {
     logger.info('showing main window')
     mainWindow.show()
-    if (!setting.isDev) {
-      registerAutoUpdaterHandlersAndRun()
-    }
+    // if (!setting.isDev) {
+    //   registerAutoUpdaterHandlersAndRun()
+    // }
   })
 
   mainWindow.on('closed', function () {

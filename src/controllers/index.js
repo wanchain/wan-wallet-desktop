@@ -218,6 +218,18 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
 
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break
+
+        case 'raw':
+            const { raw, chainType } = payload
+            try {
+                ret = await ccUtil.sendTrans(raw, chainType) 
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

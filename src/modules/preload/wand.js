@@ -48,7 +48,11 @@ module.exports = (function() {
 
             const { _type, endpoint, payload } = msg
 
-            if (_type === 'renderer_windowMessage' || _type === 'renderer_makeRequest') {
+            if (_type === 'renderer_windowMessage' 
+                || _type === 'renderer_makeRequest'
+                // || _type === 'renderer_updateMsg'
+                ) 
+            {
                 if (_type === 'renderer_windowMessage') {
                     const [route, action] = endpoint.split('_')
                     const { err, data } = payload
@@ -68,7 +72,10 @@ module.exports = (function() {
                         ipcRenderer.send(route, action, payload)
                     }
 
-                }
+                } 
+                // else if (_type === 'renderer_updateMsg') {
+                //     window.updateProgress = payload
+                // }
             }
         }
 

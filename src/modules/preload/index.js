@@ -6,7 +6,7 @@ const _wand = require('./wand').getInstance()
 window.addEventListener('message', _wand.wndMsgHandler)
 window.addEventListener('contextmenu', _wand.contextMenuHandler)
 
-// expose wand singlton
+// expose wand singleton
 window.wand = _wand
 
 window.require = require
