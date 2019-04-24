@@ -1,7 +1,59 @@
 {
-    "appName": "钱包",
-    "hideApp": "Hide WandWallet",
-    "hideOthers": "Hide Others",
-    "showAll": "Show All",
-    "quitApp": "Quit"
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{app}}",
+                "about": "关于 {{app}}",
+                "services": "服务",
+                "checkForUpdate": "检查更新",
+                "hide": "隐藏 {{ app }}",
+                "hideOthers": "隐藏其他",
+                "showAll": "显示全部",
+                "quit": "退出 {{ app }}"
+            },
+            "edit": {
+                "label": "编辑",
+                "undo": "撤销",
+                "redo": "重做",
+                "cut": "剪切",
+                "copy": "复制",
+                "paste": "粘贴",
+                "selectAll": "选择全部"
+            },
+            "setting": {
+                "label": "设置",
+                "network": {
+                    "label": "网络",
+                    "main": "Wanchain 主网",
+                    "test": "Wanchain 测试网"
+                },
+                "mode": {
+                    "label": "模式",
+                    "full": "全节点钱包",
+                    "light": "轻钱包"
+                },
+                "lang": {
+                    "label": "语言",
+                    "code": {
+                        "en": "英文",
+                        "zh": "中文简体"
+                    }
+                }
+            },
+            "window": {
+                "label": "窗口",
+                "toggle": "开发者工具",
+                "minimize": "最小化",
+                "close": "关闭",
+                "front": "前置全部窗口"
+            },
+            "help": {
+                "label": "帮助",
+                "web": "万维链官网",
+                "explorer": "万维链区块链浏览器",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org"
+            }
+        }
+    }
 }

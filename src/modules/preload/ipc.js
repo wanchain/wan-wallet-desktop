@@ -9,5 +9,14 @@ ipcRenderer.on('renderer_windowMessage', function() {
     })
 })
 
+ipcRenderer.on('renderer_updateMsg', function(event, text) {
+    window.updateProgress = text
+    // postMessage({
+    //     _type: 'renderer_updatewMsg',
+    //     endpoint: '',
+    //     payload: text
+    // })
+})
+
 ipcRenderer.send('main_setWindowId');
 

@@ -1,6 +1,7 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
+import { updater } from '~/src/modules'
 
 export default (i18n) => {
     const menu = []
@@ -17,6 +18,10 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.app.services'),
                 role: 'services',
+            },
+            {
+                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+                click: updater.run
             },
             { type: 'separator' },
             {
@@ -37,7 +42,7 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
                 accelerator: 'Command+Q',
-                click() { app.quit() }, 
+                click() { app.quit() }
             },
         ]
     }
@@ -168,6 +173,20 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
             {
+                label: i18n.t(
+                    'main.applicationMenu.window.toggle'
+                ),
+                accelerator: 'Alt+CommandOrControl+I',
+                role: 'toggledevtools',
+                // click: () => {
+                //     const curWindow = BrowserWindow.getFocusedWindow()
+                //     if (curWindow) {
+                //         curWindow.toggleDevTools()
+                //     }
+                // }
+            },
+            { type: 'separator' },
+            {
                 label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
                 role: 'minimize',
@@ -202,10 +221,6 @@ export default (i18n) => {
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
                 }
-            },
-            {
-                label: i18n.t('main.applicationMenu.help.toggle'),
-                click: () => {}
             }
         ]
     }
