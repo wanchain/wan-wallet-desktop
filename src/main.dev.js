@@ -37,7 +37,9 @@ async function createWindow () {
       height: mainWindowState.height,
       show: true,
       webPreferences: {
-        nodeIntegration: false,
+        /** TODO */
+        nodeIntegration: true,
+        nativeWindowOpen: false,
         // contextIsolation: true,
         preload: `${__dirname}/modules/preload`
       }

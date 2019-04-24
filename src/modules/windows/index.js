@@ -30,7 +30,8 @@ class Window extends EventEmitter {
             webPreferences: {
                 webaudio: true,
                 webgl: false,
-                webSecurity: false,
+                /** TODO */
+                // webSecurity: false,
                 textAreasAreResizable: true
             }
         }
@@ -87,7 +88,6 @@ class Window extends EventEmitter {
 
     send() {
         if (this.isClosed) {
-            // if (this.isClosed || !this.isContentReady) {
             return
         }
 

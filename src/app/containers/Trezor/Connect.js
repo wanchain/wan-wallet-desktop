@@ -41,6 +41,7 @@ class Connect extends Component {
     TrezorConnect.getPublicKey({
       path: this.wanPath
     }).then((result) => {
+      console.log(result)
       if (result.success) {
         this.publicKey = result.payload.publicKey;
         this.chainCode = result.payload.chainCode;

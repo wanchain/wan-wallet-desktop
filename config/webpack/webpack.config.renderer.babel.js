@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import { WDS_PORT, isDev } from '../common';
 const autoprefixer = require('autoprefixer');
 const publicPath = `http://localhost:${WDS_PORT}/dist`;
-
+import { spawn } from 'child_process';
 
 function resolve (dir) {
   return path.join(__dirname, '../../', dir)
@@ -131,17 +131,19 @@ export default {
         port: WDS_PORT,
         compress: true,
         hot: true,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-        // after: function() {
-        //     if (process.env.NODE_ENV === 'development') {
-        //         spawn('npm', ['run', 'dev:main'], {
-        //             shell: true,
-        //             env: process.env,
-        //             stdio: 'inherit'
-        //           })
-        //             .on('close', code => process.exit(code))
-        //             .on('error', spawnError => console.error(spawnError));
-        //     }
-        // }
+        headers: { 'Access-Control-Allow-Origin': '*' },
+
+        /** TODO */
+        after: function() {
+            if (process.env.NODE_ENV === 'development') {
+                spawn('npm', ['run', 'dev:main'], {
+                    shell: true,
+                    env: process.env,
+                    stdio: 'inherit'
+                  })
+                    .on('close', code => process.exit(code))
+                    .on('error', spawnError => console.error(spawnError));
+            }
+        }
     }
 }

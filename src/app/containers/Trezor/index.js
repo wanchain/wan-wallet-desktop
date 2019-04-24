@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Input, Checkbox, Table } from 'antd';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
-const { TRANSPORT_EVENT, UI, UI_EVENT, DEVICE_EVENT, DEVICE } = require('trezor-connect');
 import Connect from './Connect';
 import Accounts from './Accounts';
-const CheckboxGroup = Checkbox.Group;
 
 // Initialize TrezorConnect 
 TrezorConnect.init({
@@ -36,6 +33,7 @@ class Trezor extends Component {
       addresses: [{ key: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" },
       { key: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" }
       ],
+      // addresses: []
     };
   }
 

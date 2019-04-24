@@ -13,6 +13,7 @@ class NormalTransForm extends Component {
       advancedVisible: false,
       gasPrice: 200,
       gasLimit: 21000,
+      nonce: 0,
       advanced: false
     };
     this.advancedOptionForm = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
@@ -30,12 +31,13 @@ class NormalTransForm extends Component {
     });
   }
 
-  handleSave = (gasPrice, gasLimit) => {
-    console.log(gasLimit, gasPrice);
+  handleSave = (gasPrice, gasLimit, nonce) => {
+    console.log(gasLimit, gasPrice, nonce);
     this.setState({
       advancedVisible: false,
       gasPrice: gasPrice,
       gasLimit: gasLimit,
+      nonce: nonce,
       advanced: true
     });
   }
@@ -49,7 +51,9 @@ class NormalTransForm extends Component {
       let params = {
         gasPrice: this.state.gasPrice,
         gasLimit: this.state.gasLimit,
+        nonce: this.state.nonce,
         from: this.props.from,
+        path: this.props.path,
         to: form.getFieldValue("to"),
         amount: form.getFieldValue('amount')
       }
@@ -61,12 +65,12 @@ class NormalTransForm extends Component {
     });
   }
 
-  handleClick = (gasPrice, gasLimit) => {
-    this.setState({ gasPrice: gasPrice, gasLimit: gasLimit });
+  handleClick = (gasPrice, gasLimit, nonce) => {
+    this.setState({ gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce });
   }
 
   render() {
-    const { loading, onCancel, form, visible, gasPrice, gasLimit, minGasPrice, maxGasPrice, from } = this.props;
+    const { loading, onCancel, form, visible, gasPrice, gasLimit, nonce, minGasPrice, maxGasPrice, from } = this.props;
     const { getFieldDecorator } = form;
     const AdvancedOptionForm = this.advancedOptionForm;
     let averageGasPrice = Math.max(minGasPrice, gasPrice);
@@ -78,6 +82,7 @@ class NormalTransForm extends Component {
     if (this.state.advanced) {
       savedFee = new BigNumber(Math.max(minGasPrice, this.state.gasPrice)).times(this.state.gasLimit).div(BigNumber(10).pow(9));
     }
+    console.log("noram rander", nonce)
 
     return (
       <div>
@@ -109,9 +114,9 @@ class NormalTransForm extends Component {
                 this.state.advanced ?
                   <Input disabled={true} style={{ color: 'rgba(0,0,0,.25)' }} /> :
                   <Radio.Group>
-                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
                   </Radio.Group>
               )}
             </Form.Item>
@@ -123,6 +128,7 @@ class NormalTransForm extends Component {
           minGasPrice={minGasPrice}
           gasPrice={gasPrice}
           gasLimit={gasLimit}
+          nonce={nonce}
           onCancel={this.handleCancel}
           onSave={this.handleSave}
         />
