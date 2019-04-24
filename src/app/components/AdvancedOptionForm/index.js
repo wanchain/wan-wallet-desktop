@@ -8,7 +8,27 @@ class AdvancedOptionForm extends Component {
     super(props);
     this.state = {
       gasPrice: this.props.gasPrice,
-      gasLimit: this.props.gasLimit
+      gasLimit: this.props.gasLimit,
+      nonce: this.props.nonce
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("next", nextProps)
+    if (nextProps.gasPrice !== this.props.gasPrice) {
+      this.setState({
+        gasPrice: nextProps.gasPrice
+      });
+    }
+    if (nextProps.gasLimit !== this.props.gasLimit) {
+      this.setState({
+        gasLimit: nextProps.gasLimit
+      });
+    }
+    if (nextProps.nonce !== this.props.nonce) {
+      this.setState({
+        nonce: nextProps.nonce
+      });
     }
   }
 
@@ -18,6 +38,10 @@ class AdvancedOptionForm extends Component {
 
   handleGasLimitChange = (value) => {
     this.setState({ gasLimit: value });
+  }
+
+  handleNonceChange = (value) => {
+    this.setState({ nonce: value });
   }
 
   render() {
@@ -32,7 +56,7 @@ class AdvancedOptionForm extends Component {
         onCancel={onCancel}
         onOk={onSave}
         footer={[
-          <Button key="submit" type="primary" onClick={() => onSave(this.state.gasPrice, this.state.gasLimit)}>Save</Button>,
+          <Button key="submit" type="primary" onClick={() => onSave(this.state.gasPrice, this.state.gasLimit, this.state.nonce)}>Save</Button>,
           <Button key="back" className="cancel" onClick={onCancel}>Cancel</Button>,
         ]}
       >
@@ -41,14 +65,20 @@ class AdvancedOptionForm extends Component {
             getFieldDecorator(
               'gasPrice', { initialValue: this.state.gasPrice },
               { rules: [{ required: true, message: 'Gas price is incorrect' }] })
-              (<InputNumber min={minGasPrice} onChange={this.handleGasPriceChange} prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)
+              (<InputNumber min={minGasPrice} onChange={this.handleGasPriceChange} />)
           }
           </Form.Item>
           <Form.Item label="Gas Limit">
             {getFieldDecorator(
               'gasLimit', { initialValue: this.state.gasLimit },
               { rules: [{ required: true, message: 'Gas limit is incorrect' }] })
-              (<InputNumber onChange={this.handleGasLimitChange} prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+              (<InputNumber onChange={this.handleGasLimitChange} />)}
+          </Form.Item>
+          <Form.Item label="Nonce">
+            {getFieldDecorator(
+              'nonce', { initialValue: this.state.nonce },
+              { rules: [{ required: true, message: 'Nonce is incorrect' }] })
+              (<InputNumber onChange={this.handleNonceChange} />)}
           </Form.Item>
         </Form>
       </Modal>

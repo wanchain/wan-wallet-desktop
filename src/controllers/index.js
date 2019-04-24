@@ -125,8 +125,8 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            
-            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
+            /** TODO */
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: {['0x' + payload.addr]: balance}})
             break
     }
 })
