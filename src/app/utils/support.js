@@ -13,3 +13,7 @@ export function getBalanceObj(arr) {
   return newArr;
 }
 
+export function fromWei(data) {
+  return data / Math.pow(10, 18);
+}
+

@@ -3,7 +3,6 @@ import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
-import { accumulator } from 'utils/support';
 import { getBalance } from 'utils/helper';
 
 import { EditableFormRow, EditableCell } from './Rename';
@@ -18,8 +17,7 @@ const WAN = "m/44'/5718350'/0'/0/"
   getAddrList: stores.wanAddress.getAddrList,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateBalance: newBalanceArr => stores.wanAddress.updateBalance(newBalanceArr)
+  changeTitle: newTitle => stores.session.changeTitle(newTitle)
 }))
 
 @observer
@@ -53,30 +51,7 @@ class WanAccount extends Component {
   ];
 
   componentWillMount() {
-    this.updateBalanceForInter();
     this.props.changeTitle('Wallet Detail')
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => this.updateBalanceForInter(), 5000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
-
-  updateBalanceForInter = () => {
-
-    const promises = Object.keys(this.props.addrInfo).map(item => () => getBalance(item));
-    const series = promises.reduce(accumulator, Promise.resolve([]));
-
-    series.then(res => {
-      if(res.length) {
-        this.props.updateBalance(res);
-      }
-    }).catch(err => {
-      console.log(err);
-    });
   }
 
   creatAccount = () => {

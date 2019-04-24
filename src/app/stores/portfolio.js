@@ -1,6 +1,8 @@
 import { observable, action, computed, runInAction } from 'mobx';
 import axios from 'axios';
 
+import wanAddress from './wanAddress';
+
 class Portfolio {
   @observable coinPriceArr;
   @observable coinList = ['WAN', 'BTC', 'ETH'];
@@ -31,25 +33,35 @@ class Portfolio {
   }
 
   @computed get portfolioList() {
-    let list = self.coinList.map((item, index) => {
-      let obj = {};
-      return Object.defineProperties(obj, {
-        key: { value: `${ index + 1 }` },
-        name: { value: item },
-        price: { value: '$0', writable: true },
-        balance: { value: '0' } ,
-        value: { value: '0' },
-        portfolio: { value: 0 }
-      })
-    })
+    let list = self.coinList.map((item, index) => Object.defineProperties({}, {
+      key: { value: `${ index + 1 }` },
+      name: { value: item },
+      price: { value: '$0', writable: true },
+      balance: { value: '0', writable: true } ,
+      value: { value: '0', writable: true },
+      portfolio: { value: 0, writable: true }
+    }));
     if(self.coinPriceArr) {
-        Object.keys(self.coinPriceArr).forEach((item) => {
-          list.forEach((val) =>{
-            if(val.name === item) {
-              val.price = `$${self.coinPriceArr[item]['USD']}`
+      let amountValue = 0;
+      Object.keys(self.coinPriceArr).forEach((item) => {
+        list.forEach((val) =>{
+          if(val.name === item) {
+            if(item === 'WAN') {
+              val.balance = wanAddress.getAmount;
             }
-          })
-        })
+            val.price = `$${self.coinPriceArr[item]['USD']}`;
+            val.value = (val.price.substr(1) * val.balance).toFixed(2);
+            amountValue += parseFloat(val.value);
+          }
+        });
+      });
+      Object.keys(self.coinPriceArr).forEach((item) => {
+        list.forEach((val) =>{
+          if(val.name === item && amountValue !== 0) {
+            val.portfolio = `${ (val.value / amountValue * 100).toFixed(2) }%`;
+          }
+        });
+      });
     }
     return list;
   }
