@@ -8,15 +8,45 @@ import CreateMnemonic from './CreateMnemonic';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 
+import { accumulator } from 'utils/support';
+import { getBalance } from 'utils/helper';
+
 @inject(stores => ({
+  addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
+  updateWANBalance: newBalanceArr => stores.wanAddress.updateBalance(newBalanceArr)
 }))
 
 @observer
 export default class Layout extends Component {
+  componentWillMount() {
+    this.updateWANBalanceForInter();
+  }
+
+  componentDidMount() {
+    this.wantimer = setInterval(() => this.updateWANBalanceForInter(), 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.wantimer);
+  }
+
+  updateWANBalanceForInter = () => {
+    const promises = Object.keys(this.props.addrInfo).map(item => () => getBalance(item));
+    const series = promises.reduce(accumulator, Promise.resolve([]));
+
+    series.then(res => {
+      if(res.length) {
+        this.props.updateWANBalance(res);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
   render() {
     const { hasMnemonicOrNot } = this.props;
-    console.log( hasMnemonicOrNot )
+    
     if (!hasMnemonicOrNot) {
       return <CreateMnemonic />;
     }
