@@ -15,8 +15,7 @@ module.exports = (function() {
                 cb = arguments[1]
             }
     
-            const [route, action] = endpoint.split('_')
-    
+            const [route, action] = endpoint.split('_')    
             if (_.isEmpty(route && action) || !_.includes(routes[route], action)) {
                 return
             }
@@ -56,7 +55,6 @@ module.exports = (function() {
                 if (_type === 'renderer_windowMessage') {
                     const [route, action] = endpoint.split('_')
                     const { err, data } = payload
-
                     if (_callbacks[route] && !_.isEmpty(_callbacks[route][action])) {
                         _callbacks[route][action].forEach((cb) => cb(err, data))
 
@@ -93,7 +91,7 @@ module.exports = (function() {
 
         return {
             request: function(endpoint, payload, cb) {
-                _request(endpoint, payload, cb)
+                _request(...arguments)
             },
 
             wndMsgHandler: function(event) {
