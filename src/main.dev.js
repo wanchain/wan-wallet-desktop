@@ -48,12 +48,12 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
 
-  // mainWindow.load(`file://${__dirname}/app/index.html`)
+  mainWindow.load(`file://${__dirname}/app/index.html`)
   
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
-  mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
   
   // Open the DevTools.
   if (setting.isDev) {
