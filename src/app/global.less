@@ -3,6 +3,7 @@
   @com-modal-bg: #272840;
   @modal-input-bg: #1F2034;
   @com-white-color: #FFFFFF!important;
+  @com-handle-color: #40DABF!important;
   @com-white-opacity-color: rgba(255, 255, 255, .56)!important;
   @modal-input-focus: #414EDD;
   @button-blue-primary: linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
@@ -32,7 +33,7 @@
 }
 .container .content-wrap .ant-table-content .ant-table-body{
   padding: 0 20px;
-  background: @modal-input-bg;
+  background: @content-right-bg;
 }
 body .container .content{
   padding: 0;
@@ -75,6 +76,9 @@ body .container .content{
     color: @com-white-color;
     background: @button-blue-primary-hover;
   }
+  .ant-btn-round.ant-btn-lg{
+    padding: 0;
+  }
   // ant-modal-content
   .ant-modal-mask{
     position: fixed;
@@ -93,10 +97,19 @@ body .container .content{
   }
   .ant-modal-header{
     background: @com-modal-bg;
-    margin-right: 15px;
+    // margin-right: 15px;
+  }
+  .ant-modal-body{
+    width: 480px;
+    margin: 0 auto;
+    padding: 0;
+    p{
+      color: @com-handle-color;
+    }
   }
   .ant-form-item-label > label{
     color: @com-white-color;
+    margin-right: 10px;
   }
   .ant-input-affix-wrapper{
     width:480px;
@@ -110,17 +123,43 @@ body .container .content{
     color: @com-white-color;
     background: @modal-input-bg;
   }
+  .ant-input-number-input{
+    text-indent: 16px;
+  }
   .ant-input-number{
+    width: 480px;
+    height: 40px;
+    line-height: 40px;
     color: @com-white-color;
+    border: 1px solid @modal-input-bg;
+    border-radius: 20px;
     background: @modal-input-bg;
   }
   .ant-input-number-handler-wrap{
-
+    border-radius: 0 20px 20px 0;
+  }
+  .ant-form-item label{
+    margin-right: 10px!important;
   }
   .ant-radio-button-wrapper{
+    width: 150px;
     height: 50px;
+    line-height: 20px;
+    font-size: 14px;
+    padding: 4px 20px 0;
     color: @com-white-color;
+    border-radius: 4px!important;
+    border: 1px solid @modal-input-bg!important;
     background: @modal-input-bg;
+  }
+  .ant-radio-button-wrapper-checked:hover,
+  .ant-radio-button-wrapper-checked{
+    -webkit-box-shadow: -1px 0 0 0 @modal-input-bg!important;
+    box-shadow: -1px 0 0 0 @modal-input-bg!important;
+  }
+  .ant-radio-button-wrapper-checked:focus-within{
+    outline: none;
+    background:linear-gradient(90deg,rgba(74,76,114,1) 0%,rgba(61,62,95,1) 100%);
   }
   .ant-input[disabled]{
     color: @com-white-color;
@@ -187,11 +226,6 @@ body .container .content{
 }
 .ant-input-affix-wrapper .ant-input-prefix :not(.anticon), .ant-input-affix-wrapper .ant-input-suffix :not(.anticon){
   color: @com-white-color;
-}
-.ant-modal-body{
-  p{
-    color: @com-white-color;
-  }
 }
 .ant-tabs-bar{
   border: none!important;

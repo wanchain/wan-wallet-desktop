@@ -59,7 +59,7 @@ class AdvancedOptionForm extends Component {
           <Button key="back" className="cancel" onClick={onCancel}>Cancel</Button>,
         ]}
       >
-        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} className="transForm">
+        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
           <Form.Item label="Gas Price (GWIN)"> {
             getFieldDecorator(
               'gasPrice', { initialValue: this.state.gasPrice },

@@ -104,12 +104,12 @@ class NormalTransForm extends Component {
             <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
           ]}
         >
-          <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} className="transForm">
-            <Form.Item label="From">
+          <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+            <Form.Item label="">
               {getFieldDecorator('from', { initialValue: from }, { rules: [{ required: true, message: 'Address is incorrect' }] })
                 (<Input disabled={true} placeholder="Sender Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
-            <Form.Item label="To">
+            <Form.Item label="">
               {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect' }] })(<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="Amount">
