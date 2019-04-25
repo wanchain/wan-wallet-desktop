@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Table } from 'antd';
+import { Button, Card, Modal, Table, message } from 'antd';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
 import HwWallet from 'utils/HwWallet';
@@ -41,7 +41,6 @@ class Connect extends Component {
     TrezorConnect.getPublicKey({
       path: this.wanPath
     }).then((result) => {
-      console.log(result)
       if (result.success) {
         this.publicKey = result.payload.publicKey;
         this.chainCode = result.payload.chainCode;
@@ -49,7 +48,7 @@ class Connect extends Component {
         this.setState({ visible: true, addresses: addresses });
       }
     }).catch(error => {
-      console.error('get public key error', error)
+      message.warn('Get public key error');
     });
   }
 
@@ -86,17 +85,12 @@ class Connect extends Component {
   }
 
   rowSelection = {
-    // onChange: (selectedRowKeys, selectedRows) => {
-    //   console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    //   this.selectedAddrs = selectedRows;
-    // },
     onSelect: (record, selected, selectedRows) => {
       if (selected) {
         this.selectedAddrs.push(record);
       } else {
         this.delAddr(this.selectedAddrs, record);
       }
-      console.log("selected: ", this.selectedAddrs);
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
       if (selected) {
@@ -106,7 +100,6 @@ class Connect extends Component {
           this.delAddr(this.selectedAddrs, changeRows[i]);
         }
       }
-      console.log("selected: ", this.selectedAddrs);
     },
   };
 

@@ -46,9 +46,11 @@ class Backup extends Component {
 
   sendGetPhraseCmd = (pwd) => {
     wand.request('phrase_reveal', {pwd: pwd}, function(err, val) {
-      console.log(val)
-      if (err) console.log('error printed inside callback: ', err)
-      this.handlePhraseResult(val);
+      if (err) {
+        message.warn('Get phrase failed. Try again');
+      } else {
+        this.handlePhraseResult(val);
+      }
     }.bind(this))
   }
 

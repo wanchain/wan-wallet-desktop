@@ -57,8 +57,8 @@ class Portfolio extends Component {
 
   render() {
     return (
-        <div className="portfolioMain">
-            <Table columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
+        <div>
+            <Table className="portfolioMain" columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
         </div>
     );
   }

@@ -26,13 +26,20 @@ class NormalTransForm extends Component {
   }
 
   handleCancel = () => {
+    console.log("handleCancel")
     this.setState({
       advancedVisible: false,
     });
   }
 
+  onCancel = () => {
+    this.setState({
+      advanced: false
+    });
+    this.props.onCancel();
+  }
+
   handleSave = (gasPrice, gasLimit, nonce) => {
-    console.log(gasLimit, gasPrice, nonce);
     this.setState({
       advancedVisible: false,
       gasPrice: gasPrice,
@@ -70,7 +77,7 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { loading, onCancel, form, visible, gasPrice, gasLimit, nonce, minGasPrice, maxGasPrice, from } = this.props;
+    const { loading, form, visible, gasPrice, gasLimit, nonce, minGasPrice, maxGasPrice, from } = this.props;
     const { getFieldDecorator } = form;
     const AdvancedOptionForm = this.advancedOptionForm;
     let averageGasPrice = Math.max(minGasPrice, gasPrice);
@@ -82,7 +89,6 @@ class NormalTransForm extends Component {
     if (this.state.advanced) {
       savedFee = new BigNumber(Math.max(minGasPrice, this.state.gasPrice)).times(this.state.gasLimit).div(BigNumber(10).pow(9));
     }
-    console.log("noram rander", nonce)
 
     return (
       <div>
@@ -91,11 +97,11 @@ class NormalTransForm extends Component {
           closable={false}
           visible={visible}
           title="Transaction"
-          onCancel={onCancel}
+          onCancel={this.onCancel}
           onOk={this.handleSend}
           footer={[
             <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
-            <Button key="back" className="cancel" onClick={onCancel}>Cancel</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
           ]}
         >
           <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} className="transForm">

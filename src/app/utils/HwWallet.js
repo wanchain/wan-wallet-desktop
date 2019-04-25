@@ -4,7 +4,6 @@ const wanUtil = require('wanchainjs-util');
 class HwWallet {
   constructor(publicKey, chainCode, path) {
     this.hdk = new HDKey();
-    console.log(publicKey);
     this.hdk.publicKey = Buffer.from(publicKey, 'hex');
     this.hdk.chainCode = Buffer.from(chainCode, 'hex');
     this.dPath = path;
@@ -21,9 +20,6 @@ class HwWallet {
     return addresses;
   }
 
-//   Wallet.prototype.getAddressString = function () {
-//     return '0x' + this.getAddress().toString('hex')
-// }
 }
 
 export default HwWallet;

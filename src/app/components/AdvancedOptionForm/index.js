@@ -14,7 +14,6 @@ class AdvancedOptionForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("next", nextProps)
     if (nextProps.gasPrice !== this.props.gasPrice) {
       this.setState({
         gasPrice: nextProps.gasPrice

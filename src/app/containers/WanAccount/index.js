@@ -3,7 +3,6 @@ import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
-import { getBalance } from 'utils/helper';
 
 import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -36,7 +35,7 @@ class WanAccount extends Component {
     {
       title: 'ADDRESS',
       dataIndex: 'address',
-      render: text => <div>{text}<CopyAndQrcode addr={text}/></div>
+      render: text => <div className="addrText">{text}<CopyAndQrcode addr={text}/></div>
     }, 
     {
       title: 'BALANCE',
@@ -66,13 +65,11 @@ class WanAccount extends Component {
       wand.request('address_get', { walletID: 1, chainType: 'WAN', start: addrLen, end: addrLen + 1 }, function(err, val_address_get) {
         if (!err) {
           let ret = val_address_get;
-          wand.request('account_create', { walletID: 1, path: `${WAN}${addrLen}`, meta: {name: `Account${addrLen+1}`, addr: `0x${val_address_get.addresses[0].address}`}}, async function(err, val_account_create) {
+          wand.request('account_create', { walletID: 1, path: `${WAN}${addrLen}`, meta: {name: `Account${addrLen+1}`, addr: `0x${val_address_get.addresses[0].address}`}}, function(err, val_account_create) {
             if (!err && val_account_create) {
               let addressInfo = ret.addresses[0];
-              let balance = await getBalance(`0x${addressInfo.address}`);
               addressInfo.start = addressInfo.index;
               addressInfo.wanaddr = `0x${addressInfo.address}`;
-              addressInfo.balance = balance[addressInfo.wanaddr];
               addAddress(addressInfo);
               self.setState({
                 bool: true
@@ -129,7 +126,7 @@ class WanAccount extends Component {
           <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
-            <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>＋ Create</Button>
           </Col>
         </Row>
         <Row className="mainBody">
