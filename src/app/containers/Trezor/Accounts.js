@@ -11,10 +11,10 @@ class Accounts extends Component {
   constructor(props) {
     super(props);
     this.columns = [
-      { title: "Name", dataIndex: "name" },
-      { title: "Address", dataIndex: "address" },
-      { title: "Balance", dataIndex: "balance" },
-      { title: "Action", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} /> </div> }
+      { title: "NAME", dataIndex: "name" },
+      { title: "ADDRESS", dataIndex: "address" },
+      { title: "BALNCE", dataIndex: "balance" },
+      { title: "ACTION", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} /> </div> }
     ];
   }
 
