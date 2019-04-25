@@ -4,6 +4,7 @@ import "./index.less";
 import SendNormalTrans from 'components/SendNormalTrans';
 import TrezorConnect from 'trezor-connect';
 import BigNumber from "bignumber.js";
+const wanTx = require('wanchainjs-tx');
 
 
 class Accounts extends Component {
@@ -18,52 +19,53 @@ class Accounts extends Component {
   }
 
   handleSend = (params) => {
-    console.log("account", params)
-    // wand.request('address_getNonce', { addr: params.from, chainType: 'WAN' }, (err, val) => {
-    //   console.log(this.props.from)
-    //   console.log(val);
-    //   console.log("err", err)
-    // });
-    let transaction = {
+    let rawTx = {
       to: params.to,
-      value: new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
+      value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
       data: '',
-      chainId: 1,
+      // chainId: 1,
+      chainId: 3,  /** TODO */
       nonce: "0x0",
-      gasLimit: params.gasLimit.toString(16),
-      gasPrice: new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
-      txType: 1,
+      gasLimit: '0x' + params.gasLimit.toString(16),
+      gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
+      Txtype: 1,
     };
-    // let transaction = {
-    //   to: "0xeD1Baf7289c0acef52dB0c18E1198768EB06247e",
-    //   value: "0x06f05b59d3b20000",
-    //   data: '',
-    //   chainId: 1,
-    //   nonce: "0x0",
-    //   gasLimit: "0x5208",
-    //   gasPrice: "0x2a600b9c00",
-    //   txType: 1,
-    // };
-
-    console.log("trans", transaction)
 
     TrezorConnect.ethereumSignTransaction({
       path: params.path,
-      transaction: transaction
+      transaction: {
+        to: rawTx.to,
+        value: rawTx.value,
+        data: rawTx.data,
+        chainId: rawTx.chainId,
+        nonce: rawTx.nonce,
+        gasLimit: rawTx.gasLimit,
+        gasPrice: rawTx.gasPrice,
+        txType: rawTx.Txtype,
+      },
     }).then((result) => {
-      console.log(result)
       if (!result.success) {
         message.warn("Sign transaction failed. Please try again");
         return;
       }
 
-      transaction.v = result.payload.v;
-      transaction.r = result.payload.r;
-      transaction.s = result.payload.s;
-      let eTx = new ethUtil.Tx(transaction);
-      // rawTx.rawTx = JSON.stringify(rawTx);
-      let signedTx = '0x' + eTx.serialize().toString('hex')
+      rawTx.v = result.payload.v;
+      rawTx.r = result.payload.r;
+      rawTx.s = result.payload.s;
+      console.log("trans", rawTx)
+      let eTx = new wanTx(rawTx);
+      let signedTx = '0x' + eTx.serialize().toString('hex');
+      console.log(signedTx);
+      wand.request('transaction_raw', { raw: signedTx, chainType: 'WAN' }, (err, val) => {
+        if (err) {
+          message.warn(err);
+        } else {
+          console.log("Tx hash", val);
+        }
+      });
     });
+
+    this.setState({ visible: true });
   }
 
   render() {
