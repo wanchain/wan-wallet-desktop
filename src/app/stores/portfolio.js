@@ -5,7 +5,7 @@ import wanAddress from './wanAddress';
 
 class Portfolio {
   @observable coinPriceArr;
-  @observable coinList = ['WAN', 'BTC', 'ETH'];
+  @observable coinList = ['WAN'];
 
   @action addCoin(newCoin) {
     if(self.coinList.indexOf(newCoin) === -1) {

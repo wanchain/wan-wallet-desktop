@@ -3,6 +3,7 @@ import './index.less';
 import TrezorConnect from 'trezor-connect';
 import Connect from './Connect';
 import Accounts from './Accounts';
+import { observer, inject } from 'mobx-react';
 
 // Initialize TrezorConnect 
 TrezorConnect.init({
@@ -25,6 +26,11 @@ TrezorConnect.init({
     console.error('TrezorConnect init error', error)
   });
 
+@inject(stores => ({
+  changeTitle: newTitle => stores.session.changeTitle(newTitle)
+}))
+
+@observer
 class Trezor extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +41,10 @@ class Trezor extends Component {
       ],
       // addresses: []
     };
+  }
+
+  componentWillMount() {
+    this.props.changeTitle('Trezor')
   }
 
   resetStateVal = () => {
