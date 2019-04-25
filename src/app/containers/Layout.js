@@ -48,9 +48,9 @@ export default class Layout extends Component {
     const { hasMnemonicOrNot } = this.props;
 
     /** TODO */
-    // if (!hasMnemonicOrNot) {
-    //   return <CreateMnemonic />;
-    // }
+    if (!hasMnemonicOrNot) {
+      return <CreateMnemonic />;
+    }
 
     return (
       <Row className="container">

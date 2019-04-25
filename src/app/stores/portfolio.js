@@ -46,19 +46,21 @@ class Portfolio {
       Object.keys(self.coinPriceArr).forEach((item) => {
         list.forEach((val) =>{
           if(val.name === item) {
-            if(item === 'WAN') {
-              val.balance = wanAddress.getAmount;
+            switch(item) {
+              case 'WAN':
+                val.balance = wanAddress.getAmount;
+                break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
-            val.value = (val.price.substr(1) * val.balance).toFixed(2);
-            amountValue += parseFloat(val.value);
+            val.value = '$'+ (val.price.substr(1) * val.balance).toFixed(2);
+            amountValue += parseFloat(val.value.substr(1));
           }
         });
       });
       Object.keys(self.coinPriceArr).forEach((item) => {
         list.forEach((val) =>{
           if(val.name === item && amountValue !== 0) {
-            val.portfolio = `${ (val.value / amountValue * 100).toFixed(2) }%`;
+            val.portfolio = `${ (val.value.substr(1) / amountValue * 100).toFixed(2) }%`;
           }
         });
       });

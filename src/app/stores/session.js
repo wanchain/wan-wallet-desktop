@@ -4,7 +4,11 @@ class Session {
   @observable pageTitle = 'Wanchain Wallet';
   @observable hasMnemonicOrNot = false;
 
-  @action getMnemonic() {
+  @action getMnemonic(ret) {
+    if(ret) {
+      self.hasMnemonicOrNot = ret;
+      return;
+    }
     wand.request('phrase_has', null, function(err, val) {
       if (!err) {
         self.hasMnemonicOrNot = val
