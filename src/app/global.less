@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
-  font-family: RobotoCondensed-Bold;
+  // font-family: "Roboto";
   font-weight: bold;
   ul,li{
     list-style: none;
@@ -12,7 +12,7 @@ body {
 @content-right-bg: #1A1B2C;
 @com-modal-bg: #272840;
 @modal-input-bg: #1F2034;
-@com-white-color: #FFFFFF;
+@com-white-color: #FFFFFF!important;
 @modal-input-focus: #414EDD;
 @button-blue-primary: linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
 @button-gray-cancel: linear-gradient(90deg,#4A4C72 0%,#3D3E5F 100%);
@@ -38,6 +38,9 @@ body {
     background:rgba(31,32,52,1);
     border-radius:4px;
   }
+  button.ant-btn.ant-btn-primary{
+    font-weight: bold;
+  }
   // button
   .ant-btn-primary{
     background: @button-blue-primary;
@@ -45,7 +48,7 @@ body {
   }
   // cancel button
   .cancel{
-    weight: 150px;
+    width: 150px;
     height:40px;
     background: @button-gray-cancel;
     border-radius:20px;
@@ -77,6 +80,10 @@ body {
   }
   .ant-modal-header{
     background: @com-modal-bg;
+    margin-right: 15px;
+  }
+  .ant-form-item-label > label{
+    color: @com-white-color;
   }
   .ant-input-affix-wrapper{
     width:480px;
@@ -89,6 +96,23 @@ body {
     font-size: 16px;
     color: @com-white-color;
     background: @modal-input-bg;
+  }
+  .ant-input-number{
+    color: @com-white-color;
+    background: @modal-input-bg;
+  }
+  .ant-input-number-handler-wrap{
+
+  }
+  .ant-radio-button-wrapper{
+    height: 50px;
+    color: @com-white-color;
+    background: @modal-input-bg;
+  }
+  .ant-input[disabled]{
+    color: @com-white-color;
+    background: @modal-input-bg;
+    opacity: .5;
   }
   .ant-input:focus{
     border: 2px solid @modal-input-focus!important;
@@ -117,7 +141,7 @@ body {
       color: @com-white-color;
     }
     .ant-btn{
-      weight: 150px;
+      width: 150px;
       height:40px;
       background: @button-gray-cancel;
       border-radius:20px;
@@ -127,5 +151,66 @@ body {
       color: @com-white-color;
       background: @button-gray-cancel-hover;
     }
+    .ant-tabs-bar{
+      border: none;
+    }
+    .ant-tabs-nav .ant-tabs-tab{
+      color: @com-white-color;
+      opacity:0.3;
+    }
+    .ant-tabs-nav .ant-tabs-tab-active{
+      color: @com-white-color;
+    }
+    .ant-tabs-nav .ant-tabs-tab:active{
+      color: @com-white-color;
+      opacity:1;
+    }
   }
+}
+.ant-table{
+  color: #ffffff!important;
+}
+.ant-tabs-bar{
+  border: none;
+}
+.ant-table-thead > tr{
+  height: 110px;
+  background: @content-right-bg!important;
+}
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+  font-size: 16px;
+}
+body .ant-table-thead > tr > th{
+  font-weight: bold;
+  font-size: 20px;
+}
+body .ant-table-tbody > tr{
+  border-radius: 8px;
+  border-bottom: 10px solid @content-right-bg;
+}
+.container .content{
+  padding: 0 20px 20px!important;
+}
+.ant-input-affix-wrapper .ant-input-prefix :not(.anticon), .ant-input-affix-wrapper .ant-input-suffix :not(.anticon){
+  color: #fff;
+}
+.ant-modal-body{
+  p{
+    color: #FFF;
+  }
+}
+.ant-tabs-bar{
+  border: none!important;
+}
+.ant-tabs-nav .ant-tabs-tab-active{
+  color: #FFF;
+}
+.ant-tabs-nav .ant-tabs-tab{
+  color:rgba(255,255,255,0.3);
+}
+.ant-card{
+  border: none;
+}
+body .ant-table-tbody > tr > td:nth-child(1){
+  padding-left: 40px;
 }

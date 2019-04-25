@@ -120,7 +120,7 @@ class NormalTransForm extends Component {
                   </Radio.Group>
               )}
             </Form.Item>
-            <p onClick={this.onAdvanced}>Advanced Options</p>
+            <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
           </Form>
         </Modal>
         <AdvancedOptionForm

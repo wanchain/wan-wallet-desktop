@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
 
+import wanLogo from 'static/image/wan.png';
+
 import './index.less';
 
 @inject(stores => ({
@@ -15,10 +17,11 @@ class Portfolio extends Component {
   
   columns = [
     {
+      title: '',
       title: 'NAME',
       dataIndex: 'name',
       key: 'name',
-      render: text => <div><img /><a>{text}</a></div>,
+      render: text => <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>,
     }, {
       title: 'PRICE',
       dataIndex: 'price',
@@ -54,7 +57,7 @@ class Portfolio extends Component {
 
   render() {
     return (
-        <div>
+        <div className="portfolioMain">
             <Table columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
         </div>
     );

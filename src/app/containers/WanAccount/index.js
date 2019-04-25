@@ -29,22 +29,22 @@ class WanAccount extends Component {
 
   columns = [
     {
-      title: 'Name',
+      title: 'NAME',
       dataIndex: 'name',
       editable: true
     }, 
     {
-      title: 'Address',
+      title: 'ADDRESS',
       dataIndex: 'address',
       render: text => <div>{text}<CopyAndQrcode addr={text}/></div>
     }, 
     {
-      title: 'Balance',
+      title: 'BALANCE',
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
     }, 
     {
-      title: 'Actions',
+      title: 'ACTIONS',
       dataIndex: 'actions',
       render: text => <div><SendNormalTrans addr={text}/></div>
     }
@@ -125,9 +125,9 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={4}>WAN ( wanchain )</Col>
+          <Col span={4}>WAN <span className="span-style">( wanchain )</span></Col>
           <Col span={4}>Total: { getAmount }</Col>
-          <Col span={8} offset={8}>
+          <Col span={8} offset={8} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
           </Col>
