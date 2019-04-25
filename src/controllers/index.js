@@ -118,15 +118,23 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
             break
         case 'balance':
             let balance
+            const { addr } = payload
+            
             try {
-                logger.info(`address request balance is: 0x${payload.addr}` )
-                balance = await ccUtil.getWanBalance('0x'+payload.addr)
+                if (_.isArray(addr) && addr.length > 1) {
+                    const addresses = addr.map(item => `0x${item}`)
+                    balance = await ccUtil.getMultiWanBalances(addresses)
+
+                } else {
+                    balance = await ccUtil.getWanBalance(`0x${addr}`)
+                    balance = {[`0x${addr}`]: balance}
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            /** TODO */
-            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: {['0x' + payload.addr]: balance}})
+        
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance})
             break
     }
 })
