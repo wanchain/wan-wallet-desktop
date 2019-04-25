@@ -69,6 +69,7 @@ ipc.on(ROUTE_WALLET, (event, action, payload) => {
                 sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
 
             } catch (e) {
+                console.log(e)
                 logger.error(e.message || e.stack)
                 err = e
 
@@ -89,6 +90,21 @@ ipc.on(ROUTE_WALLET, (event, action, payload) => {
                 sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: false })
             }
 
+            break
+        
+        case 'getPubKey':
+            const { walletID, path } = payload
+            console.log(payload)
+            let pubKey
+            try {
+                pubKey = hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path)
+                console.log(pubKey)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            
+            // sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
             break
     }
 })
