@@ -35,7 +35,7 @@ class WanAccount extends Component {
     {
       title: 'ADDRESS',
       dataIndex: 'address',
-      render: text => <div>{text}<CopyAndQrcode addr={text}/></div>
+      render: text => <div className="addrText">{text}<CopyAndQrcode addr={text}/></div>
     }, 
     {
       title: 'BALANCE',
@@ -126,7 +126,7 @@ class WanAccount extends Component {
           <Col span={4}>Total: { getAmount }</Col>
           <Col span={8} offset={8} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
-            <Button type="primary" shape="round" size="large" onClick={this.creatAccount}>Create Account</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>＋ Create</Button>
           </Col>
         </Row>
         <Row className="mainBody">

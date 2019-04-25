@@ -38,7 +38,7 @@ class CopyAndQrcode extends Component {
   render() {
     const { addr } = this.props;
     return (
-      <div>
+      <div className="handleIco">
         <Icon type="copy" onClick={(e) => this.copy2Clipboard(addr, e)} />
         <Icon type="qrcode" onClick={(e) => this.createQrCode(addr, e)} />
       </div>
