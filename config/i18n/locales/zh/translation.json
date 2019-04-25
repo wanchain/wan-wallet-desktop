@@ -42,7 +42,6 @@
             },
             "window": {
                 "label": "窗口",
-                "toggle": "开发者工具",
                 "minimize": "最小化",
                 "close": "关闭",
                 "front": "前置全部窗口"
@@ -52,7 +51,8 @@
                 "web": "万维链官网",
                 "explorer": "万维链区块链浏览器",
                 "webURL": "https://wanchain.org",
-                "explorerURL": "https://www.wanscan.org"
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "开发者工具"
             }
         }
     }

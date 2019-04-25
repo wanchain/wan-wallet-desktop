@@ -5,7 +5,7 @@
                 "label": "{{app}}",
                 "about": "About {{app}}",
                 "services": "Services",
-                "checkForUpdate": "Check Updates",
+                "checkForUpdate": "Check for Updates...",
                 "hide": "Hide {{ app }}",
                 "hideOthers": "Hide others",
                 "showAll": "Show all",
@@ -42,7 +42,6 @@
             },
             "window": {
                 "label": "Window",
-                "toggle": "Dev Tools",
                 "minimize": "Minimize",
                 "close": "Close",
                 "front": "Bring All to Front"
@@ -52,7 +51,8 @@
                 "web": "Wanchain Official Website",
                 "explorer": "Wanchain Explorer",
                 "webURL": "https://wanchain.org",
-                "explorerURL": "https://www.wanscan.org"
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "Dev Tools"
             }
         }
     }
