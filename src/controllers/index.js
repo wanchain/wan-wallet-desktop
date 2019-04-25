@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { ipcMain } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
+import setting from '~/src/utils/Settings'
 import { Windows } from '~/src/modules'
 
 const logger = Logger.getLogger('controllers')
@@ -12,6 +13,7 @@ const ROUTE_WALLET = 'wallet'
 const ROUTE_ADDRESS = 'address'
 const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
+const ROUTE_QUERY = 'query'
 
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
@@ -239,6 +241,25 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break
     }
+})
+
+ipc.on(ROUTE_QUERY, (event, action, payload) => {
+    let ret, err 
+    switch (action) {
+        case 'config':
+            const { param } = payload
+            try {
+                let conf = setting[`${param}`]
+                ret = {[param]: conf}
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
+            break
+    }
+    
 })
 
 function sendResponse(endpoint, e, payload) {
