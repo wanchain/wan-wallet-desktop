@@ -1,10 +1,8 @@
 import { fromWei } from 'utils/support';
 
-export const getBalance = function (address) {
+export const getBalance = function (addrArr) {
   return new Promise((resolve, reject) => {
-    wand.request('address_balance', {
-      addr: address.substr(2)
-    }, (err, val) => {
+    wand.request('address_balance', {addr: addrArr}, (err, val) => {
       if (err) {
         return reject('error printed inside callback: ', err)
       } else {

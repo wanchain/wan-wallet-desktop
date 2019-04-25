@@ -1,8 +1,6 @@
 
 import { observable, action, computed } from 'mobx';
 
-import { getBalanceObj } from 'utils/support';
-
 const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
@@ -11,17 +9,16 @@ class WanAddress {
     @action addAddress(newAddr) {
       self.addrInfo[newAddr.wanaddr] = {
         name: `Account${newAddr.start + 1}`,
-        balance: `${newAddr.balance}`,
+        balance: '0',
         path: newAddr.start
       };
     }
 
     @action updateBalance(arr) {
-      let balaObj = getBalanceObj(arr);
-      let keys = Object.keys(balaObj);
+      let keys = Object.keys(arr);
       keys.forEach((item) => {
-        if(self.addrInfo[item].balance !== balaObj[item]) {
-          self.addrInfo[item].balance = balaObj[item]
+        if(self.addrInfo[item].balance !== arr[item]) {
+          self.addrInfo[item].balance = arr[item]
         }
       })
     }

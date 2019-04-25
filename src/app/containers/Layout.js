@@ -8,7 +8,6 @@ import CreateMnemonic from './CreateMnemonic';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 
-import { accumulator } from 'utils/support';
 import { getBalance } from 'utils/helper';
 
 @inject(stores => ({
@@ -32,11 +31,11 @@ export default class Layout extends Component {
   }
 
   updateWANBalanceForInter = () => {
-    const promises = Object.keys(this.props.addrInfo).map(item => () => getBalance(item));
-    const series = promises.reduce(accumulator, Promise.resolve([]));
-
-    series.then(res => {
-      if(res.length) {
+    const { addrInfo } = this.props;
+    const arr = Object.keys(addrInfo).map(item => item.substr(2));
+    if(Array.isArray(arr) && arr.length === 0 ) return;
+    getBalance(arr).then(res => {
+      if (res && Object.keys(res).length) {
         this.props.updateWANBalance(res);
       }
     }).catch(err => {
