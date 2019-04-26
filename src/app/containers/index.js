@@ -4,5 +4,6 @@ import Sidebar from './Sidebar';
 import WanAccount from './WanAccount';
 import Settings from './Settings';
 import Trezor from './Trezor';
+import Ledger from './Ledger';
 
-export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor };
+export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger };

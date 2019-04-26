@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
-import Connect from './Connect';
+// import Connect from './Connect';
+import ConnectHwWallet from 'components/ConnectHwWallet';
 import Accounts from './Accounts';
 import { observer, inject } from 'mobx-react';
 
@@ -11,7 +12,7 @@ TrezorConnect.init({
   connectSrc: 'https://sisyfos.trezor.io/connect-electron/',
   popup: true, // use trezor-connect UI, set it to "false" to get "trusted" mode and get more UI_EVENTs to render your own UI
   webusb: false, // webusb is not supported in electron
-  debug: true, // see whats going on inside iframe
+  debug: false, // see whats going on inside iframe
   lazyLoad: true, // set to "false" if you want to start communication with bridge on application start (and detect connected device right away)
   // or set it to true, then trezor-connect not will be initialized unless you call some TrezorConnect.method() (this is useful when you dont know if you are dealing with Trezor user)
   manifest: {
@@ -34,6 +35,7 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
+    this.dPath = "m/44'/5718350'/0'/0";
     this.state = {
       visible: false,
       addresses: [{ key: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" },
@@ -58,11 +60,33 @@ class Trezor extends Component {
     this.setState({ addresses: addresses });
   }
 
+  instruction = () => {
+    return (
+      <div>
+        <p>Please connect your Trezor wallet directly to your computer</p>
+      </div>
+    )
+  }
+
+  getPublicKey = (callback) => {
+    TrezorConnect.getPublicKey({
+      path: this.dPath
+    }).then((result) => {
+      if (result.success) {
+        callback(false, result.payload);
+      }
+    }).catch(error => {
+      callback(error, {})
+    });
+  }
+
   render() {
     return (
       <div>
         {
-          this.state.addresses.length === 0 ? <Connect setAddresses={this.setAddresses} /> : <Accounts addresses={this.state.addresses} />
+          this.state.addresses.length === 0 ? <ConnectHwWallet setAddresses={this.setAddresses} 
+          Instruction={this.instruction} getPublicKey={this.getPublicKey} 
+          dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} />
         }
       </div>
     );

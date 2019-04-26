@@ -26,7 +26,6 @@ class NormalTransForm extends Component {
   }
 
   handleCancel = () => {
-    console.log("handleCancel")
     this.setState({
       advancedVisible: false,
     });
@@ -115,26 +114,32 @@ class NormalTransForm extends Component {
             <Form.Item label="Amount">
               {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })(<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
-            <Form.Item label="Fee">
-              {getFieldDecorator('fee', { initialValue: this.state.advanced ? savedFee.toString(10) : '', rules: [{ required: true, message: "Please select transaction fee" }] })(
-                this.state.advanced ?
-                  <Input disabled={true} style={{ color: 'rgba(0,0,0,.25)' }} /> :
-                  <Radio.Group>
-                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
-                  </Radio.Group>
-              )}
-            </Form.Item>
+            {
+              this.state.advanced ?
+                <Form.Item label="Fee">
+                  {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: "Please select transaction fee" }] })(
+                    <Input disabled={true} style={{ color: 'rgba(0,0,0,.25)' }} />
+                  )}
+                </Form.Item> :
+                <Form.Item label="Fee">
+                  {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
+                    <Radio.Group>
+                      <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+            }
             <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
           </Form>
         </Modal>
         <AdvancedOptionForm
           visible={this.state.advancedVisible}
           minGasPrice={minGasPrice}
-          gasPrice={gasPrice}
-          gasLimit={gasLimit}
-          nonce={nonce}
+          gasPrice={this.state.gasPrice}
+          gasLimit={this.state.gasLimit}
+          nonce={this.state.nonce}
           onCancel={this.handleCancel}
           onSave={this.handleSave}
         />

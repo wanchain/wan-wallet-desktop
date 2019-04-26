@@ -13,7 +13,7 @@ class Accounts extends Component {
     this.columns = [
       { title: "NAME", dataIndex: "name" },
       { title: "ADDRESS", dataIndex: "address" },
-      { title: "BALANCE", dataIndex: "balance" },
+      { title: "BALNCE", dataIndex: "balance" },
       { title: "ACTION", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} /> </div> }
     ];
   }
@@ -25,12 +25,12 @@ class Accounts extends Component {
       data: '',
       // chainId: 1,
       chainId: 3,  /** TODO */
-      nonce: '0x' + params.nonce.toString(16),
+      nonce: "0x0",
       gasLimit: '0x' + params.gasLimit.toString(16),
       gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
       Txtype: 1,
     };
-    
+
     TrezorConnect.ethereumSignTransaction({
       path: params.path,
       transaction: {
@@ -46,7 +46,6 @@ class Accounts extends Component {
     }).then((result) => {
       if (!result.success) {
         message.warn("Sign transaction failed. Please try again");
-        console.log(result);
         return;
       }
 
@@ -59,10 +58,9 @@ class Accounts extends Component {
       console.log(signedTx);
       wand.request('transaction_raw', { raw: signedTx, chainType: 'WAN' }, (err, val) => {
         if (err) {
-          message.warn("Send transaction failed. Please try again");
-          console.log(err);
+          message.warn(err);
         } else {
-          console.log("TxHash:", val);
+          console.log("Tx hash", val);
         }
       });
     });
