@@ -125,8 +125,10 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
             break
 
         case 'getNonce':
+            const { addr, chainType, includePending } = payload
             try {
-                nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
+                // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
+                nonce = await ccUtil.getNonce(addr, chainType, includePending)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
