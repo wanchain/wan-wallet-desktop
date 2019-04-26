@@ -19,5 +19,8 @@
                 "rootPathPrefix": "~"
             }]
         }]
+    ],
+    "ignore": [
+        "src/modules/preload/*.js"
     ]
 }
