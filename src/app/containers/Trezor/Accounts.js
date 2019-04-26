@@ -5,8 +5,17 @@ import SendNormalTrans from 'components/SendNormalTrans';
 import TrezorConnect from 'trezor-connect';
 import BigNumber from "bignumber.js";
 const wanTx = require('wanchainjs-tx');
+import { observer, inject } from 'mobx-react';
 
 
+@inject(stores => ({
+  transParams: stores.sendTransParams.transParams,
+  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
+  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
+  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce)
+}))
+
+@observer
 class Accounts extends Component {
   constructor(props) {
     super(props);
@@ -18,18 +27,21 @@ class Accounts extends Component {
     ];
   }
 
-  handleSend = (params) => {
+  handleSend = (from) => {
+    let params = this.props.transParams[from];
     let rawTx = {
       to: params.to,
       value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
-      data: '',
+      data: params.data,
       // chainId: 1,
-      chainId: 3,  /** TODO */
+      chainId: params.chainId,
       nonce: '0x' + params.nonce.toString(16),
       gasLimit: '0x' + params.gasLimit.toString(16),
       gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
-      Txtype: 1,
+      // Txtype: 1,
+      Txtype: params.txType
     };
+    console.log("raw", rawTx)
     
     TrezorConnect.ethereumSignTransaction({
       path: params.path,

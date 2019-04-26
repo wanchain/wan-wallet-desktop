@@ -1,22 +1,47 @@
 import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import { BigNumber } from 'bignumber.js';
 
 import './index.less';
 
+@inject(stores => ({
+  transParams: stores.sendTransParams.transParams,
+  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
+  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
+  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
+  updateTo: (addr, to) => stores.sendTransParams.updateTo(addr, to),
+  updateAmount: (addr, amount) => stores.sendTransParams.updateAmount(addr, amount),
+}))
+
+@observer
 class NormalTransForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+  }
+
+  componentWillMount() {
+    this.resetState();
+    this.averageGasPrice = Math.max(this.props.minGasPrice, this.props.transParams[this.props.from].gasPrice);
+    this.minGasPrice = this.props.minGasPrice;
+    this.maxGasPrice = this.props.maxGasPrice;
+    console.log("willMount", this.averageGasPrice)
+    this.advancedOptionForm = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
+  }
+
+  // componentDidMount() {
+
+  // }
+  resetState = () => {
+    this.setState({
       visible: this.props.visible,
       advancedVisible: false,
-      gasPrice: 200,
-      gasLimit: 21000,
-      nonce: 0,
+      // gasPrice: this.props.gasPrice,
+      // gasLimit: this.props.gasLimit,
+      // nonce: this.props.nonce,
       advanced: false
-    };
-    this.advancedOptionForm = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
+    });
   }
 
   onAdvanced = () => {
@@ -38,33 +63,34 @@ class NormalTransForm extends Component {
     this.props.onCancel();
   }
 
-  handleSave = (gasPrice, gasLimit, nonce) => {
+  handleSave = () => {
     this.setState({
       advancedVisible: false,
-      gasPrice: gasPrice,
-      gasLimit: gasLimit,
-      nonce: nonce,
       advanced: true
     });
   }
+  // handleSave = (gasPrice, gasLimit, nonce) => {
+  //   this.setState({
+  //     advancedVisible: false,
+  //     gasPrice: gasPrice,
+  //     gasLimit: gasLimit,
+  //     nonce: nonce,
+  //     advanced: true
+  //   });
+  // }
 
   handleSend = () => {
     let form = this.props.form;
+    let from = this.props.from;
+    // let param = this.props.transParams[this.props.from];
+
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
-      let params = {
-        gasPrice: this.state.gasPrice,
-        gasLimit: this.state.gasLimit,
-        nonce: this.state.nonce,
-        from: this.props.from,
-        path: this.props.path,
-        to: form.getFieldValue("to"),
-        amount: form.getFieldValue('amount')
-      }
-
-      this.props.onSend(params);
+      this.props.updateTo(from, form.getFieldValue("to"));
+      this.props.updateAmount(from, form.getFieldValue('amount'));
+      this.props.onSend(from);
 
       form.resetFields();
       this.setState({ advanced: false });
@@ -72,22 +98,32 @@ class NormalTransForm extends Component {
   }
 
   handleClick = (gasPrice, gasLimit, nonce) => {
-    this.setState({ gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce });
+    // this.setState({ gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce });
+    let from = this.props.from;
+    console.log("udpate", gasPrice, gasLimit, nonce)
+
+    this.props.updateGasLimit(from, gasLimit);
+    this.props.updateGasPrice(from, gasPrice);
+    this.props.updateNonce(from, nonce);
+
   }
 
   render() {
-    const { loading, form, visible, gasPrice, gasLimit, nonce, minGasPrice, maxGasPrice, from } = this.props;
+    const { loading, form, visible, from } = this.props;
+    const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { getFieldDecorator } = form;
     const AdvancedOptionForm = this.advancedOptionForm;
-    let averageGasPrice = Math.max(minGasPrice, gasPrice);
-    let averageFee = new BigNumber(averageGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
-    let minFee = new BigNumber(minGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
+    let minFee = new BigNumber(this.minGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
+    let averageFee = new BigNumber(this.averageGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
     let maxFee = averageFee.times(2);
     let savedFee;
 
+
     if (this.state.advanced) {
-      savedFee = new BigNumber(Math.max(minGasPrice, this.state.gasPrice)).times(this.state.gasLimit).div(BigNumber(10).pow(9));
+      savedFee = new BigNumber(Math.max(this.minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9));
     }
+
+    console.log(nonce)
 
     return (
       <div>
@@ -104,15 +140,17 @@ class NormalTransForm extends Component {
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-            <Form.Item label="">
+            <Form.Item label="From">
               {getFieldDecorator('from', { initialValue: from }, { rules: [{ required: true, message: 'Address is incorrect' }] })
                 (<Input disabled={true} placeholder="Sender Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
-            <Form.Item label="">
-              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect' }] })(<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+            <Form.Item label="To">
+              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect' }] })
+                (<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="Amount">
-              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })(<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
+              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })
+                (<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             {
               this.state.advanced ?
@@ -124,9 +162,9 @@ class NormalTransForm extends Component {
                 <Form.Item label="Fee">
                   {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
                     <Radio.Group>
-                      <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                      <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                      <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(this.minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(this.averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(this.maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {maxFee.toString(10)} WAN</Radio.Button>
                     </Radio.Group>
                   )}
                 </Form.Item>
@@ -136,12 +174,13 @@ class NormalTransForm extends Component {
         </Modal>
         <AdvancedOptionForm
           visible={this.state.advancedVisible}
-          minGasPrice={minGasPrice}
-          gasPrice={this.state.gasPrice}
-          gasLimit={this.state.gasLimit}
-          nonce={this.state.nonce}
+          minGasPrice={this.minGasPrice}
+          gasPrice={gasPrice}
+          gasLimit={gasLimit}
+          nonce={nonce}
           onCancel={this.handleCancel}
           onSave={this.handleSave}
+          from={from}
         />
       </div>
     );

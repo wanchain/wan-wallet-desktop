@@ -3,7 +3,18 @@ import { message, Button, Form } from 'antd';
 
 import NormalTransForm from 'components/NormalTransForm'
 import './index.less';
+import { observer, inject } from 'mobx-react';
 
+@inject(stores => ({
+  transParams: stores.sendTransParams.transParams,
+  addTransaction: (addr, params) => stores.sendTransParams.addTransaction(addr, params),
+  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
+  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
+  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
+  updatePath: (addr, path) => stores.sendTransParams.updatePath(addr, path),
+}))
+
+@observer
 class SendNormalTrans extends Component {
   constructor(props) {
     super(props);
@@ -11,22 +22,39 @@ class SendNormalTrans extends Component {
       loading: false,
       visible: false,
       minGasPrice: 180,
+    };
+
+    let params = {
       gasPrice: 200,
       gasLimit: 21000,
-      nonce: 0
-    }
+      nonce: 0,
+      data: '0x',
+      chainId: 3,  /** TODO */
+      txType: 1,
+      path: '',
+      to: '',
+      amount: 0
+    };
+    this.props.addTransaction(this.props.from, params);
   }
+
   CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
   showModal = () => {
+    console.log(this.props.from, this.props.path);
+    this.props.updatePath(this.props.from, this.props.path);
+    console.log('request nonce')
     wand.request('address_getNonce', { addr: this.props.from, chainType: 'WAN' }, (err, val) => {
       if (err) {
         message.warn(err);
       } else {
-        this.setState({nonce: val});
+        let nonce = parseInt(val, 16);
+        console.log("getnonce", nonce)
+        // this.setState({nonce: val});
+        this.props.updateNonce(this.props.from, nonce);
+        this.setState({ visible: true });
       }
     });
-    this.setState({ visible: true });
   }
 
   handleCancel = () => {
@@ -37,8 +65,8 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = (params) => {
-    this.props.handleSend(params);
+  handleSend = (from) => {
+    this.props.handleSend(from);
     this.setState({ visible: false });
   }
 
@@ -46,9 +74,8 @@ class SendNormalTrans extends Component {
     const CollectionCreateForm = this.CollectionCreateForm;
     const from = this.props.from;
 
-    let gasLimit = this.state.gasLimit;
-    let gasPrice = this.state.gasPrice;
-    let nonce = this.state.nonce;
+    // let gasLimit = this.state.gasLimit;
+    // let gasPrice = this.state.gasPrice;
 
     return (
       <div>
@@ -57,12 +84,12 @@ class SendNormalTrans extends Component {
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
           minGasPrice={this.state.minGasPrice}
-          maxGasPrice={gasPrice * 2}
-          gasPrice={gasPrice}
-          gasLimit={gasLimit}
-          nonce={nonce}
+          maxGasPrice={this.props.transParams[from].gasPrice * 2}
+          // gasPrice={gasPrice}
+          // gasLimit={gasLimit}
+          // nonce={this.state.nonce}
           from={from}
-          path={this.props.path}
+          // path={this.props.path}
           onCancel={this.handleCancel}
           onSend={this.handleSend} />
       </div>
