@@ -1,22 +1,30 @@
 {
-  "name": "wandwallet",
-  "productName": "WandWallet",
-  "version": "2.0.0",
+  "name": "wanwallet",
+  "productName": "Wan Wallet",
+  "version": "1.0.0",
   "description": "Wanchain's new multicoin wallet",
-  "main": "./build/main.prod.js",
+  "main": "./build/main.js",
+  "author": {
+    "name": "Wanchain Dev",
+    "email": "dev@wanchain.org"
+  },
   "scripts": {
     "start": "electron .",
     "dev": "npm run dev:renderer",
     "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js ",
     "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --progress --config ./config/webpack/webpack.config.renderer.babel.js --colors",
-    "compile:renderer": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.renderer.prod.babel.js --colors",
-    "compile:main": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.main.prod.babel.js --colors",
-    "pack:mac": "run-s compile:main build:mac",
-    "build:mac": "electron-builder --mac -p always",
+    "transpile:renderer": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.renderer.prod.babel.js --colors",
+    "transpile:main": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.main.prod.babel.js --colors",
+    "pack:mac": "run-s copy transpile:renderer transpile:main build:mac",
+    "pack:win": "run-s copy transpile:renderer transpile:main build:win",
+    "pack:linux": "run-s copy transpile:renderer transpile:main build:linux",
+    "pack:all": "run-s copy transpile:renderer transpile:main build:all",
+    "build:mac": "electron-builder --mac -p never",
+    "build:win": "electron-builder --win -p never",
+    "build:linux": "electron-builder --linux -p never",
+    "build:all": "electron-builder -mwl -p never",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf build",
-    "copy:icon": "ncp assets build/",
-    "copy:i18n": "cpx src/modules/i18n/locales/**/*.json build/locales",
+    "copy": "./build.sh",
     "postinstall": "electron-builder install-app-deps",
     "rebuild": "cross-env ./node_modules/.bin/electron-rebuild"
   },
@@ -25,7 +33,6 @@
     "url": "git+https://github.com/wanchain/wandWallet.git"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/wanchain/wandWallet/issues"
