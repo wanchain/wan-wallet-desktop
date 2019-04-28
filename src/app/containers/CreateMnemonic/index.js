@@ -6,13 +6,20 @@ import './index.less'
 
 @inject(stores => ({
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
-  getMnemonic: (ret) => stores.session.getMnemonic(ret)
+  getMnemonic: ret => stores.session.getMnemonic(ret),
+  setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
 }))
 
 @observer
 class CreateMnemonic extends Component {
   createMnemonic = () =>{
-    this.props.getMnemonic(true)
+    wand.request('phrase_generate', {pwd: '123'}, (err, val) => {
+      if (err) { 
+          console.log('error printed inside callback: ', err)
+          return
+      }
+      this.props.setMnemonicStatus(true)
+    });
   }
 
   render() {

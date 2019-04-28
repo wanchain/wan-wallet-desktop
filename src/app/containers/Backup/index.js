@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
+import { clipboard } from 'electron';
+
 import './index.less';
-import { clipboard, remote } from 'electron';
 
 class Backup extends Component {
   state = {
@@ -32,16 +33,8 @@ class Backup extends Component {
     }
   }
 
-  handleCancel = () => {
-    this.resetStateVal();
-  }
-
-  inputChanged = (e) => {
+  inputChanged = e => {
     this.setState({ pwd: e.target.value });
-  }
-
-  pressEnter = (e) => {
-    this.handleOk();
   }
 
   sendGetPhraseCmd = (pwd) => {
@@ -49,14 +42,12 @@ class Backup extends Component {
       if (err) {
         message.warn('Get phrase failed. Try again');
       } else {
-        this.handlePhraseResult(val);
+        this.setState({
+          mnemonic: val,
+          showMnemonic: true
+        });
       }
     }.bind(this))
-  }
-
-  handlePhraseResult = (phrase) => {
-    this.setState({ mnemonic: phrase });
-    this.setState({ showMnemonic: true });
   }
 
   copy2Clipboard = (val) => {
@@ -74,11 +65,11 @@ class Backup extends Component {
           </p>
           <Button type="primary" onClick={this.showModal}>CONTINUE</Button>
           <Modal
-            destroyOnClose={false}
+            destroyOnClose={true}
             title="Mnemonic Sentence"
             visible={this.state.visible}
             onOk={this.handleOk}
-            onCancel={this.handleCancel}
+            onCancel={this.resetStateVal}
             okText="Send"
             closable={false}
           >
@@ -91,12 +82,10 @@ class Backup extends Component {
                     <p>{this.state.mnemonic}</p>
                   </Card>
                   <p className="copyBtn" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ Copy to clipboard ]</p>
-                  {/* <Button type="primary" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ Copy to clipboard ]</Button> */}
                 </div>
               ) : (
                   <div>
-                    {/* <p> Enter password to continue</p> */}
-                    <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} onPressEnter={this.pressEnter} />
+                    <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} onPressEnter={this.handleOk} />
                   </div>
                 )
             }
