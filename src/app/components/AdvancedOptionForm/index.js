@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, InputNumber, Icon } from 'antd';
+import { Button, Modal, Form, InputNumber } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
@@ -17,50 +17,7 @@ class AdvancedOptionForm extends Component {
     super(props);
   }
 
-  // componentWillMount() {
-  //   this.resetState();
-  // }
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.gasPrice !== this.props.gasPrice) {
-  //     this.setState({
-  //       gasPrice: nextProps.gasPrice
-  //     });
-  //   }
-  //   if (nextProps.gasLimit !== this.props.gasLimit) {
-  //     this.setState({
-  //       gasLimit: nextProps.gasLimit
-  //     });
-  //   }
-  //   if (nextProps.nonce !== this.props.nonce) {
-  //     this.setState({
-  //       nonce: nextProps.nonce
-  //     });
-  //   }
-  // }
-
-  // handleGasPriceChange = (value) => {
-  //   this.setState({ gasPrice: value });
-  // }
-
-  // handleGasLimitChange = (value) => {
-  //   this.setState({ gasLimit: value });
-  // }
-
-  // handleNonceChange = (value) => {
-  //   this.setState({ nonce: value });
-  // }
-
-  // resetState = () => {
-  //   this.setState({
-  //     gasPrice: this.props.gasPrice,
-  //     gasLimit: this.props.gasLimit,
-  //     nonce: this.props.nonce
-  //   });
-  // }
-
   handleCancel = () => {
-    // this.resetState();
     this.props.onCancel();
   }
 
@@ -69,8 +26,6 @@ class AdvancedOptionForm extends Component {
     let gasLimit = this.props.form.getFieldValue('gasLimit');
     let gasPrice = this.props.form.getFieldValue('gasPrice');
     let nonce = this.props.form.getFieldValue('nonce');
-    console.log("form", this.props.form);
-    console.log("pram", from, gasLimit, gasPrice, nonce)
     this.props.updateGasLimit(from, gasLimit);
     this.props.updateGasPrice(from, gasPrice);
     this.props.updateNonce(from, nonce);

@@ -5,7 +5,7 @@ class MFooter extends Component {
     render() {
         return (
             <div className="footer">
-              All rights reserved <br/> ©2019 WANCHAIN FOUNDATION LTD
+              All Rights Reserved <br/> ©{new Date().getFullYear()} WANCHAIN FOUNDATION LTD
             </div>
         );
     }

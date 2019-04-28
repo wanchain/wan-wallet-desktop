@@ -26,7 +26,7 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            
+
             sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: phrase })
 
             break
@@ -41,7 +41,7 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
             sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
 
             break
-        case 'reveal': 
+        case 'reveal':
             try {
                 phrase = hdUtil.revealMnemonic(payload.pwd)
 
@@ -49,17 +49,17 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            
+
             sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: phrase })
 
             break
-        case 'delete': 
+        case 'delete':
 
             break
     }
 })
 
-ipc.on(ROUTE_WALLET, (event, action, payload) => {
+ipc.on(ROUTE_WALLET, async (event, action, payload) => {
     let err
 
     switch (action) {
@@ -91,20 +91,63 @@ ipc.on(ROUTE_WALLET, (event, action, payload) => {
             }
 
             break
-        
-        case 'getPubKey':
-            const { walletID, path } = payload
-            console.log(payload)
+
+        case 'getPubKeyChainId': 
+        {
+            let { walletID, path } = payload
             let pubKey
+
             try {
-                pubKey = hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path)
-                console.log(pubKey)
+                pubKey = await hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path, true)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            
-            // sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
+
+            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
+            break
+        }
+
+        case 'getPubKey':
+        {
+            let pubKey
+
+            try {
+                pubKey = await hdUtil.getWalletSafe().getWallet(payload.walletID).getPublicKey(payload.path)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
+            break
+        }
+
+        case 'isConnected':
+        {
+            let ret = false;
+            try {
+                hdUtil.getWalletSafe().getWallet(payload.walletID);
+                ret = true;
+            } catch (e) {
+                ret = false
+            }
+
+            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: ret })
+            break
+        }
+
+        case 'connectToLedger':
+            let data = false;
+            try {
+                await hdUtil.connectToLedger()
+                data = true;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: data })
             break
     }
 })
@@ -120,7 +163,7 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-           
+
             sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: address })
             break
 
@@ -138,7 +181,7 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
         case 'balance':
             let balance
             const { addr } = payload
-            
+
             try {
                 if (_.isArray(addr) && addr.length > 1) {
                     const addresses = addr.map(item => `0x${item}`)
@@ -146,14 +189,14 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
 
                 } else {
                     balance = await ccUtil.getWanBalance(`0x${addr}`)
-                    balance = {[`0x${addr}`]: balance}
+                    balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-        
-            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance})
+
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
             break
     }
 })
@@ -170,7 +213,7 @@ ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
             }
 
             sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
-            break  
+            break
 
         case 'get':
             try {
@@ -222,18 +265,18 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
     switch (action) {
         case 'normal':
             try {
-                const { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit } = payload
-                const from = await hdUtil.getAddress(walletID, chainType, path)
+                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit } = payload
+                let from = await hdUtil.getAddress(walletID, chainType, path)
 
                 let input = {
-                    "symbol" : symbol,
-                    "from" : '0x' + from.address,
-                    "to" : to,
-                    "amount" : amount,
-                    "gasPrice" : gasPrice,
-                    "gasLimit" : gasLimit,
-                    "BIP44Path" : path,
-                    "walletID" : walletID
+                    "symbol": symbol,
+                    "from": '0x' + from.address,
+                    "to": to,
+                    "amount": amount,
+                    "gasPrice": gasPrice,
+                    "gasLimit": gasLimit,
+                    "BIP44Path": path,
+                    "walletID": walletID
                 }
 
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
@@ -249,7 +292,7 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
         case 'raw':
             const { raw, chainType } = payload
             try {
-                ret = await ccUtil.sendTrans(raw, chainType) 
+                ret = await ccUtil.sendTrans(raw, chainType)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -261,13 +304,13 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
 })
 
 ipc.on(ROUTE_QUERY, (event, action, payload) => {
-    let ret, err 
+    let ret, err
     switch (action) {
         case 'config':
             const { param } = payload
             try {
                 let conf = setting[`${param}`]
-                ret = {[param]: conf}
+                ret = { [param]: conf }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -276,7 +319,7 @@ ipc.on(ROUTE_QUERY, (event, action, payload) => {
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break
     }
-    
+
 })
 
 function sendResponse(endpoint, e, payload) {

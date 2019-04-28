@@ -33,12 +33,10 @@ class Accounts extends Component {
       to: params.to,
       value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
       data: params.data,
-      // chainId: 1,
       chainId: params.chainId,
       nonce: '0x' + params.nonce.toString(16),
       gasLimit: '0x' + params.gasLimit.toString(16),
       gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
-      // Txtype: 1,
       Txtype: params.txType
     };
     console.log("raw", rawTx)

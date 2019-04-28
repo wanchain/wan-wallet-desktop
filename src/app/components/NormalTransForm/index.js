@@ -37,9 +37,6 @@ class NormalTransForm extends Component {
     this.setState({
       visible: this.props.visible,
       advancedVisible: false,
-      // gasPrice: this.props.gasPrice,
-      // gasLimit: this.props.gasLimit,
-      // nonce: this.props.nonce,
       advanced: false
     });
   }
@@ -69,20 +66,10 @@ class NormalTransForm extends Component {
       advanced: true
     });
   }
-  // handleSave = (gasPrice, gasLimit, nonce) => {
-  //   this.setState({
-  //     advancedVisible: false,
-  //     gasPrice: gasPrice,
-  //     gasLimit: gasLimit,
-  //     nonce: nonce,
-  //     advanced: true
-  //   });
-  // }
 
   handleSend = () => {
     let form = this.props.form;
     let from = this.props.from;
-    // let param = this.props.transParams[this.props.from];
 
     form.validateFields((err, values) => {
       if (err) {
@@ -98,9 +85,7 @@ class NormalTransForm extends Component {
   }
 
   handleClick = (gasPrice, gasLimit, nonce) => {
-    // this.setState({ gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce });
     let from = this.props.from;
-    console.log("udpate", gasPrice, gasLimit, nonce)
 
     this.props.updateGasLimit(from, gasLimit);
     this.props.updateGasPrice(from, gasPrice);
@@ -122,8 +107,6 @@ class NormalTransForm extends Component {
     if (this.state.advanced) {
       savedFee = new BigNumber(Math.max(this.minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9));
     }
-
-    console.log(nonce)
 
     return (
       <div>

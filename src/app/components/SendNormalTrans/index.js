@@ -41,16 +41,12 @@ class SendNormalTrans extends Component {
   CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
   showModal = () => {
-    console.log(this.props.from, this.props.path);
     this.props.updatePath(this.props.from, this.props.path);
-    console.log('request nonce')
     wand.request('address_getNonce', { addr: this.props.from, chainType: 'WAN' }, (err, val) => {
       if (err) {
         message.warn(err);
       } else {
         let nonce = parseInt(val, 16);
-        console.log("getnonce", nonce)
-        // this.setState({nonce: val});
         this.props.updateNonce(this.props.from, nonce);
         this.setState({ visible: true });
       }
@@ -74,9 +70,6 @@ class SendNormalTrans extends Component {
     const CollectionCreateForm = this.CollectionCreateForm;
     const from = this.props.from;
 
-    // let gasLimit = this.state.gasLimit;
-    // let gasPrice = this.state.gasPrice;
-
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>Send</Button>
@@ -85,11 +78,7 @@ class SendNormalTrans extends Component {
           visible={this.state.visible}
           minGasPrice={this.state.minGasPrice}
           maxGasPrice={this.props.transParams[from].gasPrice * 2}
-          // gasPrice={gasPrice}
-          // gasLimit={gasLimit}
-          // nonce={this.state.nonce}
           from={from}
-          // path={this.props.path}
           onCancel={this.handleCancel}
           onSend={this.handleSend} />
       </div>
