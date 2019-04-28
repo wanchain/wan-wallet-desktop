@@ -30,14 +30,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wanchain/wandWallet.git"
+    "url": "git+https://github.com/wanchain/wan-wallet-desktop.git"
   },
   "keywords": [],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wanchain/wandWallet/issues"
+    "url": "https://github.com/wanchain/wan-wallet-desktop/issues"
   },
-  "homepage": "https://github.com/wanchain/wandWallet#readme",
+  "homepage": "https://github.com/wanchain/wan-wallet-desktop#readme",
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/runtime": "^7.4.0",

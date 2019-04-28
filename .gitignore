@@ -7,8 +7,8 @@ docs
 out
 
 # webpack bundle dir
-/dist/
-/build/
+/dist
+/build
 
 # Runtime data
 pids
@@ -19,7 +19,7 @@ pids
 coverage
 
 # node-waf configuration
-.lock-wscript
+.lock-script
 
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
