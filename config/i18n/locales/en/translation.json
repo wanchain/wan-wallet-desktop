@@ -52,7 +52,7 @@
                 "explorer": "Wanchain Explorer",
                 "webURL": "https://wanchain.org",
                 "explorerURL": "https://www.wanscan.org",
-                "toggle": "Dev Tools"
+                "toggle": "Toggle Developer Tools"
             }
         }
     }
