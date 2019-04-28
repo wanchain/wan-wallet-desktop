@@ -108,10 +108,10 @@ class Connect extends Component {
     return (
       <div>
         <Card title="Connect a Ledger Wallet" bordered={false}>
-          <h1>Please follow the below instructions to connect your Ledger wallet:</h1>
-          <h2>1. Connect your Ledger wallet directly to your computer.</h2>
-          <h2>2. Enter pin code to unlock your Ledger wallet.</h2>
-          <h2>3. Navigate to Wanchain APP and enter into it.</h2>
+          <h1 className="com-yellow">Please follow the below instructions to connect your Ledger wallet:</h1>
+          <h2 className="com-white">1. Connect your Ledger wallet directly to your computer.</h2>
+          <h2 className="com-white">2. Enter pin code to unlock your Ledger wallet.</h2>
+          <h2 className="com-white">3. Navigate to Wanchain APP and enter into it.</h2>
           <br />
           <Button type="primary" onClick={() => this.showDefaultPageAddrsFromHd()}>Continue</Button>
           <Modal
