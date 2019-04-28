@@ -59,11 +59,11 @@ class Backup extends Component {
     return (
       <div>
         <Card title="Reveal Mnemonic Sentence">
-          <p>
+          <p className="com-yellow">
             If you install a new wallet, you will need this mnemonic sentence to access your assets.
             Save them somewhere safe and secret.
           </p>
-          <Button type="primary" onClick={this.showModal}>CONTINUE</Button>
+          <Button type="primary" onClick={this.showModal}>Continue</Button>
           <Modal
             destroyOnClose={true}
             title="Mnemonic Sentence"
