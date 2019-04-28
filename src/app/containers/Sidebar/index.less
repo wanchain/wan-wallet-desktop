@@ -1,3 +1,4 @@
+@sidebar-right-bg: linear-gradient(90deg,#4e5cf4 0%,#272d68 100%)!important;
 .sidebar {
   .logo {
     height: 115px;
@@ -16,7 +17,9 @@
     font-size: 16px;
   }
   .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
-    background: linear-gradient(90deg,#4e5cf4 0%,#272d68 100%)!important;
+    width: 96%;
+    margin: 0 2% 0 2%;
+    background: @sidebar-right-bg;
   }
   .ant-menu-item{
     // margin: 0 15px!important;
@@ -25,16 +28,16 @@
     border-radius:6px!important;
     padding-left: 30px!important;
   }
-  .footer {
-    left: 0;
-    bottom: 0px;
-    position: fixed;
-    text-align: left;
-    font-size:10px;
-    color:rgba(255,255,255,0.4);
-    margin: 40px 0 0 35px;
-    z-index: 9999;
-    background: #121320;
-  }
+  // .footer {
+  //   left: 0;
+  //   bottom: 0px;
+  //   position: fixed;
+  //   text-align: left;
+  //   font-size:10px;
+  //   color:;
+  //   margin: 40px 0 0 35px;
+  //   z-index: 9999;
+  //   background: #121320;
+  // }
 }
 

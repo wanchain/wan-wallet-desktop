@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
+import { Icon } from 'antd';
 
 import './index.less';
 
@@ -25,7 +26,11 @@ class MHeader extends Component {
               <em className = "comLine"></em><span>{ pageTitle }</span>
             </Col>
             <Col span={18} className="user">
-              <Button type="primary"  onClick={this.logOut}>Log Out</Button>
+              {/* <Button type="primary"  onClick={this.logOut}>Log Out</Button> */}
+              <div className="log">
+                <Icon className="logOutIco" type="poweroff" />
+                <span onClick={this.logOut} className="logOut">Log Out</span>
+              </div>
             </Col>
         </Row>
       </div>

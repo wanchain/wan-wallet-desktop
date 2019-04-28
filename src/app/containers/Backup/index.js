@@ -72,7 +72,7 @@ class Backup extends Component {
             If you install a new wallet, you will need this mnemonic sentence to access your assets.
             Save them somewhere safe and secret.
           </p>
-          <Button type="primary" onClick={this.showModal}>REVEAL MNEMONIC SENTENCE</Button>
+          <Button type="primary" onClick={this.showModal}>CONTINUE</Button>
           <Modal
             destroyOnClose={false}
             title="Mnemonic Sentence"
@@ -82,20 +82,21 @@ class Backup extends Component {
             okText="Send"
             closable={false}
           >
-            <p>WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
+            <p className="textP">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
             {
               this.state.showMnemonic ? (
                 <div>
-                  <p> Your private mnemonic sentence</p>
+                  <p className="textP2"> Your private mnemonic sentence</p>
                   <Card >
                     <p>{this.state.mnemonic}</p>
                   </Card>
-                  <Button type="primary" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>Copy to clipboard</Button>
+                  <p className="copyBtn" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ Copy to clipboard ]</p>
+                  {/* <Button type="primary" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ Copy to clipboard ]</Button> */}
                 </div>
               ) : (
                   <div>
-                    <p> Enter password to continue</p>
-                    <Input.Password placeholder="Input password" onChange={this.inputChanged} onPressEnter={this.pressEnter} />
+                    {/* <p> Enter password to continue</p> */}
+                    <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} onPressEnter={this.pressEnter} />
                   </div>
                 )
             }

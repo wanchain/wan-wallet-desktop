@@ -3,7 +3,7 @@
   @com-modal-bg: #272840;
   @modal-input-bg: #1F2034;
   @com-white-color: #FFFFFF!important;
-  @com-handle-color: #40DABF!important;
+  // @com-handle-color: #40DABF!important;
   @com-white-opacity-color: rgba(255, 255, 255, .56)!important;
   @modal-input-focus: #414EDD;
   @button-blue-primary: linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
@@ -12,6 +12,7 @@
   @button-gray-cancel-hover: linear-gradient(90deg,#3D3E5F 0%,#4A4C72 100%);
   @table-td-bg-hover: #303147;
   @com-border-bottom-color: rgba(255, 255, 255, 0.1);
+  @com-message-color: #1A1B2C!important;
   body {
   margin: 0;
   padding: 0;
@@ -103,9 +104,6 @@ body .container .content{
     width: 480px;
     margin: 0 auto;
     padding: 0;
-    p{
-      color: @com-handle-color;
-    }
   }
   .ant-form-item-label > label{
     color: @com-white-color;
@@ -180,7 +178,7 @@ body .container .content{
     font-weight:bold;
   }
   .ant-modal-footer{
-    padding: 40px 0 52px 0!important;
+    padding: 60px 0 50px 0!important;
     text-align: center!important;
     border-top: none!important;
     button{
@@ -265,9 +263,8 @@ body .container .content{
 .ant-table-tbody > tr > td:nth-child(1){
   padding-left: 40px;
 }
-// .portfolioMain{
-//   body .ant-table-thead > tr > th{
-//     color: @com-white-color;
-//   }
-// }
+.ant-message{
+  // color: @com-message-color;
+  color: #222;
+}
 }
