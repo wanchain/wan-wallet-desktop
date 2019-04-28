@@ -1,0 +1,36 @@
+appId: org.wandwallet.wanchain
+copyright: Wanchain Foundation
+productName: Wan Wallet
+
+asar: true
+
+directories:
+  buildResources: build/
+  output: dist/
+
+files:
+  - package.json
+  - build/
+
+publish:
+  - provider: github
+    owner: Anson5555555Lee
+    repo: wandWallet
+
+mac:
+  category: public.app-category.productivity
+  icon: build/assets/icon.icns
+  target:
+    - dmg
+    - zip
+  
+win:
+  icon: build/assets/icon.ico
+  target: nsis
+
+linux:
+  category: WebBrowser
+  icon: build/assets/icon.png
+  target:
+    - deb
+    - AppImage

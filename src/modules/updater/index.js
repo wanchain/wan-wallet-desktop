@@ -13,6 +13,8 @@ autoUpdater.on('error', (error) => {
     // logger.info('erro in auto-updater')
     // sendStatusToWindow('Error in auto-updater. ' + err)
 
+    console.log('error message: ', error.message)
+
     dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
 })
 
@@ -43,7 +45,7 @@ function checkForUpdates(menuItem, focusedWindow, event) {
     autoUpdater.checkForUpdates()
 }
 
-module.exports = {
+export default {
     run: checkForUpdates
 }
 
