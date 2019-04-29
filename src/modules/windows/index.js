@@ -24,9 +24,9 @@ class Window extends EventEmitter {
             show: false,
             width: 1100,
             height: 720,
-            titleBarStyle: 'hiddenInset',
             acceptFirstMouse: true,
             darkTheme: true,
+            titleBarStyle: 'hidden-inset',
             webPreferences: {
                 webaudio: true,
                 webgl: false,
@@ -41,8 +41,6 @@ class Window extends EventEmitter {
         this._logger.debug('Creating browser window')
 
         this.window = new BrowserWindow(electronOptions)
-
-
 
         this.session = this.window.webContents.session
         this.session.setUserAgent(this.session.getUserAgent(), setting.language)
@@ -120,8 +118,6 @@ class Window extends EventEmitter {
         if (this.isClosed) {
             return
         }
-
-        this._logger.debug('Show')
 
         this.window.show()
 

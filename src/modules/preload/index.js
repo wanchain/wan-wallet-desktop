@@ -9,5 +9,5 @@ window.addEventListener('contextmenu', _wand.contextMenuHandler)
 // expose wand singleton
 window.wand = _wand
 
-window.require = require
+window.require = process.env.NODE_ENV === 'development' ? require : undefined
 

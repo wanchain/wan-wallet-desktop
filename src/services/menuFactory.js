@@ -11,7 +11,7 @@ class MenuFactoryService {
     }
 
     buildMenu(i18n) {
-        this._logger.info(`building an ${i18n.language} menu on platform ${process.platform}`)
+        this._logger.debug(`building an ${i18n.language} menu on platform ${process.platform}`)
         if (process.platform === 'darwin') {
             this.menu = Menu.buildFromTemplate(darwinTemplate(i18n))
         } else {

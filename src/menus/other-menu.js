@@ -12,33 +12,27 @@ export default (i18n) => {
         submenu: [
             {
                 label: i18n.t('main.applicationMenu.edit.undo'),
-                accelerator: 'CommandOrControl+Z',
                 role: 'undo',
             },
             {
                 label: i18n.t('main.applicationMenu.edit.redo'),
-                accelerator: 'Shift+CommandOrControl+Z',
                 role: 'redo',
             },
             { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.edit.cut'),
-                accelerator: 'CommandOrControl+X',
                 role: 'cut',
             },
             {
                 label: i18n.t('main.applicationMenu.edit.copy'),
-                accelerator: 'CommandOrControl+C',
                 role: 'copy'
             },
             {   
                 label: i18n.t('main.applicationMenu.edit.paste'),
-                accelerator: 'CommandOrControl+P',
                 role: 'paste'
             },
             {
                 label: i18n.t('main.applicationMenu.edit.selectAll'),
-                accelerator: 'CommandOrControl+A',
                 role: 'selectall',
             },
         ]

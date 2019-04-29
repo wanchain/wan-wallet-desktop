@@ -4,7 +4,7 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import { app, ipcMain as ipc } from 'electron'
+import { app, ipcMain as ipc, globalShortcut } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
 'electron-devtools-installer'
@@ -15,11 +15,33 @@ import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { walletBackend, Windows } from '~/src/modules'
 
+// globalShortcut.register('CommandOrControl+C', (err, ret) => {
+//   console.log(err, ret)
+// })
+console.log(globalShortcut.isRegistered('CommandOrControl+C'))
+
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
 
-let mainWindow
+if (!i18n.isIintialized) {
+  i18n.init(i18nOptions, (err) => {
+    if (err) {
+      logger.error('i18n change language error')
+    }
+  })
+}
 
+i18n.on('loaded', (loaded) => {
+  i18n.changeLanguage('en')
+  i18n.off('loaded')
+})
+
+i18n.on('languageChanged', (lng) => {
+  console.log('lang: ', lng)
+  menuFactoryService.buildMenu(i18n)
+})
+
+let mainWindow
 
 async function createWindow () {
   logger.info('creating main window')
@@ -31,11 +53,10 @@ async function createWindow () {
 
   mainWindow = Windows.create('main', {
     electronOptions: {
-      x: mainWindowState.x,
-      y: mainWindowState.y,
       width: mainWindowState.width,
       height: mainWindowState.height,
-      show: true,
+      x: mainWindowState.x,
+      y: mainWindowState.y,
       webPreferences: {
         /** TODO */
         nodeIntegration: true,
@@ -48,36 +69,17 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
 
-  mainWindow.load(`file://${__dirname}/app/index.html`)
+  // mainWindow.load(`file://${__dirname}/app/index.html`)
   
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
-  // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
   
   // Open the DevTools.
   if (setting.isDev) {
     installExtensions()
   }
-
-  const cb = (err) => { 
-    if (err) {
-      logger.error('i18n change language error')
-    }
-  }
-
-  if (!i18n.isIintialized) {
-    i18n.init(i18nOptions, cb)
-  }
-
-  i18n.on('loaded', (loaded) => {
-    i18n.changeLanguage('en')
-    i18n.off('loaded')
-  })
-
-  i18n.on('languageChanged', (lng) => {
-    menuFactoryService.buildMenu(i18n)
-  })
 
   mainWindow.on('ready', () => {
     logger.info('showing main window')

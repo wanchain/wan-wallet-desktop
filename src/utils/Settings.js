@@ -48,8 +48,10 @@ class Settings {
         this._logger = Logger.getLogger('settings')
         this._logger.info('setting initialized')
         this._db = low(new FileSync(app.getPath('userData') + '/config.json'))
+    }
 
-
+    get appName() {
+        return 'Wan Wallet Desktop'
     }
 
     get isDev() {
