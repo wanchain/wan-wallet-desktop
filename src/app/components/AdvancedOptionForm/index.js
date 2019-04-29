@@ -29,6 +29,7 @@ class AdvancedOptionForm extends Component {
     this.props.updateGasLimit(from, gasLimit);
     this.props.updateGasPrice(from, gasPrice);
     this.props.updateNonce(from, nonce);
+    console.log("handleSave", this.props.transParams[from])
 
     this.props.onSave();
   }

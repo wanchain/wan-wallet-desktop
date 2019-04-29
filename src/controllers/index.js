@@ -92,50 +92,71 @@ ipc.on(ROUTE_WALLET, async (event, action, payload) => {
 
             break
 
-        case 'getPubKeyChainId': 
-        {
-            let { walletID, path } = payload
-            let pubKey
+        case 'getPubKeyChainId':
+            {
+                let { walletID, path } = payload
+                let pubKey
 
-            try {
-                pubKey = await hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path, true)
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
+                try {
+                    pubKey = await hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path, true)
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
+                break
             }
-
-            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
-            break
-        }
 
         case 'getPubKey':
-        {
-            let pubKey
+            {
+                let pubKey
 
-            try {
-                pubKey = await hdUtil.getWalletSafe().getWallet(payload.walletID).getPublicKey(payload.path)
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
+                try {
+                    pubKey = await hdUtil.getWalletSafe().getWallet(payload.walletID).getPublicKey(payload.path)
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
+                break
             }
-
-            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: pubKey })
-            break
-        }
 
         case 'isConnected':
-        {
-            let ret = false;
-            try {
-                hdUtil.getWalletSafe().getWallet(payload.walletID);
-                ret = true;
-            } catch (e) {
-                ret = false
+            {
+                let ret = false;
+                try {
+                    hdUtil.getWalletSafe().getWallet(payload.walletID);
+                    ret = true;
+                } catch (e) {
+                    ret = false
+                }
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: ret })
+                break
             }
 
-            sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: ret })
-            break
-        }
+        case 'signTransaction':
+            {
+                let sig = {};
+                let { walletID, path, rawTx } = payload;
+                let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
+
+                try {
+                    let ret = await hdWallet.sec256k1sign(path, rawTx);
+                    sig.r = '0x' + ret.r.toString('hex');
+                    sig.s = '0x' + ret.s.toString('hex');
+                    sig.v = '0x' + ret.v.toString('hex');
+                    console.log("ret", ret);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: sig })
+                break
+            }
 
         case 'connectToLedger':
             let data = false;
@@ -290,7 +311,8 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             break
 
         case 'raw':
-            const { raw, chainType } = payload
+            console.log("raw", payload)
+            let { raw, chainType } = payload
             try {
                 ret = await ccUtil.sendTrans(raw, chainType)
             } catch (e) {
