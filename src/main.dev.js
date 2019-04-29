@@ -4,7 +4,7 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import { app, ipcMain as ipc, globalShortcut } from 'electron'
+import { app } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
 'electron-devtools-installer'
@@ -14,11 +14,6 @@ import i18n, { i18nOptions } from'~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { walletBackend, Windows } from '~/src/modules'
-
-// globalShortcut.register('CommandOrControl+C', (err, ret) => {
-//   console.log(err, ret)
-// })
-console.log(globalShortcut.isRegistered('CommandOrControl+C'))
 
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
@@ -37,7 +32,6 @@ i18n.on('loaded', (loaded) => {
 })
 
 i18n.on('languageChanged', (lng) => {
-  console.log('lang: ', lng)
   menuFactoryService.buildMenu(i18n)
 })
 
