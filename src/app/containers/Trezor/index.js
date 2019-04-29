@@ -63,7 +63,7 @@ class Trezor extends Component {
   instruction = () => {
     return (
       <div>
-        <p>Please connect your Trezor wallet directly to your computer</p>
+        <p className="com-yellow">Please connect your Trezor wallet directly to your computer</p>
       </div>
     )
   }

@@ -108,7 +108,7 @@ class Connect extends Component {
     return (
       <div>
         <Card title="Connect a Trezor Wallet" bordered={false}>
-          <p>Please connect your Trezor wallet directly to your computer</p>
+          <p className="com-yellow">Please connect your Trezor wallet directly to your computer</p>
           <br />
           <Button type="primary" onClick={() => this.showDefaultPageAddrsFromHd()}>Continue</Button>
           <Modal
