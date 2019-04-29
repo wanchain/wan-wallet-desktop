@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
 // import Connect from './Connect';
-import ConnectHwWallet from 'components/ConnectHwWallet';
+import ConnectHwWallet from 'components/HwWallet/Connect';
 import Accounts from './Accounts';
 import { observer, inject } from 'mobx-react';
 

@@ -29,7 +29,8 @@ class SendNormalTrans extends Component {
       gasLimit: 21000,
       nonce: 0,
       data: '0x',
-      chainId: 3,  /** TODO */
+      chainId: 1,
+      // chainId: 3,  /** TODO */
       txType: 1,
       path: '',
       to: '',
