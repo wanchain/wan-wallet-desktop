@@ -35,7 +35,7 @@ class WanAccount extends Component {
     {
       title: 'ADDRESS',
       dataIndex: 'address',
-      render: text => <div className="addrText">{text}<CopyAndQrcode addr={text}/></div>
+      render: text => <div className="addrText"><p className="addres">{text}</p><CopyAndQrcode addr={text}/></div>
     }, 
     {
       title: 'BALANCE',

@@ -47,8 +47,8 @@ class AdvancedOptionForm extends Component {
         onCancel={this.handleCancel}
         onOk={this.handleSave}
         footer={[
-          <Button key="submit" type="primary" onClick={() => this.handleSave()}>Save</Button>,
-          <Button key="back" className="cancel" onClick={this.handleCancel}>Cancel</Button>,
+          <Button key="submit" className="confirm-button" onClick={() => this.handleSave()}>Save</Button>,
+          <Button key="back" className="cancel-button" onClick={this.handleCancel}>Cancel</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
