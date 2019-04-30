@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
-import wanIco from 'static/image/wan.png';
-
 import './index.less';
 
 import { EditableFormRow, EditableCell } from './Rename';
@@ -123,11 +121,10 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={4}><img className="comWanTit" src={wanIco} />WAN <span className="span-style">( wanchain )</span></Col>
-          <Col span={4}>Total: { getAmount }</Col>
-          <Col span={8} offset={8} className="col-right">
+          <Col span={12} className="col-left">Total: { getAmount }</Col>
+          <Col span={12} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>＋ Create</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>
           </Col>
         </Row>
         <Row className="mainBody">

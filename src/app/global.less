@@ -36,10 +36,11 @@
   padding: 0 20px;
   background: @content-right-bg;
 }
-body .container .content{
-  padding: 0;
+.container .content{
+  padding: 0!important;
 }
 .account .title{
+  padding: 0 20px;
   border-bottom: 4px solid @com-border-bottom-color;
 }
   button.ant-btn.ant-btn-primary{
@@ -226,6 +227,9 @@ body .container .content{
 .ant-card{
   border: none;
 }
+.ant-table-body{
+    padding: 0 20px;
+}
 .ant-table-thead > tr > th .ant-table-header-column .ant-table-column-sorters::before{
   background: @content-right-bg;
 }
@@ -261,7 +265,7 @@ body .container .content{
   font-size: 16px;
 }
 .ant-table-tbody > tr > td:nth-child(1){
-  padding-left: 40px;
+  // padding-left: 40px;
 }
 .ant-message{
   // color: @com-message-color;

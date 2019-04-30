@@ -22,10 +22,10 @@ class MHeader extends Component {
     return (
       <div className="header">
         <Row className="header-top">
-            <Col span={6} className="title">
+            <Col span={22} className="title">
               <em className = "comLine"></em><span>{ pageTitle }</span>
             </Col>
-            <Col span={18} className="user">
+            <Col span={2} className="user">
               {/* <Button type="primary"  onClick={this.logOut}>Log Out</Button> */}
               <div className="log">
                 <Icon className="logOutIco" type="poweroff" />

@@ -1,18 +1,20 @@
-@nav-left-bg: #151625;
-@content-right-bg: #1A1B2C;
+@nav-left-bg: #151625!important;
+@content-right-bg: #1A1B2C!important;
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub{
+  color: rgba(255,255,255,0.6);
+  background-color: @nav-left-bg!important;
+}
+.nav-left {
+  color: #fff;
+  height: calc(100vh);
+  background-color: @nav-left-bg!important;
+}
 .container {
-  .nav-left {
-    color: #fff;
-    height: calc(100vh);
-    background-color: @nav-left-bg;
-  }
-
   .main {
     background-color: @content-right-bg;
     height: calc(100vh);
     overflow: auto;
   }
-
   .content {
     position: relative;
     padding: 10px;
