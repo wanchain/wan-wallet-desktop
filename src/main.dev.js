@@ -130,13 +130,13 @@ function installExtensions() {
   mainWindow.webContents.openDevTools()
 
   // Install extensions
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then(name => logger.debug(`Added Extension:  ${name}`))
-    .catch(err => logger.debug('An error occurred: ', err));
+  // installExtension(REACT_DEVELOPER_TOOLS)
+    // .then(name => logger.debug(`Added Extension:  ${name}`))
+    // .catch(err => logger.debug('An error occurred: ', err));
 
-  installExtension(REDUX_DEVTOOLS)
-    .then(name => logger.debug(`Added Extension:  ${name}`))
-    .catch(err => logger.debug('An error occurred: ', err));
+  // installExtension(REDUX_DEVTOOLS)
+  //   .then(name => logger.debug(`Added Extension:  ${name}`))
+  //   .catch(err => logger.debug('An error occurred: ', err));
 }
 
 // prevent crashed and close gracefully
