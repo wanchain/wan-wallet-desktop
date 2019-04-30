@@ -95,14 +95,19 @@ export default (i18n) => {
                         checked: setting.network === 'main',
                         type: 'radio',
                         click: async () => {
-                            if (process.env.NODE_ENV === 'development') {
+                            // if (process.env.NODE_ENV === 'development') {
                                 // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                            // }
+                        
+                            // app.exit(0)
+
+                            if (!setting.network.includes('main')) {
                                 setting.switchNetwork()
                                 console.log(setting.network)
                                 await walletBackend.init()
                             }
-                        
-                            // app.exit(0)
+
+                            return 
                         }
                     },
                     {
@@ -111,14 +116,19 @@ export default (i18n) => {
                         checked: setting.network === 'testnet',
                         type: 'radio',
                         click: async () => {
-                            if (process.env.NODE_ENV === 'development') {
+                            // if (process.env.NODE_ENV === 'development') {
                                 // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                            // }
+    
+                            // app.exit(0)
+
+                            if (setting.network.includes('main')) {
                                 setting.switchNetwork()
                                 console.log(setting.network)
                                 await walletBackend.init()
                             }
-    
-                            // app.exit(0)
+
+                            return 
                         }
                     }
                 ]
