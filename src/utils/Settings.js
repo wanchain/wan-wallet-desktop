@@ -14,7 +14,7 @@ let _isDev = undefined
 
 const defaultConfig = {
     mode: 'light',
-    network: 'testnet',
+    network: 'main',
     lang: 'en'
 }
 
@@ -126,6 +126,17 @@ class Settings {
 
     _set(key, value) {
         this._db.set(key, value).write()
+    }
+
+    switchNetwork() {
+        const beforeSwitchNetwork = _network
+        _network = undefined
+
+        const [ afterSwitchNetwork ] = ['main', 'testnet'].filter(item => item !== beforeSwitchNetwork)
+
+        this._set('network', afterSwitchNetwork)
+
+        _network = afterSwitchNetwork
     }
 
     loadUserData(filename) {

@@ -1,7 +1,7 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { app, shell, BrowserWindow } from 'electron'
-import { updater } from '~/src/modules'
+import { updater, walletBackend } from '~/src/modules'
 
 export default (i18n) => {
     const menu = []
@@ -94,12 +94,15 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
                         type: 'radio',
-                        click: () => {
+                        click: async () => {
                             if (process.env.NODE_ENV === 'development') {
-                                app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                                setting.switchNetwork()
+                                console.log(setting.network)
+                                await walletBackend.init()
                             }
                         
-                            app.exit(0)
+                            // app.exit(0)
                         }
                     },
                     {
@@ -107,12 +110,15 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
                         type: 'radio',
-                        click: () => {
+                        click: async () => {
                             if (process.env.NODE_ENV === 'development') {
-                                app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                                setting.switchNetwork()
+                                console.log(setting.network)
+                                await walletBackend.init()
                             }
     
-                            app.exit(0)
+                            // app.exit(0)
                         }
                     }
                 ]

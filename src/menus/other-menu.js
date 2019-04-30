@@ -52,12 +52,15 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
                         type: 'radio',
-                        click: () => {
-                            if (setting.isDev) {
-                                app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                        click: async () => {
+                            if (process.env.NODE_ENV === 'development') {
+                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
+                                setting.switchNetwork()
+                                console.log(setting.network)
+                                await walletBackend.init()
                             }
                         
-                            app.exit(0)
+                            // app.exit(0)
                         }
                     },
                     {
@@ -65,12 +68,15 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
                         type: 'radio',
-                        click: () => {
-                            if (setting.isDev) {
-                                app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                        click: async () => {
+                            if (process.env.NODE_ENV === 'development') {
+                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
+                                setting.switchNetwork()
+                                console.log(setting.network)
+                                await walletBackend.init()
                             }
     
-                            app.exit(0)
+                            // app.exit(0)
                         }
                     }
                 ]
