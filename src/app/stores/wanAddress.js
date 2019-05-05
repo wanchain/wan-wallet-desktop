@@ -56,7 +56,8 @@ class WanAddress {
           key: `${index + 1}`,
           name: self.addrInfo[item].name,
           address: item,
-          balance: self.addrInfo[item].balance
+          balance: self.addrInfo[item].balance,
+          action: 'send'
         });
       });
       return addrList;
