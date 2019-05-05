@@ -53,7 +53,7 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} /></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.chainType}/></div>
     }
   ];
 
@@ -97,7 +97,7 @@ class WanAccount extends Component {
     });
 
     if (this.state.bool) {
-      wand.request('address_get', { walletID: this.walletID, chainType: 'WAN', start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
+      wand.request('address_get', { walletID: this.walletID, chainType: this.chainType, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
         if (!err) {
           let ret = val_address_get;
           wand.request('account_create', { walletID: this.walletID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {

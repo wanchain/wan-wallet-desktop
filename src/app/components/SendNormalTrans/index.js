@@ -4,13 +4,16 @@ import { message, Button, Form } from 'antd';
 import NormalTransForm from 'components/NormalTransForm'
 import './index.less';
 import { observer, inject } from 'mobx-react';
+import { getNonce, getGasPrice, getGasLimit, getChainId } from 'utils/helper';
 
 @inject(stores => ({
   transParams: stores.sendTransParams.transParams,
+  chainId: stores.session.chainId,
   addTransaction: (addr, params) => stores.sendTransParams.addTransaction(addr, params),
   updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
   updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
   updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
+  updateChainId: (addr, nonce) => stores.sendTransParams.updateChainId(addr, nonce),
   updatePath: (addr, path) => stores.sendTransParams.updatePath(addr, path),
 }))
 
@@ -19,6 +22,7 @@ class SendNormalTrans extends Component {
   constructor(props) {
     super(props);
     console.log("from", this.props.from)
+    this.chainType = this.props.chainType;
     this.state = {
       loading: false,
       visible: false,
@@ -30,8 +34,7 @@ class SendNormalTrans extends Component {
       gasLimit: 21000,
       nonce: 0,
       data: '0x',
-      chainId: 1,
-      // chainId: 3,  /** TODO */
+      chainId: this.props.chainId,
       txType: 1,
       path: '',
       to: '',
@@ -42,18 +45,19 @@ class SendNormalTrans extends Component {
 
   CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
-  showModal = () => {
+  showModal = async () => {
     console.log("from", this.props.from)
     this.props.updatePath(this.props.from, this.props.path);
-    wand.request('address_getNonce', { addr: this.props.from, chainType: 'WAN' }, (err, val) => {
-      if (err) {
-        message.warn(err);
-      } else {
-        let nonce = parseInt(val, 16);
-        this.props.updateNonce(this.props.from, nonce);
-        this.setState({ visible: true });
-      }
-    });
+    try {
+      let [nonce, chainId] = await Promise.all([getNonce(this.props.from, this.chainType), getChainId()]);
+      console.log('nonce', nonce, "chainId", chainId);
+      this.props.updateNonce(this.props.from, nonce);
+      this.props.updateChainId(this.props.from, chainId);
+      this.setState({ visible: true });
+      console.log('params', this.props.transParams[this.props.from])
+    } catch (err) {
+      message.warn(err);
+    }
   }
 
   handleCancel = () => {

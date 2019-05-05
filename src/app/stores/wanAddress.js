@@ -7,7 +7,7 @@ class WanAddress {
     @observable addrInfo = {};
 
     @action addAddress(newAddr) {
-      self.addrInfo[newAddr.wanaddr] = {
+      self.addrInfo[newAddr.address] = {
         name: `Account${newAddr.start + 1}`,
         balance: '0',
         path: newAddr.start
