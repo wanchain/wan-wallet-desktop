@@ -24,7 +24,7 @@ class Accounts extends Component {
     ];
   }
 
-  handleSend = async (from) => {
+  handleSend = (from) => {
     console.log("from", from)
     let params = this.props.transParams[from];
     console.log(params);

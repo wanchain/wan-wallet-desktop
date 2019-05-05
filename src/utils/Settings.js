@@ -15,6 +15,7 @@ let _isDev = undefined
 const defaultConfig = {
     mode: 'light',
     network: 'main',
+    // network: 'testnet',
     lang: 'en'
 }
 

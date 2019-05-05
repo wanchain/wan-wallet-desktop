@@ -18,6 +18,7 @@ import { observer, inject } from 'mobx-react';
 class SendNormalTrans extends Component {
   constructor(props) {
     super(props);
+    console.log("from", this.props.from)
     this.state = {
       loading: false,
       visible: false,
@@ -42,6 +43,7 @@ class SendNormalTrans extends Component {
   CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
   showModal = () => {
+    console.log("from", this.props.from)
     this.props.updatePath(this.props.from, this.props.path);
     wand.request('address_getNonce', { addr: this.props.from, chainType: 'WAN' }, (err, val) => {
       if (err) {

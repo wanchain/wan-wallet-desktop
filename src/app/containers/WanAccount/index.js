@@ -11,6 +11,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
+  transParams: stores.sendTransParams.transParams,
   addrInfo: stores.wanAddress.addrInfo,
   getAmount: stores.wanAddress.getAmount,
   getAddrList: stores.wanAddress.getAddrList,
@@ -35,7 +36,7 @@ class WanAccount extends Component {
     {
       title: 'ADDRESS',
       dataIndex: 'address',
-      render: text => <div className="addrText"><p className="addres">{text}</p><CopyAndQrcode addr={text}/></div>
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text}/></div>
     }, 
     {
       title: 'BALANCE',
@@ -43,14 +44,45 @@ class WanAccount extends Component {
       sorter: (a, b) => a.balance - b.balance,
     }, 
     {
-      title: 'ACTIONS',
-      dataIndex: 'actions',
-      render: text => <div><SendNormalTrans addr={text}/></div>
+      title: 'ACTION',
+      dataIndex: 'action',
+      render: text => <div><SendNormalTrans from={text} handleSend={this.handleSend}/></div>
     }
   ];
 
   componentWillMount() {
     this.props.changeTitle('Wallet Detail');
+  }
+
+  handleSend = (from) => {
+    console.log("from", from)
+    let params = this.props.transParams[from];
+    console.log(params);
+    // let rawTx = {
+    //   to: params.to,
+    //   value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
+    //   data: params.data,
+    //   chainId: params.chainId,
+    //   nonce: '0x' + params.nonce.toString(16),
+    //   gasLimit: '0x' + params.gasLimit.toString(16),
+    //   gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
+    //   Txtype: params.txType
+    // };
+    // console.log("raw", rawTx)
+
+    // this.props.signTransaction(params.path, rawTx, (signedTx) => {
+    //   console.log('signedTx', signedTx)
+    //   wand.request('transaction_raw', { raw: signedTx, chainType: 'WAN' }, (err, val) => {
+    //     if (err) {
+    //       message.warn("Send transaction failed. Please try again");
+    //       console.log(err);
+    //     } else {
+    //       console.log("TxHash:", val);
+    //     }
+    //   });
+    // });
+
+    this.setState({ visible: true });
   }
 
   creatAccount = () => {
@@ -68,7 +100,7 @@ class WanAccount extends Component {
             if (!err && val_account_create) {
               let addressInfo = ret.addresses[0];
               addressInfo.start = addressInfo.index;
-              addressInfo.wanaddr = `0x${addressInfo.address}`;
+              addressInfo.address = `0x${addressInfo.address}`;
               addAddress(addressInfo);
               this.setState({
                 bool: true
