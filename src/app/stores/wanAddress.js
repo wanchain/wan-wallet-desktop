@@ -57,6 +57,7 @@ class WanAddress {
           name: self.addrInfo[item].name,
           address: item,
           balance: self.addrInfo[item].balance,
+          path: `${WAN}${self.addrInfo[item].path}`,
           action: 'send'
         });
       });
