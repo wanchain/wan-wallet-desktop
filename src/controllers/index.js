@@ -342,6 +342,7 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
             break
 
         case 'getGasPrice':
+        {
             const { chainType } = payload;
             try {
                 ret = await ccUtil.getGasPrice(chainType);
@@ -351,8 +352,10 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
             }
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break;
+        }
 
         case 'getGasLimit':
+        {
             const { chainType } = payload;
             try {
                 ret = await ccUtil.getGasLimit(chainType);
@@ -362,6 +365,7 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
             }
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break;
+        }
     }
 
 })
