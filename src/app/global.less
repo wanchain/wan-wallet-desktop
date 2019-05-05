@@ -6,17 +6,18 @@
   @com-yellow-color: #DA9E40;
   @com-white-opacity-color: rgba(255, 255, 255, .7)!important;
   @modal-input-focus: #414EDD;
-  @button-blue-primary: linear-gradient(90deg,#414EDD 0%,#29307C 100%);
+  @button-blue-primary: linear-gradient(90deg,#414EDD 0%,#29307C 100%)!important;
   @button-gray-cancel: linear-gradient(90deg,#4A4C72 0%,#3D3E5F 100%);
-  @button-blue-primary-hover: linear-gradient(90deg,#29307C 100%,#414EDD 0%);
+  @button-blue-primary-hover: linear-gradient(90deg,#29307C 0%,#414EDD 100%);
   @button-gray-cancel-hover: linear-gradient(90deg,#3D3E5F 0%,#4A4C72 100%);
   @table-td-bg-hover: #303147;
   @com-border-bottom-color: rgba(255, 255, 255, 0.1);
   @com-message-color: #1A1B2C!important;
-  body {
+  body,p,span,h1,h2,h3,h4,h5,h6 {
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  margin-block-start: 0!important;
+  margin-block-end: 0!important;
   // font-family: "Roboto";
   font-weight: bold;
   ul,li{
@@ -53,7 +54,7 @@
   background: @content-right-bg;
 }
 .container .content{
-  padding: 0!important;
+  padding: 1px!important;
 }
 .account .title{
   padding: 0 20px;
@@ -82,7 +83,7 @@
   }
   .ant-btn-primary:hover, .ant-btn-primary:focus{
     color: @com-white-color;
-    background: @button-blue-primary-hover;
+    background: @button-blue-primary-hover!important;
   }
   .ant-btn-round.ant-btn-lg{
     padding: 0;
@@ -295,10 +296,45 @@
 .comWanTit{
   width: 24PX;
 }
+.ant-modal-confirm-body .ant-modal-confirm-title{
+  color:  @com-yellow-color;              
+}
+.ant-modal-confirm-body > .anticon + .ant-modal-confirm-title + .ant-modal-confirm-content{
+  margin: 0!important;
+}
+.anticon-info-circle{
+  display: none;
+}
+.ant-modal-confirm-btns{
+  .ant-btn-primary{
+    width: 150px;
+    height: 40px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+.codeImg{
+  width: 148px;
+  margin: 50px auto 30px;
+  img{
+    width: 100%;
+  }
+}
+.ant-modal-confirm-btns{
+  width: 100%;
+  margin-bottom: 20px;
+}
 .com-yellow{
   font-size: 16px;
   color:  @com-yellow-color;
-  margin: 0 0 15px 0;
+  padding: 0 0 15px 0;
+}
+.ant-modal-confirm .ant-modal-confirm-btns{
+  clear: both;
+}
+.ant-modal-confirm .ant-modal-body{
+  text-align: center;
 }
 .com-white{
   font-size: 14px;
