@@ -46,11 +46,7 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => {
-        console.log(text, 'ppppppppllllll')
-        console.log(record, 'ppppppppllllll')
-        return <div><SendNormalTrans from={text} handleSend={this.handleSend}/></div>
-      }
+      render: (text, record) => <div><SendNormalTrans from={record.address} handleSend={this.handleSend}/></div>
     }
   ];
 
