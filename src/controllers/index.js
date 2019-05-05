@@ -325,7 +325,7 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
     }
 })
 
-ipc.on(ROUTE_QUERY, (event, action, payload) => {
+ipc.on(ROUTE_QUERY, async (event, action, payload) => {
     let ret, err
     switch (action) {
         case 'config':
