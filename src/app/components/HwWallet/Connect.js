@@ -108,7 +108,6 @@ class Connect extends Component {
       <div>
         <Card title="Connect a Hardware Wallet" bordered={false}>
           <this.props.Instruction />
-          <br />
           <Button type="primary" onClick={() => this.showDefaultPageAddrsFromHd()}>Continue</Button>
           <Modal
             destroyOnClose={true}
@@ -116,6 +115,7 @@ class Connect extends Component {
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
+            className="popTable"
           >
             <div>
               <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.state.addresses}></Table>

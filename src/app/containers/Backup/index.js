@@ -59,7 +59,7 @@ class Backup extends Component {
     return (
       <div>
         <Card title="Reveal Mnemonic Sentence">
-          <p className="com-yellow">
+          <p className="com-gray">
             If you install a new wallet, you will need this mnemonic sentence to access your assets.
             Save them somewhere safe and secret.
           </p>

@@ -1,6 +1,13 @@
   @font-face {
-    font-family: 'Roboto';
-    src: url('../../static/font/Roboto.ttf');
+    font-family: 'Roboto-Regular';
+    src: url('../../static/font/Roboto-Regular.ttf');
+  }
+  @font-face {
+    font-family: 'Roboto-Bold';
+    src: url('../../static/font/Roboto-Bold.ttf');
+  }
+  body{
+    font-family: "Roboto-Regular";
   }
   // base
   @content-right-bg: #1A1B2C!important;
@@ -9,7 +16,7 @@
   @com-white-color: #FFFFFF!important;
   // @com-yellow-color: #DA9E40;
   @com-yellow-color: #ff5d49;
-  @com-white-opacity-color: rgba(255, 255, 255, .7)!important;
+  @com-white-opacity-color: rgba(255, 255, 255, 0.5)!important;
   @modal-input-focus: #414EDD;
   @button-blue-primary: linear-gradient(90deg,#414EDD 0%,#29307C 100%)!important;
   @button-gray-cancel: linear-gradient(90deg,#4A4C72 0%,#3D3E5F 100%);
@@ -23,8 +30,6 @@
   padding: 0;
   margin-block-start: 0!important;
   margin-block-end: 0!important;
-  font-family: "Roboto";
-  font-weight: bold;
   ul,li{
     list-style: none;
   }
@@ -41,10 +46,37 @@
 .ant-table-tbody > tr > td{
   opacity: .7;
 }
+.popTable{
+  width: 640px;
+  .ant-modal-body{
+    width: 92%!important;
+  }
+}
+.ant-table-column-titlev{
+  opacity: .5;
+}
 .ant-modal-body{
-  width: 100%!important;
+  // width: 92%!important;
+  width: 480px;
+  margin: 0 auto;
+  padding: 0;
   .ant-table-body{
     padding: 0!important;
+  }
+}
+.ant-card-head-wrapper{
+  width: 100%;
+}
+.com-gray{
+  color: @com-white-opacity-color;
+  padding-bottom: 15px;
+  font-size: 16px;
+}
+.ledgerTex{
+  padding-bottom: 20px;
+  p{
+    font-size: 14px;
+    line-height: 20px;
   }
 }
 .container .content{
@@ -55,14 +87,14 @@
   background: @content-right-bg;
 }
 .container .content{
-  padding: 1px!important;
+  padding: 10px!important;
 }
 .account .title{
   padding: 0 20px;
   border-bottom: 4px solid @com-border-bottom-color;
 }
   button.ant-btn.ant-btn-primary{
-    font-weight: bold;
+ 
     margin: 0;
   }
   // button
@@ -107,11 +139,6 @@
   .ant-modal-header{
     background: @com-modal-bg;
     // margin-right: 15px;
-  }
-  .ant-modal-body{
-    width: 480px;
-    margin: 0 auto;
-    padding: 0;
   }
   .ant-form-item-label > label{
     color: @com-white-color;
@@ -195,7 +222,7 @@
       border-radius:20px;
       margin: 0 10px;
       font-size: 18px;
-      font-weight: Bold;
+   
       color: @com-white-color;
     }
     .ant-btn{
@@ -311,7 +338,7 @@
     height: 40px;
     border-radius: 20px;
     font-size: 18px;
-    font-weight: bold;
+ 
   }
 }
 .codeImg{
