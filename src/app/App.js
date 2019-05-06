@@ -6,13 +6,15 @@ import { AppContainer } from 'react-hot-loader';
 import './global.less';
 import Router from './Routes';
 import stores from './stores';
+import { initEmitterHandler } from 'utils/helper';
 
 class App extends Component {
   componentWillMount() {
+    initEmitterHandler();
     stores.session.getMnemonic();
     stores.session.initChainId();
     stores.wanAddress.getUserAccountFromDB();
-    stores.portfolio.updateCoinPrice()
+    stores.portfolio.updateCoinPrice();
   }
   
   render() {

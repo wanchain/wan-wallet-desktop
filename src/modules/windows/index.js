@@ -89,7 +89,7 @@ class Window extends EventEmitter {
             return
         }
 
-        console.log(arguments)
+        // console.log(arguments)
 
         // this._logger.debug(`Sending data ${arguments.toString()}`)
 

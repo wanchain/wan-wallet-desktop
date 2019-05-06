@@ -1,4 +1,5 @@
 import { observable, action } from 'mobx';
+import { regEmitterHandler } from 'utils/helper';
 
 class Session {
   @observable pageTitle = 'Wanchain Wallet';
@@ -20,23 +21,14 @@ class Session {
   }
 
   @action initChainId() {
-    return new Promise((resolve, reject) => {
-      wand.request('query_config', {
-        param: 'network'
-      }, function (err, val) {
-        let chainId;
-        if (err) {
-          return reject('Get chain ID failed ', err);
-        } else {
-          if (val['network'].includes('main')) {
-            chainId = 1;
-          } else {
-            chainId = 3;
-          }
-          self.chainId = chainId;
-          return resolve(chainId);
-        }
-      }.bind(this));
+    let chainId;
+    regEmitterHandler('network', (val) => {
+      if (val.includes('main')) {
+        chainId = 1;
+      } else {
+        chainId = 3;
+      }
+      self.chainId = chainId;
     });
   }
 
