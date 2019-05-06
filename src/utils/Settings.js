@@ -5,6 +5,7 @@ import FileSync from 'lowdb/adapters/FileSync'
 import { app } from 'electron'
 import Logger from './Logger'
 import yargs from 'yargs'
+import WalletHelper from '~/src/utils/Helper'
 
 // caches for config
 let _mode = undefined
@@ -15,7 +16,6 @@ let _isDev = undefined
 const defaultConfig = {
     mode: 'light',
     network: 'main',
-    // network: 'testnet',
     lang: 'en'
 }
 
@@ -69,6 +69,10 @@ class Settings {
      */
     get userDataPath() {
         return app.getPath('userData')
+    }
+
+    get appLogPath() {
+        return WalletHelper.getLogPath()
     }
 
     /**
@@ -138,6 +142,15 @@ class Settings {
         this._set('network', afterSwitchNetwork)
 
         _network = afterSwitchNetwork
+    }
+    
+    switchLang(langCode) {
+        const beforeSwitchLang = _lang
+        _lang = undefined
+
+        this._set('lang', langCode)
+
+        _lang = langCode
     }
 
     loadUserData(filename) {

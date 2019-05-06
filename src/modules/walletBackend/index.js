@@ -32,7 +32,7 @@ class WalletBackend extends EventEmitter {
         
         require('~/src/controllers')
         this.logger.info('finish initing walletbackend')
-        this.emit('init_done')
+        this.emit('initiationDone')
     }
 }
 

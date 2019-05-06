@@ -20,6 +20,9 @@ const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
 
 if (!i18n.isIintialized) {
+  menuFactoryService.on('menuSetDone', () => {
+    Windows.broadcast('notification', 'language', setting.language)
+  })
   i18n.init(i18nOptions, (err) => {
     if (err) {
       logger.error('i18n change language error')
@@ -150,7 +153,7 @@ process.on('uncaughtException', (err) => {
 
 async function onReady() {
   Windows.init()
-  walletBackend.on('init_done', () => {
+  walletBackend.on('initiationDone', () => {
     Windows.broadcast('notification', 'network', setting.network)
   })
   await createWindow()
