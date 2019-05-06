@@ -1,5 +1,5 @@
 import { fromWei } from 'utils/support';
-import { func } from 'prop-types';
+import { BigNumber } from 'bignumber.js';
 
 let emitterHandlers = {};
 
@@ -7,7 +7,7 @@ export const getBalance = function (addrArr) {
   return new Promise((resolve, reject) => {
     wand.request('address_balance', { addr: addrArr }, (err, val) => {
       if (err) {
-        return reject('error printed inside callback: ', err)
+        return reject('Get balance failed ', err)
       } else {
         Object.keys(val).forEach(item => val[item] = fromWei(val[item]));
         return resolve(val);
@@ -29,26 +29,25 @@ export const getNonce = function (addrArr, chainType) {
   })
 };
 
-export const getGasPrice = function (addrArr) {
+export const getGasPrice = function (chainType) {
   return new Promise((resolve, reject) => {
-    wand.request('address_balance', { addr: addrArr }, (err, val) => {
+    wand.request('query_getGasPrice', { chainType: chainType }, (err, val) => {
       if (err) {
-        return reject('error printed inside callback: ', err)
+        return reject('Get gas price failed ', err)
       } else {
-        Object.keys(val).forEach(item => val[item] = fromWei(val[item]));
-        return resolve(val);
+        let gasPrice = new BigNumber(val).div(BigNumber(10).pow(9)).toString(10);
+        return resolve(gasPrice);
       }
     })
   })
 };
 
-export const getGasLimit = function (addrArr) {
+export const getGasLimit = function (chainType) {
   return new Promise((resolve, reject) => {
-    wand.request('address_balance', { addr: addrArr }, (err, val) => {
+    wand.request('query_getGasLimit', { chainType: chainType }, (err, val) => {
       if (err) {
-        return reject('error printed inside callback: ', err)
+        return reject('Get gas limit failed ', err)
       } else {
-        Object.keys(val).forEach(item => val[item] = fromWei(val[item]));
         return resolve(val);
       }
     })

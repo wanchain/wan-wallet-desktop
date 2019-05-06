@@ -49,10 +49,10 @@ class SendNormalTrans extends Component {
     console.log("from", this.props.from)
     this.props.updatePath(this.props.from, this.props.path);
     try {
-      let [nonce, chainId] = await Promise.all([getNonce(this.props.from, this.chainType), getChainId()]);
-      console.log('nonce', nonce, "chainId", chainId);
+      let [nonce, gasPrice] = await Promise.all([getNonce(this.props.from, this.chainType), getGasPrice(this.chainType)]);
+      console.log('nonce', nonce, "gasPrice", gasPrice);
       this.props.updateNonce(this.props.from, nonce);
-      this.props.updateChainId(this.props.from, chainId);
+      this.props.updateGasPrice(this.props.from, gasPrice);
       this.setState({ visible: true });
       console.log('params', this.props.transParams[this.props.from])
     } catch (err) {

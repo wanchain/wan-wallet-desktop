@@ -319,9 +319,8 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
 
         case 'raw':
             console.log("raw", payload)
-            let { raw, chainType } = payload
             try {
-                ret = await ccUtil.sendTrans(raw, chainType)
+                ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -329,6 +328,16 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
 
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getGasLimit':
+            try {
+                ret = await ccUtil.getGasLimit(payload.chainType);
+            } catch (err) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 
@@ -336,7 +345,7 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
     let ret, err
     switch (action) {
         case 'config':
-            const { param } = payload
+            let { param } = payload
             try {
                 let conf = setting[`${param}`]
                 ret = { [param]: conf }
@@ -349,30 +358,14 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
             break
 
         case 'getGasPrice':
-        {
-            const { chainType } = payload;
             try {
-                ret = await ccUtil.getGasPrice(chainType);
+                ret = await ccUtil.getGasPrice(payload.chainType);
             } catch (err) {
                 logger.error(e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break;
-        }
-
-        case 'getGasLimit':
-        {
-            const { chainType } = payload;
-            try {
-                ret = await ccUtil.getGasLimit(chainType);
-            } catch (err) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
-            break;
-        }
     }
 
 })

@@ -10,11 +10,11 @@ import { initEmitterHandler } from 'utils/helper';
 
 class App extends Component {
   componentWillMount() {
-    initEmitterHandler();
     stores.session.getMnemonic();
     stores.session.initChainId();
     stores.wanAddress.getUserAccountFromDB();
     stores.portfolio.updateCoinPrice();
+    initEmitterHandler();
   }
   
   render() {
