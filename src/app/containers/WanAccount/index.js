@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
+import BigNumber from "bignumber.js";
 
 import './index.less';
 
@@ -11,6 +12,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
+  transParams: stores.sendTransParams.transParams,
   addrInfo: stores.wanAddress.addrInfo,
   getAmount: stores.wanAddress.getAmount,
   getAddrList: stores.wanAddress.getAddrList,
@@ -21,9 +23,15 @@ const WAN = "m/44'/5718350'/0'/0/";
 
 @observer
 class WanAccount extends Component {
-  state = {
-    bool: true,
-    isUnlock: false,
+  constructor(props) {
+    super(props);
+    this.walletID = 1;
+    this.chainType = "WAN";
+    this.symbol = "WAN";
+    this.state = {
+      bool: true,
+      isUnlock: false,
+    }
   }
 
   columns = [
@@ -31,26 +39,54 @@ class WanAccount extends Component {
       title: 'NAME',
       dataIndex: 'name',
       editable: true
-    }, 
+    },
     {
       title: 'ADDRESS',
       dataIndex: 'address',
-      render: text => <div className="addrText"><p className="addres">{text}</p><CopyAndQrcode addr={text}/></div>
-    }, 
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+    },
     {
       title: 'BALANCE',
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
-    }, 
+    },
     {
-      title: 'ACTIONS',
-      dataIndex: 'actions',
-      render: text => <div><SendNormalTrans addr={text}/></div>
+      title: 'ACTION',
+      dataIndex: 'action',
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.chainType}/></div>
     }
   ];
 
   componentWillMount() {
     this.props.changeTitle('Wallet Detail');
+  }
+
+  handleSend = (from) => {
+    console.log("from", from)
+    let params = this.props.transParams[from];
+    console.log(params);
+    let trans = {
+      walletID: this.walletID,
+      chainType: this.chainType,
+      symbol: this.symbol,
+      path: params.path,
+      to: params.to,
+      amount: params.amount,
+      gasLimit: '0x' + params.gasLimit.toString(16),
+      gasPrice: params.gasPrice,
+    };
+    console.log("trans", trans)
+
+      wand.request('transaction_normal', trans, (err, val) => {
+        if (err) {
+          message.warn("Send transaction failed. Please try again");
+          console.log(err);
+        } else {
+          console.log("TxHash:", val);
+        }
+      });
+
+    this.setState({ visible: true });
   }
 
   creatAccount = () => {
@@ -60,15 +96,15 @@ class WanAccount extends Component {
       bool: false
     });
 
-    if(this.state.bool) {
-      wand.request('address_get', { walletID: 1, chainType: 'WAN', start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
+    if (this.state.bool) {
+      wand.request('address_get', { walletID: this.walletID, chainType: this.chainType, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
         if (!err) {
           let ret = val_address_get;
-          wand.request('account_create', { walletID: 1, path: `${WAN}${addrLen}`, meta: {name: `Account${addrLen+1}`, addr: `0x${val_address_get.addresses[0].address}`}}, (err, val_account_create) => {
+          wand.request('account_create', { walletID: this.walletID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = ret.addresses[0];
               addressInfo.start = addressInfo.index;
-              addressInfo.wanaddr = `0x${addressInfo.address}`;
+              addressInfo.address = `0x${addressInfo.address}`;
               addAddress(addressInfo);
               this.setState({
                 bool: true
@@ -121,7 +157,7 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left">Total: { getAmount }</Col>
+          <Col span={12} className="col-left">Total: {getAmount}</Col>
           <Col span={12} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>

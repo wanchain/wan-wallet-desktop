@@ -3,7 +3,7 @@ import './index.less';
 import TrezorConnect from 'trezor-connect';
 // import Connect from './Connect';
 import ConnectHwWallet from 'components/HwWallet/Connect';
-import Accounts from './Accounts';
+import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
 
 // Initialize TrezorConnect 
@@ -36,6 +36,7 @@ class Trezor extends Component {
   constructor(props) {
     super(props);
     this.dPath = "m/44'/5718350'/0'/0";
+    this.chainType = "WAN";
     this.state = {
       visible: false,
       // addresses: [{ key: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" },
@@ -86,7 +87,7 @@ class Trezor extends Component {
         {
           this.state.addresses.length === 0 ? <ConnectHwWallet setAddresses={this.setAddresses} 
           Instruction={this.instruction} getPublicKey={this.getPublicKey} 
-          dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} />
+          dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} chainType={this.chainType} />
         }
       </div>
     );

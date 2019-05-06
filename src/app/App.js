@@ -10,6 +10,7 @@ import stores from './stores';
 class App extends Component {
   componentWillMount() {
     stores.session.getMnemonic();
+    stores.session.initChainId();
     stores.wanAddress.getUserAccountFromDB();
     stores.portfolio.updateCoinPrice()
   }

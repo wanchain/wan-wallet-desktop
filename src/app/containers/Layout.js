@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 
 import './Layout.less';
 import SideBar from './Sidebar';
-import CreateMnemonic from './CreateMnemonic';
+import Register from './Register';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 
@@ -61,7 +61,9 @@ export default class Layout extends Component {
     } else {
       /** TODO */
       if (!hasMnemonicOrNot) {
-        return <CreateMnemonic />;
+        return (
+          <Register />
+        );
       } else {
         return (
           <Row className="container">
@@ -71,7 +73,7 @@ export default class Layout extends Component {
             <Col span={20} className="main">
               <MHeader />
               <Row className="content">
-                  {this.props.children}
+                {this.props.children}
               </Row>
               <MFooter />
             </Col>

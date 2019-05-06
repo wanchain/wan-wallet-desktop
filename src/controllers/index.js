@@ -325,7 +325,7 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
     }
 })
 
-ipc.on(ROUTE_QUERY, (event, action, payload) => {
+ipc.on(ROUTE_QUERY, async (event, action, payload) => {
     let ret, err
     switch (action) {
         case 'config':
@@ -340,6 +340,32 @@ ipc.on(ROUTE_QUERY, (event, action, payload) => {
 
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getGasPrice':
+        {
+            const { chainType } = payload;
+            try {
+                ret = await ccUtil.getGasPrice(chainType);
+            } catch (err) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
+            break;
+        }
+
+        case 'getGasLimit':
+        {
+            const { chainType } = payload;
+            try {
+                ret = await ccUtil.getGasLimit(chainType);
+            } catch (err) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
+            break;
+        }
     }
 
 })

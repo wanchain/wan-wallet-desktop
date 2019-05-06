@@ -188,7 +188,7 @@ class Windows {
     }
 
     getById(id) {
-        logger.debug(`Get window by id, ${id}`)
+        // logger.debug(`Get window by id, ${id}`)
 
         return _.find(this._windows, (w) => w.id === id )
     }

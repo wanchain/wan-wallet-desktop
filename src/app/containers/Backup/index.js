@@ -38,7 +38,7 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
-    wand.request('phrase_reveal', {pwd: pwd}, function(err, val) {
+    wand.request('phrase_reveal', {pwd: pwd}, (err, val) => {
       if (err) {
         message.warn('Get phrase failed. Try again');
       } else {
@@ -47,7 +47,7 @@ class Backup extends Component {
           showMnemonic: true
         });
       }
-    }.bind(this))
+    })
   }
 
   copy2Clipboard = (val) => {

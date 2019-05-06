@@ -16,15 +16,16 @@ import { observer, inject } from 'mobx-react';
 class Accounts extends Component {
   constructor(props) {
     super(props);
+    this.chainType = this.props.chainType;
     this.columns = [
       { title: "NAME", dataIndex: "name" },
       { title: "ADDRESS", dataIndex: "address" },
       { title: "BALANCE", dataIndex: "balance" },
-      { title: "ACTION", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} /> </div> }
+      { title: "ACTION", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.chainType} /> </div> }
     ];
   }
 
-  handleSend = async (from) => {
+  handleSend = (from) => {
     console.log("from", from)
     let params = this.props.transParams[from];
     console.log(params);

@@ -77,6 +77,7 @@ class Ledger extends Component {
     super(props);
     this.dPath = "m/44'/5718350'/0'";
     this.walletID = 0x02;
+    this.chainType = 'WAN';
     this.connectLedger = false;
     this.state = {
       visible: false,
@@ -182,7 +183,7 @@ class Ledger extends Component {
         {
           this.state.addresses.length === 0 ? <ConnectHwWallet setAddresses={this.setAddresses}
             Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey}
-            dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} signTransaction={this.signTransaction} />
+            dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} signTransaction={this.signTransaction} chainType={this.chainType} />
         }
       </div>
     );

@@ -38,7 +38,7 @@ class Connect extends Component {
   showDefaultPageAddrsFromHd = () => {
     this.props.getPublicKey((err, result) => {
       if (err) {
-        let msg = 'Get public key error';
+        let msg = 'Connect failed';
         console.log(msg, err);
         message.warn(msg);
       } else {
