@@ -4,6 +4,15 @@ import setting from '../utils/Settings'
 import { app, shell } from 'electron'
 import { walletBackend, updater } from '~/src/modules'
 
+const platformAdapter = function (options) {
+    if (process.platform in options) {
+        return options[process.platform];
+    } else if ('default' in options) {
+        return options.default;
+    }
+    return null;
+}
+
 export default (i18n) => {
     const menu = []
 
@@ -193,6 +202,15 @@ export default (i18n) => {
     const windowMenu = {
         label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
+            {
+                label: i18n.t('main.applicationMenu.window.fullscreen'),
+                // accelerator: platformAdapter({
+                //     darwin: 'CommandOrControl+F',
+                //     default: 'F11',
+                // }),
+                accelerator: 'CommandOrControl+F',
+                role: 'toggleFullScreen'
+            },
             {
                 label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
