@@ -8,6 +8,7 @@ import './index.less';
 import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
+import totalImg from 'static/image/total.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -157,7 +158,7 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left">Total: {getAmount}</Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" />Total: {getAmount}</Col>
           <Col span={12} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>
