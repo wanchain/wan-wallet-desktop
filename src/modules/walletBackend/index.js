@@ -2,25 +2,21 @@ import { walletCore } from 'wanchain-js-sdk';
 import Logger from '~/src/utils/Logger'
 import configService from './config'
 import EventEmitter from 'events'
+// import { Windows } from '~/src/modules'
 
 class WalletBackend extends EventEmitter {
     constructor(config) {
         super()
         this.logger = Logger.getLogger('walletBackend')
-        // this.config = Object.assign(configService.getConfig(), config)
-        // try {
-            // this.sdk = new walletCore(this.config)
-        // } catch (e) {
-            // this.logger.error(e.message || e.stack)            
-        // }
-
-        // this.logger.info('create walletbackend')
     }
 
+    hdWalletDisconnectHandler(msg) {
+        const { Windows } = require('../windows')
+        Windows.broadcast('notification', 'hdwallet', msg)
+    }
+  
     async init(config) {
-        // let err
         this.config = Object.assign(configService.getConfig(), config)
-        console.log('This Config: ', this.config)
         try {
             this.logger.info('start creating walletbackend')
             this.sdk = new walletCore(this.config)
@@ -30,6 +26,11 @@ class WalletBackend extends EventEmitter {
             this.logger.error(e.message || e.stack) 
         }
         
+        
+        this.sdk.on('disconnect', this.hdWalletDisconnectHandler)
+        this.sdk.on('probeloss', this.hdWalletDisconnectHandler)
+        this.logger.info('added event listeners for hardware wallet')
+
         require('~/src/controllers')
         this.logger.info('finish initing walletbackend')
         this.emit('initiationDone')

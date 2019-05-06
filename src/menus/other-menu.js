@@ -127,6 +127,15 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
             {
+                label: i18n.t('main.applicationMenu.window.fullscreen'),
+                // accelerator: platformAdapter({
+                //     darwin: 'CommandOrControl+F',
+                //     default: 'F11',
+                // }),
+                accelerator: 'CommandOrControl+F',
+                role: 'toggleFullScreen'
+            },
+            {
                 label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
                 role: 'minimize',

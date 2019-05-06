@@ -50,6 +50,7 @@
             },
             "window": {
                 "label": "Window",
+                "fullscreen": "Full Screen",
                 "minimize": "Minimize",
                 "close": "Close",
                 "front": "Bring All to Front"

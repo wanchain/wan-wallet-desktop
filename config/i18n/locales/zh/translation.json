@@ -8,8 +8,8 @@
                     "label": "开发者",
                     "data": {
                         "label": "应用数据",
-                        "db": "钱包及交易记录",
-                        "log": "应用日志"
+                        "db": "打开钱包及交易记录",
+                        "log": "打开应用日志"
                     }
                 },
                 "services": "服务",
@@ -50,6 +50,7 @@
             },
             "window": {
                 "label": "窗口",
+                "fullscreen": "全屏",
                 "minimize": "最小化",
                 "close": "关闭",
                 "front": "前置全部窗口"
