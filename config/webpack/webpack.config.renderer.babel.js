@@ -105,6 +105,19 @@ export default {
                 }
               ]
             },
+            {
+              test:/\.(eot|woff2|woff|ttf)/,
+              use: [
+                {
+                  loader: 'url-loader',
+                  options: {
+                    name: '[path][hash:5].min.[ext]',
+                    limit: 40000,
+                    mimetype: 'application/octet-stream'
+                  }
+                }
+              ],
+            },
         ]
     },
     resolve: {
