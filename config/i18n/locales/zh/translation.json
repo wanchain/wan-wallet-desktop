@@ -4,6 +4,14 @@
             "app": {
                 "label": "{{app}}",
                 "about": "关于 {{app}}",
+                "developer": {
+                    "label": "开发者",
+                    "data": {
+                        "label": "应用数据",
+                        "db": "钱包及交易记录",
+                        "log": "应用日志"
+                    }
+                },
                 "services": "服务",
                 "checkForUpdate": "检查更新",
                 "hide": "隐藏 {{ app }}",

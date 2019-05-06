@@ -1,3 +1,4 @@
+import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { app, shell } from 'electron'
@@ -13,6 +14,30 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.app.about', { app: APP_NAME }),
                 role: 'about'
+            },
+            {
+                label: i18n.t('main.applicationMenu.app.developer.label'),
+                submenu: [
+                    {
+                        label: i18n.t('main.applicationMenu.app.developer.data.label'),
+                        submenu: [
+                            {
+                                label: i18n.t('main.applicationMenu.app.developer.data.db'),
+                                click: () => {
+                                    const dataDir = setting.userDataPath
+                                    shell.showItemInFolder(path.join(dataDir, 'Db'))
+                                }
+                            },
+                            {
+                                label: i18n.t('main.applicationMenu.app.developer.data.log'),
+                                click: () => {
+                                    const logDir = setting.appLogPath
+                                    shell.showItemInFolder(logDir)
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
             { type: 'separator' },
             {

@@ -4,6 +4,14 @@
             "app": {
                 "label": "{{app}}",
                 "about": "About {{app}}",
+                "developer": {
+                    "label": "Developer",
+                    "data": {
+                        "label": "Data Folder",
+                        "db": "Open Data Folder",
+                        "log": "Open Log Folder"
+                    }
+                },
                 "services": "Services",
                 "checkForUpdate": "Check for Updates...",
                 "hide": "Hide {{ app }}",
