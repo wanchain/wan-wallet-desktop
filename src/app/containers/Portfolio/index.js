@@ -42,7 +42,7 @@ class Portfolio extends Component {
   ]
 
   componentWillMount() {
-    this.props.changeTitle('Account Information');
+    this.props.changeTitle('Portfolio');
   }
 
   componentDidMount() {

@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import BigNumber from "bignumber.js";
 
 import './index.less';
 
 import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import totalImg from 'static/image/total.png';
+import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -59,7 +58,7 @@ class WanAccount extends Component {
   ];
 
   componentWillMount() {
-    this.props.changeTitle('Wallet Detail');
+    this.props.changeTitle('Wallet');
   }
 
   handleSend = (from) => {
@@ -158,7 +157,7 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" />Total: <span className="wanTotal">{getAmount}</span><span className="wanTex">wan</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /> <span className="wanTotal">{getAmount}</span><span className="wanTex">WAN</span></Col>
           <Col span={12} className="col-right">
             <Button type="primary" shape="round" size="large" onClick={this.unlockHD}>unlockHD</Button>
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>
