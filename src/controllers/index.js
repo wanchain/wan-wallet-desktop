@@ -53,8 +53,15 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
             sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: phrase })
 
             break
-        case 'delete':
+        case 'import':
+            try {
+                ret = hdUtil.importMnemonic(payload.phrase, payload.pwd)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
+            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
             break
     }
 })
