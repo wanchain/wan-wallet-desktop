@@ -43,7 +43,7 @@ class Window extends EventEmitter {
         this.window = new BrowserWindow(electronOptions)
 
         this.session = this.window.webContents.session
-        this.session.setUserAgent(this.session.getUserAgent(), setting.language)
+        // this.session.setUserAgent(this.session.getUserAgent(), setting.language)
 
         this.webContents = this.window.webContents
 
@@ -138,12 +138,11 @@ class Window extends EventEmitter {
 
 class Windows {
     constructor() {
-        this._windows = new Map()
+        this._windows = {}
     }
 
     init() {
         ipc.on('main_setWindowId', (e) => {
-            // const sourceWindow = e.sender.getOwnerBrowserWindow()
             const id = e.sender.id
             logger.info(`Set window id, ${id}`)
             const bwnd = BrowserWindow.fromWebContents(e.sender)
@@ -194,11 +193,9 @@ class Windows {
     }
 
     broadcast() {
-        const data = arguments;
+        const data = Array.prototype.slice.call(arguments);
 
-        logger.debug(`Broadcast, ${data.toString()}`);
-
-        console.log(...data)
+        logger.info(data.join(' '))
 
         _.each(this._windows, (wnd) => {
             wnd.send(...data);
@@ -225,6 +222,10 @@ class Windows {
 
             app.quit()
         }
+    }
+
+    size() {
+        return Object.keys(this._windows).length
     }
 }
 

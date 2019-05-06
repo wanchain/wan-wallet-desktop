@@ -23,6 +23,7 @@ if (!i18n.isIintialized) {
   menuFactoryService.on('menuSetDone', () => {
     Windows.broadcast('notification', 'language', setting.language)
   })
+  
   i18n.init(i18nOptions, (err) => {
     if (err) {
       logger.error('i18n change language error')
@@ -31,7 +32,7 @@ if (!i18n.isIintialized) {
 }
 
 i18n.on('loaded', (loaded) => {
-  i18n.changeLanguage('en')
+  i18n.changeLanguage(setting.language)
   i18n.off('loaded')
 })
 
@@ -83,6 +84,7 @@ async function createWindow () {
 
   mainWindow.on('ready', () => {
     logger.info('showing main window')
+    menuFactoryService.emit('menuSetDone')
     mainWindow.show()
     // if (!setting.isDev) {
     //   registerAutoUpdaterHandlersAndRun()
