@@ -10,10 +10,8 @@ let updater
 autoUpdater.autoDownload = false
 
 autoUpdater.on('error', (error) => {
-    // logger.info('erro in auto-updater')
-    // sendStatusToWindow('Error in auto-updater. ' + err)
 
-    console.log('error message: ', error.message)
+    logger.error(`autoupdater error: ${(error.stack || error).toString()}`)
 
     dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
 })
@@ -31,14 +29,11 @@ function checkForUpdates(menuItem, focusedWindow, event) {
     if (setting.isDev) {
         dialog.showMessageBox({
             title: 'Update Info',
-            message: 'Update checker not available in dev.'
+            message: 'Update checker not available under development environment.'
         })
 
         return
     }
-    console.log('menuItem: ', menuItem)
-    console.log('focusedWindow: ', focusedWindow)
-    console.log('event: ', menuItem)
     
     updater = menuItem
     updater.enabled = false

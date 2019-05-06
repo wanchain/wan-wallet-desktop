@@ -13,14 +13,31 @@ class App extends React.Component {
             phrase: 'I am just a placeholder :-)',
             has: '',
             status: '',
-            address: '',
-            balance: 0,
+            addresses: [],
+            balances: [],
             nonce: '',
             accountCreateResult: '',
             accountName: '',
             accountNumber: '',
-            txWanNormalResult: ''
+            txWanNormalResult: '',
+            network: '', 
+            pubKey: ''
         }
+    }
+
+    getPubKey = () => {
+        wand.request('wallet_getPubKey', {
+            walletID: 0x02,
+            path: "m/44'/60'/0'"
+        }, function(err, val) {
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
+            this.setState({
+                pubKey: val
+            })
+        }.bind(this))
     }
 
     generatePhrase = () => {
@@ -93,21 +110,36 @@ class App extends React.Component {
                 return
             }
             console.log(val)
-            const address = val.addresses[0].address
+            const addresses = val.addresses.map(obj => obj.address)
+            console.log(addresses)
             this.setState({
-                address: address
+                addresses: addresses
             })
         }.bind(this))
     }
 
     getBalance = () => {
-        wand.request('address_balance', { addr: this.state.address }, function(err, val) {
+        wand.request('address_balance', { addr: this.state.addresses }, function(err, val) {
             if (err) { 
                 console.log('error printed inside callback: ', err)
                 return
             }
+            console.log(val)
             this.setState({
-                balance: val
+                balances: Object.values(val)
+            })
+        }.bind(this))
+    }
+
+    getSingleBalance = () => {
+        wand.request('address_balance', { addr: this.state.addresses.slice(0, 1) }, function(err, val) {
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
+            console.log(val)
+            this.setState({
+                balances: Object.values(val)
             })
         }.bind(this))
     }
@@ -212,21 +244,54 @@ class App extends React.Component {
         }.bind(this))
     }
 
+    txRaw = () => {
+        wand.request('transaction_raw', {
+            raw: 'signed',
+            chainType: 'WAN'
+        }, function(err, val) {
+            // do something here
+        })
+    }
+
+    getNetowrk = () => {
+        wand.request('query_config', {
+            param: 'network'
+        }, function(err, val) {
+            if (err) { 
+                console.log('error printed inside callback: ', err)
+                return
+            }
+            this.setState({
+                network: val['network']
+            })
+        }.bind(this))
+    }
+
+    componentDidMount() {
+        wand.emitter.on('notification', function(key, val) {
+            console.log(key, val)
+        })
+    }
+
     render() {
         return (
             <div>
-                <h1>Phrase: {this.state.phrase}</h1>
-                <h1>Has phrase: {this.state.has}</h1>
-                <h1>Wallet Status: {this.state.status}</h1>
-                <h1>Wallet addresses: {this.state.address}</h1>
-                <h1>Balance: {this.state.balance}</h1>
-                <h1>Nonce: {this.state.nonce}</h1>
-                <h1>AccountCreateResult: {this.state.accountCreateResult}</h1>
-                <h1>AccountUpdateResult: {this.state.accountUpdateResult}</h1>
-                <h1>AccountDeleteResult: {this.state.accountDeleteResult}</h1>
-                <h1>TxWanNormalResult: {this.state.txWanNormalResult}</h1>
-                <h1>TxWanNormalHash: {this.state.txWanNormalHash}</h1>
-                <h1>Account name: {this.state.accountName}</h1>
+                <h3>Phrase: {this.state.phrase}</h3>
+                <h3>Has phrase: {this.state.has}</h3>
+                <h3>Wallet Status: {this.state.status}</h3>
+                <h3>Wallet addresses 1: {this.state.addresses[0]}</h3>
+                <h3>Wallet addresses 2: {this.state.addresses[1]}</h3>
+                <h3>Balance 1: {this.state.balances[0]}</h3>
+                <h3>Balance 2: {this.state.balances[1]}</h3>
+                <h3>Nonce: {this.state.nonce}</h3>
+                <h3>AccountCreateResult: {this.state.accountCreateResult}</h3>
+                <h3>AccountUpdateResult: {this.state.accountUpdateResult}</h3>
+                <h3>AccountDeleteResult: {this.state.accountDeleteResult}</h3>
+                <h3>TxWanNormalResult: {this.state.txWanNormalResult}</h3>
+                <h3>TxWanNormalHash: {this.state.txWanNormalHash}</h3>
+                <h3>Account name: {this.state.accountName}</h3>
+                <h3>Network: {this.state.network}</h3>
+                <h3>Public Key: {this.state.pubKey}</h3>
                 <button onClick={this.generatePhrase}>Generate a phrase !!!</button>
                 <button onClick={this.revealPhrase}>Reveal my phrase !!!</button>
                 <button onClick={this.hasPhrase}>Has a phrase ???</button>
@@ -240,7 +305,11 @@ class App extends React.Component {
                 <button onClick={this.updateAccount}>Update account name !!!</button>
                 <button onClick={this.deleteAccount}>Delete an account !!!</button>
                 <button onClick={this.getBalance}>Show my balance !!!</button>
+                <button onClick={this.getSingleBalance}>Show balance of 1st addr!!!</button>
                 <button onClick={this.txNormal}>Send wan coin !!!</button>
+                <button onClick={this.txRaw}>Send raw tx !!!</button>
+                <button onClick={this.getNetowrk}>Show me network !!!</button>
+                <button onClick={this.getPubKey}>Show my ledger public key !!!</button>
             </div>
         );
     }

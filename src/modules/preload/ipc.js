@@ -9,6 +9,14 @@ ipcRenderer.on('renderer_windowMessage', function() {
     })
 })
 
+ipcRenderer.on('notification', function() {
+    postMessage({
+        _type: 'renderer_notification',
+        endpoint: arguments[1],
+        payload: arguments[2]
+    })
+})
+
 ipcRenderer.on('renderer_updateMsg', function(event, text) {
     window.updateProgress = text
     // postMessage({

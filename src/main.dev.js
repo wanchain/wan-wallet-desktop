@@ -4,13 +4,14 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import { app } from 'electron'
+import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
-'electron-devtools-installer'
+// import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
+// 'electron-devtools-installer'
+import { WDS_PORT } from '~/config/common'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
-import i18n, { i18nOptions } from'~/config/i18n'
+import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { walletBackend, Windows } from '~/src/modules'
@@ -55,22 +56,24 @@ async function createWindow () {
         /** TODO */
         nodeIntegration: true,
         nativeWindowOpen: false,
-        // contextIsolation: true,
-        preload: `${__dirname}/modules/preload`
+        preload: setting.isDev ?  `${__dirname}/modules/preload` : `${__dirname}/preload.js`
       }
     }
   })
 
   mainWindowState.manage(mainWindow.window)
-
-  // mainWindow.load(`file://${__dirname}/app/index.html`)
-  
+ 
+  mainWindow.load(`file://${__dirname}/app/index.html`)
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
-  mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  // if (setting.isDev) {
+  //   mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  // } else {
+  //   mainWindow.load(`file://${__dirname}/index.html`)
+  // }
   
-  // Open the DevTools.
+  // Open the DevTools under development.
   if (setting.isDev) {
     installExtensions()
   }
@@ -147,8 +150,12 @@ process.on('uncaughtException', (err) => {
 
 async function onReady() {
   Windows.init()
-  await walletBackend.init()
+  walletBackend.on('init_done', () => {
+    Windows.broadcast('notification', 'network', setting.network)
+  })
   await createWindow()
+  await walletBackend.init()
+ 
 }
 
 // This method will be called when Electron has done everything 

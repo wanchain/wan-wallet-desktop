@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Wand Wallet</title>
+    <title>Wan Wallet Desktop</title>
 </head>
 <body>
     <div id="root"></div>
-    <!-- <script src="${isProd ? STATIC_PATH : `http://localhost:${WDS_PORT}/dist`}/js/bundle.js"></script> -->
-    <!-- <script src="http://localhost:7000/dist/js/bundle.js"></script> -->
+    <div>
+    </div>
     <script>
-        // dynamically insert the bundled app script into the renderer process
-        // const { isDev, WDS_PORT } = require('../config/common')
         const scripts = []
         scripts.push(
-            // process.end.NODE_ENV === 'development' ? 'http://localhost:7000/dist/js/bundle.js' : './dist/renderer.prod.js'
             'http://localhost:7000/dist/js/bundle.js'
         )
         document.write(

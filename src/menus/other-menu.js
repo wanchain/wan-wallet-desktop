@@ -1,7 +1,7 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
-import { updater } from '~/src/modules'
+import { shell } from 'electron'
+import { walletBackend, updater } from '~/src/modules'
 
 export default (i18n) => {
     const menu = []
@@ -53,15 +53,8 @@ export default (i18n) => {
                         checked: setting.network === 'main',
                         type: 'radio',
                         click: async () => {
-                            // if (process.env.NODE_ENV === 'development') {
-                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'main' ] })
-                            // }
-                        
-                            // app.exit(0)
-
                             if (!setting.network.includes('main')) {
                                 setting.switchNetwork()
-                                console.log(setting.network)
                                 await walletBackend.init()
                             }
 
@@ -74,15 +67,8 @@ export default (i18n) => {
                         checked: setting.network === 'testnet',
                         type: 'radio',
                         click: async () => {
-                            // if (process.env.NODE_ENV === 'development') {
-                                // app.relaunch({ args: [ '-r', '@babel/register', './src/main.dev.js', '--network', 'testnet' ] })
-                            // }
-    
-                            // app.exit(0)
-
                             if (setting.network.includes('main')) {
                                 setting.switchNetwork()
-                                console.log(setting.network)
                                 await walletBackend.init()
                             }
 
@@ -99,14 +85,18 @@ export default (i18n) => {
             //             accelerator: 'Shift+CommandOrControl+L',
             //             checked: setting.mode === 'light',
             //             type: 'radio',
-            //             click: () => {}
+            //             click: () => {
+                            
+            //             }
             //         },
             //         {
             //             label: i18n.t('main.applicationMenu.setting.mode.light'),
             //             accelerator: 'Shift+CommandOrControl+F',
             //             checked: setting.mode === 'full',
             //             type: 'radio',
-            //             click: () => {}
+            //             click: () => {
+    
+            //             }
             //         }
             //     ]
             // },
@@ -127,7 +117,7 @@ export default (i18n) => {
     })
 
     settingMenu.submenu.push({
-        label: 'Language',
+        label: i18n.t(`main.applicationMenu.setting.lang.label`),
         submenu: languageMenu
     })
     menu.push(settingMenu)
@@ -136,14 +126,6 @@ export default (i18n) => {
     const windowMenu = {
         label: i18n.t('main.applicationMenu.window.label'),
         submenu: [
-            {
-                label: i18n.t(
-                    'main.applicationMenu.window.toggle'
-                ),
-                accelerator: 'Alt+CommandOrControl+I',
-                role: 'toggledevtools'
-            },
-            { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.window.minimize'),
                 accelerator: 'CommandOrControl+M',
@@ -172,6 +154,7 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.app.checkForUpdate'),
                 click: updater.run
             },
+            { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {
@@ -183,6 +166,14 @@ export default (i18n) => {
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
                 }
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t(
+                    'main.applicationMenu.help.toggle'
+                ),
+                accelerator: 'Alt+CommandOrControl+I',
+                role: 'toggledevtools'
             }
         ]
     }

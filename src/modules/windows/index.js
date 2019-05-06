@@ -89,6 +89,8 @@ class Window extends EventEmitter {
             return
         }
 
+        console.log(arguments)
+
         // this._logger.debug(`Sending data ${arguments.toString()}`)
 
         this.webContents.send(...Array.prototype.slice.call(arguments))
@@ -189,6 +191,18 @@ class Windows {
         logger.debug(`Get window by id, ${id}`)
 
         return _.find(this._windows, (w) => w.id === id )
+    }
+
+    broadcast() {
+        const data = arguments;
+
+        logger.debug(`Broadcast, ${data.toString()}`);
+
+        console.log(...data)
+
+        _.each(this._windows, (wnd) => {
+            wnd.send(...data);
+        });
     }
 
     _onWindowClosed(wnd) {

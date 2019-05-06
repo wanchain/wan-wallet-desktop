@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const EventEmitter = require('events')
 const { ipcRenderer, remote: { Menu } } = require('electron')
 const routes = require('./routes')
 const { postMessage } = require('./util')
@@ -9,6 +10,8 @@ module.exports = (function() {
     function init() {
 
         const _callbacks = {}
+
+        const _emitter = new EventEmitter()
 
         function _request(endpoint, payload, cb) {
             if (arguments.length === 2 && typeof arguments[1] === 'function') {
@@ -49,7 +52,7 @@ module.exports = (function() {
 
             if (_type === 'renderer_windowMessage' 
                 || _type === 'renderer_makeRequest'
-                // || _type === 'renderer_updateMsg'
+                || _type === 'renderer_notification'
                 ) 
             {
                 if (_type === 'renderer_windowMessage') {
@@ -70,10 +73,10 @@ module.exports = (function() {
                         ipcRenderer.send(route, action, payload)
                     }
 
-                } 
-                // else if (_type === 'renderer_updateMsg') {
-                //     window.updateProgress = payload
-                // }
+                } else if (_type === 'renderer_notification') {
+
+                    _emitter.emit('notification', endpoint, payload)
+                }
             }
         }
 
@@ -100,7 +103,9 @@ module.exports = (function() {
 
             contextMenuHandler: function(event) {
                 _contextMenuHandler(event)
-            }
+            },
+
+            emitter: _emitter
         }
     }
 

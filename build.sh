@@ -3,8 +3,8 @@
 rm -rf build/
 rm -rf dist/ 
 
-mkdir -p build/cases
+mkdir build
 
 cp -rf assets build/
 cp -rf config/i18n/locales build/
-cp src/cases/mainTest.html build/cases/
+cp src/index.html build/

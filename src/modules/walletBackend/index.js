@@ -1,9 +1,11 @@
 import { walletCore } from 'wanchain-js-sdk';
 import Logger from '~/src/utils/Logger'
 import configService from './config'
+import EventEmitter from 'events'
 
-class WalletBackend {
+class WalletBackend extends EventEmitter {
     constructor(config) {
+        super()
         this.logger = Logger.getLogger('walletBackend')
         // this.config = Object.assign(configService.getConfig(), config)
         // try {
@@ -30,6 +32,7 @@ class WalletBackend {
         
         require('~/src/controllers')
         this.logger.info('finish initing walletbackend')
+        this.emit('init_done')
     }
 }
 
