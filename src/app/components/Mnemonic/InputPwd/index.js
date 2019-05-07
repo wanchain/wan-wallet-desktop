@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Input } from 'antd';
+import { Input, Radio  } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 @inject(stores => ({
+  method: stores.mnemonic.method,
   setPwd: pwd => stores.mnemonic.setPwd(pwd),
+  setMethod: method => stores.mnemonic.setMethod(method),
   setconfirmPwd: pwd => stores.mnemonic.setconfirmPwd(pwd),
 }))
 
@@ -17,24 +19,21 @@ class InputPwd extends Component {
     this.props.setconfirmPwd(e.target.value);
   }
 
-  createMnemonic = () => {
-    wand.request('phrase_generate', {pwd: this.state.pwd}, (err, val) => {
-      if (err) { 
-          console.log('error printed inside callback: ', err)
-          return
-      }
-      this.setState({
-        mnemonic: val.split(' '),
-        pwd: ''
-      });
-    });
+  onChange = e => {
+    this.props.setMethod(e.target.value);
   }
 
   render() {
     return (
       <div className="textc">
-        <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged}/>
-        <Input.Password placeholder="Confirm your password" onChange={this.inputConfirm}/>
+        <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} />
+        <br />
+        <Input.Password placeholder="Confirm your password" onChange={this.inputConfirm} />
+        <br />
+        <Radio.Group onChange={this.onChange} value={this.props.method} buttonStyle="solid">
+          <Radio.Button value='create'>Create Phrase</Radio.Button>
+          <Radio.Button value='import'>Import Phrase</Radio.Button>
+        </Radio.Group>
       </div>
     );
   }
