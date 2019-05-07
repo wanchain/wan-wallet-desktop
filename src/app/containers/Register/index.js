@@ -16,6 +16,7 @@ const Step = Steps.Step;
   method: stores.mnemonic.method,
   current: stores.mnemonic.current,
   mnemonic: stores.mnemonic.mnemonic,
+  newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
@@ -62,25 +63,35 @@ class Register extends Component {
       }
     } else if(current === 1 && method === 'import') {
       if(checkPhrase(mnemonic)) {
+        this.props.setMnemonic(mnemonic);
         setIndex( current + 1 );
       } else {
         message.error('Incorrect mnemonic import');
       }
     } else {
-      setIndex( current + 1 );   
+      setIndex( current + 1 );
     }
   }
 
   prev = () => {
     const { setIndex, current } = this.props;
-    console.log(current,'current')
     setIndex(current - 1);
   }
 
   done = () => {
-    
-    message.success('Processing complete!');
-    this.props.setMnemonicStatus(true);
+    const { mnemonic, newPhrase, pwd } = this.props;
+    if(newPhrase.join(' ') === mnemonic) {
+      message.success('Processing complete!');
+      wand.request('phrase_import', {phrase: mnemonic, pwd}, (err) => {
+        if(err) {
+          message.error('Confirmed mnemonic Failed');
+          return;
+        }
+        this.props.setMnemonicStatus(true);
+      });
+    } else {
+      message.error('Confirmed Mnemonic Failed');
+    }
   }
 
   render() {

@@ -6,6 +6,7 @@ class Mnemonic {
   @observable current = 0;
   @observable confirmPwd = '';
   @observable mnemonic = '';
+  @observable newPhrase = [];
 
   @action setPwd(pwd) {
     self.pwd = pwd;
@@ -24,6 +25,10 @@ class Mnemonic {
 
   @action setIndex(step) {
     self.current = step;
+  }
+
+  @action setNewPhrase(newphrase) {
+    self.newPhrase = newphrase;
   }
 
   @computed get isSamePwd() {
