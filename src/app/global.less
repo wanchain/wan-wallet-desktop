@@ -16,7 +16,7 @@
   @com-white-color: #FFFFFF!important;
   @com-yellow-color: #DA9E40;
   // @com-yellow-color: #ff5d49;
-  @com-white-opacity-color: rgba(255, 255, 255, 0.5)!important;
+  @com-white-opacity-color: rgba(255, 255, 255, 0.6)!important;
   @modal-input-focus: #414EDD;
   @button-blue-primary: linear-gradient(90deg,#414EDD 0%,#29307C 100%)!important;
   @button-gray-cancel: linear-gradient(90deg,#4A4C72 0%,#3D3E5F 100%);
@@ -33,6 +33,12 @@
   ul,li{
     list-style: none;
   }
+.zContent{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: @com-modal-bg;
+}
 .mneCom-h1{
   color: @com-white-color;
   font-size: 24px;
@@ -52,6 +58,15 @@
   font-size: 14px;
   text-align: left;
   margin: 0 auto;
+}
+.mneCom-h4{
+  width: 480px;
+  color: @com-white-color;
+  font-size: 16px;
+  text-align: center;
+  margin: 0 auto;
+  padding-bottom: 15px;
+  font-family: "Roboto-Bold";
 }
 .mne-tips{
   width: 480px;
@@ -75,7 +90,7 @@
 }
 .mne-textarea{
   width:640px!important;
-  height:580px!important;
+  height:140px!important;
   background:@com-modal-bg!important;
   opacity:0.95;
   border-radius:6px!important;
@@ -262,7 +277,7 @@
     border: none;
     font-size: 16px;
     color: @com-white-color;
-    background: @modal-input-bg;
+    background: @modal-input-bg!important;
   }
   .ant-input-number-input{
     text-indent: 16px;

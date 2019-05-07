@@ -24,7 +24,8 @@ class ShowPhrase extends Component {
     if(method === 'import') {
       return (
         <div>
-          <h3 className="mneCom-h2">Please import the Secret Phrase</h3>
+          <h3 className="mneCom-h1">Please import the Secret Phrase</h3>
+          <h4 className="mneCom-h4">Please enter your Secret Phrase in the correct order, using space</h4>
           <TextArea className="mne-textarea" rows={4} onChange={this.onChange}/>
         </div>
       )
