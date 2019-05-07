@@ -12,10 +12,10 @@ import totalImg from 'static/image/wan.png';
 const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
-  transParams: stores.sendTransParams.transParams,
   addrInfo: stores.wanAddress.addrInfo,
   getAmount: stores.wanAddress.getAmount,
   getAddrList: stores.wanAddress.getAddrList,
+  transParams: stores.sendTransParams.transParams,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
@@ -61,10 +61,8 @@ class WanAccount extends Component {
     this.props.changeTitle('Wallet');
   }
 
-  handleSend = (from) => {
-    console.log("from", from)
+  handleSend = from => {
     let params = this.props.transParams[from];
-    console.log(params);
     let trans = {
       walletID: this.walletID,
       chainType: this.chainType,
@@ -75,17 +73,14 @@ class WanAccount extends Component {
       gasLimit: '0x' + params.gasLimit.toString(16),
       gasPrice: params.gasPrice,
     };
-    console.log("trans", trans)
-
-      wand.request('transaction_normal', trans, (err, val) => {
-        if (err) {
-          message.warn("Send transaction failed. Please try again");
-          console.log(err);
-        } else {
-          console.log("TxHash:", val);
-        }
-      });
-
+    wand.request('transaction_normal', trans, (err, val) => {
+      if (err) {
+        message.warn("Send transaction failed. Please try again");
+        console.log(err);
+      } else {
+        console.log("TxHash:", val);
+      }
+    });
     this.setState({ visible: true });
   }
 

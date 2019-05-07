@@ -70,7 +70,7 @@ class ConfirmPhrase extends Component {
           </TweenOneGroup>
         </div>
         <div>
-          { mnemonicArr.map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}>{item}</Tag>) }
+          { randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}>{item}</Tag>) }
         </div>
       </div>
     );

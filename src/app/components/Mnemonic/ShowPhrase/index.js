@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Input } from 'antd';
+import { Input, Tag } from 'antd';
 
 const { TextArea } = Input;
 
@@ -31,7 +31,7 @@ class ShowPhrase extends Component {
     } else {
       return (
         <div>
-          { mnemonic }
+          { mnemonic.split(' ').map((item, index) => <Tag className="word" key={index}>{item}</Tag>) }
         </div>
       )
     }
