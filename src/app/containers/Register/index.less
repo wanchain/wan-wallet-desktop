@@ -1,18 +1,33 @@
-.content {
-  color: #000;
-  
-  .steps-content {
-    margin-top: 16px;
-    border: 1px dashed #e9e9e9;
-    border-radius: 6px;
-    background-color: #fafafa;
-    min-height: 500px;
-    text-align: center;
-    padding-top: 80px;
-  }
-  
-  .steps-action {
-    margin-top: 24px;
+  @com-modal-bg: #272840;
+  @com-white-color: #FFFFFF!important;
+  .zContent{
+  width: 100%;
+  .registerContent {
+    width: 780px;
+    color: #000;
+    margin: 0 auto;
+    background: @com-modal-bg;
+    .steps-content {
+      margin-top: 16px;
+      border-radius: 6px;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .ant-steps{
+      // display: inline-block;
+      padding: 50px 20px 0;
+    }
+    .ant-steps-item-title{
+      color: @com-white-color!important;
+    }
+    .steps-action {
+      padding: 50px 0 45px;
+      text-align: center;
+      button{
+        width:150px;
+        height:40px;
+        border-radius:20px;
+      }
+    }
   }
 }
-

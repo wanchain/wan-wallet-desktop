@@ -24,14 +24,22 @@ class ShowPhrase extends Component {
     if(method === 'import') {
       return (
         <div>
-          <p>Please import the Secret Phrase</p>
-          <TextArea rows={4} onChange={this.onChange}/>
+          <h3 className="mneCom-h2">Please import the Secret Phrase</h3>
+          <TextArea className="mne-textarea" rows={4} onChange={this.onChange}/>
         </div>
       )
     } else {
       return (
-        <div>
+        <div className="phraseCon">
+        <h1 className="mneCom-h1">Secret Backup Phrase</h1>
+        <h3 className="mneCom-h3">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your ssets will be lost.</h3>
+        <h3 className="mneCom-h2">Your sevret backe up phrase makes it easy to back up and restore
+youre account</h3>
           { mnemonic.split(' ').map((item, index) => <Tag className="word" key={index}>{item}</Tag>) }
+        <div className="mne-tips">
+          <p className="tips-tit">Tips:</p>
+          <p className="tips-mes">Your sevret backe up phrase makes it easy to back up and restore youre account Your sevret backe up phrase makes it easy to back up and restore youre account</p>
+        </div>
         </div>
       )
     }

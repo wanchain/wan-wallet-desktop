@@ -64,12 +64,12 @@ class ConfirmPhrase extends Component {
 
     return (
       <div>
-        <div>
+        <div className="show-phrase">
           <TweenOneGroup enter={{scale: 0.8, opacity: 0, type: 'from', duration: 100, onComplete: (e) => {e.target.style = '';},}} leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }} appear={false}>
             {tagChild}
           </TweenOneGroup>
         </div>
-        <div>
+        <div className="phraseCon">
           { randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}>{item}</Tag>) }
         </div>
       </div>
