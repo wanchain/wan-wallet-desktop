@@ -190,14 +190,18 @@ class Windows {
             show: true,
             ownerId: null,
             electronOptions: {
+                frame: false,
                 title: '',
-                width: 400,
-                height: 350,
+                width: 1200,
+                height: 800,
                 resizable: false,
                 center: true,
                 useContentSize: true,
+                titleBarStyle: 'customButtonsOnHover',
+                // autoHideMenuBar: true,
                 webPreferences: {
-                    preload: `${__dirname}/../preload`,
+                    webSecurity: false,
+                    preload: setting.isDev ? `${__dirname}/../preload` : `${__dirname}/preload.js`,
                     textAreasAreResizable: false,
                 }
             }
@@ -211,13 +215,13 @@ class Windows {
             opts.electronOptions.parent = parent.window;
         }
 
-        // console.log(opts)
-
-        logger.info(`Create popup window: ${type}`)
-
         const wnd = this.create(type, opts)
 
-        wnd.load(`file://${__dirname}/../../modals/${type}.html`)
+        if (setting.isDev) {
+            wnd.load(`file://${__dirname}/../../modals/${type}.html`)
+        } else {
+            wnd.load(`file://${__dirname}/modals/${type}.html`)
+        }
 
         wnd.on('ready', () => {
             wnd.show()
