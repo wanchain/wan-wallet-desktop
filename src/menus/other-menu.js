@@ -178,11 +178,19 @@ export default (i18n) => {
             },
             { type: 'separator' },
             {
-                label: i18n.t(
-                    'main.applicationMenu.help.toggle'
-                ),
+                label: i18n.t('main.applicationMenu.help.toggle'),
                 accelerator: 'Alt+CommandOrControl+I',
                 role: 'toggledevtools'
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.developer.import'),
+                click: () => {
+
+                    Windows.createModal('importKeyFile', {
+                        width: 1200, height: 800, alwaysOnTop: true
+                    })
+                }
             }
         ]
     }
