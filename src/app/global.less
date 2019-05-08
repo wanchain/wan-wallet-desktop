@@ -16,6 +16,7 @@
   @com-white-color: #FFFFFF!important;
   @com-yellow-color: #DA9E40;
   // @com-yellow-color: #ff5d49;
+  @com-white-opacity8-color: rgba(255, 255, 255, 0.8)!important;
   @com-white-opacity-color: rgba(255, 255, 255, 0.6)!important;
   @modal-input-focus: #414EDD;
   @button-blue-primary: linear-gradient(90deg,#414EDD 0%,#29307C 100%)!important;
@@ -198,7 +199,8 @@
   width: 100%;
 }
 .com-gray{
-  color: @com-white-opacity-color;
+  color: @com-white-opacity8-color;
+  opacity: .8;
   padding-bottom: 15px;
   font-size: 16px;
 }
@@ -207,6 +209,7 @@
   p{
     font-size: 14px;
     line-height: 20px;
+    color: @com-white-opacity-color;
   }
 }
 .container .content{

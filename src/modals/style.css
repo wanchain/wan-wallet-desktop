@@ -1,0 +1,25 @@
+body{
+  width:640px;
+  height:640px;
+  background:rgba(39,40,64,1)!important;
+  opacity:0.95;
+  border-radius:6px;
+  padding: 40px;
+  color: #fff;
+}
+.form-group label{
+    color: #fff;
+}
+.form-group input{
+    width:480px;
+    height:40px;
+    background:rgba(31,32,52,1);
+    border-radius:20px;
+}
+.form-group button{
+    width:150px;
+    height:40px;
+    line-height: 40px;
+    background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+    border-radius:20px;
+}
