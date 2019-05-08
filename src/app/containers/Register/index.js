@@ -46,7 +46,7 @@ class Register extends Component {
           if(method === 'create') {
             wand.request('phrase_generate', {pwd: pwd}, (err, val) => {
               if(err) {
-                message.error('Create Phrase Failed');
+                message.error('Create seed phrase failed');
                 return;
               }
               this.props.setMnemonic(val);
@@ -56,17 +56,17 @@ class Register extends Component {
             setIndex(1);            
           }
         } else {
-          message.error('Password must contain at least 6 characters of uppercase, lowercase, and numeric characters');
+          message.error('Password must have a minimum of 6 characters; must contain at least one uppercase letter, one lowercase letter, and one numeric digit');
         }
       } else {
-        message.error("Passwords don't match");
+        message.error("Passwords mismatched");
       }
     } else if(current === 1 && method === 'import') {
       if(checkPhrase(mnemonic)) {
         this.props.setMnemonic(mnemonic);
         setIndex( current + 1 );
       } else {
-        message.error('Incorrect mnemonic import');
+        message.error('Seed phrase is invalid');
       }
     } else {
       setIndex( current + 1 );
@@ -84,13 +84,16 @@ class Register extends Component {
       message.success('Processing complete!');
       wand.request('phrase_import', {phrase: mnemonic, pwd}, (err) => {
         if(err) {
-          message.error('Confirmed mnemonic Failed');
+          message.error('Write seed phrase to database failed');
           return;
         }
-        this.props.setMnemonicStatus(true);
+        wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
+          if (err) console.log('error printed inside callback: ', err)
+          this.props.setMnemonicStatus(true);
+        })
       });
     } else {
-      message.error('Confirmed Mnemonic Failed');
+      message.error('Seed phrase mismatched');
     }
   }
 
@@ -108,11 +111,11 @@ class Register extends Component {
               && <Button type="primary" onClick={this.next}>Next</Button>
             }
             {
-              current === steps.length - 1
-              && <Button type="primary" onClick={this.done}>Done</Button>
+              current > 1 && (<Button onClick={this.prev} className="cancel">Previous</Button>)
             }
             {
-              current > 1 && (<Button style={{ marginLeft: 8 }} onClick={this.prev} className="cancel">Previous</Button>)
+              current === steps.length - 1
+              && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>Done</Button>
             }
           </div>
         </div>

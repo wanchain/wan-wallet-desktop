@@ -28,7 +28,7 @@ class ConfirmPhrase extends Component {
 
   addWord = (item, index) => {
     const { tags, mnemonicArr } = this.state;
-    if(tags.length === 11) {
+    if (tags.length === 11) {
       this.props.setNewPhrase(tags.concat(item))
     }
     mnemonicArr.splice(index, 1);
@@ -47,7 +47,7 @@ class ConfirmPhrase extends Component {
 
   forMap = tag => {
     const tagElem = (
-      <Tag closable onClose={e => {e.preventDefault();this.handleClose(tag);}}>
+      <Tag closable onClose={e => { e.preventDefault(); this.handleClose(tag); }}>
         <span>
           {tag}
         </span>
@@ -66,13 +66,14 @@ class ConfirmPhrase extends Component {
 
     return (
       <div>
+        <h3 className="mneCom-h1">Confirm Your Seed Phrase</h3>
         <div className="show-phrase">
-          <TweenOneGroup enter={{scale: 0.8, opacity: 0, type: 'from', duration: 100, onComplete: (e) => {e.target.style = '';},}} leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }} appear={false}>
+          <TweenOneGroup enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100, onComplete: (e) => { e.target.style = ''; }, }} leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }} appear={false}>
             {tagChild}
           </TweenOneGroup>
         </div>
         <div className="phraseCon">
-          { randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>) }
+          {randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
         </div>
       </div>
     );
