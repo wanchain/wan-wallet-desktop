@@ -81,12 +81,16 @@ class Register extends Component {
   done = () => {
     const { mnemonic, newPhrase, pwd } = this.props;
     if(newPhrase.join(' ') === mnemonic) {
+      message.success('Processing complete!');
       wand.request('phrase_import', {phrase: mnemonic, pwd}, (err) => {
         if(err) {
           message.error('Write seed phrase to database failed');
           return;
         }
-        this.props.setMnemonicStatus(true);
+        wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
+          if (err) console.log('error printed inside callback: ', err)
+          this.props.setMnemonicStatus(true);
+        })
       });
     } else {
       message.error('Seed phrase mismatched');
