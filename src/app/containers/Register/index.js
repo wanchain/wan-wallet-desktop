@@ -84,7 +84,7 @@ class Register extends Component {
       message.success('Processing complete!');
       wand.request('phrase_import', {phrase: mnemonic, pwd}, (err) => {
         if(err) {
-          message.error('Confirmed mnemonic Failed');
+          message.error('Write seed phrase to database failed');
           return;
         }
         wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
@@ -93,7 +93,7 @@ class Register extends Component {
         })
       });
     } else {
-      message.error('Confirmed Mnemonic Failed');
+      message.error('Seed phrase mismatched');
     }
   }
 
