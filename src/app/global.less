@@ -34,6 +34,15 @@
   ul,li{
     list-style: none;
   }
+  .ant-radio-button-wrapper:not(:first-child)::before{
+    background: none;
+  }
+  .log, .title{
+    font-family: 'Roboto-Bold';
+  }
+  .container .main{
+    position: relative;
+  }
   // loading
 .ant-spin{
   position: fixed!important;
@@ -134,17 +143,17 @@
   text-align: left;
   padding: 10px;
 }
-.ant-btn{
-  width: 150px;
-  height:40px;
-  background: @button-gray-cancel!important;
-  border-radius:20px;
-  border: none;
-}
-.ant-btn:hover, .ant-btn:focus{
-  color: @com-white-color!important;
-  background: @button-gray-cancel-hover!important;
-}
+// .ant-btn{
+//   width: 150px;
+//   height:40px;
+//   background: @button-gray-cancel!important;
+//   border-radius:20px;
+//   border: none;
+// }
+// .ant-btn:hover, .ant-btn:focus{
+//   color: @com-white-color!important;
+//   background: @button-gray-cancel-hover!important;
+// }
 .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
   width:220px!important;
   height:80px!important;
@@ -382,6 +391,7 @@
     .ant-tabs-nav .ant-tabs-tab{
       color: @com-white-color;
       opacity:0.3;
+      font-size: 18px!important;
     }
     .ant-tabs-nav .ant-tabs-tab-active{
       color: @com-white-color;
@@ -438,7 +448,7 @@
   background: @table-td-bg-hover;
 }
 .ant-table-thead > tr > th{
-  font-weight: bold;
+  font-family: 'Roboto-Bold';
   font-size: 20px;
   border: none;
   background: none;
