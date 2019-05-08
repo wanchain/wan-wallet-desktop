@@ -26,11 +26,11 @@ class InputPwd extends Component {
   render() {
     return (
       <div className="textc">
-        <h1 className="mneCom-h1">Create Phrase</h1>
-        <h3 className="mneCom-h3">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your ssets will be lost.</h3>
+        <h1 className="mneCom-h1">Create a WAN Wallet</h1>
+        {/* <h3 className="mneCom-h3">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your ssets will be lost.</h3> */}
         <div className="mne-input">
-          <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} />
-          <Input.Password placeholder="Confirm your password" onChange={this.inputConfirm} />
+          <Input.Password placeholder="Enter Password" onChange={this.inputChanged} />
+          <Input.Password placeholder="Confirm Password" onChange={this.inputConfirm} />
         </div>
         <Radio.Group onChange={this.onChange} value={this.props.method} buttonStyle="solid" className="groupCon">
           <Radio.Button value='create' className="creat-button">Create Phrase</Radio.Button>

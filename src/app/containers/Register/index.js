@@ -27,7 +27,7 @@ const Step = Steps.Step;
 class Register extends Component {
   state = {
     steps: [{
-      title: 'Create Phrase',
+      title: 'Create Password',
       content: <InputPwd />,
     }, {
       title: 'Secret Backup Phrase',
@@ -56,10 +56,10 @@ class Register extends Component {
             setIndex(1);            
           }
         } else {
-          message.error('Passwords must contain at least 6 characters of uppercase, lowercase, and numeric characters');
+          message.error('Password must contain at least 6 characters of uppercase, lowercase, and numeric characters');
         }
       } else {
-        message.error('Incorrect password setting');
+        message.error("Passwords don't match");
       }
     } else if(current === 1 && method === 'import') {
       if(checkPhrase(mnemonic)) {

@@ -40,7 +40,7 @@ class Backup extends Component {
   sendGetPhraseCmd = (pwd) => {
     wand.request('phrase_reveal', {pwd: pwd}, (err, val) => {
       if (err) {
-        message.warn('Get phrase failed. Try again');
+        message.warn('Invalid password. Try again');
       } else {
         this.setState({
           mnemonic: val,
@@ -70,7 +70,6 @@ class Backup extends Component {
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.resetStateVal}
-            okText="Send"
             closable={false}
           >
             <p className="textP">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
@@ -85,7 +84,7 @@ class Backup extends Component {
                 </div>
               ) : (
                   <div>
-                    <Input.Password placeholder="Enter password to continue" onChange={this.inputChanged} onPressEnter={this.handleOk} />
+                    <Input.Password placeholder="Enter Password" onChange={this.inputChanged} onPressEnter={this.handleOk} />
                   </div>
                 )
             }

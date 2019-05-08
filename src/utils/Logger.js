@@ -12,7 +12,7 @@ export default class Logger {
     static fileTransport() {
         return new transports.DailyRotateFile({
             level: 'info',
-            filename: 'wandWalletMain-%DATE%.log',
+            filename: 'wanWalletMain-%DATE%.log',
             dirname: WalletHelper.getLogPath(),
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,

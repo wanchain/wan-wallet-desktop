@@ -76,7 +76,7 @@ class Settings {
     }
 
     /**
-     * Return mode of WandWallet, light or full 
+     * Return mode of WanWallet, light or full 
      * @return {string} wallet mode, light or full
      */
     get mode() {
