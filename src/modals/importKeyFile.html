@@ -6,17 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            background:rgba(39,40,64,1)!important;
-        }
-    </style>
     <title>Import Wanchain Key File</title>
 </head>
 <body>
-    <div class="container" style="width: 640px;">
+    <div class="importKey">
+    <div class="container">
         <div class="row justify-content-center align-items-center">
-            <div class="col-12" style="width: 640px;">
+            <h1>Import Wanchain Key File</h1>
+            <div class="col-12">
                 <form>
                     <div class="form-group"> 
                         <label class="label text-dark" for="oldpwd">Enter password for this wallet</label>
@@ -27,20 +24,21 @@
                         <input id="newpwd" name="newpwd" class="form-control" type="password" placeholder="password for keyfile" required />
                     </div>
                     <div class="form-group">
-                        <label class="label text-dark" style="color: #fff;">Select keyfile</label>
-                        <div class="custom-file" style="margin-top: 15px">
+                        <label class="label text-dark">Select keyfile</label>
+                        <div class="custom-file">
                             <input id="keyfile" name="keyfile" type="file" required />
                             <label class="custom-file-label text-dark" for="keyfile">Choose keyfile</label>
                         </div>
                     </div>
                     
-                    <div class="form-group" style="margin-top: 50px">
+                    <div class="form-group">
                         <button id="submit" type="submit" class="btn btn-dark btn-lg btn-block">Submit</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>   
+    </div>  
+    </div> 
 </body>
 <script type="application/javascript">
     document.querySelector('#keyfile').addEventListener('change', function() {
