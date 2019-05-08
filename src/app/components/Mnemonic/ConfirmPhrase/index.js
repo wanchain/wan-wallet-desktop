@@ -48,7 +48,9 @@ class ConfirmPhrase extends Component {
   forMap = tag => {
     const tagElem = (
       <Tag closable onClose={e => {e.preventDefault();this.handleClose(tag);}}>
-        {tag}
+        <span>
+          {tag}
+        </span>
       </Tag>
     );
     return (
@@ -70,7 +72,7 @@ class ConfirmPhrase extends Component {
           </TweenOneGroup>
         </div>
         <div className="phraseCon">
-          { randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}>{item}</Tag>) }
+          { randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>) }
         </div>
       </div>
     );

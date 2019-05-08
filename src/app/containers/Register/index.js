@@ -101,9 +101,6 @@ class Register extends Component {
     return (
     <div className="zContent">
       <div className="registerContent">
-          <Steps current={current}>
-            {steps.map(item => <Step key={item.title} title={item.title} />)}
-          </Steps>
           <div className="steps-content">{steps[current].content}</div>
           <div className="steps-action">
             {
