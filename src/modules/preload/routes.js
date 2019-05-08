@@ -1,5 +1,5 @@
 module.exports = {
-    phrase: [ 'generate', 'reveal', 'has', 'import'],
+    phrase: [ 'generate', 'reveal', 'has', 'import', 'importKeyFile'],
     wallet: [ 'lock', 'unlock', 'getPubKey', 'connectToLedger', 'isConnected', 'getPubKeyChainId', 'signTransaction' ],
     address: [ 'get', 'getNonce', 'balance' ],
     account: [ 'create', 'get', 'getAll', 'update', 'delete' ],

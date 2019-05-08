@@ -6,6 +6,7 @@
                 "about": "About {{app}}",
                 "developer": {
                     "label": "Developer",
+                    "import": "Import Keyfile",
                     "data": {
                         "label": "Data Folder",
                         "db": "Open Data Folder",

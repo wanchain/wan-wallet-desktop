@@ -1,8 +1,8 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
-import { walletBackend, updater } from '~/src/modules'
+import { app, shell, dialog } from 'electron'
+import { walletBackend, updater, Windows } from '~/src/modules'
 
 const platformAdapter = function (options) {
     if (process.platform in options) {
@@ -45,6 +45,26 @@ export default (i18n) => {
                                 }
                             }
                         ]
+                    },
+                    { type: 'separator' },
+                    {
+                        label: i18n.t('main.applicationMenu.app.developer.import'),
+                        click: () => {
+
+                            Windows.createModal('importKeyFile', {
+                                width: 1200, height: 800, alwaysOnTop: true
+                            })
+                            // const mainWindow = Windows.getByType('main')
+                            // const files = dialog.showOpenDialog({
+                            //     properties: ['openFile'],
+                            //     filters: [
+                            //         { name: 'All Files', extensions: ['*'] }
+                            //         // { name: 'Markdown Files', extensions: ['md', 'markdown'] }
+                            //     ]
+                            // })
+
+                            // if (files) { console.log(files) }
+                        }
                     }
                 ]
             },

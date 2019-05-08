@@ -6,10 +6,11 @@
                 "about": "关于 {{app}}",
                 "developer": {
                     "label": "开发者",
+                    "import": "导入Keyfile",
                     "data": {
                         "label": "应用数据",
-                        "db": "打开钱包及交易记录",
-                        "log": "打开应用日志"
+                        "db": "显示钱包及交易记录文件夹",
+                        "log": "显示应用日志文件夹"
                     }
                 },
                 "services": "服务",

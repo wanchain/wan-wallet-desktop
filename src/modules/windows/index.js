@@ -1,8 +1,10 @@
 import _ from 'lodash'
+import path from 'path'
 import { app, BrowserWindow, ipcMain as ipc } from 'electron'
 import Logger from '~/src/utils/Logger'
 import EventEmitter from 'events'
 import setting from '~/src/utils/Settings'
+import { pathExists } from 'fs-extra-p';
 
 const logger = Logger.getLogger('Windows')
 
@@ -176,6 +178,50 @@ class Windows {
 
         const wnd = this._windows[type] = new Window(this, type, options)
         wnd.on('closed', this._onWindowClosed.bind(this, wnd))
+
+        return wnd
+    }
+
+    createModal(type, options) {
+        options = options || {}
+
+        let opts = {
+            // url: path.join(__dirname, 'index.html'),
+            show: true,
+            ownerId: null,
+            electronOptions: {
+                title: '',
+                width: 400,
+                height: 350,
+                resizable: false,
+                center: true,
+                useContentSize: true,
+                webPreferences: {
+                    preload: `${__dirname}/../preload`,
+                    textAreasAreResizable: false,
+                }
+            }
+        }
+
+        const parent = _.find(this._windows, (w) => {
+            return w.type === 'main';
+        })
+
+        if (parent) {
+            opts.electronOptions.parent = parent.window;
+        }
+
+        // console.log(opts)
+
+        logger.info(`Create popup window: ${type}`)
+
+        const wnd = this.create(type, opts)
+
+        wnd.load(`file://${__dirname}/../../modals/${type}.html`)
+
+        wnd.on('ready', () => {
+            wnd.show()
+        })
 
         return wnd
     }

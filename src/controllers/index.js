@@ -1,3 +1,4 @@
+import fs from 'fs'
 import _ from 'lodash'
 import { ipcMain } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
@@ -56,6 +57,21 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
         case 'import':
             try {
                 ret = hdUtil.importMnemonic(payload.phrase, payload.pwd)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
+            break
+
+        case 'importKeyFile':
+            const WANBIP44Path = "m/44'/5718350'/0'/0/0"
+            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
+            const keyFileContent = fs.readFileSync(keyFilePath).toString()
+            console.log(keyFileContent)
+            try {
+                ret = hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
