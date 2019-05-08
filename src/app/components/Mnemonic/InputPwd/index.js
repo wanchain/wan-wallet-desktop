@@ -27,7 +27,6 @@ class InputPwd extends Component {
     return (
       <div className="textc">
         <h1 className="mneCom-h1">Create a WAN Wallet</h1>
-        {/* <h3 className="mneCom-h3">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your ssets will be lost.</h3> */}
         <div className="mne-input">
           <Input.Password placeholder="Enter Password" onChange={this.inputChanged} />
           <Input.Password placeholder="Confirm Password" onChange={this.inputConfirm} />

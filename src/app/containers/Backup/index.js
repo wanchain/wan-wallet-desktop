@@ -60,7 +60,7 @@ class Backup extends Component {
       <div>
         <Card title="Reveal Mnemonic Sentence">
           <p className="com-gray">
-            If you install a new wallet, you will need this mnemonic sentence to access your assets.
+            If you install a new wallet, you will need this seed phrase to access your assets.
             Save them somewhere safe and secret.
           </p>
           <Button type="primary" onClick={this.showModal}>Continue</Button>
@@ -72,11 +72,11 @@ class Backup extends Component {
             onCancel={this.resetStateVal}
             closable={false}
           >
-            <p className="textP">WARNING: DO NOT share this mnemonic sentence with anybody! Otherwise all of your assets will be lost.</p>
+            <p className="textP">WARNING: DO NOT share this seed phrase with anybody. Otherwise all of your assets will be lost.</p>
             {
               this.state.showMnemonic ? (
                 <div>
-                  <p className="textP2"> Your private mnemonic sentence</p>
+                  <p className="textP2"> Your private seed phrase</p>
                   <Card >
                     <p>{this.state.mnemonic}</p>
                   </Card>
