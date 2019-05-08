@@ -29,7 +29,8 @@ class Sidebar extends Component {
       return (
         <Menu.Item key={item.key}>
           <Link to={item.key}>
-            <Icon type={item.icon} />
+            {/* <Icon type={item.icon} /> */}
+            <em className="com-circle"></em>
             {item.title}
           </Link>
         </Menu.Item>
