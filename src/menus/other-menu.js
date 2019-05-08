@@ -1,7 +1,7 @@
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { shell } from 'electron'
-import { walletBackend, updater } from '~/src/modules'
+import { walletBackend, updater, Windows } from '~/src/modules'
 
 export default (i18n) => {
     const menu = []
