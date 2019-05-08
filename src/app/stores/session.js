@@ -5,6 +5,8 @@ class Session {
   @observable pageTitle = 'Wanchain Wallet';
   @observable hasMnemonicOrNot = false;
   @observable chainId = 1;
+  @observable auth = false;
+
 
   @action getMnemonic() {
     return new Promise((resolve, reject) => {
@@ -34,6 +36,10 @@ class Session {
 
   @action setMnemonicStatus(status) {
     self.hasMnemonicOrNot = status;
+  }
+
+  @action setAuth(val) {
+    self.auth = val;
   }
 
   @action changeTitle(newTitle) {

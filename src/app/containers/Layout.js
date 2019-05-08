@@ -5,12 +5,14 @@ import { observer, inject } from 'mobx-react';
 import './Layout.less';
 import SideBar from './Sidebar';
 import Register from './Register';
+import Login from 'containers/Login';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 
 import { getBalance } from 'utils/helper';
 
 @inject(stores => ({
+  auth: stores.session.auth,
   addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
@@ -54,16 +56,14 @@ export default class Layout extends Component {
   }
 
   render() {
-    const { hasMnemonicOrNot } = this.props;
-
+    const { hasMnemonicOrNot, auth } = this.props;
     if(this.state.loading) {
       return <Spin size="large" />
     } else {
-      /** TODO */
       if (!hasMnemonicOrNot) {
-        return (
-          <Register />
-        );
+        return <Register />;
+      } else if (!auth) {
+        return <Login />
       } else {
         return (
           <Row className="container">

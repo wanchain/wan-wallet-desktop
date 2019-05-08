@@ -111,7 +111,7 @@ class WanAccount extends Component {
   }
 
   unlockHD = () => {
-    wand.request('wallet_unlock', { pwd: 'Wanglu888' }, (err, val) => {
+    wand.request('wallet_unlock', { pwd: '123' }, (err, val) => {
       if (err) console.log('error printed inside callback: ', err)
       this.setState({
         isUnlock: val

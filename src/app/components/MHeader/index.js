@@ -1,19 +1,27 @@
 import React, { Component } from 'react';
-import { Button, Row, Col } from 'antd';
+import { Icon, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { Icon } from 'antd';
 
 import './index.less';
 
 @inject(stores => ({
+  auth: stores.session.auth,
   pageTitle: stores.session.pageTitle,
-  getMnemonic: (ret) => stores.session.getMnemonic(ret)
+  setAuth: val => stores.session.setAuth(val),
+  getMnemonic: ret => stores.session.getMnemonic(ret)
 }))
 
 @observer
 class MHeader extends Component {
-  logOut = () =>{
-    this.props.getMnemonic(false)
+  logOut = () => {
+    wand.request('wallet_lock', null, (err, val) => {
+      console.log(val, 'val')
+      if (err) { 
+          console.log('error printed inside callback: ', err)
+          return
+      }
+      this.props.setAuth(false);
+    })
   }
 
   render () {
@@ -26,7 +34,6 @@ class MHeader extends Component {
               <em className = "comLine"></em><span>{ pageTitle }</span>
             </Col>
             <Col span={2} className="user">
-              {/* <Button type="primary"  onClick={this.logOut}>Log Out</Button> */}
               <div className="log">
                 <Icon className="logOutIco" type="poweroff" />
                 <span onClick={this.logOut} className="logOut">Log Out</span>
