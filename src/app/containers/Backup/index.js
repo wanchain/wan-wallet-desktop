@@ -38,10 +38,11 @@ class Backup extends Component {
   }
 
   sendGetPhraseCmd = (pwd) => {
-    wand.request('phrase_reveal', {pwd: pwd}, (err, val) => {
+    wand.request('phrase_reveal', { pwd: pwd }, (err, val) => {
       if (err) {
         message.warn('Invalid password. Try again');
       } else {
+        console.log('val', val)
         this.setState({
           mnemonic: val,
           showMnemonic: true
@@ -76,10 +77,10 @@ class Backup extends Component {
             {
               this.state.showMnemonic ? (
                 <div>
-                  <p className="textP2"> Your private seed phrase</p>
-                  <Card >
-                    <p>{this.state.mnemonic}</p>
-                  </Card>
+                  <p className="textP2"> Your Seed Phrase:</p>
+                  {/* <Card > */}
+                  <p className="textP3">{this.state.mnemonic}</p>
+                  {/* </Card> */}
                   <p className="copyBtn" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ Copy to clipboard ]</p>
                 </div>
               ) : (
