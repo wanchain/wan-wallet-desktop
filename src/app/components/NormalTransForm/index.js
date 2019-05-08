@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
-import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import { BigNumber } from 'bignumber.js';
+import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
+
+import AdvancedOptionForm from 'components/AdvancedOptionForm';
 
 import './index.less';
 
@@ -17,22 +18,14 @@ import './index.less';
 
 @observer
 class NormalTransForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
     this.resetState();
     this.averageGasPrice = Math.max(this.props.minGasPrice, this.props.transParams[this.props.from].gasPrice);
     this.minGasPrice = this.props.minGasPrice;
     this.maxGasPrice = this.props.maxGasPrice;
-    console.log("willMount", this.averageGasPrice)
     this.advancedOptionForm = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
   }
 
-  // componentDidMount() {
-
-  // }
   resetState = () => {
     this.setState({
       visible: this.props.visible,

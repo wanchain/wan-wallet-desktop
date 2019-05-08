@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Row, Col } from 'antd';
+import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
@@ -10,6 +10,9 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
+const CHAINTYPE = 'WAN';
+const SYMBOL = 'WAN';
+const WALLETID = 1;
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -23,15 +26,9 @@ const WAN = "m/44'/5718350'/0'/0/";
 
 @observer
 class WanAccount extends Component {
-  constructor(props) {
-    super(props);
-    this.walletID = 1;
-    this.chainType = "WAN";
-    this.symbol = "WAN";
-    this.state = {
-      bool: true,
-      isUnlock: false,
-    }
+  state = {
+    bool: true,
+    isUnlock: false,
   }
 
   columns = [
@@ -53,7 +50,7 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.chainType}/></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
   ];
 
@@ -64,13 +61,13 @@ class WanAccount extends Component {
   handleSend = from => {
     let params = this.props.transParams[from];
     let trans = {
-      walletID: this.walletID,
-      chainType: this.chainType,
-      symbol: this.symbol,
+      walletID: WALLETID,
+      chainType: CHAINTYPE,
+      symbol: SYMBOL,
       path: params.path,
       to: params.to,
       amount: params.amount,
-      gasLimit: '0x' + params.gasLimit.toString(16),
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
     };
     wand.request('transaction_normal', trans, (err, val) => {
@@ -92,10 +89,10 @@ class WanAccount extends Component {
     });
 
     if (this.state.bool) {
-      wand.request('address_get', { walletID: this.walletID, chainType: this.chainType, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
+      wand.request('address_get', { walletID: WALLETID, chainType: CHAINTYPE, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
         if (!err) {
           let ret = val_address_get;
-          wand.request('account_create', { walletID: this.walletID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = ret.addresses[0];
               addressInfo.start = addressInfo.index;

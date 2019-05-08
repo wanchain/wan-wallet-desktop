@@ -13,7 +13,6 @@ class SendTransParams {
     }
 
     @action updateGasLimit(addr, gasLimit) {
-        console.log("update", addr, gasLimit, self.transParams[addr])
         self.transParams[addr].gasLimit = gasLimit;
     }
 
