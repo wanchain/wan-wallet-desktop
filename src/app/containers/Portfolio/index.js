@@ -17,7 +17,6 @@ class Portfolio extends Component {
   
   columns = [
     {
-      title: '',
       title: 'NAME',
       dataIndex: 'name',
       key: 'name',

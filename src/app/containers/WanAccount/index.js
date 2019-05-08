@@ -7,6 +7,8 @@ import './index.less';
 import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
+import TransHistory from 'components/TransHistory';
+
 import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
@@ -158,6 +160,11 @@ class WanAccount extends Component {
         <Row className="mainBody">
           <Col>
             <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={columns} dataSource={this.props.getAddrList} />
+          </Col>
+        </Row>
+        <Row className="mainBody">
+          <Col>
+            <TransHistory />
           </Col>
         </Row>
       </div>
