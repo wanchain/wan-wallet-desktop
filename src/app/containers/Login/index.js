@@ -38,7 +38,7 @@ class Login extends Component {
       <div className="loginW">
         <div className="loginCon">
           <Input.Password placeholder="input password" onPressEnter={this.unlock} onChange={this.handleChange}/>
-          <Button onClick={this.unlock}>unlock</Button>
+          <Button type="primary" onClick={this.unlock}>unlock</Button>
         </div>
       </div>
     );

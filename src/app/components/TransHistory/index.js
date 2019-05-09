@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Table, Select  } from 'antd';
 import { observer, inject } from 'mobx-react';
 
+import hostroy from 'static/image/wan.png';
+
 const Option = Select.Option;
 
 @inject(stores => ({
@@ -81,7 +83,7 @@ class TransHistory extends Component {
     return (
       <div>
         <div className="histroyCon">
-          <span>Transaction History</span>
+          <img src={hostroy} /><span>Transaction History</span>
           <Select 
             showSearch 
             style={{ width: 400 }} 
