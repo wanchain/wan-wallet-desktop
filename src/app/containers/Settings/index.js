@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
 import { Tabs } from 'antd';
-import Backup from 'containers/Backup';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
+
+import Backup from 'containers/Backup';
 
 const { TabPane } = Tabs;
 
@@ -11,6 +12,13 @@ const { TabPane } = Tabs;
 
 @observer
 class Settings extends Component {
+  constructor(props) {
+    super(props);
+    this.props.changeTitle('Settings');
+    this.state = {
+      tabTreeNode: null
+    }
+  }
 
   tabs = [{
     title: 'Backup',
@@ -20,20 +28,16 @@ class Settings extends Component {
     title: 'Restore',
     key: 'restore',
     content: 'Restore phrase'
-  }];
+  }]
 
-  componentWillMount() {
-    this.props.changeTitle('Settings')
+  componentDidMount() {
     const tabTreeNode = this.renderTab(this.tabs);
-
     this.setState({
       tabTreeNode
     });
   }
 
-  renderTab = (data) => {
-    return data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);
-  }
+  renderTab = data => data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);
 
   render() {
     return (

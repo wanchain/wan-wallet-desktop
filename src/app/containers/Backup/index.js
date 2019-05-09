@@ -37,12 +37,11 @@ class Backup extends Component {
     this.setState({ pwd: e.target.value });
   }
 
-  sendGetPhraseCmd = (pwd) => {
+  sendGetPhraseCmd = pwd => {
     wand.request('phrase_reveal', { pwd: pwd }, (err, val) => {
       if (err) {
         message.warn('Invalid password. Try again');
       } else {
-        console.log('val', val)
         this.setState({
           mnemonic: val,
           showMnemonic: true

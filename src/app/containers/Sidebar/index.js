@@ -9,15 +9,20 @@ import './index.less';
 const SubMenu = Menu.SubMenu;
 
 class Sidebar extends Component {
-  componentWillMount() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      menuTreeNode: null
+    }
+  }
+  componentDidMount() {
     const menuTreeNode = this.renderMenu(menuList);
-
     this.setState({
       menuTreeNode
     });
   }
 
-  renderMenu = (data) => {
+  renderMenu = data => {
     return data.map((item) => {
       if(item.children) {
         return (
@@ -37,7 +42,7 @@ class Sidebar extends Component {
     });
   }
 
-  render () {
+  render() {
     return (
       <div className="sidebar">
         <div className="logo">
