@@ -5,7 +5,9 @@ class MFooter extends Component {
     render() {
         return (
             <div className="footer">
-              All Rights Reserved <br/> ©{new Date().getFullYear()} WANCHAIN FOUNDATION LTD
+              <div className="f-content">
+                All Rights Reserved <br/> ©{new Date().getFullYear()} WANCHAIN FOUNDATION LTD
+              </div>
             </div>
         );
     }
