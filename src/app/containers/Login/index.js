@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Row, Col } from 'antd';
+import { Button, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
@@ -11,22 +11,32 @@ import './index.less';
 
 @observer
 class Login extends Component {
+  state = {
+    pwd: ''
+  }
   unlock = () => {
-    wand.request('wallet_unlock', { pwd: '123' }, (err, val) => {
+    const pwd = this.state.pwd;
+    wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
       if (err) {
-        console.log('error printed inside callback: ', err);
+        message.error('Wrong Password')
         return;
       } 
-      this.props.setAuth(true)
+      this.props.setAuth(true);
     })
   }
-  render () {
 
+  handleChange = (e) => {
+    this.setState({
+      pwd: e.target.value
+    })
+  }
+
+  render () {
     return (
       <div className="header">
         <div className="loginCon">
-          <input />
-          <button onClick={this.unlock}>解锁</button>
+          <Input.Password placeholder="input password" onPressEnter={this.unlock} onChange={this.handleChange}/>
+          <Button onClick={this.unlock}>unlock</Button>
         </div>
       </div>
     );

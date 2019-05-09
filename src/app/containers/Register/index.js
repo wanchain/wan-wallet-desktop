@@ -18,6 +18,7 @@ const Step = Steps.Step;
   mnemonic: stores.mnemonic.mnemonic,
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
+  setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
@@ -90,6 +91,7 @@ class Register extends Component {
         wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
           if (err) console.log('error printed inside callback: ', err)
           this.props.setMnemonicStatus(true);
+          this.props.setAuth(true);
         })
       });
     } else {
