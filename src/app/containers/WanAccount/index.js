@@ -93,10 +93,9 @@ class WanAccount extends Component {
     if (this.state.bool) {
       wand.request('address_get', { walletID: WALLETID, chainType: CHAINTYPE, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
         if (!err) {
-          let ret = val_address_get;
           wand.request('account_create', { walletID: WALLETID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
-              let addressInfo = ret.addresses[0];
+              let addressInfo = val_address_get.addresses[0];
               addressInfo.start = addressInfo.index;
               addressInfo.address = `0x${addressInfo.address}`;
               addAddress(addressInfo);

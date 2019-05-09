@@ -61,6 +61,41 @@ class TransHistory extends Component {
       to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
       value: '10 Wan'
     },
+    {
+      key: 5,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '10 Wan'
+    },
+    {
+      key: 6,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '10 Wan'
+    },
+    {
+      key: 7,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '10 Wan'
+    },
+    {
+      key: 8,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '10 Wan'
+    },
+    {
+      key: 9,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '10 Wan'
+    },
   ]
   onChange = value => {
     console.log(`selected ${value}`);
@@ -98,7 +133,7 @@ class TransHistory extends Component {
             { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
           </Select>
         </div>
-        <Table className="portfolioMain" columns={this.columns} dataSource={this.source} pagination={false}/>
+        <Table className="portfolioMain" columns={this.columns} dataSource={this.source} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
     );
   }
