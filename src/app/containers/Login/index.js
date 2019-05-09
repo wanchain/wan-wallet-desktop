@@ -35,7 +35,7 @@ class Login extends Component {
 
   render () {
     return (
-      <div className="header">
+      <div className="loginW">
         <div className="loginCon">
           <Input.Password placeholder="input password" onPressEnter={this.unlock} onChange={this.handleChange}/>
           <Button onClick={this.unlock}>unlock</Button>
