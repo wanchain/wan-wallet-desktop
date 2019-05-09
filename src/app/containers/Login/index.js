@@ -24,8 +24,10 @@ class Login extends Component {
 
     return (
       <div className="header">
-        <input/>
-        <button onClick={this.unlock}>解锁</button>
+        <div className="loginCon">
+          <input />
+          <button onClick={this.unlock}>解锁</button>
+        </div>
       </div>
     );
   }

@@ -80,20 +80,22 @@ class TransHistory extends Component {
     const addrList = Object.keys(this.props.addrInfo);
     return (
       <div>
-        <span>Transaction History</span>
-        <Select 
-          showSearch 
-          style={{ width: 400 }} 
-          placeholder="Select a person" 
-          optionFilterProp="children" 
-          onChange={this.onChange} 
-          onFocus={this.onFocus} 
-          onBlur={this.onBlur} 
-          onSearch={this.onSearch}
-          filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-        >
-          { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
-        </Select>
+        <div className="histroyCon">
+          <span>Transaction History</span>
+          <Select 
+            showSearch 
+            style={{ width: 400 }} 
+            placeholder="Select a person" 
+            optionFilterProp="children" 
+            onChange={this.onChange} 
+            onFocus={this.onFocus} 
+            onBlur={this.onBlur} 
+            onSearch={this.onSearch}
+            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          >
+            { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
+          </Select>
+        </div>
         <Table className="portfolioMain" columns={this.columns} dataSource={this.source} pagination={false}/>
       </div>
     );
