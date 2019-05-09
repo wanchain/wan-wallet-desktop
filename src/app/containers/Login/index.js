@@ -16,12 +16,14 @@ class Login extends Component {
   }
   unlock = () => {
     const pwd = this.state.pwd;
-    wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
-      if (err) {
-        message.error('Wrong Password')
-        return;
-      } 
-      this.props.setAuth(true);
+    wand.request('wallet_lock', () => {
+      wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
+        if (err) {
+          message.error('Wrong Password')
+          return;
+        } 
+        this.props.setAuth(true);
+      })
     })
   }
 
