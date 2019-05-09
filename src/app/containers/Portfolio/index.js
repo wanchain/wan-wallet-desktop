@@ -14,6 +14,10 @@ import './index.less';
 
 @observer
 class Portfolio extends Component {
+  constructor(props) {
+    super(props);
+    this.props.changeTitle('Portfolio');
+  }
   
   columns = [
     {
@@ -39,10 +43,6 @@ class Portfolio extends Component {
       key: 'portfolio',
     }
   ]
-
-  componentWillMount() {
-    this.props.changeTitle('Portfolio');
-  }
 
   componentDidMount() {
     this.timer = setInterval(() =>{

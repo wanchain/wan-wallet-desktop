@@ -28,9 +28,13 @@ const WALLETID = 1;
 
 @observer
 class WanAccount extends Component {
-  state = {
-    bool: true,
-    isUnlock: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      bool: true,
+      isUnlock: false,
+    }
+    this.props.changeTitle('Wallet');
   }
 
   columns = [
@@ -55,10 +59,6 @@ class WanAccount extends Component {
       render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
   ];
-
-  componentWillMount() {
-    this.props.changeTitle('Wallet');
-  }
 
   handleSend = from => {
     let params = this.props.transParams[from];

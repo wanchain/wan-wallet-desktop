@@ -96,6 +96,13 @@ class TransHistory extends Component {
       to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
       value: '10 Wan'
     },
+    {
+      key: 10,
+      time: 2019,
+      from: 'Account1',
+      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
+      value: '11 Wan'
+    },
   ]
   onChange = value => {
     console.log(`selected ${value}`);

@@ -25,10 +25,6 @@ export default class Layout extends Component {
     loading: true
   }
 
-  componentWillMount() {
-    this.updateWANBalanceForInter();
-  }
-
   componentDidMount() {
     this.wantimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
     this.props.getMnemonic().then(() => {

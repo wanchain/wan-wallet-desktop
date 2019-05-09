@@ -14,7 +14,8 @@ class Login extends Component {
   state = {
     pwd: ''
   }
-  unlock = () => {
+
+  login = () => {
     const pwd = this.state.pwd;
     wand.request('wallet_lock', () => {
       wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
@@ -37,8 +38,8 @@ class Login extends Component {
     return (
       <div className="loginW">
         <div className="loginCon">
-          <Input.Password placeholder="input password" onPressEnter={this.unlock} onChange={this.handleChange}/>
-          <Button type="primary" onClick={this.unlock}>unlock</Button>
+          <Input.Password placeholder="input password" onPressEnter={this.login} onChange={this.handleChange}/>
+          <Button type="primary" onClick={this.login}>LOG IN</Button>
         </div>
       </div>
     );
