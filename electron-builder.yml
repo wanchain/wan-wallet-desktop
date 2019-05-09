@@ -1,4 +1,4 @@
-appId: org.wandwallet.wanchain
+appId: org.wanwalletdesktop.wanchain
 copyright: Wanchain Foundation
 productName: Wan Wallet
 
@@ -33,4 +33,4 @@ linux:
   icon: build/assets/icon.png
   target:
     - deb
-    - AppImage
+    - zip

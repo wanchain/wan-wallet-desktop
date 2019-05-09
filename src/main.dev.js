@@ -14,7 +14,7 @@ import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import { walletBackend, Windows } from '~/src/modules'
+import { Windows, walletBackend } from '~/src/modules'
 
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
@@ -67,15 +67,15 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
  
-  mainWindow.load(`file://${__dirname}/app/index.html`)
+  // mainWindow.load(`file://${__dirname}/app/index.html`)
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
-  // if (setting.isDev) {
-  //   mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
-  // } else {
-  //   mainWindow.load(`file://${__dirname}/index.html`)
-  // }
+  if (setting.isDev) {
+    mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+  } else {
+    mainWindow.load(`file://${__dirname}/index.html`)
+  }
   
   // Open the DevTools under development.
   if (setting.isDev) {

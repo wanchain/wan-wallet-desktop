@@ -2,7 +2,6 @@ import { walletCore } from 'wanchain-js-sdk';
 import Logger from '~/src/utils/Logger'
 import configService from './config'
 import EventEmitter from 'events'
-// import { Windows } from '~/src/modules'
 
 class WalletBackend extends EventEmitter {
     constructor(config) {
