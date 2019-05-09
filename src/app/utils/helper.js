@@ -42,11 +42,23 @@ export const getGasPrice = function (chainType) {
   })
 };
 
-export const getGasLimit = function (chainType) {
+export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
-    wand.request('query_getGasLimit', { chainType: chainType }, (err, val) => {
+    wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
       if (err) {
-        return reject('Get gas limit failed ', err)
+        return reject('Estimate gas failed ', err)
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};
+
+export const checkWanAddr = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isWanAddress', { address: address }, (err, val) => {
+      if (err) {
+        return reject('Check WAN address failed ', err)
       } else {
         return resolve(val);
       }

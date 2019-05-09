@@ -58,7 +58,7 @@ class Backup extends Component {
   render() {
     return (
       <div>
-        <Card title="Reveal Mnemonic Sentence">
+        <Card title="Reveal Seed Phrase">
           <p className="com-gray">
             If you install a new wallet, you will need this seed phrase to access your assets.
             Save them somewhere safe and secret.
@@ -66,7 +66,7 @@ class Backup extends Component {
           <Button type="primary" onClick={this.showModal}>Continue</Button>
           <Modal
             destroyOnClose={true}
-            title="Mnemonic Sentence"
+            title="Seed Phrase"
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.resetStateVal}

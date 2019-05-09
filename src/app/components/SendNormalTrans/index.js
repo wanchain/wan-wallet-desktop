@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
-import { getNonce, getGasPrice, getGasLimit, getChainId } from 'utils/helper';
+import { getNonce, getGasPrice, estimateGas, getChainId } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 

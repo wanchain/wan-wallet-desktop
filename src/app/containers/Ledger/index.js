@@ -93,9 +93,9 @@ class Ledger extends Component {
       <div className="">
         <h2 className="com-gray">Please follow the below instructions to connect your Ledger wallet:</h2>
         <div className="ledgerTex">
-          <p>1. Connect your Ledger wallet directly to your computer.</p>
-          <p>2. Enter pin code to unlock your Ledger wallet.</p>
-          <p>3. Navigate to Wanchain APP and enter into it.</p>
+          <p>1. Connect your Ledger wallet directly to your computer</p>
+          <p>2. Enter pin code to unlock your Ledger wallet</p>
+          <p>3. Navigate to Wanchain APP and enter into it</p>
         </div>
       </div>
     )

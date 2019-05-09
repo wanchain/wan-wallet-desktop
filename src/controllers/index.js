@@ -242,6 +242,18 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
 
             sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
             break
+
+        case 'isWanAddress':
+            let ret;
+            try {
+                ret = await ccUtil.isWanAddress(payload.address);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
+            break
     }
 })
 
@@ -345,9 +357,18 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getGasLimit':
+        /**
+         * tx = {
+         *   from: from,
+         *   to: to,
+         *   value: value,
+         *   data: data,
+         *   gas: defaultGas
+         * }
+         */
+        case 'estimateGas':
             try {
-                ret = await ccUtil.getGasLimit(payload.chainType);
+                ret = await ccUtil.estimateGas(payload.chainType, payload.tx);
             } catch (err) {
                 logger.error(e.message || e.stack)
                 err = e

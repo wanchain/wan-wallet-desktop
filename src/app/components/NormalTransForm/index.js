@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
+import { checkWanAddr, estimateGas } from 'utils/helper';
 
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 
@@ -86,6 +87,11 @@ class NormalTransForm extends Component {
 
   }
 
+  checkWanAddr = (rule, value, callback) => {
+    console.log('rule', rule, 'value', value)
+    let ret = checkWanAddr(value);
+  }
+
   render() {
     const { loading, form, visible, from } = this.props;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
@@ -121,11 +127,11 @@ class NormalTransForm extends Component {
                 (<Input disabled={true} placeholder="Sender Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="To">
-              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect' }] })
+              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkWanAddr }] })
                 (<Input placeholder="Recipient Address" prefix={<Icon type="wallet" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             <Form.Item label="Amount">
-              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect' }] })
+              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
                 (<InputNumber placeholder="0" prefix={<Icon type="money-collect" style={{ color: 'rgba(0,0,0,.25)' }} />} />)}
             </Form.Item>
             {

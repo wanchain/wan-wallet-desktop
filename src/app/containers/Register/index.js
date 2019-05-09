@@ -41,12 +41,12 @@ class Register extends Component {
 
   next = () => {
     const { current, isSamePwd, setIndex, pwd, method, mnemonic } = this.props;
-    if(current === 0) {
-      if(isSamePwd) {
-        if(checkCryptographic(pwd)) {
-          if(method === 'create') {
-            wand.request('phrase_generate', {pwd: pwd}, (err, val) => {
-              if(err) {
+    if (current === 0) {
+      if (isSamePwd) {
+        if (checkCryptographic(pwd)) {
+          if (method === 'create') {
+            wand.request('phrase_generate', { pwd: pwd }, (err, val) => {
+              if (err) {
                 message.error('Create seed phrase failed');
                 return;
               }
@@ -54,7 +54,7 @@ class Register extends Component {
               setIndex(1);
             });
           } else {
-            setIndex(1);            
+            setIndex(1);
           }
         } else {
           message.error('Password must have a minimum of 6 characters; must contain at least one uppercase letter, one lowercase letter, and one numeric digit');
@@ -62,15 +62,15 @@ class Register extends Component {
       } else {
         message.error("Passwords mismatched");
       }
-    } else if(current === 1 && method === 'import') {
-      if(checkPhrase(mnemonic)) {
+    } else if (current === 1 && method === 'import') {
+      if (checkPhrase(mnemonic)) {
         this.props.setMnemonic(mnemonic);
-        setIndex( current + 1 );
+        setIndex(current + 1);
       } else {
         message.error('Seed phrase is invalid');
       }
     } else {
-      setIndex( current + 1 );
+      setIndex(current + 1);
     }
   }
 
@@ -81,17 +81,19 @@ class Register extends Component {
 
   done = () => {
     const { mnemonic, newPhrase, pwd } = this.props;
-    if(newPhrase.join(' ') === mnemonic) {
-      message.success('Processing complete!');
-      wand.request('phrase_import', {phrase: mnemonic, pwd}, (err) => {
-        if(err) {
+    if (newPhrase.join(' ') === mnemonic) {
+      wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
+        if (err) {
           message.error('Write seed phrase to database failed');
           return;
         }
         wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
-          if (err) console.log('error printed inside callback: ', err)
-          this.props.setMnemonicStatus(true);
-          this.props.setAuth(true);
+          if (err) {
+            console.log('Unlock wallet failed ', err)
+          } else {
+            this.props.setMnemonicStatus(true);
+            this.props.setAuth(true);
+            }
         })
       });
     } else {
@@ -104,8 +106,8 @@ class Register extends Component {
     const { current } = this.props;
 
     return (
-    <div className="zContent">
-      <div className="registerContent">
+      <div className="zContent">
+        <div className="registerContent">
           <div className="steps-content">{steps[current].content}</div>
           <div className="steps-action">
             {
