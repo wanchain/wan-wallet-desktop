@@ -1,5 +1,8 @@
+import Web3 from 'web3';
+const web3 = new Web3();
+
 export function fromWei(data) {
-  return data / (10 ** 18);
+  return web3.utils.fromWei(data);
 }
 
 export function checkCryptographic(pwd) {
@@ -14,4 +17,10 @@ export function checkPhrase(phrase) {
 
 export function randomsort(arr) {
   return arr.sort(() => Math.random()>.5 ? -1 : 1);
+}
+
+export function timeFormater(time) {
+  const current = new Date(time * 1000);
+  const m = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec");
+  return `${m[current.getMonth()]} ${current.getDate()} ${current.getFullYear()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
 }

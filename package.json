@@ -66,6 +66,7 @@
     "wanchain-js-sdk": "github:wanchain/wanchain-js-sdk#new_wallet",
     "wanchainjs-tx": "^1.5.0",
     "wanchainjs-util": "^5.2.1",
+    "web3": "^1.0.0-beta.55",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.8.0",
     "yargs": "^13.2.2"
