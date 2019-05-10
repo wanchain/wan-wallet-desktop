@@ -1,5 +1,6 @@
 
 import { observable, action, computed } from 'mobx';
+import { timeFormater, fromWei } from 'utils/support';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -87,10 +88,10 @@ class WanAddress {
         if(addrList.includes(self.transHistory[item]["from"])) {
           historyList.push({
             key: item,
-            time: self.transHistory[item]["sendTime"],
+            time: timeFormater(self.transHistory[item]["sendTime"]),
             from: self.addrInfo[self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
-            value: self.transHistory[item].value,
+            value: fromWei(self.transHistory[item].value),
             status: self.transHistory[item].status
           });
         }
