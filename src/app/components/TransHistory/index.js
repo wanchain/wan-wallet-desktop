@@ -61,7 +61,7 @@ class TransHistory extends Component {
             showSearch
             allowClear
             style={{ width: 400 }} 
-            placeholder="Select a person" 
+            placeholder="Select a FROM address" 
             optionFilterProp="children" 
             onChange={this.onChange} 
             onFocus={this.onFocus} 

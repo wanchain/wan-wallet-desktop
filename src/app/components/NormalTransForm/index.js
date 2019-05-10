@@ -101,12 +101,15 @@ class NormalTransForm extends Component {
     return tx;
   }
 
-  updateGasLimit = (chainType, trans) => {
+  updateGasLimit = () => {
+    let trans = this.constructTx();
+    let chainType = this.props.transParams[trans.from].chainType;
     wand.request('transaction_estimateGas', { chainType: chainType, tx: trans }, (err, val) => {
       if (err) {
         message.warn("Estimate gas failed. Please try again");
         console.log(err);
       } else {
+        console.log('Update gas limit:', val);
         this.props.updateGasLimit(trans.from, val);
       }
     });
@@ -115,9 +118,7 @@ class NormalTransForm extends Component {
   checkWanAddr = async (rule, value, callback) => {
     let ret = await checkWanAddr(value);
     if (ret) {
-      let trans = this.constructTx();
-      let chainType = this.props.transParams[trans.from].chainType;
-      this.updateGasLimit(chainType, trans);
+      this.updateGasLimit();
       callback();
     } else {
       callback('Invalid address');
@@ -125,6 +126,7 @@ class NormalTransForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
+    this.updateGasLimit();
     callback();
   }
 
