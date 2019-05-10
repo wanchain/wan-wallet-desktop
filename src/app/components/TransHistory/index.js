@@ -8,6 +8,8 @@ const Option = Select.Option;
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  historyList: stores.wanAddress.historyList,
+  setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
 
 @observer
@@ -32,80 +34,9 @@ class TransHistory extends Component {
     }
   ]
 
-  source = [
-    {
-      key: 1,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 2,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    }, 
-    {
-      key: 3,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 4,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 5,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 6,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 7,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 8,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 9,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '10 Wan'
-    },
-    {
-      key: 10,
-      time: 2019,
-      from: 'Account1',
-      to: '0x4d249096704f30b7c4b28f6dd497a5f7b8f7d83f',
-      value: '11 Wan'
-    },
-  ]
   onChange = value => {
     console.log(`selected ${value}`);
+    this.props.setSelectedAddr(value);
   }
   
   onBlur = () => {
@@ -127,7 +58,8 @@ class TransHistory extends Component {
         <div className="histroyCon">
           <img src={hostroy} /><span>Transaction History</span>
           <Select 
-            showSearch 
+            showSearch
+            allowClear
             style={{ width: 400 }} 
             placeholder="Select a person" 
             optionFilterProp="children" 
@@ -140,7 +72,7 @@ class TransHistory extends Component {
             { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
           </Select>
         </div>
-        <Table className="portfolioMain" columns={this.columns} dataSource={this.source} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <Table className="portfolioMain" columns={this.columns} dataSource={this.props.historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
     );
   }

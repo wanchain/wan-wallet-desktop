@@ -5,6 +5,8 @@ const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
     @observable addrInfo = {};
+    @observable selectedAddr = '';
+    @observable transHistory = {};
 
     @action addAddress(newAddr) {
       self.addrInfo[newAddr.address] = {
@@ -12,6 +14,20 @@ class WanAddress {
         balance: '0',
         path: newAddr.start
       };
+    }
+
+    @action updateTransHistory() {
+      wand.request('transaction_showRecords', (err, val) => {
+        if(!err && val.length !== 0) {
+          val.forEach((item) => {
+            self.transHistory[item.txHash] = item
+          })
+        }
+      })
+    }
+
+    @action setSelectedAddr(addr) {
+      self.selectedAddr = addr;
     }
 
     @action updateBalance(arr) {
@@ -62,6 +78,24 @@ class WanAddress {
         });
       });
       return addrList;
+    }
+
+    @computed get historyList() {
+      let historyList = [];
+      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo);
+      Object.keys(self.transHistory).forEach(item => {
+        if(addrList.includes(self.transHistory[item]["from"])) {
+          historyList.push({
+            key: item,
+            time: self.transHistory[item]["sendTime"],
+            from: self.addrInfo[self.transHistory[item]["from"]].name,
+            to: self.transHistory[item].to,
+            value: self.transHistory[item].value,
+            status: self.transHistory[item].status
+          });
+        }
+      });
+      return historyList;
     }
 
     @computed get getAmount() {

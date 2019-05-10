@@ -12,8 +12,8 @@ class App extends Component {
   componentWillMount() {
     stores.session.getMnemonic();
     stores.session.initChainId();
-    stores.wanAddress.getUserAccountFromDB();
     stores.portfolio.updateCoinPrice();
+    stores.wanAddress.getUserAccountFromDB();
     initEmitterHandler();
   }
   

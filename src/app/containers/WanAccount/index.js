@@ -24,6 +24,7 @@ const WALLETID = 1;
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateTransHistory: newTrans => stores.wanAddress.updateTransHistory(newTrans),
 }))
 
 @observer
@@ -35,6 +36,15 @@ class WanAccount extends Component {
       isUnlock: false,
     }
     this.props.changeTitle('Wallet');
+    this.props.updateTransHistory();
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   columns = [
@@ -77,6 +87,7 @@ class WanAccount extends Component {
         message.warn("Send transaction failed. Please try again");
         console.log(err);
       } else {
+        this.props.updateTransHistory();
         console.log("TxHash:", val);
       }
     });
