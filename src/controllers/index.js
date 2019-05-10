@@ -175,7 +175,6 @@ ipc.on(ROUTE_WALLET, async (event, action, payload) => {
                     sig.r = '0x' + ret.r.toString('hex');
                     sig.s = '0x' + ret.s.toString('hex');
                     sig.v = '0x' + ret.v.toString('hex');
-                    console.log("ret", ret);
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -256,7 +255,7 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: balance })
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: ret })
             break
     }
 })
@@ -350,7 +349,6 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             break
 
         case 'raw':
-            console.log("raw", payload)
             try {
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
             } catch (e) {
@@ -373,12 +371,12 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
         case 'estimateGas':
             try {
                 ret = await ccUtil.estimateGas(payload.chainType, payload.tx);
-            } catch (err) {
+            } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
 
-            sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break;
 
         case 'showRecords': 

@@ -28,9 +28,10 @@ class SendNormalTrans extends Component {
   }
 
   componentWillMount() {
-    const { from, chainId, addTransaction } = this.props;
+    const { from, chainId, addTransaction, chainType } = this.props;
 
     addTransaction(from, {
+      chainType: chainType,
       gasPrice: 200,
       gasLimit: 21000,
       nonce: 0,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
-import { checkWanAddr, estimateGas } from 'utils/helper';
+import { checkWanAddr } from 'utils/helper';
 
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 
@@ -24,6 +24,7 @@ class NormalTransForm extends Component {
     this.averageGasPrice = Math.max(this.props.minGasPrice, this.props.transParams[this.props.from].gasPrice);
     this.minGasPrice = this.props.minGasPrice;
     this.maxGasPrice = this.props.maxGasPrice;
+    this.defaultGasLimit = 4700000;
     this.advancedOptionForm = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
   }
 
@@ -84,12 +85,47 @@ class NormalTransForm extends Component {
     this.props.updateGasLimit(from, gasLimit);
     this.props.updateGasPrice(from, gasPrice);
     this.props.updateNonce(from, nonce);
-
   }
 
-  checkWanAddr = (rule, value, callback) => {
-    console.log('rule', rule, 'value', value)
-    let ret = checkWanAddr(value);
+  constructTx = () => {
+    let form = this.props.form;
+    let from = form.getFieldValue("from");
+    let amount = form.getFieldValue("amount") ? form.getFieldValue("amount") : 0;
+    let tx = {
+      from: from,
+      to: form.getFieldValue("to"),
+      value: amount,
+      data: this.props.transParams[from].data,
+      gas: this.defaultGasLimit
+    }
+    return tx;
+  }
+
+  updateGasLimit = (chainType, trans) => {
+    wand.request('transaction_estimateGas', { chainType: chainType, tx: trans }, (err, val) => {
+      if (err) {
+        message.warn("Estimate gas failed. Please try again");
+        console.log(err);
+      } else {
+        this.props.updateGasLimit(trans.from, val);
+      }
+    });
+  }
+
+  checkWanAddr = async (rule, value, callback) => {
+    let ret = await checkWanAddr(value);
+    if (ret) {
+      let trans = this.constructTx();
+      let chainType = this.props.transParams[trans.from].chainType;
+      this.updateGasLimit(chainType, trans);
+      callback();
+    } else {
+      callback('Invalid address');
+    }
+  }
+
+  checkAmount = (rule, value, callback) => {
+    callback();
   }
 
   render() {
