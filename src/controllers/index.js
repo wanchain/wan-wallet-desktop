@@ -9,12 +9,16 @@ import { Windows } from '~/src/modules'
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
 
+// route consts
 const ROUTE_PHRASE = 'phrase'
 const ROUTE_WALLET = 'wallet'
 const ROUTE_ADDRESS = 'address'
 const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
+
+// db collection consts
+const WAN_NORMAL_COLLECTION = ''
 
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
@@ -373,8 +377,22 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
+
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'showRecords': 
+            try {
+                ret = global.wanDb.queryComm('normalTrans', (items) => {
+                    return items
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

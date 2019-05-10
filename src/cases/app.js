@@ -273,6 +273,13 @@ class App extends React.Component {
         })
     }
 
+    showRecords() {
+        wand.request('transaction_showRecords', function(err, val) {
+            if (err) { console.log(err); return }
+            console.log(val)
+        })
+    }
+
     render() {
         return (
             <div>
@@ -310,6 +317,7 @@ class App extends React.Component {
                 <button onClick={this.txRaw}>Send raw tx !!!</button>
                 <button onClick={this.getNetowrk}>Show me network !!!</button>
                 <button onClick={this.getPubKey}>Show my ledger public key !!!</button>
+                <button onClick={this.showRecords}>Show transaction records !!!</button>
             </div>
         );
     }
