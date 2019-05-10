@@ -18,7 +18,7 @@ const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
 
 // db collection consts
-const WAN_NORMAL_COLLECTION = ''
+const DB_NORMAL_COLLECTION = 'normalTrans'
 
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
@@ -383,7 +383,7 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
 
         case 'showRecords': 
             try {
-                ret = global.wanDb.queryComm('normalTrans', (items) => {
+                ret = global.wanDb.queryComm(DB_NORMAL_COLLECTION, (items) => {
                     return items
                 })
             } catch (e) {
