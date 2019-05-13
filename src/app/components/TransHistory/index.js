@@ -3,6 +3,7 @@ import { Table, Select  } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import history from 'static/image/history.png';
+import './index.less';
 
 const Option = Select.Option;
 
