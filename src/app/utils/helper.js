@@ -5,12 +5,16 @@ let emitterHandlers = {};
 
 export const getBalance = function (addrArr) {
   return new Promise((resolve, reject) => {
+    let thisVal
     wand.request('address_balance', { addr: addrArr }, (err, val) => {
+      thisVal = Object.assign({}, val);
       if (err) {
         return reject('Get balance failed ', err)
       } else {
-        Object.keys(val).forEach(item => val[item] = fromWei(val[item]));
-        return resolve(val);
+        Object.keys(thisVal).forEach(item => {
+          return thisVal[item] = fromWei(thisVal[item])
+        });
+        return resolve(thisVal);
       }
     })
   })
