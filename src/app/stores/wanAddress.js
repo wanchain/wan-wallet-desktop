@@ -86,13 +86,14 @@ class WanAddress {
       let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo);
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
+          let status = self.transHistory[item].status;
           historyList.push({
             key: item,
             time: timeFormater(self.transHistory[item]["sendTime"]),
             from: self.addrInfo[self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: self.transHistory[item].status
+            status: ['Failed', 'Success'].includes(status) ? status : 'Pending'
           });
         }
       });

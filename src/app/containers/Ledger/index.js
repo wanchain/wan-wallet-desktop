@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import './index.less';
-import ConnectHwWallet from 'components/HwWallet/Connect';
-import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
+
+import './index.less';
+import Accounts from 'components/HwWallet/Accounts';
+import ConnectHwWallet from 'components/HwWallet/Connect';
+
 const wanTx = require('wanchainjs-tx');
 const ethUtil = require('ethereumjs-util');
 
@@ -183,9 +185,9 @@ class Ledger extends Component {
     return (
       <div>
         {
-          this.state.addresses.length === 0 ? <ConnectHwWallet setAddresses={this.setAddresses}
-            Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey}
-            dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} signTransaction={this.signTransaction} chainType={this.chainType} />
+          this.state.addresses.length === 0 
+            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.dPath} />
+            : <Accounts addresses={this.state.addresses} signTransaction={this.signTransaction} chainType={this.chainType} />
         }
       </div>
     );
