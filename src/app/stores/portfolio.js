@@ -48,7 +48,7 @@ class Portfolio {
           if(val.name === item) {
             switch(item) {
               case 'WAN':
-                val.balance = wanAddress.getAmount;
+                val.balance = wanAddress.getAllAmount;
                 break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;

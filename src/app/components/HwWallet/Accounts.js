@@ -59,12 +59,7 @@ class Accounts extends Component {
   render() {
     return (
       <div>
-        <Table
-          rowSelection={this.rowSelection}
-          pagination={false}
-          columns={this.columns}
-          dataSource={this.props.addresses}>
-        </Table>
+        <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.props.addresses}></Table>
       </div>
     )
   }

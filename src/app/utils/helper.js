@@ -3,7 +3,9 @@ import { BigNumber } from 'bignumber.js';
 
 let emitterHandlers = {};
 
-export const getBalance = function (addrArr) {
+export const getBalance = function (arr) {
+  const addrArr = arr.map(item => item.substr(2));
+
   return new Promise((resolve, reject) => {
     let thisVal
     wand.request('address_balance', { addr: addrArr }, (err, val) => {

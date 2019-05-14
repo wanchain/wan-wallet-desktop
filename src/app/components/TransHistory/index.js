@@ -53,7 +53,7 @@ class TransHistory extends Component {
   }
 
   render() {
-    const addrList = Object.keys(this.props.addrInfo);
+    const addrList = Object.keys(this.props.addrInfo['normal']);
     return (
       <div>
         <div className="histroyCon">

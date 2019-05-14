@@ -5,16 +5,29 @@ import { timeFormater, fromWei } from 'utils/support';
 const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
-    @observable addrInfo = {};
+    @observable addrInfo = {
+      'normal': {},
+      'ledger': {},
+      'trezor': {},
+    };
     @observable selectedAddr = '';
     @observable transHistory = {};
 
     @action addAddress(newAddr) {
-      self.addrInfo[newAddr.address] = {
+      self.addrInfo['normal'][newAddr.address] = {
         name: `Account${newAddr.start + 1}`,
         balance: '0',
         path: newAddr.start
       };
+    }
+
+    @action addLedgerAddress(addr) {
+      if(!Object.keys(self.addrInfo['ledger']).includes(addr)) {
+        self.addrInfo['ledger'][addr] = {
+          balance: '0',
+          address: addr,
+        }
+      }
     }
 
     @action updateTransHistory() {
@@ -31,21 +44,30 @@ class WanAddress {
       self.selectedAddr = addr;
     }
 
-    @action updateBalance(arr) {
+    @action updateWANBalance(arr) {
       let keys = Object.keys(arr);
-      keys.forEach((item) => {
-        if(self.addrInfo[item].balance !== arr[item]) {
-          self.addrInfo[item].balance = arr[item]
+      let normal = Object.keys(self.addrInfo['normal']); 
+      let ledger = Object.keys(self.addrInfo['ledger']); 
+      let trezor = Object.keys(self.addrInfo['trezor']); 
+      keys.forEach(item => {
+        if(normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
+          self.addrInfo['normal'][item].balance = arr[item];
+        }
+        if(ledger.includes(item) && self.addrInfo['ledger'][item].balance !== arr[item]) {
+          self.addrInfo['ledger'][item].balance = arr[item];
+        }
+        if(trezor.includes(item) && self.addrInfo['trezor'][item].balance !== arr[item]) {
+          self.addrInfo['trezor'][item].balance = arr[item];
         }
       })
     }
 
     @action updateName(arr) {
-      const path = self.addrInfo[arr["address"]]["path"];
+      const path = self.addrInfo['normal'][arr['address']]['path'];
 
       wand.request('account_update', { walletID: 1, path: `${WAN}${path}`, meta: {name: arr.name, addr: arr.address} }, (err, val) => {
         if(!err && val) {
-          self.addrInfo[arr["address"]]["name"] = arr.name;
+          self.addrInfo['normal'][arr['address']]['name'] = arr.name;
         }
       })
     }
@@ -56,7 +78,7 @@ class WanAddress {
         if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           Object.keys(info).forEach((item) => {
-            self.addrInfo[info[item]['1']['addr']] = {
+            self.addrInfo['normal'][info[item]['1']['addr']] = {
               name: info[item]['1']['name'],
               balance: 0,
               path: item.substr(item.lastIndexOf('\/')+1)
@@ -68,29 +90,42 @@ class WanAddress {
 
     @computed get getAddrList() {
       let addrList = [];
-      Object.keys(self.addrInfo).forEach((item, index) => {
+      Object.keys(self.addrInfo['normal']).forEach((item, index) => {
         addrList.push({
           key: `${index + 1}`,
-          name: self.addrInfo[item].name,
+          name: self.addrInfo['normal'][item].name,
           address: item,
-          balance: self.addrInfo[item].balance,
-          path: `${WAN}${self.addrInfo[item].path}`,
+          balance: self.addrInfo['normal'][item].balance,
+          path: `${WAN}${self.addrInfo['normal'][item].path}`,
           action: 'send'
         });
       });
       return addrList;
     }
 
+    @computed get ledgerAddrList() {
+      let ledgerAddrList = [];
+      Object.keys(self.addrInfo['ledger']).forEach((item, index) => {
+        ledgerAddrList.push({
+          key: item,
+          name: `Account${index + 1}`,
+          address: item,
+          balance: self.addrInfo['ledger'][item].balance,
+        });
+      });
+      return ledgerAddrList;
+    }
+
     @computed get historyList() {
       let historyList = [];
-      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo);
+      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo['normal']);
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
           historyList.push({
             key: item,
             time: timeFormater(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo[self.transHistory[item]["from"]].name,
+            from: self.addrInfo['normal'][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
             status: ['Failed', 'Success'].includes(status) ? status : 'Pending'
@@ -101,7 +136,11 @@ class WanAddress {
     }
 
     @computed get getAmount() {
-      return Object.keys(self.addrInfo).reduce((prev, curr) => prev + (self.addrInfo[curr].balance - 0), 0);
+      return Object.keys(self.addrInfo['normal']).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
+    }
+
+    @computed get getAllAmount() {
+      return Object.keys(self.addrInfo['normal']).concat(Object.keys(self.addrInfo['ledger'])).concat(Object.keys(self.addrInfo['trezor'])).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
     }
 }
 
