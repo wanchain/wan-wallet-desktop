@@ -196,5 +196,52 @@ export default (i18n) => {
     }
     menu.push(helpMenu)
 
+    const developerMenu = {
+        label: i18n.t('main.applicationMenu.app.developer.label'),
+        submenu: [
+            {
+                label: i18n.t('main.applicationMenu.app.developer.assets.label'),
+                submenu: [
+                    {
+                        label: i18n.t('main.applicationMenu.app.developer.assets.wan.label'),
+                        submenu: [
+                            {   
+                                label: i18n.t('main.applicationMenu.app.developer.assets.wan.import'),
+                                click: () => {
+
+                                    Windows.createModal('importKeyFile', {
+                                        width: 1200, height: 800, alwaysOnTop: true
+                                    })
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.developer.data.label'),
+                submenu: [
+                    {
+                        label: i18n.t('main.applicationMenu.app.developer.data.db'),
+                        click: () => {
+                            const dataDir = setting.userDataPath
+                            shell.showItemInFolder(path.join(dataDir, 'Db'))
+                        }
+                    },
+                    {
+                        label: i18n.t('main.applicationMenu.app.developer.data.log'),
+                        click: () => {
+                            const logDir = setting.appLogPath
+                            shell.showItemInFolder(logDir)
+                        }
+                    }
+                ]
+            }
+        ]
+    }   
+
+    menu.push(developerMenu)
+
     return menu
 }
