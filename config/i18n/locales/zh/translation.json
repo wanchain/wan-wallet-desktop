@@ -6,7 +6,13 @@
                 "about": "关于 {{app}}",
                 "developer": {
                     "label": "开发者",
-                    "import": "从Key File导入",
+                    "assets": {
+                        "label": "资产",
+                        "wan": {
+                            "label": "万维币",
+                            "import": "从Key File导入地址"
+                        }
+                    },
                     "data": {
                         "label": "应用数据",
                         "db": "显示钱包及交易记录文件夹",
