@@ -1,24 +1,46 @@
 {
     "presets": ["@babel/preset-env", "@babel/preset-react"],
     "plugins": [
-        ["@babel/transform-runtime"],
-        ["@babel/plugin-proposal-decorators", { "legacy": true }],
+        [
+            "@babel/transform-runtime",
+            {
+                "absoluteRuntime": false,
+                "corejs": false,
+                "helpers": true,
+                "regenerator": true,
+                "useESModules": false
+            }
+        ],
+        [
+            "@babel/plugin-proposal-decorators", 
+            { 
+                "legacy": true 
+            }
+        ],
         [
             "@babel/proposal-class-properties",
             {
                 "loose": true
             }
         ],
-        ["import", {
-          "libraryName": "antd",
-          "libraryDirectory": "es",
-          "style": "css" // `style: true` 会加载 less 文件
-        }],
-        ["babel-plugin-root-import", {
-            "paths": [{
-                "rootPathPrefix": "~"
-            }]
-        }]
+        [
+            "import", 
+            {
+                "libraryName": "antd",
+                "libraryDirectory": "es",
+                "style": "css" // `style: true` 会加载 less 文件
+            }
+        ],
+        [
+            "babel-plugin-root-import", 
+            {
+                "paths": [
+                    {
+                        "rootPathPrefix": "~"
+                    }
+                ]
+            }
+        ]
     ],
     "ignore": [
         "src/modules/preload/*.js"

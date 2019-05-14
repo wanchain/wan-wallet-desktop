@@ -28,7 +28,7 @@ class Window extends EventEmitter {
             height: 720,
             acceptFirstMouse: true,
             darkTheme: true,
-            titleBarStyle: 'hidden-inset',
+            // titleBarStyle: 'hiddenInset',
             webPreferences: {
                 webaudio: true,
                 webgl: false,
@@ -186,19 +186,18 @@ class Windows {
         options = options || {}
 
         let opts = {
-            // url: path.join(__dirname, 'index.html'),
             show: true,
             ownerId: null,
             electronOptions: {
-                frame: false,
+                // frame: false,
                 title: '',
                 width: 1200,
                 height: 800,
                 resizable: false,
                 center: true,
                 useContentSize: true,
-                titleBarStyle: 'customButtonsOnHover',
-                // autoHideMenuBar: true,
+                // titleBarStyle: 'hiddenInset',
+                autoHideMenuBar: true,
                 webPreferences: {
                     webSecurity: false,
                     preload: setting.isDev ? `${__dirname}/../preload` : `${__dirname}/preload.js`,

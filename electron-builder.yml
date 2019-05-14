@@ -28,6 +28,10 @@ win:
   icon: build/assets/icon.ico
   target: nsis
 
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
 linux:
   category: WebBrowser
   icon: build/assets/icon.png

@@ -16,7 +16,7 @@
     "transpile:renderer": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.renderer.prod.babel.js --colors",
     "transpile:main": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.main.prod.babel.js --colors",
     "pack:mac": "run-s copy transpile:renderer transpile:main build:mac",
-    "pack:win": "run-s copy transpile:renderer transpile:main build:win",
+    "pack:win": "run-s copy:win transpile:renderer transpile:main build:win",
     "pack:linux": "run-s copy transpile:renderer transpile:main build:linux",
     "pack:all": "run-s copy transpile:renderer transpile:main build:all",
     "build:mac": "electron-builder --mac -p never",
@@ -25,6 +25,7 @@
     "build:all": "electron-builder -mwl -p never",
     "test": "echo \"Error: no test specified\" && exit 1",
     "copy": "./build.sh",
+    "copy:win": "build.bat",
     "postinstall": "electron-builder install-app-deps"
   },
   "repository": {

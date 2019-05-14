@@ -73,6 +73,7 @@ async function createWindow () {
 
   if (setting.isDev) {
     mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+    // mainWindow.load(`file://${__dirname}/index.html`)
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }

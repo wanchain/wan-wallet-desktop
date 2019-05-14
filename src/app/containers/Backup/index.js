@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
-import { clipboard } from 'electron';
+// import { clipboard } from 'electron';
 
 import './index.less';
 
@@ -51,7 +51,8 @@ class Backup extends Component {
   }
 
   copy2Clipboard = (val) => {
-    clipboard.writeText(val);
+    // clipboard.writeText(val);
+    wand.writeText(val);
     message.success('Copy successfully');
   }
 

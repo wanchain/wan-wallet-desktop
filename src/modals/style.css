@@ -2,10 +2,10 @@
     font-family: 'Roboto-Regular';
     src: url('../../static/font/Roboto-Regular.ttf');
   }
-  @font-face {
-    font-family: 'Roboto-Bold';
-    src: url('../../static/font/Roboto-Bold.ttf');
-  }
+@font-face {
+font-family: 'Roboto-Bold';
+src: url('../../static/font/Roboto-Bold.ttf');
+}
 body{
     background:rgba(39,40,64,1)!important;
     opacity:0.95;

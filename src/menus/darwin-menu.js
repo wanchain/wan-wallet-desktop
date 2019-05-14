@@ -28,6 +28,26 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.app.developer.label'),
                 submenu: [
                     {
+                        label: i18n.t('main.applicationMenu.app.developer.assets.label'),
+                        submenu: [
+                            {
+                                label: i18n.t('main.applicationMenu.app.developer.assets.wan.label'),
+                                submenu: [
+                                    {   
+                                        label: i18n.t('main.applicationMenu.app.developer.assets.wan.import'),
+                                        click: () => {
+
+                                            Windows.createModal('importKeyFile', {
+                                                width: 1200, height: 800, alwaysOnTop: true
+                                            })
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    { type: 'separator' },
+                    {
                         label: i18n.t('main.applicationMenu.app.developer.data.label'),
                         submenu: [
                             {
@@ -45,26 +65,6 @@ export default (i18n) => {
                                 }
                             }
                         ]
-                    },
-                    { type: 'separator' },
-                    {
-                        label: i18n.t('main.applicationMenu.app.developer.import'),
-                        click: () => {
-
-                            Windows.createModal('importKeyFile', {
-                                width: 1200, height: 800, alwaysOnTop: true
-                            })
-                            // const mainWindow = Windows.getByType('main')
-                            // const files = dialog.showOpenDialog({
-                            //     properties: ['openFile'],
-                            //     filters: [
-                            //         { name: 'All Files', extensions: ['*'] }
-                            //         // { name: 'Markdown Files', extensions: ['md', 'markdown'] }
-                            //     ]
-                            // })
-
-                            // if (files) { console.log(files) }
-                        }
                     }
                 ]
             },

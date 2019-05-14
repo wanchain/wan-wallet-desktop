@@ -1,25 +1,29 @@
 import path from 'path';
 import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals'
 const autoprefixer = require('autoprefixer');
 
 function resolve (dir) {
     return path.join(__dirname, '../../', dir)
 }
 
-export default {
-    target: 'electron-renderer',
+const options = {
+    // externals: [nodeExternals()],
+
+    // target: 'electron-renderer',
     
     devtool: 'source-map',
 
     mode: 'production',
     
     entry: [
-        // path.join(__dirname, '..', '..', 'src', 'app/App.js')
-        path.join(__dirname, '..', '..', 'src', 'cases/app.js')
+        path.join(__dirname, '..', '..', 'src', 'app/App.js')
     ],
+
     output: {
         path: path.join(__dirname, '..', '..', 'build'),
         filename: "renderer.js",
+        // libraryTarget: 'commonjs2'
     },
     module: {
         rules: [
@@ -35,7 +39,8 @@ export default {
                         }]
                       ]
                     }
-                }
+                },
+                exclude: /node_modules/
             },
             {
               test: /\.less$/,
@@ -118,7 +123,7 @@ export default {
         ]
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json'],
+      extensions: ['.js', '.jsx'],
       alias: {
         static: resolve('static/'),
         constants: resolve('src/app/constants/'),
@@ -128,13 +133,11 @@ export default {
       }
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
-    ],
-    node: {
-        __dirname: false,
-        __filename: false
-    }
+      new webpack.EnvironmentPlugin({
+        NODE_ENV: 'production'
+      }),
+      new webpack.NamedModulesPlugin()
+    ]
 }
+
+export default options

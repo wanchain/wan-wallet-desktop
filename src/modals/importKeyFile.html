@@ -10,58 +10,58 @@
 </head>
 <body>
     <div class="importKey">
-    <div class="container">
-        <div class="row justify-content-center align-items-center">
-            <h1>Import Wanchain Key File</h1>
-            <div class="col-12">
-                <form>
-                    <div class="form-group"> 
-                        <label class="label text-dark" for="oldpwd">Enter password for this wallet</label>
-                        <input id="oldpwd" name="oldpwd" class="form-control" type="password"  placeholder="password for wallet" required />
-                    </div>
-                    <div class="form-group">
-                        <label class="label text-dark" for="newpwd">Enter password for keyfile</label>
-                        <input id="newpwd" name="newpwd" class="form-control" type="password" placeholder="password for keyfile" required />
-                    </div>
-                    <div class="form-group">
-                        <label class="label text-dark">Select keyfile</label>
-                        <div class="custom-file">
-                            <input id="keyfile" name="keyfile" type="file" required />
-                            <label class="custom-file-label text-dark" for="keyfile">Choose keyfile</label>
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <h1>Import Wanchain Key File</h1>
+                <div class="col-12">
+                    <form id="KeyFileForm">
+                        <div class="form-group">
+                            <label class="label text-dark" for="oldpwd">Enter old password for key file</label>
+                            <input id="oldpwd" name="oldpwd" class="form-control" type="password" required />
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button id="submit" type="submit" class="btn btn-dark btn-lg btn-block">Submit</button>
-                    </div>
-                </form>
+                        <div class="form-group"> 
+                            <label class="label text-dark" for="newpwd">Enter the password for wan wallet</label>
+                            <input id="newpwd" name="newpwd" class="form-control" type="password" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="label text-dark">Choose key file</label>
+                            <div class="custom-file" style="overflow: hidden; height: auto;">
+                                <input id="keyfile" name="keyfile" type="file" required />
+                                <label class="custom-file-label text-dark" for="keyfile"></label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button id="submit" type="submit" class="btn btn-dark btn-lg btn-block">Submit</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </div>  
+        </div>  
     </div> 
 </body>
 <script type="application/javascript">
-    document.querySelector('#keyfile').addEventListener('change', function() {
-        const value = document.querySelector('#keyfile').files[0]
-        console.log(value)
-        // var val = this.value.split(/\\/g)
-        // document.querySelector('.custom-file-label').innerHTML = val[val.length - 1]
+
+    const fileSelector = document.querySelector('#keyfile')
+    const btn = document.querySelector('#submit')
+    fileSelector.addEventListener('change', function() {
+        const value = fileSelector.files[0]
+        console.log('fileSelector value: ', value)
         document.querySelector('.custom-file-label').innerHTML = value.name
     })
-
-    const btn = document.querySelector('#submit')
     
     btn.addEventListener('click', e => {
-        console.log('here')
         e.preventDefault()
         const myForm = document.getElementById('KeyFileForm')
         const formData = new FormData(myForm)
         const keyFilePwd = formData.get('oldpwd')
         const hdWalletPwd = formData.get('newpwd')
-        const fileDesc = formData.get('keyfile')        
-        // wand.request('phrase_importKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function() {
+        const fileDesc = formData.get('keyfile')
+        
+        console.log(keyFilePwd, hdWalletPwd, fileDesc.path)
+        wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function() {
 
-        // })
+        })
     })
 </script>
 </html>

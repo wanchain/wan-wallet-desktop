@@ -6,7 +6,13 @@
                 "about": "About {{app}}",
                 "developer": {
                     "label": "Developer",
-                    "import": "Import Keyfile",
+                    "assets": {
+                        "label": "Assets",
+                        "wan": {
+                            "label": "Wanchain",
+                            "import": "Import From Key File"
+                        }
+                    },
                     "data": {
                         "label": "Data Folder",
                         "db": "Open Data Folder",

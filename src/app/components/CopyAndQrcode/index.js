@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Icon, message } from 'antd';
 import QRCode from 'qrcode';
 
-import { clipboard } from 'electron';
+// import { clipboard } from 'electron';
 
 class CopyAndQrcode extends Component {
   state = {
@@ -31,7 +31,8 @@ class CopyAndQrcode extends Component {
   }
 
   copy2Clipboard = (addr) => {
-    clipboard.writeText(addr);
+    // clipboard.writeText(addr);
+    wand.writeText(addr);
     message.success('Copy successfully');
   }
 

@@ -20,6 +20,12 @@ const ROUTE_QUERY = 'query'
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
 
+// wallet path consts
+const WANBIP44Path = "m/44'/5718350'/0'/0/0"
+
+// chain ID consts
+const WAN_ID = 5718350 
+
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
     switch (action) {
@@ -68,21 +74,6 @@ ipc.on(ROUTE_PHRASE, (event, action, payload) => {
 
             sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
             break
-
-        case 'importKeyFile':
-            const WANBIP44Path = "m/44'/5718350'/0'/0/0"
-            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
-            const keyFileContent = fs.readFileSync(keyFilePath).toString()
-            console.log(keyFileContent)
-            try {
-                ret = hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-
-            sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
-            break
     }
 })
 
@@ -96,7 +87,6 @@ ipc.on(ROUTE_WALLET, async (event, action, payload) => {
                 sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
 
             } catch (e) {
-                console.log(e)
                 logger.error(e.message || e.stack)
                 err = e
 
@@ -109,6 +99,8 @@ ipc.on(ROUTE_WALLET, async (event, action, payload) => {
             try {
                 phrase = hdUtil.revealMnemonic(payload.pwd)
                 hdUtil.initializeHDWallet(phrase)
+                // create key file wallet
+                hdUtil.newKeyStoreWallet(phrase)
                 sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -256,6 +248,21 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
             }
 
             sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'fromKeyFile':
+            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
+            const keyFileContent = fs.readFileSync(keyFilePath).toString()
+            try {
+                hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
+                let count = hdUtil.getKeyStoreCount(WAN_ID)
+                Windows.broadcast('notification', 'keyfilewalletcount', count)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            // sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
             break
     }
 })

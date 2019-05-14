@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const EventEmitter = require('events')
-const { ipcRenderer, remote: { Menu } } = require('electron')
+const { ipcRenderer, remote: { Menu }, clipboard } = require('electron')
 const routes = require('./routes')
 const { postMessage } = require('./util')
 
@@ -104,6 +104,8 @@ module.exports = (function() {
             contextMenuHandler: function(event) {
                 _contextMenuHandler(event)
             },
+
+            writeText: clipboard.writeText,
 
             emitter: _emitter
         }
