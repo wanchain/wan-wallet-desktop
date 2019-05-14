@@ -1,6 +1,7 @@
+import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { shell } from 'electron'
+import { app, shell } from 'electron'
 import { walletBackend, updater, Windows } from '~/src/modules'
 
 export default (i18n) => {
@@ -8,10 +9,10 @@ export default (i18n) => {
 
     // Edit menu
     const editMenu = {
-        label: i18n.t('main.applicationMenu.edit.label'),
+        label: i18n.t('main.applicationMenu.edit.label', { app: APP_NAME }),
         submenu: [
             {
-                label: i18n.t('main.applicationMenu.edit.undo'),
+                label: i18n.t('main.applicationMenu.edit.undo', { app: APP_NAME }),
                 role: 'undo',
             },
             {
@@ -181,16 +182,6 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.help.toggle'),
                 accelerator: 'Alt+CommandOrControl+I',
                 role: 'toggledevtools'
-            },
-            { type: 'separator' },
-            {
-                label: i18n.t('main.applicationMenu.app.developer.import'),
-                click: () => {
-
-                    Windows.createModal('importKeyFile', {
-                        width: 1200, height: 800, alwaysOnTop: true
-                    })
-                }
             }
         ]
     }
@@ -237,11 +228,16 @@ export default (i18n) => {
                         }
                     }
                 ]
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
+                click() { app.quit() }
             }
         ]
     }   
 
-    menu.push(developerMenu)
+    menu.unshift(developerMenu)
 
     return menu
 }
