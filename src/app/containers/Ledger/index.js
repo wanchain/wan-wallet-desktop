@@ -145,7 +145,6 @@ class Ledger extends Component {
       walletID: this.walletID,
       path: this.dPath
     }, function (err, val) {
-      console.log("publickey", err, val);
       callback(err, val);
     });
   }
@@ -165,7 +164,7 @@ class Ledger extends Component {
         message.warn("Sign transaction failed. Please try again");
         console.log("Sign failed", err);
       } else {
-        console.log("sigature", sig)
+        console.log("signature", sig)
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;

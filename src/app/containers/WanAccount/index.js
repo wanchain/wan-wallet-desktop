@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
+import wanUtil from "wanchain-util";
 
 import './index.less';
 
@@ -108,7 +109,7 @@ class WanAccount extends Component {
             if (!err && val_account_create) {
               let addressInfo = val_address_get.addresses[0];
               addressInfo.start = addressInfo.index;
-              addressInfo.address = `0x${addressInfo.address}`;
+              addressInfo.address = wanUtil.toChecksumAddress(`0x${addressInfo.address}`);
               addAddress(addressInfo);
               this.setState({
                 bool: true
