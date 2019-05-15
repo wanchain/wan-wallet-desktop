@@ -32,6 +32,10 @@ class TransHistory extends Component {
       title: 'VALUE',
       dataIndex: 'value',
       key: 'value'
+    }, {
+      title: 'STATUS',
+      dataIndex: 'status',
+      key: 'status'
     }
   ]
 

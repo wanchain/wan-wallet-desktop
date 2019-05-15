@@ -21,13 +21,16 @@ class WanAddress {
       };
     }
 
-    @action addLedgerAddress(addr) {
-      if(!Object.keys(self.addrInfo['ledger']).includes(addr)) {
-        self.addrInfo['ledger'][addr] = {
-          balance: '0',
-          address: addr,
+    @action addLedgerAddress(addrArr) {
+      addrArr.forEach(addr => {
+        if(!Object.keys(self.addrInfo['ledger']).includes(addr.address)) {
+          self.addrInfo['ledger'][addr.address] = {
+            balance: addr.balance || '0',
+            address: addr.balance,
+            path: addr.path
+          }
         }
-      }
+      })
     }
 
     @action updateTransHistory() {
@@ -128,19 +131,23 @@ class WanAddress {
             from: self.addrInfo['normal'][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: ['Failed', 'Success'].includes(status) ? status : 'Pending'
+            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            sendTime: self.transHistory[item]["sendTime"],
           });
         }
       });
-      return historyList;
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 
-    @computed get getAmount() {
+    @computed get getNormalAmount() {
       return Object.keys(self.addrInfo['normal']).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
     }
 
     @computed get getAllAmount() {
-      return Object.keys(self.addrInfo['normal']).concat(Object.keys(self.addrInfo['ledger'])).concat(Object.keys(self.addrInfo['trezor'])).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
+      let ledger = Object.keys(self.addrInfo['ledger']).reduce((prev, curr) => prev + (self.addrInfo['ledger'][curr].balance - 0), 0);
+      let trezor = Object.keys(self.addrInfo['trezor']).reduce((prev, curr) => prev + (self.addrInfo['trezor'][curr].balance - 0), 0);
+
+      return self.getNormalAmount + ledger + trezor;
     }
 }
 

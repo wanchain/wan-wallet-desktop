@@ -22,5 +22,5 @@ export function randomsort(arr) {
 export function timeFormater(time) {
   const current = new Date(time * 1000);
   const m = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec");
-  return `${m[current.getMonth()]} ${current.getDate()} ${current.getFullYear()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
+  return `${m[current.getMonth()]}-${current.getDate()}-${current.getFullYear()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
 }
