@@ -30,8 +30,10 @@ class WalletBackend extends EventEmitter {
         this.sdk.on('probeloss', this.hdWalletDisconnectHandler)
         this.logger.info('added event listeners for hardware wallet')
 
+        this.logger.info('register walletbackend controllers')
         require('~/src/controllers')
-        this.logger.info('finish initing walletbackend')
+        this.logger.info('finish initiating walletbackend')
+        
         this.emit('initiationDone')
     }
 }

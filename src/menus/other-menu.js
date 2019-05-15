@@ -56,6 +56,8 @@ export default (i18n) => {
                         click: async () => {
                             if (!setting.network.includes('main')) {
                                 setting.switchNetwork()
+                                Windows.broadcast('notification', 'network', setting.network)
+                                Windows.broadcast('notification', 'sdk', 'init')
                                 await walletBackend.init()
                             }
 
@@ -70,6 +72,8 @@ export default (i18n) => {
                         click: async () => {
                             if (setting.network.includes('main')) {
                                 setting.switchNetwork()
+                                Windows.broadcast('notification', 'network', setting.network)
+                                Windows.broadcast('notification', 'sdk', 'init')
                                 await walletBackend.init()
                             }
 
@@ -112,7 +116,10 @@ export default (i18n) => {
             type: 'radio',
             checked: i18n.language === languageCode,
             click: () => {
-                i18n.changeLanguage(languageCode)
+                if (!setting.language.includes(languageCode)) {
+                    i18n.changeLanguage(languageCode)
+                    menuFactoryService.emit('menuSetDone')
+                }
             }
         }
     })

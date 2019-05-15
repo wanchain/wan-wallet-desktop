@@ -6,7 +6,6 @@
 
 import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import { WDS_PORT } from '~/config/common'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
@@ -17,9 +16,18 @@ import { Windows, walletBackend } from '~/src/modules'
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
 
+menuFactoryService.on('menuSetDone', () => {
+  Windows.broadcast('notification', 'language', setting.language)
+})
+
 if (!i18n.isIintialized) {
-  menuFactoryService.on('menuSetDone', () => {
-    Windows.broadcast('notification', 'language', setting.language)
+  i18n.on('languageChanged', (lng) => {
+    menuFactoryService.buildMenu(i18n)
+  })
+
+  i18n.on('loaded', (loaded) => {
+    i18n.changeLanguage(setting.language)
+    i18n.off('loaded')
   })
   
   i18n.init(i18nOptions, (err) => {
@@ -28,15 +36,6 @@ if (!i18n.isIintialized) {
     }
   })
 }
-
-i18n.on('loaded', (loaded) => {
-  i18n.changeLanguage(setting.language)
-  i18n.off('loaded')
-})
-
-i18n.on('languageChanged', (lng) => {
-  menuFactoryService.buildMenu(i18n)
-})
 
 let mainWindow
 
@@ -65,12 +64,13 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
  
-  // mainWindow.load(`file://${__dirname}/app/index.html`)
+  mainWindow.load(`file://${__dirname}/app/index.html`)
+
   // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
   // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
 
   if (setting.isDev) {
-    mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
+    // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
     // mainWindow.load(`file://${__dirname}/index.html`)
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
@@ -82,55 +82,20 @@ async function createWindow () {
   }
 
   mainWindow.on('ready', () => {
-    logger.info('showing main window')
-    menuFactoryService.emit('menuSetDone')
+    logger.info('ready to show main window')
     mainWindow.show()
-    // if (!setting.isDev) {
-    //   registerAutoUpdaterHandlersAndRun()
-    // }
+    Windows.broadcast('notification', 'language', setting.language)
+    Windows.broadcast('notification', 'network', setting.network)
+    if (global.chainManager) {
+      Windows.broadcast('notification', 'sdk', 'ready')
+    } else {
+      Windows.broadcast('notification', 'sdk', 'init')
+    }
   })
 
   mainWindow.on('closed', function () {
     mainWindow = null
   })
-}
-
-function registerAutoUpdaterHandlersAndRun() {
-  autoUpdater.on('checking-for-update', () => {
-    logger.info('checking-for-update')
-    sendStatusToWindow('Checking for update...')
-  })
-  
-  autoUpdater.on('update-available', (info) => {
-    logger.info('update-available')
-    sendStatusToWindow('Update available.')
-  })
-  
-  autoUpdater.on('update-not-available', (info) => {
-    logger.info('update-not-available')
-    sendStatusToWindow('Update not available.')
-  })
-  
-  autoUpdater.on('error', (err) => {
-    logger.info('erro in auto-updater')
-    sendStatusToWindow('Error in auto-updater. ' + err)
-  })
-  
-  autoUpdater.on('download-progress', (progressObj) => {
-    logger.info('download-progress')
-    let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-    log_message = log_message + ' - Download ' + progressObj.percent + '%'
-    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-    sendStatusToWindow(log_message)
-  })
-  
-  autoUpdater.on('update-downloaded', (info) => {
-    logger.info('update-downloaded')
-    sendStatusToWindow('Update downloaded')
-    autoUpdater.quitAndInstall()
-  })
-
-  autoUpdater.checkForUpdates()
 }
 
 function installExtensions() {
@@ -144,13 +109,14 @@ process.on('uncaughtException', (err) => {
 })
 
 async function onReady() {
+  // initiate windows manager
   Windows.init()
+  // register handler for walletbackend init 
+  walletBackend.on('initiationDone', async () => {
+    Windows.broadcast('notification', 'sdk', 'ready')
+  })
 
   await createWindow()
-  walletBackend.on('initiationDone', async () => {
-    await createWindow()
-    Windows.broadcast('notification', 'network', setting.network)
-  })
   
   await walletBackend.init()
 }
@@ -170,4 +136,42 @@ app.on('activate', async function () {
     await createWindow()
   }
 })
+
+// function registerAutoUpdaterHandlersAndRun() {
+//   autoUpdater.on('checking-for-update', () => {
+//     logger.info('checking-for-update')
+//     sendStatusToWindow('Checking for update...')
+//   })
+  
+//   autoUpdater.on('update-available', (info) => {
+//     logger.info('update-available')
+//     sendStatusToWindow('Update available.')
+//   })
+  
+//   autoUpdater.on('update-not-available', (info) => {
+//     logger.info('update-not-available')
+//     sendStatusToWindow('Update not available.')
+//   })
+  
+//   autoUpdater.on('error', (err) => {
+//     logger.info('erro in auto-updater')
+//     sendStatusToWindow('Error in auto-updater. ' + err)
+//   })
+  
+//   autoUpdater.on('download-progress', (progressObj) => {
+//     logger.info('download-progress')
+//     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
+//     log_message = log_message + ' - Download ' + progressObj.percent + '%'
+//     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+//     sendStatusToWindow(log_message)
+//   })
+  
+//   autoUpdater.on('update-downloaded', (info) => {
+//     logger.info('update-downloaded')
+//     sendStatusToWindow('Update downloaded')
+//     autoUpdater.quitAndInstall()
+//   })
+
+//   autoUpdater.checkForUpdates()
+// }
 

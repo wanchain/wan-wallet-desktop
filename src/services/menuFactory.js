@@ -23,7 +23,6 @@ class MenuFactoryService extends EventEmitter {
 
         Menu.setApplicationMenu(this.menu)
         setting.switchLang(i18n.language)
-        this.emit('menuSetDone')
     }
 }
 
