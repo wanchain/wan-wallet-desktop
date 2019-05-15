@@ -133,7 +133,8 @@ class WanAddress {
           name: `Account${index + 1}`,
           address: item,
           balance: self.addrInfo['ledger'][item].balance,
-          path: item.path
+          path: self.addrInfo['ledger'][item].path,
+          action: 'send'
         });
       });
       return ledgerAddrList;

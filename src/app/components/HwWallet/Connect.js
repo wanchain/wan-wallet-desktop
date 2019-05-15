@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Table, message } from 'antd';
+import wanUtil from "wanchain-util";
 
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
@@ -60,7 +61,7 @@ class Connect extends Component {
     let hdKeys = wallet.getHdKeys(start, limit);
     let addresses = [];
     hdKeys.forEach(hdKey => {
-      addresses.push({ key: hdKey.address, address: hdKey.address, balance: 0, path: hdKey.path });
+      addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
     });
     getBalance(addresses.map(item => item.address)).then(res => {
       if (res && Object.keys(res).length) {

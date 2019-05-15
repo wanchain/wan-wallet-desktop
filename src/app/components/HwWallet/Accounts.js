@@ -20,7 +20,7 @@ class Accounts extends Component {
     { title: "NAME", dataIndex: "name" },
     { title: "ADDRESS", dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
     { title: "BALANCE", dataIndex: "balance" },
-    { title: "ACTION", render: record => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
+    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
   ];
 
   handleSend = from => {
