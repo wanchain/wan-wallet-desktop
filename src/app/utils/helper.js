@@ -96,6 +96,7 @@ export const regEmitterHandler = function (key, callback) {
 
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
+    console.log('emitter', key, val)
     if (emitterHandlers.hasOwnProperty(key)) {
       emitterHandlers[key](val);
     }

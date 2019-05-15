@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import Backup from 'containers/Backup';
+import Restore from 'containers/Restore';
 
 const { TabPane } = Tabs;
 
@@ -27,7 +28,7 @@ class Settings extends Component {
   }, {
     title: 'Restore',
     key: 'restore',
-    content: 'Restore phrase'
+    content: <Restore />
   }]
 
   componentDidMount() {
