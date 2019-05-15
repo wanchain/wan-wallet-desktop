@@ -147,7 +147,7 @@ async function onReady() {
   Windows.init()
 
   await createWindow()
-  walletBackend.on('initiationDone', () => {
+  walletBackend.on('initiationDone', async () => {
     await createWindow()
     Windows.broadcast('notification', 'network', setting.network)
   })
