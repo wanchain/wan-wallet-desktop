@@ -157,11 +157,11 @@ process.on('uncaughtException', (err) => {
 async function onReady() {
   Windows.init()
   walletBackend.on('initiationDone', () => {
+    await createWindow()
     Windows.broadcast('notification', 'network', setting.network)
   })
-  await createWindow()
+  
   await walletBackend.init()
- 
 }
 
 // This method will be called when Electron has done everything 
