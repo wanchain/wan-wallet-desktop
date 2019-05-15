@@ -3,6 +3,7 @@ import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { app, shell } from 'electron'
 import { walletBackend, updater, Windows } from '~/src/modules'
+import menuFactoryService from '~/src/services/menuFactory'
 
 export default (i18n) => {
     const menu = []
