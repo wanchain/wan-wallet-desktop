@@ -6,8 +6,6 @@
 
 import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
-// import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 
-// 'electron-devtools-installer'
 import { WDS_PORT } from '~/config/common'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
@@ -137,15 +135,6 @@ function registerAutoUpdaterHandlersAndRun() {
 
 function installExtensions() {
   mainWindow.webContents.openDevTools()
-
-  // Install extensions
-  // installExtension(REACT_DEVELOPER_TOOLS)
-    // .then(name => logger.debug(`Added Extension:  ${name}`))
-    // .catch(err => logger.debug('An error occurred: ', err));
-
-  // installExtension(REDUX_DEVTOOLS)
-  //   .then(name => logger.debug(`Added Extension:  ${name}`))
-  //   .catch(err => logger.debug('An error occurred: ', err));
 }
 
 // prevent crashed and close gracefully
@@ -156,12 +145,14 @@ process.on('uncaughtException', (err) => {
 
 async function onReady() {
   Windows.init()
-  walletBackend.on('initiationDone', () => {
+
+  await createWindow()
+  walletBackend.on('initiationDone', async () => {
+    await createWindow()
     Windows.broadcast('notification', 'network', setting.network)
   })
-  await createWindow()
+  
   await walletBackend.init()
- 
 }
 
 // This method will be called when Electron has done everything 

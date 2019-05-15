@@ -84,6 +84,7 @@ ipc.on(ROUTE_WALLET, async (event, action, payload) => {
         case 'lock':
             try {
                 hdUtil.deleteHDWallet()
+                hdUtil.deleteKeyStoreWallet()
                 sendResponse([ROUTE_WALLET, action].join('_'), event, { err: err, data: true })
 
             } catch (e) {

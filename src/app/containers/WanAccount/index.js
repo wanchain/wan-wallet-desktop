@@ -97,7 +97,7 @@ class WanAccount extends Component {
 
   creatAccount = () => {
     const { addrInfo, addAddress } = this.props;
-    const addrLen = Object.keys(addrInfo).length;
+    const addrLen = Object.keys(addrInfo['normal']).length;
     this.setState({
       bool: false
     });

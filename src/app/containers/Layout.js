@@ -16,7 +16,7 @@ import { getBalance } from 'utils/helper';
   addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  updateWANBalance: newBalanceArr => stores.wanAddress.updateBalance(newBalanceArr),
+  updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
 }))
 
 @observer
@@ -40,9 +40,9 @@ export default class Layout extends Component {
 
   updateWANBalanceForInter = () => {
     const { addrInfo } = this.props;
-    const arr = Object.keys(addrInfo).map(item => item.substr(2));
-    if(Array.isArray(arr) && arr.length === 0 ) return;
-    getBalance(arr).then(res => {
+    const allAddr = Object.keys(addrInfo['normal']).concat(Object.keys(addrInfo['ledger'])).concat(Object.keys(addrInfo['trezor']))
+    if(Array.isArray(allAddr) && allAddr.length === 0 ) return;
+    getBalance(allAddr).then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateWANBalance(res);
       }

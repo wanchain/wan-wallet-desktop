@@ -70,7 +70,10 @@ class WanRawTx {
 }
 
 @inject(stores => ({
-  changeTitle: newTitle => stores.session.changeTitle(newTitle)
+  addrInfo: stores.wanAddress.addrInfo,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  addLedgerAddr: newAddr => stores.wanAddress.addLedgerAddress(newAddr)
 }))
 
 @observer
@@ -81,13 +84,7 @@ class Ledger extends Component {
     this.walletID = 0x02;
     this.chainType = 'WAN';
     this.connectLedger = false;
-    this.state = {
-      visible: false,
-      // addresses: [{ key: "0xf19137479fc2708d97fd1f67bfbfd8ebfc8fccd0", address: "0xf19137479fc2708d97fd1f67bfbfd8ebfc8fccd0", balance: 0, path: "m/44'/5718350'/0'/0/0" },
-      // { key: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" }
-      // ],
-      addresses: []
-    };
+    this.props.changeTitle('Ledger');
   }
 
   instruction = () => {
@@ -103,39 +100,21 @@ class Ledger extends Component {
     )
   }
 
-  componentWillMount() {
-    this.props.changeTitle('Ledger')
-  }
-
-  resetStateVal = () => {
-    this.setState({
-      visible: false,
-      addresses: [],
-    });
-  }
-
-  setAddresses = (addresses) => {
-    this.setState({ addresses: addresses });
-  }
-
-  connectAndGetPublicKey = (callback) => {
+  connectAndGetPublicKey = callback => {
     wand.request('wallet_isConnected', { walletID: this.walletID }, (err, connected) => {
-      if (err) {
-        return;
+      if (err) return;
+      if (connected) {
+        this.getPublicKey(callback);
       } else {
-        if (connected) {
-          this.getPublicKey(callback);
-        } else {
-          console.log("connect to ledger")
-          wand.request('wallet_connectToLedger', {}, (err, val) => {
-            if (err) {
-              callback(err, val);
-            } else {
-              this.connectLedger = true;
-              this.getPublicKey(callback);
-            }
-          });
-        }
+        console.log("connect to ledger")
+        wand.request('wallet_connectToLedger', {}, (err, val) => {
+          if (err) {
+            callback(err, val);
+          } else {
+            this.connectLedger = true;
+            this.getPublicKey(callback);
+          }
+        });
       }
     });
   }
@@ -150,18 +129,13 @@ class Ledger extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
-    let eTx = new WanRawTx(tx);
-    let rawTx = eTx.serialize();;
+    let eTx = new WanRawTx(tx), rawTx = eTx.serialize();
+    console.log("etx", eTx);
+    console.log("rawTx", rawTx);
 
-    console.log("etx", eTx)
-    console.log("rawTx", rawTx)
-    wand.request('wallet_signTransaction', {
-      walletID: this.walletID,
-      path: path,
-      rawTx: rawTx
-    }, (err, sig) => {
+    wand.request('wallet_signTransaction', { walletID: this.walletID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
-        message.warn("Sign transaction failed. Please try again");
+        message.warn('Sign transaction failed. Please try again');
         console.log("Sign failed", err);
       } else {
         console.log("signature", sig)
@@ -181,12 +155,13 @@ class Ledger extends Component {
   }
 
   render() {
+    const { ledgerAddrList, addLedgerAddr } = this.props;
     return (
       <div>
         {
-          this.state.addresses.length === 0 
-            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.dPath} />
-            : <Accounts addresses={this.state.addresses} signTransaction={this.signTransaction} chainType={this.chainType} />
+          ledgerAddrList.length === 0
+            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.dPath} />
+            : <Accounts addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={this.chainType} />
         }
       </div>
     );
