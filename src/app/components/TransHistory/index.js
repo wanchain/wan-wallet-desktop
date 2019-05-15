@@ -57,7 +57,8 @@ class TransHistory extends Component {
   }
 
   render() {
-    const addrList = Object.keys(this.props.addrInfo['normal']);
+    const { addrInfo, historyList, name } = this.props;
+    const addrList = Object.keys(addrInfo[name]);
     return (
       <div>
         <div className="histroyCon">
@@ -77,7 +78,7 @@ class TransHistory extends Component {
             { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
           </Select>
         </div>
-        <Table className="portfolioMain" columns={this.columns} dataSource={this.props.historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
     );
   }

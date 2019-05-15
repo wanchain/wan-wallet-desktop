@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
+import { message } from 'antd';
 
 import './index.less';
 import Accounts from 'components/HwWallet/Accounts';
@@ -161,7 +162,7 @@ class Ledger extends Component {
         {
           ledgerAddrList.length === 0
             ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.dPath} />
-            : <Accounts addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={this.chainType} />
+            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={this.chainType} />
         }
       </div>
     );

@@ -165,7 +165,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory />
+            <TransHistory name="normal"/>
           </Col>
         </Row>
       </div>

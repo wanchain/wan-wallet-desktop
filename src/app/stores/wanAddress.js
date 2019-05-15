@@ -3,6 +3,8 @@ import { observable, action, computed } from 'mobx';
 import { timeFormater, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
 
+import session from './session';
+
 const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
@@ -92,6 +94,22 @@ class WanAddress {
       })
     }
 
+    @computed get currentPage() {
+      let page = '';
+      switch (session.pageTitle) {
+        case 'Ledger':
+          page = 'ledger';
+          break;
+        case 'Trezor':
+          page = 'trezor';
+          break;
+        case 'Wallet':
+          page = 'normal';
+          break;
+      }
+      return page;
+    }
+
     @computed get getAddrList() {
       let addrList = [];
       Object.keys(self.addrInfo['normal']).forEach((item, index) => {
@@ -115,21 +133,22 @@ class WanAddress {
           name: `Account${index + 1}`,
           address: item,
           balance: self.addrInfo['ledger'][item].balance,
+          path: item.path
         });
       });
       return ledgerAddrList;
     }
 
     @computed get historyList() {
-      let historyList = [];
-      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo['normal']);
+      let historyList = [], page = self.currentPage;
+      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo[page]);
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
           historyList.push({
             key: item,
             time: timeFormater(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo['normal'][self.transHistory[item]["from"]].name,
+            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
             status: ['Failed', 'Success'].includes(status) ? status : 'Pending',

@@ -1,31 +1,29 @@
 import React, { Component } from "react";
-import { Table, message } from "antd";
-import SendNormalTrans from 'components/SendNormalTrans';
+import { Table, message, Row, Col } from "antd";
 import BigNumber from "bignumber.js";
 import { observer, inject } from 'mobx-react';
 
+import TransHistory from 'components/TransHistory';
+import CopyAndQrcode from 'components/CopyAndQrcode';
+import SendNormalTrans from 'components/SendNormalTrans';
 
 @inject(stores => ({
   transParams: stores.sendTransParams.transParams,
+  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
   updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
   updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
-  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce)
 }))
 
 @observer
 class Accounts extends Component {
-  constructor(props) {
-    super(props);
-    this.chainType = this.props.chainType;
-    this.columns = [
-      { title: "NAME", dataIndex: "name" },
-      { title: "ADDRESS", dataIndex: "address" },
-      { title: "BALANCE", dataIndex: "balance" },
-      { title: "ACTION", render: (record) => <div> <SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.chainType} /> </div> }
-    ];
-  }
+  columns = [
+    { title: "NAME", dataIndex: "name" },
+    { title: "ADDRESS", dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
+    { title: "BALANCE", dataIndex: "balance" },
+    { title: "ACTION", render: record => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
+  ];
 
-  handleSend = (from) => {
+  handleSend = from => {
     console.log("from", from)
     let params = this.props.transParams[from];
     console.log(params);
@@ -57,9 +55,20 @@ class Accounts extends Component {
   }
 
   render() {
+    const { name, addresses } = this.props;
+ 
     return (
-      <div>
-        <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={this.props.addresses}></Table>
+      <div className="account">
+        <Row className="mainBody">
+          <Col>
+            <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={addresses}></Table>
+          </Col>
+        </Row>
+        <Row className="mainBody">
+          <Col>
+            <TransHistory name={name}/>
+          </Col>
+        </Row>
       </div>
     )
   }
