@@ -6,15 +6,18 @@ import { AppContainer } from 'react-hot-loader';
 import './global.less';
 import Router from './Routes';
 import stores from './stores';
-import { initEmitterHandler } from 'utils/helper';
 
 class App extends Component {
-  componentWillMount() {
-    stores.session.getMnemonic();
-    stores.session.initChainId();
-    stores.portfolio.updateCoinPrice();
-    stores.wanAddress.getUserAccountFromDB();
-    initEmitterHandler();
+  constructor(props) {
+    super(props);
+    wand.emitter.on('notification', (key, val) => {
+      if(key === 'sdk' && val === 'ready') {
+        stores.session.getMnemonic();
+        stores.session.initChainId();
+        stores.portfolio.updateCoinPrice();
+        stores.wanAddress.getUserAccountFromDB();
+      }
+    })
   }
   
   render() {
