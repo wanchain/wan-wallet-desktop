@@ -1,6 +1,7 @@
 
 import { observable, action, computed } from 'mobx';
 import { timeFormater, fromWei } from 'utils/support';
+import wanUtil from "wanchain-util";
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -97,7 +98,7 @@ class WanAddress {
         addrList.push({
           key: `${index + 1}`,
           name: self.addrInfo['normal'][item].name,
-          address: item,
+          address: wanUtil.toChecksumAddress(item),
           balance: self.addrInfo['normal'][item].balance,
           path: `${WAN}${self.addrInfo['normal'][item].path}`,
           action: 'send'
