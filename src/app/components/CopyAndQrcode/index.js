@@ -16,7 +16,7 @@ class CopyAndQrcode extends Component {
         url: url
       })
       Modal.info({
-        title: 'Point a compatible mobile app to this code',
+        title: addr,
         content: (
           <div className="codeImg">
             <img src={this.state.url} />
