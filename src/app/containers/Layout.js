@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { promiseTimeout } from 'utils/support';
+import { isSdkReady } from 'utils/helper';
 
 import './Layout.less';
 import SideBar from './Sidebar';
@@ -26,26 +26,29 @@ export default class Layout extends Component {
     loading: true
   }
 
-  async waitUntilSdkReady() {
-    try {
-      let ret = await promiseTimeout(1000, this.props.getMnemonic(), 'SDK is not ready. Wait...');
-      console.log('SDK is ready');
-      this.setState({
-        loading: false
-      });
-    } catch (err) {
-      console.log(err);
-      this.waitUntilSdkReady();
-    }
+  waitUntilSdkReady() {
+    let id = setInterval(async () => {
+      let ready = await isSdkReady();
+      console.log('layout ready', ready)
+      if (ready) {
+        if (await this.props.getMnemonic()) {
+          this.setState({
+            loading: false
+          });
+        }
+        console.log('SDK is ready');
+        clearInterval(id);
+      }
+    }, 1000);
   }
 
   componentDidMount() {
-    this.wantimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
+    this.wanTimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
     this.waitUntilSdkReady();
   }
 
   componentWillUnmount() {
-    clearInterval(this.wantimer);
+    clearInterval(this.wanTimer);
   }
 
   updateWANBalanceForInter = () => {

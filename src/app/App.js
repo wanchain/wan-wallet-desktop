@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
 import { AppContainer } from 'react-hot-loader';
-import { initEmitterHandler } from 'utils/helper';
+import { initEmitterHandler, isSdkReady } from 'utils/helper';
 
 import './global.less';
 import Router from './Routes';
@@ -12,9 +12,15 @@ class App extends Component {
   constructor(props) {
     super(props);
     stores.session.initChainId();
-    stores.portfolio.updateCoinPrice();
-    stores.wanAddress.getUserAccountFromDB();
     initEmitterHandler();
+    let id = setInterval(async () => {
+      let ready = await isSdkReady();
+      if (ready) {
+        stores.wanAddress.getUserAccountFromDB();
+        stores.portfolio.updateCoinPrice();
+        clearInterval(id);
+      }
+    }, 1000);
   }
 
   render() {

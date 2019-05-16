@@ -90,6 +90,25 @@ export const getChainId = function () {
   });
 };
 
+export const isSdkReady = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('query_config', {
+      param: 'sdkStatus'
+    }, function (err, val) {
+      console.log(val);
+      if (err) {
+        return reject('Get SDK status failed ', err);
+      } else {
+        if (val['sdkStatus'].includes('ready')) {
+          return resolve(true);
+        } else {
+          return resolve(false);
+        }
+      }
+    });
+  });
+};
+
 export const regEmitterHandler = function (key, callback) {
   emitterHandlers[key] = callback;
 }
