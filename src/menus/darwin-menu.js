@@ -66,6 +66,14 @@ export default (i18n) => {
                                 }
                             }
                         ]
+                    },
+                    { type: 'separator' },
+                    {
+                        label: i18n.t(
+                            'main.applicationMenu.help.toggle'
+                        ),
+                        accelerator: 'Alt+CommandOrControl+I',
+                        role: 'toggledevtools'
                     }
                 ]
             },
@@ -74,10 +82,10 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.app.services'),
                 role: 'services',
             },
-            {
-                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-                click: updater.run
-            },
+            // {
+            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+            //     click: updater.run
+            // },
             { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.app.hide', { app: APP_NAME }),
@@ -274,14 +282,6 @@ export default (i18n) => {
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
                 }
-            },
-            { type: 'separator' },
-            {
-                label: i18n.t(
-                    'main.applicationMenu.help.toggle'
-                ),
-                accelerator: 'Alt+CommandOrControl+I',
-                role: 'toggledevtools'
             }
         ]
     }

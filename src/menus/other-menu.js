@@ -168,11 +168,11 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.help.label'),
         role: 'help',
         submenu: [
-            {
-                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-                click: updater.run
-            },
-            { type: 'separator' },
+            // {
+            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+            //     click: updater.run
+            // },
+            // { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {
@@ -184,12 +184,6 @@ export default (i18n) => {
                 click: () => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
                 }
-            },
-            { type: 'separator' },
-            {
-                label: i18n.t('main.applicationMenu.help.toggle'),
-                accelerator: 'Alt+CommandOrControl+I',
-                role: 'toggledevtools'
             }
         ]
     }
@@ -241,6 +235,12 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
                 click() { app.quit() }
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.help.toggle'),
+                accelerator: 'Alt+CommandOrControl+I',
+                role: 'toggledevtools'
             }
         ]
     }   
