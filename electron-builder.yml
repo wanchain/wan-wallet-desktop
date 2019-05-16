@@ -1,4 +1,4 @@
-appId: org.wanwalletdesktop.wanchain
+appId: org.wallet.wanchain
 copyright: Wanchain Foundation
 productName: Wan Wallet
 
@@ -18,28 +18,28 @@ publish:
     repo: wandWallet
 
 mac:
-  category: public.app-category.productivity
+  category: public.app-category.finance
   icon: build/assets/icon.icns
   target:
     - dmg
     - zip
-  
-dmg:
-  artifactName: Wan-Wallet-${version}.dmg
 
 win:
   icon: build/assets/icon.ico
   target: nsis
+
+linux:
+  category: Finance
+  icon: build/assets/icon.png
+  target:
+    - deb
+    - zip
+
+dmg:
+  artifactName: Wan-Wallet-${version}.dmg
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
   artifactName: Wan-Wallet-${version}.exe
-
-linux:
-  category: WebBrowser
-  icon: build/assets/icon.png
-  target:
-    - deb
-    - zip
