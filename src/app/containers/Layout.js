@@ -28,14 +28,13 @@ export default class Layout extends Component {
 
   async waitUntilSdkReady() {
     try {
-      let ret = await promiseTimeout(1000, this.props.getMnemonic(), 'timeout');
-      if (ret) {
-        this.setState({
-          loading: false
-        });
-      }
+      let ret = await promiseTimeout(1000, this.props.getMnemonic(), 'SDK is not ready. Wait...');
+      console.log('SDK is ready');
+      this.setState({
+        loading: false
+      });
     } catch (err) {
-      console.log('SDK is not ready', err);
+      console.log(err);
       this.waitUntilSdkReady();
     }
   }

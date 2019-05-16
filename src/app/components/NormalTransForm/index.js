@@ -127,7 +127,11 @@ class NormalTransForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     this.updateGasLimit();
-    callback();
+    if (value >= 0) {
+      callback();
+    } else {
+      callback('Invalid amount');
+    }
   }
 
   render() {
