@@ -147,16 +147,16 @@ export default {
         headers: { 'Access-Control-Allow-Origin': '*' },
         disableHostCheck: true,
         /** TODO */
-        // after: function() {
-        //     if (process.env.NODE_ENV === 'development') {
-        //         spawn('npm', ['run', 'dev:main'], {
-        //             shell: true,
-        //             env: process.env,
-        //             stdio: 'inherit'
-        //           })
-        //             .on('close', code => process.exit(code))
-        //             .on('error', spawnError => console.error(spawnError));
-        //     }
-        // }
+        after: function() {
+            if (process.env.NODE_ENV === 'development') {
+                spawn('npm', ['run', 'dev:main'], {
+                    shell: true,
+                    env: process.env,
+                    stdio: 'inherit'
+                  })
+                    .on('close', code => process.exit(code))
+                    .on('error', spawnError => console.error(spawnError));
+            }
+        }
     }
 }

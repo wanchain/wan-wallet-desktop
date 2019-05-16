@@ -24,7 +24,7 @@ const DB_NORMAL_COLLECTION = 'normalTrans'
 const WANBIP44Path = "m/44'/5718350'/0'/0/0"
 
 // chain ID consts
-const WAN_ID = 5718350 
+const WAN_ID = 5718350
 
 ipc.on(ROUTE_PHRASE, (event, action, payload) => {
     let err, phrase, ret
@@ -207,6 +207,17 @@ ipc.on(ROUTE_ADDRESS, async (event, action, payload) => {
             sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: address })
             break
 
+        case 'getOne':
+            try {
+                address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.path)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, action].join('_'), event, { err: err, data: address })
+            break
+
         case 'getNonce':
             try {
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
@@ -289,7 +300,6 @@ ipc.on(ROUTE_ACCOUNT, (event, action, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-
             sendResponse([ROUTE_ACCOUNT, action].join('_'), event, { err: err, data: ret })
             break
 
@@ -387,7 +397,7 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break;
 
-        case 'showRecords': 
+        case 'showRecords':
             try {
                 ret = global.wanDb.queryComm(DB_NORMAL_COLLECTION, (items) => {
                     return items

@@ -67,7 +67,7 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
     }
   ];
 
@@ -103,13 +103,15 @@ class WanAccount extends Component {
     });
 
     if (this.state.bool) {
-      wand.request('address_get', { walletID: WALLETID, chainType: CHAINTYPE, start: addrLen, end: addrLen + 1 }, (err, val_address_get) => {
+      let path = `${WAN}${addrLen}`;
+      wand.request('address_getOne', { walletID: WALLETID, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID, path: `${WAN}${addrLen}`, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.addresses[0].address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
-              let addressInfo = val_address_get.addresses[0];
-              addressInfo.start = addressInfo.index;
-              addressInfo.address = wanUtil.toChecksumAddress(`0x${addressInfo.address}`);
+              let addressInfo = {
+                start: addrLen,
+                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`)
+              }
               addAddress(addressInfo);
               this.setState({
                 bool: true
@@ -165,7 +167,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name="normal"/>
+            <TransHistory name="normal" />
           </Col>
         </Row>
       </div>
