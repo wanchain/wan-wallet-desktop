@@ -418,7 +418,14 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
         case 'config':
             let { param } = payload
             try {
-                let conf = setting[`${param}`]
+                let conf
+
+                if (param === 'sdkStatus') {
+                    conf = global.chainManager ? 'ready': 'init'
+                } else {
+                    conf = setting[`${param}`]
+                }
+                
                 ret = { [param]: conf }
             } catch (e) {
                 logger.error(e.message || e.stack)
