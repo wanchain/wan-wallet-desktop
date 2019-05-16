@@ -3,77 +3,19 @@ import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
 
 import './index.less';
+import { wanTx, WanRawTx } from 'utils/hardwareUtils'
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
-const wanTx = require('wanchainjs-tx');
-const ethUtil = require('ethereumjs-util');
-
-class WanRawTx {
-  constructor(data) {
-    const fields = [{
-      name: 'Txtype',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 'nonce',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 'gasPrice',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 'gasLimit',
-      alias: 'gas',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 'to',
-      allowZero: true,
-      length: 20,
-      default: new Buffer([])
-    }, {
-      name: 'value',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 'data',
-      alias: 'input',
-      allowZero: true,
-      default: new Buffer([])
-    }, {
-      name: 'chainId',
-      length: 32,
-      allowLess: true,
-      default: new Buffer([0x01])
-    }, {
-      name: 'dumb1',
-      length: 32,
-      allowLess: true,
-      allowZero: false,
-      default: new Buffer([0x00])
-    }, {
-      name: 'dumb2',
-      length: 32,
-      allowLess: true,
-      allowZero: false,
-      default: new Buffer([0x00])
-    }]
-
-    ethUtil.defineProperties(this, fields, data)
-  }
-}
+const DPATH = "m/44'/5718350'/0'";
+const WALLETID = 0x02;
+const CHAINTYPE = 'WAN';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addLedgerAddr: newAddr => stores.wanAddress.addLedgerAddress(newAddr)
 }))
 
@@ -81,11 +23,17 @@ class WanRawTx {
 class Ledger extends Component {
   constructor(props) {
     super(props);
-    this.dPath = "m/44'/5718350'/0'";
-    this.walletID = 0x02;
-    this.chainType = 'WAN';
-    this.connectLedger = false;
     this.props.changeTitle('Ledger');
+  }
+
+  componentDidUpdate() {
+    if(this.props.ledgerAddrList.length !== 0 && !this.timer) {
+      this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   instruction = () => {
@@ -102,7 +50,7 @@ class Ledger extends Component {
   }
 
   connectAndGetPublicKey = callback => {
-    wand.request('wallet_isConnected', { walletID: this.walletID }, (err, connected) => {
+    wand.request('wallet_isConnected', { walletID: WALLETID }, (err, connected) => {
       if (err) return;
       if (connected) {
         this.getPublicKey(callback);
@@ -112,7 +60,6 @@ class Ledger extends Component {
           if (err) {
             callback(err, val);
           } else {
-            this.connectLedger = true;
             this.getPublicKey(callback);
           }
         });
@@ -120,24 +67,22 @@ class Ledger extends Component {
     });
   }
 
-  getPublicKey = (callback) => {
+  getPublicKey = callback => {
     wand.request('wallet_getPubKeyChainId', {
-      walletID: this.walletID,
-      path: this.dPath
-    }, function (err, val) {
+      walletID: WALLETID,
+      path: DPATH
+    }, (err, val) => {
       callback(err, val);
     });
   }
 
   signTransaction = (path, tx, callback) => {
-    let eTx = new WanRawTx(tx), rawTx = eTx.serialize();
-    console.log("etx", eTx);
-    console.log("rawTx", rawTx);
+    let rawTx = new WanRawTx(tx).serialize();
 
-    wand.request('wallet_signTransaction', { walletID: this.walletID, path: path, rawTx: rawTx }, (err, sig) => {
+    wand.request('wallet_signTransaction', { walletID: WALLETID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn('Sign transaction failed. Please try again');
-        console.log("Sign failed", err);
+        console.log(`Sign Failed: ${err}`);
       } else {
         console.log("signature", sig)
         tx.v = sig.v;
@@ -161,8 +106,8 @@ class Ledger extends Component {
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.dPath} />
-            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={this.chainType} />
+            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={DPATH} />
+            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAINTYPE} />
         }
       </div>
     );

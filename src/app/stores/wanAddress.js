@@ -40,7 +40,8 @@ class WanAddress {
       wand.request('transaction_showRecords', (err, val) => {
         if(!err && val.length !== 0) {
           val.forEach((item) => {
-            self.transHistory[item.txHash] = item
+            item.from = wanUtil.toChecksumAddress(item.from);
+            self.transHistory[item.txHash] = item;
           })
         }
       })
@@ -143,6 +144,7 @@ class WanAddress {
     @computed get historyList() {
       let historyList = [], page = self.currentPage;
       let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo[page]);
+
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;

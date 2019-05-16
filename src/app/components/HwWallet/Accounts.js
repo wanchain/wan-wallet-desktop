@@ -9,9 +9,7 @@ import SendNormalTrans from 'components/SendNormalTrans';
 
 @inject(stores => ({
   transParams: stores.sendTransParams.transParams,
-  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
-  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
-  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -24,9 +22,7 @@ class Accounts extends Component {
   ];
 
   handleSend = from => {
-    console.log("from", from)
     let params = this.props.transParams[from];
-    console.log(params);
     let rawTx = {
       to: params.to,
       value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
@@ -37,15 +33,16 @@ class Accounts extends Component {
       gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
       Txtype: params.txType
     };
-    console.log("raw", rawTx)
-
-    this.props.signTransaction(params.path, rawTx, (signedTx) => {
-      console.log('signedTx', signedTx)
-      wand.request('transaction_raw', { raw: signedTx, chainType: 'WAN' }, (err, val) => {
+    this.props.signTransaction(params.path, rawTx, raw => {
+      console.log('raw', raw)
+      wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, val) => {
         if (err) {
           message.warn("Send transaction failed. Please try again");
           console.log(err);
         } else {
+          wand.request('transaction_insertTransToDB', { rawTx }, () => {
+            this.props.updateTransHistory();
+          })
           console.log("TxHash:", val);
         }
       });
@@ -61,7 +58,7 @@ class Accounts extends Component {
       <div className="account">
         <Row className="mainBody">
           <Col>
-            <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={addresses}></Table>
+            <Table pagination={false} columns={this.columns} dataSource={addresses}></Table>
           </Col>
         </Row>
         <Row className="mainBody">

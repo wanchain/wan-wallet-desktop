@@ -25,7 +25,7 @@ const WALLETID = 1;
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateTransHistory: newTrans => stores.wanAddress.updateTransHistory(newTrans),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer

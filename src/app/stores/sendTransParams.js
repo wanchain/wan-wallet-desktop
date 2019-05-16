@@ -8,6 +8,10 @@ class SendTransParams {
         self.transParams[addr] = params;
     }
 
+    @action updateTransParams(addr, paramsObj) {
+      Object.keys(paramsObj).forEach(item => {self.transParams[addr][item] = paramsObj[item]});
+    }
+
     @action updateGasPrice(addr, gasPrice) {
         self.transParams[addr].gasPrice = gasPrice;
     }

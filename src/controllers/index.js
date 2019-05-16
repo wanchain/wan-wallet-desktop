@@ -408,7 +408,18 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             }
 
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
-            break
+            break;
+
+        case 'insertTransToDB': 
+            try {
+              ccUtil.insertNormalTx(payload.rawTx);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: true })
+            break;
     }
 })
 
