@@ -1,6 +1,6 @@
 appId: org.wanwalletdesktop.wanchain
 copyright: Wanchain Foundation
-productName: Wan Wallet Desktop
+productName: Wan Wallet
 
 asar: true
 
@@ -24,6 +24,9 @@ mac:
     - dmg
     - zip
   
+dmg:
+  artifactName: Wan-Wallet-${version}.dmg
+
 win:
   icon: build/assets/icon.ico
   target: nsis
@@ -31,6 +34,8 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  installerIcon: build/assets/icon.ico
+  artifactName: Wan-Wallet-${version}.exe
 
 linux:
   category: WebBrowser
