@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Modal, Form, Input, Icon, Radio, InputNumber } from 'antd';
+import { Button, Modal, Form, Input, Icon, Radio, InputNumber, message } from 'antd';
 import { checkWanAddr } from 'utils/helper';
 
 import AdvancedOptionForm from 'components/AdvancedOptionForm';

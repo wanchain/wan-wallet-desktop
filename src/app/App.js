@@ -10,14 +10,12 @@ import stores from './stores';
 class App extends Component {
   constructor(props) {
     super(props);
-    wand.emitter.on('notification', (key, val) => {
-      if(key === 'sdk' && val === 'ready') {
-        stores.session.getMnemonic();
-        stores.session.initChainId();
-        stores.portfolio.updateCoinPrice();
-        stores.wanAddress.getUserAccountFromDB();
-      }
-    })
+    setTimeout(() => {
+      stores.session.getMnemonic();
+      stores.session.initChainId();
+      stores.portfolio.updateCoinPrice();
+      stores.wanAddress.getUserAccountFromDB();
+    }, 9000);
   }
   
   render() {
