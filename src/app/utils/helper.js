@@ -95,7 +95,6 @@ export const isSdkReady = function () {
     wand.request('query_config', {
       param: 'sdkStatus'
     }, function (err, val) {
-      console.log(val);
       if (err) {
         return reject('Get SDK status failed ', err);
       } else {
@@ -115,7 +114,7 @@ export const regEmitterHandler = function (key, callback) {
 
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
-    console.log('emitter', key, val)
+    // console.log('emitter', key, val)
     if (emitterHandlers.hasOwnProperty(key)) {
       emitterHandlers[key](val);
     }

@@ -20,9 +20,6 @@ TrezorConnect.init({
     appUrl: 'electron-app-boilerplate'
   }
 })
-  .then(() => {
-    console.log("TrezorConnect is ready! Enjoy")
-  })
   .catch(error => {
     console.error('TrezorConnect init error', error)
   });

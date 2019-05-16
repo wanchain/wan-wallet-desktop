@@ -29,15 +29,17 @@ export default class Layout extends Component {
   waitUntilSdkReady() {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
-      console.log('layout ready', ready)
       if (ready) {
-        if (await this.props.getMnemonic()) {
+        try {
+          await this.props.getMnemonic();
           this.setState({
             loading: false
           });
+          console.log('SDK is ready');
+          clearInterval(id);
+        } catch (err) {
+          console.log('Get mnemonic failed');
         }
-        console.log('SDK is ready');
-        clearInterval(id);
       }
     }, 1000);
   }
