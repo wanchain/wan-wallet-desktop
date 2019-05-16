@@ -233,14 +233,14 @@ export default (i18n) => {
             },
             { type: 'separator' },
             {
-                label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
-                click() { app.quit() }
-            },
-            { type: 'separator' },
-            {
                 label: i18n.t('main.applicationMenu.help.toggle'),
                 accelerator: 'Alt+CommandOrControl+I',
                 role: 'toggledevtools'
+            },
+            { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.quit', { app: APP_NAME }),
+                click() { app.quit() }
             }
         ]
     }   
