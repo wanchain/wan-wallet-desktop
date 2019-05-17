@@ -37,6 +37,12 @@ const menuList = [
     ]
   },
   {
+    title: 'Staking',
+    step: '1',
+    key: '/staking',
+    icon: 'pie-chart'
+  },
+  {
     title: 'Settings',
     step: '1',
     key: '/settings',

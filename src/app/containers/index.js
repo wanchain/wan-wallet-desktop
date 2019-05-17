@@ -5,5 +5,6 @@ import WanAccount from './WanAccount';
 import Settings from './Settings';
 import Trezor from './Trezor';
 import Ledger from './Ledger';
+import Staking from './Staking';
 
-export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger };
+export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger, Staking };
