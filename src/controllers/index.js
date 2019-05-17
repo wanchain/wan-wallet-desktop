@@ -464,34 +464,82 @@ ipc.on(ROUTE_STAKING, async (event, action, payload) => {
     let ret, err
     switch (action) {
         case 'totalLocked':
+            try {
+                //let accounts = hdUtil.getUserAccount(payload.walletID, payload.path)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'totalReturning':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'totalReward':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
-        case 'delegateHistory':
+        case 'validatorInfo':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'txHistory':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'delegateIn':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'delegateOut':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
         case 'txDetail':
+            try {
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
 
