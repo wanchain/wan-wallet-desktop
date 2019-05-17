@@ -432,15 +432,13 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
-    console.log('here')
     let ret, err
     const [action, id] = actionUni.split('#')
-    console.log(action, id)
 
     switch (action) {
         case 'config':
             let { param } = payload
-            console.log(param)
+
             try {
                 let conf
 
@@ -449,7 +447,6 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
                 } else {
                     conf = setting[`${param}`]
                 }
-                console.log(conf)
                 
                 ret = { [param]: conf }
             } catch (e) {
