@@ -1,7 +1,5 @@
 import { observable, action } from 'mobx';
 import { regEmitterHandler, getChainId } from 'utils/helper';
-import { observer, inject } from 'mobx-react';
-
 
 class Session {
   @observable pageTitle = 'Wanchain Wallet';
