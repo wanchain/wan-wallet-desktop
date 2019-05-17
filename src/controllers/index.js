@@ -16,6 +16,7 @@ const ROUTE_ADDRESS = 'address'
 const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
+const ROUTE_STAKING = 'staking'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -410,9 +411,9 @@ ipc.on(ROUTE_TX, async (event, action, payload) => {
             sendResponse([ROUTE_TX, action].join('_'), event, { err: err, data: ret })
             break;
 
-        case 'insertTransToDB': 
+        case 'insertTransToDB':
             try {
-              ccUtil.insertNormalTx(payload.rawTx);
+                ccUtil.insertNormalTx(payload.rawTx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -432,11 +433,11 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
                 let conf
 
                 if (param === 'sdkStatus') {
-                    conf = global.chainManager ? 'ready': 'init'
+                    conf = global.chainManager ? 'ready' : 'init'
                 } else {
                     conf = setting[`${param}`]
                 }
-                
+
                 ret = { [param]: conf }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -455,6 +456,45 @@ ipc.on(ROUTE_QUERY, async (event, action, payload) => {
             }
             sendResponse([ROUTE_QUERY, action].join('_'), event, { err: err, data: ret })
             break;
+    }
+
+})
+
+ipc.on(ROUTE_STAKING, async (event, action, payload) => {
+    let ret, err
+    switch (action) {
+        case 'totalLocked':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'totalReturning':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'totalReward':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'delegateHistory':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'txHistory':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'delegateIn':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'delegateOut':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'txDetail':
+            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            break
+
     }
 
 })
