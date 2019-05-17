@@ -15,7 +15,6 @@ import './index.less';
 class MHeader extends Component {
   logOut = () => {
     wand.request('wallet_lock', null, (err, val) => {
-      console.log(val, 'val')
       if (err) { 
           console.log('error printed inside callback: ', err)
           return

@@ -7,9 +7,11 @@ import { toWei } from 'utils/support';
 
 import './index.less';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
+import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 
 const DEFAULT_GAS = 4700000;
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
+const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
 @inject(stores => ({
   transParams: stores.sendTransParams.transParams,
@@ -23,6 +25,7 @@ class NormalTransForm extends Component {
     this.state = {
       visible: this.props.visible,
       advancedVisible: false,
+      confirmVisible: false,
       advanced: false
     }
     this.averageGasPrice = Math.max(this.props.minGasPrice, this.props.transParams[this.props.from].gasPrice);
@@ -34,10 +37,17 @@ class NormalTransForm extends Component {
     });
   }
 
-  handleCancel = () => {
+  handleAdvancedCancel = () => {
     this.setState({
       advancedVisible: false,
     });
+  }
+
+  handleConfirmCancel = () => {
+    this.setState({
+      confirmVisible: false,
+    });
+    this.onCancel();
   }
 
   onCancel = () => {
@@ -64,10 +74,16 @@ class NormalTransForm extends Component {
         to: form.getFieldValue('to'),
         amount: form.getFieldValue('amount')
       })
-      this.props.onSend(from);
 
       form.resetFields();
-      this.setState({ advanced: false });
+      this.setState({ advanced: false, confirmVisible: true });
+    });
+  }
+
+  sendTrans = () => {
+    this.props.onSend(this.props.from);
+    this.setState({
+      confirmVisible: false,
     });
   }
 
@@ -100,7 +116,9 @@ class NormalTransForm extends Component {
   checkToWanAddr = (rule, value, callback) => {
     checkWanAddr(value).then(ret => {
       if (ret) {
-        this.updateGasLimit();
+        if (!this.state.advanced) {
+          this.updateGasLimit();
+        }
         callback();
       } else {
         callback('Invalid address');
@@ -112,7 +130,9 @@ class NormalTransForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     if (value >= 0) {
-      this.updateGasLimit();
+      if (!this.state.advanced) {
+        this.updateGasLimit();
+      }
       callback();
     } else {
       callback('Invalid amount');
@@ -120,7 +140,7 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { advancedVisible, advanced } = this.state;
+    const { advancedVisible, confirmVisible, advanced } = this.state;
     const { loading, form, visible, from, minGasPrice, maxGasPrice } = this.props;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { getFieldDecorator } = form;
@@ -138,8 +158,8 @@ class NormalTransForm extends Component {
           onCancel={this.onCancel}
           onOk={this.handleSend}
           footer={[
-            <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
             <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
@@ -153,29 +173,30 @@ class NormalTransForm extends Component {
             </Form.Item>
             <Form.Item label="Amount">
               {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
-                (<InputNumber placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                (<InputNumber min={0} placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
             </Form.Item>
             {
-            advanced 
-            ? <Form.Item label="Fee">
-                {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: "Please select transaction fee" }] })(
-                  <Input disabled={true} className="colorInput" />
-                )}
-              </Form.Item> 
-            : <Form.Item label="Fee">
-                {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
-                  <Radio.Group>
-                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(this.averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {averageFee.times(2).toString(10)} WAN</Radio.Button>
-                  </Radio.Group>
-                )}
-              </Form.Item>
+              advanced
+                ? <Form.Item label="Fee">
+                  {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: "Please select transaction fee" }] })(
+                    <Input disabled={true} className="colorInput" />
+                  )}
+                </Form.Item>
+                : <Form.Item label="Fee">
+                  {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
+                    <Radio.Group>
+                      <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(this.averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
+                      <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {averageFee.times(2).toString(10)} WAN</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
             }
             <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
           </Form>
         </Modal>
-        <AdvancedOption visible={advancedVisible} minGasPrice={minGasPrice} gasPrice={gasPrice} gasLimit={gasLimit} nonce={nonce} onCancel={this.handleCancel} onSave={this.handleSave} from={from} />
+        <AdvancedOption visible={advancedVisible} minGasPrice={minGasPrice} gasPrice={gasPrice} gasLimit={gasLimit} nonce={nonce} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
+        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} />
       </div>
     );
   }
