@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Input, Radio  } from 'antd';
 import { observer, inject } from 'mobx-react';
 
+import './index.less';
 @inject(stores => ({
   method: stores.mnemonic.method,
   setPwd: pwd => stores.mnemonic.setPwd(pwd),
