@@ -78,7 +78,7 @@ export const getChainId = function () {
       param: 'network'
     }, function (err, val) {
       if (err) {
-        return reject('Get chain ID failed ', err);
+        return reject('Get chain ID failed', err);
       } else {
         if (val['network'].includes('main')) {
           return resolve(1);

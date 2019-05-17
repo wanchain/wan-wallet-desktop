@@ -350,7 +350,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     switch (action) {
         case 'normal':
             try {
-                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit } = payload
+                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
 
                 let input = {
@@ -361,7 +361,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     "gasPrice": gasPrice,
                     "gasLimit": gasLimit,
                     "BIP44Path": path,
-                    "walletID": walletID
+                    "walletID": walletID,
+                    "nonce": nonce
                 }
 
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
@@ -441,7 +442,6 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
 
             try {
                 let conf
-
                 if (param === 'sdkStatus') {
                     conf = global.chainManager ? 'ready': 'init'
                 } else {

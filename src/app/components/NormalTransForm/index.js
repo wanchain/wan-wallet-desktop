@@ -3,11 +3,12 @@ import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber, message } from 'antd';
 import { checkWanAddr } from 'utils/helper';
+import { toWei } from 'utils/support';
 
 import './index.less';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 
-const DEFAULTGASLIMIT = 4700000;
+const DEFAULT_GAS = 4700000;
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
@@ -80,9 +81,9 @@ class NormalTransForm extends Component {
     let tx = {
       from: from,
       to: form.getFieldValue('to'),
-      value: form.getFieldValue('amount') || 0,
+      value: toWei((form.getFieldValue('amount') || 0).toString(10)),
       data: this.props.transParams[from].data,
-      gas: DEFAULTGASLIMIT
+      gas: DEFAULT_GAS
     };
     let { chainType } = this.props.transParams[from];
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
