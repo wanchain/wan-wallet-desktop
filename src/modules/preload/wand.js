@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const uuid = require('uuid/v1')
 const EventEmitter = require('events')
 const { ipcRenderer, remote: { Menu }, clipboard } = require('electron')
 const routes = require('./routes')
@@ -24,9 +25,11 @@ module.exports = (function() {
             }
     
             if (cb) {
+                let cbID = uuid()
                 _callbacks[route] =  _callbacks[route] || {}
-                _callbacks[route][action] = _callbacks[route][action] || []
-                _callbacks[route][action].push(cb)
+                _callbacks[route][action] = _callbacks[route][action] || {}
+                _callbacks[route][action][cbID] = cb
+                endpoint = endpoint + '#' + cbID
             }
     
             postMessage({
@@ -56,12 +59,14 @@ module.exports = (function() {
                 ) 
             {
                 if (_type === 'renderer_windowMessage') {
-                    const [route, action] = endpoint.split('_')
+                    const [route, actionUni] = endpoint.split('_')
+                    const [action, cbID] = actionUni.split('#')
                     const { err, data } = payload
-                    if (_callbacks[route] && !_.isEmpty(_callbacks[route][action])) {
-                        _callbacks[route][action].forEach((cb) => cb(err, data))
-
-                        delete _callbacks[route][action]
+                    if (_callbacks[route] && _callbacks[route][action] && _callbacks[route][action][cbID]) {
+                        const cb = _callbacks[route][action][cbID]
+                        
+                        cb(err, data)
+                        delete _callbacks[route][action][cbID]
                     }
 
                 } else if (_type === 'renderer_makeRequest') {

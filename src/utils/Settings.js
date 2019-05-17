@@ -52,7 +52,7 @@ class Settings {
     }
 
     get appName() {
-        return 'Wan Wallet Desktop'
+        return 'Wan Wallet'
     }
 
     get isDev() {
