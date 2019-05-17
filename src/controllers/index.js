@@ -88,13 +88,13 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             try {
                 hdUtil.deleteHDWallet()
                 hdUtil.deleteKeyStoreWallet()
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
 
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
 
             break
@@ -105,12 +105,12 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
                 hdUtil.newKeyStoreWallet(phrase)
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
 
             break
@@ -127,7 +127,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     err = e
                 }
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: pubKey })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: pubKey })
                 break
             }
 
@@ -142,7 +142,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     err = e
                 }
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: pubKey })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: pubKey })
                 break
             }
 
@@ -156,7 +156,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     ret = false
                 }
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
 
@@ -176,7 +176,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     err = e
                 }
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: sig })
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
                 break
             }
 
@@ -190,7 +190,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: data })
+            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             break
     }
 })
@@ -208,7 +208,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: address })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: address })
             break
 
         case 'getOne':
@@ -219,7 +219,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: address })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: address })
             break
 
         case 'getNonce':
@@ -231,7 +231,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: nonce })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: nonce })
             break
         case 'balance':
             let balance
@@ -251,7 +251,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: balance })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
 
         case 'isWanAddress':
@@ -263,7 +263,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'fromKeyFile':
@@ -296,7 +296,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'get':
@@ -306,7 +306,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'getAll':
@@ -317,7 +317,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
         case 'update':
             try {
@@ -327,7 +327,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'delete':
@@ -338,7 +338,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
     }
 })
@@ -371,7 +371,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'raw':
@@ -382,7 +382,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         /**
@@ -402,7 +402,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
         case 'showRecords':
@@ -415,7 +415,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
         case 'insertTransToDB': 
@@ -426,18 +426,21 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: true })
             break;
     }
 })
 
 ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
+    console.log('here')
     let ret, err
     const [action, id] = actionUni.split('#')
+    console.log(action, id)
 
     switch (action) {
         case 'config':
             let { param } = payload
+            console.log(param)
             try {
                 let conf
 
@@ -446,6 +449,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
                 } else {
                     conf = setting[`${param}`]
                 }
+                console.log(conf)
                 
                 ret = { [param]: conf }
             } catch (e) {
@@ -453,7 +457,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
                 err = e
             }
 
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_QUERY, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'getGasPrice':
@@ -463,7 +467,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_QUERY, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
     }
 
