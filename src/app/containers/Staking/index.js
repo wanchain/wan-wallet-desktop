@@ -4,14 +4,14 @@ import { observer, inject } from 'mobx-react';
 
 import Cards from 'components/Staking/Cards';
 import Validators from 'components/Staking/Validators';
-// import StakingHistory from 'components/Staking/StakingHistory';
+import StakingHistory from 'components/Staking/StakingHistory';
+
+import totalImg from 'static/image/wan.png';
 
 import './index.less';
 
 @inject(stores => ({
-  portfolioList: stores.portfolio.portfolioList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateCoinPrice: () => stores.portfolio.updateCoinPrice()
 }))
 
 @observer
@@ -32,19 +32,22 @@ class Staking extends Component {
   render() {
     return (
       <div className="staking">
+        <Row className="title">
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /><span className="dashboard">Dashboard</span></Col>
+        </Row>
         <Row>
           <Col>
-            <Cards/>
+            <Cards />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Validators/>
+            <Validators />
           </Col>
         </Row>
         <Row>
           <Col>
-            {/* <StakingHistory/> */}
+            <StakingHistory />
           </Col>
         </Row>
       </div>
