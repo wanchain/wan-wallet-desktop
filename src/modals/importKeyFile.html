@@ -74,7 +74,6 @@
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', function(){
                     const parent = btn.parentElement
-                    console.log(parent.classList)
                     if (parent.classList.contains('show')) parent.classList.remove('show')
                 })
             })
@@ -88,6 +87,12 @@
                 event.preventDefault();
                 event.stopPropagation();
 
+                errText.innerHTML = ''
+                successText.innerHTML = ''
+
+                if (alertError.classList.contains('show')) alertError.classList.remove('show')
+                if (alertSuccess.classList.contains('show')) alertSuccess.classList.remove('show')
+
                 form.classList.add('was-validated');
 
                 const formData = new FormData(form)
@@ -96,41 +101,38 @@
                 const fileDesc = formData.get('keyfile')
 
                 if (keyFilePwd && hdWalletPwd && fileDesc.path) {
-                    console.log(keyFilePwd, hdWalletPwd, fileDesc.path)
+                    wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function(err, val) {
+                        if (err) {
+                            const desc = err.desc || err.message
+
+                            if (desc.includes('not found')) {
+                                errText.innerHTML = ERR_NOT_FOUND
+                            } 
+
+                            if (desc.includes('authentication code mismatch')) {
+                                errText.innerHTML = ERR_WRONG_PWD_KEYFILE
+                            }
+
+                            if (desc.includes('Invalid password')) {
+                                errText.innerHTML = ERR_WRONG_PWD_WALLET
+                            }
+
+                            if (desc.includes("Cannot read property 'cipherparams'")) {
+                                errText.innerHTML = ERR_INVALID_KEYFILE
+                            }
+            
+                            alertError.classList.add('show')
+
+                            return
+                        }
+
+                        if (val) {
+                            successText.innerHTML = TEXT_SUCCESS
+                            alertSuccess.classList.add('show')    
+                        }            
+                    })
                 }
-                
-                wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function(err, val) {
-                    if (err) {
-                        console.log(err)
-                        const desc = err.desc || err.message
-                        console.log(desc)
-
-                        if (desc.includes('not found')) {
-                            errText.innerHTML = ERR_NOT_FOUND
-                        } 
-
-                        if (desc.includes('authentication code mismatch')) {
-                            errText.innerHTML = ERR_WRONG_PWD_KEYFILE
-                        }
-
-                        if (desc.includes('Invalid password')) {
-                            errText.innerHTML = ERR_WRONG_PWD_WALLET
-                        }
-
-                        if (desc.includes("Cannot read property 'cipherparams'")) {
-                            errText.innerHTML = ERR_INVALID_KEYFILE
-                        }
         
-                        alertError.classList.add('show')
-
-                        return
-                    }
-
-                    if (val) {
-                        successText.innerHTML = TEXT_SUCCESS
-                        alertSuccess.classList.add('show')    
-                    }            
-                })
             })
         }, false)
     })()
