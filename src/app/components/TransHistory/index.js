@@ -43,18 +43,6 @@ class TransHistory extends Component {
     console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
   }
-  
-  onBlur = () => {
-    console.log('blur');
-  }
-  
-  onFocus = () => {
-    console.log('focus');
-  }
-  
-  onSearch = val => {
-    console.log('search:', val);
-  }
 
   render() {
     const { addrInfo, historyList, name } = this.props;
@@ -66,7 +54,7 @@ class TransHistory extends Component {
           <Select 
             showSearch
             allowClear
-            style={{ width: 400 }} 
+            style={{ width: 400 }}
             placeholder="Select a FROM address" 
             optionFilterProp="children" 
             onChange={this.onChange} 

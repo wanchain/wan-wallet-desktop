@@ -1,5 +1,5 @@
 import { observable, action } from 'mobx';
-import { regEmitterHandler } from 'utils/helper';
+import { regEmitterHandler, getChainId } from 'utils/helper';
 
 class Session {
   @observable pageTitle = 'Wanchain Wallet';
@@ -22,8 +22,11 @@ class Session {
     })
   }
 
-  @action initChainId() {
+  @action initChainId(callback) {
     let chainId;
+    getChainId().then((chainId) => {
+      self.chainId = chainId;
+    });
     regEmitterHandler('network', (val) => {
       if (val.includes('main')) {
         chainId = 1;
@@ -31,6 +34,13 @@ class Session {
         chainId = 3;
       }
       self.chainId = chainId;
+      wand.request('wallet_lock', null, (err, val) => {
+        if (err) { 
+            console.log('Lock failed ', err)
+            return
+        }
+        self.setAuth(false);
+      })
     });
   }
 

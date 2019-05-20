@@ -15,7 +15,8 @@ body{
 }
 .importKey{
     width:480px;
-    margin: 0 auto; 
+    margin: 0 auto;
+    padding-top: 30px;
 }
 .container{
     padding: 100px 0 0;
@@ -73,4 +74,12 @@ body{
     margin: 60px auto;
     background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
     border-radius:20px;
+}
+
+.alert {
+    border-radius: 0;
+}
+
+.alert-group {
+    position: absolute;
 }

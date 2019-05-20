@@ -1,6 +1,5 @@
-import React, { Component } from "react";
-import { Table, message, Row, Col } from "antd";
-import BigNumber from "bignumber.js";
+import React, { Component } from 'react';
+import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import TransHistory from 'components/TransHistory';
@@ -21,20 +20,10 @@ class Accounts extends Component {
     { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
   ];
 
-  handleSend = from => {
+  handleSend = (from, rawTx) => {
     let params = this.props.transParams[from];
-    let rawTx = {
-      to: params.to,
-      value: '0x' + new BigNumber(params.amount).times(BigNumber(10).pow(18)).toString(16),
-      data: params.data,
-      chainId: params.chainId,
-      nonce: '0x' + params.nonce.toString(16),
-      gasLimit: '0x' + params.gasLimit.toString(16),
-      gasPrice: '0x' + new BigNumber(params.gasPrice).times(BigNumber(10).pow(9)).toString(16),
-      Txtype: params.txType
-    };
+
     this.props.signTransaction(params.path, rawTx, raw => {
-      console.log('raw', raw)
       wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, val) => {
         if (err) {
           message.warn("Send transaction failed. Please try again");

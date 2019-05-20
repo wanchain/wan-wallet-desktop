@@ -57,9 +57,9 @@ export default (i18n) => {
                         click: async () => {
                             if (!setting.network.includes('main')) {
                                 setting.switchNetwork()
-                                Windows.broadcast('notification', 'network', setting.network)
                                 Windows.broadcast('notification', 'sdk', 'init')
                                 await walletBackend.init()
+                                Windows.broadcast('notification', 'network', setting.network)
                             }
 
                             return 
@@ -73,9 +73,9 @@ export default (i18n) => {
                         click: async () => {
                             if (setting.network.includes('main')) {
                                 setting.switchNetwork()
-                                Windows.broadcast('notification', 'network', setting.network)
                                 Windows.broadcast('notification', 'sdk', 'init')
                                 await walletBackend.init()
+                                Windows.broadcast('notification', 'network', setting.network)
                             }
 
                             return 

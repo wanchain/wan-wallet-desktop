@@ -5,6 +5,10 @@ export function fromWei(data) {
   return web3.utils.fromWei(data);
 }
 
+export function toWei(data) {
+  return web3.utils.toWei(data);
+}
+
 export function checkCryptographic(pwd) {
   let reg = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}");
   return reg.test(pwd);

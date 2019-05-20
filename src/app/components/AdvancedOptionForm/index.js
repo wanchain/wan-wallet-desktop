@@ -47,8 +47,8 @@ class AdvancedOptionForm extends Component {
         onCancel={this.handleCancel}
         onOk={this.handleSave}
         footer={[
-          <Button key="submit" className="confirm-button" onClick={() => this.handleSave()}>Save</Button>,
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>Cancel</Button>,
+          <Button key="submit" type="primary" className="confirm-button" onClick={() => this.handleSave()}>Save</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
@@ -63,13 +63,13 @@ class AdvancedOptionForm extends Component {
             {getFieldDecorator(
               'gasLimit', { initialValue: gasLimit },
               { rules: [{ required: true, message: 'Gas limit is incorrect' }] })
-              (<InputNumber />)}
+              (<InputNumber min={21000} />)}
           </Form.Item>
           <Form.Item label="Nonce">
             {getFieldDecorator(
               'nonce', { initialValue: nonce },
               { rules: [{ required: true, message: 'Nonce is incorrect' }] })
-              (<InputNumber />)}
+              (<InputNumber min={0} />)}
           </Form.Item>
         </Form>
       </Modal>

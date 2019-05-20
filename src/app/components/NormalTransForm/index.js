@@ -2,29 +2,34 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber, message } from 'antd';
-import { checkWanAddr } from 'utils/helper';
 
 import './index.less';
+import { toWei } from 'utils/support';
+import { checkWanAddr } from 'utils/helper';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
+import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 
-const DEFAULTGASLIMIT = 4700000;
+const DEFAULT_GAS = 4700000;
+const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
+  rawTx: stores.sendTransParams.rawTx,
+  from: stores.sendTransParams.currentFrom,
+  gasFeeArr: stores.sendTransParams.gasFeeArr,
   transParams: stores.sendTransParams.transParams,
+  minGasPrice: stores.sendTransParams.minGasPrice,
+  maxGasPrice: stores.sendTransParams.maxGasPrice,
+  averageGasPrice: stores.sendTransParams.averageGasPrice,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
 class NormalTransForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: this.props.visible,
-      advancedVisible: false,
-      advanced: false
-    }
-    this.averageGasPrice = Math.max(this.props.minGasPrice, this.props.transParams[this.props.from].gasPrice);
+  state = {
+    advanced: false,
+    confirmVisible: false,
+    advancedVisible: false,
   }
 
   onAdvanced = () => {
@@ -33,10 +38,17 @@ class NormalTransForm extends Component {
     });
   }
 
-  handleCancel = () => {
+  handleAdvancedCancel = () => {
     this.setState({
       advancedVisible: false,
     });
+  }
+
+  handleConfirmCancel = () => {
+    this.setState({
+      confirmVisible: false,
+    });
+    this.onCancel();
   }
 
   onCancel = () => {
@@ -54,19 +66,24 @@ class NormalTransForm extends Component {
   }
 
   handleSend = () => {
+    const { rawTx, onSend, updateTransParams } = this.props;
     let form = this.props.form;
     let from = this.props.from;
 
     form.validateFields(err => {
       if (err) return;
-      this.props.updateTransParams(from, {
-        to: form.getFieldValue('to'),
-        amount: form.getFieldValue('amount')
-      })
-      this.props.onSend(from);
+      updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+      onSend(from, rawTx);
 
       form.resetFields();
-      this.setState({ advanced: false });
+      this.setState({ advanced: false, confirmVisible: true });
+    });
+  }
+
+  sendTrans = () => {
+    this.props.onSend(this.props.from);
+    this.setState({
+      confirmVisible: false,
     });
   }
 
@@ -80,15 +97,14 @@ class NormalTransForm extends Component {
     let tx = {
       from: from,
       to: form.getFieldValue('to'),
-      value: form.getFieldValue('amount') || 0,
+      value: toWei((form.getFieldValue('amount') || 0).toString(10)),
       data: this.props.transParams[from].data,
-      gas: DEFAULTGASLIMIT
+      gas: DEFAULT_GAS
     };
     let { chainType } = this.props.transParams[from];
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
       if (err) {
         message.warn("Estimate gas failed. Please try again");
-        console.log(err);
       } else {
         console.log('Update gas limit:', gasLimit);
         this.props.updateTransParams(from, { gasLimit });
@@ -99,7 +115,9 @@ class NormalTransForm extends Component {
   checkToWanAddr = (rule, value, callback) => {
     checkWanAddr(value).then(ret => {
       if (ret) {
-        this.updateGasLimit();
+        if (!this.state.advanced) {
+          this.updateGasLimit();
+        }
         callback();
       } else {
         callback('Invalid address');
@@ -111,7 +129,9 @@ class NormalTransForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     if (value >= 0) {
-      this.updateGasLimit();
+      if (!this.state.advanced) {
+        this.updateGasLimit();
+      }
       callback();
     } else {
       callback('Invalid amount');
@@ -119,26 +139,26 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { advancedVisible, advanced } = this.state;
-    const { loading, form, visible, from, minGasPrice, maxGasPrice } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr } = this.props;
+    const { advancedVisible, confirmVisible, advanced } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
+    const { minFee, averageFee, maxFee } = gasFeeArr
     const { getFieldDecorator } = form;
-    let minFee = new BigNumber(minGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
-    let averageFee = new BigNumber(this.averageGasPrice).times(gasLimit).div(BigNumber(10).pow(9));
+
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
 
     return (
       <div>
         <Modal
+          visible
           destroyOnClose={true}
           closable={false}
-          visible={visible}
           title="Transaction"
           onCancel={this.onCancel}
           onOk={this.handleSend}
           footer={[
-            <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
             <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
@@ -152,7 +172,7 @@ class NormalTransForm extends Component {
             </Form.Item>
             <Form.Item label="Amount">
               {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
-                (<InputNumber placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                (<InputNumber min={0} placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
             </Form.Item>
             {
             advanced 
@@ -164,9 +184,9 @@ class NormalTransForm extends Component {
             : <Form.Item label="Fee">
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow">Slow <br /> {minFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(this.averageGasPrice, gasLimit, nonce)} value="average">Average <br /> {averageFee.toString(10)} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast">Fast <br /> {averageFee.times(2).toString(10)} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow"><p>Slow</p>{minFee} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average"><p>Average</p>{averageFee} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast"><p>Fast</p>{maxFee} WAN</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>
@@ -174,7 +194,8 @@ class NormalTransForm extends Component {
             <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
           </Form>
         </Modal>
-        <AdvancedOption visible={advancedVisible} minGasPrice={minGasPrice} gasPrice={gasPrice} gasLimit={gasLimit} nonce={nonce} onCancel={this.handleCancel} onSave={this.handleSave} from={from} />
+        <AdvancedOption visible={advancedVisible} minGasPrice={minGasPrice} gasPrice={gasPrice} gasLimit={gasLimit} nonce={nonce} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
+        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} />
       </div>
     );
   }

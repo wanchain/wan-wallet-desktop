@@ -39,9 +39,11 @@ class WanAddress {
     @action updateTransHistory() {
       wand.request('transaction_showRecords', (err, val) => {
         if(!err && val.length !== 0) {
-          val.forEach((item) => {
+          val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
-            self.transHistory[item.txHash] = item;
+            if(item.txHash !== item.hashX) {
+              self.transHistory[item.txHash] = item;
+            }
           })
         }
       })
@@ -72,7 +74,7 @@ class WanAddress {
     @action updateName(arr) {
       const path = self.addrInfo['normal'][arr['address']]['path'];
 
-      wand.request('account_update', { walletID: 1, path: `${WAN}${path}`, meta: {name: arr.name, addr: arr.address} }, (err, val) => {
+      wand.request('account_update', { walletID: 1, path: `${WAN}${path}`, meta: {name: arr.name, addr: arr.address.toLowerCase()} }, (err, val) => {
         if(!err && val) {
           self.addrInfo['normal'][arr['address']]['name'] = arr.name;
         }
@@ -85,7 +87,8 @@ class WanAddress {
         if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           Object.keys(info).forEach((item) => {
-            self.addrInfo['normal'][info[item]['1']['addr']] = {
+            let address = info[item]['1']['addr']
+            self.addrInfo['normal'][wanUtil.toChecksumAddress(address)] = {
               name: info[item]['1']['name'],
               balance: 0,
               path: item.substr(item.lastIndexOf('\/')+1)

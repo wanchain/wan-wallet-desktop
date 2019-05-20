@@ -1,51 +1,69 @@
-
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, toJS } from 'mobx';
+import BigNumber from 'bignumber.js';
 
 class SendTransParams {
+    @observable currentFrom = '';
     @observable transParams = {};
-
-    @action addTransaction(addr, params) {
-        self.transParams[addr] = params;
+    @observable gasLimit = '21000';
+    @observable defaultGasPrice = 200;
+    @observable minGasPrice = 180;
+    @observable currentGasPrice = 180;
+    
+    @action addTransTemplate(addr, params) {
+        self.currentFrom = addr;
+        self.transParams[addr] = Object.defineProperties({}, {
+          chainType: { value: params.chainType, writable: true, enumerable:true },
+          gasPrice: { value: self.minGasPrice, writable: true, enumerable:true },
+          gasLimit: { value: self.gasLimit, writable: true, enumerable:true },
+          nonce: { value: '', writable: true, enumerable:true } ,
+          data: { value: '0x', writable: true, enumerable:true },
+          chainId: { value: params.chainId, writable: true, enumerable:true },
+          txType: { value: 1, writable: true, enumerable:true },
+          path: { value: '', writable: true, enumerable:true },
+          to: { value: '', writable: true, enumerable:true },
+          amount: { value: 0, writable: true, enumerable:true }
+        });
     }
 
     @action updateTransParams(addr, paramsObj) {
       Object.keys(paramsObj).forEach(item => {self.transParams[addr][item] = paramsObj[item]});
     }
 
-    @action updateGasPrice(addr, gasPrice) {
-        self.transParams[addr].gasPrice = gasPrice;
+    @computed get maxGasPrice() {
+      return self.currentGasPrice * 2;
     }
 
-    @action updateGasLimit(addr, gasLimit) {
-        self.transParams[addr].gasLimit = gasLimit;
+    @computed get averageGasPrice() {
+      return Math.max(self.minGasPrice, self.currentGasPrice);
     }
 
-    @action updateNonce(addr, nonce) {
-        self.transParams[addr].nonce = nonce;
+    @computed get gasFeeArr() {
+      let minFee = new BigNumber(self.minGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
+      let averageFee = new BigNumber(self.averageGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
+      return {
+        minFee: minFee.toString(10),
+        averageFee: averageFee.toString(10),
+        maxFee: averageFee.times(2).toString(10)
+      }
     }
 
-    @action updateAmount(addr, amount) {
-        self.transParams[addr].amount = amount;
-    }
-
-    @action updateTo(addr, to) {
-        self.transParams[addr].to = to;
-    }
-
-    @action updateData(addr, data) {
-        self.transParams[addr].data = data;
-    }
-
-    @action updateChainId(addr, chainId) {
-        self.transParams[addr].chainId = chainId;
-    }
-
-    @action updateTxType(addr, txType) {
-        self.transParams[addr].txType = txType;
-    }
-
-    @action updatePath(addr, path) {
-        self.transParams[addr].path = path;
+    @computed get rawTx() {
+      if(Object.keys(self.transParams).length !== 0) {
+        let from = self.currentFrom;
+        let { to, amount, data, chainId, nonce, gasLimit, gasPrice, txType } = self.transParams[from];
+        return {
+          to: to,
+          value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
+          data: data,
+          chainId: chainId,
+          nonce: '0x' + nonce.toString(16),
+          gasLimit: '0x' + gasLimit.toString(16),
+          gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
+          Txtype: txType
+        };
+      } else {
+        return {}
+      }
     }
 }
 

@@ -11,12 +11,8 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 @inject(stores => ({
   chainId: stores.session.chainId,
   transParams: stores.sendTransParams.transParams,
-  updatePath: (addr, path) => stores.sendTransParams.updatePath(addr, path),
-  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce),
-  updateChainId: (addr, nonce) => stores.sendTransParams.updateChainId(addr, nonce),
-  addTransaction: (addr, params) => stores.sendTransParams.addTransaction(addr, params),
-  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
-  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
+  addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
+  updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
@@ -24,34 +20,17 @@ class SendNormalTrans extends Component {
   state = {
     loading: false,
     visible: false,
-    minGasPrice: 180,
-  }
-
-  componentWillMount() {
-    const { from, chainId, addTransaction, chainType } = this.props;
-    addTransaction(from, {
-      chainType: chainType,
-      gasPrice: 200,
-      gasLimit: 21000,
-      nonce: 0,
-      data: '0x',
-      chainId: chainId,
-      txType: 1,
-      path: '',
-      to: '',
-      amount: 0
-    });
   }
 
   showModal = async () => {
-    const {from, path, chainType, updatePath, updateNonce, updateGasPrice} = this.props;
-    updatePath(from, path);
+    const { from, path, chainType, chainId, addTransTemplate, updateTransParams } = this.props;
+    addTransTemplate(from, { chainType, chainId });
     try {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
-      updateNonce(from, nonce);
-      updateGasPrice(from, gasPrice);
+      updateTransParams(from, { path, nonce, gasPrice });
       this.setState({ visible: true });
     } catch (err) {
+      console.log(`err: ${err}`)
       message.warn(err);
     }
   }
@@ -64,25 +43,20 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {
-    this.props.handleSend(from);
+  handleSend = (from, rawTx) => {
+    this.props.handleSend(from, rawTx);
     this.setState({ visible: false });
   }
 
   render() {
-    const { from, transParams } = this.props;
-    const { visible, minGasPrice } = this.state;
+    const { visible } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>Send</Button>
-        <CollectionCreateForm
-          wrappedComponentRef={this.saveFormRef}
-          visible={visible}
-          minGasPrice={minGasPrice}
-          maxGasPrice={transParams[from].gasPrice * 2}
-          from={from}
-          onCancel={this.handleCancel}
-          onSend={this.handleSend} />
+        { visible 
+          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} />
+          : ''
+        }
       </div>
     );
   }
