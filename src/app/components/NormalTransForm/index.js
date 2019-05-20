@@ -32,6 +32,12 @@ class NormalTransForm extends Component {
     advancedVisible: false,
   }
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   onAdvanced = () => {
     this.setState({
       advancedVisible: true,
@@ -66,14 +72,14 @@ class NormalTransForm extends Component {
   }
 
   handleSend = () => {
-    const { rawTx, onSend, updateTransParams } = this.props;
+    const { onSend, updateTransParams } = this.props;
     let form = this.props.form;
     let from = this.props.from;
 
     form.validateFields(err => {
       if (err) return;
       updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
-      onSend(from, rawTx);
+      onSend(from, this.props.rawTx);
 
       form.resetFields();
       this.setState({ advanced: false, confirmVisible: true });

@@ -28,6 +28,7 @@ class WanAddress {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo['ledger']).includes(addr.address)) {
           self.addrInfo['ledger'][addr.address] = {
+            name: `Account${addr.path.substr(18) - 0 + 1}`,
             balance: addr.balance || '0',
             address: addr.balance,
             path: addr.path

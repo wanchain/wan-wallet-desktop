@@ -22,17 +22,25 @@ class Accounts extends Component {
 
   handleSend = (from, rawTx) => {
     let params = this.props.transParams[from];
-
     this.props.signTransaction(params.path, rawTx, raw => {
-      wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, val) => {
+      wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
         if (err) {
           message.warn("Send transaction failed. Please try again");
           console.log(err);
         } else {
-          wand.request('transaction_insertTransToDB', { rawTx }, () => {
+          let params = {
+            txHash,
+            from: from.toLowerCase(),
+            srcSCAddrKey: 'WAN',
+            srcChainType: 'WAN',
+            tokenSymbol: 'ETH',
+            ...rawTx
+          }
+          console.log(params, 'paramsparamsparamsparams')
+          wand.request('transaction_insertTransToDB', {rawTx: params}, () => {
             this.props.updateTransHistory();
           })
-          console.log("TxHash:", val);
+          console.log("TxHash:", txHash);
         }
       });
     });

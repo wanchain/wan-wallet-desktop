@@ -78,7 +78,7 @@ class Ledger extends Component {
 
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
-
+    
     wand.request('wallet_signTransaction', { walletID: WALLETID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn('Sign transaction failed. Please try again');
