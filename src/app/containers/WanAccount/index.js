@@ -67,9 +67,13 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} onRef={this.onRef}/></div>
     }
   ];
+
+  onRef = ref => {
+    this.child = ref
+  }
 
   handleSend = from => {
     let params = this.props.transParams[from];
@@ -84,16 +88,17 @@ class WanAccount extends Component {
       gasPrice: params.gasPrice,
       nonce: params.nonce
     };
+
     wand.request('transaction_normal', trans, (err, val) => {
       if (err) {
         message.warn("Send transaction failed. Please try again");
         console.log(err);
       } else {
+        this.child.handleCancel();
         this.props.updateTransHistory();
         console.log("TxHash:", val);
       }
     });
-    this.setState({ visible: true });
   }
 
   creatAccount = () => {

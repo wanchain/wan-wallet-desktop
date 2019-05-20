@@ -70,7 +70,7 @@ class NormalTransForm extends Component {
   }
 
   handleNext = () => {
-    const { onSend, updateTransParams } = this.props;
+    const { updateTransParams } = this.props;
     let form = this.props.form;
     let from = this.props.from;
 
