@@ -3,7 +3,7 @@ import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import Cards from 'components/Staking/Cards';
-// import Validators from 'components/Staking/Validators';
+import Validators from 'components/Staking/Validators';
 // import StakingHistory from 'components/Staking/StakingHistory';
 
 import './index.less';
@@ -39,7 +39,7 @@ class Staking extends Component {
         </Row>
         <Row>
           <Col>
-            {/* <Validators/> */}
+            <Validators/>
           </Col>
         </Row>
         <Row>
