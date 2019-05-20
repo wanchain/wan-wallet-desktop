@@ -10,7 +10,7 @@ class WalletBackend extends EventEmitter {
     }
 
     hdWalletDisconnectHandler(msg) {
-        const { Windows } = require('../windows')
+        const Windows = require('../windows')
         Windows.broadcast('notification', 'hdwallet', msg)
     }
   
