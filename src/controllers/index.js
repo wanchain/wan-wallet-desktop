@@ -269,16 +269,20 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'fromKeyFile':
             const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
             const keyFileContent = fs.readFileSync(keyFilePath).toString()
+
             try {
                 hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
                 let count = hdUtil.getKeyStoreCount(WAN_ID)
                 Windows.broadcast('notification', 'keyfilewalletcount', count)
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
 
-            // sendResponse([ROUTE_PHRASE, action].join('_'), event, { err: err, data: !!ret })
             break
     }
 })
@@ -474,7 +478,8 @@ function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
     const senderWindow = Windows.getById(id)
     const { err } = payload
-    if (!_.isEmpty(err)) payload.err = errorWrapper(err)
+
+    if (_.isObject(err) || !_.isEmpty(err)) payload.err = errorWrapper(err)
     senderWindow.send('renderer_windowMessage', endpoint, payload)
 }
 

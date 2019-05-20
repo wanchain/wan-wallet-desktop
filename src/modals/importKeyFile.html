@@ -9,46 +9,42 @@
     <title>Import Wanchain Key File</title>
 </head>
 <body>
-    <div class="alert-group">
-        <div class="alert fade" role="alert">
-            <h4 class="alert-heading">
-                Well done!
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </h4>
-            <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
-        </div>
-        <div class="alert alert-danger fade" role="alert">
-            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+    <div class="alert alert-success fade" role="alert">
+        <strong id='success-text'></strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="alert alert-danger fade" role="alert">
+        <strong id='err-text'></strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <div class="importKey">
         <div class="container">
             <div class="row justify-content-center align-items-center">
                 <h1>Import Wanchain Key File</h1>
                 <div class="col-12">
-                    <form id="KeyFileForm">
+                    <form id="KeyFileForm" novalidate>
                         <div class="form-group">
                             <label class="label text-dark" for="oldpwd">Enter old password for key file</label>
                             <input id="oldpwd" name="oldpwd" class="form-control" type="password" required />
+                            <div id="kfFeedback" class="invalid-feedback">Please provide a valid password for key file.</div>
                         </div>
                         <div class="form-group"> 
                             <label class="label text-dark" for="newpwd">Enter the password for wan wallet</label>
                             <input id="newpwd" name="newpwd" class="form-control" type="password" required />
+                            <div class="invalid-feedback">Please provide a valid password for wan wallet.</div>
                         </div>
-                        <div class="form-group">
-                            <label class="label text-dark">Choose key file</label>
-                            <div class="custom-file" style="overflow: hidden; height: auto;">
-                                <input id="keyfile" name="keyfile" type="file" required />
-                                <label class="custom-file-label text-dark" for="keyfile"></label>
-                            </div>
+                        <p style="margin-top: 40px; margin-bottom: 7px;">Choose a key file: </p>
+                        <div class="custom-file" style="height: 70px;">
+                            <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required />
+                            <label class="custom-file-label" for="keyfile" style="overflow: hidden;"></label>
+                            <div class="invalid-feedback" style="margin-top: 10px;">Please choose a valide key file</div>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group"> 
                             <button id="submit" type="submit" class="btn btn-dark btn-lg btn-block">Submit</button>
                         </div>
                     </form>
@@ -58,36 +54,87 @@
     </div> 
 </body>
 <script type="application/javascript">
-    const fileSelector = document.querySelector('#keyfile')
-    const btn = document.querySelector('#submit')
-    const alertError = document.querySelector('.alert-danger')
-    const alertSuccess = document.querySelector('.alert-success')
+    (function() {
+        const ERR_NOT_FOUND = 'cannot proceed, wallet not created or been locked'
+        const ERR_WRONG_PWD_KEYFILE = 'invalid password for key file'
+        const ERR_WRONG_PWD_WALLET = 'invalid password for wan wallet'
+        const ERR_INVALID_KEYFILE = 'invalid key file format'
+        const TEXT_SUCCESS = 'key file import complete, close this window and go to main page for more detail'
 
-    fileSelector.addEventListener('change', function() {
-        const value = fileSelector.files[0]
-        console.log('fileSelector value: ', value)
-        document.querySelector('.custom-file-label').innerHTML = value.name
-    })
-    
-    btn.addEventListener('click', e => {
-        e.preventDefault()
-        const myForm = document.getElementById('KeyFileForm')
-        const formData = new FormData(myForm)
-        const keyFilePwd = formData.get('oldpwd')
-        const hdWalletPwd = formData.get('newpwd')
-        const fileDesc = formData.get('keyfile')
+        window.addEventListener('load', function() {
+            const fileSelector = document.querySelector('#keyfile')
+            const subBtn = document.querySelector('#submit')
+            const alertError = document.querySelector('.alert-danger')
+            const alertSuccess = document.querySelector('.alert-success')
+            const form = document.getElementById('KeyFileForm')
+            const errText = document.getElementById('err-text')
+            const successText = document.getElementById('success-text')
+            const closeBtns = document.querySelectorAll('.close')
+
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function(){
+                    const parent = btn.parentElement
+                    console.log(parent.classList)
+                    if (parent.classList.contains('show')) parent.classList.remove('show')
+                })
+            })
+
+            fileSelector.addEventListener('change', function() {
+                const value = fileSelector.files[0]
+                document.querySelector('.custom-file-label').innerHTML = value.name
+            })
+            
+            subBtn.addEventListener('click', e => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                form.classList.add('was-validated');
+
+                const formData = new FormData(form)
+                const keyFilePwd = formData.get('oldpwd')
+                const hdWalletPwd = formData.get('newpwd')
+                const fileDesc = formData.get('keyfile')
+
+                if (keyFilePwd && hdWalletPwd && fileDesc.path) {
+                    console.log(keyFilePwd, hdWalletPwd, fileDesc.path)
+                }
+                
+                wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function(err, val) {
+                    if (err) {
+                        console.log(err)
+                        const desc = err.desc || err.message
+                        console.log(desc)
+
+                        if (desc.includes('not found')) {
+                            errText.innerHTML = ERR_NOT_FOUND
+                        } 
+
+                        if (desc.includes('authentication code mismatch')) {
+                            errText.innerHTML = ERR_WRONG_PWD_KEYFILE
+                        }
+
+                        if (desc.includes('Invalid password')) {
+                            errText.innerHTML = ERR_WRONG_PWD_WALLET
+                        }
+
+                        if (desc.includes("Cannot read property 'cipherparams'")) {
+                            errText.innerHTML = ERR_INVALID_KEYFILE
+                        }
         
-        console.log(keyFilePwd, hdWalletPwd, fileDesc.path)
-        // wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function(err, val) {
-        //     if (err) {
-        //         console.log('err: ', err)
-        //         return
-        //     }
+                        alertError.classList.add('show')
 
-        //     console.log('val: ', val)
-        // })
-        console.log(alertError.classList)
-        console.log(alertSuccess.classList)
-    })
+                        return
+                    }
+
+                    if (val) {
+                        successText.innerHTML = TEXT_SUCCESS
+                        alertSuccess.classList.add('show')    
+                    }            
+                })
+            })
+        }, false)
+    })()
 </script>
+
+
 </html>

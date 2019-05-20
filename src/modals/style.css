@@ -77,9 +77,16 @@ body{
 }
 
 .alert {
+    position: absolute;
     border-radius: 0;
 }
 
-.alert-group {
-    position: absolute;
+.alert.alert-danger {
+    width: 100%;
+    text-align: center;
+}
+
+.alert.alert-success {
+    width: 100%;
+    text-align: center;
 }
