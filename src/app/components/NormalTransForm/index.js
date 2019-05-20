@@ -14,7 +14,6 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
-  rawTx: stores.sendTransParams.rawTx,
   from: stores.sendTransParams.currentFrom,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
   transParams: stores.sendTransParams.transParams,
@@ -54,7 +53,6 @@ class NormalTransForm extends Component {
     this.setState({
       confirmVisible: false,
     });
-    this.onCancel();
   }
 
   onCancel = () => {
@@ -71,7 +69,7 @@ class NormalTransForm extends Component {
     });
   }
 
-  handleSend = () => {
+  handleNext = () => {
     const { onSend, updateTransParams } = this.props;
     let form = this.props.form;
     let from = this.props.from;
@@ -79,18 +77,12 @@ class NormalTransForm extends Component {
     form.validateFields(err => {
       if (err) return;
       updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
-      onSend(from, this.props.rawTx);
-
-      form.resetFields();
       this.setState({ advanced: false, confirmVisible: true });
     });
   }
 
   sendTrans = () => {
     this.props.onSend(this.props.from);
-    this.setState({
-      confirmVisible: false,
-    });
   }
 
   handleClick = (gasPrice, gasLimit, nonce) => {
@@ -122,7 +114,7 @@ class NormalTransForm extends Component {
     checkWanAddr(value).then(ret => {
       if (ret) {
         if (!this.state.advanced) {
-          this.updateGasLimit();
+          // this.updateGasLimit();
         }
         callback();
       } else {
@@ -136,7 +128,7 @@ class NormalTransForm extends Component {
   checkAmount = (rule, value, callback) => {
     if (value >= 0) {
       if (!this.state.advanced) {
-        this.updateGasLimit();
+        // this.updateGasLimit();
       }
       callback();
     } else {
@@ -161,15 +153,14 @@ class NormalTransForm extends Component {
           closable={false}
           title="Transaction"
           onCancel={this.onCancel}
-          onOk={this.handleSend}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
-            <Button key="submit" type="primary" loading={loading} onClick={this.handleSend}>Send</Button>,
+            <Button key="submit" type="primary" onClick={this.handleNext}>Next</Button>,
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
             <Form.Item label="From">
-              {getFieldDecorator('from', { initialValue: from }, { rules: [{ required: true, message: 'Address is incorrect' }] })
+              {getFieldDecorator('from', { initialValue: from })
                 (<Input disabled={true} placeholder="Sender Address" prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
             <Form.Item label="To">
@@ -200,8 +191,8 @@ class NormalTransForm extends Component {
             <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
           </Form>
         </Modal>
-        <AdvancedOption visible={advancedVisible} minGasPrice={minGasPrice} gasPrice={gasPrice} gasLimit={gasLimit} nonce={nonce} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
-        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} />
+        <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
+        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

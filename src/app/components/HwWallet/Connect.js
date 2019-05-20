@@ -18,6 +18,12 @@ class Connect extends Component {
     this.columns = [{ title: 'Address', dataIndex: 'address' }, { title: 'Balance', dataIndex: 'balance' }];
   }
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   resetStateVal = () => {
     this.page = 0;
     this.selectedAddrs = [];

@@ -79,23 +79,23 @@ class Ledger extends Component {
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
     
+    message.info('Please Sign transaction in Ledger');
     wand.request('wallet_signTransaction', { walletID: WALLETID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn('Sign transaction failed. Please try again');
+        callback(err, null);
+
         console.log(`Sign Failed: ${err}`);
       } else {
         console.log("signature", sig)
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;
-
         console.log("trans", tx)
-
         let wTx = new wanTx(tx);
         let signedTx = '0x' + wTx.serialize().toString('hex');
         console.log(signedTx);
-  
-        callback(signedTx);
+        callback(null, signedTx);
       }
     });
   }

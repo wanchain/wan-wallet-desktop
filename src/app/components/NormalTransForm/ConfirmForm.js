@@ -11,10 +11,6 @@ import './index.less';
 
 @observer
 class ConfirmForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleCancel = () => {
     this.props.onCancel();
   }
@@ -24,7 +20,7 @@ class ConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, from } = this.props;
+    const { visible, form, from, loading, sendTrans, onCancel } = this.props;
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce } = this.props.transParams[from];
 
@@ -37,10 +33,9 @@ class ConfirmForm extends Component {
         visible={visible}
         title="Transaction Confirm"
         onCancel={this.handleCancel}
-        onOk={this.handleSave}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" className="confirm-button" onClick={() => this.handleSave()}>Confirm</Button>,
+          <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>Send</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">

@@ -7,6 +7,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 
 @inject(stores => ({
+  rawTx: stores.sendTransParams.rawTx,
   transParams: stores.sendTransParams.transParams,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
@@ -17,35 +18,42 @@ class Accounts extends Component {
     { title: "NAME", dataIndex: "name" },
     { title: "ADDRESS", dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
     { title: "BALANCE", dataIndex: "balance" },
-    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
+    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} onRef={this.onRef} /></div> }
   ];
 
-  handleSend = (from, rawTx) => {
-    let params = this.props.transParams[from];
-    this.props.signTransaction(params.path, rawTx, raw => {
-      wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
-        if (err) {
-          message.warn("Send transaction failed. Please try again");
-          console.log(err);
-        } else {
-          let params = {
-            txHash,
-            from: from.toLowerCase(),
-            srcSCAddrKey: 'WAN',
-            srcChainType: 'WAN',
-            tokenSymbol: 'ETH',
-            ...rawTx
-          }
-          console.log(params, 'paramsparamsparamsparams')
-          wand.request('transaction_insertTransToDB', {rawTx: params}, () => {
-            this.props.updateTransHistory();
-          })
-          console.log("TxHash:", txHash);
-        }
-      });
-    });
+  onRef = ref => {
+    this.child = ref
+  }
 
-    this.setState({ visible: true });
+  handleSend = from => {
+    const { rawTx } = this.props;
+    let params = this.props.transParams[from];
+    this.props.signTransaction(params.path, rawTx, (err, raw) => {
+      this.child.handleCancel();
+
+      if(err) {
+      } else {
+        wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
+          if (err) {
+            message.warn("Send transaction failed. Please try again");
+            console.log(err);
+          } else {
+            let params = {
+              txHash,
+              from: from.toLowerCase(),
+              srcSCAddrKey: 'WAN',
+              srcChainType: 'WAN',
+              tokenSymbol: 'ETH',
+              ...rawTx
+            }
+            wand.request('transaction_insertTransToDB', {rawTx: params}, () => {
+              this.props.updateTransHistory();
+            })
+            console.log("TxHash:", txHash);
+          }
+        });
+      }
+    });
   }
 
   render() {
