@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { Table } from 'antd';
+import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 
+import Cards from 'components/Staking/Cards';
+// import Validators from 'components/Staking/Validators';
+// import StakingHistory from 'components/Staking/StakingHistory';
+
 import './index.less';
-import wanLogo from 'static/image/wan.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
@@ -17,36 +20,9 @@ class Staking extends Component {
     super(props);
     this.props.changeTitle('Staking');
   }
-  
-  columns = [
-    {
-      title: 'NAME',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>,
-    }, {
-      title: 'PRICE',
-      dataIndex: 'price',
-      key: 'price',
-    }, {
-      title: 'BALANCE',
-      dataIndex: 'balance',
-      key: 'balance',
-    }, {
-      title: 'VALUE',
-      dataIndex: 'value',
-      key: 'value'
-    }, {
-      title: 'PORTFOLIO',
-      dataIndex: 'portfolio',
-      key: 'portfolio',
-    }
-  ]
 
   componentDidMount() {
-    this.timer = setInterval(() =>{
-      this.props.updateCoinPrice();
-    }, 5000)
+
   }
 
   componentWillUnmount() {
@@ -55,10 +31,23 @@ class Staking extends Component {
 
   render() {
     return (
-        <div>
-          <div>Hello Staking</div>
-          <Table className="portfolioMain" columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
-        </div>
+      <div className="staking">
+        <Row>
+          <Col>
+            <Cards/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {/* <Validators/> */}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {/* <StakingHistory/> */}
+          </Col>
+        </Row>
+      </div>
     );
   }
 }
