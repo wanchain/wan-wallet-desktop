@@ -18,25 +18,19 @@ class Accounts extends Component {
     { title: "NAME", dataIndex: "name" },
     { title: "ADDRESS", dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
     { title: "BALANCE", dataIndex: "balance" },
-    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} onRef={this.onRef} /></div> }
+    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
   ];
-
-  onRef = ref => {
-    this.child = ref
-  }
 
   handleSend = from => {
     const { rawTx } = this.props;
     let params = this.props.transParams[from];
-    this.props.signTransaction(params.path, rawTx, (err, raw) => {
-      this.child.handleCancel();
-
-      if(err) {
-      } else {
+    return new Promise((resolve, reject)=> {
+      this.props.signTransaction(params.path, rawTx, (err, raw) => {
         wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
           if (err) {
             message.warn("Send transaction failed. Please try again");
             console.log(err);
+            reject();
           } else {
             let params = {
               txHash,
@@ -49,11 +43,12 @@ class Accounts extends Component {
             wand.request('transaction_insertTransToDB', {rawTx: params}, () => {
               this.props.updateTransHistory();
             })
+            resolve();
             console.log("TxHash:", txHash);
           }
         });
-      }
-    });
+      });
+    })
   }
 
   render() {

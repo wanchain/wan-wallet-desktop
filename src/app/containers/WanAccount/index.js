@@ -67,13 +67,25 @@ class WanAccount extends Component {
     {
       title: 'ACTION',
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} onRef={this.onRef}/></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
   ];
 
-  onRef = ref => {
-    this.child = ref
-  }
+  columnsTree = this.columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: this.handleSave,
+      }),
+    };
+  });
 
   handleSend = from => {
     let params = this.props.transParams[from];
@@ -88,17 +100,19 @@ class WanAccount extends Component {
       gasPrice: params.gasPrice,
       nonce: params.nonce
     };
-
-    wand.request('transaction_normal', trans, (err, val) => {
-      if (err) {
-        message.warn("Send transaction failed. Please try again");
-        console.log(err);
-      } else {
-        this.child.handleCancel();
-        this.props.updateTransHistory();
-        console.log("TxHash:", val);
-      }
-    });
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_normal', trans, function(err, txHash) {
+        if (err) {
+          message.warn("Send transaction failed. Please try again");
+          console.log(err);
+          reject(false)
+        } else {
+          this.props.updateTransHistory();
+          console.log("TxHash:", txHash);
+          resolve(txHash)
+        }
+      }.bind(this));
+    })
   }
 
   creatAccount = () => {
@@ -134,29 +148,13 @@ class WanAccount extends Component {
   }
 
   render() {
-    const { getAmount } = this.props;
+    const { getAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
         row: EditableFormRow,
       },
     };
-
-    const columns = this.columns.map((col) => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          editable: col.editable,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          handleSave: this.handleSave,
-        }),
-      };
-    });
 
     return (
       <div className="account">
@@ -168,7 +166,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={columns} dataSource={this.props.getAddrList} />
+            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList} />
           </Col>
         </Row>
         <Row className="mainBody">
