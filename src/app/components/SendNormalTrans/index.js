@@ -22,6 +22,12 @@ class SendNormalTrans extends Component {
     visible: false,
   }
 
+  componentDidMount(){
+    if(typeof this.props.onRef === 'function') {
+      this.props.onRef(this)
+    }
+  }
+
   showModal = async () => {
     const { from, path, chainType, chainId, addTransTemplate, updateTransParams } = this.props;
     addTransTemplate(from, { chainType, chainId });
@@ -36,25 +42,25 @@ class SendNormalTrans extends Component {
   }
 
   handleCancel = () => {
-    this.setState({ visible: false });
+    this.setState({ visible: false, loading: false });
   }
 
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
 
-  handleSend = (from, rawTx) => {
-    this.props.handleSend(from, rawTx);
-    this.setState({ visible: false });
+  handleSend = from => {
+    this.props.handleSend(from);
+    this.setState({ loading: true });
   }
 
   render() {
-    const { visible } = this.state;
+    const { visible, loading } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>Send</Button>
         { visible 
-          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} />
+          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading}/>
           : ''
         }
       </div>

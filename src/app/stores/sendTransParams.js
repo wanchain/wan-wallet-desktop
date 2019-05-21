@@ -1,4 +1,4 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import BigNumber from 'bignumber.js';
 
 class SendTransParams {
@@ -10,19 +10,20 @@ class SendTransParams {
     @observable currentGasPrice = 180;
     
     @action addTransTemplate(addr, params) {
-        self.currentFrom = addr;
-        self.transParams[addr] = Object.defineProperties({}, {
-          chainType: { value: params.chainType, writable: true, enumerable:true },
-          gasPrice: { value: self.minGasPrice, writable: true, enumerable:true },
-          gasLimit: { value: self.gasLimit, writable: true, enumerable:true },
-          nonce: { value: '', writable: true, enumerable:true } ,
-          data: { value: '0x', writable: true, enumerable:true },
-          chainId: { value: params.chainId, writable: true, enumerable:true },
-          txType: { value: 1, writable: true, enumerable:true },
-          path: { value: '', writable: true, enumerable:true },
-          to: { value: '', writable: true, enumerable:true },
-          amount: { value: 0, writable: true, enumerable:true }
-        });
+      let objKey = { writable: true, enumerable:true };
+      self.currentFrom = addr;
+      self.transParams[addr] = Object.defineProperties({}, {
+        chainType: { value: params.chainType, ...objKey },
+        gasPrice: { value: self.minGasPrice, ...objKey },
+        gasLimit: { value: self.gasLimit, ...objKey },
+        nonce: { value: '', ...objKey } ,
+        data: { value: '0x', ...objKey },
+        chainId: { value: params.chainId, ...objKey },
+        txType: { value: 1, ...objKey },
+        path: { value: '', ...objKey },
+        to: { value: '', ...objKey },
+        amount: { value: 0, ...objKey }
+      });
     }
 
     @action updateTransParams(addr, paramsObj) {

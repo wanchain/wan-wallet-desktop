@@ -18,6 +18,12 @@ class Connect extends Component {
     this.columns = [{ title: 'Address', dataIndex: 'address' }, { title: 'Balance', dataIndex: 'balance' }];
   }
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   resetStateVal = () => {
     this.page = 0;
     this.selectedAddrs = [];
@@ -63,14 +69,18 @@ class Connect extends Component {
     hdKeys.forEach(hdKey => {
       addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
     });
+    visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
     getBalance(addresses.map(item => item.address)).then(res => {
       if (res && Object.keys(res).length) {
+        let addresses = this.state.addresses;
         addresses.forEach(item => {
           if(Object.keys(res).includes(item.address)) {
             item.balance = res[item.address];
           }
         })
-        visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
+        this.setState({
+          addresses
+        })
       }
     }).catch(err => {
       console.log('err', err);

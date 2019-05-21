@@ -2,6 +2,7 @@ import { walletCore } from 'wanchain-js-sdk';
 import Logger from '~/src/utils/Logger'
 import configService from './config'
 import EventEmitter from 'events'
+import Windows from '~/src/modules/windows'
 
 class WalletBackend extends EventEmitter {
     constructor(config) {
@@ -10,7 +11,6 @@ class WalletBackend extends EventEmitter {
     }
 
     hdWalletDisconnectHandler(msg) {
-        const { Windows } = require('../windows')
         Windows.broadcast('notification', 'hdwallet', msg)
     }
   
@@ -24,7 +24,6 @@ class WalletBackend extends EventEmitter {
         } catch (e) {
             this.logger.error(e.message || e.stack) 
         }
-        
         
         this.sdk.on('disconnect', this.hdWalletDisconnectHandler)
         this.sdk.on('probeloss', this.hdWalletDisconnectHandler)

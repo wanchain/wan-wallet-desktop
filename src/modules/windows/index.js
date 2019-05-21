@@ -40,6 +40,8 @@ class Window extends EventEmitter {
 
         electronOptions = _.merge(electronOptions, opts.electronOptions)
 
+        console.log('electronOptions: ', electronOptions)
+
         this._logger.debug('Creating browser window')
 
         this.window = new BrowserWindow(electronOptions)
@@ -189,14 +191,12 @@ class Windows {
             show: true,
             ownerId: null,
             electronOptions: {
-                // frame: false,
-                title: '',
                 width: 1200,
                 height: 800,
-                resizable: false,
+                // resizable: false,
+                fullscreen: false,
                 center: true,
                 useContentSize: true,
-                // titleBarStyle: 'hiddenInset',
                 autoHideMenuBar: true,
                 webPreferences: {
                     webSecurity: false,
@@ -211,7 +211,7 @@ class Windows {
         })
 
         if (parent) {
-            opts.electronOptions.parent = parent.window;
+            opts.electronOptions.parent = parent.window
         }
 
         const wnd = this.create(type, opts)
@@ -263,7 +263,7 @@ class Windows {
         }
 
         const anyOpen = _.find(this._windows, (wnd) => {
-            
+            return wnd.isPrimary && !wnd.isClosed && wnd.isShown
         })
 
         if (!anyOpen && process.platform !== 'darwin') {

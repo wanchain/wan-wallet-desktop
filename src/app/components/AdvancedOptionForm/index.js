@@ -5,18 +5,13 @@ import { observer, inject } from 'mobx-react';
 import './index.less';
 
 @inject(stores => ({
+  minGasPrice: stores.sendTransParams.minGasPrice,
   transParams: stores.sendTransParams.transParams,
-  updateGasPrice: (addr, gasPrice) => stores.sendTransParams.updateGasPrice(addr, gasPrice),
-  updateGasLimit: (addr, gasLimit) => stores.sendTransParams.updateGasLimit(addr, gasLimit),
-  updateNonce: (addr, nonce) => stores.sendTransParams.updateNonce(addr, nonce)
+  updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
 class AdvancedOptionForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleCancel = () => {
     this.props.onCancel();
   }
@@ -26,18 +21,15 @@ class AdvancedOptionForm extends Component {
     let gasLimit = this.props.form.getFieldValue('gasLimit');
     let gasPrice = this.props.form.getFieldValue('gasPrice');
     let nonce = this.props.form.getFieldValue('nonce');
-    this.props.updateGasLimit(from, gasLimit);
-    this.props.updateGasPrice(from, gasPrice);
-    this.props.updateNonce(from, nonce);
+    this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
     console.log("handleSave", this.props.transParams[from])
-
     this.props.onSave();
   }
 
   render() {
-    const { visible, form, minGasPrice, from } = this.props;
+    const { visible, form, minGasPrice, from, transParams } = this.props;
     const { getFieldDecorator } = form;
-    const { gasLimit, gasPrice, nonce } = this.props.transParams[from];
+    const { gasLimit, gasPrice, nonce } = transParams[from];
     return (
       <Modal
         destroyOnClose={true}
@@ -48,7 +40,7 @@ class AdvancedOptionForm extends Component {
         onOk={this.handleSave}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" className="confirm-button" onClick={() => this.handleSave()}>Save</Button>,
+          <Button key="submit" type="primary" className="confirm-button" onClick={this.handleSave}>Save</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
