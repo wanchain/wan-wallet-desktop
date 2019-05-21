@@ -16,12 +16,12 @@ class Cell extends Component {
     return (
       <div className="cell">
         <Row>
-          <Col>
+          <Col className="cell-title">
             This is title.
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col className="cell-bottom">
             This is bottom.
           </Col>
         </Row>

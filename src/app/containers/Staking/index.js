@@ -34,6 +34,9 @@ class Staking extends Component {
       <div className="staking">
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /><span className="dashboard">Dashboard</span></Col>
+          <Col span={12} className="col-right">
+            <Button className="newValidatorBtn" type="primary" shape="round" size="large">New Validator</Button>
+          </Col>
         </Row>
         <Row>
           <Col>

@@ -11,27 +11,32 @@ class Card extends Component {
       value: props.value,
       tail: props.tail,
       bottom: props.bottom,
+      className: props.className,
     }
   }
 
   render() {
     return (
-      <div className="card">
+      <div className={this.state.className}>
         <Row>
-          <Col>
+          <Col className="title">
             {this.state.title}
           </Col>
         </Row>
         <Row>
-          <Col span={8}>
+          <Col>
+          <span className="value">{this.state.value}</span>
+          <span className="tail">{this.state.tail}</span>
+          </Col>
+          {/* <Col span={8} className="value">
             {this.state.value}
           </Col>
-          <Col span={8} offset={2}>
+          <Col span={8} offset={2} className="tail">
             {this.state.tail}
-          </Col>
+          </Col> */}
         </Row>
         <Row>
-          <Col>
+          <Col className="bottom">
             {this.state.bottom}
           </Col>
         </Row>

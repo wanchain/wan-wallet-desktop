@@ -19,17 +19,14 @@ class Validator extends Component {
   render() {
     return (
       <div className="validator">
-        <Row>
-          <Col span={3} ><Cell /></Col>
-          <Col span={3} >-></Col>
-          <Col span={3} ><Cell /></Col>
-          <Col span={3} >-></Col>
-          <Col span={3} ><Cell /></Col>
-          <Col span={3} >-></Col>
-          <Col span={3} ><Cell /></Col>
-          <Col span={3} >
-            <Button>+</Button>
-            <Button>-</Button>
+        <Row type="flex" justify="space-around">
+          <Col span={4} className="accountName">ACCOUNT1</Col>
+          <Col span={4} ><Cell /></Col>
+          <Col span={4} ><Cell /></Col>
+          <Col span={4} ><Cell /></Col>
+          <Col span={4} >
+            <Button className="topup">+</Button>
+            <Button className="exitit">-</Button>
           </Col>
         </Row>
       </div>
