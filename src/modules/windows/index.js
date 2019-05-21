@@ -40,8 +40,6 @@ class Window extends EventEmitter {
 
         electronOptions = _.merge(electronOptions, opts.electronOptions)
 
-        console.log('electronOptions: ', electronOptions)
-
         this._logger.debug('Creating browser window')
 
         this.window = new BrowserWindow(electronOptions)
@@ -266,7 +264,7 @@ class Windows {
             return wnd.isPrimary && !wnd.isClosed && wnd.isShown
         })
 
-        if (!anyOpen && process.platform !== 'darwin') {
+        if (!anyOpen) {
             logger.info('All primary windows closed/invisible, so quitting app...')
 
             app.quit()
