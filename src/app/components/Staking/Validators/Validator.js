@@ -1,32 +1,23 @@
 import React, { Component } from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col } from 'antd';
 import './index.less';
-import Cell from './Cell';
 
 class Validator extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      account: props.account,
-      stake: props.stake,
-      stakeTime: props.time,
-      validator: props.validator,
-      rewardTime: props.reward,
+      img: props.img,
+      name: props.name,
     }
   }
 
   render() {
     return (
       <div className="validator">
-        <Row type="flex" justify="space-around">
-          <Col span={4} className="accountName">ACCOUNT1</Col>
-          <Col span={4} ><Cell /></Col>
-          <Col span={4} ><Cell /></Col>
-          <Col span={4} ><Cell /></Col>
-          <Col span={4} >
-            <Button className="topup">+</Button>
-            <Button className="exitit">-</Button>
+        <Row>
+          <Col>
+            <img src={this.state.img}/><span className="name">{this.state.name}</span>
           </Col>
         </Row>
       </div>

@@ -17,12 +17,12 @@ class Cell extends Component {
       <div className="cell">
         <Row>
           <Col className="cell-title">
-            This is title.
+            <span>{this.state.title}</span><span className="cell-title-ends">{" WAN"}</span>
           </Col>
         </Row>
         <Row>
           <Col className="cell-bottom">
-            This is bottom.
+          {this.state.bottom}
           </Col>
         </Row>
       </div>

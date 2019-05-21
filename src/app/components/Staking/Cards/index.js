@@ -26,7 +26,7 @@ class Cards extends Component {
           </Col>
           <Col span={6}>
             <Card className="card3"
-              title="Current Return Rate"
+              title="Current Reward Rate"
               value="15%"
               tail="↑"
               bottom="Epoch 1000"
@@ -34,7 +34,7 @@ class Cards extends Component {
           </Col>
           <Col span={6}>
             <Card className="card4"
-              title="Total distributed rewards"
+              title="Total Distributed Rewards"
               value="15,000"
               tail="WAN"
               bottom="From 1th Jan"
