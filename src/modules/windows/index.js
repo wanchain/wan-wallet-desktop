@@ -260,14 +260,16 @@ class Windows {
             }
         }
 
-        const anyOpen = _.find(this._windows, (wnd) => {
+        const anyOpen = _.findKey(this._windows, (wnd) => {
             return wnd.isPrimary && !wnd.isClosed && wnd.isShown
         })
 
         if (!anyOpen) {
-            logger.info('All primary windows closed/invisible, so quitting app...')
+            logger.info('All primary windows closed/invisible')
 
-            app.quit()
+            if (process.platform !== 'darwin') {
+                app.quit()
+            }
         }
     }
 

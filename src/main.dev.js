@@ -48,6 +48,7 @@ async function createWindow () {
   });
 
   mainWindow = Windows.create('main', {
+    primary: true,
     electronOptions: {
       width: mainWindowState.width,
       height: mainWindowState.height,
