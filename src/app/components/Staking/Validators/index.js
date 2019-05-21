@@ -5,9 +5,28 @@ import Cell from './Cell';
 import Validator from "./Validator";
 import validatorImg from 'static/image/validator.png';
 import arrow from 'static/image/arrow.png';
-import topup2 from 'static/image/topup2.png';
+import WithdrawForm from '../WithdrawForm';
 
 class Validators extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      visible: false,
+    }
+  }
+
+  modifyWithdraw() {
+    this.setState({ visible: true });
+  }
+
+  handleCancel = () => {
+    this.setState({ visible: false });
+  }
+
+  handleSend = () => {
+    this.setState({ visible: false });
+  }
 
   columns = [
     {
@@ -57,7 +76,7 @@ class Validators extends Component {
         <div>
           <Row>
             <Col span={12} align="center"><Button className="modifyTopUpBtn" /></Col>
-            <Col span={12} align="center"><Button className="modifyExititBtn" /></Col>
+            <Col span={12} align="center"><Button className="modifyExititBtn" onClick={this.modifyWithdraw.bind(this)} /></Col>
           </Row>
           <Row>
             <Col span={12} className="modifyBtnText" align="center">Top-up</Col>
@@ -85,6 +104,10 @@ class Validators extends Component {
     return (
       <div className="validators">
         <Table columns={this.columns} dataSource={validators} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        { this.state.visible 
+          ? <WithdrawForm onCancel={this.handleCancel} onSend={this.handleSend}/>
+          : ''
+        }
       </div>
     );
   }
