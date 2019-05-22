@@ -22,7 +22,9 @@ class MenuFactoryService extends EventEmitter {
         }
 
         Menu.setApplicationMenu(this.menu)
-        setting.switchLang(i18n.language)
+        if (setting.language !== i18n.language) {
+            setting.switchLang(i18n.language)
+        }
     }
 }
 

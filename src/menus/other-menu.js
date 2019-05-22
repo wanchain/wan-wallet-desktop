@@ -119,7 +119,6 @@ export default (i18n) => {
             click: () => {
                 if (!setting.language.includes(languageCode)) {
                     i18n.changeLanguage(languageCode)
-                    menuFactoryService.emit('menuSetDone')
                 }
             }
         }

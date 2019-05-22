@@ -220,9 +220,8 @@ export default (i18n) => {
             type: 'radio',
             checked: i18n.language === languageCode,
             click: () => {
-                if (!setting.language.includes(languageCode)) {
+                if (setting.language !== languageCode) {
                     i18n.changeLanguage(languageCode)
-                    menuFactoryService.emit('menuSetDone')
                 }
             }
         }

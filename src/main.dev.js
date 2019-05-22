@@ -16,13 +16,10 @@ import { Windows, walletBackend } from '~/src/modules'
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
 
-menuFactoryService.on('menuSetDone', () => {
-  Windows.broadcast('notification', 'language', setting.language)
-})
-
 if (!i18n.isIintialized) {
-  i18n.on('languageChanged', (lng) => {
+  i18n.on('languageChanged', () => {
     menuFactoryService.buildMenu(i18n)
+    Windows.broadcast('notification', 'language', setting.language)
   })
 
   i18n.on('loaded', (loaded) => {
