@@ -39,8 +39,8 @@ class StakingHistory extends Component {
     const { historyList } = this.props;
     return (
       <div>
-        <div className="histroyCon">
-          <img src={history} /><span>History</span>
+        <div className="stakeHistroy">
+          <img className="stakeHistroy-img" src={history} /><span>History</span>
         </div>
         <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
