@@ -1,6 +1,6 @@
 import fs from 'fs'
 import _ from 'lodash'
-import { ipcMain } from 'electron'
+import { ipcMain, app } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
@@ -81,13 +81,16 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
             try {
                 fs.rmdirSync(path.join(setting.userDataPath, 'Db'))
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                // sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
 
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
+                // sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
+
+            app.relaunch()
+            app.exit(0)
 
             break
     }
