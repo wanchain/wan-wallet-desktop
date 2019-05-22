@@ -114,7 +114,7 @@ class NormalTransForm extends Component {
     checkWanAddr(value).then(ret => {
       if (ret) {
         if (!this.state.advanced) {
-          // this.updateGasLimit();
+          this.updateGasLimit();
         }
         callback();
       } else {
@@ -128,7 +128,7 @@ class NormalTransForm extends Component {
   checkAmount = (rule, value, callback) => {
     if (value >= 0) {
       if (!this.state.advanced) {
-        // this.updateGasLimit();
+        this.updateGasLimit();
       }
       callback();
     } else {

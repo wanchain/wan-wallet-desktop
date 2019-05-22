@@ -4,7 +4,7 @@ import { Tag } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 
 import './index.less';
-import { randomsort } from 'utils/support';
+import { randomSort } from 'utils/support';
 
 @inject(stores => ({
   pwd: stores.mnemonic.pwd,
@@ -73,7 +73,7 @@ class ConfirmPhrase extends Component {
           </TweenOneGroup>
         </div>
         <div className="phraseCon">
-          {randomsort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
+          {randomSort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
         </div>
       </div>
     );

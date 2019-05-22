@@ -49,7 +49,7 @@ class TransHistory extends Component {
     const addrList = Object.keys(addrInfo[name]);
     return (
       <div>
-        <div className="histroyCon">
+        <div className="historyCon">
           <img src={history} /><span>Transaction History</span>
           <Select 
             showSearch

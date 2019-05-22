@@ -19,11 +19,11 @@ export function checkPhrase(phrase) {
   return formatPhrase.length === 12 && formatPhrase.every(val => /^[a-z]{1,}$/.test(val));
 }
 
-export function randomsort(arr) {
+export function randomSort(arr) {
   return arr.sort(() => Math.random()>.5 ? -1 : 1);
 }
 
-export function timeFormater(time) {
+export function timeFormat(time) {
   const current = new Date(time * 1000);
   const m = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec");
   return `${m[current.getMonth()]}-${current.getDate()}-${current.getFullYear()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;

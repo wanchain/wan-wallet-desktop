@@ -7,16 +7,17 @@ import { wanTx, WanRawTx } from 'utils/hardwareUtils'
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
-const DPATH = "m/44'/5718350'/0'";
-const WALLETID = 0x02;
-const CHAINTYPE = 'WAN';
+const WAN_PATH = "m/44'/5718350'/0'";
+const WALLET_ID = 0x02;
+const CHAIN_TYPE = 'WAN';
+const LEDGER = 'ledger';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
-  addLedgerAddr: newAddr => stores.wanAddress.addLedgerAddress(newAddr)
+  addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr)
 }))
 
 @observer
@@ -50,7 +51,7 @@ class Ledger extends Component {
   }
 
   connectAndGetPublicKey = callback => {
-    wand.request('wallet_isConnected', { walletID: WALLETID }, (err, connected) => {
+    wand.request('wallet_isConnected', { walletID: WALLET_ID }, (err, connected) => {
       if (err) return;
       if (connected) {
         this.getPublicKey(callback);
@@ -69,8 +70,8 @@ class Ledger extends Component {
 
   getPublicKey = callback => {
     wand.request('wallet_getPubKeyChainId', {
-      walletID: WALLETID,
-      path: DPATH
+      walletID: WALLET_ID,
+      path: WAN_PATH
     }, (err, val) => {
       callback(err, val);
     });
@@ -80,7 +81,7 @@ class Ledger extends Component {
     let rawTx = new WanRawTx(tx).serialize();
     
     message.info('Please Sign transaction in Ledger');
-    wand.request('wallet_signTransaction', { walletID: WALLETID, path: path, rawTx: rawTx }, (err, sig) => {
+    wand.request('wallet_signTransaction', { walletID: WALLET_ID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn('Sign transaction failed. Please try again');
         callback(err, null);
@@ -106,8 +107,8 @@ class Ledger extends Component {
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={DPATH} />
-            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAINTYPE} />
+            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
+            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

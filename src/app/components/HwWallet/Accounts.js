@@ -37,7 +37,7 @@ class Accounts extends Component {
               from: from.toLowerCase(),
               srcSCAddrKey: 'WAN',
               srcChainType: 'WAN',
-              tokenSymbol: 'ETH',
+              tokenSymbol: 'WAN',
               ...rawTx
             }
             wand.request('transaction_insertTransToDB', {rawTx: params}, () => {

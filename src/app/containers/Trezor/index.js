@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import './index.less';
 import TrezorConnect from 'trezor-connect';
-// import Connect from './Connect';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
+const wanTx = require('wanchainjs-tx');
+
+const WAN_PATH = "m/44'/5718350'/0'/0";
+const CHAIN_TYPE = 'WAN';
+const TREZOR = 'trezor';
 
 // Initialize TrezorConnect 
 TrezorConnect.init({
@@ -25,37 +29,28 @@ TrezorConnect.init({
   });
 
 @inject(stores => ({
-  changeTitle: newTitle => stores.session.changeTitle(newTitle)
+  addrInfo: stores.wanAddress.addrInfo,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
+  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
 }))
 
 @observer
 class Trezor extends Component {
   constructor(props) {
     super(props);
-    this.dPath = "m/44'/5718350'/0'/0";
-    this.chainType = "WAN";
-    this.state = {
-      visible: false,
-      // addresses: [{ key: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xcf0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" },
-      // { key: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", address: "0xaa0ade20ee35f2f1dcaa0686315b5680d6c0a4e5", balance: 0, path: "m/44'/5718350'/0'/0/0" }
-      // ],
-      addresses: []
-    };
-  }
-
-  componentWillMount() {
     this.props.changeTitle('Trezor')
   }
 
-  resetStateVal = () => {
-    this.setState({
-      visible: false,
-      addresses: [],
-    });
+  componentDidUpdate() {
+    if (this.props.trezorAddrList.length !== 0 && !this.timer) {
+      this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+    }
   }
 
-  setAddresses = (addresses) => {
-    this.setState({ addresses: addresses });
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   instruction = () => {
@@ -68,7 +63,7 @@ class Trezor extends Component {
 
   getPublicKey = (callback) => {
     TrezorConnect.getPublicKey({
-      path: this.dPath
+      path: WAN_PATH
     }).then((result) => {
       if (result.success) {
         callback(false, result.payload);
@@ -78,13 +73,45 @@ class Trezor extends Component {
     });
   }
 
+  signTransaction = (path, tx, callback) => {
+    TrezorConnect.ethereumSignTransaction({
+      path: path,
+      transaction: {
+        to: tx.to,
+        value: tx.value,
+        data: tx.data,
+        chainId: tx.chainId,
+        nonce: tx.nonce,
+        gasLimit: tx.gasLimit,
+        gasPrice: tx.gasPrice,
+        txType: tx.Txtype,
+      },
+    }).then((result) => {
+      if (!result.success) {
+        message.warn("Sign transaction failed. Please try again");
+        callback('Sign failed', null);
+        return;
+      }
+
+      tx.v = result.payload.v;
+      tx.r = result.payload.r;
+      tx.s = result.payload.s;
+      let eTx = new wanTx(tx);
+      let signedTx = '0x' + eTx.serialize().toString('hex');
+      console.log('signed', signedTx);
+      callback(null, signedTx);
+    });
+  }
+
   render() {
+    const { trezorAddrList, addTrezorAddr } = this.props;
     return (
       <div>
         {
-          this.state.addresses.length === 0 ? <ConnectHwWallet setAddresses={this.setAddresses} 
-          Instruction={this.instruction} getPublicKey={this.getPublicKey} 
-          dPath={this.dPath} /> : <Accounts addresses={this.state.addresses} chainType={this.chainType} />
+          trezorAddrList.length === 0
+            ? <ConnectHwWallet setAddresses={addTrezorAddr}
+              Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
+            : <Accounts name="trezor" addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

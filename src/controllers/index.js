@@ -381,6 +381,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'raw':
             try {
+                logger.info('Send raw transaction', payload)
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
             } catch (e) {
                 logger.error(e.message || e.stack)
