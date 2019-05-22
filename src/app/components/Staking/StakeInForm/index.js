@@ -6,22 +6,46 @@ import Validator from '../Validators/Validator';
 import './index.less';
 import validatorImg from 'static/image/validator.png';
 
+@inject(stores => ({
+  getAddrList: stores.wanAddress.getAddrList,
+}))
 
+@observer
 class StakeInForm extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      balance: "0",
+      addrList: [],
+    }
+  }
+
+  componentWillMount() {
+    const { getAddrList } = this.props;
+    let addrList = []
+    getAddrList.forEach(addr => {
+      addrList.push(
+        addr.address
+      )
+    });
+    this.setState({addrList: addrList})
   }
 
   componentWillUnmount() {
+    
+  }
 
+  onChange = value => {
+    const { getAddrList } = this.props;
+    for (let i = 0; i < getAddrList.length; i++) {
+      const element = getAddrList[i];
+      if (element.address == value) {
+        this.setState({balance: element.balance})
+      }
+    }
   }
 
   render() {
-    let addrList = []
-    addrList.push(
-      "0xCdE32F2d3d683510d610Cd94b4Dba28c6D5d515C"
-    )
-
     let validatorList = []
     validatorList.push(
       (<Validator img={validatorImg} name="Ethereum" />)
@@ -87,7 +111,7 @@ class StakeInForm extends Component {
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={5}><span className="stakein-name">Balance</span></Col>
-                <Col span={19}><span className="stakein-addr">20,000 WAN</span></Col>
+                <Col span={19}><span className="stakein-addr">{this.state.balance} WAN</span></Col>
               </Row>
             </div>
             <div className="stakein-line">
@@ -106,7 +130,7 @@ class StakeInForm extends Component {
                     onSearch={this.onSearch}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    {addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+                    {this.state.addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
                   </Select>
                 </Col>
               </Row>
