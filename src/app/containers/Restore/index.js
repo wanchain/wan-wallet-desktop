@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Input, message } from 'antd';
+import { Button, Card, Modal } from 'antd';
 
 import './index.less';
 
@@ -19,9 +19,7 @@ class Restore extends Component {
   }
 
   handleOk = () => {
-    /** TODO */
-    console.log('clear local data and reboot ')
-    this.resetStateVal();
+    wand.request('phrase_reset', null, () => {});
   }
 
   render() {

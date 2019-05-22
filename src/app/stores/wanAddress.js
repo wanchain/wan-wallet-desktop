@@ -24,6 +24,10 @@ class WanAddress {
       };
     }
 
+    @action updateAddress(type, newAddress = {}) {
+      self.addrInfo[type] = newAddress;
+    }
+
     @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {

@@ -8,9 +8,13 @@ class Session {
   @observable auth = false;
   @observable language = 'en_US';
 
+  @action setChainId(id) {
+    self.chainId = id;
+  }
+
   @action getMnemonic() {
     return new Promise((resolve, reject) => {
-      wand.request('phrase_has', null, function (err, val) {
+      wand.request('phrase_has', null, (err, val) => {
         if (!err) {
           self.hasMnemonicOrNot = val;
           resolve(val);
@@ -18,29 +22,13 @@ class Session {
           self.hasMnemonicOrNot = false;
           resolve(false);
         }
-      }.bind(this));
+      });
     })
   }
 
   @action initChainId(callback) {
-    let chainId;
     getChainId().then((chainId) => {
       self.chainId = chainId;
-    });
-    regEmitterHandler('network', (val) => {
-      if (val.includes('main')) {
-        chainId = 1;
-      } else {
-        chainId = 3;
-      }
-      self.chainId = chainId;
-      wand.request('wallet_lock', null, (err, val) => {
-        if (err) { 
-            console.log('Lock failed ', err)
-            return
-        }
-        self.setAuth(false);
-      })
     });
   }
 

@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
 import { AppContainer } from 'react-hot-loader';
-import { initEmitterHandler, isSdkReady } from 'utils/helper';
 import intl from 'react-intl-universal';
-import locales from './locales';
-import { regEmitterHandler } from 'utils/helper';
 
 import './global.less';
 import Router from './Routes';
 import stores from './stores';
+import locales from './locales';
+import { initEmitterHandler, regEmitterHandler, isSdkReady } from 'utils/helper';
 
 class App extends Component {
   constructor(props) {
@@ -28,6 +27,38 @@ class App extends Component {
         clearInterval(id);
       }
     }, 1000);
+  }
+
+  componentDidMount() {
+    regEmitterHandler('uiAction', action => {
+      if(action === 'lockWallet' && stores.session.auth === true) {
+        wand.request('wallet_lock', null, (err, val) => {
+          if (err) { 
+              console.log('Lock failed ', err)
+              return
+          }
+          stores.session.setAuth(false);
+        })
+      }
+    });
+
+    regEmitterHandler('hdwallet', val => {
+      if(['Ledger', 'Trzeor'].includes(val.Device)) {
+        stores.wanAddress.updateAddress(val.Device.toLowerCase());
+      }
+    });
+
+    regEmitterHandler('network', net => {
+      wand.request('wallet_lock', null, (err, val) => {
+        if (err) { 
+            console.log('Lock failed ', err)
+            return
+        }
+        stores.session.setAuth(false);
+        stores.session.setChainId(net.includes('main') ? 1 : 3);
+        stores.wanAddress.updateTransHistory();
+      })
+    });
   }
 
   changeLanguage = (lan) => {

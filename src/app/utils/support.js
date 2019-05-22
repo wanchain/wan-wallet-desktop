@@ -10,8 +10,10 @@ export function toWei(data) {
 }
 
 export function checkCryptographic(pwd) {
-  let reg = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}");
-  return reg.test(pwd);
+  let reg = new RegExp("(?=^[^\\s]*$)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[\\S]{6,}");
+  let reg1 = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}");
+
+  return reg.test(pwd) || reg1.test(pwd);
 }
 
 export function checkPhrase(phrase) {
