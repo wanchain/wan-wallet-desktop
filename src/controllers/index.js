@@ -76,6 +76,20 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 
             sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: !!ret })
             break
+
+        case 'reset':
+            try {
+                fs.rmdirSync(path.join(setting.userDataPath, 'Db'))
+
+                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
+            }
+
+            break
     }
 })
 
