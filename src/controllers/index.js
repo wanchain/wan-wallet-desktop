@@ -181,11 +181,15 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let { walletID, path, rawTx } = payload;
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
 
+                logger.info('Sign transaction:');
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx );
+
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
                     sig.r = '0x' + ret.r.toString('hex');
                     sig.s = '0x' + ret.s.toString('hex');
                     sig.v = '0x' + ret.v.toString('hex');
+                    logger.info('Signature:' + JSON.stringify(sig));
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -241,6 +245,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
+                logger.info('Nonce: ' + payload.addr + ',' + nonce);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -384,8 +389,11 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     "nonce": nonce
                 }
 
+                logger.info('Normal transaction: ' + JSON.stringify(input));
+
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
+                logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -396,8 +404,9 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'raw':
             try {
-                logger.info('Send raw transaction', payload)
+                logger.info('Send raw transaction: ' + JSON.stringify(payload))
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
+                logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -417,7 +426,9 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
          */
         case 'estimateGas':
             try {
+                logger.info('Try to estimate gas: ' + payload.chainType + ',' + JSON.stringify(payload.tx));
                 ret = await ccUtil.estimateGas(payload.chainType, payload.tx);
+                logger.info('Estimated gas: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -480,6 +491,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
         case 'getGasPrice':
             try {
                 ret = await ccUtil.getGasPrice(payload.chainType);
+                logger.info('Gas price: ' + payload.chainType + ',' + ret);
             } catch (err) {
                 logger.error(e.message || e.stack)
                 err = e

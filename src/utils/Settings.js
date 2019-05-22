@@ -120,8 +120,8 @@ class Settings {
     }
 
     get autoLockTimeout() {
-        // auto lock the wallet if main window loses focus for a period of time
-        return 1000*60*1
+        // auto lock the wallet if main window loses focus for a period of time. 5 min
+        return 5 * 60 * 1000
     }
 
     _get(key) {
