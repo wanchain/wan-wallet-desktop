@@ -1,5 +1,6 @@
 import fs from 'fs'
 import _ from 'lodash'
+import path from 'path'
 import { ipcMain, app } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
