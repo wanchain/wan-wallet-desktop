@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
@@ -11,6 +12,7 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 @inject(stores => ({
   chainId: stores.session.chainId,
   transParams: stores.sendTransParams.transParams,
+  language: stores.session.language,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
@@ -56,7 +58,7 @@ class SendNormalTrans extends Component {
     const { visible, loading } = this.state;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>Send</Button>
+        <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible 
           ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading}/>
           : ''

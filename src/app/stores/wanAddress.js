@@ -2,6 +2,7 @@
 import { observable, action, computed } from 'mobx';
 import { timeFormat, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
+import intl from 'react-intl-universal';
 
 import session from './session';
 
@@ -105,14 +106,16 @@ class WanAddress {
 
     @computed get currentPage() {
       let page = '';
+      console.log(session.pageTitle);
+      console.log(intl.get('Ledger.ledger'),intl.get('Trezor.trezor'),intl.get('WanAccount.wallet'));
       switch (session.pageTitle) {
-        case 'Ledger':
+        case intl.get('Ledger.ledger'):
           page = 'ledger';
           break;
-        case 'Trezor':
+        case intl.get('Trezor.trezor'):
           page = 'trezor';
           break;
-        case 'Wallet':
+        case intl.get('WanAccount.wallet'):
           page = 'normal';
           break;
       }

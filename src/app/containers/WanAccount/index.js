@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
 
 import './index.less';
@@ -22,6 +23,7 @@ const WALLETID = 1;
   getAmount: stores.wanAddress.getNormalAmount,
   getAddrList: stores.wanAddress.getAddrList,
   transParams: stores.sendTransParams.transParams,
+  language: stores.session.language,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
@@ -36,7 +38,7 @@ class WanAccount extends Component {
       bool: true,
       isUnlock: false,
     }
-    this.props.changeTitle('Wallet');
+    this.props.changeTitle(intl.get('WanAccount.wallet'));
     this.props.updateTransHistory();
   }
 
@@ -50,22 +52,22 @@ class WanAccount extends Component {
 
   columns = [
     {
-      title: 'NAME',
+      title: intl.get('WanAccount.name'),
       dataIndex: 'name',
       editable: true
     },
     {
-      title: 'ADDRESS',
+      title: intl.get('WanAccount.address'),
       dataIndex: 'address',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
-      title: 'BALANCE',
+      title: intl.get('WanAccount.balance'),
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
     },
     {
-      title: 'ACTION',
+      title: intl.get('WanAccount.action'),
       dataIndex: 'action',
       render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
@@ -103,7 +105,7 @@ class WanAccount extends Component {
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, function(err, txHash) {
         if (err) {
-          message.warn("Send transaction failed. Please try again");
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
           reject(false)
         } else {
@@ -159,9 +161,9 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /> <span className="wanTotal">{getAmount}</span><span className="wanTex">WAN</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

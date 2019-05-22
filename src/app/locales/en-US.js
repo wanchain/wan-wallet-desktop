@@ -25,7 +25,7 @@ const en_US = {
     'Backup.seedPhrase': 'Reveal Seed Phrase',
     'Backup.warning': 'WARNING',
     'Backup.doNotShare': 'DO NOT share this seed phrase with anybody. Otherwise all of your assets will be lost.',
-    'Backup.yourSeedPhrase': 'Your Seed Phrase:',
+    'Backup.yourSeedPhrase': 'Your Seed Phrase',
     'Backup.copyToClipboard': 'Copy to clipboard',
     'Backup.enterPassword': 'Enter Password',
 
@@ -34,6 +34,7 @@ const en_US = {
     'Ledger.connectLedgerWalletToComputer': 'Connect your Ledger wallet directly to your computer',
     'Ledger.enterPinCode': 'Enter pin code to unlock your Ledger wallet',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
+    'Ledger.signTransactionInLedger': 'Please Sign transaction in Ledger',
     'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
     
     'Portfolio.portfolio': 'Portfolio',
@@ -47,6 +48,7 @@ const en_US = {
     'Restore.warning': 'WARNING',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',
     'Restore.continue': 'Continue',
+    'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.allLocalDataWillBeLost': 'All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?',
     
     'Settings.settings': 'Settings',
@@ -57,6 +59,8 @@ const en_US = {
 
     'Trezor.trezor': 'Trezor',
     'Trezor.connectTrezorWalletToComputer': 'Please connect your Trezor wallet directly to your computer',
+    'Trezor.signTransactionFailed': 'Sign transaction failed. Please try again',
+    'Trezor.signFailed': 'Sign failed',
 
     'WanAccount.wallet': 'Wallet',
     'WanAccount.name': 'NAME',
@@ -92,7 +96,7 @@ const en_US = {
     'HwWallet.Connect.connectFailed': 'Connect failed',
     'HwWallet.Connect.connectAHardwareWallet': 'Connect a Hardware Wallet',
     'HwWallet.Connect.continue': 'Continue',
-    'HwWallet.Connect.pleaseSelectTheAddresses': 'Select Address',
+    'HwWallet.Connect.selectAddress': 'Please select the addresses',
     'HwWallet.Connect.previousAddresses': 'Previous addresses',
     'HwWallet.Connect.nextAddresses': 'Next addresses',
 
@@ -117,8 +121,9 @@ const en_US = {
     'Mnemonic.ShowPhrase.tips': 'Tips',
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'Write this seed phrase on a piece of paper and store in a secure place',
 
+    'NormalTransForm.ConfirmForm.transactionConfirm': 'Transaction Confirm',
     'NormalTransForm.ConfirmForm.cancel': 'Cancel',
-    'NormalTransForm.ConfirmForm.confirm': 'Confirm',
+    'NormalTransForm.ConfirmForm.send': 'Send',
     'NormalTransForm.ConfirmForm.from': 'From',
     'NormalTransForm.ConfirmForm.to': 'To',
     'NormalTransForm.ConfirmForm.amount': 'Amount',
@@ -133,9 +138,8 @@ const en_US = {
     'NormalTransForm.invalidAmount': 'Invalid amount',
     'NormalTransForm.transaction': 'Transaction',
     'NormalTransForm.cancel': 'Cancel',
-    'NormalTransForm.send': 'Send',
+    'NormalTransForm.next': 'Next',
     'NormalTransForm.from': 'From',
-    'NormalTransForm.addressIsIncorrect': 'Address is incorrect',
     'NormalTransForm.senderAddress': 'Sender Address',
     'NormalTransForm.to': 'To',
     'NormalTransForm.addressIsIncorrect': 'Address is incorrect',

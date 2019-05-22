@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import wanLogo from 'static/image/wan.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
+  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateCoinPrice: () => stores.portfolio.updateCoinPrice()
 }))
@@ -15,29 +17,29 @@ import wanLogo from 'static/image/wan.png';
 class Portfolio extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Portfolio');
+    this.props.changeTitle(intl.get('Portfolio.portfolio'));
   }
   
   columns = [
     {
-      title: 'NAME',
+      title: intl.get('Portfolio.name'),
       dataIndex: 'name',
       key: 'name',
       render: text => <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>,
     }, {
-      title: 'PRICE',
+      title: intl.get('Portfolio.price'),
       dataIndex: 'price',
       key: 'price',
     }, {
-      title: 'BALANCE',
+      title: intl.get('Portfolio.balance'),
       dataIndex: 'balance',
       key: 'balance',
     }, {
-      title: 'VALUE',
+      title: intl.get('Portfolio.value'),
       dataIndex: 'value',
       key: 'value'
     }, {
-      title: 'PORTFOLIO',
+      title: intl.get('Portfolio.portfolioUppercase'),
       dataIndex: 'portfolio',
       key: 'portfolio',
     }

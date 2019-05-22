@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Table, message } from 'antd';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
 
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
 
+@inject(stores => ({
+  language: stores.session.language,
+}))
+
+@observer
 class Connect extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +22,7 @@ class Connect extends Component {
     this.page = 0;
     this.pageSize = 5;
     this.selectedAddrs = [];
-    this.columns = [{ title: 'Address', dataIndex: 'address' }, { title: 'Balance', dataIndex: 'balance' }];
+    this.columns = [{ title: intl.get('HwWallet.Connect.address'), dataIndex: 'address' }, { title: intl.get('HwWallet.Connect.balance'), dataIndex: 'balance' }];
   }
 
   componentWillUnmount() {
@@ -40,7 +47,7 @@ class Connect extends Component {
   showDefaultPageAddrsFromHd = () => {
     this.props.getPublicKey((err, result) => {
       if (err) {
-        message.warn('Connect failed');
+        message.warn(intl.get('HwWallet.Connect.connectFailed'));
       } else {
         this.publicKey = result.publicKey;
         this.chainCode = result.chainCode;
@@ -117,15 +124,15 @@ class Connect extends Component {
 
     return (
       <div>
-        <Card title="Connect a Hardware Wallet" bordered={false}>
+        <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>
           <this.props.Instruction />
-          <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>Continue</Button>
-          <Modal destroyOnClose={true} title="Please select the addresses" visible={visible} onOk={this.handleOk} onCancel={this.resetStateVal} className="popTable">
+          <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
+          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.resetStateVal} className="popTable">
             <div>
               <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={addresses}></Table>
               <div className="rollPage">
-                { this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">Previous addresses</p> : ''}
-                <p onClick={this.showNextPageAddrs} className="nextPage">Next addresses</p>
+                { this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p> : ''}
+                <p onClick={this.showNextPageAddrs} className="nextPage">{intl.get('HwWallet.Connect.nextAddresses')}</p>
               </div>
             </div>
           </Modal>

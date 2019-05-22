@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Icon, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 
 @inject(stores => ({
   auth: stores.session.auth,
   pageTitle: stores.session.pageTitle,
+  language: stores.session.language,
   setAuth: val => stores.session.setAuth(val),
   getMnemonic: ret => stores.session.getMnemonic(ret)
 }))
@@ -35,7 +37,7 @@ class MHeader extends Component {
             <Col span={2} className="user">
               <div className="log">
                 <Icon className="logOutIco" type="poweroff" />
-                <span onClick={this.logOut} className="logOut">Log Out</span>
+                <span onClick={this.logOut} className="logOut">{intl.get('MHeader.logout')}</span>
               </div>
             </Col>
         </Row>

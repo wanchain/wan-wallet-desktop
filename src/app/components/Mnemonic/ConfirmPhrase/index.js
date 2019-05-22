@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Tag } from 'antd';
+import intl from 'react-intl-universal';
 import { TweenOneGroup } from 'rc-tween-one';
 
 import './index.less';
@@ -10,6 +11,7 @@ import { randomSort } from 'utils/support';
   pwd: stores.mnemonic.pwd,
   method: stores.mnemonic.method,
   mnemonic: stores.mnemonic.mnemonic,
+  language: stores.session.language,
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
   setNewPhrase: val => stores.mnemonic.setNewPhrase(val),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
@@ -66,7 +68,7 @@ class ConfirmPhrase extends Component {
 
     return (
       <div>
-        <h3 className="mneCom-h1">Confirm Your Seed Phrase</h3>
+        <h3 className="mneCom-h1">{intl.get('Mnemonic.ConfirmPhrase.confirmYourSeedPhrase')}</h3>
         <div className="show-phrase">
           <TweenOneGroup enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100, onComplete: (e) => { e.target.style = ''; }, }} leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }} appear={false}>
             {tagChild}

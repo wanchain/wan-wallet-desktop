@@ -22,7 +22,7 @@ class Login extends Component {
     wand.request('wallet_lock', () => {
       wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
         if (err) {
-          message.error('Wrong Password')
+          message.error(intl.get('Login.wrongPassword'))
           return;
         } 
         this.props.setAuth(true);

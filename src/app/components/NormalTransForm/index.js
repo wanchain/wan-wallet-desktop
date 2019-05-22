@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, InputNumber, message } from 'antd';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import { toWei } from 'utils/support';
@@ -20,6 +21,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
+  language: stores.session.language,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 
@@ -102,7 +104,7 @@ class NormalTransForm extends Component {
     let { chainType } = this.props.transParams[from];
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
       if (err) {
-        message.warn("Estimate gas failed. Please try again");
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
         console.log('Update gas limit:', gasLimit);
         this.props.updateTransParams(from, { gasLimit });
@@ -118,7 +120,7 @@ class NormalTransForm extends Component {
         }
         callback();
       } else {
-        callback('Invalid address');
+        callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }).catch((err) => {
       callback(err);
@@ -132,7 +134,7 @@ class NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback('Invalid amount');
+      callback(intl.get('NormalTransForm.invalidAmount'));
     }
   }
 
@@ -151,44 +153,44 @@ class NormalTransForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title="Transaction"
+          title={intl.get('NormalTransForm.transaction')}
           onCancel={this.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>Cancel</Button>,
-            <Button key="submit" type="primary" onClick={this.handleNext}>Next</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-            <Form.Item label="From">
+            <Form.Item label={intl.get('NormalTransForm.from')}>
               {getFieldDecorator('from', { initialValue: from })
-                (<Input disabled={true} placeholder="Sender Address" prefix={<Icon type="wallet" className="colorInput" />} />)}
+                (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
-            <Form.Item label="To">
-              {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                (<Input placeholder="Recipient Address" prefix={<Icon type="wallet" className="colorInput" />} />)}
+            <Form.Item label={intl.get('NormalTransForm.to')}>
+              {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
-            <Form.Item label="Amount">
-              {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
+            <Form.Item label={intl.get('NormalTransForm.amount')}>
+              {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                 (<InputNumber min={0} placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
             </Form.Item>
             {
             advanced 
-            ? <Form.Item label="Fee">
-                {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: "Please select transaction fee" }] })(
+            ? <Form.Item label={intl.get('NormalTransForm.fee')}>
+                {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Input disabled={true} className="colorInput" />
                 )}
               </Form.Item> 
-            : <Form.Item label="Fee">
-                {getFieldDecorator('fixFee', { rules: [{ required: true, message: "Please select transaction fee" }] })(
+            : <Form.Item label={intl.get('NormalTransForm.fee')}>
+                {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow"><p>Slow</p>{minFee} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average"><p>Average</p>{averageFee} WAN</Radio.Button>
-                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast"><p>Fast</p>{maxFee} WAN</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(minGasPrice, gasLimit, nonce)} value="slow"><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(averageGasPrice, gasLimit, nonce)} value="average"><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={() => this.handleClick(maxGasPrice, gasLimit, nonce)} value="fast"><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>
             }
-            <p className="onAdvancedT" onClick={this.onAdvanced}>Advanced Options</p>
+            <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
           </Form>
         </Modal>
         <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />

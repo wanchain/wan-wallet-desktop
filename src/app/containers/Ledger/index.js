@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import { wanTx, WanRawTx } from 'utils/hardwareUtils'
@@ -15,6 +16,7 @@ const LEDGER = 'ledger';
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr)
@@ -24,7 +26,7 @@ const LEDGER = 'ledger';
 class Ledger extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Ledger');
+    this.props.changeTitle(intl.get('Ledger.ledger'));
   }
 
   componentDidUpdate() {
@@ -40,11 +42,11 @@ class Ledger extends Component {
   instruction = () => {
     return (
       <div className="">
-        <h2 className="com-gray">Please follow the below instructions to connect your Ledger wallet:</h2>
+        <h2 className="com-gray">{intl.get('Ledger.followInstructionsToConnectLedgerWallet')}:</h2>
         <div className="ledgerTex">
-          <p>1. Connect your Ledger wallet directly to your computer</p>
-          <p>2. Enter pin code to unlock your Ledger wallet</p>
-          <p>3. Navigate to Wanchain APP and enter into it</p>
+          <p>1. {intl.get('Ledger.connectLedgerWalletToComputer')}</p>
+          <p>2. {intl.get('Ledger.enterPinCode')}</p>
+          <p>3. {intl.get('Ledger.navigateToWanchainAPPAndEnterIntoIt')}</p>
         </div>
       </div>
     )
@@ -80,10 +82,10 @@ class Ledger extends Component {
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
     
-    message.info('Please Sign transaction in Ledger');
+    message.info(intl.get('Ledger.signTransactionInLedger'));
     wand.request('wallet_signTransaction', { walletID: WALLET_ID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
-        message.warn('Sign transaction failed. Please try again');
+        message.warn(intl.get('Ledger.signTransactionFailed'));
         callback(err, null);
 
         console.log(`Sign Failed: ${err}`);

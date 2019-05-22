@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Select  } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import history from 'static/image/history.png';
 import './index.less';
@@ -10,6 +11,7 @@ const Option = Select.Option;
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   historyList: stores.wanAddress.historyList,
+  language: stores.session.language,
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
 
@@ -17,23 +19,23 @@ const Option = Select.Option;
 class TransHistory extends Component {
   columns = [
     {
-      title: 'TIME',
+      title: intl.get('TransHistory.time'),
       dataIndex: 'time',
       key: 'time',
     }, {
-      title: 'FROM',
+      title: intl.get('TransHistory.from'),
       dataIndex: 'from',
       key: 'from',
     }, {
-      title: 'TO',
+      title: intl.get('TransHistory.to'),
       dataIndex: 'to',
       key: 'to',
     }, {
-      title: 'VALUE',
+      title: intl.get('TransHistory.value'),
       dataIndex: 'value',
       key: 'value'
     }, {
-      title: 'STATUS',
+      title: intl.get('TransHistory.status'),
       dataIndex: 'status',
       key: 'status'
     }
@@ -50,12 +52,12 @@ class TransHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span>Transaction History</span>
+          <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
           <Select 
             showSearch
             allowClear
             style={{ width: 400 }}
-            placeholder="Select a FROM address" 
+            placeholder={intl.get('TransHistory.selectAFromAddress')}
             optionFilterProp="children" 
             onChange={this.onChange} 
             onFocus={this.onFocus} 

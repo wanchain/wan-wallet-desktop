@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import menuList from 'constants/menuConfig';
 import logo from 'static/image/logo.png';
@@ -8,6 +10,11 @@ import './index.less';
 
 const SubMenu = Menu.SubMenu;
 
+@inject(stores => ({
+  language: stores.session.language,
+}))
+
+@observer
 class Sidebar extends Component {
   constructor(props) {
     super(props);
@@ -46,7 +53,7 @@ class Sidebar extends Component {
     return (
       <div className="sidebar">
         <div className="logo">
-          <img src={logo} alt="Wanchain" />
+          <img src={logo} alt={intl.get('Sidebar.wanchain')} />
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} className="menuTreeNode">
           { this.state.menuTreeNode }

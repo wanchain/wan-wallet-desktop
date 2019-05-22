@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Input, Tag } from 'antd';
+import intl from 'react-intl-universal';
 
 const { TextArea } = Input;
 
@@ -9,6 +10,7 @@ import './index.less';
 @inject(stores => ({
   method: stores.mnemonic.method,
   mnemonic: stores.mnemonic.mnemonic,
+  language: stores.session.language,
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
 }))
@@ -24,20 +26,20 @@ class ShowPhrase extends Component {
     if (method === 'import') {
       return (
         <div>
-          <h3 className="mneCom-h1">Import Your Seed Phrase</h3>
-          <h4 className="mneCom-h4">Enter your seed phrase here and separate each word with a single space</h4>
+          <h3 className="mneCom-h1">{intl.get('Mnemonic.ShowPhrase.importYourSeedPhrase')}</h3>
+          <h4 className="mneCom-h4">{intl.get('Mnemonic.ShowPhrase.enterSeedPhraseHereAndSeparateEachWordWithSingleSpace')}</h4>
           <TextArea className="mne-textarea" rows={4} onChange={this.onChange} />
         </div>
       )
     } else {
       return (
         <div className="phraseCon">
-          <h1 className="mneCom-h1">Backup Your Seed Phrase</h1>
-          <h3 className="mneCom-h3">WARNING: DO NOT share this seed phrase with anybody. Otherwise all of your assets will be lost.</h3>
+          <h1 className="mneCom-h1">{intl.get('Mnemonic.ShowPhrase.backupYourSeedPhrase')}</h1>
+          <h3 className="mneCom-h3">{intl.get('Mnemonic.ShowPhrase.warning')}: {intl.get('Mnemonic.ShowPhrase.doNotShareThisSeedPhraseWithAnybody')}</h3>
           {mnemonic.split(' ').map((item, index) => <Tag className="word" key={index}>{item}</Tag>)}
           <div className="mne-tips">
-            <p className="tips-tit">Tips:</p>
-            <p className="tips-mes">Write this seed phrase on a piece of paper and store in a secure place</p>
+            <p className="tips-tit">{intl.get('Mnemonic.ShowPhrase.tips')}:</p>
+            <p className="tips-mes">{intl.get('Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace')}</p>
           </div>
         </div>
       )

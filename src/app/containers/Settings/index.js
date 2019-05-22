@@ -1,6 +1,7 @@
 import { Tabs } from 'antd';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import Backup from 'containers/Backup';
 import Restore from 'containers/Restore';
@@ -8,6 +9,7 @@ import Restore from 'containers/Restore';
 const { TabPane } = Tabs;
 
 @inject(stores => ({
+  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle)
 }))
 
@@ -15,18 +17,18 @@ const { TabPane } = Tabs;
 class Settings extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Settings');
+    this.props.changeTitle(intl.get('Settings.settings'));
     this.state = {
       tabTreeNode: null
     }
   }
 
   tabs = [{
-    title: 'Backup',
+    title: intl.get('Settings.backup'),
     key: 'backup',
     content: <Backup />
   }, {
-    title: 'Restore',
+    title: intl.get('Settings.restore'),
     key: 'restore',
     content: <Restore />
   }]

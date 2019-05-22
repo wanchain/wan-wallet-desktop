@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, message, Steps } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import InputPwd from 'components/Mnemonic/InputPwd';
@@ -18,6 +19,7 @@ const Step = Steps.Step;
   mnemonic: stores.mnemonic.mnemonic,
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
+  language: stores.session.language,
   setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
@@ -28,13 +30,13 @@ const Step = Steps.Step;
 class Register extends Component {
   state = {
     steps: [{
-      title: 'Create Password',
+      title: intl.get('Register.createPassword'),
       content: <InputPwd />,
     }, {
-      title: 'Secret Backup Phrase',
+      title: intl.get('Register.secretBackupPhrase'),
       content: <ShowPhrase />,
     }, {
-      title: 'Confirm your Secret Backup Phrase',
+      title: intl.get('Register.confirmSecretBackupPhrase'),
       content: <ConfirmPhrase />,
     }]
   }
@@ -47,7 +49,7 @@ class Register extends Component {
           if (method === 'create') {
             wand.request('phrase_generate', { pwd: pwd }, (err, val) => {
               if (err) {
-                message.error('Create seed phrase failed');
+                message.error(intl.get('Register.createSeedPhraseFailed'));
                 return;
               }
               this.props.setMnemonic(val);
@@ -57,17 +59,17 @@ class Register extends Component {
             setIndex(1);
           }
         } else {
-          message.error('Password must have a minimum of 6 characters; must contain at least one uppercase letter, one lowercase letter, and one numeric digit');
+          message.error(intl.get('Register.passwordTip'));
         }
       } else {
-        message.error("Passwords mismatched");
+        message.error(intl.get('Register.passwordsMismatched'));
       }
     } else if (current === 1 && method === 'import') {
       if (checkPhrase(mnemonic)) {
         this.props.setMnemonic(mnemonic);
         setIndex(current + 1);
       } else {
-        message.error('Seed phrase is invalid');
+        message.error(intl.get('Register.seedPhraseIsInvalid'));
       }
     } else {
       setIndex(current + 1);
@@ -84,12 +86,12 @@ class Register extends Component {
     if (newPhrase.join(' ') === mnemonic) {
       wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
         if (err) {
-          message.error('Write seed phrase to database failed');
+          message.error(intl.get('Register.writeSeedPhraseToDatabaseFailed'));
           return;
         }
         wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
           if (err) {
-            console.log('Unlock wallet failed ', err)
+            console.log(intl.get('Register.unlockWalletFailed'), err)
           } else {
             this.props.setMnemonicStatus(true);
             this.props.setAuth(true);
@@ -97,7 +99,7 @@ class Register extends Component {
         })
       });
     } else {
-      message.error('Seed phrase mismatched');
+      message.error(intl.get('Register.seedPhraseMismatched'));
     }
   }
 
@@ -112,14 +114,14 @@ class Register extends Component {
           <div className="steps-action">
             {
               current < steps.length - 1
-              && <Button type="primary" onClick={this.next}>Next</Button>
+              && <Button type="primary" onClick={this.next}>{intl.get('Register.next')}</Button>
             }
             {
-              current > 1 && (<Button onClick={this.prev} className="cancel">Previous</Button>)
+              current > 1 && (<Button onClick={this.prev} className="cancel">{intl.get('Register.previous')}</Button>)
             }
             {
               current === steps.length - 1
-              && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>Done</Button>
+              && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>{intl.get('Register.done')}</Button>
             }
           </div>
         </div>

@@ -62,6 +62,7 @@ class App extends Component {
   }
 
   changeLanguage = (lan) => {
+    console.log(lan);
     intl.init({
       currentLocale: lan,
       locales

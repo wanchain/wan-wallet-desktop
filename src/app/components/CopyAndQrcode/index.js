@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import { Modal, Icon, message } from 'antd';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
 
 // import { clipboard } from 'electron';
 
+@inject(stores => ({
+  language: stores.session.language,
+}))
+
+@observer
 class CopyAndQrcode extends Component {
   state = {
     url: ''
@@ -33,7 +40,7 @@ class CopyAndQrcode extends Component {
   copy2Clipboard = (addr) => {
     // clipboard.writeText(addr);
     wand.writeText(addr);
-    message.success('Copy successfully');
+    message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
 
   render() {

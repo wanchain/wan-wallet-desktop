@@ -4,6 +4,7 @@ import TrezorConnect from 'trezor-connect';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
 
 const WAN_PATH = "m/44'/5718350'/0'/0";
@@ -31,6 +32,7 @@ TrezorConnect.init({
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   trezorAddrList: stores.wanAddress.trezorAddrList,
+  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
@@ -40,7 +42,7 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Trezor')
+    this.props.changeTitle(intl.get('Trezor.trezor'))
   }
 
   componentDidUpdate() {
@@ -56,7 +58,7 @@ class Trezor extends Component {
   instruction = () => {
     return (
       <div>
-        <p className="com-gray">Please connect your Trezor wallet directly to your computer</p>
+        <p className="com-gray">{intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
   }
@@ -88,8 +90,8 @@ class Trezor extends Component {
       },
     }).then((result) => {
       if (!result.success) {
-        message.warn("Sign transaction failed. Please try again");
-        callback('Sign failed', null);
+        message.warn(intl.get('Trezor.signTransactionFailed'));
+        callback(intl.get('Trezor.signFailed'), null);
         return;
       }
 
