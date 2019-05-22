@@ -14,8 +14,9 @@ class Window extends EventEmitter {
 
         opts = opts || {}
 
+        this._timer = null
         this._mgr = mgr
-        this._logger = Logger.getLogger(type)
+        this._logger = Logger.getLogger(`${type}Window`)
         this.type = type
         this.isPrimary = !!opts.primary
         this.isPopup = !!opts.isPopup
@@ -55,6 +56,39 @@ class Window extends EventEmitter {
             this.isClosed = true
             this.isContentReady = false
             this.emit('closed')
+        })
+
+        this.window.on('blur', () => {
+            if (this.type === 'main') {
+                if (global.chainManager && !this.isClosed) {
+                    this._logger.info('main window losing focus, start autolock timer')
+                    this._timer = setTimeout(() => {
+                        this._logger.info('time out, lock the wallet')
+                        this._mgr.broadcast('notification', 'uiAction', 'lockWallet')
+                        clearTimeout(this._timer)
+                        this._timer = null
+                        this._logger.info('autolock timer cleared')
+                    }, setting.autoLockTimeout)
+                }
+            }
+        })
+
+        this.window.on('focus', () => {
+            if (this.type === 'main') {
+                if (this._timer) {
+                    this._logger.info('main window getting focus again, cancel autolock timer')
+                    let timer = this._timer
+                    
+                    try {
+                        clearTimeout(timer)
+                        this._logger.info('autolock timer cleared')
+                    } catch (e) {
+                        this._logger.error(e.message || e.stack)
+                    }
+
+                    this._timer = null
+                }
+            }
         })
 
         this.webContents.once('did-finish-load', () => {
@@ -245,8 +279,8 @@ class Windows {
         logger.info(data.join(' '))
 
         _.each(this._windows, (wnd) => {
-            wnd.send(...data);
-        });
+            wnd.send(...data)
+        })
     }
 
     _onWindowClosed(wnd) {
