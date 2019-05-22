@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Select  } from 'antd';
+import { Table, Select } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -27,7 +27,7 @@ class TransHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}` 
+    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}`
     wand.shell.openExternal(href);
   }
 
@@ -38,22 +38,24 @@ class TransHistory extends Component {
       <div>
         <div className="historyCon">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
-          <Select 
+          <Select
             showSearch
             allowClear
             style={{ width: 400 }}
             placeholder={intl.get('TransHistory.selectAFromAddress')}
-            optionFilterProp="children" 
-            onChange={this.onChange} 
-            onFocus={this.onFocus} 
-            onBlur={this.onBlur} 
+            optionFilterProp="children"
+            onChange={this.onChange}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
             onSearch={this.onSearch}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
+            {addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
           </Select>
         </div>
-        <Table onRow={record => ({onClick: this.onClickRow.bind(this, record)})} className="portfolioMain" columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <div className="historyRow">
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        </div>
       </div>
     );
   }
