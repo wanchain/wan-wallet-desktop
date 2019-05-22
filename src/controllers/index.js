@@ -1,4 +1,5 @@
 import fs from 'fs'
+import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app } from 'electron'
@@ -80,14 +81,10 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 
         case 'reset':
             try {
-                fs.rmdirSync(path.join(setting.userDataPath, 'Db'))
-
-                // sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                fsExtra.removeSync(path.join(setting.userDataPath, 'Db'))
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
-
-                // sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
 
             app.relaunch()
