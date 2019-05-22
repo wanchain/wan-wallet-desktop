@@ -3,47 +3,32 @@ import { Table, Select  } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import history from 'static/image/history.png';
 import './index.less';
+import history from 'static/image/history.png';
 
 const Option = Select.Option;
+const main = 'https://www.wanscan.org/tx/'
+const testnet = 'http://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
-  addrInfo: stores.wanAddress.addrInfo,
-  historyList: stores.wanAddress.historyList,
+  chainId: stores.session.chainId,
   language: stores.session.language,
+  addrInfo: stores.wanAddress.addrInfo,
+  transColumns: stores.session.transColumns,
+  historyList: stores.wanAddress.historyList,
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
 
 @observer
 class TransHistory extends Component {
-  columns = [
-    {
-      title: intl.get('TransHistory.time'),
-      dataIndex: 'time',
-      key: 'time',
-    }, {
-      title: intl.get('TransHistory.from'),
-      dataIndex: 'from',
-      key: 'from',
-    }, {
-      title: intl.get('TransHistory.to'),
-      dataIndex: 'to',
-      key: 'to',
-    }, {
-      title: intl.get('TransHistory.value'),
-      dataIndex: 'value',
-      key: 'value'
-    }, {
-      title: intl.get('TransHistory.status'),
-      dataIndex: 'status',
-      key: 'status'
-    }
-  ]
-
   onChange = value => {
     console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
+  }
+
+  onClickRow = record => {
+    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}` 
+    wand.shell.openExternal(href);
   }
 
   render() {
@@ -68,7 +53,7 @@ class TransHistory extends Component {
             { addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>) }
           </Select>
         </div>
-        <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <Table onRow={record => ({onClick: this.onClickRow.bind(this, record)})} className="portfolioMain" columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
     );
   }

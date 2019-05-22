@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
+import { message } from 'antd';
 import { AppContainer } from 'react-hot-loader';
 import intl from 'react-intl-universal';
 
@@ -13,9 +14,6 @@ import { initEmitterHandler, regEmitterHandler, isSdkReady } from 'utils/helper'
 class App extends Component {
   constructor(props) {
     super(props);
-    regEmitterHandler('language', (val) => {
-      this.changeLanguage(val === 'en' ? 'en_US' : 'zh_CN');
-    });
     this.changeLanguage('en_US');
     stores.session.initChainId();
     initEmitterHandler();
@@ -30,6 +28,10 @@ class App extends Component {
   }
 
   componentDidMount() {
+    regEmitterHandler('language', (val) => {
+      this.changeLanguage(val === 'en' ? 'en_US' : 'zh_CN');
+    });
+
     regEmitterHandler('uiAction', action => {
       if(action === 'lockWallet' && stores.session.auth === true) {
         wand.request('wallet_lock', null, (err, val) => {
@@ -44,6 +46,7 @@ class App extends Component {
 
     regEmitterHandler('hdwallet', val => {
       if(['Ledger', 'Trzeor'].includes(val.Device)) {
+        message.warn('Ledger is disconnect!');
         stores.wanAddress.updateAddress(val.Device.toLowerCase());
       }
     });
@@ -61,13 +64,13 @@ class App extends Component {
     });
   }
 
-  changeLanguage = (lan) => {
+  changeLanguage = lan => {
     console.log(lan);
     intl.init({
       currentLocale: lan,
       locales
     }).then(() => {
-      stores.session.language = lan;
+      stores.session.setLanguage(lan);
     });
   }
 
