@@ -77,6 +77,20 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 
             sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: !!ret })
             break
+
+        case 'reset':
+            try {
+                fs.rmdirSync(path.join(setting.userDataPath, 'Db'))
+
+                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
+            }
+
+            break
     }
 })
 
@@ -382,6 +396,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'raw':
             try {
+                logger.info('Send raw transaction', payload)
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
             } catch (e) {
                 logger.error(e.message || e.stack)

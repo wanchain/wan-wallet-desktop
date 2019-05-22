@@ -1,6 +1,6 @@
 
 import { observable, action, computed } from 'mobx';
-import { timeFormater, fromWei } from 'utils/support';
+import { timeFormat, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
 
 import session from './session';
@@ -24,11 +24,11 @@ class WanAddress {
       };
     }
 
-    @action addLedgerAddress(addrArr) {
+    @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
-        if(!Object.keys(self.addrInfo['ledger']).includes(addr.address)) {
-          self.addrInfo['ledger'][addr.address] = {
-            name: `Account${addr.path.substr(18) - 0 + 1}`,
+        if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+          self.addrInfo[type][addr.address] = {
+            name: `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`,
             balance: addr.balance || '0',
             address: addr.balance,
             path: addr.path
@@ -84,7 +84,7 @@ class WanAddress {
 
     @action getUserAccountFromDB() {
       wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
-        if (err) console.log('error printed inside callback: ', err)
+        if (err) console.log('Get user from DB failed ', err)
         if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           Object.keys(info).forEach((item) => {
@@ -119,7 +119,7 @@ class WanAddress {
       let addrList = [];
       Object.keys(self.addrInfo['normal']).forEach((item, index) => {
         addrList.push({
-          key: `${index + 1}`,
+          key: item,
           name: self.addrInfo['normal'][item].name,
           address: wanUtil.toChecksumAddress(item),
           balance: self.addrInfo['normal'][item].balance,
@@ -131,18 +131,35 @@ class WanAddress {
     }
 
     @computed get ledgerAddrList() {
-      let ledgerAddrList = [];
-      Object.keys(self.addrInfo['ledger']).forEach((item, index) => {
-        ledgerAddrList.push({
+      let addrList = [];
+      let type = 'ledger';
+      Object.keys(self.addrInfo[type]).forEach((item, index) => {
+        addrList.push({
           key: item,
-          name: `Account${index + 1}`,
-          address: item,
-          balance: self.addrInfo['ledger'][item].balance,
-          path: self.addrInfo['ledger'][item].path,
+          name: self.addrInfo[type][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: self.addrInfo[type][item].balance,
+          path: self.addrInfo[type][item].path,
           action: 'send'
         });
       });
-      return ledgerAddrList;
+      return addrList;
+    }
+
+    @computed get trezorAddrList() {
+      let addrList = [];
+      let type = 'trezor';
+      Object.keys(self.addrInfo[type]).forEach((item, index) => {
+        addrList.push({
+          key: item,
+          name: self.addrInfo[type][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: self.addrInfo[type][item].balance,
+          path: self.addrInfo[type][item].path,
+          action: 'send'
+        });
+      });
+      return addrList;
     }
 
     @computed get historyList() {
@@ -154,7 +171,7 @@ class WanAddress {
           let status = self.transHistory[item].status;
           historyList.push({
             key: item,
-            time: timeFormater(self.transHistory[item]["sendTime"]),
+            time: timeFormat(self.transHistory[item]["sendTime"]),
             from: self.addrInfo[page][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
