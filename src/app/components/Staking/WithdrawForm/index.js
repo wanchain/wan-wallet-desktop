@@ -29,6 +29,7 @@ class WithdrawForm extends Component {
             <Button key="submit" type="primary" onClick={this.props.onSend}>Send</Button>,
             <Button key="back" className="cancel" onClick={this.props.onCancel}>Cancel</Button>,
           ]}
+          className="withdraw-modal"
         >
           <div className="withdraw-bg">
             <div className="withdraw-title">Validator's Account:</div>
@@ -61,8 +62,8 @@ class WithdrawForm extends Component {
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-              <Col span={6}><span className="withdraw-name">Address</span></Col>
-                <Col span={18}><span className="withdraw-addr">0x9E872759a206320D46211493c738fDD7eb48fF29</span></Col>
+                <Col span={6}><span className="withdraw-name">Address</span></Col>
+                <Col span={18}><span className="withdraw-addr">0x9E872759a206320D46211493c738fDD7eb48fF28</span></Col>
               </Row>
             </div>
           </div>
