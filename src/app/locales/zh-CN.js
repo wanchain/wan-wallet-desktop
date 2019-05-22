@@ -25,7 +25,7 @@ const zh_CN = {
     'Backup.seedPhrase': '显示助记词',
     'Backup.warning': '告警',
     'Backup.doNotShare': '不要把助记词告诉任何人，否则你会丢失所有的数字资产。',
-    'Backup.yourSeedPhrase': '你的助记词:',
+    'Backup.yourSeedPhrase': '你的助记词',
     'Backup.copyToClipboard': '复制到剪切板',
     'Backup.enterPassword': '输入密码',
 
@@ -34,6 +34,7 @@ const zh_CN = {
     'Ledger.connectLedgerWalletToComputer': '将你的Ledger连接上你的电脑',
     'Ledger.enterPinCode': '输入PIN码解锁你的Ledger',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': '在Ledger上面点击进入Wanchain APP',
+    'Ledger.signTransactionInLedger': '请在Ledger上确认',
     'Ledger.signTransactionFailed': '签名失败，请重试',
     
     'Portfolio.portfolio': '我的资产',
@@ -57,6 +58,8 @@ const zh_CN = {
 
     'Trezor.trezor': 'Trezor',
     'Trezor.connectTrezorWalletToComputer': '请将Trezor连接上你的电脑',
+    'Trezor.signTransactionFailed': '签名失败，请重试',
+    'Trezor.signFailed': '签名失败',
 
     'WanAccount.wallet': '我的资产',
     'WanAccount.name': '名称',
@@ -92,7 +95,7 @@ const zh_CN = {
     'HwWallet.Connect.connectFailed': '连接失败',
     'HwWallet.Connect.connectAHardwareWallet': '连接硬件钱包',
     'HwWallet.Connect.continue': '下一步',
-    'HwWallet.Connect.pleaseSelectTheAddresses': '选择地址',
+    'HwWallet.Connect.selectAddress': '选择地址',
     'HwWallet.Connect.previousAddresses': '上一页',
     'HwWallet.Connect.nextAddresses': '下一页',
 
@@ -117,8 +120,9 @@ const zh_CN = {
     'Mnemonic.ShowPhrase.tips': '温馨提示',
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': '把助记词写在纸上，保存在安全的地方',
 
+    'NormalTransForm.ConfirmForm.transactionConfirm': '交易确认',
     'NormalTransForm.ConfirmForm.cancel': '取消',
-    'NormalTransForm.ConfirmForm.confirm': '确认',
+    'NormalTransForm.ConfirmForm.send': '发送',
     'NormalTransForm.ConfirmForm.from': '转出方',
     'NormalTransForm.ConfirmForm.to': '转入方',
     'NormalTransForm.ConfirmForm.amount': '金额',
@@ -133,9 +137,8 @@ const zh_CN = {
     'NormalTransForm.invalidAmount': '非法金额',
     'NormalTransForm.transaction': '转账',
     'NormalTransForm.cancel': '取消',
-    'NormalTransForm.send': '发送',
+    'NormalTransForm.next': '下一步',
     'NormalTransForm.from': '转出方',
-    'NormalTransForm.addressIsIncorrect': '地址不正确',
     'NormalTransForm.senderAddress': '发送者地址',
     'NormalTransForm.to': '转入方',
     'NormalTransForm.addressIsIncorrect': '地址不正确',

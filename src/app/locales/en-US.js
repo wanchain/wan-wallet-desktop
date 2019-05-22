@@ -34,7 +34,7 @@ const en_US = {
     'Ledger.connectLedgerWalletToComputer': 'Connect your Ledger wallet directly to your computer',
     'Ledger.enterPinCode': 'Enter pin code to unlock your Ledger wallet',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
-    'Ledger.signTransactionInLedger': 'Please Sign transaction in Ledger',
+    'Ledger.signTransactionInLedger': 'Please confirm in Ledger',
     'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
     
     'Portfolio.portfolio': 'Portfolio',
@@ -48,7 +48,6 @@ const en_US = {
     'Restore.warning': 'WARNING',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',
     'Restore.continue': 'Continue',
-    'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.allLocalDataWillBeLost': 'All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?',
     
     'Settings.settings': 'Settings',
@@ -96,7 +95,7 @@ const en_US = {
     'HwWallet.Connect.connectFailed': 'Connect failed',
     'HwWallet.Connect.connectAHardwareWallet': 'Connect a Hardware Wallet',
     'HwWallet.Connect.continue': 'Continue',
-    'HwWallet.Connect.selectAddress': 'Please select the addresses',
+    'HwWallet.Connect.selectAddress': 'Select Address',
     'HwWallet.Connect.previousAddresses': 'Previous addresses',
     'HwWallet.Connect.nextAddresses': 'Next addresses',
 
