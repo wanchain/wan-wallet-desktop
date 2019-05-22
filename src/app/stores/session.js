@@ -6,7 +6,7 @@ class Session {
   @observable hasMnemonicOrNot = false;
   @observable chainId = 1;
   @observable auth = false;
-
+  @observable language = 'en_US';
 
   @action getMnemonic() {
     return new Promise((resolve, reject) => {

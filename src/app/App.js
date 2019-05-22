@@ -3,6 +3,9 @@ import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
 import { AppContainer } from 'react-hot-loader';
 import { initEmitterHandler, isSdkReady } from 'utils/helper';
+import intl from 'react-intl-universal';
+import locales from './locales';
+import { regEmitterHandler } from 'utils/helper';
 
 import './global.less';
 import Router from './Routes';
@@ -11,6 +14,10 @@ import stores from './stores';
 class App extends Component {
   constructor(props) {
     super(props);
+    regEmitterHandler('language', (val) => {
+      this.changeLanguage(val === 'en' ? 'en_US' : 'zh_CN');
+    });
+    this.changeLanguage('en_US');
     stores.session.initChainId();
     initEmitterHandler();
     let id = setInterval(async () => {
@@ -21,6 +28,15 @@ class App extends Component {
         clearInterval(id);
       }
     }, 1000);
+  }
+
+  changeLanguage = (lan) => {
+    intl.init({
+      currentLocale: lan,
+      locales
+    }).then(() => {
+      stores.session.language = lan;
+    });
   }
 
   render() {

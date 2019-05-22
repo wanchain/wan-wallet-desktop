@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Button, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 
 @inject(stores => ({
   auth: stores.session.auth,
-  setAuth: val => stores.session.setAuth(val)
+  setAuth: val => stores.session.setAuth(val),
+  language: stores.session.language,
 }))
 
 @observer
@@ -38,8 +40,8 @@ class Login extends Component {
     return (
       <div className="loginW">
         <div className="loginCon">
-          <Input.Password placeholder="Input Password" onPressEnter={this.login} onChange={this.handleChange}/>
-          <Button type="primary" onClick={this.login}>LOG IN</Button>
+          <Input.Password placeholder={intl.get('Login.inputPassword')} onPressEnter={this.login} onChange={this.handleChange}/>
+          <Button type="primary" onClick={this.login}>{intl.get('Login.login')}</Button>
         </div>
       </div>
     );
