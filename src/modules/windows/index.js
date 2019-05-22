@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import path from 'path'
 import { app, BrowserWindow, ipcMain as ipc } from 'electron'
 import Logger from '~/src/utils/Logger'
 import EventEmitter from 'events'
 import setting from '~/src/utils/Settings'
-import { pathExists } from 'fs-extra-p';
+import desktopIdle from 'desktop-idle'
 
 const logger = Logger.getLogger('Windows')
 
@@ -15,6 +14,7 @@ class Window extends EventEmitter {
         opts = opts || {}
 
         this._timer = null
+        this._idleChecker = null
         this._mgr = mgr
         this._logger = Logger.getLogger(`${type}Window`)
         this.type = type
@@ -61,6 +61,18 @@ class Window extends EventEmitter {
         this.window.on('blur', () => {
             if (this.type === 'main') {
                 if (global.chainManager && !this.isClosed) {
+                    if (this._idleChecker) {
+                        this._logger.info('main window losing focus, clear idel time checker')
+                        try {
+                            clearInterval(this._idleChecker)
+                            this._logger.info('idle checker cleared')
+                        } catch (e) {
+                            this._logger.error(e.message || e.stack)
+                        }
+
+                        this._idleChecker = null
+                    }
+
                     this._logger.info('main window losing focus, start autolock timer')
                     this._timer = setTimeout(() => {
                         this._logger.info('time out, lock the wallet')
@@ -76,7 +88,7 @@ class Window extends EventEmitter {
         this.window.on('focus', () => {
             if (this.type === 'main') {
                 if (this._timer) {
-                    this._logger.info('main window getting focus again, cancel autolock timer')
+                    this._logger.info('main window getting focus again, clear autolock timer')
                     let timer = this._timer
                     
                     try {
@@ -87,6 +99,22 @@ class Window extends EventEmitter {
                     }
 
                     this._timer = null
+                }
+
+                if (global.chainManager) {
+                    this._logger.info('start an interval checker for idle time')
+                    this._idleChecker = setInterval(() => {
+                        let idleTime = desktopIdle.getIdleTime()
+                        this._logger.info(`user idle time ${idleTime}`)
+                        if (idleTime * 1000 > setting.autoLockTimeout) {
+                            this._logger.info('user idle or away from key board, lock the wallet')
+                            this._mgr.broadcast('notification', 'uiAction', 'lockWallet')
+                            clearInterval(this._idleChecker)
+                            this._idleChecker = null
+                            this._logger.info('idle check interval cleared')
+                        }
+
+                    }, setting.idleCheckInterval)
                 }
             }
         })

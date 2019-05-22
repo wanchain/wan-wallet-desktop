@@ -124,6 +124,10 @@ class Settings {
         return 5 * 60 * 1000
     }
 
+    get idleCheckInterval() {
+        return 1 * 60 * 1000
+    }
+
     _get(key) {
         let val = this._db.get(key).value()
 
