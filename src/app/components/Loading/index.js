@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Progress } from 'antd';
+import intl from 'react-intl-universal';
 
 import './index.less';
 
@@ -10,8 +11,8 @@ class Loading extends Component {
 
   componentDidMount() {
     this.timer = setInterval(() => {
-      let currePercent = this.state.percent;
-      let tmp = Math.random() * 30 + parseFloat(currePercent);
+      let currentPercent = this.state.percent;
+      let tmp = Math.random() * 30 + parseFloat(currentPercent);
       if(tmp > 100) {
         tmp = 99.9;
         clearInterval(this.timer);
@@ -30,7 +31,7 @@ class Loading extends Component {
     return (
       <div className="loadingBg">
         <Progress className="progressSty" strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
-        <p>Please Wait While The Wallet Is Loading!</p>
+        <p>{intl.get('Loading.tips')}</p>
       </div>
     );
   }

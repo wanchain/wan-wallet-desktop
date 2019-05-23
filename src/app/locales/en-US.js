@@ -3,6 +3,8 @@ const en_US = {
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
 
+    'Loading.tips': 'Please wait while the wallet is loading...',
+
     'Register.createPassword': 'Create Password',
     'Register.secretBackupPhrase': 'Backup Seed Phrase',
     'Register.confirmSecretBackupPhrase': 'Confirm Seed Phrase',
