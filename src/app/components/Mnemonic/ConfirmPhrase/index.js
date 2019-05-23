@@ -11,7 +11,7 @@ import { randomSort } from 'utils/support';
   pwd: stores.mnemonic.pwd,
   method: stores.mnemonic.method,
   mnemonic: stores.mnemonic.mnemonic,
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
   setNewPhrase: val => stores.mnemonic.setNewPhrase(val),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)

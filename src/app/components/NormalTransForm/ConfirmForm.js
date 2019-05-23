@@ -7,8 +7,8 @@ import { BigNumber } from 'bignumber.js';
 import './index.less';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  language: stores.session.language,
 }))
 
 @observer

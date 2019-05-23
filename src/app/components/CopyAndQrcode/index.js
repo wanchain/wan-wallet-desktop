@@ -7,7 +7,7 @@ import QRCode from 'qrcode';
 // import { clipboard } from 'electron';
 
 @inject(stores => ({
-  language: stores.session.language,
+  language: stores.languageIntl.language,
 }))
 
 @observer

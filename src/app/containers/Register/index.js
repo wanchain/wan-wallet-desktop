@@ -19,7 +19,7 @@ const Step = Steps.Step;
   mnemonic: stores.mnemonic.mnemonic,
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),

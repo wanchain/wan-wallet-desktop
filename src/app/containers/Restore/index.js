@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 import './index.less';
 
 @inject(stores => ({
-  language: stores.session.language,
+  language: stores.languageIntl.language,
 }))
 
 @observer

@@ -15,13 +15,13 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
   transParams: stores.sendTransParams.transParams,
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
-  language: stores.session.language,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 

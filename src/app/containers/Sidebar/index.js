@@ -4,30 +4,18 @@ import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import menuList from 'constants/menuConfig';
-import logo from 'static/image/logo.png';
 import './index.less';
+import logo from 'static/image/logo.png';
 
 const SubMenu = Menu.SubMenu;
 
 @inject(stores => ({
-  language: stores.session.language,
+  language: stores.languageIntl.language,
+  sidebarColums: stores.languageIntl.sidebarColums,
 }))
 
 @observer
 class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menuTreeNode: null
-    }
-  }
-  componentDidMount() {
-    const menuTreeNode = this.renderMenu(menuList);
-    this.setState({
-      menuTreeNode
-    });
-  }
 
   renderMenu = data => {
     return data.map((item) => {
@@ -50,13 +38,15 @@ class Sidebar extends Component {
   }
 
   render() {
+    const { sidebarColums } = this.props;
+
     return (
       <div className="sidebar">
         <div className="logo">
           <img src={logo} alt={intl.get('Sidebar.wanchain')} />
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} className="menuTreeNode">
-          { this.state.menuTreeNode }
+          { this.renderMenu(sidebarColums) }
         </Menu>
       </div>
     );

@@ -10,7 +10,7 @@ import './index.less';
 @inject(stores => ({
   method: stores.mnemonic.method,
   mnemonic: stores.mnemonic.mnemonic,
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
 }))
