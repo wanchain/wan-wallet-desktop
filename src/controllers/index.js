@@ -119,7 +119,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 phrase = hdUtil.revealMnemonic(payload.pwd)
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
-                hdUtil.newKeyStoreWallet(phrase)
+                hdUtil.newKeyStoreWallet(payload.pwd)
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -318,16 +318,16 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
             break
 
-        case 'getKeyStoreCount':
-            let ret;
+        case 'getKeyStoreCount': 
+            let count;
             try {
-                ret = hdUtil.getKeyStoreCount(WAN_ID);
+              count = hdUtil.getKeyStoreCount(WAN_ID);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
 
-            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: count })
             break
             
     }
