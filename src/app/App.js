@@ -45,8 +45,8 @@ class App extends Component {
     });
 
     regEmitterHandler('hdwallet', val => {
-      if(['Ledger', 'Trzeor'].includes(val.Device)) {
-        message.warn('Ledger is disconnect!');
+      if(['Ledger', 'Trezor'].includes(val.Device)) {
+        message.warn(intl.get('HwWallet.disconnected'));
         wand.request('wallet_deleteLedger');
         stores.wanAddress.updateAddress(val.Device.toLowerCase());
       }

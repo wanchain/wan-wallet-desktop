@@ -98,6 +98,7 @@ const en_US = {
     'HwWallet.Connect.selectAddress': 'Select Address',
     'HwWallet.Connect.previousAddresses': 'Previous addresses',
     'HwWallet.Connect.nextAddresses': 'Next addresses',
+    'HwWallet.disconnected': 'Hardware wallet is disconnected',
 
     'MFooter.allRightsReserved': 'All Rights Reserved',
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',

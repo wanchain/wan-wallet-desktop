@@ -106,8 +106,6 @@ class WanAddress {
 
     @computed get currentPage() {
       let page = '';
-      console.log(session.pageTitle);
-      console.log(intl.get('Ledger.ledger'),intl.get('Trezor.trezor'),intl.get('WanAccount.wallet'));
       switch (session.pageTitle) {
         case intl.get('Ledger.ledger'):
           page = 'ledger';

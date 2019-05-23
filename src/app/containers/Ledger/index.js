@@ -30,7 +30,7 @@ class Ledger extends Component {
   }
 
   componentDidUpdate() {
-    if(this.props.ledgerAddrList.length !== 0 && !this.timer) {
+    if (this.props.ledgerAddrList.length !== 0 && !this.timer) {
       this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
     }
   }
@@ -53,21 +53,18 @@ class Ledger extends Component {
   }
 
   connectAndGetPublicKey = callback => {
-    wand.request('wallet_isConnected', { walletID: WALLET_ID }, (err, connected) => {
-      if (err) return;
-      if (connected) {
-        this.getPublicKey(callback);
+    console.log("connect to ledger")
+    wand.request('wallet_connectToLedger', {}, (err, val) => {
+      if (err) {
+        callback(err, val);
       } else {
-        console.log("connect to ledger")
-        wand.request('wallet_connectToLedger', {}, (err, val) => {
-          if (err) {
-            callback(err, val);
-          } else {
-            this.getPublicKey(callback);
-          }
-        });
+        this.getPublicKey(callback);
       }
     });
+  }
+
+  handleCancel = () => {
+    wand.request('wallet_deleteLedger');
   }
 
   getPublicKey = callback => {
@@ -81,7 +78,7 @@ class Ledger extends Component {
 
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
-    
+
     message.info(intl.get('Ledger.signTransactionInLedger'));
     wand.request('wallet_signTransaction', { walletID: WALLET_ID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
@@ -109,7 +106,7 @@ class Ledger extends Component {
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
+            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
             : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>

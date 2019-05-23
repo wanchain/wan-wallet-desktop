@@ -36,7 +36,7 @@ const zh_CN = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': '在Ledger上面点击进入Wanchain APP',
     'Ledger.signTransactionInLedger': '请在Ledger上确认',
     'Ledger.signTransactionFailed': '签名失败，请重试',
-    
+
     'Portfolio.portfolio': '我的资产',
     'Portfolio.name': '名称',
     'Portfolio.price': '价格',
@@ -98,6 +98,7 @@ const zh_CN = {
     'HwWallet.Connect.selectAddress': '选择地址',
     'HwWallet.Connect.previousAddresses': '上一页',
     'HwWallet.Connect.nextAddresses': '下一页',
+    'HwWallet.disconnected': '硬件钱包已断开',
 
     'MFooter.allRightsReserved': '版权所有',
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',

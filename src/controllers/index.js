@@ -215,7 +215,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
         case 'deleteLedger':
           {
             try {
-                hdUtil.disconnectLedger()
+                await hdUtil.disconnectLedger()
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
