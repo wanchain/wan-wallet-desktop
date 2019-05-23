@@ -126,29 +126,6 @@ class LanguageIntl {
       }
     ];
   }
-
-  @computed get wanAddrColumns() {
-    return self.language && [
-      {
-        title: intl.get('WanAccount.name'),
-        dataIndex: 'name',
-        editable: true
-      },
-      {
-        title: intl.get('WanAccount.address'),
-        dataIndex: 'address',
-      },
-      {
-        title: intl.get('WanAccount.balance'),
-        dataIndex: 'balance',
-        sorter: (a, b) => a.balance - b.balance,
-      },
-      {
-        title: intl.get('WanAccount.action'),
-        dataIndex: 'action',
-      }
-    ];
-  }
 }
 
 const self = new LanguageIntl();

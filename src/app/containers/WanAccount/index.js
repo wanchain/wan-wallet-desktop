@@ -25,7 +25,6 @@ const KEYSTOREID = 5;
   getAddrList: stores.wanAddress.getAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
-  // wanAddrColumns: stores.languageIntl.wanAddrColumns,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
