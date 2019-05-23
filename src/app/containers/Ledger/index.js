@@ -15,8 +15,8 @@ const LEDGER = 'ledger';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr)

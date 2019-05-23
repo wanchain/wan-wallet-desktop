@@ -8,7 +8,7 @@ import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
 
 @inject(stores => ({
-  language: stores.session.language,
+  language: stores.languageIntl.language,
 }))
 
 @observer

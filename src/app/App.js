@@ -71,7 +71,7 @@ class App extends Component {
       currentLocale: lan,
       locales
     }).then(() => {
-      stores.session.setLanguage(lan);
+      stores.languageIntl.setLanguage(lan);
     });
   }
 

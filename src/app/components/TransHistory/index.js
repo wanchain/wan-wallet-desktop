@@ -12,10 +12,10 @@ const testnet = 'http://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  language: stores.session.language,
   addrInfo: stores.wanAddress.addrInfo,
-  transColumns: stores.session.transColumns,
+  language: stores.languageIntl.language,
   historyList: stores.wanAddress.historyList,
+  transColumns: stores.languageIntl.transColumns,
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
 

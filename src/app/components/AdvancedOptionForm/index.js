@@ -6,9 +6,9 @@ import intl from 'react-intl-universal';
 import './index.less';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   minGasPrice: stores.sendTransParams.minGasPrice,
   transParams: stores.sendTransParams.transParams,
-  language: stores.session.language,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 

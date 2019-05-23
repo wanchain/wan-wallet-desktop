@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 import './index.less';
 @inject(stores => ({
   method: stores.mnemonic.method,
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   setPwd: pwd => stores.mnemonic.setPwd(pwd),
   setMethod: method => stores.mnemonic.setMethod(method),
   setconfirmPwd: pwd => stores.mnemonic.setconfirmPwd(pwd),

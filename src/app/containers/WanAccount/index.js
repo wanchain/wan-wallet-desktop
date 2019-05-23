@@ -20,10 +20,10 @@ const WALLETID = 1;
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
-  getAmount: stores.wanAddress.getNormalAmount,
+  language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
+  getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
-  language: stores.session.language,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),

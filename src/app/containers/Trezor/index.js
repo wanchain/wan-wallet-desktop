@@ -31,8 +31,8 @@ TrezorConnect.init({
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
-  language: stores.session.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)

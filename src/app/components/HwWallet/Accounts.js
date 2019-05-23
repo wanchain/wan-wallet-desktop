@@ -9,8 +9,8 @@ import SendNormalTrans from 'components/SendNormalTrans';
 
 @inject(stores => ({
   rawTx: stores.sendTransParams.rawTx,
+  language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  language: stores.session.language,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 

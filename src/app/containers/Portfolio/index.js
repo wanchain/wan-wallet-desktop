@@ -7,10 +7,10 @@ import './index.less';
 import wanLogo from 'static/image/wan.png';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   portfolioList: stores.portfolio.portfolioList,
-  language: stores.session.language,
+  updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateCoinPrice: () => stores.portfolio.updateCoinPrice()
 }))
 
 @observer

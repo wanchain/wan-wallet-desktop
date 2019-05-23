@@ -9,7 +9,7 @@ import Restore from 'containers/Restore';
 const { TabPane } = Tabs;
 
 @inject(stores => ({
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   changeTitle: newTitle => stores.session.changeTitle(newTitle)
 }))
 

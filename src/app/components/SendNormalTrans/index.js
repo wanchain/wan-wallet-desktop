@@ -11,8 +11,8 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 
 @inject(stores => ({
   chainId: stores.session.chainId,
+  language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  language: stores.session.language,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))

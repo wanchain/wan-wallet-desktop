@@ -8,7 +8,7 @@ import './index.less';
 @inject(stores => ({
   auth: stores.session.auth,
   pageTitle: stores.session.pageTitle,
-  language: stores.session.language,
+  language: stores.languageIntl.language,
   setAuth: val => stores.session.setAuth(val),
   getMnemonic: ret => stores.session.getMnemonic(ret)
 }))
