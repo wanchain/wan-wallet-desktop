@@ -5,6 +5,8 @@ import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import { Windows } from '~/src/modules'
+import Web3 from 'web3';
+const web3 = new Web3();
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -30,7 +32,7 @@ const WAN_ID = 5718350
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
     const [action, id] = actionUni.split('#')
-    
+
     switch (action) {
         case 'generate':
             try {
@@ -490,47 +492,97 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
 
 })
 
-ipc.on(ROUTE_STAKING, async (event, action, payload) => {
+ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
     let ret, err
+    const [action, id] = actionUni.split('#')
+
     switch (action) {
-        case 'totalLocked':
+        case 'info':
             try {
-                //let accounts = hdUtil.getUserAccount(payload.walletID, payload.path)
+                ret = {
+                    base: {
+                        myStake: "N/A",
+                        validatorCnt: "In N/A validators",
+                        pendingWithdrawal: "N/A",
+                        epochID: "Epoch N/A",
+                        epochIDRaw: 0,
+                        currentRewardRate: "N/A %",
+                        stakePool: 0,
+                        currentRewardRateChange: "↑",
+                        totalDistributedRewards: "N/A",
+                        startFrom: "From " + (new Date()).toDateString(),
+                    },
+                    list: []
+                };
+
+                let totalStake = web3.utils.toBN(0);
+                let withdrawStake = web3.utils.toBN(0);
+                let validator = [];
+                let totalReward = web3.utils.toBN(0);
+                for (let i = 0; i < payload.length; i++) {
+                    const account = payload[i];
+                    const info = await ccUtil.getDelegatorStakeInfo('wan', account.address)
+
+                    console.log('info: ', info)
+                    if (info && info.length > 0) {
+                        //[{address:"xxxx", amount:3, quitEpoch:0},{address:"xxxxxx", amount:7, quitEpoch:10}]
+                        for (let m = 0; m < info.length; m++) {
+                            const staker = info[m];
+                            totalStake = web3.utils.toBN(staker.amount).add(totalStake);
+                            if (staker.quitEpoch != 0) {
+                                withdrawStake = web3.utils.toBN(staker.amount).add(withdrawStake);
+                            }
+
+                            if (!validator[staker.address]) {
+                                validator[staker.address] = web3.utils.toBN(staker.amount);
+                            } else {
+                                validator[staker.address] = web3.utils.toBN(staker.amount).add(validator[staker.address]);
+                            }
+                        }
+                    }
+
+                    // [{address:"xxxx", amount:3, epochId:0},{address:"xxxxxx", amount:7, epochId:10}]
+                    const incentive = await ccUtil.getDelegatorIncentive('wan', account.address)
+                    for (let m = 0; m < incentive.length; m++) {
+                        const inc = incentive[m];
+                        totalReward = web3.utils.toBN(inc.amount).add(totalReward);
+                    }
+                }
+
+                ret.base.myStake = Number(web3.utils.fromWei(totalStake.toString())).toFixed(0);
+                ret.base.pendingWithdrawal = Number(web3.utils.fromWei(withdrawStake.toString())).toFixed(0);
+                ret.base.totalDistributedRewards = Number(web3.utils.fromWei(totalReward.toString())).toFixed(2);
+
+                //use Object.getOwnPropertyNames to get length must -1.
+                ret.base.validatorCnt = "In " + (Object.getOwnPropertyNames(validator).length - 1) + " validators";
+
+                ret.base.epochIDRaw = await ccUtil.getEpochID('wan');
+
+                let blockNumber = await ccUtil.getBlockNumber('wan');
+                let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
+                let stakePool = web3.utils.toBN(0)
+                if (stakerInfo) {
+                    for (let i = 0; i < stakerInfo.length; i++) {
+                        const si = stakerInfo[i];
+                        stakePool = web3.utils.toBN(si.amount).add(stakePool);
+                        for (let m = 0; m < si.clients.length; m++) {
+                            const cl = si.clients[m];
+                            stakePool = web3.utils.toBN(cl.amount).add(stakePool);
+                        }
+
+                        for (let m = 0; m < si.partners.length; m++) {
+                            const pr = si.partners[m];
+                            stakePool = web3.utils.toBN(pr.amount).add(stakePool);
+                        }
+                    }
+                }
+
+                ret.base.stakePool = Number(web3.utils.fromWei(stakePool.toString())).toFixed(0);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
-            break
-
-        case 'totalReturning':
-            try {
-
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
-            break
-
-        case 'totalReward':
-            try {
-
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
-            break
-
-        case 'validatorInfo':
-            try {
-
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'txHistory':
@@ -545,7 +597,25 @@ ipc.on(ROUTE_STAKING, async (event, action, payload) => {
 
         case 'delegateIn':
             try {
+                // 1. Get from address from wallet
+                let addr = payload;
+                console.log('delegateIn from:', payload.account, 'to:', payload.validator, 'value:', payload.value);
 
+                let gasPrice = await ccUtil.getGasPrice('wan');
+                let gasLimit = 200000;
+
+                let input = {
+                    "from": '0x' + addr.address,
+                    "validatorAddr": payload.validator,
+                    "amount": payload.value,
+                    "gasPrice": gasPrice,
+                    "gasLimit": gasLimit,
+                    "BIP44Path": addr.path,
+                    "walletID": 1
+                }
+
+                let ret = await global.crossInvoker.PosDelegateIn(input);
+                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

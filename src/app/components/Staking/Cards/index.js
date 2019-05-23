@@ -2,42 +2,51 @@ import React, { Component } from 'react';
 import { Row, Col } from 'antd';
 import Card from './Card'
 import './index.less';
+import { observer, inject } from 'mobx-react';
 
+@inject(stores => ({
+  stakeInfo: stores.staking.stakeInfo,
+}))
+
+@observer
 class Cards extends Component {
   render() {
+    console.log("Cards render", this.props.stakeInfo);
+    console.log("epoch ID", this.props.stakeInfo.epochID)
+
     return (
       <div className="cards">
         <Row gutter={16}>
           <Col span={6}>
             <Card className="card1"
               title="My Stake"
-              value="150,000"
+              value={this.props.stakeInfo.myStake}
               tail="WAN"
-              bottom="In 4 validators"
+              bottom={this.props.stakeInfo.validatorCnt}
             />
           </Col>
           <Col span={6}>
             <Card className="card2"
               title="Pending Withdrawal"
-              value="2,000"
+              value={this.props.stakeInfo.pendingWithdrawal}
               tail="WAN"
-              bottom="Epoch 1000"
+              bottom={this.props.stakeInfo.epochID}
             />
           </Col>
           <Col span={6}>
             <Card className="card3"
               title="Current Reward Rate"
-              value="15%"
-              tail="↑"
-              bottom="Epoch 1000"
+              value={this.props.stakeInfo.currentRewardRate}
+              tail={this.props.stakeInfo.currentRewardRateChange}
+              bottom={this.props.stakeInfo.epochID}
             />
           </Col>
           <Col span={6}>
             <Card className="card4"
               title="Total Distributed Rewards"
-              value="15,000"
+              value={this.props.stakeInfo.totalDistributedRewards}
               tail="WAN"
-              bottom="From 1th Jan"
+              bottom={this.props.stakeInfo.startFrom}
             />
           </Col>
         </Row>

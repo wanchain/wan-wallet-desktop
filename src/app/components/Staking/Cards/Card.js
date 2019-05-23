@@ -6,33 +6,25 @@ import mountain from 'static/image/mountain.png';
 class Card extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      title: props.title,
-      value: props.value,
-      tail: props.tail,
-      bottom: props.bottom,
-      className: props.className,
-    }
   }
 
   render() {
     return (
-      <div className={this.state.className}>
+      <div className={this.props.className}>
         <Row>
           <Col className="card-title">
-            <img className="card-ico" src={mountain} /><span>{this.state.title}</span>
+            <img className="card-ico" src={mountain} /><span>{this.props.title}</span>
           </Col>
         </Row>
         <Row>
           <Col className="card-value-boarder">
-            <span className="card-value">{this.state.value}</span>
-            <span className="card-tail">{this.state.tail}</span>
+            <span className="card-value">{this.props.value}</span>
+            <span className="card-tail">{this.props.tail}</span>
           </Col>
         </Row>
         <Row>
           <Col className="card-bottom">
-            {this.state.bottom}
+            {this.props.bottom}
           </Col>
         </Row>
       </div>

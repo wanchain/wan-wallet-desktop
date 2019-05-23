@@ -13,10 +13,10 @@ import totalImg from 'static/image/wan.png';
 import './index.less';
 
 @inject(stores => ({
-  addrInfo: stores.wanAddress.addrInfo,
-  getAmount: stores.wanAddress.getNormalAmount,
   getAddrList: stores.wanAddress.getAddrList,
+  stakingList: stores.staking.stakingList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  updateStakeInfo: () => stores.staking.updateStakeInfo()
 }))
 
 @observer
@@ -30,14 +30,15 @@ class Staking extends Component {
   }
 
   componentDidMount() {
-    const { getAmount, getAddrList } = this.props;
-    console.log("getAddrList", getAddrList)
-    console.log('-----------')
-    console.log("getAmount", getAmount)
-
+    this.props.updateStakeInfo();
+    this.timer = setInterval(() =>{
+      console.log('time up staking info.')
+      this.props.updateStakeInfo();
+    }, 5000)
   }
 
   componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   handleCreateValidator() {
@@ -52,13 +53,21 @@ class Staking extends Component {
     this.setState({ createValidator: false });
   }
 
+  delegateIn() {
+
+  }
+
+  delegateOut() {
+    
+  }
+
   render() {
     return (
       <div className="staking">
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /><span className="dashboard">Dashboard</span></Col>
           <Col span={12} className="col-right">
-            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleCreateValidator.bind(this)}>New Validator</Button>
+            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleCreateValidator.bind(this)}>New Delegate</Button>
             {this.state.createValidator
               ? <StakeInForm onCancel={this.handleCancel} onSend={this.handleSend} />
               : ''

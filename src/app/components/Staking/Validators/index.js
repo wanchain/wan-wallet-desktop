@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Table } from 'antd';
+
 import './index.less';
 import Cell from './Cell';
 import Validator from "./Validator";
-import validatorImg from 'static/image/validator.png';
-import arrow from 'static/image/arrow.png';
+
 import WithdrawForm from '../WithdrawForm';
 import StakeInForm from '../StakeInForm';
 
+import { observer, inject } from 'mobx-react';
+
+@inject(stores => ({
+  getAddrList: stores.wanAddress.getAddrList,
+  stakingList: stores.staking.stakingList,
+}))
+
+@observer
 class Validators extends Component {
 
   constructor(props) {
@@ -94,22 +102,9 @@ class Validators extends Component {
   ]
 
   render() {
-    let validators = []
-    for (let i = 0; i < 5; i++) {
-      validators.push({
-        myAccount: "ACCOUNT1",
-        myStake: { title: "50,000", bottom: "30 days ago" },
-        arrow1: arrow,
-        validator: { img: validatorImg, name: "Ethereum" },
-        arrow2: arrow,
-        distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
-        modifyStake: ["+", "-"]
-      })
-    }
-
     return (
       <div className="validators">
-        <Table columns={this.columns} dataSource={validators} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table columns={this.columns} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         {this.state.withdrawVisible
           ? <WithdrawForm onCancel={this.handleCancel} onSend={this.handleSend} />
           : ''
