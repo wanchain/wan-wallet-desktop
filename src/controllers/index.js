@@ -518,7 +518,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.getGasPrice(payload.chainType);
                 logger.info('Gas price: ' + payload.chainType + ',' + ret);
-            } catch (err) {
+            } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
