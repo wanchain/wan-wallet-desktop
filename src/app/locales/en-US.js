@@ -59,7 +59,8 @@ const en_US = {
     'Sidebar.wanchain': 'Wanchain',
 
     'Trezor.trezor': 'Trezor',
-    'Trezor.connectTrezorWalletToComputer': 'Please connect your Trezor wallet directly to your computer',
+    'Trezor.installBridge': 'Install Trezor bridge',
+    'Trezor.connectTrezorWalletToComputer': 'Connect your Trezor wallet directly to your computer',
     'Trezor.signTransactionFailed': 'Sign transaction failed. Please try again',
     'Trezor.signFailed': 'Sign failed',
 

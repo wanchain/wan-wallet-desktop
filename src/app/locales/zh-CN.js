@@ -33,6 +33,7 @@ const zh_CN = {
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': '请按照下面步骤连接你的Ledger',
+    'Trezor.installBridge': '安装Trezor bridge',
     'Ledger.connectLedgerWalletToComputer': '将你的Ledger连接上你的电脑',
     'Ledger.enterPinCode': '输入PIN码解锁你的Ledger',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': '在Ledger上面点击进入Wanchain APP',

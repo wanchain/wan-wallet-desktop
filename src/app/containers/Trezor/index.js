@@ -55,10 +55,15 @@ class Trezor extends Component {
     clearInterval(this.timer);
   }
 
+  handleClick = () => {
+    wand.shell.openExternal('https://wallet.trezor.io/#/bridge');
+  }
+
   instruction = () => {
     return (
       <div>
-        <p className="com-gray">{intl.get('Trezor.connectTrezorWalletToComputer')}</p>
+        <p className="com-gray">1. {intl.get('Trezor.installBridge')}: <span onClick={this.handleClick}>Trezor Bridge</span></p>
+        <p className="com-gray">2. {intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
   }
