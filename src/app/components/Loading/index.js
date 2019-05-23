@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
 import { Progress } from 'antd';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+
 import intl from 'react-intl-universal';
 
 import './index.less';
