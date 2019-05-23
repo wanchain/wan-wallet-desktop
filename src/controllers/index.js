@@ -317,6 +317,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
 
             break
+
+        case 'getKeyStoreCount':
+            let ret;
+            try {
+                ret = hdUtil.getKeyStoreCount(WAN_ID);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+            
     }
 })
 

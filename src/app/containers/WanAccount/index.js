@@ -24,7 +24,7 @@ const WALLETID = 1;
   getAddrList: stores.wanAddress.getAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
-  wanAddrColumns: stores.languageIntl.wanAddrColumns,
+  // wanAddrColumns: stores.languageIntl.wanAddrColumns,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
@@ -42,6 +42,45 @@ class WanAccount extends Component {
     this.props.updateTransHistory();
     this.props.changeTitle(intl.get('WanAccount.wallet'));
   }
+
+  columns = [
+    {
+      title: intl.get('WanAccount.name'),
+      dataIndex: 'name',
+      editable: true
+    },
+    {
+      title: intl.get('WanAccount.address'),
+      dataIndex: 'address',
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+    },
+    {
+      title: intl.get('WanAccount.balance'),
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    },
+    {
+      title: intl.get('WanAccount.action'),
+      dataIndex: 'action',
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+    }
+  ];
+
+  columnsTree = this.columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: this.handleSave,
+      }),
+    };
+  });
 
   componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
@@ -120,30 +159,6 @@ class WanAccount extends Component {
       },
     };
 
-    const columnsTree = this.props.wanAddrColumns.map((col) => {
-      if (!col.editable) {
-        return col;
-      }
-      switch(col.dataIndex) {
-        case 'address':
-          col.render = text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
-          break;
-        case 'action': 
-          col.render = (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
-          break;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          editable: col.editable,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          handleSave: this.handleSave,
-        }),
-      };
-    });
-
     return (
       <div className="account">
         <Row className="title">
@@ -154,7 +169,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={columnsTree} dataSource={getAddrList} />
+            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList} />
           </Col>
         </Row>
         <Row className="mainBody">
