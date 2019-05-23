@@ -9,6 +9,7 @@ import { getBalance } from 'utils/helper';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
+  selectAddrColumns: stores.languageIntl.selectAddrColumns,
 }))
 
 @observer
@@ -22,7 +23,6 @@ class Connect extends Component {
     this.page = 0;
     this.pageSize = 5;
     this.selectedAddrs = [];
-    this.columns = [{ title: intl.get('HwWallet.Connect.address'), dataIndex: 'address' }, { title: intl.get('HwWallet.Connect.balance'), dataIndex: 'balance' }];
   }
 
   componentWillUnmount() {
@@ -136,9 +136,12 @@ class Connect extends Component {
           <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
           <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} className="popTable">
             <div>
-              <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={addresses}></Table>
+              <Table rowSelection={this.rowSelection} pagination={false} columns={this.props.selectAddrColumns} dataSource={addresses}></Table>
               <div className="rollPage">
-                {this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p> : ''}
+                {this.page !== 0 
+                  ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p> 
+                  : ''
+                }
                 <p onClick={this.showNextPageAddrs} className="nextPage">{intl.get('HwWallet.Connect.nextAddresses')}</p>
               </div>
             </div>
