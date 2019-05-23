@@ -211,6 +211,19 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             break
+
+        case 'deleteLedger':
+          {
+            try {
+                hdUtil.disconnectLedger()
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+    
+            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break
+          }
     }
 })
 
