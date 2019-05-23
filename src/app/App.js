@@ -20,8 +20,9 @@ class App extends Component {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
-        stores.wanAddress.getUserAccountFromDB();
         stores.portfolio.updateCoinPrice();
+        stores.wanAddress.getKeyStoreAddr();
+        stores.wanAddress.getUserAccountFromDB();
         clearInterval(id);
       }
     }, 1000);
@@ -63,6 +64,10 @@ class App extends Component {
         stores.wanAddress.updateTransHistory();
       })
     });
+
+    regEmitterHandler('keyfilewalletcount', () => {
+      stores.wanAddress.getKeyStoreAddr();
+    })
   }
 
   changeLanguage = lan => {

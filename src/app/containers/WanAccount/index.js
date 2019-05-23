@@ -17,6 +17,7 @@ const WAN = "m/44'/5718350'/0'/0/";
 const CHAINTYPE = 'WAN';
 const SYMBOL = 'WAN';
 const WALLETID = 1;
+const KEYSTOREID = 5;
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -24,7 +25,6 @@ const WALLETID = 1;
   getAddrList: stores.wanAddress.getAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
-  // wanAddrColumns: stores.languageIntl.wanAddrColumns,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
@@ -45,22 +45,18 @@ class WanAccount extends Component {
 
   columns = [
     {
-      title: intl.get('WanAccount.name'),
       dataIndex: 'name',
       editable: true
     },
     {
-      title: intl.get('WanAccount.address'),
       dataIndex: 'address',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
-      title: intl.get('WanAccount.balance'),
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
     },
     {
-      title: intl.get('WanAccount.action'),
       dataIndex: 'action',
       render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
@@ -159,12 +155,16 @@ class WanAccount extends Component {
       },
     };
 
+    this.props.language && this.columnsTree.forEach(col => {
+      col.title = intl.get(`WanAccount.${col.dataIndex}`)
+    })
+
     return (
       <div className="account">
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+          <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

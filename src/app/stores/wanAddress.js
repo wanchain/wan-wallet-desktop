@@ -7,6 +7,7 @@ import intl from 'react-intl-universal';
 import session from './session';
 
 const WAN = "m/44'/5718350'/0'/0/";
+const KEYSTOREID = 5;
 
 class WanAddress {
     @observable addrInfo = {
@@ -101,6 +102,23 @@ class WanAddress {
             }
           })
         }
+      })
+    }
+
+    @action getKeyStoreAddr() {
+      wand.request('address_getKeyStoreCount', null, (err, count) => {
+        if(err) {
+          console.log(`address_getKeyStoreCount_err: ${err}`);
+          return;
+        }
+        console.log(count, 'count')
+        wand.request('address_get', { walletID: KEYSTOREID, chainType: 'WAN', start: 0, end: count}, (err, data) => {
+          if(err) {
+            console.log(`address_get_err: ${err}`);
+            return;
+          }
+          console.log(data, 'data')
+        })
       })
     }
 
