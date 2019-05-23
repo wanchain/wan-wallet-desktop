@@ -5,6 +5,8 @@ import ConnectHwWallet from 'components/HwWallet/Connect';
 import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import { Icon, message } from 'antd';
+
 const wanTx = require('wanchainjs-tx');
 
 const WAN_PATH = "m/44'/5718350'/0'/0";
@@ -62,7 +64,7 @@ class Trezor extends Component {
   instruction = () => {
     return (
       <div>
-        <p className="com-gray">1. {intl.get('Trezor.installBridge')}: <span onClick={this.handleClick}>Trezor Bridge</span></p>
+        <p className="com-gray">1. {intl.get('Trezor.installBridge')} <Icon type='link' onClick={this.handleClick}/></p>
         <p className="com-gray">2. {intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
