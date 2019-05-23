@@ -11,7 +11,7 @@ const SubMenu = Menu.SubMenu;
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  sidebarColums: stores.languageIntl.sidebarColums,
+  sidebarColumns: stores.languageIntl.sidebarColumns,
 }))
 
 @observer
@@ -38,7 +38,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColums } = this.props;
+    const { sidebarColumns } = this.props;
 
     return (
       <div className="sidebar">
@@ -46,7 +46,7 @@ class Sidebar extends Component {
           <img src={logo} alt={intl.get('Sidebar.wanchain')} />
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} className="menuTreeNode">
-          { this.renderMenu(sidebarColums) }
+          { this.renderMenu(sidebarColumns) }
         </Menu>
       </div>
     );

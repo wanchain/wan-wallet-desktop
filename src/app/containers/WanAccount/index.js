@@ -24,6 +24,7 @@ const WALLETID = 1;
   getAddrList: stores.wanAddress.getAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
+  // wanAddrColumns: stores.languageIntl.wanAddrColumns,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
@@ -38,16 +39,8 @@ class WanAccount extends Component {
       bool: true,
       isUnlock: false,
     }
-    this.props.changeTitle(intl.get('WanAccount.wallet'));
     this.props.updateTransHistory();
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer);
+    this.props.changeTitle(intl.get('WanAccount.wallet'));
   }
 
   columns = [
@@ -88,6 +81,14 @@ class WanAccount extends Component {
       }),
     };
   });
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
 
   handleSend = from => {
     let params = this.props.transParams[from];

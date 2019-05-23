@@ -1,9 +1,16 @@
-import React, { Component } from 'react';
 import { Progress } from 'antd';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+
 import intl from 'react-intl-universal';
 
 import './index.less';
 
+@inject(stores => ({
+  language: stores.languageIntl.language,
+}))
+
+@observer
 class Loading extends Component {
   state = {
     percent: 0
@@ -11,16 +18,15 @@ class Loading extends Component {
 
   componentDidMount() {
     this.timer = setInterval(() => {
-      let currentPercent = this.state.percent;
-      let tmp = Math.random() * 30 + parseFloat(currentPercent);
-      if(tmp > 100) {
-        tmp = 99.9;
+      let currePercent = this.state.percent;
+      let tmp = 10 + parseFloat(currePercent);
+      if(tmp === 100) {
         clearInterval(this.timer);
       }
       this.setState({
-        percent: tmp.toFixed(1)
+        percent: tmp
       })
-    }, 500)
+    }, 1000)
   }
   
   componentWillUnmount() {
