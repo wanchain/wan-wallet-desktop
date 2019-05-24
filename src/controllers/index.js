@@ -6,6 +6,7 @@ import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import { Windows } from '~/src/modules'
 import Web3 from 'web3';
+import { toWei } from '../app/utils/support';
 const web3 = new Web3();
 
 const logger = Logger.getLogger('controllers')
@@ -598,23 +599,16 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
         case 'delegateIn':
             try {
                 // 1. Get from address from wallet
-                let addr = payload;
-                console.log('delegateIn from:', payload.account, 'to:', payload.validator, 'value:', payload.value);
+                console.log('delegateIn:', payload);
 
+                let tx = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
+                
                 let gasLimit = 200000;
-
-                let input = {
-                    "from": '0x' + addr.address,
-                    "validatorAddr": payload.validator,
-                    "amount": payload.value,
-                    "gasPrice": gasPrice,
-                    "gasLimit": gasLimit,
-                    "BIP44Path": addr.path,
-                    "walletID": 1
-                }
-
-                let ret = await global.crossInvoker.PosDelegateIn(input);
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');;
+                tx.gasLimit = gasLimit;
+   
+                let ret = await global.crossInvoker.PosDelegateIn(tx);
                 console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)

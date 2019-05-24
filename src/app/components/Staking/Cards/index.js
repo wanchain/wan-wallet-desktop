@@ -11,8 +11,8 @@ import { observer, inject } from 'mobx-react';
 @observer
 class Cards extends Component {
   render() {
-    console.log("Cards render", this.props.stakeInfo);
-    console.log("epoch ID", this.props.stakeInfo.epochID)
+    //console.log("Cards render", this.props.stakeInfo);
+    //console.log("epoch ID", this.props.stakeInfo.epochID)
 
     return (
       <div className="cards">

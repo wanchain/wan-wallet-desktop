@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Table, Row, Col, message } from 'antd';
+import { Button, Table, Row, Col, message, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 
 import Cards from 'components/Staking/Cards';
 import Validators from 'components/Staking/Validators';
 import StakingHistory from 'components/Staking/StakingHistory';
 import StakeInForm from 'components/Staking/StakeInForm';
-
+const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
 import totalImg from 'static/image/wan.png';
 
@@ -32,7 +32,7 @@ class Staking extends Component {
   componentDidMount() {
     this.props.updateStakeInfo();
     this.timer = setInterval(() =>{
-      console.log('time up staking info.')
+      //console.log('time up staking info.')
       this.props.updateStakeInfo();
     }, 5000)
   }
@@ -69,7 +69,7 @@ class Staking extends Component {
           <Col span={12} className="col-right">
             <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleCreateValidator.bind(this)}>New Delegate</Button>
             {this.state.createValidator
-              ? <StakeInForm onCancel={this.handleCancel} onSend={this.handleSend} />
+              ? <DelegateInForm onCancel={this.handleCancel} onSend={this.handleSend} />
               : ''
             }
           </Col>

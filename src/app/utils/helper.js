@@ -64,8 +64,10 @@ export const checkWanAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isWanAddress', { address: address }, (err, val) => {
       if (err) {
+        console.log("Check WAN address failed")
         return reject('Check WAN address failed ', err)
       } else {
+        console.log("Check WAN address success")        
         return resolve(val);
       }
     })

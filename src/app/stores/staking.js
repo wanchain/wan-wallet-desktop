@@ -24,17 +24,17 @@ class Staking {
   epochID = 0;
 
   @action updateStakeInfo() {
-    console.log("updateStakeInfo")
+    //console.log("updateStakeInfo")
     const addrList = wanAddress.getAddrList.slice()
     wand.request('staking_info', addrList, (err, val) => {
-      console.log('wand returned.', val)
+      //console.log('wand returned.', val)
       if(!err && val) {
         this.stakeInfo = val.base;
         this.stakerList = val.list;
         let reward = this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = reward * 100 / val.base.stakePool
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
-        console.log('rewardRate:', this.stakeInfo.currentRewardRate);
+        //console.log('rewardRate:', this.stakeInfo.currentRewardRate);
         this.stakeInfo.epochID = "Epoch " + this.stakeInfo.epochIDRaw;
 
         if (val.base.epochID != this.epochID) {
@@ -49,7 +49,7 @@ class Staking {
           this.epochID = val.base.epochID;
         }
 
-        console.log('stakeInfo:', this.stakeInfo);
+        //console.log('stakeInfo:', this.stakeInfo);
       }
     })
   }
