@@ -64,8 +64,8 @@ class App extends Component {
       })
     });
 
-    regEmitterHandler('keyfilepath', path => {
-      stores.wanAddress.addKeyStoreAddr(path);
+    regEmitterHandler('keyfilepath', data => {
+      stores.wanAddress.addKeyStoreAddr(data);
     })
   }
 
