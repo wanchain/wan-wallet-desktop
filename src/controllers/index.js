@@ -23,7 +23,7 @@ const ROUTE_QUERY = 'query'
 const DB_NORMAL_COLLECTION = 'normalTrans'
 
 // wallet path consts
-const WANBIP44Path = "m/44'/5718350'/0'/0/0"
+const WANBIP44Path = "m/44'/5718350'/0'/0/"
 
 // chain ID consts
 const WAN_ID = 5718350
@@ -300,13 +300,14 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'fromKeyFile':
-            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
-            const keyFileContent = fs.readFileSync(keyFilePath).toString()
-
+            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
+            const keyFileContent = fs.readFileSync(keyFilePath).toString();
+            const keyStoreObj = JSON.parse(keyFileContent)
             try {
-                hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
-                let count = hdUtil.getKeyStoreCount(WAN_ID)
-                Windows.broadcast('notification', 'keyfilewalletcount', count)
+                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
+
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, {name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}` });
+                Windows.broadcast('notification', 'keyfilepath', {path, addr: keyStoreObj.address});
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {

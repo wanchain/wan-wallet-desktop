@@ -14,6 +14,7 @@ class WanAddress {
       'normal': {},
       'ledger': {},
       'trezor': {},
+      'import': {},
     };
     @observable selectedAddr = '';
     @observable transHistory = {};
@@ -36,7 +37,7 @@ class WanAddress {
           self.addrInfo[type][addr.address] = {
             name: `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`,
             balance: addr.balance || '0',
-            address: addr.balance,
+            address: addr.address,
             path: addr.path
           }
         }
@@ -62,9 +63,11 @@ class WanAddress {
 
     @action updateWANBalance(arr) {
       let keys = Object.keys(arr);
-      let normal = Object.keys(self.addrInfo['normal']); 
-      let ledger = Object.keys(self.addrInfo['ledger']); 
-      let trezor = Object.keys(self.addrInfo['trezor']); 
+      let normal = Object.keys(self.addrInfo['normal']);
+      let ledger = Object.keys(self.addrInfo['ledger']);
+      let trezor = Object.keys(self.addrInfo['trezor']);
+      let importArr = Object.keys(self.addrInfo['import']);
+
       keys.forEach(item => {
         if(normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
           self.addrInfo['normal'][item].balance = arr[item];
@@ -75,15 +78,24 @@ class WanAddress {
         if(trezor.includes(item) && self.addrInfo['trezor'][item].balance !== arr[item]) {
           self.addrInfo['trezor'][item].balance = arr[item];
         }
+        if(importArr.includes(item) && self.addrInfo['import'][item].balance !== arr[item]) {
+          self.addrInfo['import'][item].balance = arr[item];
+        }
       })
     }
 
     @action updateName(arr) {
-      const path = self.addrInfo['normal'][arr['address']]['path'];
-
-      wand.request('account_update', { walletID: 1, path: `${WAN}${path}`, meta: {name: arr.name, addr: arr.address.toLowerCase()} }, (err, val) => {
+      let walletID, type;
+      if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
+        walletID = 1;
+        type = 'normal';
+      } else {
+        walletID = KEYSTOREID;
+        type = 'import';
+      };
+      wand.request('account_update', { walletID, path: arr.path, meta: {name: arr.name, addr: arr.address.toLowerCase()} }, (err, val) => {
         if(!err && val) {
-          self.addrInfo['normal'][arr['address']]['name'] = arr.name;
+          self.addrInfo[type][arr['address']]['name'] = arr.name;
         }
       })
     }
@@ -93,33 +105,27 @@ class WanAddress {
         if (err) console.log('Get user from DB failed ', err)
         if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
-          Object.keys(info).forEach((item) => {
-            let address = info[item]['1']['addr']
-            self.addrInfo['normal'][wanUtil.toChecksumAddress(address)] = {
-              name: info[item]['1']['name'],
-              balance: 0,
-              path: item.substr(item.lastIndexOf('\/')+1)
-            }
+          let typeFunc = id => id === '1' ? 'normal': 'import';
+          Object.keys(info).forEach(val => {
+            Object.keys(info[val]).forEach(item => {
+              let address = info[val][item]['addr'];
+              self.addrInfo[typeFunc(item)][wanUtil.toChecksumAddress(address)] = {
+                name: info[val][item]['name'],
+                balance: 0,
+                path: item.substr(val.lastIndexOf('\/')+1)
+              }
+            })
           })
         }
       })
     }
 
-    @action getKeyStoreAddr() {
-      wand.request('address_getKeyStoreCount', null, (err, count) => {
-        if(err) {
-          console.log(`address_getKeyStoreCount_err: ${err}`);
-          return;
-        }
-        console.log(count, 'count')
-        wand.request('address_get', { walletID: KEYSTOREID, chainType: 'WAN', start: 0, end: count}, (err, data) => {
-          if(err) {
-            console.log(`address_get_err: ${err}`);
-            return;
-          }
-          console.log(data, 'data')
-        })
-      })
+    @action addKeyStoreAddr({path, addr}) {
+      self.addrInfo['import'][`0x${addr}`] = {
+        name: `Imported${path + 1}`,
+        balance: '0',
+        path: path
+      };
     }
 
     @computed get currentPage() {
@@ -140,13 +146,16 @@ class WanAddress {
 
     @computed get getAddrList() {
       let addrList = [];
-      Object.keys(self.addrInfo['normal']).forEach((item, index) => {
+      let normalArr = Object.keys(self.addrInfo['normal']);
+      let importArr = Object.keys(self.addrInfo['import']);
+      normalArr.concat(importArr).forEach((item, index) => {
+        let type = normalArr.length -1 < index ? 'import' : 'normal';
         addrList.push({
           key: item,
-          name: self.addrInfo['normal'][item].name,
+          name: self.addrInfo[type][item].name,
           address: wanUtil.toChecksumAddress(item),
-          balance: self.addrInfo['normal'][item].balance,
-          path: `${WAN}${self.addrInfo['normal'][item].path}`,
+          balance: self.addrInfo[type][item].balance,
+          path: `${WAN}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
       });
@@ -207,14 +216,15 @@ class WanAddress {
     }
 
     @computed get getNormalAmount() {
-      return Object.keys(self.addrInfo['normal']).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
+      let sum = 0;
+      Object.values({normal: self.addrInfo.normal, import: self.addrInfo.import}).forEach(value => sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0));
+      return sum;
     }
 
     @computed get getAllAmount() {
-      let ledger = Object.keys(self.addrInfo['ledger']).reduce((prev, curr) => prev + (self.addrInfo['ledger'][curr].balance - 0), 0);
-      let trezor = Object.keys(self.addrInfo['trezor']).reduce((prev, curr) => prev + (self.addrInfo['trezor'][curr].balance - 0), 0);
-
-      return self.getNormalAmount + ledger + trezor;
+      let sum = 0;
+      Object.values(self.addrInfo).forEach(value => sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0));
+      return sum;
     }
 }
 

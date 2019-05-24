@@ -21,7 +21,6 @@ class App extends Component {
       let ready = await isSdkReady();
       if (ready) {
         stores.portfolio.updateCoinPrice();
-        stores.wanAddress.getKeyStoreAddr();
         stores.wanAddress.getUserAccountFromDB();
         clearInterval(id);
       }
@@ -65,8 +64,8 @@ class App extends Component {
       })
     });
 
-    regEmitterHandler('keyfilewalletcount', () => {
-      stores.wanAddress.getKeyStoreAddr();
+    regEmitterHandler('keyfilepath', path => {
+      stores.wanAddress.addKeyStoreAddr(path);
     })
   }
 

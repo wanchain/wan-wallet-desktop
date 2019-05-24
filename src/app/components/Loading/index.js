@@ -21,6 +21,7 @@ class Loading extends Component {
       let currePercent = this.state.percent;
       let tmp = 10 + parseFloat(currePercent);
       if(tmp === 100) {
+        tmp = 99.9
         clearInterval(this.timer);
       }
       this.setState({

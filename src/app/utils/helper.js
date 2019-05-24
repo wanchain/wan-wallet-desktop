@@ -108,6 +108,12 @@ export const isSdkReady = function () {
   });
 };
 
+export const getChainIdByAddr = function (addrInfo) {
+  Object.keys(addrInfo).forEach(type => {
+    Object.keys(addrInfo[type]).forEach(() => {})
+  })
+}
+
 export const regEmitterHandler = function (key, callback) {
   emitterHandlers[key] = callback;
 }

@@ -57,7 +57,7 @@ export default class Layout extends Component {
 
   updateWANBalanceForInter = () => {
     const { addrInfo } = this.props;
-    const allAddr = Object.keys(addrInfo['normal']).concat(Object.keys(addrInfo['ledger'])).concat(Object.keys(addrInfo['trezor']))
+    const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalance(allAddr).then(res => {
       if (res && Object.keys(res).length) {

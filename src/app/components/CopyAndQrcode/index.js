@@ -4,9 +4,8 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
 
-// import { clipboard } from 'electron';
-
 @inject(stores => ({
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
 }))
 
@@ -16,7 +15,7 @@ class CopyAndQrcode extends Component {
     url: ''
   }
 
-  createQrCode = (addr) => {
+  createQrCode = addr => {
     QRCode.toDataURL(addr)
     .then(url => {
       this.setState({
@@ -37,18 +36,21 @@ class CopyAndQrcode extends Component {
     });
   }
 
-  copy2Clipboard = (addr) => {
-    // clipboard.writeText(addr);
+  copy2Clipboard = addr => {
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
 
   render() {
-    const { addr } = this.props;
+    const { addr, addrInfo } = this.props;
     return (
       <div className="handleIco">
-        <Icon type="copy" onClick={(e) => this.copy2Clipboard(addr, e)} />
-        <Icon type="qrcode" onClick={(e) => this.createQrCode(addr, e)} />
+        <Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} />
+        <Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} />
+        { Object.keys(addrInfo['import']).includes(addr) 
+            ? <Icon type="import" title="Imported Address"/>
+            : ''
+        }
       </div>
     );
   }
