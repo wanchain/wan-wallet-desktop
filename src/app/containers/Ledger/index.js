@@ -41,13 +41,10 @@ class Ledger extends Component {
 
   instruction = () => {
     return (
-      <div className="">
-        <h2 className="com-gray">{intl.get('Ledger.followInstructionsToConnectLedgerWallet')}:</h2>
-        <div className="ledgerTex">
-          <p>1. {intl.get('Ledger.connectLedgerWalletToComputer')}</p>
-          <p>2. {intl.get('Ledger.enterPinCode')}</p>
-          <p>3. {intl.get('Ledger.navigateToWanchainAPPAndEnterIntoIt')}</p>
-        </div>
+      <div>
+        <p className="com-gray">1. {intl.get('Ledger.connectLedgerWalletToComputer')} </p>
+        <p className="com-gray">2. {intl.get('Ledger.enterPinCode')}</p>
+        <p className="com-gray">3. {intl.get('Ledger.navigateToWanchainAPPAndEnterIntoIt')}</p>
       </div>
     )
   }
