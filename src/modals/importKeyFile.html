@@ -107,17 +107,14 @@
 
                             if (desc.includes('not found')) {
                                 errText.innerHTML = ERR_NOT_FOUND
-                            } 
-
-                            if (desc.includes('authentication code mismatch')) {
+                            }
+                            else if (desc.includes('authentication code mismatch')) {
                                 errText.innerHTML = ERR_WRONG_PWD_KEYFILE
                             }
-
-                            if (desc.includes('Invalid password')) {
+                            else if (desc.includes('Invalid password')) {
                                 errText.innerHTML = ERR_WRONG_PWD_WALLET
                             }
-
-                            if (desc.includes("Cannot read property 'cipherparams'")) {
+                            else {
                                 errText.innerHTML = ERR_INVALID_KEYFILE
                             }
             
