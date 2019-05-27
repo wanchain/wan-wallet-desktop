@@ -28,10 +28,12 @@ class ConfigFactoryService {
         this.config.iWAN = {
             "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
             "wallet": {
-                "apikey": "fa5078fd834201d1d5bd57908a3069fe8ba560f329c060dffe04ccb52a9f1fcb",
-                "secret": "67ab8ebd6ade75b5a9ae3761f03aa3750ce73a1d859dd070bddd72436c7d5957"
+                "apikey": process.env.API_KEY,
+                "secret": process.env.API_SECRET
             }
         }
+
+        console.log(this.config.iWAN)
     }
 
     getConfig() {

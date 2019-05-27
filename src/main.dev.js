@@ -4,6 +4,7 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
+import env from 'dotenv'
 import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import setting from '~/src/utils/Settings'
@@ -12,6 +13,8 @@ import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { Windows, walletBackend } from '~/src/modules'
+
+env.config()
 
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
