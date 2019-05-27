@@ -32,8 +32,6 @@ class ConfigFactoryService {
                 "secret": process.env.API_SECRET
             }
         }
-
-        console.log(this.config.iWAN)
     }
 
     getConfig() {
