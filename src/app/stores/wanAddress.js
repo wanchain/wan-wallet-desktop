@@ -1,10 +1,11 @@
 
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { timeFormat, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
 import intl from 'react-intl-universal';
 
-import session from './session';
+import { checkAddrType } from 'utils/helper'
+import languageIntl from './languageIntl';
 
 const WAN = "m/44'/5718350'/0'/0/";
 const KEYSTOREID = 5;
@@ -16,6 +17,7 @@ class WanAddress {
       'trezor': {},
       'import': {},
     };
+    @observable currentPage = [];    
     @observable selectedAddr = '';
     @observable transHistory = {};
 
@@ -58,7 +60,11 @@ class WanAddress {
     }
 
     @action setSelectedAddr(addr) {
-      self.selectedAddr = addr;
+      if(typeof addr === 'string') {
+        self.selectedAddr = [addr];
+      } else {
+        self.selectedAddr = addr;
+      }
     }
 
     @action updateWANBalance(arr) {
@@ -128,20 +134,8 @@ class WanAddress {
       };
     }
 
-    @computed get currentPage() {
-      let page = '';
-      switch (session.pageTitle) {
-        case intl.get('Ledger.ledger'):
-          page = 'ledger';
-          break;
-        case intl.get('Trezor.trezor'):
-          page = 'trezor';
-          break;
-        case intl.get('WanAccount.wallet'):
-          page = 'normal';
-          break;
-      }
-      return page;
+    @action setCurrPage(page) {
+      self.currentPage = page;
     }
 
     @computed get getAddrList() {
@@ -196,18 +190,25 @@ class WanAddress {
 
     @computed get historyList() {
       let historyList = [], page = self.currentPage;
-      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo[page]);
-
+      let addrList = [];
+      if(self.selectedAddr) {
+        addrList = self.selectedAddr
+      } else {
+        page.forEach(name => {
+          addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+        })
+      }
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
+          let type = checkAddrType(self.transHistory[item]["from"], self.addrInfo)
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
+            from: self.addrInfo[type][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
           });
         }

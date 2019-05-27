@@ -164,6 +164,9 @@ const en_US = {
     'TransHistory.to': 'TO',
     'TransHistory.value': 'AMOUNT',
     'TransHistory.status': 'STATUS',
+    'TransHistory.success': 'Success',
+    'TransHistory.failed': 'Failed',
+    'TransHistory.pending': 'Pending',
     'TransHistory.transactionHistory': 'Transaction History',
     'TransHistory.selectAFromAddress': 'Select a FROM address',
 

@@ -104,7 +104,7 @@ class Ledger extends Component {
         {
           ledgerAddrList.length === 0
             ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
-            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

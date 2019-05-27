@@ -120,7 +120,7 @@ class Trezor extends Component {
           trezorAddrList.length === 0
             ? <ConnectHwWallet setAddresses={addTrezorAddr}
               Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
-            : <Accounts name="trezor" addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

@@ -10,8 +10,10 @@ import './index.less';
   pageTitle: stores.session.pageTitle,
   language: stores.languageIntl.language,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
   setAuth: val => stores.session.setAuth(val),
-  getMnemonic: ret => stores.session.getMnemonic(ret)
+  getMnemonic: ret => stores.session.getMnemonic(ret),
+  updateAddress: (type, newAddress) => stores.wanAddress.updateAddress(type, newAddress),
 }))
 
 @observer
@@ -26,16 +28,21 @@ class MHeader extends Component {
     })
   }
 
+  handleDisconnect = () => {
+    wand.request('wallet_deleteLedger');
+    this.props.updateAddress(this.props.pageTitle.toLowerCase())
+  }
+
   render () {
-    const { pageTitle, ledgerAddrList } = this.props;
+    const { pageTitle, ledgerAddrList, trezorAddrList } = this.props;
 
     return (
       <div className="header">
         <Row className="header-top">
             <Col span={22} className="title">
               <em className = "comLine"></em><span>{ pageTitle }</span>
-              { ['Ledger', 'Trzeor'].includes(pageTitle) && (ledgerAddrList.length !== 0)
-                  ? <Button className="creatBtnHead" type="primary" shape="round" size="large" ><Icon type="usb" theme="filled" />Disconnect</Button>
+              { ['Ledger', 'Trzeor'].includes(pageTitle) && ((ledgerAddrList.length !== 0) || (trezorAddrList.length !== 0))
+                  ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />Disconnect</Button>
                   : ''
               }
             </Col>

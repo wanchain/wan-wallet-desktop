@@ -16,11 +16,17 @@ const testnet = 'http://testnet.wanscan.org/tx/';
   language: stores.languageIntl.language,
   historyList: stores.wanAddress.historyList,
   transColumns: stores.languageIntl.transColumns,
+  setCurrPage: page => stores.wanAddress.setCurrPage(page),
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
 
 @observer
 class TransHistory extends Component {
+  constructor(props) {
+    super(props);
+    this.props.setCurrPage(this.props.name)
+  }
+
   onChange = value => {
     console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
@@ -33,7 +39,11 @@ class TransHistory extends Component {
 
   render() {
     const { addrInfo, historyList, name } = this.props;
-    const addrList = Object.keys(addrInfo[name]);
+    let addrList = [];
+    name.forEach(val => {
+      addrList = addrList.concat(Object.keys(addrInfo[val]));
+    })
+
     return (
       <div>
         <div className="historyCon">

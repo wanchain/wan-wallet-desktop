@@ -165,6 +165,9 @@ const zh_CN = {
     'TransHistory.to': '转入方',
     'TransHistory.value': '金额',
     'TransHistory.status': '状态',
+    'TransHistory.success': '成功',
+    'TransHistory.failed': '失败',
+    'TransHistory.pending': '进行中',
     'TransHistory.transactionHistory': '转账历史',
     'TransHistory.selectAFromAddress': '选择转出方地址',
 
