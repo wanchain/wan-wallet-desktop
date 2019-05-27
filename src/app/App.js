@@ -61,6 +61,7 @@ class App extends Component {
         stores.session.setAuth(false);
         stores.session.setChainId(net.includes('main') ? 1 : 3);
         stores.wanAddress.updateTransHistory();
+        stores.wanAddress.updateAddress(['ledger', 'trzeor']);
       })
     });
 

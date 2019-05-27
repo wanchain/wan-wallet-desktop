@@ -30,7 +30,11 @@ class WanAddress {
     }
 
     @action updateAddress(type, newAddress = {}) {
-      self.addrInfo[type] = newAddress;
+      if(typeof type === 'string') {
+        self.addrInfo[type] = newAddress;
+      } else {
+        type.forEach(item => self.addrInfo[item] = newAddress)
+      }
     }
 
     @action addAddresses(type, addrArr) {
