@@ -37,6 +37,21 @@ class StakeInForm extends Component {
     this.setState({ addrList: addrList })
   }
 
+  componentDidMount() {
+    console.log('record:', this.props.record);
+    if (this.props.record) {
+      let { form } = this.props;
+      form.setFieldsValue({to: this.props.record.validator.address});
+      form.setFieldsValue({validatorName: this.props.record.validator});
+      form.setFieldsValue({from: this.props.record.accountAddress});
+      this.onChange(this.props.record.accountAddress);
+    }
+  }
+
+  componentDidUpdate() {
+
+  }
+
   componentWillUnmount() {
 
   }
@@ -92,7 +107,17 @@ class StakeInForm extends Component {
     let to = form.getFieldValue('to');
 
     let path = this.getPath(from);
-    console.log('path', path);
+
+    let amount = form.getFieldValue('amount');
+    if(!amount || amount < 100) {
+      message.error("Please input a valid amount.");
+      return;
+    }
+
+    if (this.state.balance <= amount) {
+      message.error("Balance is not enough.")
+      return;
+    }
 
     let tx = {
       "from": from,
@@ -181,7 +206,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input placeholder="Please enter address" prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        (<Input placeholder="Please enter address" prefix={<Icon type="wallet" className="colorInput"/>} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -229,6 +254,7 @@ class StakeInForm extends Component {
                             onBlur={this.onBlur}
                             onSearch={this.onSearch}
                             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            className="colorInput"
                           >
                             {this.state.addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
                           </Select>

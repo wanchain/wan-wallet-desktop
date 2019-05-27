@@ -514,15 +514,15 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        console.log('account:', account);
-                        console.log('delegateInfo:', info);
+                        //console.log('account:', account);
+                        //console.log('delegateInfo:', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
                     if (inc && inc.length && inc.length > 0) {
-                        console.log('account:', account);
-                        console.log('incentive length:', inc.length);
+                        //console.log('account:', account);
+                        //console.log('incentive length:', inc.length);
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
@@ -727,8 +727,10 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             const sk = di.stake[m]
             list.push({
                 myAccount: di.account.name,
+                balance: di.account.balance,
                 accountAddress: di.account.address,
-                myStake: { title: web3.utils.fromWei(sk.amount), bottom: "N/A days ago" },
+                accountPath: di.account.path,
+                myStake: { title: web3.utils.fromWei(sk.amount), bottom: "0 days ago" },
                 //arrow1: arrow,
                 validator: {
                     //img: validatorImg, 
@@ -762,16 +764,21 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             }
         }
 
-        epochs.sort((a, b) => { return a - b })
-        console.log('eopchs:', epochs);
-        let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
+        if (epochs.length > 0) {
+            epochs.sort((a, b) => { return a - b })
+            //console.log('eopchs:', i, epochs);
+            let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
+    
+            list[i].myStake.bottom = days + " days ago";
+        } else {
+            list[i].myStake.bottom = "Less than 2 days ago";
+        }
+        
 
-        list[i].myStake.bottom = days + " days ago";
-
-        list[i].distributeRewards = { title: web3.utils.fromWei(distributeRewards), bottom: ("from " + epochs.length + " epochs") };
+        list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
     }
 
-    console.log('list:', list)
+    //console.log('list:', list)
 
     return list;
 }

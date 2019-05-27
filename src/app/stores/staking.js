@@ -59,12 +59,16 @@ class Staking {
     for (let i = 0; i < this.stakerList.length; i++) {
       validators.push({
         myAccount: this.stakerList[i].myAccount,
+        accountAddress: this.stakerList[i].accountAddress,
+        accountPath: this.stakerList[i].accountPath,
+        balance: this.stakerList[i].balance,
         myStake: this.stakerList[i].myStake,
         arrow1: arrow,
-        validator: { img: validatorImg, name: this.stakerList[i].validator.name },
+        validator: { img: validatorImg, name: this.stakerList[i].validator.name, address: this.stakerList[i].validatorAddress },
         arrow2: arrow,
         distributeRewards: this.stakerList[i].distributeRewards,
-        modifyStake: ["+", "-"]
+        modifyStake: ["+", "-"],
+        key: i,
       })
     }
 

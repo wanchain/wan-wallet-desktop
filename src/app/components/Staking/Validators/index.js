@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Table } from 'antd';
+import { Row, Col, Button, Table, Form } from 'antd';
 
 import './index.less';
 import Cell from './Cell';
-import Validator from "./Validator";
-
-import WithdrawForm from '../WithdrawForm';
-import StakeInForm from '../StakeInForm';
-
 import { observer, inject } from 'mobx-react';
 
+import Validator from "./Validator";
+import DelegateIn from "./DelegateIn";
+import DelegateOut from "./DelegateOut";
 @inject(stores => ({
   getAddrList: stores.wanAddress.getAddrList,
   stakingList: stores.staking.stakingList,
@@ -26,13 +24,11 @@ class Validators extends Component {
     }
   }
 
-  modifyWithdraw() {
+  modifyWithdraw = () => {
     this.setState({ withdrawVisible: true });
   }
 
-  modifyStakeIn() {
-    this.setState({ stakeInVisible: true });
-  }
+
 
   handleCancel = () => {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
@@ -86,18 +82,20 @@ class Validators extends Component {
       title: 'MODIFY STAKE',
       dataIndex: 'modifyStake',
       key: 'modifyStake',
-      render: img => (
-        <div>
-          <Row>
-            <Col span={12} align="center"><Button className="modifyTopUpBtn" onClick={this.modifyStakeIn.bind(this)} /></Col>
-            <Col span={12} align="center"><Button className="modifyExititBtn" onClick={this.modifyWithdraw.bind(this)} /></Col>
-          </Row>
-          <Row>
-            <Col span={12} className="modifyBtnText" align="center">Top-up</Col>
-            <Col span={12} className="modifyBtnText" align="center">Exitit</Col>
-          </Row>
-        </div>
-      ),
+      render: (text, record) => {
+        return (
+          <div>
+            <Row>
+              <Col span={12} align="center"><DelegateIn record={record} /></Col>
+              <Col span={12} align="center"><DelegateOut record={record} /></Col>
+            </Row>
+            <Row>
+              <Col span={12} className="modifyBtnText" align="center">Top-up</Col>
+              <Col span={12} className="modifyBtnText" align="center">Exitit</Col>
+            </Row>
+          </div>
+        )
+      }
     }
   ]
 
@@ -105,20 +103,6 @@ class Validators extends Component {
     return (
       <div className="validators">
         <Table columns={this.columns} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
-        {this.state.withdrawVisible
-          ? <WithdrawForm onCancel={this.handleCancel} onSend={this.handleSend}
-            validator={"0x345634370843c5e4adaf5c521ebe4ff88d62f341"}
-            stake={200000}
-            balance={543210}
-            account={this.props.getAddrList[0]}
-          />
-          : ''
-        }
-
-        {this.state.stakeInVisible
-          ? <StakeInForm onCancel={this.handleCancel} onSend={this.handleSend} />
-          : ''
-        }
       </div>
     );
   }

@@ -18,9 +18,9 @@ class WithdrawForm extends Component {
 
   onSend = ()=>{
     let tx = {
-      "from": this.props.account.address,
-      "validator": this.props.validator,
-      "path": this.props.account.path,
+      "from": this.props.record.accountAddress,
+      "validator": this.props.record.validator.address,
+      "path": this.props.record.accountPath,
     }
 
     wand.request('staking_delegateOut', tx, (err, ret) => {
@@ -44,8 +44,8 @@ class WithdrawForm extends Component {
           title="Register to Withdraw"
           onCancel={this.props.onCancel}
           footer={[
-            <Button key="submit" type="primary" onClick={this.onSend}>Send</Button>,
             <Button key="back" className="cancel" onClick={this.props.onCancel}>Cancel</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend}>Send</Button>,
           ]}
           className="withdraw-modal"
         >
@@ -54,13 +54,13 @@ class WithdrawForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Name</span></Col>
-                <Col span={18}><Validator img={validatorImg} name="Ethereum" /></Col>
+                <Col span={18}><Validator img={this.props.record.validator.img} name={this.props.record.validator.name} /></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Address</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.validator}</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.record.validator.address}</span></Col>
               </Row>
             </div>
           </div>
@@ -69,19 +69,19 @@ class WithdrawForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Stake</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.stake} WAN</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.record.myStake.title} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Balance</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.balance} WAN</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.record.balance} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Address</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.account.address}</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.record.accountAddress}</span></Col>
               </Row>
             </div>
           </div>
