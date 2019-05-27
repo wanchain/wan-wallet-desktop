@@ -207,6 +207,10 @@ class WanAddress {
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
+          if(!self.transHistory[item].validator) {
+            return;
+          }
+
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
