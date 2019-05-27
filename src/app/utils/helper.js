@@ -108,6 +108,21 @@ export const isSdkReady = function () {
   });
 };
 
+export const checkAddrType = function (addr, addrInfo) {
+  let type = false;
+  if(typeof addr === 'string') {
+    addr = addr.startsWith('0x') ? addr : `0x${addr}`.toLowerCase();
+    Object.keys(addrInfo).forEach(item => {
+      let has = Object.keys(addrInfo[item]).find(val => val.toLowerCase() === addr.toLowerCase());
+      if(has) {
+        type = item;
+        return type;
+      }
+    })
+    return type
+  }  
+}
+
 export const getChainIdByAddr = function (addrInfo) {
   Object.keys(addrInfo).forEach(type => {
     Object.keys(addrInfo[type]).forEach(() => {})

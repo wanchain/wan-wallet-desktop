@@ -10,7 +10,7 @@ import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory';
-
+import { checkAddrType } from 'utils/helper'
 import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
@@ -88,8 +88,9 @@ class WanAccount extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID : KEYSTOREID;
     let trans = {
-      walletID: WALLETID,
+      walletID: walletID,
       chainType: CHAINTYPE,
       symbol: SYMBOL,
       path: params.path,

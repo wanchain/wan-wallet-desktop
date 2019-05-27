@@ -1,5 +1,5 @@
 
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, toJS } from 'mobx';
 import { timeFormat, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
 import intl from 'react-intl-universal';
@@ -106,13 +106,13 @@ class WanAddress {
         if(ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           let typeFunc = id => id === '1' ? 'normal': 'import';
-          Object.keys(info).forEach(val => {
-            Object.keys(info[val]).forEach(item => {
-              let address = info[val][item]['addr'];
-              self.addrInfo[typeFunc(item)][wanUtil.toChecksumAddress(address)] = {
-                name: info[val][item]['name'],
+          Object.keys(info).forEach(path => {
+            Object.keys(info[path]).forEach(id => {
+              let address = info[path][id]['addr'];
+              self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
+                name: info[path][id]['name'],
                 balance: 0,
-                path: item.substr(val.lastIndexOf('\/')+1)
+                path: path.substr(path.lastIndexOf('\/')+1)
               }
             })
           })
