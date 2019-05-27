@@ -38,7 +38,6 @@ class StakeInForm extends Component {
   }
 
   componentDidMount() {
-    console.log('record:', this.props.record);
     if (this.props.record) {
       let { form } = this.props;
       form.setFieldsValue({to: this.props.record.validator.address});
