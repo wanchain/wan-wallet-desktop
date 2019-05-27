@@ -7,7 +7,7 @@ class SendTransParams {
     @observable gasLimit = '21000';
     @observable defaultGasPrice = 200;
     @observable minGasPrice = 180;
-    @observable currentGasPrice = 180;
+    @observable currentGasPrice = 200;
     
     @action addTransTemplate(addr, params) {
       let objKey = { writable: true, enumerable:true };
@@ -27,7 +27,12 @@ class SendTransParams {
     }
 
     @action updateTransParams(addr, paramsObj) {
-      Object.keys(paramsObj).forEach(item => {self.transParams[addr][item] = paramsObj[item]});
+      Object.keys(paramsObj).forEach(item => {
+        if(item === 'gasPrice') {
+          self.currentGasPrice = paramsObj[item];
+        }
+        self.transParams[addr][item] = paramsObj[item];
+      });
     }
 
     @computed get maxGasPrice() {
