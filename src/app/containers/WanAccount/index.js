@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col, message } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
 
 import './index.less';
@@ -9,18 +10,20 @@ import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory';
-
+import { checkAddrType } from 'utils/helper'
 import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
 const CHAINTYPE = 'WAN';
 const SYMBOL = 'WAN';
 const WALLETID = 1;
+const KEYSTOREID = 5;
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
-  getAmount: stores.wanAddress.getNormalAmount,
+  language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
+  getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
@@ -36,36 +39,24 @@ class WanAccount extends Component {
       bool: true,
       isUnlock: false,
     }
-    this.props.changeTitle('Wallet');
     this.props.updateTransHistory();
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer);
+    this.props.changeTitle(intl.get('WanAccount.wallet'));
   }
 
   columns = [
     {
-      title: 'NAME',
       dataIndex: 'name',
       editable: true
     },
     {
-      title: 'ADDRESS',
       dataIndex: 'address',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
-      title: 'BALANCE',
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
     },
     {
-      title: 'ACTION',
       dataIndex: 'action',
       render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
@@ -87,10 +78,19 @@ class WanAccount extends Component {
     };
   });
 
+  componentDidMount() {
+    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
   handleSend = from => {
     let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID : KEYSTOREID;
     let trans = {
-      walletID: WALLETID,
+      walletID: walletID,
       chainType: CHAINTYPE,
       symbol: SYMBOL,
       path: params.path,
@@ -103,7 +103,7 @@ class WanAccount extends Component {
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, function(err, txHash) {
         if (err) {
-          message.warn("Send transaction failed. Please try again");
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
           reject(false)
         } else {
@@ -156,12 +156,16 @@ class WanAccount extends Component {
       },
     };
 
+    this.props.language && this.columnsTree.forEach(col => {
+      col.title = intl.get(`WanAccount.${col.dataIndex}`)
+    })
+
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /> <span className="wanTotal">{getAmount}</span><span className="wanTex">WAN</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>Create</Button>
+          <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">
@@ -171,7 +175,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name="normal" />
+            <TransHistory name={['normal', 'import']} />
           </Col>
         </Row>
       </div>

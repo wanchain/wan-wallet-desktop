@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Button, Modal, Form, InputNumber } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   minGasPrice: stores.sendTransParams.minGasPrice,
   transParams: stores.sendTransParams.transParams,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
@@ -35,32 +37,32 @@ class AdvancedOptionForm extends Component {
         destroyOnClose={true}
         closable={false}
         visible={visible}
-        title="Advanced Options"
+        title={intl.get('AdvancedOptionForm.advancedOptions')}
         onCancel={this.handleCancel}
         onOk={this.handleSave}
         footer={[
-          <Button key="back" className="cancel-button" onClick={this.handleCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" className="confirm-button" onClick={this.handleSave}>Save</Button>,
+          <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('AdvancedOptionForm.cancel')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" onClick={this.handleSave}>{intl.get('AdvancedOptionForm.save')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label="Gas Price (GWIN)"> {
+          <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + intl.get('AdvancedOptionForm.gwin') + ')'}> {
             getFieldDecorator(
               'gasPrice', { initialValue: gasPrice },
-              { rules: [{ required: true, message: 'Gas price is incorrect' }] })
+              { rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasPriceIsIncorrect') }] })
               (<InputNumber min={minGasPrice} />)
           }
           </Form.Item>
-          <Form.Item label="Gas Limit">
+          <Form.Item label={intl.get('AdvancedOptionForm.gasLimit')}>
             {getFieldDecorator(
               'gasLimit', { initialValue: gasLimit },
-              { rules: [{ required: true, message: 'Gas limit is incorrect' }] })
+              { rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasLimitIsIncorrect') }] })
               (<InputNumber min={21000} />)}
           </Form.Item>
-          <Form.Item label="Nonce">
+          <Form.Item label={intl.get('AdvancedOptionForm.nonce')}>
             {getFieldDecorator(
               'nonce', { initialValue: nonce },
-              { rules: [{ required: true, message: 'Nonce is incorrect' }] })
+              { rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect') }] })
               (<InputNumber min={0} />)}
           </Form.Item>
         </Form>

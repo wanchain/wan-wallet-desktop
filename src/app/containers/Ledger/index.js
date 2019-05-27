@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import { wanTx, WanRawTx } from 'utils/hardwareUtils'
@@ -14,6 +15,7 @@ const LEDGER = 'ledger';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
@@ -24,11 +26,11 @@ const LEDGER = 'ledger';
 class Ledger extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Ledger');
+    this.props.changeTitle(intl.get('Ledger.ledger'));
   }
 
   componentDidUpdate() {
-    if(this.props.ledgerAddrList.length !== 0 && !this.timer) {
+    if (this.props.ledgerAddrList.length !== 0 && !this.timer) {
       this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
     }
   }
@@ -39,33 +41,27 @@ class Ledger extends Component {
 
   instruction = () => {
     return (
-      <div className="">
-        <h2 className="com-gray">Please follow the below instructions to connect your Ledger wallet:</h2>
-        <div className="ledgerTex">
-          <p>1. Connect your Ledger wallet directly to your computer</p>
-          <p>2. Enter pin code to unlock your Ledger wallet</p>
-          <p>3. Navigate to Wanchain APP and enter into it</p>
-        </div>
+      <div>
+        <p className="com-gray">1. {intl.get('Ledger.connectLedgerWalletToComputer')} </p>
+        <p className="com-gray">2. {intl.get('Ledger.enterPinCode')}</p>
+        <p className="com-gray">3. {intl.get('Ledger.navigateToWanchainAPPAndEnterIntoIt')}</p>
       </div>
     )
   }
 
   connectAndGetPublicKey = callback => {
-    wand.request('wallet_isConnected', { walletID: WALLET_ID }, (err, connected) => {
-      if (err) return;
-      if (connected) {
-        this.getPublicKey(callback);
+    console.log("connect to ledger")
+    wand.request('wallet_connectToLedger', {}, (err, val) => {
+      if (err) {
+        callback(err, val);
       } else {
-        console.log("connect to ledger")
-        wand.request('wallet_connectToLedger', {}, (err, val) => {
-          if (err) {
-            callback(err, val);
-          } else {
-            this.getPublicKey(callback);
-          }
-        });
+        this.getPublicKey(callback);
       }
     });
+  }
+
+  handleCancel = () => {
+    wand.request('wallet_deleteLedger');
   }
 
   getPublicKey = callback => {
@@ -79,11 +75,11 @@ class Ledger extends Component {
 
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
-    
-    message.info('Please Sign transaction in Ledger');
+
+    message.info(intl.get('Ledger.signTransactionInLedger'));
     wand.request('wallet_signTransaction', { walletID: WALLET_ID, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
-        message.warn('Sign transaction failed. Please try again');
+        message.warn(intl.get('Ledger.signTransactionFailed'));
         callback(err, null);
 
         console.log(`Sign Failed: ${err}`);
@@ -107,8 +103,8 @@ class Ledger extends Component {
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
-            : <Accounts name="ledger" addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
+            : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

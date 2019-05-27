@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Spin } from 'antd';
+import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import { isSdkReady } from 'utils/helper';
 
@@ -9,6 +9,8 @@ import Register from './Register';
 import Login from 'containers/Login';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
+import Loading from 'components/Loading';
+
 
 import { getBalance } from 'utils/helper';
 
@@ -55,7 +57,7 @@ export default class Layout extends Component {
 
   updateWANBalanceForInter = () => {
     const { addrInfo } = this.props;
-    const allAddr = Object.keys(addrInfo['normal']).concat(Object.keys(addrInfo['ledger'])).concat(Object.keys(addrInfo['trezor']))
+    const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalance(allAddr).then(res => {
       if (res && Object.keys(res).length) {
@@ -69,7 +71,7 @@ export default class Layout extends Component {
   render() {
     const { hasMnemonicOrNot, auth } = this.props;
     if (this.state.loading) {
-      return <Spin size="large" />
+      return <Loading />
     } else {
       if (!hasMnemonicOrNot) {
         return <Register />;

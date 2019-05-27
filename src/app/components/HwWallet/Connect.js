@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Table, message } from 'antd';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
 
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
 
+@inject(stores => ({
+  language: stores.languageIntl.language,
+  selectAddrColumns: stores.languageIntl.selectAddrColumns,
+}))
+
+@observer
 class Connect extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +23,6 @@ class Connect extends Component {
     this.page = 0;
     this.pageSize = 5;
     this.selectedAddrs = [];
-    this.columns = [{ title: 'Address', dataIndex: 'address' }, { title: 'Balance', dataIndex: 'balance' }];
   }
 
   componentWillUnmount() {
@@ -33,6 +40,13 @@ class Connect extends Component {
     });
   }
 
+  handleCancel = () => {
+    this.resetStateVal();
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
+  }
+
   handleOk = () => {
     this.props.setAddresses(this.selectedAddrs);
   }
@@ -40,7 +54,7 @@ class Connect extends Component {
   showDefaultPageAddrsFromHd = () => {
     this.props.getPublicKey((err, result) => {
       if (err) {
-        message.warn('Connect failed');
+        message.warn(intl.get('HwWallet.Connect.connectFailed'));
       } else {
         this.publicKey = result.publicKey;
         this.chainCode = result.chainCode;
@@ -62,7 +76,7 @@ class Connect extends Component {
     this.deriveAddresses(this.page * this.pageSize, this.pageSize);
   }
 
-  deriveAddresses =  (start, limit, visible = false) => {
+  deriveAddresses = (start, limit, visible = false) => {
     let wallet = new HwWallet(this.publicKey, this.chainCode, this.props.dPath);
     let hdKeys = wallet.getHdKeys(start, limit);
     let addresses = [];
@@ -74,7 +88,7 @@ class Connect extends Component {
       if (res && Object.keys(res).length) {
         let addresses = this.state.addresses;
         addresses.forEach(item => {
-          if(Object.keys(res).includes(item.address)) {
+          if (Object.keys(res).includes(item.address)) {
             item.balance = res[item.address];
           }
         })
@@ -97,14 +111,14 @@ class Connect extends Component {
   rowSelection = {
     onSelect: (record, selected) => {
       if (selected) {
-        this.selectedAddrs.push({...record});
+        this.selectedAddrs.push({ ...record });
       } else {
         this.delAddr(record);
       }
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
       if (selected) {
-        this.selectedAddrs.push(...changeRows.map(item => ({...item})));
+        this.selectedAddrs.push(...changeRows.map(item => ({ ...item })));
       } else {
         changeRows.forEach(item => { this.delAddr(item) });
       }
@@ -117,15 +131,18 @@ class Connect extends Component {
 
     return (
       <div>
-        <Card title="Connect a Hardware Wallet" bordered={false}>
+        <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>
           <this.props.Instruction />
-          <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>Continue</Button>
-          <Modal destroyOnClose={true} title="Please select the addresses" visible={visible} onOk={this.handleOk} onCancel={this.resetStateVal} className="popTable">
+          <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
+          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} className="popTable">
             <div>
-              <Table rowSelection={this.rowSelection} pagination={false} columns={this.columns} dataSource={addresses}></Table>
+              <Table rowSelection={this.rowSelection} pagination={false} columns={this.props.selectAddrColumns} dataSource={addresses}></Table>
               <div className="rollPage">
-                { this.page !== 0 ? <p onClick={this.showPreviousPageAddrs} className="previousPage">Previous addresses</p> : ''}
-                <p onClick={this.showNextPageAddrs} className="nextPage">Next addresses</p>
+                {this.page !== 0 
+                  ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p> 
+                  : ''
+                }
+                <p onClick={this.showNextPageAddrs} className="nextPage">{intl.get('HwWallet.Connect.nextAddresses')}</p>
               </div>
             </div>
           </Modal>

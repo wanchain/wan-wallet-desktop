@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 
+@inject(stores => ({
+  language: stores.languageIntl.language,
+}))
+
+@observer
 class Restore extends Component {
   state = {
     visible: false,
@@ -19,29 +26,26 @@ class Restore extends Component {
   }
 
   handleOk = () => {
-    /** TODO */
-    console.log('clear local data and reboot ')
-    this.resetStateVal();
+    wand.request('phrase_reset', null, () => {});
   }
 
   render() {
     return (
       <div>
-        <Card title="Restore From Seed Phrase">
+        <Card title={intl.get('Restore.restoreFromSeedPhrase')}>
           <p className="textP">
-            WARNING: If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. 
-            Please confirm and continue.
+            {intl.get('Restore.warning')}: {intl.get('Restore.restoreNewWalletWillDeleteAllLocalData')}
           </p>
-          <Button type="primary" onClick={this.showModal}>Continue</Button>
+          <Button type="primary" onClick={this.showModal}>{intl.get('Restore.continue')}</Button>
           <Modal
             destroyOnClose={true}
-            title="Restore From Seed Phrase"
+            title={intl.get('Restore.restoreFromSeedPhrase')}
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.resetStateVal}
             closable={false}
           >
-            <p className="textP">WARNING: All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?</p>
+            <p className="textP">{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
           </Modal>
         </Card>
       </div>

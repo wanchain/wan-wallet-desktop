@@ -1,16 +1,18 @@
 import fs from 'fs'
+import fsExtra from 'fs-extra'
 import _ from 'lodash'
-import { ipcMain } from 'electron'
+import path from 'path'
+import { ipcMain, app, Menu } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import { Windows } from '~/src/modules'
 import Web3 from 'web3';
 import { toWei } from '../app/utils/support';
-//import validatorImg from '../../static/image/validator.png';
-//import arrow from '../../static/image/arrow.png';
 
 const web3 = new Web3();
+import { Windows, walletBackend } from '~/src/modules'
+import menuFactoryService from '~/src/services/menuFactory'
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -23,15 +25,16 @@ const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
+const ROUTE_SETTING = 'setting'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
 
 // wallet path consts
-const WANBIP44Path = "m/44'/5718350'/0'/0/0"
+const WANBIP44Path = "m/44'/5718350'/0'/0/"
 
 // chain ID consts
-const WAN_ID = 5718350
+const WAN_ID = 5718350;
 
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
@@ -86,15 +89,14 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 
         case 'reset':
             try {
-                fs.rmdirSync(path.join(setting.userDataPath, 'Db'))
-
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                fsExtra.removeSync(path.join(setting.userDataPath, 'Db'))
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
-
-                sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: false })
             }
+
+            app.relaunch()
+            app.exit(0)
 
             break
     }
@@ -125,7 +127,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 phrase = hdUtil.revealMnemonic(payload.pwd)
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
-                hdUtil.newKeyStoreWallet(phrase)
+                hdUtil.newKeyStoreWallet(payload.pwd)
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -187,11 +189,15 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let { walletID, path, rawTx } = payload;
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
 
+                logger.info('Sign transaction:');
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx );
+
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
                     sig.r = '0x' + ret.r.toString('hex');
                     sig.s = '0x' + ret.s.toString('hex');
                     sig.v = '0x' + ret.v.toString('hex');
+                    logger.info('Signature:' + JSON.stringify(sig));
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -213,6 +219,19 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             break
+
+        case 'deleteLedger':
+          {
+            try {
+                await hdUtil.disconnectLedger()
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+    
+            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break
+          }
     }
 })
 
@@ -247,6 +266,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
+                logger.info('Nonce: ' + payload.addr + ',' + nonce);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -288,13 +308,14 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'fromKeyFile':
-            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload
-            const keyFileContent = fs.readFileSync(keyFilePath).toString()
-
+            const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
+            const keyFileContent = fs.readFileSync(keyFilePath).toString();
+            const keyStoreObj = JSON.parse(keyFileContent)
             try {
-                hdUtil.importKeyStore(WANBIP44Path, keyFileContent, keyFilePwd, hdWalletPwd)
-                let count = hdUtil.getKeyStoreCount(WAN_ID)
-                Windows.broadcast('notification', 'keyfilewalletcount', count)
+                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
+
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, {name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}` });
+                Windows.broadcast('notification', 'keyfilepath', {path, addr: keyStoreObj.address});
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
@@ -305,6 +326,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
 
             break
+
+        case 'getKeyStoreCount': 
+            let count;
+            try {
+              count = hdUtil.getKeyStoreCount(WAN_ID);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: count })
+            break
+            
     }
 })
 
@@ -390,8 +424,11 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     "nonce": nonce
                 }
 
+                logger.info('Normal transaction: ' + JSON.stringify(input));
+
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
+                logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -402,8 +439,9 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'raw':
             try {
-                logger.info('Send raw transaction', payload)
+                logger.info('Send raw transaction: ' + JSON.stringify(payload))
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
+                logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -423,7 +461,9 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
          */
         case 'estimateGas':
             try {
+                logger.info('Try to estimate gas: ' + payload.chainType + ',' + JSON.stringify(payload.tx));
                 ret = await ccUtil.estimateGas(payload.chainType, payload.tx);
+                logger.info('Estimated gas: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -486,7 +526,8 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
         case 'getGasPrice':
             try {
                 ret = await ccUtil.getGasPrice(payload.chainType);
-            } catch (err) {
+                logger.info('Gas price: ' + payload.chainType + ',' + ret);
+            } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -514,25 +555,14 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        //console.log('account:', account);
-                        //console.log('delegateInfo:', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
                     if (inc && inc.length && inc.length > 0) {
-                        //console.log('account:', account);
-                        //console.log('incentive length:', inc.length);
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
-
-                //console.log('accounts', accounts);
-                //console.log('delegateInfo', delegateInfo);
-                //console.log('incentive', incentive);
-                //console.log('epochID', epochID);
-                //console.log('stakerInfo', stakerInfo);
-
 
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, stakerInfo);
@@ -603,20 +633,55 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
             break
-
-        case 'txDetail':
-            try {
-
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
-            break
-
     }
-
 })
+
+ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
+    let ret, err
+    const [action, id] = actionUni.split('#')
+
+    switch (action) {
+        case 'switchNetwork':
+
+            const { choice } = payload
+            const mainWin = Windows.getByType('main')
+            const switchWin = Windows.getByType('changeNetwork')
+            
+            if (choice === 'yes') {
+                try {
+
+                    setting.switchNetwork()
+                    
+                    Windows.broadcast('notification', 'sdk', 'init')
+                    
+                    await walletBackend.init()
+                    
+                    Windows.broadcast('notification', 'network', setting.network)
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+            } else if (choice === 'no') {
+                try {
+                    const networkMenu = menuFactoryService.networkMenu
+                    const targetText = setting.network.includes('main') ? 'Main Network': 'Test Network'
+                    const [ targetMenu ] = networkMenu.items.filter(i => i.label === targetText)
+                    targetMenu.click()
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+            }
+
+            switchWin.close()
+            mainWin.show()
+            
+            break
+    }
+})
+
+
+
 
 function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
@@ -679,7 +744,6 @@ function buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, staker
     }
 
     base.myStake = Number(web3.utils.fromWei(totalStake.toString())).toFixed(0);
-    //console.log('myStake', base.myStake);
     base.pendingWithdrawal = Number(web3.utils.fromWei(withdrawStake.toString())).toFixed(0);
     base.totalDistributedRewards = Number(web3.utils.fromWei(totalReward.toString())).toFixed(2);
 
@@ -711,15 +775,6 @@ function buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, staker
 
 function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo) {
     let list = [];
-    // list.push({
-    //     myAccount: addrList[i].name,
-    //     myStake: { title: "50,000", bottom: "30 days ago" },
-    //     arrow1: arrow,
-    //     validator: { img: validatorImg, name: "Keystore" },
-    //     arrow2: arrow,
-    //     distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
-    //     modifyStake: ["+", "-"]
-    // });
 
     for (let i = 0; i < delegateInfo.length; i++) {
         const di = delegateInfo[i];
@@ -731,13 +786,10 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
                 accountAddress: di.account.address,
                 accountPath: di.account.path,
                 myStake: { title: web3.utils.fromWei(sk.amount), bottom: "0 days ago" },
-                //arrow1: arrow,
                 validator: {
-                    //img: validatorImg, 
                     name: sk.address
                 },
                 validatorAddress: sk.address,
-                //arrow2: arrow,
                 distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
                 modifyStake: ["+", "-"]
             })
@@ -766,9 +818,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
 
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
-            //console.log('eopchs:', i, epochs);
             let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
-    
             list[i].myStake.bottom = days + " days ago";
         } else {
             list[i].myStake.bottom = "Less than 2 days ago";
@@ -777,8 +827,6 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
     }
-
-    //console.log('list:', list)
 
     return list;
 }

@@ -1,4 +1,6 @@
 import path from 'path'
+import dotenv from 'dotenv';
+import webpack from 'webpack'
 import nodeExternals from 'webpack-node-externals'
 
 export default {
@@ -47,6 +49,13 @@ export default {
     node: {
         __dirname: false,
         __filename: false
-    }
+    },
+
+    plugins: [
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: 'production',
+            ...dotenv.config().parsed
+        })
+    ]
 }
 

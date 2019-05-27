@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="importKeyFile.css">
     <title>Import Wanchain Key File</title>
 </head>
 <body>
@@ -28,24 +28,25 @@
                 <div class="col-12">
                     <form id="KeyFileForm" novalidate>
                         <div class="form-group">
-                            <label class="label text-dark" for="oldpwd">Enter old password for key file</label>
+                            <label class="label text-dark" for="oldpwd">Enter Key File Password</label>
                             <input id="oldpwd" name="oldpwd" class="form-control" type="password" required />
-                            <div id="kfFeedback" class="invalid-feedback">Please provide a valid password for key file.</div>
+                            <div id="kfFeedback" class="invalid-feedback">Key file password is invalid</div>
                         </div>
                         <div class="form-group"> 
-                            <label class="label text-dark" for="newpwd">Enter the password for wan wallet</label>
+                            <label class="label text-dark" for="newpwd">Enter WAN Wallet Password</label>
                             <input id="newpwd" name="newpwd" class="form-control" type="password" required />
-                            <div class="invalid-feedback">Please provide a valid password for wan wallet.</div>
+                            <div class="invalid-feedback">WAN wallet password is invalid.</div>
                         </div>
-                        <p style="margin-top: 40px; margin-bottom: 7px;">Choose a key file: </p>
+                        <p style="margin-top: 40px; margin-bottom: 7px;">Choose a Key File</p>
                         <div class="custom-file" style="height: 70px;">
                             <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required />
                             <label class="custom-file-label" for="keyfile" style="overflow: hidden;"></label>
-                            <div class="invalid-feedback" style="margin-top: 10px;">Please choose a valide key file.</div>
+                            <div class="invalid-feedback" style="margin-top: 10px;">Key file is invalid</div>
                         </div>
                         
-                        <div class="form-group"> 
-                            <button id="submit" type="submit" class="btn btn-dark btn-lg btn-block">Submit</button>
+                        <div id="buttons" class="form-group"> 
+                            <button id="cancel" class="btn btn-dark btn-lg">Cancel</button>
+                            <button id="submit" type="submit" class="btn btn-dark btn-lg">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -63,6 +64,7 @@
 
         window.addEventListener('load', function() {
             const fileSelector = document.querySelector('#keyfile')
+            const cancelBtn = document.querySelector('#cancel')
             const subBtn = document.querySelector('#submit')
             const alertError = document.querySelector('.alert-danger')
             const alertSuccess = document.querySelector('.alert-success')
@@ -82,7 +84,11 @@
                 const value = fileSelector.files[0]
                 document.querySelector('.custom-file-label').innerHTML = value.name
             })
-            
+            cancelBtn.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.close();
+            })
             subBtn.addEventListener('click', e => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -107,17 +113,14 @@
 
                             if (desc.includes('not found')) {
                                 errText.innerHTML = ERR_NOT_FOUND
-                            } 
-
-                            if (desc.includes('authentication code mismatch')) {
+                            }
+                            else if (desc.includes('authentication code mismatch')) {
                                 errText.innerHTML = ERR_WRONG_PWD_KEYFILE
                             }
-
-                            if (desc.includes('Invalid password')) {
+                            else if (desc.includes('Invalid password')) {
                                 errText.innerHTML = ERR_WRONG_PWD_WALLET
                             }
-
-                            if (desc.includes("Cannot read property 'cipherparams'")) {
+                            else {
                                 errText.innerHTML = ERR_INVALID_KEYFILE
                             }
             

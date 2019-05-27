@@ -4,6 +4,7 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
+import env from 'dotenv'
 import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import setting from '~/src/utils/Settings'
@@ -13,16 +14,15 @@ import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { Windows, walletBackend } from '~/src/modules'
 
+env.config()
+
 const logger = Logger.getLogger('main')
 autoUpdater.logger = logger
 
-menuFactoryService.on('menuSetDone', () => {
-  Windows.broadcast('notification', 'language', setting.language)
-})
-
 if (!i18n.isIintialized) {
-  i18n.on('languageChanged', (lng) => {
+  i18n.on('languageChanged', () => {
     menuFactoryService.buildMenu(i18n)
+    Windows.broadcast('notification', 'language', setting.language)
   })
 
   i18n.on('loaded', (loaded) => {

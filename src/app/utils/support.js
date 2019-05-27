@@ -10,7 +10,8 @@ export function toWei(data) {
 }
 
 export function checkCryptographic(pwd) {
-  let reg = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}");
+  let reg = new RegExp("(?=^[^\\s]*$)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[\\S]{6,}");
+
   return reg.test(pwd);
 }
 
@@ -26,7 +27,11 @@ export function randomSort(arr) {
 export function timeFormat(time) {
   const current = new Date(time * 1000);
   const m = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec");
-  return `${m[current.getMonth()]}-${current.getDate()}-${current.getFullYear()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
+  let date = ('0' + current.getDate()).substr(-2);
+  let hours = ('0' + current.getHours()).substr(-2);
+  let minutes = ('0' + current.getMinutes()).substr(-2);
+  let secondes = ('0' + current.getSeconds()).substr(-2);
+  return `${m[current.getMonth()]}-${date}-${current.getFullYear()} ${hours}:${minutes}:${secondes}`;
 }
 
 export function promiseTimeout(ms, p, desc) {

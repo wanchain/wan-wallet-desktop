@@ -4,6 +4,9 @@ import TrezorConnect from 'trezor-connect';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 import Accounts from 'components/HwWallet/Accounts';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
+import { Icon, message } from 'antd';
+
 const wanTx = require('wanchainjs-tx');
 
 const WAN_PATH = "m/44'/5718350'/0'/0";
@@ -30,6 +33,7 @@ TrezorConnect.init({
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
@@ -40,7 +44,7 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Trezor')
+    this.props.changeTitle(intl.get('Trezor.trezor'))
   }
 
   componentDidUpdate() {
@@ -53,10 +57,15 @@ class Trezor extends Component {
     clearInterval(this.timer);
   }
 
+  handleClick = () => {
+    wand.shell.openExternal('https://wallet.trezor.io/#/bridge');
+  }
+
   instruction = () => {
     return (
       <div>
-        <p className="com-gray">Please connect your Trezor wallet directly to your computer</p>
+        <p className="com-gray">1. {intl.get('Trezor.installBridge')} <Icon type='link' onClick={this.handleClick}/></p>
+        <p className="com-gray">2. {intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
   }
@@ -88,8 +97,8 @@ class Trezor extends Component {
       },
     }).then((result) => {
       if (!result.success) {
-        message.warn("Sign transaction failed. Please try again");
-        callback('Sign failed', null);
+        message.warn(intl.get('Trezor.signTransactionFailed'));
+        callback(intl.get('Trezor.signFailed'), null);
         return;
       }
 
@@ -111,7 +120,7 @@ class Trezor extends Component {
           trezorAddrList.length === 0
             ? <ConnectHwWallet setAddresses={addTrezorAddr}
               Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
-            : <Accounts name="trezor" addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

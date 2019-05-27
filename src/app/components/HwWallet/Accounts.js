@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -8,6 +9,7 @@ import SendNormalTrans from 'components/SendNormalTrans';
 
 @inject(stores => ({
   rawTx: stores.sendTransParams.rawTx,
+  language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
@@ -15,10 +17,10 @@ import SendNormalTrans from 'components/SendNormalTrans';
 @observer
 class Accounts extends Component {
   columns = [
-    { title: "NAME", dataIndex: "name" },
-    { title: "ADDRESS", dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
-    { title: "BALANCE", dataIndex: "balance" },
-    { title: "ACTION", dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
+    { title: intl.get('HwWallet.Accounts.name'), dataIndex: "name" },
+    { title: intl.get('HwWallet.Accounts.address'), dataIndex: "address", render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>},
+    { title: intl.get('HwWallet.Accounts.balance'), dataIndex: "balance" },
+    { title: intl.get('HwWallet.Accounts.action'), dataIndex: "action", render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> }
   ];
 
   handleSend = from => {
@@ -28,7 +30,7 @@ class Accounts extends Component {
       this.props.signTransaction(params.path, rawTx, (err, raw) => {
         wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
           if (err) {
-            message.warn("Send transaction failed. Please try again");
+            message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
             console.log(err);
             reject();
           } else {

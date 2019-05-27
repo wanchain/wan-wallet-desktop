@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const uuid = require('uuid/v1')
 const EventEmitter = require('events')
-const { ipcRenderer, remote: { Menu }, clipboard } = require('electron')
+const { ipcRenderer, remote: { Menu }, clipboard, shell } = require('electron')
 const routes = require('./routes')
 const { postMessage } = require('./util')
 
@@ -112,7 +112,9 @@ module.exports = (function() {
 
             writeText: clipboard.writeText,
 
-            emitter: _emitter
+            emitter: _emitter,
+
+            shell: shell
         }
     }
 

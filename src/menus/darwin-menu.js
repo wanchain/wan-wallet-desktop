@@ -2,7 +2,7 @@ import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
 import { app, shell } from 'electron'
-import { walletBackend, updater, Windows } from '~/src/modules'
+import { Windows } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
 
 const platformAdapter = function (options) {
@@ -157,12 +157,14 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
                         type: 'radio',
-                        click: async () => {
+                        click: async (m) => {
                             if (!setting.network.includes('main')) {
-                                setting.switchNetwork()
-                                Windows.broadcast('notification', 'sdk', 'init')
-                                await walletBackend.init()
-                                Windows.broadcast('notification', 'network', setting.network)
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1600, height: 900, alwaysOnTop: true
+                                })
                             }
 
                             return 
@@ -173,12 +175,14 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
                         type: 'radio',
-                        click: async () => {
+                        click: async (m) => {
                             if (setting.network.includes('main')) {
-                                setting.switchNetwork()
-                                Windows.broadcast('notification', 'sdk', 'init')
-                                await walletBackend.init()
-                                Windows.broadcast('notification', 'network', setting.network)
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1600, height: 900, alwaysOnTop: true
+                                })
                             }
 
                             return 
@@ -220,9 +224,8 @@ export default (i18n) => {
             type: 'radio',
             checked: i18n.language === languageCode,
             click: () => {
-                if (!setting.language.includes(languageCode)) {
+                if (setting.language !== languageCode) {
                     i18n.changeLanguage(languageCode)
-                    menuFactoryService.emit('menuSetDone')
                 }
             }
         }
@@ -240,10 +243,6 @@ export default (i18n) => {
         submenu: [
             {
                 label: i18n.t('main.applicationMenu.window.fullscreen'),
-                // accelerator: platformAdapter({
-                //     darwin: 'CommandOrControl+F',
-                //     default: 'F11',
-                // }),
                 accelerator: 'CommandOrControl+F',
                 role: 'toggleFullScreen'
             },
@@ -280,7 +279,8 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.help.explorer'),
                 click: () => {
-                    shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
+                    const url = setting.network.includes('main') ? 'https://www.wanscan.org' : 'http://testnet.wanscan.org'
+                    shell.openExternal(url)
                 }
             }
         ]

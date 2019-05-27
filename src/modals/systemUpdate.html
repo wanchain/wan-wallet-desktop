@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="systemUpdate.css">
+
+    <script src="../../static/vender/jquery-3.2.1.min.js"></script>
+    <script src="../../static/vender/jquery.i18n.js"></script>
+    <script src="../../static/vender/jquery.i18n.messagestore.js"></script>
+    <!-- <script src="../../static/vender/jquery.i18n.fallbacks.js"></script> -->
+    <!-- <script src="../../static/vender/jquery.i18n.parser.js"></script> -->
+    <!-- <script src="../../static/vender/jquery.i18n.emitter.js"></script> -->
+    <!-- <script src="../../static/vender/jquery.i18n.language.js"></script> -->
+    <title id="title"><!-- System Update --></title>
+</head>
+
+<body>
+    <div id="main-container">
+        <p id="head">
+            <!-- Software Update -->
+        </p>
+        <img id="rocket" src="image/rocket.png">
+        <p id="newVersion">
+            <!-- A new version of Wanchain Wallet is available! -->
+        </p>
+        <p id="version">
+            <!-- Latest version 3.3 is now available, your current version is 1.1. <br>
+            Would you like to upgrade now ? -->
+        </p>
+        <br>
+        <div id="release">
+            <!-- Release notes: -->
+        </div>
+        <br>
+        <div id="info">
+            <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum. -->
+        </div>
+        <div id="buttons">
+            <button id="later" loading><!-- Remind Me Later --></button>
+            <button id="upgrade"><!-- Update Now --></button>
+        </div>
+    </div>
+</body>
+<script type="application/javascript">
+    // console.log(wand);
+    document.getElementById('later').addEventListener('click', () => {
+
+    });
+    document.getElementById('upgrade').addEventListener('click', () => {
+
+    });
+
+    var lan = 'zh';
+    window.onload = () => {
+        $.i18n({
+            locale: lan
+        }).load({
+            [lan]: `../../config/i18n/locales/${lan}/systemUpdate.json`,
+        }).then((res) => {
+            setLanguage();
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+    setLanguage = () => {
+        const ids = [
+            'title',
+            'head',
+            'newVersion',
+            'release',
+            'later',
+            'upgrade'
+        ];
+        ids.forEach((id) => {
+            setText(id);
+        });
+        $('#version').html($.i18n('version', '3.3', '1.1'));
+        const info = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        $('#info').html(info);
+    }
+    setText = (id) => {
+        // console.log($.i18n(id));
+        $(`#${id}`).html($.i18n(id));
+    }
+</script>
+
+</html>

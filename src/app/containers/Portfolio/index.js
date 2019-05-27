@@ -1,47 +1,31 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import './index.less';
 import wanLogo from 'static/image/wan.png';
 
+function TokenImg(text) {
+  return (
+    <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>
+  );
+}
+
 @inject(stores => ({
+  language: stores.languageIntl.language,
   portfolioList: stores.portfolio.portfolioList,
+  portfolioColumns: stores.languageIntl.portfolioColumns,
+  updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateCoinPrice: () => stores.portfolio.updateCoinPrice()
 }))
 
 @observer
 class Portfolio extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Portfolio');
+    this.props.changeTitle(intl.get('Portfolio.portfolio'));
   }
-  
-  columns = [
-    {
-      title: 'NAME',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>,
-    }, {
-      title: 'PRICE',
-      dataIndex: 'price',
-      key: 'price',
-    }, {
-      title: 'BALANCE',
-      dataIndex: 'balance',
-      key: 'balance',
-    }, {
-      title: 'VALUE',
-      dataIndex: 'value',
-      key: 'value'
-    }, {
-      title: 'PORTFOLIO',
-      dataIndex: 'portfolio',
-      key: 'portfolio',
-    }
-  ]
 
   componentDidMount() {
     this.timer = setInterval(() =>{
@@ -54,9 +38,13 @@ class Portfolio extends Component {
   }
 
   render() {
+    const { portfolioColumns, portfolioList } = this.props;
+    const columns = [...portfolioColumns];
+    columns[0]['render'] = TokenImg;
+
     return (
         <div>
-          <Table className="portfolioMain" columns={this.columns} dataSource={this.props.portfolioList} pagination={false}/>
+          <Table className="portfolioMain" columns={columns} dataSource={portfolioList} pagination={false}/>
         </div>
     );
   }
