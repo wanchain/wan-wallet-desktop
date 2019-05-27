@@ -3,6 +3,7 @@ import { Row, Col } from 'antd';
 import Card from './Card'
 import './index.less';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 @inject(stores => ({
   stakeInfo: stores.staking.stakeInfo,
@@ -19,7 +20,7 @@ class Cards extends Component {
         <Row gutter={16}>
           <Col span={6}>
             <Card className="card1"
-              title="My Stake"
+              title={intl.get('staking.myStake')}
               value={this.props.stakeInfo.myStake}
               tail="WAN"
               bottom={this.props.stakeInfo.validatorCnt}
@@ -27,15 +28,16 @@ class Cards extends Component {
           </Col>
           <Col span={6}>
             <Card className="card2"
-              title="Pending Withdrawal"
-              value={this.props.stakeInfo.pendingWithdrawal}
+              title={intl.get('staking.totalReward')}
+              value={this.props.stakeInfo.totalDistributedRewards}
               tail="WAN"
-              bottom={this.props.stakeInfo.epochID}
+              bottom={this.props.stakeInfo.startFrom}
             />
+
           </Col>
           <Col span={6}>
             <Card className="card3"
-              title="Current Reward Rate"
+              title={intl.get('staking.rewardRate')}
               value={this.props.stakeInfo.currentRewardRate}
               tail={this.props.stakeInfo.currentRewardRateChange}
               bottom={this.props.stakeInfo.epochID}
@@ -43,10 +45,10 @@ class Cards extends Component {
           </Col>
           <Col span={6}>
             <Card className="card4"
-              title="Total Distributed Rewards"
-              value={this.props.stakeInfo.totalDistributedRewards}
+              title={intl.get('staking.pending')}
+              value={this.props.stakeInfo.pendingWithdrawal}
               tail="WAN"
-              bottom={this.props.stakeInfo.startFrom}
+              bottom={this.props.stakeInfo.epochID}
             />
           </Col>
         </Row>

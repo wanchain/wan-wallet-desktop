@@ -74,6 +74,12 @@ class LanguageIntl {
         ]
       },
       {
+        title: intl.get('menuConfig.staking'),
+        step: '1',
+        key: '/staking',
+        icon: 'pie-chart'
+      },
+      {
         title: intl.get('menuConfig.settings'),
         step: '1',
         key: '/settings',

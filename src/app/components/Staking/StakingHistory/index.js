@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Select  } from 'antd';
 import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 import history from 'static/image/history.png';
 import './index.less';
@@ -17,27 +18,27 @@ const Option = Select.Option;
 class StakingHistory extends Component {
   columns = [
     {
-      title: 'TIME',
+      title: intl.get('TransHistory.time'),
       dataIndex: 'time',
       key: 'time',
     }, {
-      title: 'TYPE',
+      title: intl.get('staking.table.type'),
       dataIndex: 'annotate',
       key: 'annotate',
     }, {
-      title: 'FROM',
+      title: intl.get('TransHistory.from'),
       dataIndex: 'from',
       key: 'from',
     }, {
-      title: 'VALIDATOR',
+      title: intl.get('staking.table.validator'),
       dataIndex: 'validator',
       key: 'validator',
     }, {
-      title: 'VALUE',
+      title: intl.get('TransHistory.value'),
       dataIndex: 'value',
       key: 'value'
     }, {
-      title: 'STATUS',
+      title: intl.get('TransHistory.status'),
       dataIndex: 'status',
       key: 'status'
     }
@@ -53,7 +54,7 @@ class StakingHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span>Transaction History</span>
+          <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>

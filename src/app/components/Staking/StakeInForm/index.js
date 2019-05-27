@@ -7,6 +7,7 @@ import './index.less';
 import validatorImg from 'static/image/validator.png';
 import { checkWanAddr } from 'utils/helper';
 import { toWei } from 'utils/support';
+import intl from 'react-intl-universal';
 
 
 
@@ -155,16 +156,16 @@ class StakeInForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title="Delegate Now"
+          title={intl.get('StakeInForm.title')}
           onCancel={this.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>Cancel</Button>,
-            <Button key="submit" type="primary" onClick={this.onSend}>Send</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
           className="stakein-modal"
         >
           <div className="stakein-bg">
-            <div className="stakein-title">Validator's Account:</div>
+            <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={4}><span className="stakein-name">Name</span></Col>
@@ -213,7 +214,7 @@ class StakeInForm extends Component {
             </div>
           </div>
           <div className="stakein-bg">
-            <div className="stakein-title">My Account:</div>
+            <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={4}><span className="stakein-name">Stake</span></Col>

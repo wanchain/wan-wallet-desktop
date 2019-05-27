@@ -5,6 +5,8 @@ import './index.less';
 import Cell from './Cell';
 import { observer, inject } from 'mobx-react';
 
+import intl from 'react-intl-universal';
+
 import Validator from "./Validator";
 import DelegateIn from "./DelegateIn";
 import DelegateOut from "./DelegateOut";
@@ -40,11 +42,11 @@ class Validators extends Component {
 
   columns = [
     {
-      title: 'MY ACCOUNT',
+      title: intl.get('staking.table.myAccount'),
       dataIndex: 'myAccount',
       key: 'myAccount',
     }, {
-      title: 'MY STAKE',
+      title: intl.get('staking.table.myStake'),
       dataIndex: 'myStake',
       key: 'myStake',
       render: stake => (
@@ -58,7 +60,7 @@ class Validators extends Component {
         <img className="table-arrow" src={img} />
       ),
     }, {
-      title: 'VALIDATOR',
+      title: intl.get('staking.table.validator'),
       dataIndex: 'validator',
       key: 'validator',
       render: validator => (
@@ -72,14 +74,14 @@ class Validators extends Component {
         <img className="table-arrow" src={img} />
       ),
     }, {
-      title: 'DISTRIBUTED REWARDS',
+      title: intl.get('staking.table.distributedReward'),
       dataIndex: 'distributeRewards',
       key: 'distributeRewards',
       render: stake => (
         <Cell title={stake.title} bottom={stake.bottom} />
       ),
     }, {
-      title: 'MODIFY STAKE',
+      title: intl.get('staking.table.modifyStake'),
       dataIndex: 'modifyStake',
       key: 'modifyStake',
       render: (text, record) => {
@@ -90,8 +92,8 @@ class Validators extends Component {
               <Col span={12} align="center"><DelegateOut record={record} /></Col>
             </Row>
             <Row>
-              <Col span={12} className="modifyBtnText" align="center">Top-up</Col>
-              <Col span={12} className="modifyBtnText" align="center">Exitit</Col>
+              <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
+              <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
             </Row>
           </div>
         )

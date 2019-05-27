@@ -176,7 +176,9 @@ const en_US = {
     'menuConfig.hardwareWallet': 'Hardware Wallet',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
+
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
@@ -185,5 +187,27 @@ const en_US = {
     'utils.helper.checkWanAddressFailed': 'Check WAN address failed',
     'utils.helper.getChainIdFailed': 'Get chain ID failed',
     'utils.helper.getSdkStatusFailed': 'Get SDK status failed',
+
+    'staking.dashboard': 'Dashboard',
+    'staking.title': 'Staking',
+    'staking.newDelegate': 'New Delegate',
+    'staking.myStake': 'My Stake',
+    'staking.pending': 'Pending Withdrawal',
+    'staking.rewardRate': 'Current Reward Rate',
+    'staking.totalReward': 'Total Distributed Reward',
+    'staking.table.myAccount': 'MY ACCOUNT',
+    'staking.table.myStake': 'MY STAKE',
+    'staking.table.validator': 'VALIDATOR',
+    'staking.table.distributedReward': 'DISTRIBUTED REWARD',
+    'staking.table.modifyStake': 'MODIFY STAKE',
+    'staking.table.topup': 'Top-up',
+    'staking.table.exit': 'Exit',
+    'staking.table.type': 'TYPE',
+    'StakeInForm.title': 'Delegate Now',
+    'StakeInForm.validatorAccount': 'Validator\'s Account:',
+    'StakeInForm.myAccount': 'My Account:',
+
+
+
 }
 export default en_US;

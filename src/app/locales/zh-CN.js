@@ -177,6 +177,7 @@ const zh_CN = {
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.staking': '资产委托',
     'menuConfig.settings': '设置',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
@@ -186,5 +187,26 @@ const zh_CN = {
     'utils.helper.checkWanAddressFailed': '校验WAN地址失败',
     'utils.helper.getChainIdFailed': '获取链ID失败',
     'utils.helper.getSdkStatusFailed': '获取SDK状态失败',
+
+    'staking.dashboard': '仪表盘',
+    'staking.title': '资产委托',
+    'staking.newDelegate': '新建委托',
+    'staking.myStake': '我的委托',
+    'staking.pending': '等待退款',
+    'staking.rewardRate': '当前收益率',
+    'staking.totalReward': '累积收到奖励',
+    'staking.table.myAccount': '我的账户',
+    'staking.table.myStake': '我的委托',
+    'staking.table.validator': '验证人',
+    'staking.table.distributedReward': '已收到奖励',
+    'staking.table.modifyStake': '修改委托',
+    'staking.table.topup': '充值',
+    'staking.table.exit': '退出',
+    'staking.table.type': '类型',
+    'StakeInForm.title': '开始委托',
+    'StakeInForm.validatorAccount': '验证人账户:',
+    'StakeInForm.myAccount': '我的账户:',
+
+
 }
 export default zh_CN;

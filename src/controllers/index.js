@@ -6,7 +6,6 @@ import { ipcMain, app, Menu } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
-import { Windows } from '~/src/modules'
 import Web3 from 'web3';
 import { toWei } from '../app/utils/support';
 

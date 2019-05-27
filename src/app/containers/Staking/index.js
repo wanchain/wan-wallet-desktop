@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Table, Row, Col, message, Form } from 'antd';
+import intl from 'react-intl-universal';
+
 import { observer, inject } from 'mobx-react';
 
 import Cards from 'components/Staking/Cards';
@@ -24,7 +26,7 @@ import './index.less';
 class Staking extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('Staking');
+    this.props.changeTitle(intl.get('staking.title'));
     this.state = {
       createValidator: false,
     }
@@ -69,9 +71,9 @@ class Staking extends Component {
     return (
       <div className="staking">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /><span className="dashboard">Dashboard</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt="Wanchain" /><span className="dashboard">{intl.get('staking.dashboard')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleCreateValidator.bind(this)}>New Delegate</Button>
+            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleCreateValidator.bind(this)}>{intl.get('staking.newDelegate')}</Button>
             {this.state.createValidator
               ? <DelegateInForm onCancel={this.handleCancel} onSend={this.handleSend} />
               : ''
