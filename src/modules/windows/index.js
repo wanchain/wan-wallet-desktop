@@ -270,7 +270,8 @@ class Windows {
             return w.type === 'main';
         })
 
-        if (parent) {
+        // we need to hide main window when loading window or upgrading window on the top
+        if (parent && type !== 'changeNetwork') {
             opts.electronOptions.parent = parent.window
         }
 

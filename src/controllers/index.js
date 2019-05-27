@@ -2,11 +2,12 @@ import fs from 'fs'
 import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
-import { ipcMain, app } from 'electron'
+import { ipcMain, app, Menu } from 'electron'
 import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
-import { Windows } from '~/src/modules'
+import { Windows, walletBackend } from '~/src/modules'
+import menuFactoryService from '~/src/services/menuFactory'
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -18,6 +19,7 @@ const ROUTE_ADDRESS = 'address'
 const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
+const ROUTE_SETTING = 'setting'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -527,6 +529,50 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
             break;
     }
 
+})
+
+ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
+    let ret, err
+    const [action, id] = actionUni.split('#')
+
+    switch (action) {
+        case 'switchNetwork':
+
+            const { choice } = payload
+            const mainWin = Windows.getByType('main')
+            const switchWin = Windows.getByType('changeNetwork')
+            
+            if (choice === 'yes') {
+                try {
+
+                    setting.switchNetwork()
+                    
+                    Windows.broadcast('notification', 'sdk', 'init')
+                    
+                    await walletBackend.init()
+                    
+                    Windows.broadcast('notification', 'network', setting.network)
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+            } else if (choice === 'no') {
+                try {
+                    const networkMenu = menuFactoryService.networkMenu
+                    const targetText = setting.network.includes('main') ? 'Main Network': 'Test Network'
+                    const [ targetMenu ] = networkMenu.items.filter(i => i.label === targetText)
+                    targetMenu.click()
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+            }
+
+            switchWin.close()
+            mainWin.show()
+            
+            break
+    }
 })
 
 function sendResponse(endpoint, e, payload) {

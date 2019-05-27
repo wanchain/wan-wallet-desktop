@@ -4,5 +4,6 @@ module.exports = {
     address: [ 'get', 'getOne', 'getNonce', 'balance', 'isWanAddress', 'fromKeyFile', 'getKeyStoreCount' ],
     account: [ 'create', 'get', 'getAll', 'update', 'delete' ],
     transaction: [ 'normal', 'raw', 'estimateGas', 'showRecords', 'insertTransToDB' ],
-    query: [ 'config', 'getGasPrice' ]
+    query: [ 'config', 'getGasPrice' ],
+    setting: ['switchNetwork']
 }

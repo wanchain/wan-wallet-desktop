@@ -54,12 +54,14 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
                         type: 'radio',
-                        click: async () => {
+                        click: async (m) => {
                             if (!setting.network.includes('main')) {
-                                setting.switchNetwork()
-                                Windows.broadcast('notification', 'sdk', 'init')
-                                await walletBackend.init()
-                                Windows.broadcast('notification', 'network', setting.network)
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1600, height: 900, alwaysOnTop: true
+                                })
                             }
 
                             return 
@@ -70,12 +72,14 @@ export default (i18n) => {
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
                         type: 'radio',
-                        click: async () => {
+                        click: async (m) => {
                             if (setting.network.includes('main')) {
-                                setting.switchNetwork()
-                                Windows.broadcast('notification', 'sdk', 'init')
-                                await walletBackend.init()
-                                Windows.broadcast('notification', 'network', setting.network)
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1600, height: 900, alwaysOnTop: true
+                                })
                             }
 
                             return 
@@ -136,10 +140,6 @@ export default (i18n) => {
         submenu: [
             {
                 label: i18n.t('main.applicationMenu.window.fullscreen'),
-                // accelerator: platformAdapter({
-                //     darwin: 'CommandOrControl+F',
-                //     default: 'F11',
-                // }),
                 accelerator: 'CommandOrControl+F',
                 role: 'toggleFullScreen'
             },
@@ -181,7 +181,8 @@ export default (i18n) => {
             {
                 label: i18n.t('main.applicationMenu.help.explorer'),
                 click: () => {
-                    shell.openExternal(i18n.t('main.applicationMenu.help.explorerURL'))
+                    const url = setting.network.includes('main') ? 'https://www.wanscan.org' : 'http://testnet.wanscan.org'
+                    shell.openExternal(url)
                 }
             }
         ]

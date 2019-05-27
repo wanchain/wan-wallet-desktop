@@ -11,6 +11,15 @@ class MenuFactoryService extends EventEmitter {
         this._logger = Logger.getLogger('MenuFactory')
         this._logger.info('creating menu factory service')
         this.menu = menu
+        this._networkMenu = null
+    }
+
+    set networkMenu(menuItem) {
+        this._networkMenu = menuItem
+    }
+
+    get networkMenu() {
+        return this._networkMenu
     }
 
     buildMenu(i18n) {
