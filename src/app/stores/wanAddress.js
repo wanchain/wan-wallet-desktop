@@ -183,6 +183,46 @@ class WanAddress {
       return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 
+    //TODO: need add hd
+    @computed get getAddrListAll() {
+      let addrList = [];
+      Object.keys(self.addrInfo['normal']).forEach((item, index) => {
+        addrList.push({
+          key: item,
+          name: self.addrInfo['normal'][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: self.addrInfo['normal'][item].balance,
+          path: `${WAN}${self.addrInfo['normal'][item].path}`,
+          action: 'send',
+        });
+      });
+      return addrList;
+    }
+
+    //TODO: need add hd
+    @computed get stakingHistoryList() {
+      let historyList = [], page = 'normal';//self.currentPage;
+      let addrList = self.selectedAddr ? [self.selectedAddr] : Object.keys(self.addrInfo[page]);
+
+      Object.keys(self.transHistory).forEach(item => {
+        if(addrList.includes(self.transHistory[item]["from"])) {
+          let status = self.transHistory[item].status;
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item]["sendTime"]),
+            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
+            to: self.transHistory[item].to,
+            value: fromWei(self.transHistory[item].value),
+            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            sendTime: self.transHistory[item]["sendTime"],
+            annotate: self.transHistory[item].annotate,
+            validator: self.transHistory[item].validator,
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    }
+
     @computed get getNormalAmount() {
       return Object.keys(self.addrInfo['normal']).reduce((prev, curr) => prev + (self.addrInfo['normal'][curr].balance - 0), 0);
     }

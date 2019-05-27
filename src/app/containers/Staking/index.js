@@ -13,10 +13,11 @@ import totalImg from 'static/image/wan.png';
 import './index.less';
 
 @inject(stores => ({
-  getAddrList: stores.wanAddress.getAddrList,
+  getAddrList: stores.wanAddress.getAddrListAll,
   stakingList: stores.staking.stakingList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),
-  updateStakeInfo: () => stores.staking.updateStakeInfo()
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -27,13 +28,16 @@ class Staking extends Component {
     this.state = {
       createValidator: false,
     }
+
+    this.props.updateStakeInfo();
+    this.props.updateTransHistory();
   }
 
   componentDidMount() {
-    this.props.updateStakeInfo();
     this.timer = setInterval(() =>{
       //console.log('time up staking info.')
       this.props.updateStakeInfo();
+      this.props.updateTransHistory();
     }, 5000)
   }
 
@@ -86,7 +90,7 @@ class Staking extends Component {
         </Row>
         <Row>
           <Col>
-            <StakingHistory />
+            <StakingHistory name="normal"/>
           </Col>
         </Row>
       </div>

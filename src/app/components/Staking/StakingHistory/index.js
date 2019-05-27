@@ -5,6 +5,15 @@ import { observer, inject } from 'mobx-react';
 import history from 'static/image/history.png';
 import './index.less';
 
+const Option = Select.Option;
+
+@inject(stores => ({
+  addrInfo: stores.wanAddress.addrInfo,
+  historyList: stores.wanAddress.stakingHistoryList,
+  setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
+}))
+
+@observer
 class StakingHistory extends Component {
   columns = [
     {
@@ -12,13 +21,17 @@ class StakingHistory extends Component {
       dataIndex: 'time',
       key: 'time',
     }, {
+      title: 'TYPE',
+      dataIndex: 'annotate',
+      key: 'annotate',
+    }, {
       title: 'FROM',
       dataIndex: 'from',
       key: 'from',
     }, {
-      title: 'TO',
-      dataIndex: 'to',
-      key: 'to',
+      title: 'VALIDATOR',
+      dataIndex: 'validator',
+      key: 'validator',
     }, {
       title: 'VALUE',
       dataIndex: 'value',
@@ -39,8 +52,8 @@ class StakingHistory extends Component {
     const { historyList } = this.props;
     return (
       <div>
-        <div className="stakeHistroy">
-          <img className="stakeHistroy-img" src={history} /><span>History</span>
+        <div className="historyCon">
+          <img src={history} /><span>Transaction History</span>
         </div>
         <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>

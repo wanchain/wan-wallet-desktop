@@ -16,6 +16,24 @@ class WithdrawForm extends Component {
 
   }
 
+  onSend = ()=>{
+    let tx = {
+      "from": this.props.account.address,
+      "validator": this.props.validator,
+      "path": this.props.account.path,
+    }
+
+    wand.request('staking_delegateOut', tx, (err, ret) => {
+      if (err) {
+        message.warn("Estimate gas failed. Please try again");
+      } else {
+        console.log('delegateOut ret:', ret);
+      }
+    });
+
+    this.props.onSend()
+  }
+
   render() {
     return (
       <div className="withdraw">
@@ -26,7 +44,7 @@ class WithdrawForm extends Component {
           title="Register to Withdraw"
           onCancel={this.props.onCancel}
           footer={[
-            <Button key="submit" type="primary" onClick={this.props.onSend}>Send</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend}>Send</Button>,
             <Button key="back" className="cancel" onClick={this.props.onCancel}>Cancel</Button>,
           ]}
           className="withdraw-modal"
@@ -42,7 +60,7 @@ class WithdrawForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Address</span></Col>
-                <Col span={18}><span className="withdraw-addr">0x9E872759a206320D46211493c738fDD7eb48fF29</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.validator}</span></Col>
               </Row>
             </div>
           </div>
@@ -51,19 +69,19 @@ class WithdrawForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Stake</span></Col>
-                <Col span={18}><span className="withdraw-addr">20,000 WAN</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.stake} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Balance</span></Col>
-                <Col span={18}><span className="withdraw-addr">20,000 WAN</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.balance} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">Address</span></Col>
-                <Col span={18}><span className="withdraw-addr">0x9E872759a206320D46211493c738fDD7eb48fF28</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.account.address}</span></Col>
               </Row>
             </div>
           </div>

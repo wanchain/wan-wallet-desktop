@@ -7,6 +7,9 @@ import setting from '~/src/utils/Settings'
 import { Windows } from '~/src/modules'
 import Web3 from 'web3';
 import { toWei } from '../app/utils/support';
+//import validatorImg from '../../static/image/validator.png';
+//import arrow from '../../static/image/arrow.png';
+
 const web3 = new Web3();
 
 const logger = Logger.getLogger('controllers')
@@ -500,85 +503,40 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
     switch (action) {
         case 'info':
             try {
-                ret = {
-                    base: {
-                        myStake: "N/A",
-                        validatorCnt: "In N/A validators",
-                        pendingWithdrawal: "N/A",
-                        epochID: "Epoch N/A",
-                        epochIDRaw: 0,
-                        currentRewardRate: "N/A %",
-                        stakePool: 0,
-                        currentRewardRateChange: "↑",
-                        totalDistributedRewards: "N/A",
-                        startFrom: "From " + (new Date()).toDateString(),
-                    },
-                    list: []
-                };
-
-                let totalStake = web3.utils.toBN(0);
-                let withdrawStake = web3.utils.toBN(0);
-                let validator = [];
-                let totalReward = web3.utils.toBN(0);
-                for (let i = 0; i < payload.length; i++) {
-                    const account = payload[i];
-                    const info = await ccUtil.getDelegatorStakeInfo('wan', account.address)
-
-                    console.log('info: ', info)
-                    if (info && info.length > 0) {
-                        //[{address:"xxxx", amount:3, quitEpoch:0},{address:"xxxxxx", amount:7, quitEpoch:10}]
-                        for (let m = 0; m < info.length; m++) {
-                            const staker = info[m];
-                            totalStake = web3.utils.toBN(staker.amount).add(totalStake);
-                            if (staker.quitEpoch != 0) {
-                                withdrawStake = web3.utils.toBN(staker.amount).add(withdrawStake);
-                            }
-
-                            if (!validator[staker.address]) {
-                                validator[staker.address] = web3.utils.toBN(staker.amount);
-                            } else {
-                                validator[staker.address] = web3.utils.toBN(staker.amount).add(validator[staker.address]);
-                            }
-                        }
-                    }
-
-                    // [{address:"xxxx", amount:3, epochId:0},{address:"xxxxxx", amount:7, epochId:10}]
-                    const incentive = await ccUtil.getDelegatorIncentive('wan', account.address)
-                    for (let m = 0; m < incentive.length; m++) {
-                        const inc = incentive[m];
-                        totalReward = web3.utils.toBN(inc.amount).add(totalReward);
-                    }
-                }
-
-                ret.base.myStake = Number(web3.utils.fromWei(totalStake.toString())).toFixed(0);
-                ret.base.pendingWithdrawal = Number(web3.utils.fromWei(withdrawStake.toString())).toFixed(0);
-                ret.base.totalDistributedRewards = Number(web3.utils.fromWei(totalReward.toString())).toFixed(2);
-
-                //use Object.getOwnPropertyNames to get length must -1.
-                ret.base.validatorCnt = "In " + (Object.getOwnPropertyNames(validator).length - 1) + " validators";
-
-                ret.base.epochIDRaw = await ccUtil.getEpochID('wan');
-
+                let accounts = payload;
+                let delegateInfo = [];
+                let incentive = [];
+                let epochID = await ccUtil.getEpochID('wan');
                 let blockNumber = await ccUtil.getBlockNumber('wan');
                 let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
-                let stakePool = web3.utils.toBN(0)
-                if (stakerInfo) {
-                    for (let i = 0; i < stakerInfo.length; i++) {
-                        const si = stakerInfo[i];
-                        stakePool = web3.utils.toBN(si.amount).add(stakePool);
-                        for (let m = 0; m < si.clients.length; m++) {
-                            const cl = si.clients[m];
-                            stakePool = web3.utils.toBN(cl.amount).add(stakePool);
-                        }
 
-                        for (let m = 0; m < si.partners.length; m++) {
-                            const pr = si.partners[m];
-                            stakePool = web3.utils.toBN(pr.amount).add(stakePool);
-                        }
+                for (let i = 0; i < accounts.length; i++) {
+                    const account = accounts[i];
+                    const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
+                    if (info && info.length && info.length > 0) {
+                        console.log('account:', account);
+                        console.log('delegateInfo:', info);
+                        delegateInfo.push({ account: account, stake: info });
+                    }
+
+                    const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
+                    if (inc && inc.length && inc.length > 0) {
+                        console.log('account:', account);
+                        console.log('incentive length:', inc.length);
+                        incentive.push({ account: account, incentive: inc });
                     }
                 }
 
-                ret.base.stakePool = Number(web3.utils.fromWei(stakePool.toString())).toFixed(0);
+                //console.log('accounts', accounts);
+                //console.log('delegateInfo', delegateInfo);
+                //console.log('incentive', incentive);
+                //console.log('epochID', epochID);
+                //console.log('stakerInfo', stakerInfo);
+
+
+                ret = { base: {}, list: [] }
+                ret.base = buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, stakerInfo);
+                ret.list = buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -603,11 +561,11 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 let tx = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
-                
+
                 let gasLimit = 200000;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');;
                 tx.gasLimit = gasLimit;
-   
+
                 let ret = await global.crossInvoker.PosDelegateIn(tx);
                 console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
@@ -619,7 +577,26 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateOut':
             try {
+                console.log('delegateOut:', payload);
 
+                let tx = payload;
+                let gasPrice = await ccUtil.getGasPrice('wan');
+
+                let gasLimit = 200000;
+                let gasPriceGwei = web3.utils.fromWei(gasPrice, 'gwei');;
+
+                let input = {
+                    "from": tx.from,
+                    "validatorAddr": tx.validator,
+                    "amount": 0,
+                    "gasPrice": gasPriceGwei,
+                    "gasLimit": gasLimit,
+                    "BIP44Path": tx.path,
+                    "walletID": 1
+                }
+
+                let ret = await global.crossInvoker.PosDelegateOut(input);
+                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -652,4 +629,149 @@ function sendResponse(endpoint, e, payload) {
 
 function errorWrapper(err) {
     return { desc: err.message, code: err.errno, cat: err.name }
+}
+
+function buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, stakerInfo) {
+    let base = {
+        myStake: "N/A",
+        validatorCnt: "In N/A validators",
+        pendingWithdrawal: "N/A",
+        epochID: "Epoch N/A",
+        epochIDRaw: 0,
+        currentRewardRate: "N/A %",
+        stakePool: 0,
+        currentRewardRateChange: "↑",
+        totalDistributedRewards: "N/A",
+        startFrom: "From " + (new Date()).toDateString(),
+    };
+
+    let totalStake = web3.utils.toBN(0);
+    let withdrawStake = web3.utils.toBN(0);
+    let validator = {};
+    let totalReward = web3.utils.toBN(0);
+    //console.log("delegateInfo length:", delegateInfo.length);
+    for (let i = 0; i < delegateInfo.length; i++) {
+        const info = delegateInfo[i].stake;
+        //console.log("info", info);
+        //[{address:"xxxx", amount:3, quitEpoch:0},{address:"xxxxxx", amount:7, quitEpoch:10}]
+        for (let m = 0; m < info.length; m++) {
+            const staker = info[m];
+            totalStake = web3.utils.toBN(staker.amount).add(totalStake);
+            if (staker.quitEpoch != 0) {
+                withdrawStake = web3.utils.toBN(staker.amount).add(withdrawStake);
+            }
+
+            if (!validator[staker.address]) {
+                validator[staker.address] = web3.utils.toBN(staker.amount);
+            } else {
+                validator[staker.address] = web3.utils.toBN(staker.amount).add(validator[staker.address]);
+            }
+        }
+    }
+
+    for (let i = 0; i < incentive.length; i++) {
+        const inc = incentive[i].incentive;
+        // [{address:"xxxx", amount:3, epochId:0},{address:"xxxxxx", amount:7, epochId:10}]
+        for (let m = 0; m < inc.length; m++) {
+            const one = inc[m];
+            totalReward = web3.utils.toBN(one.amount).add(totalReward);
+        }
+    }
+
+    base.myStake = Number(web3.utils.fromWei(totalStake.toString())).toFixed(0);
+    //console.log('myStake', base.myStake);
+    base.pendingWithdrawal = Number(web3.utils.fromWei(withdrawStake.toString())).toFixed(0);
+    base.totalDistributedRewards = Number(web3.utils.fromWei(totalReward.toString())).toFixed(2);
+
+    base.validatorCnt = "In " + Object.getOwnPropertyNames(validator).length + " validators";
+
+    base.epochIDRaw = epochID;
+
+    let stakePool = web3.utils.toBN(0)
+    if (stakerInfo) {
+        for (let i = 0; i < stakerInfo.length; i++) {
+            const si = stakerInfo[i];
+            stakePool = web3.utils.toBN(si.amount).add(stakePool);
+            for (let m = 0; m < si.clients.length; m++) {
+                const cl = si.clients[m];
+                stakePool = web3.utils.toBN(cl.amount).add(stakePool);
+            }
+
+            for (let m = 0; m < si.partners.length; m++) {
+                const pr = si.partners[m];
+                stakePool = web3.utils.toBN(pr.amount).add(stakePool);
+            }
+        }
+    }
+
+    base.stakePool = Number(web3.utils.fromWei(stakePool.toString())).toFixed(0);
+
+    return base;
+}
+
+function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo) {
+    let list = [];
+    // list.push({
+    //     myAccount: addrList[i].name,
+    //     myStake: { title: "50,000", bottom: "30 days ago" },
+    //     arrow1: arrow,
+    //     validator: { img: validatorImg, name: "Keystore" },
+    //     arrow2: arrow,
+    //     distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
+    //     modifyStake: ["+", "-"]
+    // });
+
+    for (let i = 0; i < delegateInfo.length; i++) {
+        const di = delegateInfo[i];
+        for (let m = 0; m < di.stake.length; m++) {
+            const sk = di.stake[m]
+            list.push({
+                myAccount: di.account.name,
+                accountAddress: di.account.address,
+                myStake: { title: web3.utils.fromWei(sk.amount), bottom: "N/A days ago" },
+                //arrow1: arrow,
+                validator: {
+                    //img: validatorImg, 
+                    name: sk.address
+                },
+                validatorAddress: sk.address,
+                //arrow2: arrow,
+                distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
+                modifyStake: ["+", "-"]
+            })
+        }
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        let validatorAddress = list[i].validatorAddress;
+        let accountAddress = list[i].accountAddress;
+        let distributeRewards = web3.utils.toBN(0);
+        let epochs = [];
+        for (let m = 0; m < incentive.length; m++) {
+            const inc = incentive[m];
+            if (accountAddress == inc.account.address) {
+                for (let n = 0; n < inc.incentive.length; n++) {
+                    const obj = inc.incentive[n];
+                    if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
+                        distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
+                        if (!epochs.includes(obj.epochId)) {
+                            epochs.push(obj.epochId);
+                        }
+                    }
+                }
+            }
+        }
+
+        epochs.sort((a, b) => { return a - b })
+        console.log('eopchs:', epochs);
+        let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
+
+        list[i].myStake.bottom = days + " days ago";
+
+        list[i].distributeRewards = { title: web3.utils.fromWei(distributeRewards), bottom: ("from " + epochs.length + " epochs") };
+    }
+
+    console.log('list:', list)
+
+    return list;
 }

@@ -56,18 +56,18 @@ class Staking {
 
   @computed get stakingList() {
     let validators = []
-    let addrList = wanAddress.getAddrList
-    for (let i = 0; i < addrList.length; i++) {
+    for (let i = 0; i < this.stakerList.length; i++) {
       validators.push({
-        myAccount: addrList[i].name,
-        myStake: { title: "50,000", bottom: "30 days ago" },
+        myAccount: this.stakerList[i].myAccount,
+        myStake: this.stakerList[i].myStake,
         arrow1: arrow,
-        validator: { img: validatorImg, name: "Ethereum" },
+        validator: { img: validatorImg, name: this.stakerList[i].validator.name },
         arrow2: arrow,
-        distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
+        distributeRewards: this.stakerList[i].distributeRewards,
         modifyStake: ["+", "-"]
       })
     }
+
     return validators;
   }
 

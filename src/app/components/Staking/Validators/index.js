@@ -89,7 +89,7 @@ class Validators extends Component {
       render: img => (
         <div>
           <Row>
-            <Col span={12} align="center"><Button className="modifyTopUpBtn" onClick={this.modifyStakeIn.bind(this)}/></Col>
+            <Col span={12} align="center"><Button className="modifyTopUpBtn" onClick={this.modifyStakeIn.bind(this)} /></Col>
             <Col span={12} align="center"><Button className="modifyExititBtn" onClick={this.modifyWithdraw.bind(this)} /></Col>
           </Row>
           <Row>
@@ -106,7 +106,12 @@ class Validators extends Component {
       <div className="validators">
         <Table columns={this.columns} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         {this.state.withdrawVisible
-          ? <WithdrawForm onCancel={this.handleCancel} onSend={this.handleSend} />
+          ? <WithdrawForm onCancel={this.handleCancel} onSend={this.handleSend}
+            validator={"0x345634370843c5e4adaf5c521ebe4ff88d62f341"}
+            stake={200000}
+            balance={543210}
+            account={this.props.getAddrList[0]}
+          />
           : ''
         }
 
