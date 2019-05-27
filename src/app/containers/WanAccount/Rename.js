@@ -24,11 +24,11 @@ export class EditableCell extends Component {
     });
   }
 
-  save = () => {
+  save = e => {
     const { record, handleSave } = this.props;
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
-        return;
+        values = {};
       }
       this.toggleEdit();
       handleSave({ ...record, ...values });

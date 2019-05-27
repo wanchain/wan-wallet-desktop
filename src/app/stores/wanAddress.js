@@ -24,6 +24,7 @@ class WanAddress {
     @action addAddress(newAddr) {
       self.addrInfo['normal'][newAddr.address] = {
         name: `Account${newAddr.start + 1}`,
+        address: newAddr.address,
         balance: '0',
         path: newAddr.start
       };
@@ -122,7 +123,8 @@ class WanAddress {
               self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
                 name: info[path][id]['name'],
                 balance: 0,
-                path: path.substr(path.lastIndexOf('\/')+1)
+                path: path.substr(path.lastIndexOf('\/')+1),
+                address: wanUtil.toChecksumAddress(address)
               }
             })
           })
@@ -134,7 +136,8 @@ class WanAddress {
       self.addrInfo['import'][`0x${addr}`] = {
         name: `Imported${path + 1}`,
         balance: '0',
-        path: path
+        path: path,
+        address: `0x${addr}`
       };
     }
 

@@ -73,6 +73,7 @@ const en_US = {
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.create': 'Create',
+    'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',

@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, toJS } from 'mobx';
 import BigNumber from 'bignumber.js';
 
 class SendTransParams {
