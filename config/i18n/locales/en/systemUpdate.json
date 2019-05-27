@@ -2,7 +2,7 @@
     "title": "System Update",
     "head": "Software Update",
     "newVersion": "A new version of Wanchain Wallet is available!",
-    "version": "Latest version $1 is now available, your current version is $2. Would you like to upgrade now ?",
+    "version": "Latest version $1 is now available, your current version is $2. <br>Would you like to upgrade now ?",
     "release": "Release notes:",
     "info": "$1",
     "later": "Remind Me Later",

@@ -38,8 +38,8 @@ p {
     font-size: 18px;
 }
 #version {
-    width: 350px;
-    display: inline-block;
+    /* width: 350px; */
+    /* display: inline-block; */
     font-size: 14px;
     font-family: 'Roboto-Regular';
 }
