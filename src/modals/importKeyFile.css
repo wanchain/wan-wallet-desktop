@@ -36,6 +36,9 @@ body{
 .form-group label{
     color: #fff!important;
 }
+.form-control, .custom-file-label, .custom-file-label::after{
+    border: none;
+}
 .form-control:focus, .form-group input{
     width:480px;
     height:45px;
@@ -47,6 +50,9 @@ body{
     text-indent: 24px;
     padding: 0;
 }
+.custom-file-input{
+    cursor: pointer;
+}
 .custom-file-label{
     width:480px;
     height:45px;
@@ -55,6 +61,7 @@ body{
     text-indent: 24px;
     background:rgba(31,32,52,1);
     border-radius:20px;
+    cursor: pointer;
 }
 .custom-file-label::after{
     width: 100px;
@@ -68,24 +75,31 @@ body{
 }
 .form-group button{
     width:150px;
-    height:40px;
     line-height: 40px;
     padding: 0;
     margin: 60px auto;
-    background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+    
     border-radius:20px;
 }
-
+#buttons {
+    text-align: center;
+}
+#cancel{
+    background:linear-gradient(90deg,rgba(74,76,114,1) 0%,rgba(61,62,95,1) 100%);
+    opacity:0.95;
+    margin-right: 10px;
+}
+#submit{
+    background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+}
 .alert {
     position: absolute;
     border-radius: 0;
 }
-
 .alert.alert-danger {
     width: 100%;
     text-align: center;
 }
-
 .alert.alert-success {
     width: 100%;
     text-align: center;
