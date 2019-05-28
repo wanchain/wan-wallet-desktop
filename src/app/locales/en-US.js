@@ -108,6 +108,7 @@ const en_US = {
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',
 
     'MHeader.logout': 'Log Out',
+    'MHeader.disconnect': 'Disconnect',
 
     'Mnemonic.ConfirmPhrase.confirmYourSeedPhrase': 'Confirm Your Seed Phrase',
 
@@ -186,5 +187,9 @@ const en_US = {
     'utils.helper.checkWanAddressFailed': 'Check WAN address failed',
     'utils.helper.getChainIdFailed': 'Get chain ID failed',
     'utils.helper.getSdkStatusFailed': 'Get SDK status failed',
+
+    'popup.ok': 'Ok',
+    'popup.cancel': 'Cancel',
+
 }
 export default en_US;

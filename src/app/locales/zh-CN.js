@@ -108,6 +108,7 @@ const zh_CN = {
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',
 
     'MHeader.logout': '注销',
+    'MHeader.disconnect': '断开连接',
 
     'Mnemonic.ConfirmPhrase.confirmYourSeedPhrase': '确认你的助记词',
 
@@ -187,5 +188,8 @@ const zh_CN = {
     'utils.helper.checkWanAddressFailed': '校验WAN地址失败',
     'utils.helper.getChainIdFailed': '获取链ID失败',
     'utils.helper.getSdkStatusFailed': '获取SDK状态失败',
+
+    'popup.ok': '确定',
+    'popup.cancel': '取消',
 }
 export default zh_CN;

@@ -28,7 +28,8 @@ class CopyAndQrcode extends Component {
             <img src={this.state.url} />
           </div>
         ),
-        maskClosable: true
+        maskClosable: true,
+        okText: intl.get('popup.ok')
       });
     })
     .catch(err => {
