@@ -1,0 +1,18 @@
+{
+    "title": "Import Wanchain Key File",
+    "head": "Import Wanchain Key File",
+    "enterKfPw": "Enter Key File Password",
+    "kfFeedback": "Key file password is invalid",
+    "enterWwPw": "Enter WAN Wallet Password",
+    "wWPwInvalid": "WAN wallet password is invalid.",
+    "chooseKf": "Choose a Key File",
+    "kFInvalid": "Key file is invalid",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "ERR_NOT_FOUND": "cannot proceed, wallet not created or been locked",
+    "ERR_WRONG_PWD_KEYFILE": "invalid password for key file",
+    "ERR_WRONG_PWD_WAL": "invalid password for wan wallet",
+    "ERR_INVALID_KEYFILE": "invalid key file format",
+    "TEXT_SUCCESS": "key file import complete, close this window and go to main page for more detail",
+    "browse": "Browse"
+}

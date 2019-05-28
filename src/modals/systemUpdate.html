@@ -58,10 +58,32 @@
     </div>
 </body>
 <script type="application/javascript">
-    let setLoadingPercentage = (perc) => {
+    const ids = [
+        'title',
+        'head',
+        'newVersion',
+        'release',
+        'no',
+        'upgrade',
+        'downloading'
+    ];
+    const lan = 'zh';
+    const setLoadingPercentage = (perc) => {
         document.getElementById('percentage').innerText = perc + '%';
         document.getElementById('loading-bar').style.width = perc.toString() + '%';
     }
+    const setLanguage = () => {
+        ids.forEach((id) => {
+            setText(id);
+        });
+        $('#version').html($.i18n('version', '3.3', '1.1'));
+        const info = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        $('#info').html(info);
+    }
+    const setText = (id) => {
+        $(`#${id}`).html($.i18n(id));
+    }
+
     document.getElementById('no').addEventListener('click', () => {
 
     });
@@ -72,28 +94,6 @@
             setLoadingPercentage(Math.round(Math.random() * 100));
         }, 1500);
     });
-
-    var lan = 'zh';
-    let setLanguage = () => {
-        const ids = [
-            'title',
-            'head',
-            'newVersion',
-            'release',
-            'no',
-            'upgrade',
-            'downloading'
-        ];
-        ids.forEach((id) => {
-            setText(id);
-        });
-        $('#version').html($.i18n('version', '3.3', '1.1'));
-        const info = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-        $('#info').html(info);
-    }
-    let setText = (id) => {
-        $(`#${id}`).html($.i18n(id));
-    }
     window.onload = () => {
         $.i18n({
             locale: lan
@@ -105,7 +105,6 @@
             console.log(err);
         });
     }
-    
 </script>
 
 </html>
