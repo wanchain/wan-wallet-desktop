@@ -9,10 +9,10 @@
     "kFInvalid": "Key file is invalid",
     "cancel": "Cancel",
     "submit": "Submit",
-    "ERR_NOT_FOUND": "cannot proceed, wallet not created or been locked",
-    "ERR_WRONG_PWD_KEYFILE": "invalid password for key file",
-    "ERR_WRONG_PWD_WAL": "invalid password for wan wallet",
-    "ERR_INVALID_KEYFILE": "invalid key file format",
-    "TEXT_SUCCESS": "key file import complete, close this window and go to main page for more detail",
+    "ERR_NOT_FOUND": "Cannot proceed, wallet is not created or locked",
+    "ERR_WRONG_PWD_KEYFILE": "Invalid key file password",
+    "ERR_WRONG_PWD_WAL": "Invalid WAN wallet password",
+    "ERR_INVALID_KEYFILE": "Invalid key file format",
+    "TEXT_SUCCESS": "Import is successful",
     "browse": "Browse"
 }

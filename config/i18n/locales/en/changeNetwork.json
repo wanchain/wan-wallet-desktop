@@ -1,6 +1,6 @@
 {
     "title": "Switch Network",
-    "head": "If you change network, you will logout from this platform.",
+    "head": "Are you sure to switch network?",
     "no": "No",
     "yes": "Yes"
 }
