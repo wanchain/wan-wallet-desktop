@@ -168,14 +168,7 @@ export default (i18n) => {
         role: 'help',
         submenu: [
             {
-                label: i18n.t('main.applicationMenu.app.about', { app: APP_NAME }),
-                click: () => {
-                    dialog.showMessageBox({
-                        type: 'info',
-                        title: `About ${APP_NAME}`,
-                        message: `Version: ${app.getVersion()}`
-                    })
-                }
+                label: i18n.t('main.applicationMenu.app.version', { version: app.getVersion() }),
             },
             { type: 'separator' },
             {

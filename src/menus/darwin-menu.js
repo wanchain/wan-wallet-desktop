@@ -163,7 +163,9 @@ export default (i18n) => {
                                 const mainWin = Windows.getByType('main')
                                 mainWin.hide()
                                 Windows.createModal('changeNetwork', {
-                                    width: 1024 + 208, height: 720, alwaysOnTop: true
+                                    width: 1024 + 208, 
+                                    height: 720, 
+                                    alwaysOnTop: true
                                 })
                             }
 

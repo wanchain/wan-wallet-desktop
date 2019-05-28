@@ -251,9 +251,8 @@ class Windows {
             show: true,
             ownerId: null,
             electronOptions: {
-                width: 1200,
-                height: 800,
-                // resizable: false,
+                width: 1220,
+                height: process.platform === 'darwin' ? 680 : 720,
                 fullscreen: false,
                 center: true,
                 useContentSize: true,
@@ -265,6 +264,7 @@ class Windows {
                 }
             }
         }
+        
 
         const parent = _.find(this._windows, (w) => {
             return w.type === 'main';
@@ -273,6 +273,10 @@ class Windows {
         // we need to hide main window when loading window or upgrading window on the top
         if (parent && type !== 'changeNetwork') {
             opts.electronOptions.parent = parent.window
+        }
+
+        if (type === 'changeNetwork') {
+            opts.electronOptions.frame = false
         }
 
         const wnd = this.create(type, opts)
