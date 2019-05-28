@@ -17,8 +17,8 @@ const LEDGER = 'ledger';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr)
 }))
 
@@ -26,7 +26,7 @@ const LEDGER = 'ledger';
 class Ledger extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle(intl.get('Ledger.ledger'));
+    this.props.changeTitle('Ledger.ledger');
   }
 
   componentDidUpdate() {

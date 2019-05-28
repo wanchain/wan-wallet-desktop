@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
-import intl from 'react-intl-universal';
 
 import './index.less';
 import wanLogo from 'static/image/wan.png';
@@ -13,18 +12,17 @@ function TokenImg(text) {
 }
 
 @inject(stores => ({
-  language: stores.languageIntl.language,
   portfolioList: stores.portfolio.portfolioList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
 @observer
 class Portfolio extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle(intl.get('Portfolio.portfolio'));
+    this.props.changeTitle('Portfolio.portfolio');
   }
 
   componentDidMount() {

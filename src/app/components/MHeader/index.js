@@ -7,8 +7,8 @@ import './index.less';
 
 @inject(stores => ({
   auth: stores.session.auth,
-  pageTitle: stores.session.pageTitle,
   language: stores.languageIntl.language,
+  pageTitle: stores.languageIntl.pageTitle,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   setAuth: val => stores.session.setAuth(val),

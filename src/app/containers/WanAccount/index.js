@@ -27,8 +27,8 @@ const KEYSTOREID = 5;
   transParams: stores.sendTransParams.transParams,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
 @observer
@@ -40,7 +40,7 @@ class WanAccount extends Component {
       isUnlock: false,
     }
     this.props.updateTransHistory();
-    this.props.changeTitle(intl.get('WanAccount.wallet'));
+    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [

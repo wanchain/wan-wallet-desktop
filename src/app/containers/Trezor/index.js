@@ -35,7 +35,7 @@ TrezorConnect.init({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
 }))
@@ -44,7 +44,7 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle(intl.get('Trezor.trezor'))
+    this.props.changeTitle('Trezor.trezor')
   }
 
   componentDidUpdate() {

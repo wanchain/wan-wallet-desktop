@@ -10,15 +10,13 @@ import logo from 'static/image/logo.png';
 const SubMenu = Menu.SubMenu;
 
 @inject(stores => ({
-  language: stores.languageIntl.language,
   sidebarColumns: stores.languageIntl.sidebarColumns,
 }))
 
 @observer
 class Sidebar extends Component {
-
   renderMenu = data => {
-    return data.map((item) => {
+    return data.map(item => {
       if(item.children) {
         return (
           <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>

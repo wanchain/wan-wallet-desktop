@@ -2,7 +2,6 @@ import { observable, action } from 'mobx';
 import { getChainId } from 'utils/helper';
 
 class Session {
-  @observable pageTitle = 'Wanchain Wallet';
   @observable hasMnemonicOrNot = false;
   @observable chainId = 1;
   @observable auth = false;
@@ -37,10 +36,6 @@ class Session {
 
   @action setAuth(val) {
     self.auth = val;
-  }
-
-  @action changeTitle(newTitle) {
-    self.pageTitle = newTitle;
   }
 }
 
