@@ -51,7 +51,10 @@ class WanAddress {
       })
     }
 
-    @action updateTransHistory() {
+    @action updateTransHistory(initialize = false) {
+      if(initialize) {
+        self.transHistory = {};
+      }
       wand.request('transaction_showRecords', (err, val) => {
         if(!err && val.length !== 0) {
           val.forEach(item => {

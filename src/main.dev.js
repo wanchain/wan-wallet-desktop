@@ -14,17 +14,17 @@ import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { Windows, walletBackend } from '~/src/modules'
 
-ipcMain.on('ELECTRON_GUEST_WINDOW_MANAGER_WEB_CONTENTS_METHOD', function (event, guestId, method, ...args) {
-  const guestContents = webContents.fromId(guestId)
-  if (guestContents == null) return
+// ipcMain.on('ELECTRON_GUEST_WINDOW_MANAGER_WEB_CONTENTS_METHOD', function (event, guestId, method, ...args) {
+//   const guestContents = webContents.fromId(guestId)
+//   if (guestContents == null) return
 
-  
-  // if (canAccessWindow(event.sender, guestContents)) {
-  //   guestContents[method](...args)
-  // } else {
-  //   console.error(`Blocked ${event.sender.getURL()} from calling ${method} on its opener.`)
-  // }
-})
+
+//   // if (canAccessWindow(event.sender, guestContents)) {
+//   //   guestContents[method](...args)
+//   // } else {
+//   //   console.error(`Blocked ${event.sender.getURL()} from calling ${method} on its opener.`)
+//   // }
+// })
 
 env.config()
 
@@ -55,8 +55,8 @@ async function createWindow () {
   logger.info('creating main window')
 
   const mainWindowState = windowStateKeeper({
-    defaultWidth: 1024 + 208,
-    defaultHeight: 720
+    defaultWidth: 1220,
+    defaultHeight: process.platform === 'darwin' ? 680 : 720
   });
 
   mainWindow = Windows.create('main', {
@@ -121,22 +121,22 @@ process.on('uncaughtException', (err) => {
   app.quit()
 })
 
-async function onReady() {
-  registerAutoUpdaterHandlersAndRun()
-}
-
 // async function onReady() {
-//   // initiate windows manager
-//   Windows.init()
-//   // register handler for walletbackend init 
-//   walletBackend.on('initiationDone', async () => {
-//     Windows.broadcast('notification', 'sdk', 'ready')
-//   })
-
-//   await createWindow()
-  
-//   await walletBackend.init()
+//   registerAutoUpdaterHandlersAndRun()
 // }
+
+async function onReady() {
+  // initiate windows manager
+  Windows.init()
+  // register handler for walletbackend init 
+  walletBackend.on('initiationDone', async () => {
+    Windows.broadcast('notification', 'sdk', 'ready')
+  })
+
+  await createWindow()
+  
+  await walletBackend.init()
+}
 
 // This method will be called when Electron has done everything 
 // initialization and ready for creating browser windows
@@ -154,15 +154,15 @@ app.on('activate', async function () {
   }
 })
 
-function registerAutoUpdaterHandlersAndRun() {
+// function registerAutoUpdaterHandlersAndRun() {
 
-  console.log('autoUpdater: ', autoUpdater)
+//   console.log('autoUpdater: ', autoUpdater)
 
-  autoUpdater.on('checking-for-update', () => {
-    logger.info('checking-for-update')
-    console.log('arguments: ', arguments)
-    // sendStatusToWindow('Checking for update...')
-  })
+//   autoUpdater.on('checking-for-update', () => {
+//     logger.info('checking-for-update')
+//     console.log('arguments: ', arguments)
+//     // sendStatusToWindow('Checking for update...')
+//   })
   
 //   autoUpdater.on('update-available', (info) => {
 //     logger.info('update-available')
@@ -194,5 +194,5 @@ function registerAutoUpdaterHandlersAndRun() {
 //   })
 
 //   autoUpdater.checkForUpdates()
-}
+// }
 
