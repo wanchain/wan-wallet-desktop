@@ -189,7 +189,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
 
                 logger.info('Sign transaction:');
-                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx );
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
 
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
@@ -220,17 +220,17 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             break
 
         case 'deleteLedger':
-          {
-            try {
-                await hdUtil.disconnectLedger()
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
+            {
+                try {
+                    await hdUtil.disconnectLedger()
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                break
             }
-    
-            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
-            break
-          }
     }
 })
 
@@ -306,6 +306,21 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'isValidatorAddress':
+            try {
+                ret = await ccUtil.isWanAddress(payload.address);
+                let info = await ccUtil.getValidatorInfo('wan', payload.address);
+                if(!info || info.feeRate == 100) {
+                    ret = false;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'fromKeyFile':
             const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
             const keyFileContent = fs.readFileSync(keyFilePath).toString();
@@ -313,8 +328,8 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
 
-                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, {name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}` });
-                Windows.broadcast('notification', 'keyfilepath', {path, addr: keyStoreObj.address});
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}` });
+                Windows.broadcast('notification', 'keyfilepath', { path, addr: keyStoreObj.address });
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
@@ -326,10 +341,10 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
             break
 
-        case 'getKeyStoreCount': 
+        case 'getKeyStoreCount':
             let count;
             try {
-              count = hdUtil.getKeyStoreCount(WAN_ID);
+                count = hdUtil.getKeyStoreCount(WAN_ID);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -337,7 +352,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: count })
             break
-            
+
     }
 })
 
@@ -550,6 +565,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let blockNumber = await ccUtil.getBlockNumber('wan');
                 let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
 
+                // let testAddr = '0x7fc2da2C7d17c5F934E424144281023D29c2Fcbd';
+                // let testReturn = await ccUtil.getDelegatorIncentive('wan', testAddr);
+                // console.log('addr:', testAddr, 'ret:', testReturn);
+                // exit(0);
+
+                console.log('accounts.length', accounts.length)
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
@@ -558,7 +579,10 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
+                    console.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
+                        console.log('account:', account);
+                        console.log('incentive length:', inc.length);
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
@@ -573,22 +597,22 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'txHistory':
-            try {
-
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
-            break
-
         case 'delegateIn':
             try {
                 // 1. Get from address from wallet
                 console.log('delegateIn:', payload);
 
                 let tx = payload;
+
+                tx.validatorAddr;
+
+                let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
+                if (!validatorInfo || validatorInfo.feeRate == 100) {
+                    throw new Error('Validator Address is Invalid');
+                }
+
+                console.log('validatorInfo', validatorInfo);
+
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
                 let gasLimit = 200000;
@@ -645,16 +669,16 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             const { choice } = payload
             const mainWin = Windows.getByType('main')
             const switchWin = Windows.getByType('changeNetwork')
-            
+
             if (choice === 'yes') {
                 try {
 
                     setting.switchNetwork()
-                    
+
                     Windows.broadcast('notification', 'sdk', 'init')
-                    
+
                     await walletBackend.init()
-                    
+
                     Windows.broadcast('notification', 'network', setting.network)
                 } catch (e) {
                     logger.error(e.message || e.stack)
@@ -663,8 +687,8 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             } else if (choice === 'no') {
                 try {
                     const networkMenu = menuFactoryService.networkMenu
-                    const targetText = setting.network.includes('main') ? 'Main Network': 'Test Network'
-                    const [ targetMenu ] = networkMenu.items.filter(i => i.label === targetText)
+                    const targetText = setting.network.includes('main') ? 'Main Network' : 'Test Network'
+                    const [targetMenu] = networkMenu.items.filter(i => i.label === targetText)
                     targetMenu.click()
                 } catch (e) {
                     logger.error(e.message || e.stack)
@@ -674,7 +698,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             switchWin.close()
             mainWin.show()
-            
+
             break
     }
 })
@@ -795,18 +819,27 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
         }
     }
 
+    console.log('list.length', list.length);
     for (let i = 0; i < list.length; i++) {
         let validatorAddress = list[i].validatorAddress;
         let accountAddress = list[i].accountAddress;
         let distributeRewards = web3.utils.toBN(0);
         let epochs = [];
+
+        console.log('incentive.length', incentive.length);
         for (let m = 0; m < incentive.length; m++) {
             const inc = incentive[m];
+            //console.log('accountAddress == inc.account.address', accountAddress, inc.account.address);
             if (accountAddress == inc.account.address) {
+
+                console.log('inc.incentive.length', inc.incentive.length);
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
+
+                    //console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
+                        console.log('distributeRewards', distributeRewards)
                         if (!epochs.includes(obj.epochId)) {
                             epochs.push(obj.epochId);
                         }
@@ -815,6 +848,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             }
         }
 
+        console.log('epochs.length', epochs.length)
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
@@ -822,9 +856,9 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
         } else {
             list[i].myStake.bottom = "Less than 2 days ago";
         }
-        
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
+        console.log('list[i].distributeRewards', list[i].distributeRewards);
     }
 
     return list;

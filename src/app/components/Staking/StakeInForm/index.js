@@ -6,6 +6,8 @@ import Validator from '../Validators/Validator';
 import './index.less';
 import validatorImg from 'static/image/validator.png';
 import { checkWanAddr } from 'utils/helper';
+import { checkWanValidatorAddr } from 'utils/helper';
+
 import { toWei } from 'utils/support';
 import intl from 'react-intl-universal';
 
@@ -68,8 +70,7 @@ class StakeInForm extends Component {
 
 
   checkToWanAddr = (rule, value, callback) => {
-    //callback();
-    checkWanAddr(value).then(ret => {
+    checkWanValidatorAddr(value).then(ret => {
       if (ret) {
         callback();
       } else {
@@ -131,7 +132,7 @@ class StakeInForm extends Component {
 
     wand.request('staking_delegateIn', tx, (err, ret) => {
       if (err) {
-        message.warn("Estimate gas failed. Please try again");
+        message.warn(err.message);
       } else {
         console.log('delegateIn ret:', ret);
       }
