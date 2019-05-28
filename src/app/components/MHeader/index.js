@@ -7,8 +7,8 @@ import './index.less';
 
 @inject(stores => ({
   auth: stores.session.auth,
-  pageTitle: stores.session.pageTitle,
   language: stores.languageIntl.language,
+  pageTitle: stores.languageIntl.pageTitle,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   setAuth: val => stores.session.setAuth(val),
@@ -42,7 +42,7 @@ class MHeader extends Component {
             <Col span={22} className="title">
               <em className = "comLine"></em><span>{ pageTitle }</span>
               { ['Ledger', 'Trzeor'].includes(pageTitle) && ((ledgerAddrList.length !== 0) || (trezorAddrList.length !== 0))
-                  ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />Disconnect</Button>
+                  ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
                   : ''
               }
             </Col>

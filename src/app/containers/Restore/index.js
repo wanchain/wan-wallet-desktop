@@ -44,6 +44,8 @@ class Restore extends Component {
             onOk={this.handleOk}
             onCancel={this.resetStateVal}
             closable={false}
+            okText={intl.get('popup.ok')}
+            cancelText={intl.get('popup.cancel')}
           >
             <p className="textP">{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
           </Modal>

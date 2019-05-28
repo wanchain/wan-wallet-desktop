@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button, Card, Modal, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-// import { clipboard } from 'electron';
 
 import './index.less';
 
@@ -58,7 +57,6 @@ class Backup extends Component {
   }
 
   copy2Clipboard = (val) => {
-    // clipboard.writeText(val);
     wand.writeText(val);
     message.success(intl.get('Backup.copySuccessfully'));
   }
@@ -78,6 +76,8 @@ class Backup extends Component {
             onOk={this.handleOk}
             onCancel={this.resetStateVal}
             closable={false}
+            okText={intl.get('popup.ok')}
+            cancelText={intl.get('popup.cancel')}
           >
             <p className="textP">{intl.get('Backup.warning')}: {intl.get('Backup.doNotShare')}</p>
             {

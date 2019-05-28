@@ -5,7 +5,7 @@
  */
 
 import env from 'dotenv'
-import { app, ipcMain as ipc } from 'electron'
+import { app, ipcMain as ipc, webContents } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
@@ -13,6 +13,18 @@ import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { Windows, walletBackend } from '~/src/modules'
+
+// ipcMain.on('ELECTRON_GUEST_WINDOW_MANAGER_WEB_CONTENTS_METHOD', function (event, guestId, method, ...args) {
+//   const guestContents = webContents.fromId(guestId)
+//   if (guestContents == null) return
+
+
+//   // if (canAccessWindow(event.sender, guestContents)) {
+//   //   guestContents[method](...args)
+//   // } else {
+//   //   console.error(`Blocked ${event.sender.getURL()} from calling ${method} on its opener.`)
+//   // }
+// })
 
 env.config()
 
@@ -43,8 +55,8 @@ async function createWindow () {
   logger.info('creating main window')
 
   const mainWindowState = windowStateKeeper({
-    defaultWidth: 1024 + 208,
-    defaultHeight: 720
+    defaultWidth: 1220,
+    defaultHeight: process.platform === 'darwin' ? 680 : 720
   });
 
   mainWindow = Windows.create('main', {
@@ -86,10 +98,9 @@ async function createWindow () {
     logger.info('ready to show main window')
     mainWindow.show()
     Windows.broadcast('notification', 'language', setting.language)
-    Windows.broadcast('notification', 'network', setting.network)
     if (global.chainManager) {
-      Windows.broadcast('notification', 'sdk', 'ready')
-    } else {
+      sendReadyNotifications();
+      } else {
       Windows.broadcast('notification', 'sdk', 'init')
     }
   })
@@ -103,18 +114,27 @@ function installExtensions() {
   mainWindow.webContents.openDevTools()
 }
 
+function sendReadyNotifications() {
+  Windows.broadcast('notification', 'sdk', 'ready')
+  Windows.broadcast('notification', 'network', setting.network)
+}
+
 // prevent crashed and close gracefully
 process.on('uncaughtException', (err) => {
   logger.error(`UNCAUGHT EXCEPTION ${err.stack}`)
   app.quit()
 })
 
+// async function onReady() {
+//   registerAutoUpdaterHandlersAndRun()
+// }
+
 async function onReady() {
   // initiate windows manager
   Windows.init()
   // register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
-    Windows.broadcast('notification', 'sdk', 'ready')
+    sendReadyNotifications();
   })
 
   await createWindow()
@@ -139,9 +159,14 @@ app.on('activate', async function () {
 })
 
 // function registerAutoUpdaterHandlersAndRun() {
+//   autoUpdater.fullChangelog = true
+
+//   console.log('autoUpdater: ', autoUpdater)
+
 //   autoUpdater.on('checking-for-update', () => {
 //     logger.info('checking-for-update')
-//     sendStatusToWindow('Checking for update...')
+//     console.log('arguments: ', arguments)
+//     // sendStatusToWindow('Checking for update...')
 //   })
   
 //   autoUpdater.on('update-available', (info) => {

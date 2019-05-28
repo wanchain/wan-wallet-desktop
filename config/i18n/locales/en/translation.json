@@ -4,6 +4,7 @@
             "app": {
                 "label": "{{app}}",
                 "about": "About {{app}}",
+                "version": "Version {{version}}",
                 "developer": {
                     "label": "Developer",
                     "assets": {

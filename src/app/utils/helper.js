@@ -136,7 +136,18 @@ export const checkAddrType = function (addr, addrInfo) {
       }
     })
     return type
-  }  
+  }
+}
+
+export const hasSameName = function (record, addrInfo) {
+  let bool = false;
+  let tmp = Object.assign({}, addrInfo['normal'], addrInfo['import']);
+  Object.values(tmp).forEach(item => {
+    if(item.name === record.name && item.address !== record.address) {
+      bool = true
+    }
+  })
+  return bool;
 }
 
 export const getChainIdByAddr = function (addrInfo) {

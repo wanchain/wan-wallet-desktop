@@ -3,9 +3,18 @@ import intl from 'react-intl-universal';
 
 class LanguageIntl {
   @observable language = 'en_US';
+  @observable title = 'Wanchain Wallet';
 
   @action setLanguage(language) {
     self.language = language;
+  }
+
+  @action changeTitle(newTitle) {
+    self.title = newTitle;
+  }
+
+  @computed get pageTitle() {
+    return self.language && intl.get(self.title);
   }
 
   @computed get transColumns() {

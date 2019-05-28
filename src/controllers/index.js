@@ -696,9 +696,9 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 }
             }
 
-            switchWin.close()
             mainWin.show()
-
+            switchWin.close()
+            
             break
     }
 })

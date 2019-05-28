@@ -1,7 +1,7 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
+import { app, shell, dialog } from 'electron'
 import { walletBackend, updater, Windows } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
 
@@ -60,7 +60,7 @@ export default (i18n) => {
                                 const mainWin = Windows.getByType('main')
                                 mainWin.hide()
                                 Windows.createModal('changeNetwork', {
-                                    width: 1600, height: 900, alwaysOnTop: true
+                                    width: 1024 + 208, height: 720, alwaysOnTop: true
                                 })
                             }
 
@@ -78,7 +78,7 @@ export default (i18n) => {
                                 const mainWin = Windows.getByType('main')
                                 mainWin.hide()
                                 Windows.createModal('changeNetwork', {
-                                    width: 1600, height: 900, alwaysOnTop: true
+                                    width: 1024 + 208, height: 720, alwaysOnTop: true
                                 })
                             }
 
@@ -167,11 +167,10 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.help.label'),
         role: 'help',
         submenu: [
-            // {
-            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-            //     click: updater.run
-            // },
-            // { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.version', { version: app.getVersion() }),
+            },
+            { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {

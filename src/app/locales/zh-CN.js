@@ -73,6 +73,7 @@ const zh_CN = {
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.create': '创建',
+    'WanAccount.notSameName': '帐户名称不能重复。请再试一次',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',
@@ -107,6 +108,7 @@ const zh_CN = {
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',
 
     'MHeader.logout': '注销',
+    'MHeader.disconnect': '断开连接',
 
     'Mnemonic.ConfirmPhrase.confirmYourSeedPhrase': '确认你的助记词',
 
@@ -217,5 +219,7 @@ const zh_CN = {
     'WithdrawForm.title': '退出委托',
     'WithdrawForm.note': '注意：在退出委托后，委托金额将在3个epoch内返回原账户，委托金额将被清零',
 
+    'popup.ok': '确定',
+    'popup.cancel': '取消',
 }
 export default zh_CN;

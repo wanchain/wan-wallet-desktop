@@ -10,7 +10,7 @@ import { EditableFormRow, EditableCell } from './Rename';
 import SendNormalTrans from 'components/SendNormalTrans';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory';
-import { checkAddrType } from 'utils/helper'
+import { checkAddrType, hasSameName } from 'utils/helper'
 import totalImg from 'static/image/wan.png';
 
 const WAN = "m/44'/5718350'/0'/0/";
@@ -27,8 +27,8 @@ const KEYSTOREID = 5;
   transParams: stores.sendTransParams.transParams,
   updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
 @observer
@@ -40,7 +40,7 @@ class WanAccount extends Component {
       isUnlock: false,
     }
     this.props.updateTransHistory();
-    this.props.changeTitle(intl.get('WanAccount.wallet'));
+    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -144,7 +144,11 @@ class WanAccount extends Component {
   }
 
   handleSave = row => {
-    this.props.updateName(row);
+    if(hasSameName(row, this.props.addrInfo)) {
+      message.warn(intl.get('WanAccount.notSameName'));
+    } else {
+      this.props.updateName(row);
+    }
   }
 
   render() {

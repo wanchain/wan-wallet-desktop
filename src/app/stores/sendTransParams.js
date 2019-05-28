@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, toJS } from 'mobx';
 import BigNumber from 'bignumber.js';
 
 class SendTransParams {
@@ -26,11 +26,12 @@ class SendTransParams {
       });
     }
 
+    @action updateGasPrice(gasPrice) {
+        self.currentGasPrice = gasPrice;
+    }
+
     @action updateTransParams(addr, paramsObj) {
       Object.keys(paramsObj).forEach(item => {
-        if(item === 'gasPrice') {
-          self.currentGasPrice = paramsObj[item];
-        }
         self.transParams[addr][item] = paramsObj[item];
       });
     }
@@ -57,7 +58,7 @@ class SendTransParams {
       if(Object.keys(self.transParams).length !== 0) {
         let from = self.currentFrom;
         let { to, amount, data, chainId, nonce, gasLimit, gasPrice, txType } = self.transParams[from];
-        console.log('tx', self.transParams[from])
+        console.log('tx', JSON.stringify(self.transParams[from]));
         return {
           to: to,
           value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),

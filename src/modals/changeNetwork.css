@@ -29,7 +29,7 @@ body{
     top: 30%;
     z-index: 1;
 }
-#title {
+#head {
     font-size:24px;
     font-family:RobotoCondensed-Bold;
     font-weight:bold;

@@ -27,7 +27,7 @@ class Loading extends Component {
       this.setState({
         percent: tmp
       })
-    }, 1000)
+    }, 2000)
   }
   
   componentWillUnmount() {

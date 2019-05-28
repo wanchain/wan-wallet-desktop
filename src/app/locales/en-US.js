@@ -73,6 +73,7 @@ const en_US = {
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.create': 'Create',
+    'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',
@@ -107,6 +108,7 @@ const en_US = {
     'MFooter.wanchainFoundationLtd': 'WANCHAIN FOUNDATION LTD',
 
     'MHeader.logout': 'Log Out',
+    'MHeader.disconnect': 'Disconnect',
 
     'Mnemonic.ConfirmPhrase.confirmYourSeedPhrase': 'Confirm Your Seed Phrase',
 
@@ -217,6 +219,8 @@ const en_US = {
     'WithdrawForm.title': 'Register to Withdraw',
     'WithdrawForm.note': 'Note: After registering for withdrawal, staking balance will go to zero and staked WAN will be returned to your account within 3 epochs.',
 
+    'popup.ok': 'Ok',
+    'popup.cancel': 'Cancel',
 
 }
 export default en_US;

@@ -5,14 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="stylesheet" href="changeNetwork.css">
-        <title>Switch Network</title>
+        <script src="../../static/vender/jquery-3.2.1.min.js"></script>
+        <script src="../../static/vender/jquery.i18n.js"></script>
+        <script src="../../static/vender/jquery.i18n.messagestore.js"></script>
+        <title id="title"><!-- Switch Network --></title>
     </head>
     <body>
         <div id="main-container">
-            <p id="title">If you change network, you will logout from this platform.</p>
+            <p id="head"><!-- If you change network, you will logout from this platform. --></p>
             <div id="buttons">
-                <button id="no">No</button>
-                <button id="yes" loading>Yes</button>
+                <button id="no"><!-- No --></button>
+                <button id="yes" loading><!-- Yes --></button>
             </div>
         </div>
         <div id="mask">
@@ -25,11 +28,37 @@
     </body>
     <script type="application/javascript">
         (function() {
+            const setLanguage = () => {
+                const ids = [
+                    'title',
+                    'head',
+                    'no',
+                    'yes'
+                ];
+                ids.forEach((id) => {
+                    setText(id);
+                });
+            }
+            let setText = (id) => {
+                $(`#${id}`).html($.i18n(id));
+            }
+
             window.onload = () => {
-                const yesBtn = document.getElementById('yes')
-                const noBtn = document.getElementById('no')
-                const spinner = document.getElementById('mask')
-                const mainContainer = document.getElementById('main-container')
+                const yesBtn = document.getElementById('yes');
+                const noBtn = document.getElementById('no');
+                const spinner = document.getElementById('mask');
+                const mainContainer = document.getElementById('main-container');
+
+                let lan = 'zh';
+                $.i18n({
+                    locale: lan
+                }).load({
+                    [lan]: `../../config/i18n/locales/${lan}/changeNetwork.json`,
+                }).then((res) => {
+                    setLanguage();
+                }).catch((err) => {
+                    console.log(err);
+                });
 
                 yesBtn.addEventListener('click', (e) => {
                     e.preventDefault()

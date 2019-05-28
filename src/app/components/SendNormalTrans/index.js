@@ -15,6 +15,7 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
+  updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
 }))
 
 @observer
@@ -25,11 +26,12 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, chainType, chainId, addTransTemplate, updateTransParams } = this.props;
+    const { from, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
     addTransTemplate(from, { chainType, chainId });
     try {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
+      updateGasPrice(gasPrice);
       this.setState({ visible: true });
     } catch (err) {
       console.log(`err: ${err}`)
