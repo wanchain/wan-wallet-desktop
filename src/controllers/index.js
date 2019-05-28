@@ -570,7 +570,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 // console.log('addr:', testAddr, 'ret:', testReturn);
                 // exit(0);
 
-                console.log('accounts.length', accounts.length)
+                //console.log('accounts.length', accounts.length)
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
@@ -582,8 +582,8 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
                     //console.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
-                        console.log('account:', account);
-                        console.log('incentive length:', inc.length);
+                        //console.log('account:', account);
+                        //console.log('incentive length:', inc.length);
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
@@ -833,7 +833,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             //console.log('accountAddress == inc.account.address', accountAddress, inc.account.address);
             if (accountAddress == inc.account.address) {
 
-                console.log('inc.incentive.length', inc.incentive.length);
+                //console.log('inc.incentive.length', inc.incentive.length);
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
 
