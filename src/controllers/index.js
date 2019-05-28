@@ -840,7 +840,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
                     //console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
-                        console.log('distributeRewards', distributeRewards)
+                        //console.log('distributeRewards', distributeRewards)
                         if (!epochs.includes(obj.epochId)) {
                             epochs.push(obj.epochId);
                         }
