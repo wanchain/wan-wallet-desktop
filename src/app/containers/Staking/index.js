@@ -18,7 +18,7 @@ import './index.less';
   language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrListAll,
   stakingList: stores.staking.stakingList,
-  changeTitle: newTitle => stores.session.changeTitle(newTitle),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
