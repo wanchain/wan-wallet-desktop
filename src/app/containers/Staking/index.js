@@ -15,6 +15,7 @@ import totalImg from 'static/image/wan.png';
 import './index.less';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrListAll,
   stakingList: stores.staking.stakingList,
   changeTitle: newTitle => stores.session.changeTitle(newTitle),

@@ -5,6 +5,7 @@ import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Co
 import Validator from '../Validators/Validator';
 import './index.less';
 import validatorImg from 'static/image/validator.png';
+import intl from 'react-intl-universal';
 
 
 class WithdrawForm extends Component {
@@ -41,11 +42,11 @@ class WithdrawForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title="Register to Withdraw"
+          title={intl.get('WithdrawForm.title')}
           onCancel={this.props.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>Cancel</Button>,
-            <Button key="submit" type="primary" onClick={this.onSend}>Send</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
           className="withdraw-modal"
         >
@@ -53,40 +54,39 @@ class WithdrawForm extends Component {
             <div className="withdraw-title">Validator's Account:</div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">Name</span></Col>
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={18}><Validator img={this.props.record.validator.img} name={this.props.record.validator.name} /></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">Address</span></Col>
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.validator.address}</span></Col>
               </Row>
             </div>
           </div>
           <div className="withdraw-bg">
-            <div className="withdraw-title">My Account:</div>
+            <div className="withdraw-title">{intl.get('StakeInForm.myAccount')}</div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">Stake</span></Col>
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.stake')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.myStake.title} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">Balance</span></Col>
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.balance} WAN</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">Address</span></Col>
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.accountAddress}</span></Col>
               </Row>
             </div>
           </div>
-          <p className="withdraw-note">Note: After registering for withdrawal, staking balance will go to zero and staked WAN will be
-returned to your account within 3 epochs.</p>
+          <p className="withdraw-note">{intl.get('WithdrawForm.note')}</p>
         </Modal>
       </div>
     );

@@ -206,7 +206,16 @@ const zh_CN = {
     'StakeInForm.title': '开始委托',
     'StakeInForm.validatorAccount': '验证人账户:',
     'StakeInForm.myAccount': '我的账户:',
-
+    'StakeInForm.name': '名称',
+    'StakeInForm.address': '地址',
+    'StakeInForm.stake': '委托金额',
+    'StakeInForm.balance': '余额',
+    'StakeInForm.more': '更多信息',
+    'StakeInForm.selectName': '选择一个名称',
+    'StakeInForm.enterAddress': '请输入地址',
+    'StakeInForm.selectAddress': '选择一个地址',
+    'WithdrawForm.title': '退出委托',
+    'WithdrawForm.note': '注意：在退出委托后，委托金额将在3个epoch内返回原账户，委托金额将被清零',
 
 }
 export default zh_CN;

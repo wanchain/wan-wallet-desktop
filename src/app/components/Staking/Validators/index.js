@@ -11,6 +11,7 @@ import Validator from "./Validator";
 import DelegateIn from "./DelegateIn";
 import DelegateOut from "./DelegateOut";
 @inject(stores => ({
+  language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
   stakingList: stores.staking.stakingList,
 }))

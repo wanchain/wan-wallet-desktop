@@ -169,7 +169,7 @@ class StakeInForm extends Component {
             <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">Name</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={16}>
 
                   <Form layout="inline">
@@ -181,7 +181,7 @@ class StakeInForm extends Component {
                           showSearch
                           allowClear
                           style={{ width: 355 }}
-                          placeholder="Select a FROM name"
+                          placeholder={intl.get('StakeInForm.selectName')}
                           optionFilterProp="children"
                           onChange={this.onChange}
                           onFocus={this.onFocus}
@@ -196,18 +196,18 @@ class StakeInForm extends Component {
                   </Form>
                 </Col>
                 <Col span={4}>
-                  <a href="https://www.wanscan.org/">More Info</a>
+                  <a href="https://www.wanscan.org/">{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">Address</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input placeholder="Please enter address" prefix={<Icon type="wallet" className="colorInput"/>} />)}
+                        (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput"/>} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -218,7 +218,7 @@ class StakeInForm extends Component {
             <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">Stake</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
@@ -232,13 +232,13 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={5}><span className="stakein-name">Balance</span></Col>
+                <Col span={5}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={19}><span className="stakein-addr">{this.state.balance} WAN</span></Col>
               </Row>
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">Address</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
@@ -248,7 +248,7 @@ class StakeInForm extends Component {
                             showSearch
                             allowClear
                             style={{ width: 355 }}
-                            placeholder="Select a FROM address"
+                            placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             onChange={this.onChange}
                             onFocus={this.onFocus}

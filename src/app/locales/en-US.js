@@ -206,7 +206,16 @@ const en_US = {
     'StakeInForm.title': 'Delegate Now',
     'StakeInForm.validatorAccount': 'Validator\'s Account:',
     'StakeInForm.myAccount': 'My Account:',
-
+    'StakeInForm.name': 'Name',
+    'StakeInForm.address': 'Address',
+    'StakeInForm.stake': 'Stake',
+    'StakeInForm.balance': 'Balance',
+    'StakeInForm.more': 'More Info',
+    'StakeInForm.selectName': 'Select a FROM name',
+    'StakeInForm.enterAddress': 'Please enter address',
+    'StakeInForm.selectAddress': 'Select a FROM address',
+    'WithdrawForm.title': 'Register to Withdraw',
+    'WithdrawForm.note': 'Note: After registering for withdrawal, staking balance will go to zero and staked WAN will be returned to your account within 3 epochs.',
 
 
 }
