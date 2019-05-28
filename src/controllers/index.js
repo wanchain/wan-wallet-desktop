@@ -607,7 +607,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.validatorAddr;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
-                if (!validatorInfo || validatorInfo.feeRate == 100) {
+                if (!validatorInfo || validatorInfo.feeRate == 10000) {
                     throw new Error('Validator Address is Invalid');
                 }
 
