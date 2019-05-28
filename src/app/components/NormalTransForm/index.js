@@ -171,7 +171,7 @@ class NormalTransForm extends Component {
             </Form.Item>
             <Form.Item label={intl.get('NormalTransForm.amount')}>
               {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                (<InputNumber min={0} placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                (<Input min={0} placeholder="0" prefix={<Icon type="money-collect" className="colorInput" />} />)}
             </Form.Item>
             {
             advanced 

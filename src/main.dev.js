@@ -98,10 +98,9 @@ async function createWindow () {
     logger.info('ready to show main window')
     mainWindow.show()
     Windows.broadcast('notification', 'language', setting.language)
-    Windows.broadcast('notification', 'network', setting.network)
     if (global.chainManager) {
-      Windows.broadcast('notification', 'sdk', 'ready')
-    } else {
+      sendReadyNotifications();
+      } else {
       Windows.broadcast('notification', 'sdk', 'init')
     }
   })
@@ -113,6 +112,11 @@ async function createWindow () {
 
 function installExtensions() {
   mainWindow.webContents.openDevTools()
+}
+
+function sendReadyNotifications() {
+  Windows.broadcast('notification', 'sdk', 'ready')
+  Windows.broadcast('notification', 'network', setting.network)
 }
 
 // prevent crashed and close gracefully
@@ -130,7 +134,7 @@ async function onReady() {
   Windows.init()
   // register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
-    Windows.broadcast('notification', 'sdk', 'ready')
+    sendReadyNotifications();
   })
 
   await createWindow()
