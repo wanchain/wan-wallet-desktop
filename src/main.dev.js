@@ -159,6 +159,7 @@ app.on('activate', async function () {
 })
 
 // function registerAutoUpdaterHandlersAndRun() {
+//   autoUpdater.fullChangelog = true
 
 //   console.log('autoUpdater: ', autoUpdater)
 

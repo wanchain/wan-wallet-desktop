@@ -167,11 +167,11 @@ export default (i18n) => {
         label: i18n.t('main.applicationMenu.help.label'),
         role: 'help',
         submenu: [
-            // {
-            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-            //     click: updater.run
-            // },
-            // { type: 'separator' },
+            {
+                label: i18n.t('main.applicationMenu.app.about', { app: APP_NAME }),
+                role: 'about'
+            },
+            { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.help.web'),
                 click: () => {

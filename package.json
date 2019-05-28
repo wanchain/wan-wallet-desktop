@@ -19,7 +19,7 @@
     "pack:win": "run-s copy:win transpile:renderer transpile:main build:win",
     "pack:linux": "run-s copy transpile:renderer transpile:main build:linux",
     "pack:all": "run-s copy transpile:renderer transpile:main build:all",
-    "build:mac": "electron-builder --mac -p never",
+    "build:mac": "electron-builder --mac -p always",
     "build:win": "electron-builder --win -p never",
     "build:linux": "electron-builder --linux -p never",
     "build:all": "electron-builder -mwl -p never",
