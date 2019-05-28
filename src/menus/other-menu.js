@@ -1,7 +1,7 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
+import { app, shell, dialog } from 'electron'
 import { walletBackend, updater, Windows } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
 
@@ -169,7 +169,13 @@ export default (i18n) => {
         submenu: [
             {
                 label: i18n.t('main.applicationMenu.app.about', { app: APP_NAME }),
-                role: 'about'
+                click: () => {
+                    dialog.showMessageBox({
+                        type: 'info',
+                        title: `About ${APP_NAME}`,
+                        message: `Version: ${app.getVersion()}`
+                    })
+                }
             },
             { type: 'separator' },
             {
