@@ -6,13 +6,13 @@
     "enterWwPw": "请输入WAN钱包密码",
     "wWPwInvalid": "WAN钱包密码错误",
     "chooseKf": "请选择一个密钥文件",
-    "kFInvalid": "密钥文件错误",
+    "kFInvalid": "密钥文件不正确",
     "cancel": "取消",
     "submit": "提交",
     "ERR_NOT_FOUND": "无法继续, 钱包没有创建或已经被锁住",
-    "ERR_WRONG_PWD_KEYFILE": "密钥文件密码有误",
+    "ERR_WRONG_PWD_KEYFILE": "密钥文件密码错误",
     "ERR_WRONG_PWD_WAL": "WAN钱包密码错误",
     "ERR_INVALID_KEYFILE": "密钥文件格式错误",
-    "TEXT_SUCCESS": "密钥文件导入完成, 关闭本窗口并移往主界面获取等多信息",
+    "TEXT_SUCCESS": "导入成功",
     "browse": "浏览"
 }
