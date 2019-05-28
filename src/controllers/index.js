@@ -310,7 +310,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.isWanAddress(payload.address);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                if(!info || info.feeRate == 100) {
+                if(!info || info.feeRate == 10000) {
                     ret = false;
                 }
             } catch (e) {
