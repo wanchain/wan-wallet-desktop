@@ -9,6 +9,8 @@ import './index.less';
 const Option = Select.Option;
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
+  stakingColumns: stores.languageIntl.stakingColumns,
   addrInfo: stores.wanAddress.addrInfo,
   historyList: stores.wanAddress.stakingHistoryList,
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
@@ -16,34 +18,6 @@ const Option = Select.Option;
 
 @observer
 class StakingHistory extends Component {
-  columns = [
-    {
-      title: intl.get('TransHistory.time'),
-      dataIndex: 'time',
-      key: 'time',
-    }, {
-      title: intl.get('staking.table.type'),
-      dataIndex: 'annotate',
-      key: 'annotate',
-    }, {
-      title: intl.get('TransHistory.from'),
-      dataIndex: 'from',
-      key: 'from',
-    }, {
-      title: intl.get('staking.table.validator'),
-      dataIndex: 'validator',
-      key: 'validator',
-    }, {
-      title: intl.get('TransHistory.value'),
-      dataIndex: 'value',
-      key: 'value'
-    }, {
-      title: intl.get('TransHistory.status'),
-      dataIndex: 'status',
-      key: 'status'
-    }
-  ]
-
   onChange = value => {
     console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
@@ -56,7 +30,7 @@ class StakingHistory extends Component {
         <div className="historyCon">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
-        <Table className="portfolioMain" columns={this.columns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <Table className="portfolioMain" columns={this.props.stakingColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>
     );
   }

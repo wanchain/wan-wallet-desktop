@@ -575,11 +575,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
+                        //console.log('account', account.address, 'info', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    console.log('account', account.address, 'incentive.length', inc.length);
+                    //console.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
                         console.log('account:', account);
                         console.log('incentive length:', inc.length);
@@ -819,14 +820,14 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
         }
     }
 
-    console.log('list.length', list.length);
+    //console.log('list.length', list.length);
     for (let i = 0; i < list.length; i++) {
         let validatorAddress = list[i].validatorAddress;
         let accountAddress = list[i].accountAddress;
         let distributeRewards = web3.utils.toBN(0);
         let epochs = [];
 
-        console.log('incentive.length', incentive.length);
+        //console.log('incentive.length', incentive.length);
         for (let m = 0; m < incentive.length; m++) {
             const inc = incentive[m];
             //console.log('accountAddress == inc.account.address', accountAddress, inc.account.address);
@@ -848,7 +849,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             }
         }
 
-        console.log('epochs.length', epochs.length)
+        //console.log('epochs.length', epochs.length)
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
@@ -858,7 +859,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
         }
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
-        console.log('list[i].distributeRewards', list[i].distributeRewards);
+        //console.log('list[i].distributeRewards', list[i].distributeRewards);
     }
 
     return list;

@@ -43,6 +43,56 @@ class LanguageIntl {
     ]
   };
 
+  @computed get stakingColumns() {
+    return self.language && [
+      {
+        title: intl.get('TransHistory.time'),
+        dataIndex: 'time',
+        key: 'time',
+      }, {
+        title: intl.get('staking.table.type'),
+        dataIndex: 'annotate',
+        key: 'annotate',
+      }, {
+        title: intl.get('TransHistory.from'),
+        dataIndex: 'from',
+        key: 'from',
+      }, {
+        title: intl.get('staking.table.validator'),
+        dataIndex: 'validator',
+        key: 'validator',
+      }, {
+        title: intl.get('TransHistory.value'),
+        dataIndex: 'value',
+        key: 'value'
+      }, {
+        title: intl.get('TransHistory.status'),
+        dataIndex: 'status',
+        key: 'status'
+      }
+    ]
+  };
+
+  @computed get validatorColumns() {
+    return self.language && [
+      {
+        title: intl.get('staking.table.myAccount'),
+      }, {
+        title: intl.get('staking.table.myStake'),
+      }, {
+        title: '',
+      }, {
+        title: intl.get('staking.table.validator'),
+      }, {
+        title: '',
+      }, {
+        title: intl.get('staking.table.distributedReward'),
+      }, {
+        title: intl.get('staking.table.modifyStake'),
+      }
+    ]
+  }
+
   @computed get sidebarColumns() {
     return self.language && [
       {

@@ -12,6 +12,7 @@ import DelegateIn from "./DelegateIn";
 import DelegateOut from "./DelegateOut";
 @inject(stores => ({
   language: stores.languageIntl.language,
+  validatorColumns: stores.languageIntl.validatorColumns,
   getAddrList: stores.wanAddress.getAddrList,
   stakingList: stores.staking.stakingList,
 }))
@@ -24,6 +25,8 @@ class Validators extends Component {
     this.state = {
       withdrawVisible: false,
       stakeInVisible: false,
+      language: this.props.language,
+      stakingList: this.props.stakingList,
     }
   }
 
@@ -41,71 +44,75 @@ class Validators extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  columns = [
-    {
-      title: intl.get('staking.table.myAccount'),
-      dataIndex: 'myAccount',
-      key: 'myAccount',
-    }, {
-      title: intl.get('staking.table.myStake'),
-      dataIndex: 'myStake',
-      key: 'myStake',
-      render: stake => (
-        <Cell title={stake.title} bottom={stake.bottom} />
-      ),
-    }, {
-      title: '',
-      dataIndex: 'arrow1',
-      key: 'arrow1',
-      render: img => (
-        <img className="table-arrow" src={img} />
-      ),
-    }, {
-      title: intl.get('staking.table.validator'),
-      dataIndex: 'validator',
-      key: 'validator',
-      render: validator => (
-        <Validator img={validator.img} name={validator.name} />
-      ),
-    }, {
-      title: '',
-      dataIndex: 'arrow2',
-      key: 'arrow2',
-      render: img => (
-        <img className="table-arrow" src={img} />
-      ),
-    }, {
-      title: intl.get('staking.table.distributedReward'),
-      dataIndex: 'distributeRewards',
-      key: 'distributeRewards',
-      render: stake => (
-        <Cell title={stake.title} bottom={stake.bottom} />
-      ),
-    }, {
-      title: intl.get('staking.table.modifyStake'),
-      dataIndex: 'modifyStake',
-      key: 'modifyStake',
-      render: (text, record) => {
-        return (
-          <div>
-            <Row>
-              <Col span={12} align="center"><DelegateIn record={record} /></Col>
-              <Col span={12} align="center"><DelegateOut record={record} /></Col>
-            </Row>
-            <Row>
-              <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
-              <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
-            </Row>
-          </div>
-        )
+  getColumns() {
+    let columns = [
+      {
+        title: this.props.validatorColumns[0].title,
+        dataIndex: 'myAccount',
+        key: 'myAccount',
+      }, {
+        title: this.props.validatorColumns[1].title,
+        dataIndex: 'myStake',
+        key: 'myStake',
+        render: stake => (
+          <Cell title={stake.title} bottom={stake.bottom} />
+        ),
+      }, {
+        title: this.props.validatorColumns[2].title,
+        dataIndex: 'arrow1',
+        key: 'arrow1',
+        render: img => (
+          <img className="table-arrow" src={img} />
+        ),
+      }, {
+        title: this.props.validatorColumns[3].title,
+        dataIndex: 'validator',
+        key: 'validator',
+        render: validator => (
+          <Validator img={validator.img} name={validator.name} />
+        ),
+      }, {
+        title: this.props.validatorColumns[4].title,
+        dataIndex: 'arrow2',
+        key: 'arrow2',
+        render: img => (
+          <img className="table-arrow" src={img} />
+        ),
+      }, {
+        title: this.props.validatorColumns[5].title,
+        dataIndex: 'distributeRewards',
+        key: 'distributeRewards',
+        render: stake => (
+          <Cell title={stake.title} bottom={stake.bottom} />
+        ),
+      }, {
+        title: this.props.validatorColumns[6].title,
+        dataIndex: 'modifyStake',
+        key: 'modifyStake',
+        render: (text, record) => {
+          return (
+            <div>
+              <Row>
+                <Col span={12} align="center"><DelegateIn record={record} /></Col>
+                <Col span={12} align="center"><DelegateOut record={record} /></Col>
+              </Row>
+              <Row>
+                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
+                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
+              </Row>
+            </div>
+          )
+        }
       }
-    }
-  ]
+    ]
+
+    return columns
+  }
 
   render() {
     return (
       <div className="validators">
-        <Table columns={this.columns} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }
