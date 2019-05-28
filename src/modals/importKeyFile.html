@@ -102,7 +102,7 @@
             $.i18n({
                 locale: lan
             }).load({
-                [lan]: `../../config/i18n/locales/${lan}/importKeyFile.json`,
+                [lan]: wand.isDev ? `../../config/i18n/locales/${lan}/importKeyFile.json` : `../locales/${lan}/importKeyFile.json`,
             }).then((res) => {
                 setLanguage();
                 ERR_NOT_FOUND = $.i18n('ERR_NOT_FOUND');

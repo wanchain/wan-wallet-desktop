@@ -98,7 +98,7 @@
         $.i18n({
             locale: lan
         }).load({
-            [lan]: `../../config/i18n/locales/${lan}/systemUpdate.json`,
+            [lan]: wand.isDev ? `../../config/i18n/locales/${lan}/systemUpdate.json` : `../locales/${lan}/systemUpdate.json`,
         }).then((res) => {
             setLanguage();
         }).catch((err) => {

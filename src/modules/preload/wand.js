@@ -114,7 +114,9 @@ module.exports = (function() {
 
             emitter: _emitter,
 
-            shell: shell
+            shell: shell,
+
+            isDev: process.env.NODE_ENV === 'development'
         }
     }
 
