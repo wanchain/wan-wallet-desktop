@@ -104,3 +104,7 @@ body{
     width: 100%;
     text-align: center;
 }
+
+.custom-file-input:lang(en)~.custom-file-label::after {
+    content: attr(data-content);
+}
