@@ -159,8 +159,11 @@ const zh_CN = {
     'NormalTransForm.fast': '上链快',
     'NormalTransForm.wan': 'WAN',
     'NormalTransForm.advancedOptions': '高级选项',
+    'NormalTransForm.overBalance': '费用超出了余额, 请重试',
+    'NormalTransForm.sendAll': '发送全部',
 
     'SendNormalTrans.send': '发送',
+    'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
     'TransHistory.time': '时间',
     'TransHistory.from': '转出方',

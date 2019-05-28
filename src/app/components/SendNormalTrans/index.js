@@ -5,12 +5,13 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
-import { getNonce, getGasPrice, estimateGas, getChainId } from 'utils/helper';
+import { getNonce, getGasPrice, getBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
 @inject(stores => ({
   chainId: stores.session.chainId,
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
@@ -26,7 +27,11 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    if(getBalanceByAddr(from, addrInfo) === '0') {
+      message.warn(intl.get('SendNormalTrans.hasBalance'));
+      return;
+    }
     addTransTemplate(from, { chainType, chainId });
     try {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
