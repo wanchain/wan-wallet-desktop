@@ -171,17 +171,17 @@ app.on('activate', async function () {
   
 //   autoUpdater.on('update-available', (info) => {
 //     logger.info('update-available')
-//     sendStatusToWindow('Update available.')
+//     // sendStatusToWindow('Update available.')
 //   })
   
 //   autoUpdater.on('update-not-available', (info) => {
 //     logger.info('update-not-available')
-//     sendStatusToWindow('Update not available.')
+//     // sendStatusToWindow('Update not available.')
 //   })
   
 //   autoUpdater.on('error', (err) => {
 //     logger.info('erro in auto-updater')
-//     sendStatusToWindow('Error in auto-updater. ' + err)
+//     // sendStatusToWindow('Error in auto-updater. ' + err)
 //   })
   
 //   autoUpdater.on('download-progress', (progressObj) => {
@@ -189,12 +189,12 @@ app.on('activate', async function () {
 //     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
 //     log_message = log_message + ' - Download ' + progressObj.percent + '%'
 //     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-//     sendStatusToWindow(log_message)
+//     // sendStatusToWindow(log_message)
 //   })
   
 //   autoUpdater.on('update-downloaded', (info) => {
 //     logger.info('update-downloaded')
-//     sendStatusToWindow('Update downloaded')
+//     // sendStatusToWindow('Update downloaded')
 //     autoUpdater.quitAndInstall()
 //   })
 
