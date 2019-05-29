@@ -1,45 +1,56 @@
-@font-face {
+/* @font-face {
     font-family: 'Roboto-Regular';
     src: url('../../static/font/Roboto-Regular.ttf');
 }
+
 @font-face {
-font-family: 'Roboto-Bold';
-src: url('../../static/font/Roboto-Bold.ttf');
-}
-html, body {
+    font-family: 'Roboto-Bold';
+    src: url('../../static/font/Roboto-Bold.ttf');
+} */
+
+html,
+body {
     width: 100%;
     height: 100%;
 }
-body{
-    background:rgba(39,40,64,1) !important;
-    opacity:0.95;
+
+body {
+    background: rgba(39, 40, 64, 1) !important;
+    opacity: 0.95;
     color: white;
     margin: 0 auto;
     text-align: center;
     font-family: 'Roboto-Bold';
 }
+
 #main-container {
     position: relative;
     top: 15%;
 }
+
 p {
     margin: 0px;
 }
+
 #head {
     font-size: 24px;
     margin-bottom: 40px;
 }
+
 #rocket {
     width: 80px;
 }
+
 #newVersion {
     margin: 20px 0px;
     font-size: 18px;
 }
+
 #version {
     font-size: 14px;
     font-family: 'Roboto-Regular';
 }
+
 #release {
     display: inline-block;
     margin: 40px 0px 15px 0px;
@@ -47,9 +58,10 @@ p {
     width: 600px;
     text-align: left;
 }
+
 #info {
     display: inline-block;
-    background:rgba(31,32,52,1);
+    background: rgba(31, 32, 52, 1);
     font-family: 'Roboto-Regular';
     font-size: 14px;
     color: rgba(255, 255, 255, 0.5);
@@ -58,25 +70,29 @@ p {
     text-align: left;
     padding: 20px;
 }
+
 #buttons {
     margin-top: 44px;
 }
-#buttons button{
+
+#buttons button {
     width: 150px;
     height: 40px;
-    border-radius:20px;
+    border-radius: 20px;
     border: none;
     font-size: 16px;
     color: white;
     cursor: pointer;
 }
+
 #no {
-    background:linear-gradient(90deg,rgba(74,76,114,1) 0%,rgba(61,62,95,1) 100%);
-    opacity:0.95;
+    background: linear-gradient(90deg, rgba(74, 76, 114, 1) 0%, rgba(61, 62, 95, 1) 100%);
+    opacity: 0.95;
     margin-right: 10px;
 }
+
 #upgrade {
-    background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+    background: linear-gradient(90deg, rgba(65, 78, 221, 1) 0%, rgba(41, 48, 124, 1) 100%);
 }
 
 #mask {
@@ -84,13 +100,14 @@ p {
     width: 100%;
     height: 100%;
     /* background: rgba(255,255,255,0.3); */
-    background: rgba(39,40,64,1);
+    background: rgba(39, 40, 64, 1);
     position: absolute;
     left: 0px;
-    top:0px;
+    top: 0px;
     z-index: 2;
     text-align: center;
 }
+
 #mask-container {
     box-sizing: border-box;
     width: 100%;
@@ -99,9 +116,11 @@ p {
     padding: 0px 10%;
     text-align: left;
 }
+
 #downloading {
     text-align: center;
 }
+
 #loading-outer {
     display: inline-block;
     box-sizing: border-box;
@@ -109,6 +128,7 @@ p {
     margin-right: -4em;
     padding-right: 4em;
 }
+
 #loading-bar {
     display: inline-block;
     box-sizing: border-box;
@@ -117,6 +137,7 @@ p {
     border-radius: 100px;
     background-image: linear-gradient(to right, rgb(16, 142, 233) 0%, rgb(135, 208, 104) 100%);
 }
+
 #percentage {
     font-family: 'Roboto-Regular';
     font-size: 16px;

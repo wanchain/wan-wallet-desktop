@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
     font-family: 'Roboto-Regular';
     src: url('../../static/font/Roboto-Regular.ttf');
 }
@@ -6,7 +6,7 @@
 @font-face {
     font-family: 'Roboto-Bold';
     src: url('../../static/font/Roboto-Bold.ttf');
-}
+} */
 
 html,
 body {
@@ -38,8 +38,7 @@ body {
 
 #head {
     font-size: 24px;
-    font-family: 'RobotoCondensed-Bold';
-    font-weight: bold;
+    font-family: 'Roboto-Bold';
     color: rgba(255, 255, 255, 1);
     line-height: 32px;
     margin: 0px;
@@ -55,6 +54,10 @@ body {
     font-size: 18px;
     color: white;
     font-family: 'Roboto-Regular';
+}
+
+#buttons button:focus {
+    border: 2px solid #414EDD;
 }
 
 #buttons button:focus {
