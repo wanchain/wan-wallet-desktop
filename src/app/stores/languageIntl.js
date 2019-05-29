@@ -3,7 +3,7 @@ import intl from 'react-intl-universal';
 
 class LanguageIntl {
   @observable language = 'en_US';
-  @observable title = 'Wanchain Wallet';
+  @observable title = 'Portfolio.portfolio';
 
   @action setLanguage(language) {
     self.language = language;

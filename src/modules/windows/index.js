@@ -33,8 +33,7 @@ class Window extends EventEmitter {
             webPreferences: {
                 webaudio: true,
                 webgl: false,
-                /** TODO */
-                // webSecurity: false,
+                webSecurity: true,
                 textAreasAreResizable: true
             }
         }
@@ -258,7 +257,7 @@ class Windows {
                 useContentSize: true,
                 autoHideMenuBar: true,
                 webPreferences: {
-                    webSecurity: false,
+                    webSecurity: true,
                     preload: setting.isDev ? `${__dirname}/../preload` : `${__dirname}/preload.js`,
                     textAreasAreResizable: false,
                 }

@@ -67,8 +67,7 @@ async function createWindow () {
       x: mainWindowState.x,
       y: mainWindowState.y,
       webPreferences: {
-        /** TODO */
-        nodeIntegration: true,
+        nodeIntegration: setting.isDev ? true : false,
         nativeWindowOpen: false,
         preload: setting.isDev ?  `${__dirname}/modules/preload` : `${__dirname}/preload.js`
       }
