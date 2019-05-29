@@ -11,7 +11,7 @@
                         "label": "Assets",
                         "wan": {
                             "label": "Wanchain",
-                            "import": "Import From Key File"
+                            "import": "Import Key File"
                         }
                     },
                     "data": {
