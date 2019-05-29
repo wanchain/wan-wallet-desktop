@@ -5,7 +5,7 @@
  */
 
 import env from 'dotenv'
-import { app, ipcMain as ipc, webContents } from 'electron'
+import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
@@ -14,22 +14,10 @@ import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
 import { Windows, walletBackend } from '~/src/modules'
 
-// ipcMain.on('ELECTRON_GUEST_WINDOW_MANAGER_WEB_CONTENTS_METHOD', function (event, guestId, method, ...args) {
-//   const guestContents = webContents.fromId(guestId)
-//   if (guestContents == null) return
-
-
-//   // if (canAccessWindow(event.sender, guestContents)) {
-//   //   guestContents[method](...args)
-//   // } else {
-//   //   console.error(`Blocked ${event.sender.getURL()} from calling ${method} on its opener.`)
-//   // }
-// })
-
 env.config()
 
 const logger = Logger.getLogger('main')
-autoUpdater.logger = logger
+autoUpdater.logger = Logger.getLogger('updater')
 
 if (!i18n.isIintialized) {
   i18n.on('languageChanged', () => {
@@ -157,46 +145,64 @@ app.on('activate', async function () {
   }
 })
 
-// function registerAutoUpdaterHandlersAndRun() {
-//   autoUpdater.fullChangelog = true
+function registerAutoUpdaterHandlersAndRun() {
+  autoUpdater.fullChangelog = true
 
-//   console.log('autoUpdater: ', autoUpdater)
+  console.log('autoUpdater: ', autoUpdater)
 
-//   autoUpdater.on('checking-for-update', () => {
-//     logger.info('checking-for-update')
-//     console.log('arguments: ', arguments)
-//     // sendStatusToWindow('Checking for update...')
-//   })
+  autoUpdater.on('checking-for-update', () => {
+    // logger.info('checking-for-update')
+    console.log('arguments inside checking-for-update: ', arguments)
+    // sendStatusToWindow('Checking for update...')
+  })
   
-//   autoUpdater.on('update-available', (info) => {
-//     logger.info('update-available')
-//     // sendStatusToWindow('Update available.')
-//   })
-  
-//   autoUpdater.on('update-not-available', (info) => {
-//     logger.info('update-not-available')
-//     // sendStatusToWindow('Update not available.')
-//   })
-  
-//   autoUpdater.on('error', (err) => {
-//     logger.info('erro in auto-updater')
-//     // sendStatusToWindow('Error in auto-updater. ' + err)
-//   })
-  
-//   autoUpdater.on('download-progress', (progressObj) => {
-//     logger.info('download-progress')
-//     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-//     log_message = log_message + ' - Download ' + progressObj.percent + '%'
-//     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-//     // sendStatusToWindow(log_message)
-//   })
-  
-//   autoUpdater.on('update-downloaded', (info) => {
-//     logger.info('update-downloaded')
-//     // sendStatusToWindow('Update downloaded')
-//     autoUpdater.quitAndInstall()
-//   })
+  autoUpdater.on('update-available', (info) => {
+    // logger.info('update-available')
+    console.log('arguments inside update-available: ', arguments)
+    console.log('update info inside update-available', info)
+    // sendStatusToWindow('Update available.')
 
-//   autoUpdater.checkForUpdates()
-// }
+    autoUpdater
+      .downloadUpdate()
+      .then(ret => console.log('ret inside downloadUpdate: ', ret))
+      .catch(err => console.log('err inside downloadUpdate: ', err))
+  })
+  
+  autoUpdater.on('update-not-available', (info) => {
+
+    // logger.info('update-not-available')
+    console.log('arguments inside update-not-available: ', arguments)
+    console.log('update info inside update-not-available', info)
+    // sendStatusToWindow('Update not available.')
+  })
+  
+  autoUpdater.on('error', (err) => {
+    logger.info('erro in auto-updater')
+    console.log('arguments inside error: ', arguments)
+    console.log('error inside error: ', err)
+    // sendStatusToWindow('Error in auto-updater. ' + err)
+  })
+  
+  autoUpdater.on('download-progress', (progressObj) => {
+    console.log('progressObj: ', progressObj)
+    logger.info('download-progress')
+    let log_message = 'Download speed: ' + progressObj.bytesPerSecond
+    log_message = log_message + ' - Download ' + progressObj.percent + '%'
+    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+    console.log('download log_message: ', log_message)
+    // sendStatusToWindow(log_message)
+  })
+  
+  autoUpdater.on('update-downloaded', (info) => {
+    logger.info('update-downloaded')
+    console.log('update info inside update-not-available', info)
+    // sendStatusToWindow('Update downloaded')
+    autoUpdater.quitAndInstall()
+  })
+
+  autoUpdater
+    .checkForUpdates()
+    .then(ret => console.log('ret inside checkForUpdates: ', ret))
+    .catch(err => console.log('err inside checkForUpdates: ', err))
+}
 

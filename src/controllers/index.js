@@ -538,11 +538,11 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
     switch (action) {
         case 'switchNetwork':
 
-            const { choice } = payload
+            const choice = parseInt(payload.choice)
             const mainWin = Windows.getByType('main')
             const switchWin = Windows.getByType('changeNetwork')
             
-            if (choice === 'yes') {
+            if (choice === 1) {
                 try {
 
                     setting.switchNetwork()
@@ -556,12 +556,11 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                     logger.error(e.message || e.stack)
                     err = e
                 }
-            } else if (choice === 'no') {
+            } else if (choice === 0) {
                 try {
                     const networkMenu = menuFactoryService.networkMenu
-                    const targetText = setting.network.includes('main') ? 'Main Network': 'Test Network'
-                    const [ targetMenu ] = networkMenu.items.filter(i => i.label === targetText)
-                    targetMenu.click()
+                    const [ targetMenu ] = networkMenu.items.filter(i => !i.checked)
+                    targetMenu.checked = true
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e

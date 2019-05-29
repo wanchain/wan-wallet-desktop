@@ -56,6 +56,7 @@ module.exports = (function() {
             if (_type === 'renderer_windowMessage' 
                 || _type === 'renderer_makeRequest'
                 || _type === 'renderer_notification'
+                || _type === 'renderer_updateInfo'
                 ) 
             {
                 if (_type === 'renderer_windowMessage') {
@@ -79,8 +80,9 @@ module.exports = (function() {
                     }
 
                 } else if (_type === 'renderer_notification') {
-
                     _emitter.emit('notification', endpoint, payload)
+                } else if (_type === 'renderer_updateInfo') {
+                    _emitter.emit('update', endpoint, payload)
                 }
             }
         }

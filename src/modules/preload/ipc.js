@@ -17,13 +17,12 @@ ipcRenderer.on('notification', function() {
     })
 })
 
-ipcRenderer.on('renderer_updateMsg', function(event, text) {
-    window.updateProgress = text
-    // postMessage({
-    //     _type: 'renderer_updatewMsg',
-    //     endpoint: '',
-    //     payload: text
-    // })
+ipcRenderer.on('updateInfo', function() {
+    postMessage({
+        _type: 'renderer_updateInfo',
+        endpoint: arguments[1],
+        payload: arguments[2]
+    })
 })
 
 ipcRenderer.send('main_setWindowId');

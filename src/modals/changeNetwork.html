@@ -95,7 +95,7 @@
                 mainContainer.style.display = 'none'
 
                 wand.request('setting_switchNetwork', {
-                    choice: 'yes'
+                    choice: 1
                 })
             });
 
@@ -104,7 +104,7 @@
                 e.stopPropagation()
 
                 wand.request('setting_switchNetwork', {
-                    choice: 'no'
+                    choice: 0
                 })
             });
         }
