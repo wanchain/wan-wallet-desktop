@@ -4,6 +4,7 @@ const en_US = {
     'Login.inputPassword': 'Input Password',
 
     'Loading.tips': 'Please wait while the wallet is loading...',
+    'Loading.transData': 'Loading',
 
     'Register.createPassword': 'Create Password',
     'Register.secretBackupPhrase': 'Backup Seed Phrase',

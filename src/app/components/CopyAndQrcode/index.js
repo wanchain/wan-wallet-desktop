@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Icon, message } from 'antd';
+import { Modal, Icon, message, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
@@ -49,7 +49,7 @@ class CopyAndQrcode extends Component {
         <Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} />
         <Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} />
         { Object.keys(addrInfo['import']).includes(addr) 
-            ? <Icon type="import" title={intl.get('title.imported')}/>
+            ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
             : ''
         }
       </div>

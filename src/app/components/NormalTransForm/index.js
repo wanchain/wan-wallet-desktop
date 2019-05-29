@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message } from 'antd';
+import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
 import './index.less';
@@ -207,6 +207,7 @@ class NormalTransForm extends Component {
 
     return (
       <div>
+
         <Modal
           visible
           destroyOnClose={true}
@@ -218,40 +219,44 @@ class NormalTransForm extends Component {
             <Button key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
-          <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-            <Form.Item label={intl.get('NormalTransForm.from')}>
-              {getFieldDecorator('from', { initialValue: from })
-                (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-            </Form.Item>
-            <Form.Item label={intl.get('NormalTransForm.to')}>
-              {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-            </Form.Item>
-            <Form.Item label={intl.get('NormalTransForm.amount')}>
-              {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="money-collect" className="colorInput" />} />)}
-              <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
-            </Form.Item>
-            {
-            advanced 
-            ? <Form.Item label={intl.get('NormalTransForm.fee')}>
-                {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
-                  <Input disabled={true} className="colorInput" />
-                )}
-              </Form.Item> 
-            : <Form.Item label={intl.get('NormalTransForm.fee')}>
-                {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
-                  <Radio.Group>
-                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice, gasLimit, nonce)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice, gasLimit, nonce)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice, gasLimit, nonce)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                  </Radio.Group>
-                )}
+          <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+              <Form.Item label={intl.get('NormalTransForm.from')}>
+                {getFieldDecorator('from', { initialValue: from })
+                  (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-            }
-            <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
-          </Form>
+              <Form.Item label={intl.get('NormalTransForm.to')}>
+                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
+              <Form.Item label={intl.get('NormalTransForm.amount')}>
+                {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
+                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
+              </Form.Item>
+              {
+              advanced 
+              ? <Form.Item label={intl.get('NormalTransForm.fee')}>
+                  {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
+                    <Input disabled={true} className="colorInput" />
+                  )}
+                </Form.Item> 
+              : <Form.Item label={intl.get('NormalTransForm.fee')}>
+                  {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
+                    <Radio.Group>
+                      <Radio.Button onClick={e => this.handleClick(e, minGasPrice, gasLimit, nonce)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                      <Radio.Button onClick={e => this.handleClick(e, averageGasPrice, gasLimit, nonce)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                      <Radio.Button onClick={e => this.handleClick(e, maxGasPrice, gasLimit, nonce)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+              }
+              <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
+            </Form>
+          </Spin>
+
         </Modal>
+
         <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
         <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
