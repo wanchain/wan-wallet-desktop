@@ -41,7 +41,7 @@ class MHeader extends Component {
         <Row className="header-top">
             <Col span={22} className="title">
               <em className = "comLine"></em><span>{ pageTitle }</span>
-              { ['Ledger', 'Trzeor'].includes(pageTitle) && ((ledgerAddrList.length !== 0) || (trezorAddrList.length !== 0))
+              { (pageTitle === 'Ledger' && ledgerAddrList.length !== 0) || (pageTitle === 'Trezor' && trezorAddrList.length !== 0)
                   ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
                   : ''
               }
