@@ -26,12 +26,12 @@ export function randomSort(arr) {
 
 export function timeFormat(time) {
   const current = new Date(time * 1000);
-  const m = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec");
   let date = ('0' + current.getDate()).substr(-2);
   let hours = ('0' + current.getHours()).substr(-2);
   let minutes = ('0' + current.getMinutes()).substr(-2);
   let secondes = ('0' + current.getSeconds()).substr(-2);
-  return `${m[current.getMonth()]}-${date}-${current.getFullYear()} ${hours}:${minutes}:${secondes}`;
+  let month = ('0' + (current.getMonth() + 1)).substr(-2);
+  return `${current.getFullYear()}-${month}-${date} ${hours}:${minutes}:${secondes}`;
 }
 
 export function promiseTimeout(ms, p, desc) {
