@@ -193,6 +193,7 @@ const en_US = {
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',
+    'title.imported': 'Imported Address',
 
 }
 export default en_US;

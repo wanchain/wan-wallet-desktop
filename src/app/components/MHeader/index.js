@@ -29,7 +29,9 @@ class MHeader extends Component {
   }
 
   handleDisconnect = () => {
-    wand.request('wallet_deleteLedger');
+    if(this.props.pageTitle === 'Ledger') {
+      wand.request('wallet_deleteLedger');
+    }
     this.props.updateAddress(this.props.pageTitle.toLowerCase())
   }
 

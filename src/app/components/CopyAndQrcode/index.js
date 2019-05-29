@@ -49,7 +49,7 @@ class CopyAndQrcode extends Component {
         <Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} />
         <Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} />
         { Object.keys(addrInfo['import']).includes(addr) 
-            ? <Icon type="import" title="Imported Address"/>
+            ? <Icon type="import" title={intl.get('title.imported')}/>
             : ''
         }
       </div>
