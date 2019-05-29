@@ -3,7 +3,7 @@ const zh_CN = {
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
 
-    'Loading.tips': '钱包正在加载，请耐心等待...',
+    'Loading.tips': '钱包正在加载，请耐心等待......',
     'Loading.transData': '加载中...',
 
     'Register.createPassword': '创建',
