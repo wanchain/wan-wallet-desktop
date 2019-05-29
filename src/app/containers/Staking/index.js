@@ -16,7 +16,6 @@ import './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  getAddrList: stores.wanAddress.getAddrListAll,
   stakingList: stores.staking.stakingList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateStakeInfo: () => stores.staking.updateStakeInfo(),
@@ -27,7 +26,7 @@ import './index.less';
 class Staking extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle(intl.get('staking.title'));
+    this.props.changeTitle('staking.title');
     this.state = {
       createValidator: false,
     }
@@ -56,16 +55,13 @@ class Staking extends Component {
     this.setState({ createValidator: false });
   }
 
-  handleSend = () => {
+  handleSend = (walletID) => {
     this.setState({ createValidator: false });
-  }
 
-  delegateIn() {
-
-  }
-
-  delegateOut() {
-    
+    console.log('walletID', walletID)
+    if(walletID == 2) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
+    }
   }
 
   render() {

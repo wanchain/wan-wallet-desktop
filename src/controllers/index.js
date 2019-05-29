@@ -565,11 +565,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let blockNumber = await ccUtil.getBlockNumber('wan');
                 let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
 
-                // let testAddr = '0x7fc2da2C7d17c5F934E424144281023D29c2Fcbd';
-                // let testReturn = await ccUtil.getDelegatorIncentive('wan', testAddr);
-                // console.log('addr:', testAddr, 'ret:', testReturn);
-                // exit(0);
-
                 //console.log('accounts.length', accounts.length)
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
@@ -584,13 +579,15 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     if (inc && inc.length && inc.length > 0) {
                         //console.log('account:', account);
                         //console.log('incentive length:', inc.length);
+                        //console.log('incentive:', inc);
+
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
 
                 ret = { base: {}, list: [] }
-                ret.base = buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, stakerInfo);
-                ret.list = buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo);
+                ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
+                ret.list = buildStakingList(delegateInfo, incentive, epochID, ret.base);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -600,12 +597,8 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateIn':
             try {
-                // 1. Get from address from wallet
                 console.log('delegateIn:', payload);
-
                 let tx = payload;
-
-                tx.validatorAddr;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
                 if (!validatorInfo || validatorInfo.feeRate == 10000) {
@@ -646,7 +639,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     "gasPrice": gasPriceGwei,
                     "gasLimit": gasLimit,
                     "BIP44Path": tx.path,
-                    "walletID": 1
+                    "walletID": tx.walletID,
                 }
 
                 let ret = await global.crossInvoker.PosDelegateOut(input);
@@ -720,7 +713,7 @@ function errorWrapper(err) {
     return { desc: err.message, code: err.errno, cat: err.name }
 }
 
-function buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, stakerInfo) {
+function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     let base = {
         myStake: "N/A",
         validatorCnt: "In N/A validators",
@@ -797,7 +790,7 @@ function buildStakingBaseInfo(accounts, delegateInfo, incentive, epochID, staker
     return base;
 }
 
-function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo) {
+function buildStakingList(delegateInfo, incentive, epochID, base) {
     let list = [];
 
     for (let i = 0; i < delegateInfo.length; i++) {
@@ -820,6 +813,7 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
         }
     }
 
+    let longestDays = 0;
     //console.log('list.length', list.length);
     for (let i = 0; i < list.length; i++) {
         let validatorAddress = list[i].validatorAddress;
@@ -837,10 +831,10 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
 
-                    //console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
+                    console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
-                        //console.log('distributeRewards', distributeRewards)
+                        console.log('distributeRewards', distributeRewards)
                         if (!epochs.includes(obj.epochId)) {
                             epochs.push(obj.epochId);
                         }
@@ -854,12 +848,20 @@ function buildStakingList(accounts, delegateInfo, incentive, epochID, stakerInfo
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
             list[i].myStake.bottom = days + " days ago";
+
+            if (days > longestDays) {
+                longestDays = days;
+            }
         } else {
             list[i].myStake.bottom = "Less than 2 days ago";
         }
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
-        //console.log('list[i].distributeRewards', list[i].distributeRewards);
+        console.log('list[i].distributeRewards', list[i].distributeRewards);
+
+        let d = new Date()
+        d.setDate( d.getDate() - longestDays );
+        base.startFrom = "From " + d.toDateString();
     }
 
     return list;

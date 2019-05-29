@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form, message } from 'antd';
 import './index.less';
+import intl from 'react-intl-universal'
 import StakeInForm from '../StakeInForm';
 const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
@@ -21,8 +22,11 @@ class DelegateIn extends Component {
     this.setState({ visible: false });
   }
 
-  handleSend = () => {
+  handleSend = (hardware) => {
     this.setState({ visible: false });
+    if(hardware == 2) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
+    }
   }
 
   render() {

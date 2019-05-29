@@ -25,7 +25,11 @@ class Staking {
 
   @action updateStakeInfo() {
     //console.log("updateStakeInfo")
-    const addrList = wanAddress.getAddrList.slice()
+    let addrList = [];
+    addrList.push(...wanAddress.getAddrList.slice())
+    addrList.push(...wanAddress.ledgerAddrList.slice())
+    addrList.push(...wanAddress.trezorAddrList.slice())
+
     wand.request('staking_info', addrList, (err, val) => {
       //console.log('wand returned.', val)
       if(!err && val) {

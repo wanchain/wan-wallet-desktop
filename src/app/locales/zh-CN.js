@@ -191,7 +191,7 @@ const zh_CN = {
     'utils.helper.getSdkStatusFailed': '获取SDK状态失败',
 
     'staking.dashboard': '仪表盘',
-    'staking.title': '资产委托',
+    'staking.title': '权益挖矿',
     'staking.newDelegate': '新建委托',
     'staking.myStake': '我的委托',
     'staking.pending': '等待退款',

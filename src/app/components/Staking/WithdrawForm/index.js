@@ -7,7 +7,13 @@ import './index.less';
 import validatorImg from 'static/image/validator.png';
 import intl from 'react-intl-universal';
 
+@inject(stores => ({
+  getAddrList: stores.wanAddress.getAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
+}))
 
+@observer
 class WithdrawForm extends Component {
   constructor(props) {
     super(props)
@@ -17,11 +23,43 @@ class WithdrawForm extends Component {
 
   }
 
-  onSend = ()=>{
+  onSend = () => {
+
+    let from = this.props.record.accountAddress;
+
+    const { ledgerAddrList, trezorAddrList } = this.props;
+
+    const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
+    const WALLET_ID_LEDGER = 0x02;
+    const WALLET_ID_TREZOR = 0x03;
+    
+    let walletID = WALLET_ID_NATIVE;
+
+    for (let i = 0; i < ledgerAddrList.length; i++) {
+      const hdAddr = ledgerAddrList[i].address;
+      if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        walletID = WALLET_ID_LEDGER
+        break;
+      }
+    }
+
+    for (let i = 0; i < trezorAddrList.length; i++) {
+      const hdAddr = trezorAddrList[i].address;
+      if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        walletID = WALLET_ID_TREZOR
+        break;
+      }
+    }
+
     let tx = {
       "from": this.props.record.accountAddress,
       "validator": this.props.record.validator.address,
       "path": this.props.record.accountPath,
+      "walletID": walletID,
+    }
+
+    if(walletID == 2) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
     }
 
     wand.request('staking_delegateOut', tx, (err, ret) => {

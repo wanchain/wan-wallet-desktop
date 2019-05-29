@@ -1,22 +1,27 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Radio } from 'antd';
 import Validator from '../Validators/Validator';
 import './index.less';
 import validatorImg from 'static/image/validator.png';
-import { checkWanAddr } from 'utils/helper';
 import { checkWanValidatorAddr } from 'utils/helper';
 
-import { toWei } from 'utils/support';
 import intl from 'react-intl-universal';
+import { wanTx, WanRawTx } from 'utils/hardwareUtils'
+import TrezorConnect from 'trezor-connect';
+const wanTxTrezor = require('wanchainjs-tx');
 
 
+const main = 'https://www.wanscan.org/address/'
+const testnet = 'http://testnet.wanscan.org/address/';
 
+const Option = Select.Option;
 const DEFAULT_GAS = 4700000;
 
 @inject(stores => ({
   getAddrList: stores.wanAddress.getAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
 }))
 
 @observer
@@ -30,23 +35,57 @@ class StakeInForm extends Component {
   }
 
   componentWillMount() {
-    const { getAddrList } = this.props;
+    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
     getAddrList.forEach(addr => {
       addrList.push(
         addr.address
       )
     });
+
+    ledgerAddrList.forEach(addr => {
+      addrList.push(
+        'Ledger: ' + addr.address
+      )
+    });
+
+    trezorAddrList.forEach(addr => {
+      addrList.push(
+        'Trezor: ' + addr.address
+      )
+    });
+
     this.setState({ addrList: addrList })
   }
 
   componentDidMount() {
     if (this.props.record) {
       let { form } = this.props;
-      form.setFieldsValue({to: this.props.record.validator.address});
-      form.setFieldsValue({validatorName: this.props.record.validator});
-      form.setFieldsValue({from: this.props.record.accountAddress});
-      this.onChange(this.props.record.accountAddress);
+      form.setFieldsValue({ to: this.props.record.validator.address });
+      form.setFieldsValue({ validatorName: this.props.record.validator });
+
+      let from = this.props.record.accountAddress;
+
+      const { ledgerAddrList, trezorAddrList } = this.props;
+
+      for (let i = 0; i < ledgerAddrList.length; i++) {
+        const hdAddr = ledgerAddrList[i].address;
+        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+          from = 'Ledger: ' + from;
+          break;
+        }
+      }
+
+      for (let i = 0; i < trezorAddrList.length; i++) {
+        const hdAddr = trezorAddrList[i].address;
+        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+          from = 'Trezor: ' + from;
+          break;
+        }
+      }
+
+      form.setFieldsValue({ from: from });
+      this.onChange(from);
     }
   }
 
@@ -59,7 +98,30 @@ class StakeInForm extends Component {
   }
 
   onChange = value => {
-    const { getAddrList } = this.props;
+    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+
+    if (value.includes('Ledger')) {
+      for (let i = 0; i < ledgerAddrList.length; i++) {
+        const element = ledgerAddrList[i];
+        value = value.replace('Ledger: ', '')
+        if (element.address == value) {
+          this.setState({ balance: element.balance })
+        }
+      }
+      return;
+    }
+
+    if (value.includes('Trezor')) {
+      for (let i = 0; i < trezorAddrList.length; i++) {
+        const element = trezorAddrList[i];
+        value = value.replace('Trezor: ', '')
+        if (element.address == value) {
+          this.setState({ balance: element.balance })
+        }
+      }
+      return;
+    }
+
     for (let i = 0; i < getAddrList.length; i++) {
       const element = getAddrList[i];
       if (element.address == value) {
@@ -90,12 +152,26 @@ class StakeInForm extends Component {
   }
 
   getPath = (from) => {
-    const addrs = this.props.getAddrList
+    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    let addrs = getAddrList
+    let fromAddr = from
+
     console.log('getPath called', addrs)
+
+    if (from.includes('Ledger')) {
+      fromAddr = from.replace('Ledger: ', '')
+      addrs = ledgerAddrList
+    }
+
+    if (from.includes('Trezor')) {
+      fromAddr = from.replace('Trezor: ', '')
+      addrs = trezorAddrList      
+    }
+
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      console.log('addr,from', addr, from)
-      if (addr.address == from) {
+      console.log('addr,from', addr, fromAddr)
+      if (addr.address == fromAddr) {
         return addr.path;
       }
     }
@@ -110,7 +186,7 @@ class StakeInForm extends Component {
     let path = this.getPath(from);
 
     let amount = form.getFieldValue('amount');
-    if(!amount || amount < 100) {
+    if (!amount || amount < 100) {
       message.error("Please input a valid amount.");
       return;
     }
@@ -120,14 +196,34 @@ class StakeInForm extends Component {
       return;
     }
 
+    const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
+    const WALLET_ID_LEDGER = 0x02;
+    const WALLET_ID_TREZOR = 0x03;
+    
+    let walletID = WALLET_ID_NATIVE;
+
+    let hardware = false
+
+    if (from.includes('Ledger')) {
+      from = from.replace('Ledger: ', '')
+      walletID = WALLET_ID_LEDGER;
+      hardware = true;
+    }
+
+    if (from.includes('Trezor')) {
+      from = from.replace('Trezor: ', '')
+      walletID = WALLET_ID_TREZOR;
+      hardware = true;
+    }
+
     let tx = {
       "from": from,
       "validatorAddr": to,
-      "amount": (form.getFieldValue('amount')|| 0).toString(),
+      "amount": (form.getFieldValue('amount') || 0).toString(),
       "gasPrice": 0,
       "gasLimit": 0,
       "BIP44Path": path,
-      "walletID": 1
+      "walletID": walletID
     }
 
     wand.request('staking_delegateIn', tx, (err, ret) => {
@@ -138,7 +234,14 @@ class StakeInForm extends Component {
       }
     });
 
-    this.props.onSend();
+    this.props.onSend(walletID);
+  }
+
+  onClick = () => {
+    let { form } = this.props;
+    let to = form.getFieldValue('to');
+    let href = this.props.chainId === 1 ? `${main}${to}` : `${testnet}${to}`
+    wand.shell.openExternal(href);
   }
 
   render() {
@@ -196,7 +299,7 @@ class StakeInForm extends Component {
                   </Form>
                 </Col>
                 <Col span={4}>
-                  <a href="https://www.wanscan.org/">{intl.get('StakeInForm.more')}</a>
+                  <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
@@ -207,7 +310,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput"/>} />)}
+                        (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
