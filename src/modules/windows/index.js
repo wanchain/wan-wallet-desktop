@@ -251,7 +251,7 @@ class Windows {
             ownerId: null,
             electronOptions: {
                 width: 1220,
-                height: process.platform === 'darwin' ? 680 : 720,
+                height: process.platform === 'darwin' ? 720 : 760,
                 fullscreen: false,
                 center: true,
                 useContentSize: true,

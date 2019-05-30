@@ -538,9 +538,9 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
     switch (action) {
         case 'switchNetwork':
 
-            const choice = parseInt(payload.choice)
-            const mainWin = Windows.getByType('main')
-            const switchWin = Windows.getByType('changeNetwork')
+            let choice = parseInt(payload.choice)
+            let mainWin = Windows.getByType('main')
+            let switchWin = Windows.getByType('changeNetwork')
             
             if (choice === 1) {
                 try {
@@ -571,6 +571,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             switchWin.close()
             
             break
+    
     }
 })
 

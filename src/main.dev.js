@@ -5,19 +5,17 @@
  */
 
 import env from 'dotenv'
-import { app, ipcMain as ipc } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import { app } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import { Windows, walletBackend } from '~/src/modules'
+import { Windows, walletBackend, updater } from '~/src/modules'
 
 env.config()
 
 const logger = Logger.getLogger('main')
-autoUpdater.logger = Logger.getLogger('updater')
 
 if (!i18n.isIintialized) {
   i18n.on('languageChanged', () => {
@@ -64,14 +62,10 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
  
-  mainWindow.load(`file://${__dirname}/app/index.html`)
-
-  // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
-  // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
+  
 
   if (setting.isDev) {
-    // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
-    // mainWindow.load(`file://${__dirname}/index.html`)
+    mainWindow.load(`file://${__dirname}/app/index.html`)
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }
@@ -112,13 +106,10 @@ process.on('uncaughtException', (err) => {
   app.quit()
 })
 
-// async function onReady() {
-//   registerAutoUpdaterHandlersAndRun()
-// }
-
 async function onReady() {
   // initiate windows manager
   Windows.init()
+
   // register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
     sendReadyNotifications();
@@ -127,6 +118,11 @@ async function onReady() {
   await createWindow()
   
   await walletBackend.init()
+
+  // check updates only if under production mode
+  if (process.env.NODE_ENV === 'production') {
+    updater.start()
+  }
 }
 
 // This method will be called when Electron has done everything 
@@ -144,65 +140,3 @@ app.on('activate', async function () {
     await createWindow()
   }
 })
-
-function registerAutoUpdaterHandlersAndRun() {
-  autoUpdater.fullChangelog = true
-
-  console.log('autoUpdater: ', autoUpdater)
-
-  autoUpdater.on('checking-for-update', () => {
-    // logger.info('checking-for-update')
-    console.log('arguments inside checking-for-update: ', arguments)
-    // sendStatusToWindow('Checking for update...')
-  })
-  
-  autoUpdater.on('update-available', (info) => {
-    // logger.info('update-available')
-    console.log('arguments inside update-available: ', arguments)
-    console.log('update info inside update-available', info)
-    // sendStatusToWindow('Update available.')
-
-    autoUpdater
-      .downloadUpdate()
-      .then(ret => console.log('ret inside downloadUpdate: ', ret))
-      .catch(err => console.log('err inside downloadUpdate: ', err))
-  })
-  
-  autoUpdater.on('update-not-available', (info) => {
-
-    // logger.info('update-not-available')
-    console.log('arguments inside update-not-available: ', arguments)
-    console.log('update info inside update-not-available', info)
-    // sendStatusToWindow('Update not available.')
-  })
-  
-  autoUpdater.on('error', (err) => {
-    logger.info('erro in auto-updater')
-    console.log('arguments inside error: ', arguments)
-    console.log('error inside error: ', err)
-    // sendStatusToWindow('Error in auto-updater. ' + err)
-  })
-  
-  autoUpdater.on('download-progress', (progressObj) => {
-    console.log('progressObj: ', progressObj)
-    logger.info('download-progress')
-    let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-    log_message = log_message + ' - Download ' + progressObj.percent + '%'
-    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-    console.log('download log_message: ', log_message)
-    // sendStatusToWindow(log_message)
-  })
-  
-  autoUpdater.on('update-downloaded', (info) => {
-    logger.info('update-downloaded')
-    console.log('update info inside update-not-available', info)
-    // sendStatusToWindow('Update downloaded')
-    autoUpdater.quitAndInstall()
-  })
-
-  autoUpdater
-    .checkForUpdates()
-    .then(ret => console.log('ret inside checkForUpdates: ', ret))
-    .catch(err => console.log('err inside checkForUpdates: ', err))
-}
-

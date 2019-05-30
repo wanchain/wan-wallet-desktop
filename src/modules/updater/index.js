@@ -1,90 +1,94 @@
-import Logger from '~/src/utils/Logger'
-import { dialog } from 'electron'
-import setting from '~/src/utils/Settings'
+import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import { Windows } from '~/src/modules'
+import Logger from '~/src/utils/Logger'
+import Windows from '~/src/modules/windows'
 
-const logger = Logger.getLogger('updater')
+class WalletUpdater {
+    constructor() {
+        this.updater = autoUpdater
+        
+        this._logger = Logger.getLogger('updater')
+        this.updater.logger = this._logger
 
-let updater 
-autoUpdater.autoDownload = false
+        // config updater
+        this.updater.fullChangelog = true
+        this.updater.autoInstallOnAppQuit = false
+        this.updater.autoDownload = false
+        this.updater.allowDowngrade = false
+    }
 
-autoUpdater.on('error', (error) => {
+    start() {
+        if (process.env.NODE_ENV === 'development') {
+            return
+        }
 
-    logger.error(`autoupdater error: ${(error.stack || error).toString()}`)
+        let updateModal
 
-    dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
-})
+        ipc.on('upgrade', (event, actionUni, payload) => {
+            let ret, err
+            const [action, id] = actionUni.split('#')
+        
+            switch(action) {
+              case 'start': 
+        
+                let choice = parseInt(payload.choice)
+                this._logger.info(`user update choice ${choice}`)
 
-autoUpdater.on('update-not-available', () => {
-    dialog.showMessageBox({
-      title: 'No Updates',
-      message: 'Current version is up-to-date.'
-    })
-    updater.enabled = true
-    updater = null
-})
-
-function checkForUpdates(menuItem, focusedWindow, event) {
-    if (setting.isDev) {
-        dialog.showMessageBox({
-            title: 'Update Info',
-            message: 'Update checker not available under development environment.'
+                if (choice === 1) {
+                      this.updater.downloadUpdate()
+                } else if (choice === 0) {
+                  try {
+                    updateModal.close()
+                  } catch (e) {
+                    this._logger.error(`error inside updater: ${err.stack}`)
+                  }
+                }
+        
+                break
+            }
         })
 
-        return
+        this.updater.on('checking-for-update', () => {
+            this._logger.info('checking for updates...')
+        })
+
+        this.updater.on('update-available', (info) => {
+            updateModal = Windows.createModal('systemUpdate', {
+              width: 1024 + 208, 
+              height: 720, 
+              alwaysOnTop: true
+            })    
+        
+            const updateInfo = {
+              currVersion: app.getVersion(),
+              releaseVersion: info.version,
+              releaseDate: new Date(info.releaseDate),
+              releaseNotes: info.releaseNotes[0].note
+            }
+        
+            updateModal.on('ready', () => {
+              updateModal.webContents.send('updateInfo', 'versionInfo', JSON.stringify(updateInfo))
+            })
+        })
+
+        this.updater.on('error', (err) => {
+            this._logger.error(`updater error: ${err.stack}`)
+        })
+
+        this.updater.on('download-progress', (progressObj) => {
+            let logMsg = 'Download speed: ' + parseFloat(progressObj.bytesPerSecond / 125) + ' kbps'
+            logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
+            logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+            this._logger.info(`download progess: ${logMsg}`)
+        
+            updateModal.webContents.send('updateInfo', 'upgradeProgress', JSON.stringify(progressObj))
+        })
+        this.updater.on('update-downloaded', (info) => {
+            this.updater.quitAndInstall()
+        })
+
+        this.updater.checkForUpdates()
     }
-    
-    updater = menuItem
-    updater.enabled = false
-    autoUpdater.checkForUpdates()
 }
 
-export default {
-    run: checkForUpdates
-}
-
-// const logger = Logger.getLogger('updater')
-// autoUpdater.logger = logger;
-// // autoUpdater.logger.transports.file.level = 'info';
-
-// autoUpdater.on('checking-for-update', () => {
-//     logger.info('checking-for-update')
-//     sendStatusToWindow('Checking for update...')
-// })
-
-// autoUpdater.on('update-available', (info) => {
-//     logger.info('update-available')
-//     sendStatusToWindow('Update available.')
-// })
-
-// autoUpdater.on('update-not-available', (info) => {
-//     logger.info('update-not-available')
-//     sendStatusToWindow('Update not available.')
-// })
-
-// autoUpdater.on('error', (err) => {
-//     logger.info('erro in auto-updater')
-//     sendStatusToWindow('Error in auto-updater. ' + err)
-// })
-
-// autoUpdater.on('download-progress', (progressObj) => {
-//     logger.info('download-progress')
-//     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-//     log_message = log_message + ' - Download ' + progressObj.percent + '%'
-//     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-//     sendStatusToWindow(log_message)
-// })
-
-// autoUpdater.on('update-downloaded', (info) => {
-//     logger.info('update-downloaded')
-//     sendStatusToWindow('Update downloaded')
-//     autoUpdater.quitAndInstall()
-// })
-  
-// function sendStatusToWindow(text) {
-//     logger.info(text)
-//     const wnd = Windows.getByType('main')
-//     wnd.webContents.send('renderer_updateMsg', text);
-// }
-  
+export default new WalletUpdater()

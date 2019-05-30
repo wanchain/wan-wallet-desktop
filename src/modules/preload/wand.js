@@ -14,6 +14,8 @@ module.exports = (function() {
 
         const _emitter = new EventEmitter()
 
+        _emitter.setMaxListeners(100)
+
         function _request(endpoint, payload, cb) {
             if (arguments.length === 2 && typeof arguments[1] === 'function') {
                 cb = arguments[1]
@@ -60,6 +62,7 @@ module.exports = (function() {
                 ) 
             {
                 if (_type === 'renderer_windowMessage') {
+                    
                     const [route, actionUni] = endpoint.split('_')
                     const [action, cbID] = actionUni.split('#')
                     const { err, data } = payload
@@ -71,6 +74,7 @@ module.exports = (function() {
                     }
 
                 } else if (_type === 'renderer_makeRequest') {
+                    
                     const [route, action] = endpoint.split('_') 
                 
                     if (_.isEmpty(payload)) {
@@ -80,9 +84,13 @@ module.exports = (function() {
                     }
 
                 } else if (_type === 'renderer_notification') {
+
                     _emitter.emit('notification', endpoint, payload)
+
                 } else if (_type === 'renderer_updateInfo') {
+
                     _emitter.emit('update', endpoint, payload)
+
                 }
             }
         }

@@ -75,56 +75,110 @@
         document.getElementById('percentage').innerText = perc + '%';
         document.getElementById('loading-bar').style.width = perc.toString() + '%';
     }
-    const setLanguage = () => {
+    const setLanguage = (currVersion, releaseVersion, releaseNotes) => {
         ids.forEach((id) => {
             setText(id);
         });
-        $('#version').html($.i18n('version', '3.3', '1.1'));
-        const info =
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-        $('#info').html(info);
+        $('#version').html($.i18n('version', releaseVersion, currVersion));
+        $('#info').html(releaseNotes);
     }
     const setText = (id) => {
         $(`#${id}`).html($.i18n(id));
     }
 
-    document.getElementById('no').addEventListener('click', () => {
+    // document.getElementById('no').addEventListener('click', () => {
 
-    });
-    document.getElementById('upgrade').addEventListener('click', () => {
-        document.getElementById('mask').style.display = 'block';
+    // });
+    // document.getElementById('upgrade').addEventListener('click', () => {
+        // document.getElementById('mask').style.display = 'block';
         //生成随机数的，联调时要删除
-        let timer = setInterval(() => {
-            setLoadingPercentage(Math.round(Math.random() * 100));
-        }, 1500);
-    });
+        // let timer = setInterval(() => {
+            // setLoadingPercentage(Math.round(Math.random() * 100));
+        // }, 1500);
+    // });
+
     window.onload = () => {
-        new Promise((resolve, reject) => {
-            wand.request('query_config', {
-                param: 'language'
-            }, function (err, val) {
-                if (err) {
-                    return reject(err);
-                } else {
-                    return resolve(val.language);
-                }
-            })
-        }).then((res) => {
-            console.log(res);
-            let lan = res;
-            $.i18n({
-                locale: lan
-            }).load({
-                [lan]: wand.isDev ? `../../config/i18n/locales/${lan}/systemUpdate.json` :
-                    `../locales/${lan}/systemUpdate.json`,
+        const upgradeButton = document.getElementById('upgrade')
+        const quitButton = document.getElementById('no')
+
+        let currentVersion, releaseVersion, releaseDate, releaseNotes
+        
+        wand.emitter.on('update', function(key, val) {
+            new Promise((resolve, reject) => {
+                wand.request('query_config', {
+                    param: 'language'
+                }, function (err, val) {
+                    if (err) {
+                        return reject(err);
+                    } else {
+                        return resolve(val.language);
+                    }
+                })
             }).then((res) => {
-                setLanguage();
+                console.log(res);
+                let lan = res;
+                $.i18n({
+                    locale: lan
+                }).load({
+                    [lan]: wand.isDev ? `../../config/i18n/locales/${lan}/systemUpdate.json` :
+                        `../locales/${lan}/systemUpdate.json`,
+                }).then((res) => {
+                    switch (key) {
+                        case 'versionInfo':
+                            const infoObj = JSON.parse(val)
+                            console.log('infoObj: ', infoObj)
+                            currentVersion = infoObj.currVersion
+                            releaseVersion = infoObj.releaseVersion
+                            releaseDate = infoObj.releaseDate
+                            releaseNotes = infoObj.releaseNotes
+
+                            setLanguage(currentVersion, releaseVersion, releaseNotes)
+
+                            break
+                        
+                        case 'upgradeProgress':
+                            const progressObj = JSON.parse(val)
+                            console.log('progressObj: ', progressObj)
+                        
+                            setLoadingPercentage(parseInt(progressObj.percent));
+                            break
+                    }
+
+                    
+
+                }).catch((err) => {
+                    console.log(err);
+                });
             }).catch((err) => {
                 console.log(err);
             });
-        }).catch((err) => {
-            console.log(err);
-        });
+        })
+
+        
+        upgradeButton.addEventListener('click', (e) => {
+
+            e.preventDefault()
+            e.stopPropagation()
+
+            if (!releaseVersion) {
+                return
+            }
+
+            wand.request('upgrade_start', {
+                choice: 1
+            })
+
+            document.getElementById('mask').style.display = 'block'
+        })
+
+        quitButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            wand.request('upgrade_start', {
+                choice: 0
+            })
+        })
     }
 </script>
 

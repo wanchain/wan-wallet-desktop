@@ -5,5 +5,6 @@ module.exports = {
     account: [ 'create', 'get', 'getAll', 'update', 'delete' ],
     transaction: [ 'normal', 'raw', 'estimateGas', 'showRecords', 'insertTransToDB' ],
     query: [ 'config', 'getGasPrice' ],
-    setting: ['switchNetwork']
+    setting: ['switchNetwork'],
+    upgrade: ['start']
 }

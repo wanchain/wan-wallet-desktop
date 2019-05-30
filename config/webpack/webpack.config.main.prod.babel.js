@@ -23,7 +23,7 @@ export default {
     },
     
     module: {
-        unknownContextCritical : false,
+        // unknownContextCritical : false,
         rules: [
             {
                 test: /\.(js|jsx)$/,
