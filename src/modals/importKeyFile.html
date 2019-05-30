@@ -19,13 +19,13 @@
 <body>
     <div class="alert alert-success fade" role="alert">
         <strong id='success-text'></strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="alert alert-danger fade" role="alert">
         <strong id='err-text'></strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -40,7 +40,7 @@
                         <div class="form-group">
                             <label id="enterKfPw" class="label text-dark" for="oldpwd">
                                 <!-- Enter Key File Password --></label>
-                            <input id="oldpwd" name="oldpwd" class="form-control" type="password" required />
+                            <input id="oldpwd" name="oldpwd" class="form-control" type="password" required tabindex="1"/>
                             <div id="kfFeedback" class="invalid-feedback">
                                 <!-- Key file password is invalid -->
                             </div>
@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label id="enterWwPw" class="label text-dark" for="newpwd">
                                 <!-- Enter WAN Wallet Password --></label>
-                            <input id="newpwd" name="newpwd" class="form-control" type="password" required />
+                            <input id="newpwd" name="newpwd" class="form-control" type="password" required tabindex="2"/>
                             <div id="wWPwInvalid" class="invalid-feedback">
                                 <!-- WAN wallet password is invalid. -->
                             </div>
@@ -57,18 +57,18 @@
                             <!-- Choose a Key File -->
                         </p>
                         <div class="custom-file" style="height: 70px;">
-                            <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required />
+                            <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required tabindex="-1"/>
                             <label id="kFButton" class="custom-file-label" for="keyfile" style="overflow: hidden;"
-                                data-content="Browse"></label>
+                                tabindex="3" data-content="Browse"></label>
                             <div id="kFInvalid" class="invalid-feedback" style="margin-top: 10px;">
                                 <!-- Key file is invalid -->
                             </div>
                         </div>
 
                         <div id="buttons" class="form-group">
-                            <button id="cancel" class="btn btn-dark btn-lg">
+                            <button id="cancel" class="btn btn-dark btn-lg" tabindex="4">
                                 <!-- Cancel --></button>
-                            <button id="submit" type="submit" class="btn btn-dark btn-lg">
+                            <button id="submit" type="submit" class="btn btn-dark btn-lg" tabindex="5">
                                 <!-- Submit --></button>
                         </div>
                     </form>
@@ -119,9 +119,18 @@
             const kFBtn = document.querySelector('#kFButton')
 
             form.addEventListener('keypress', (e) => {
+                console.log(e);
                 if(e.key === "Enter") {
                     e.preventDefault();
-                    return false;
+                    let event = document.createEvent('MouseEvents');
+                    event.initEvent('click', false, true);
+                    if(e.target.id === "kFButton") {
+                        kFBtn.dispatchEvent(event);
+                    }else if(e.target.id === "cancel") {
+                        cancelBtn.dispatchEvent(event);
+                    } else {
+                        subBtn.dispatchEvent(event);
+                    }
                 }
             });
 

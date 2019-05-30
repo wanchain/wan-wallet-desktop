@@ -98,8 +98,17 @@ body {
     border-radius: 20px;
 }
 
+#kFButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
 #buttons {
     text-align: center;
+}
+
+#buttons button:focus {
+    border: 1px solid white;
 }
 
 #cancel {
