@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Radio } from 'antd';
+import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
 import Validator from '../Validators/Validator';
 import './index.less';
 import validatorImg from 'static/image/validator.png';
@@ -22,6 +22,7 @@ const DEFAULT_GAS = 4700000;
   getAddrList: stores.wanAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
+  onlineValidatorList: stores.staking.onlineValidatorList,
 }))
 
 @observer
@@ -97,8 +98,18 @@ class StakeInForm extends Component {
 
   }
 
+  onValidatorChange = value => {
+    console.log('select:', value);
+    let {form} = this.props;
+    form.setFieldsValue({ to: value });
+    form.setFieldsValue({ validatorName: value });
+  }
+
   onChange = value => {
     const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    if (!value) {
+      return
+    }
 
     if (value.includes('Ledger')) {
       for (let i = 0; i < ledgerAddrList.length; i++) {
@@ -245,12 +256,16 @@ class StakeInForm extends Component {
   }
 
   render() {
-    let validatorList = []
-    validatorList.push(
-      (<Validator img={validatorImg} name="Ethereum" />)
-    )
+    let { onlineValidatorList, form } = this.props;
 
-    const { loading, form, validator, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr } = this.props;
+    let validatorListSelect = []
+    for (let i = 0; i < onlineValidatorList.length; i++) {
+      const v = onlineValidatorList[i];
+      validatorListSelect.push(
+        //(<Validator img={v.icon} name={v.name} address={v.address} />)
+        (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small"/>{" "}{v.name}</div>)
+      )
+    }
 
     const { getFieldDecorator } = form;
 
@@ -286,13 +301,13 @@ class StakeInForm extends Component {
                           style={{ width: 355 }}
                           placeholder={intl.get('StakeInForm.selectName')}
                           optionFilterProp="children"
-                          onChange={this.onChange}
+                          onChange={this.onValidatorChange}
                           onFocus={this.onFocus}
                           onBlur={this.onBlur}
                           onSearch={this.onSearch}
-                          filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
-                          {validatorList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+                          {validatorListSelect.map((item, index) => <Option value={item.props.name} key={index}>{item}</Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -357,7 +372,7 @@ class StakeInForm extends Component {
                             onFocus={this.onFocus}
                             onBlur={this.onBlur}
                             onSearch={this.onSearch}
-                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             className="colorInput"
                           >
                             {this.state.addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}

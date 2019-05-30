@@ -832,10 +832,10 @@ function buildStakingList(delegateInfo, incentive, epochID, base) {
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
 
-                    console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
+                    //console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
-                        console.log('distributeRewards', distributeRewards)
+                        //console.log('distributeRewards', distributeRewards)
                         if (!epochs.includes(obj.epochId)) {
                             epochs.push(obj.epochId);
                         }
@@ -858,7 +858,7 @@ function buildStakingList(delegateInfo, incentive, epochID, base) {
         }
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
-        console.log('list[i].distributeRewards', list[i].distributeRewards);
+        //console.log('list[i].distributeRewards', list[i].distributeRewards);
 
         let d = new Date()
         d.setDate( d.getDate() - longestDays );

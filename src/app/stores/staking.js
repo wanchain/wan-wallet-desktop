@@ -20,6 +20,8 @@ class Staking {
 
   @observable stakerList = [];
 
+  @observable validatorList = [];
+
   rewardRate = 0;
   epochID = 0;
 
@@ -32,9 +34,10 @@ class Staking {
 
     wand.request('staking_info', addrList, (err, val) => {
       //console.log('wand returned.', val)
-      if(!err && val) {
+      if (!err && val) {
         this.stakeInfo = val.base;
         this.stakerList = val.list;
+        this.validatorList = val.stakerInfo;
         let reward = this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = reward * 100 / val.base.stakePool
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
@@ -75,7 +78,23 @@ class Staking {
         key: i,
       })
     }
+    return validators;
+  }
 
+  @computed get onlineValidatorList() {
+    let validators = []
+    for (let i = 0; i < this.validatorList.length; i++) {
+      if (this.validatorList[i].feeRate == 10000) {
+        continue;
+      }
+
+      validators.push({
+        name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
+        address: this.validatorList[i].address,
+        icon: this.validatorList[i].icon? this.validatorList[i].icon : validatorImg,
+        key: this.validatorList[i],
+      })
+    }
     return validators;
   }
 
