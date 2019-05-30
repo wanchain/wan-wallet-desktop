@@ -118,6 +118,13 @@
             const closeBtns = document.querySelectorAll('.close')
             const kFBtn = document.querySelector('#kFButton')
 
+            form.addEventListener('keypress', (e) => {
+                if(e.key === "Enter") {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
             new Promise((resolve, reject) => {
                 wand.request('query_config', {
                     param: 'language'
