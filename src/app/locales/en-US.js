@@ -162,6 +162,8 @@ const en_US = {
     'NormalTransForm.overBalance': 'The cost exceeds the balance. Please try again',
     'NormalTransForm.sendAll': 'Send Everything',
 
+    'Rename.name': 'Name is incorrect',
+    
     'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
 
