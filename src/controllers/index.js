@@ -577,8 +577,8 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
                     //console.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
-                        //console.log('account:', account);
-                        //console.log('incentive length:', inc.length);
+                        console.log('account:', account.address);
+                        console.log('incentive length:', inc.length);
                         //console.log('incentive:', inc);
 
                         incentive.push({ account: account, incentive: inc });
@@ -588,6 +588,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
                 ret.list = buildStakingList(delegateInfo, incentive, epochID, ret.base);
+                ret.stakerInfo = stakerInfo;
             } catch (e) {
                 logger.error(actionUni + (e.message || e.stack))
                 err = e
