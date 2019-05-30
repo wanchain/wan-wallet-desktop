@@ -163,6 +163,8 @@ const zh_CN = {
     'NormalTransForm.overBalance': '费用超出了余额, 请重试',
     'NormalTransForm.sendAll': '发送全部',
 
+    'Rename.name': '名字不正确',
+
     'SendNormalTrans.send': '发送',
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
