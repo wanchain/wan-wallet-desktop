@@ -179,7 +179,7 @@ const zh_CN = {
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
-    'menuConfig.staking': '资产委托',
+    'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
