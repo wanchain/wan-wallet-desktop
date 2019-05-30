@@ -1,7 +1,7 @@
 {
     "title": "Import Wanchain Key File",
     "head": "Import Wanchain Key File",
-    "warning": "Warning: the import key file feature is not recommended. It does not provide backup of key files.",
+    "warning": "WARNING: Key file account is not recommended. We don't support key file backup functionality. Please transfer your assets to HD accounts.",
     "enterKfPw": "Enter Key File Password",
     "kfFeedback": "Key file password is invalid",
     "enterWwPw": "Enter WAN Wallet Password",

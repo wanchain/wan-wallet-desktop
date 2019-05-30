@@ -1,7 +1,7 @@
 {
     "title": "导入Wanchain密钥文件",
     "head": "导入Wanchain密钥文件",
-    "warning": "警告：不推荐使用导入密钥文件功能，此功能不提供密钥文件备份功能。",
+    "warning": "告警：不推荐使用密钥文件账户，我们不提供密钥文件备份功能。请将资产转移到HD账户。",
     "enterKfPw": "请输入密钥文件密码",
     "kfFeedback": "密钥文件密码错误",
     "enterWwPw": "请输入WAN钱包密码",
