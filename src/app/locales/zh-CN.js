@@ -53,10 +53,14 @@ const zh_CN = {
     'Restore.restoreNewWalletWillDeleteAllLocalData': '如果你恢复助记词，所有本地数据会被删除，程序会重新启动。请确认是否继续。',
     'Restore.continue': '下一步',
     'Restore.allLocalDataWillBeLost': '所有本地数据都会被删除，包括但不限于当前的助记词、交易记录、导入的地址等等。要继续吗？',
-    
+
     'Settings.settings': '设置',
+    'Settings.config': '配置',
     'Settings.backup': '备份',
     'Settings.restore': '恢复',
+
+    'Config.option': '安全选项',
+    'Config.inputPwd': '发送交易的时候再次输入密码',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -86,7 +90,7 @@ const zh_CN = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas上限输入不正确',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce输入不正确',
-    
+
     'CopyAndQrcode.copySuccessfully': '复制成功',
 
     'HwWallet.Accounts.name': '名称',

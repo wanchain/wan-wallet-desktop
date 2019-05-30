@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 
 import Backup from 'containers/Backup';
 import Restore from 'containers/Restore';
+import Config from 'containers/Config';
 
 const { TabPane } = Tabs;
 
@@ -20,6 +21,7 @@ class Settings extends Component {
   }
 
   tabsMap = {
+    config: <Config />,
     backup: <Backup />,
     restore: <Restore />,
   }

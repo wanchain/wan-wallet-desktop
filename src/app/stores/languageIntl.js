@@ -119,7 +119,7 @@ class LanguageIntl {
 
   @computed get selectAddrColumns() {
     return self.language && [
-      { title: intl.get('HwWallet.Connect.address'), dataIndex: 'address' }, 
+      { title: intl.get('HwWallet.Connect.address'), dataIndex: 'address' },
       { title: intl.get('HwWallet.Connect.balance'), dataIndex: 'balance' }
     ];
   }
@@ -127,6 +127,9 @@ class LanguageIntl {
   @computed get settingsColumns() {
     return self.language && [
       {
+        title: intl.get('Settings.config'),
+        key: 'config',
+      }, {
         title: intl.get('Settings.backup'),
         key: 'backup',
       }, {

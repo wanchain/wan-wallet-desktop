@@ -54,8 +54,12 @@ const en_US = {
     'Restore.allLocalDataWillBeLost': 'All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?',
     
     'Settings.settings': 'Settings',
+    'Settings.config': 'Config',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restore',
+
+    'Config.option': 'Security Options',
+    'Config.inputPwd': 'Input password again while sending transaction',
 
     'Sidebar.wanchain': 'Wanchain',
 
