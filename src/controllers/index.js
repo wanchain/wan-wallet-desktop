@@ -589,7 +589,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
                 ret.list = buildStakingList(delegateInfo, incentive, epochID, ret.base);
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error(actionUni + (e.message || e.stack))
                 err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
