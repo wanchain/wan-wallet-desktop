@@ -76,12 +76,14 @@ class WalletUpdater {
         })
 
         this.updater.on('download-progress', (progressObj) => {
-            let logMsg = 'Download speed: ' + parseFloat(progressObj.bytesPerSecond / 125) + ' kbps'
-            logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
-            logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-            this._logger.info(`download progess: ${logMsg}`)
+          console.log('progressObj: ', progressObj)
+          
+          let logMsg = 'Download speed: ' + parseFloat(progressObj.bytesPerSecond / 125) + ' kbps'
+          logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
+          logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+          this._logger.info(`download progess: ${logMsg}`)
         
-            updateModal.webContents.send('updateInfo', 'upgradeProgress', JSON.stringify(progressObj))
+          updateModal.webContents.send('updateInfo', 'upgradeProgress', JSON.stringify(progressObj))
         })
         this.updater.on('update-downloaded', (info) => {
             this.updater.quitAndInstall()
