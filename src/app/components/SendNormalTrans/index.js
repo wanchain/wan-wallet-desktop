@@ -5,12 +5,13 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
-import { getNonce, getGasPrice, estimateGas, getChainId } from 'utils/helper';
+import { getNonce, getGasPrice, getBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 
 @inject(stores => ({
   chainId: stores.session.chainId,
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
@@ -21,18 +22,24 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 @observer
 class SendNormalTrans extends Component {
   state = {
+    spin: true,
     loading: false,
     visible: false,
   }
 
   showModal = async () => {
-    const { from, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    if(getBalanceByAddr(from, addrInfo) === '0') {
+      message.warn(intl.get('SendNormalTrans.hasBalance'));
+      return;
+    }
+    this.setState({ visible: true });
     addTransTemplate(from, { chainType, chainId });
     try {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
       updateGasPrice(gasPrice);
-      this.setState({ visible: true });
+      setTimeout(() => {this.setState({ spin: false })}, 0)
     } catch (err) {
       console.log(`err: ${err}`)
       message.warn(err);
@@ -40,7 +47,7 @@ class SendNormalTrans extends Component {
   }
 
   handleCancel = () => {
-    this.setState({ visible: false });
+    this.setState({ visible: false, spin: true });
   }
 
   saveFormRef = formRef => {
@@ -50,19 +57,19 @@ class SendNormalTrans extends Component {
   handleSend = from => {
     this.setState({ loading: true });
     this.props.handleSend(from).then(ret => {
-      this.setState({ visible: false, loading: false });
+      this.setState({ visible: false, loading: false, spin: true });
     }).catch(err => {
-      this.setState({ visible: false, loading: false });
+      this.setState({ visible: false, loading: false, spin: true });
     });
   }
 
   render() {
-    const { visible, loading } = this.state;
+    const { visible, loading, spin } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible 
-          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading}/>
+          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
           : ''
         }
       </div>

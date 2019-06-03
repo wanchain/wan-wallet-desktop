@@ -23,11 +23,15 @@ TrezorConnect.init({
   lazyLoad: true, // set to "false" if you want to start communication with bridge on application start (and detect connected device right away)
   // or set it to true, then trezor-connect not will be initialized unless you call some TrezorConnect.method() (this is useful when you dont know if you are dealing with Trezor user)
   manifest: {
-    email: 'email@developer.com',
-    appUrl: 'electron-app-boilerplate'
-  }
+    email: 'techsupport@wanchain.com',
+    appUrl: 'wan-wallet-desktop'
+  },
+  env: "electron"
 })
-  .catch(error => {
+.then(() => {
+  console.log("TrezorConnect is ready")
+})
+.catch(error => {
     console.error('TrezorConnect init error', error)
   });
 

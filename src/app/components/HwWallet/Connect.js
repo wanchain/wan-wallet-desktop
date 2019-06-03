@@ -3,6 +3,7 @@ import { Button, Card, Modal, Table, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
+import './index.less';
 
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';

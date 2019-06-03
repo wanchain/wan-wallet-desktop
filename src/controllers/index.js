@@ -696,17 +696,17 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
-    let ret, err
+    let ret, err, keys, vals = []
     const [action, id] = actionUni.split('#')
 
     switch (action) {
         case 'switchNetwork':
 
-            const { choice } = payload
-            const mainWin = Windows.getByType('main')
-            const switchWin = Windows.getByType('changeNetwork')
-
-            if (choice === 'yes') {
+            let choice = parseInt(payload.choice)
+            let mainWin = Windows.getByType('main')
+            let switchWin = Windows.getByType('changeNetwork')
+            
+            if (choice === 1) {
                 try {
 
                     setting.switchNetwork()
@@ -720,12 +720,11 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                     logger.error(e.message || e.stack)
                     err = e
                 }
-            } else if (choice === 'no') {
+            } else if (choice === 0) {
                 try {
                     const networkMenu = menuFactoryService.networkMenu
-                    const targetText = setting.network.includes('main') ? 'Main Network' : 'Test Network'
-                    const [targetMenu] = networkMenu.items.filter(i => i.label === targetText)
-                    targetMenu.click()
+                    const [ targetMenu ] = networkMenu.items.filter(i => !i.checked)
+                    targetMenu.checked = true
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -735,6 +734,41 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             mainWin.show()
             switchWin.close()
 
+            break
+    
+        case 'set':
+            keys = Object.keys(payload)
+            vals = Object.values(payload)
+
+            try {
+                keys.forEach((key, index) => {
+                    let newValue = key === 'settings' ? Object.assign(setting.get('settings'), vals[index]) : vals[index]
+                    setting.set(key, newValue)
+                })
+                ret = true
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                ret = false
+            }
+
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'get':
+            let { keys } = payload
+            
+            try {
+                keys.forEach((key, index) => {
+                    vals[index] = setting.get(key)
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
     }
 })

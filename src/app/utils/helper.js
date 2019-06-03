@@ -150,6 +150,21 @@ export const hasSameName = function (record, addrInfo) {
   return bool;
 }
 
+export const getBalanceByAddr = function (addr, addrInfo) {
+  let balance = 0;
+  let tmp = {};
+  Object.keys(addrInfo).forEach(item => {
+    tmp = Object.assign(tmp, addrInfo[item])
+  })
+  Object.values(tmp).forEach(item => {
+    if(item.address === addr) {
+      balance = item.balance;
+      return;
+    }
+  })
+  return balance;
+}
+
 export const getChainIdByAddr = function (addrInfo) {
   Object.keys(addrInfo).forEach(type => {
     Object.keys(addrInfo[type]).forEach(() => {})

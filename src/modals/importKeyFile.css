@@ -1,69 +1,94 @@
-@font-face {
+/* @font-face {
     font-family: 'Roboto-Regular';
     src: url('../../static/font/Roboto-Regular.ttf');
-  }
-@font-face {
-font-family: 'Roboto-Bold';
-src: url('../../static/font/Roboto-Bold.ttf');
 }
-body{
-    background:rgba(39,40,64,1)!important;
-    opacity:0.95;
-    border-radius:6px;
+
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('../../static/font/Roboto-Bold.ttf');
+} */
+
+body {
+    background: rgba(39, 40, 64, 1) !important;
+    opacity: 0.95;
+    border-radius: 6px;
     color: #fff;
     margin: 0 auto;
 }
-.importKey{
-    width:480px;
+
+.importKey {
+    width: 480px;
     margin: 0 auto;
     padding-top: 30px;
 }
-.container{
+
+.container {
     padding: 100px 0 0;
 }
-.container h1{
+
+.container h1 {
     text-align: center;
     color: #fff;
     font-size: 24px;
     margin-bottom: 20px;
     font-family: 'Roboto-Bold';
 }
-.form-group{
-    width:480px;
-    margin: 0 auto; 
+
+#warning {
+    color: #DA9E40;
+    font-family: 'Roboto-Regular';
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left;
+    padding: 20px 15px 0px;
+    margin: auto;
+}
+
+.form-group {
+    width: 480px;
+    margin: 0 auto;
     padding-top: 40px;
 }
-.form-group label{
-    color: #fff!important;
+
+.form-group label {
+    color: #fff !important;
 }
-.form-control, .custom-file-label, .custom-file-label::after{
+
+.form-control,
+.custom-file-label,
+.custom-file-label::after {
     border: none;
 }
-.form-control:focus, .form-group input{
-    width:480px;
-    height:45px;
-    background:rgba(31,32,52,1);
-    border-radius:20px;
+
+.form-control:focus,
+.form-group input {
+    width: 480px;
+    height: 45px;
+    background: rgba(31, 32, 52, 1);
+    border-radius: 20px;
     outline: none;
     line-height: 45px;
     color: #fff;
     text-indent: 24px;
     padding: 0;
 }
-.custom-file-input{
+
+.custom-file-input {
     cursor: pointer;
 }
-.custom-file-label{
-    width:480px;
-    height:45px;
+
+.custom-file-label {
+    width: 480px;
+    height: 45px;
     line-height: 45px;
     padding: 0;
     text-indent: 24px;
-    background:rgba(31,32,52,1);
-    border-radius:20px;
+    background: rgba(31, 32, 52, 1);
+    border-radius: 20px;
     cursor: pointer;
 }
-.custom-file-label::after{
+
+.custom-file-label::after {
     width: 100px;
     height: 42px;
     line-height: 42px;
@@ -71,35 +96,51 @@ body{
     margin: 1px;
     padding: 0;
     border-radius: 20px;
-    background: linear-gradient(90deg,#414EDD 0%,#29307C 100%);
+    background: linear-gradient(90deg, #414EDD 0%, #29307C 100%);
 }
-.form-group button{
-    width:150px;
+
+.form-group button {
+    width: 150px;
     line-height: 40px;
     padding: 0;
     margin: 60px auto;
-    
-    border-radius:20px;
+
+    border-radius: 20px;
 }
+
+#kFButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
 #buttons {
     text-align: center;
 }
-#cancel{
-    background:linear-gradient(90deg,rgba(74,76,114,1) 0%,rgba(61,62,95,1) 100%);
-    opacity:0.95;
+
+#buttons button:focus {
+    border: 1px solid white;
+}
+
+#cancel {
+    background: linear-gradient(90deg, rgba(74, 76, 114, 1) 0%, rgba(61, 62, 95, 1) 100%);
+    opacity: 0.95;
     margin-right: 10px;
 }
-#submit{
-    background:linear-gradient(90deg,rgba(65,78,221,1) 0%,rgba(41,48,124,1) 100%);
+
+#submit {
+    background: linear-gradient(90deg, rgba(65, 78, 221, 1) 0%, rgba(41, 48, 124, 1) 100%);
 }
+
 .alert {
     position: absolute;
     border-radius: 0;
 }
+
 .alert.alert-danger {
     width: 100%;
     text-align: center;
 }
+
 .alert.alert-success {
     width: 100%;
     text-align: center;

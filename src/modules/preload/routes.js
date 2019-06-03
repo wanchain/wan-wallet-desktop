@@ -6,5 +6,6 @@ module.exports = {
     transaction: [ 'normal', 'raw', 'estimateGas', 'showRecords', 'insertTransToDB' ],
     query: [ 'config', 'getGasPrice' ],
     staking: [ 'info', 'delegateIn', 'delegateOut', 'getContractData', 'insertTransToDB' ],
-    setting: ['switchNetwork']
+    setting: ['switchNetwork', 'set', 'get'],
+    upgrade: ['start']
 }

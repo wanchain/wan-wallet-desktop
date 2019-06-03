@@ -1,64 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="importKeyFile.css">
-    <script src="../../static/vender/jquery-3.2.1.min.js"></script>
-    <script src="../../static/vender/jquery.i18n.js"></script>
-    <script src="../../static/vender/jquery.i18n.messagestore.js"></script>
-    <title id="title"><!-- Import Wanchain Key File --></title>
+    <script src="./imortFontFamily.js"></script>
+    <script src="./vender/jquery-3.2.1.min.js"></script>
+    <script src="./vender/jquery.i18n.js"></script>
+    <script src="./vender/jquery.i18n.messagestore.js"></script>
+    <title id="title">
+        <!-- Import Wanchain Keystore File -->
+    </title>
 </head>
+
 <body>
     <div class="alert alert-success fade" role="alert">
         <strong id='success-text'></strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="alert alert-danger fade" role="alert">
         <strong id='err-text'></strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="importKey">
         <div class="container">
             <div class="row justify-content-center align-items-center">
-                <h1 id="head"><!-- Import Wanchain Key File --></h1>
+                <h1 id="head">
+                    <!-- Import Wanchain Keystore File -->
+                </h1>
+                <p id="warning"></p>
                 <div class="col-12">
                     <form id="KeyFileForm" novalidate>
                         <div class="form-group">
-                            <label id="enterKfPw" class="label text-dark" for="oldpwd"><!-- Enter Key File Password --></label>
-                            <input id="oldpwd" name="oldpwd" class="form-control" type="password" required />
-                            <div id="kfFeedback" class="invalid-feedback"><!-- Key file password is invalid --></div>
+                            <label id="enterKfPw" class="label text-dark" for="oldpwd">
+                                <!-- Input Keystore Password --></label>
+                            <input id="oldpwd" name="oldpwd" class="form-control" type="password" required tabindex="1"/>
+                            <div id="kfFeedback" class="invalid-feedback">
+                                <!-- Keystore password is invalid -->
+                            </div>
                         </div>
-                        <div class="form-group"> 
-                            <label id="enterWwPw" class="label text-dark" for="newpwd"><!-- Enter WAN Wallet Password --></label>
-                            <input id="newpwd" name="newpwd" class="form-control" type="password" required />
-                            <div id="wWPwInvalid" class="invalid-feedback"><!-- WAN wallet password is invalid. --></div>
+                        <div class="form-group">
+                            <label id="enterWwPw" class="label text-dark" for="newpwd">
+                                <!-- Input WAN Wallet Password --></label>
+                            <input id="newpwd" name="newpwd" class="form-control" type="password" required tabindex="2"/>
+                            <div id="wWPwInvalid" class="invalid-feedback">
+                                <!-- WAN wallet password is invalid. -->
+                            </div>
                         </div>
-                        <p id="chooseKf" style="margin-top: 40px; margin-bottom: 7px;"><!-- Choose a Key File --></p>
+                        <p id="chooseKf" style="margin-top: 40px; margin-bottom: 7px;">
+                            <!-- Choose a Keystore File -->
+                        </p>
                         <div class="custom-file" style="height: 70px;">
-                            <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required />
-                            <label id="kFButton" class="custom-file-label" for="keyfile" style="overflow: hidden;" data-content="Browse"></label>
-                            <div id="kFInvalid" class="invalid-feedback" style="margin-top: 10px;"><!-- Key file is invalid --></div>
+                            <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required tabindex="-1"/>
+                            <label id="kFButton" class="custom-file-label" for="keyfile" style="overflow: hidden;"
+                                tabindex="3" data-content="Browse"></label>
+                            <div id="kFInvalid" class="invalid-feedback" style="margin-top: 10px;">
+                                <!-- Keystore file is invalid -->
+                            </div>
                         </div>
-                        
-                        <div id="buttons" class="form-group"> 
-                            <button id="cancel" class="btn btn-dark btn-lg"><!-- Cancel --></button>
-                            <button id="submit" type="submit" class="btn btn-dark btn-lg"><!-- Submit --></button>
+
+                        <div id="buttons" class="form-group">
+                            <button id="cancel" class="btn btn-dark btn-lg" tabindex="4">
+                                <!-- Cancel --></button>
+                            <button id="submit" type="submit" class="btn btn-dark btn-lg" tabindex="5">
+                                <!-- Submit --></button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>  
-    </div> 
+        </div>
+    </div>
 </body>
 <script type="application/javascript">
-    (function() {
+    (function () {
         let ERR_NOT_FOUND = 'cannot proceed, wallet not created or been locked';
         let ERR_WRONG_PWD_KEYFILE = 'invalid password for key file';
         let ERR_WRONG_PWD_WALLET = 'invalid password for wan wallet';
@@ -69,6 +90,7 @@
             const ids = [
                 'title',
                 'head',
+                'warning',
                 'enterKfPw',
                 'kfFeedback',
                 'enterWwPw',
@@ -86,7 +108,7 @@
             $(`#${id}`).html($.i18n(id));
         }
 
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const fileSelector = document.querySelector('#keyfile')
             const cancelBtn = document.querySelector('#cancel')
             const subBtn = document.querySelector('#submit')
@@ -98,31 +120,65 @@
             const closeBtns = document.querySelectorAll('.close')
             const kFBtn = document.querySelector('#kFButton')
 
-            let lan = 'zh';
-            $.i18n({
-                locale: lan
-            }).load({
-                [lan]: `../../config/i18n/locales/${lan}/importKeyFile.json`,
+            form.addEventListener('keypress', (e) => {
+                console.log(e);
+                if(e.key === "Enter") {
+                    e.preventDefault();
+                    let event = document.createEvent('MouseEvents');
+                    event.initEvent('click', false, true);
+                    if(e.target.id === "kFButton") {
+                        kFBtn.dispatchEvent(event);
+                    }else if(e.target.id === "cancel") {
+                        cancelBtn.dispatchEvent(event);
+                    } else {
+                        subBtn.dispatchEvent(event);
+                    }
+                }
+            });
+
+            new Promise((resolve, reject) => {
+                wand.request('query_config', {
+                    param: 'language'
+                }, function (err, val) {
+                    if (err) {
+                        return reject(err);
+                    } else {
+                        return resolve(val.language);
+                    }
+                })
             }).then((res) => {
-                setLanguage();
-                ERR_NOT_FOUND = $.i18n('ERR_NOT_FOUND');
-                ERR_WRONG_PWD_KEYFILE = $.i18n('ERR_WRONG_PWD_KEYFILE');
-                ERR_WRONG_PWD_WAL= $.i18n('ERR_WRONG_PWD_WAL');
-                ERR_INVALID_KEYFILE = $.i18n('ERR_INVALID_KEYFILE');
-                TEXT_SUCCESS = $.i18n('TEXT_SUCCESS');
-                kFBtn.setAttribute('data-content', $.i18n('browse'));
+                console.log(res);
+                let lan = res;
+                $.i18n({
+                    locale: lan
+                }).load({
+                    [lan]: wand.isDev ?
+                        `../../config/i18n/locales/${lan}/importKeyFile.json` :
+                        `../locales/${lan}/importKeyFile.json`,
+                }).then((res) => {
+                    setLanguage();
+                    ERR_NOT_FOUND = $.i18n('ERR_NOT_FOUND');
+                    ERR_WRONG_PWD_KEYFILE = $.i18n('ERR_WRONG_PWD_KEYFILE');
+                    ERR_WRONG_PWD_WAL = $.i18n('ERR_WRONG_PWD_WAL');
+                    ERR_INVALID_KEYFILE = $.i18n('ERR_INVALID_KEYFILE');
+                    TEXT_SUCCESS = $.i18n('TEXT_SUCCESS');
+                    kFBtn.setAttribute('data-content', $.i18n('browse'));
+                }).catch((err) => {
+                    console.log(err);
+                });
+
             }).catch((err) => {
                 console.log(err);
             });
 
             closeBtns.forEach(btn => {
-                btn.addEventListener('click', function(){
+                btn.addEventListener('click', function () {
                     const parent = btn.parentElement;
                     if (parent.classList.contains('show')) parent.classList.remove('show')
                 })
             })
 
-            fileSelector.addEventListener('change', function() {
+            fileSelector.addEventListener('change', function () {
                 const value = fileSelector.files[0];
                 document.querySelector('.custom-file-label').innerHTML = value.name;
             })
@@ -149,19 +205,20 @@
                 const fileDesc = formData.get('keyfile')
 
                 if (keyFilePwd && hdWalletPwd && fileDesc.path) {
-                    wand.request('address_fromKeyFile', { keyFilePwd, hdWalletPwd, keyFilePath: fileDesc.path }, function(err, val) {
+                    wand.request('address_fromKeyFile', {
+                        keyFilePwd,
+                        hdWalletPwd,
+                        keyFilePath: fileDesc.path
+                    }, function (err, val) {
                         if (err) {
                             const desc = err.desc || err.message
                             if (desc.includes('not found')) {
                                 errText.innerHTML = ERR_NOT_FOUND
-                            }
-                            else if (desc.includes('authentication code mismatch')) {
+                            } else if (desc.includes('authentication code mismatch')) {
                                 errText.innerHTML = ERR_WRONG_PWD_KEYFILE
-                            }
-                            else if (desc.includes('Invalid password')) {
+                            } else if (desc.includes('Invalid password')) {
                                 errText.innerHTML = ERR_WRONG_PWD_WALLET
-                            }
-                            else {
+                            } else {
                                 errText.innerHTML = ERR_INVALID_KEYFILE
                             }
                             alertError.classList.add('show')
@@ -169,8 +226,8 @@
                         }
                         if (val) {
                             successText.innerHTML = TEXT_SUCCESS
-                            alertSuccess.classList.add('show')    
-                        }            
+                            alertSuccess.classList.add('show')
+                        }
                     })
                 }
             });

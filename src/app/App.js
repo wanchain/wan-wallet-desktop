@@ -16,6 +16,7 @@ class App extends Component {
     super(props);
     this.changeLanguage('en_US');
     stores.session.initChainId();
+    stores.session.initSettings();
     initEmitterHandler();
     let id = setInterval(async () => {
       let ready = await isSdkReady();

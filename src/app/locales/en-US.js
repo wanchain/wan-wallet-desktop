@@ -2,8 +2,10 @@ const en_US = {
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
+    'Login.restore': 'Forget password, Retore the wallet?',
 
     'Loading.tips': 'Please wait while the wallet is loading...',
+    'Loading.transData': 'Loading',
 
     'Register.createPassword': 'Create Password',
     'Register.secretBackupPhrase': 'Backup Seed Phrase',
@@ -53,8 +55,12 @@ const en_US = {
     'Restore.allLocalDataWillBeLost': 'All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?',
     
     'Settings.settings': 'Settings',
+    'Settings.config': 'Config',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restore',
+
+    'Config.option': 'Security Options',
+    'Config.inputPwd': 'Input password again while sending transaction',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -158,8 +164,16 @@ const en_US = {
     'NormalTransForm.fast': 'Fast',
     'NormalTransForm.wan': 'WAN',
     'NormalTransForm.advancedOptions': 'Advanced Options',
+    'NormalTransForm.overBalance': 'The cost exceeds the balance. Please try again',
+    'NormalTransForm.sendAll': 'Send Everything',
+    'NormalTransForm.password': 'Password',
+    'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
+
+    'Rename.name': 'Name is incorrect',
+    
     'SendNormalTrans.send': 'Send',
+    'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
 
     'TransHistory.time': 'TIME',
     'TransHistory.from': 'FROM',
@@ -221,6 +235,7 @@ const en_US = {
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',
+    'title.imported': 'Imported Address',
 
 }
 export default en_US;

@@ -4,7 +4,7 @@
             "app": {
                 "label": "{{app}}",
                 "about": "关于 {{app}}",
-                "version": "版本信息：{{version}}",
+                "version": "Wan Wallet 版本信息：{{version}}",
                 "developer": {
                     "label": "开发者",
                     "assets": {

@@ -5,31 +5,17 @@
  */
 
 import env from 'dotenv'
-import { app, ipcMain as ipc, webContents } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import { app } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
 import Logger from '~/src/utils/Logger'
 import windowStateKeeper from 'electron-window-state'
-import { Windows, walletBackend } from '~/src/modules'
-
-// ipcMain.on('ELECTRON_GUEST_WINDOW_MANAGER_WEB_CONTENTS_METHOD', function (event, guestId, method, ...args) {
-//   const guestContents = webContents.fromId(guestId)
-//   if (guestContents == null) return
-
-
-//   // if (canAccessWindow(event.sender, guestContents)) {
-//   //   guestContents[method](...args)
-//   // } else {
-//   //   console.error(`Blocked ${event.sender.getURL()} from calling ${method} on its opener.`)
-//   // }
-// })
+import { Windows, walletBackend, updater } from '~/src/modules'
 
 env.config()
 
 const logger = Logger.getLogger('main')
-autoUpdater.logger = logger
 
 if (!i18n.isIintialized) {
   i18n.on('languageChanged', () => {
@@ -67,8 +53,7 @@ async function createWindow () {
       x: mainWindowState.x,
       y: mainWindowState.y,
       webPreferences: {
-        /** TODO */
-        nodeIntegration: true,
+        nodeIntegration: setting.isDev ? true : false,
         nativeWindowOpen: false,
         preload: setting.isDev ?  `${__dirname}/modules/preload` : `${__dirname}/preload.js`
       }
@@ -77,14 +62,10 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
  
-  mainWindow.load(`file://${__dirname}/app/index.html`)
-
-  // PLEASE DO NOT REMOVE THIS LINE, IT IS RESERVED FOR PACKAGE TEST
-  // mainWindow.load(`file://${__dirname}/index.html#v${app.getVersion()}`)
+  
 
   if (setting.isDev) {
-    // mainWindow.load(`file://${__dirname}/cases/mainTest.html`)
-    // mainWindow.load(`file://${__dirname}/index.html`)
+    mainWindow.load(`file://${__dirname}/app/index.html`)
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }
@@ -125,13 +106,10 @@ process.on('uncaughtException', (err) => {
   app.quit()
 })
 
-// async function onReady() {
-//   registerAutoUpdaterHandlersAndRun()
-// }
-
 async function onReady() {
   // initiate windows manager
   Windows.init()
+
   // register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
     sendReadyNotifications();
@@ -140,6 +118,11 @@ async function onReady() {
   await createWindow()
   
   await walletBackend.init()
+
+  // check updates only if under production mode
+  if (process.env.NODE_ENV === 'production') {
+    updater.start()
+  }
 }
 
 // This method will be called when Electron has done everything 
@@ -157,47 +140,3 @@ app.on('activate', async function () {
     await createWindow()
   }
 })
-
-// function registerAutoUpdaterHandlersAndRun() {
-//   autoUpdater.fullChangelog = true
-
-//   console.log('autoUpdater: ', autoUpdater)
-
-//   autoUpdater.on('checking-for-update', () => {
-//     logger.info('checking-for-update')
-//     console.log('arguments: ', arguments)
-//     // sendStatusToWindow('Checking for update...')
-//   })
-  
-//   autoUpdater.on('update-available', (info) => {
-//     logger.info('update-available')
-//     sendStatusToWindow('Update available.')
-//   })
-  
-//   autoUpdater.on('update-not-available', (info) => {
-//     logger.info('update-not-available')
-//     sendStatusToWindow('Update not available.')
-//   })
-  
-//   autoUpdater.on('error', (err) => {
-//     logger.info('erro in auto-updater')
-//     sendStatusToWindow('Error in auto-updater. ' + err)
-//   })
-  
-//   autoUpdater.on('download-progress', (progressObj) => {
-//     logger.info('download-progress')
-//     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-//     log_message = log_message + ' - Download ' + progressObj.percent + '%'
-//     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-//     sendStatusToWindow(log_message)
-//   })
-  
-//   autoUpdater.on('update-downloaded', (info) => {
-//     logger.info('update-downloaded')
-//     sendStatusToWindow('Update downloaded')
-//     autoUpdater.quitAndInstall()
-//   })
-
-//   autoUpdater.checkForUpdates()
-// }
-

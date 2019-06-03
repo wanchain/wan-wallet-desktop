@@ -59,7 +59,7 @@ class WanAddress {
         if(!err && val.length !== 0) {
           val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
-            if(item.txHash !== item.hashX) {
+            if(item.txHash !== item.hashX || item.status === 'Failed') {
               self.transHistory[item.txHash] = item;
             }
           })

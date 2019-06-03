@@ -5,6 +5,7 @@ class Session {
   @observable hasMnemonicOrNot = false;
   @observable chainId = 1;
   @observable auth = false;
+  @observable settings = {};
 
   @action setChainId(id) {
     self.chainId = id;
@@ -36,6 +37,26 @@ class Session {
 
   @action setAuth(val) {
     self.auth = val;
+  }
+
+  @action initSettings() {
+    wand.request('setting_get', { keys: ['settings'] }, (err, ret) => {
+      if(err) {
+        console.log(`err: ${JSON.stringify(err)}`);
+        return;
+      };
+      self.settings = ret[0];
+    })
+  }
+
+  @action updateSettings(newValue) {
+    let obj = self.settings;
+    wand.request('setting_set', { settings: newValue }, (err, ret) => {
+      if(err) return;
+      if(ret) {
+        self.settings = Object.assign(obj, newValue);
+      }
+    })
   }
 }
 

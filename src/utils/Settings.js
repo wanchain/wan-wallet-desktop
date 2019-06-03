@@ -12,11 +12,15 @@ let _mode = undefined
 let _network = undefined
 let _lang = undefined
 let _isDev = undefined
+let _setting = undefined
 
 const defaultConfig = {
     mode: 'light',
     network: 'main',
-    lang: 'en'
+    lang: 'en',
+    settings: {
+      reinput_pwd: false
+    }
 }
 
 const argv = yargs
@@ -119,6 +123,14 @@ class Settings {
         return _lang = this._get('lang') || defaultConfig.lang
     }
 
+    get settings() {
+      if (_settings) {
+          return _settings
+      }
+      
+      return _settings = this._get('settings') || defaultConfig.settings
+    }
+
     get autoLockTimeout() {
         // auto lock the wallet if main window loses focus for a period of time. 5 min
         return 5 * 60 * 1000
@@ -126,6 +138,10 @@ class Settings {
 
     get idleCheckInterval() {
         return 1 * 60 * 1000
+    }
+
+    get(key) {
+        return this._get(key)
     }
 
     _get(key) {
@@ -136,6 +152,10 @@ class Settings {
         }
 
         return val
+    }
+
+    set(key, value) {
+        this._set(key, value)
     }
 
     _set(key, value) {

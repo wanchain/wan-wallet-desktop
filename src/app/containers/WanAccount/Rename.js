@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Input, Form } from 'antd';
+import { observer, inject } from 'mobx-react';
+import intl from 'react-intl-universal';
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -10,6 +12,11 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 export const EditableFormRow = Form.create()(EditableRow);
 
+@inject(stores => ({
+  language: stores.languageIntl.language,
+}))
+
+@observer
 export class EditableCell extends Component {
   state = {
     editing: false,
@@ -50,11 +57,12 @@ export class EditableCell extends Component {
                   {form.getFieldDecorator(dataIndex, {
                     rules: [{
                       required: true,
-                      message: `${title} is required.`,
+                      message: intl.get('Rename.name'),
                     }],
                     initialValue: record[dataIndex],
                   })(
                     <Input
+                      style={{ width: '300px' }}
                       ref={node => (this.input = node)}
                       onPressEnter={this.save}
                       onBlur={this.save}

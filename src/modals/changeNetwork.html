@@ -1,82 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="changeNetwork.css">
-        <script src="../../static/vender/jquery-3.2.1.min.js"></script>
-        <script src="../../static/vender/jquery.i18n.js"></script>
-        <script src="../../static/vender/jquery.i18n.messagestore.js"></script>
-        <title id="title"><!-- Switch Network --></title>
-    </head>
-    <body>
-        <div id="main-container">
-            <p id="head"><!-- If you change network, you will logout from this platform. --></p>
-            <div id="buttons">
-                <button id="no"><!-- No --></button>
-                <button id="yes" loading><!-- Yes --></button>
-            </div>
-        </div>
-        <div id="mask">
-            <i class="icon-loading">
-                <svg viewBox="0 0 1024 1024" class="loading-spin">
-                    <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 0 0-94.3-139.9 437.71 437.71 0 0 0-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
-                </svg>
-            </i>
-        </div>
-    </body>
-    <script type="application/javascript">
-        (function() {
-            const setLanguage = () => {
-                const ids = [
-                    'title',
-                    'head',
-                    'no',
-                    'yes'
-                ];
-                ids.forEach((id) => {
-                    setText(id);
-                });
-            }
-            let setText = (id) => {
-                $(`#${id}`).html($.i18n(id));
-            }
 
-            window.onload = () => {
-                const yesBtn = document.getElementById('yes');
-                const noBtn = document.getElementById('no');
-                const spinner = document.getElementById('mask');
-                const mainContainer = document.getElementById('main-container');
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="changeNetwork.css">
+    <script src="./imortFontFamily.js"></script>
+    <script src="./vender/jquery-3.2.1.min.js"></script>
+    <script src="./vender/jquery.i18n.js"></script>
+    <script src="./vender/jquery.i18n.messagestore.js"></script>
+    <title id="title">
+        <!-- Switch Network -->
+    </title>
+</head>
 
-                let lan = 'zh';
+<body>
+    <div id="main-container">
+        <p id="head">
+            <!-- If you change network, you will logout from this platform. -->
+        </p>
+        <div id="buttons">
+            <button id="no" tabindex="1">
+                <!-- No --></button>
+            <button id="yes" tabindex="2" loading>
+                <!-- Yes --></button>
+        </div>
+    </div>
+    <div id="mask">
+        <i class="icon-loading">
+            <svg viewBox="0 0 1024 1024" class="loading-spin">
+                <path
+                    d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 0 0-94.3-139.9 437.71 437.71 0 0 0-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z">
+                </path>
+            </svg>
+        </i>
+    </div>
+</body>
+<script type="application/javascript">
+    (function () {
+        const setLanguage = () => {
+            const ids = [
+                'title',
+                'head',
+                'no',
+                'yes'
+            ];
+            ids.forEach((id) => {
+                setText(id);
+            });
+        }
+        let setText = (id) => {
+            $(`#${id}`).html($.i18n(id));
+        }
+
+        window.onload = () => {
+            const yesBtn = document.getElementById('yes');
+            const noBtn = document.getElementById('no');
+            const spinner = document.getElementById('mask');
+            const mainContainer = document.getElementById('main-container');
+
+            new Promise((resolve, reject) => {
+                wand.request('query_config', {
+                    param: 'language'
+                }, function (err, val) {
+                    if (err) {
+                        return reject(err);
+                    } else {
+                        return resolve(val.language);
+                    }
+                })
+            }).then((res) => {
+                console.log(res);
+                let lan = res;
                 $.i18n({
                     locale: lan
                 }).load({
-                    [lan]: `../../config/i18n/locales/${lan}/changeNetwork.json`,
+                    [lan]: wand.isDev ? `../../config/i18n/locales/${lan}/changeNetwork.json` :
+                        `../locales/${lan}/changeNetwork.json`,
                 }).then((res) => {
                     setLanguage();
                 }).catch((err) => {
                     console.log(err);
                 });
 
-                yesBtn.addEventListener('click', (e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
+            }).catch((err) => {
+                console.log(err);
+            });
 
-                    spinner.style.display = 'block';
-                    mainContainer.style.display = 'none'
+            yesBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                e.stopPropagation()
 
-                    wand.request('setting_switchNetwork', { choice: 'yes' })
-                });
+                spinner.style.display = 'block';
+                mainContainer.style.display = 'none'
 
-                noBtn.addEventListener('click', (e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
+                wand.request('setting_switchNetwork', {
+                    choice: 1
+                })
+            });
 
-                    wand.request('setting_switchNetwork', { choice: 'no' })
-                });
-            }
-        })()
-    </script>
+            noBtn.addEventListener('click', (e) => {
+                e.preventDefault()
+                e.stopPropagation()
+
+                wand.request('setting_switchNetwork', {
+                    choice: 0
+                })
+            });
+        }
+    })()
+</script>
+
 </html>

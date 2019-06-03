@@ -2,8 +2,10 @@ const zh_CN = {
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
+    'Login.restore': '忘记密码，是否重置钱包？',
 
-    'Loading.tips': '钱包正在加载，请耐心等待...',
+    'Loading.tips': '钱包正在加载，请耐心等待......',
+    'Loading.transData': '加载中...',
 
     'Register.createPassword': '创建',
     'Register.secretBackupPhrase': '备份助记词',
@@ -52,10 +54,14 @@ const zh_CN = {
     'Restore.restoreNewWalletWillDeleteAllLocalData': '如果你恢复助记词，所有本地数据会被删除，程序会重新启动。请确认是否继续。',
     'Restore.continue': '下一步',
     'Restore.allLocalDataWillBeLost': '所有本地数据都会被删除，包括但不限于当前的助记词、交易记录、导入的地址等等。要继续吗？',
-    
+
     'Settings.settings': '设置',
+    'Settings.config': '配置',
     'Settings.backup': '备份',
     'Settings.restore': '恢复',
+
+    'Config.option': '安全选项',
+    'Config.inputPwd': '发送交易的时候再次输入密码',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -85,7 +91,7 @@ const zh_CN = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas上限输入不正确',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce输入不正确',
-    
+
     'CopyAndQrcode.copySuccessfully': '复制成功',
 
     'HwWallet.Accounts.name': '名称',
@@ -159,8 +165,15 @@ const zh_CN = {
     'NormalTransForm.fast': '上链快',
     'NormalTransForm.wan': 'WAN',
     'NormalTransForm.advancedOptions': '高级选项',
+    'NormalTransForm.overBalance': '费用超出了余额, 请重试',
+    'NormalTransForm.sendAll': '发送全部',
+    'NormalTransForm.password': '密码',
+    'NormalTransForm.pwdIsIncorrect': '密码不正确',
+
+    'Rename.name': '名字不正确',
 
     'SendNormalTrans.send': '发送',
+    'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
     'TransHistory.time': '时间',
     'TransHistory.from': '转出方',
@@ -221,5 +234,7 @@ const zh_CN = {
 
     'popup.ok': '确定',
     'popup.cancel': '取消',
+    'title.imported': '已导入的地址',
+
 }
 export default zh_CN;
