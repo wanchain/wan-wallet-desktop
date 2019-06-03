@@ -12,11 +12,15 @@ let _mode = undefined
 let _network = undefined
 let _lang = undefined
 let _isDev = undefined
+let _setting = undefined
 
 const defaultConfig = {
     mode: 'light',
     network: 'main',
-    lang: 'en'
+    lang: 'en',
+    settings: {
+      reinput_pwd: false
+    }
 }
 
 const argv = yargs
@@ -117,6 +121,14 @@ class Settings {
         }
         
         return _lang = this._get('lang') || defaultConfig.lang
+    }
+
+    get settings() {
+      if (_settings) {
+          return _settings
+      }
+      
+      return _settings = this._get('settings') || defaultConfig.settings
     }
 
     get autoLockTimeout() {

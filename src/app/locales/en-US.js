@@ -2,6 +2,7 @@ const en_US = {
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
+    'Login.restore': 'Forget password, Retore the wallet?',
 
     'Loading.tips': 'Please wait while the wallet is loading...',
     'Loading.transData': 'Loading',

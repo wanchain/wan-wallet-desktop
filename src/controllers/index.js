@@ -532,7 +532,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
-    let ret, err, keys, vals
+    let ret, err, keys, vals = []
     const [action, id] = actionUni.split('#')
 
     switch (action) {
@@ -578,7 +578,8 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             try {
                 keys.forEach((key, index) => {
-                    setting.set(key, vals[index])
+                    let newValue = key === 'settings' ? Object.assign(setting.get('settings'), vals[index]) : vals[index]
+                    setting.set(key, newValue)
                 })
                 ret = true
             } catch (e) {
