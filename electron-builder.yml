@@ -33,7 +33,7 @@ linux:
   icon: build/assets/icon.png
   target: 
     - deb
-    - AppImage
+    - appImage
 
 dmg:
   artifactName: Wan-Wallet-${version}.dmg
@@ -47,5 +47,5 @@ nsis:
 deb:
   artifactName: Wan-Wallet-${version}.deb
 
-AppImage:
+appImage:
   artifactName: Wan-Wallet-${version}.AppImage
