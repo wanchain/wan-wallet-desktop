@@ -166,6 +166,8 @@ const zh_CN = {
     'NormalTransForm.advancedOptions': '高级选项',
     'NormalTransForm.overBalance': '费用超出了余额, 请重试',
     'NormalTransForm.sendAll': '发送全部',
+    'NormalTransForm.password': '密码',
+    'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
     'Rename.name': '名字不正确',
 

@@ -15,6 +15,7 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
+  settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
@@ -90,6 +91,7 @@ class NormalTransForm extends Component {
 
     form.validateFields(err => {
       if (err) return;
+      let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = parseFloat(form.getFieldValue('amount'));
       let currfee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
@@ -97,8 +99,18 @@ class NormalTransForm extends Component {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
-      updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
-      this.setState({ advanced: false, confirmVisible: true });
+      if(!pwd) {
+        message.warn(intl.get('Backup.invalidPassword'));
+        return;
+      }
+      wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+        if (err) {
+          message.warn(intl.get('Backup.invalidPassword'));
+        } else {
+          updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+          this.setState({ advanced: false, confirmVisible: true });
+        }
+      })
     });
   }
 
@@ -197,7 +209,7 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr
@@ -234,6 +246,12 @@ class NormalTransForm extends Component {
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="money-collect" className="colorInput" />} />)}
                 <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               </Form.Item>
+              {settings.reinput_pwd 
+                ? <Form.Item label={intl.get('NormalTransForm.password')}>
+                    {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
+                    (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  </Form.Item>
+                : ''}
               {
               advanced 
               ? <Form.Item label={intl.get('NormalTransForm.fee')}>

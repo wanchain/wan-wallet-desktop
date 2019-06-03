@@ -165,6 +165,9 @@ const en_US = {
     'NormalTransForm.advancedOptions': 'Advanced Options',
     'NormalTransForm.overBalance': 'The cost exceeds the balance. Please try again',
     'NormalTransForm.sendAll': 'Send Everything',
+    'NormalTransForm.password': 'Password',
+    'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
+
 
     'Rename.name': 'Name is incorrect',
     
