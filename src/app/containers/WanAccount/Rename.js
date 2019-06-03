@@ -62,6 +62,7 @@ export class EditableCell extends Component {
                     initialValue: record[dataIndex],
                   })(
                     <Input
+                      style={{ width: '300px' }}
                       ref={node => (this.input = node)}
                       onPressEnter={this.save}
                       onBlur={this.save}
