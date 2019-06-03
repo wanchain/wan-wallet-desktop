@@ -12,7 +12,7 @@
     <script src="./vender/jquery.i18n.js"></script>
     <script src="./vender/jquery.i18n.messagestore.js"></script>
     <title id="title">
-        <!-- Import Wanchain Key File -->
+        <!-- Import Wanchain Keystore File -->
     </title>
 </head>
 
@@ -33,36 +33,36 @@
         <div class="container">
             <div class="row justify-content-center align-items-center">
                 <h1 id="head">
-                    <!-- Import Wanchain Key File -->
+                    <!-- Import Wanchain Keystore File -->
                 </h1>
                 <p id="warning"></p>
                 <div class="col-12">
                     <form id="KeyFileForm" novalidate>
                         <div class="form-group">
                             <label id="enterKfPw" class="label text-dark" for="oldpwd">
-                                <!-- Enter Key File Password --></label>
+                                <!-- Input Keystore Password --></label>
                             <input id="oldpwd" name="oldpwd" class="form-control" type="password" required tabindex="1"/>
                             <div id="kfFeedback" class="invalid-feedback">
-                                <!-- Key file password is invalid -->
+                                <!-- Keystore password is invalid -->
                             </div>
                         </div>
                         <div class="form-group">
                             <label id="enterWwPw" class="label text-dark" for="newpwd">
-                                <!-- Enter WAN Wallet Password --></label>
+                                <!-- Input WAN Wallet Password --></label>
                             <input id="newpwd" name="newpwd" class="form-control" type="password" required tabindex="2"/>
                             <div id="wWPwInvalid" class="invalid-feedback">
                                 <!-- WAN wallet password is invalid. -->
                             </div>
                         </div>
                         <p id="chooseKf" style="margin-top: 40px; margin-bottom: 7px;">
-                            <!-- Choose a Key File -->
+                            <!-- Choose a Keystore File -->
                         </p>
                         <div class="custom-file" style="height: 70px;">
                             <input type="file" class="custom-file-input" id="keyfile" name="keyfile" required tabindex="-1"/>
                             <label id="kFButton" class="custom-file-label" for="keyfile" style="overflow: hidden;"
                                 tabindex="3" data-content="Browse"></label>
                             <div id="kFInvalid" class="invalid-feedback" style="margin-top: 10px;">
-                                <!-- Key file is invalid -->
+                                <!-- Keystore file is invalid -->
                             </div>
                         </div>
 
