@@ -22,11 +22,12 @@ class DelegateIn extends Component {
     this.setState({ visible: false });
   }
 
-  handleSend = (hardware) => {
+  handleSend = (walletID) => {
     this.setState({ visible: false });
-    if(hardware == 2) {
+    if(walletID == 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
+    console.log('send finish');
   }
 
   render() {

@@ -5,8 +5,8 @@ export function fromWei(data) {
   return web3.utils.fromWei(data);
 }
 
-export function toWei(data) {
-  return web3.utils.toWei(data);
+export function toWei(data, unit) {
+  return '0x' + web3.utils.toBN(web3.utils.toWei(data, unit)).toString(16);
 }
 
 export function checkCryptographic(pwd) {

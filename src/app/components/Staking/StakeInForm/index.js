@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
-import Validator from '../Validators/Validator';
 import './index.less';
-import validatorImg from 'static/image/validator.png';
 import { checkWanValidatorAddr } from 'utils/helper';
 
 import intl from 'react-intl-universal';
-import { wanTx, WanRawTx } from 'utils/hardwareUtils'
+const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
-const wanTxTrezor = require('wanchainjs-tx');
-
+const pu = require('promisefy-util')
+import { getNonce, getGasPrice, estimateGas, getChainId, getContractData } from 'utils/helper';
+import { toWei } from 'utils/support.js';
 
 const main = 'https://www.wanscan.org/address/'
 const testnet = 'http://testnet.wanscan.org/address/';
 
 const Option = Select.Option;
-const DEFAULT_GAS = 4700000;
 
 @inject(stores => ({
   getAddrList: stores.wanAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   onlineValidatorList: stores.staking.onlineValidatorList,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -63,7 +63,10 @@ class StakeInForm extends Component {
     if (this.props.record) {
       let { form } = this.props;
       form.setFieldsValue({ to: this.props.record.validator.address });
-      form.setFieldsValue({ validatorName: this.props.record.validator });
+
+      let validatorName = ((<div name={this.props.record.validator.name.toString()}><Avatar src={this.props.record.validator.img} name={this.props.record.validator.name} value={this.props.record.validator.name} size="small" />{" "}{this.props.record.validator.name}</div>))
+
+      form.setFieldsValue({ validatorName: validatorName });
 
       let from = this.props.record.accountAddress;
 
@@ -100,7 +103,7 @@ class StakeInForm extends Component {
 
   onValidatorChange = value => {
     console.log('select:', value);
-    let {form} = this.props;
+    let { form } = this.props;
     form.setFieldsValue({ to: value });
     form.setFieldsValue({ validatorName: value });
   }
@@ -176,7 +179,7 @@ class StakeInForm extends Component {
 
     if (from.includes('Trezor')) {
       fromAddr = from.replace('Trezor: ', '')
-      addrs = trezorAddrList      
+      addrs = trezorAddrList
     }
 
     for (let i = 0; i < addrs.length; i++) {
@@ -188,7 +191,7 @@ class StakeInForm extends Component {
     }
   }
 
-  onSend = () => {
+  onSend = async () => {
 
     let { form } = this.props;
     let from = form.getFieldValue('from');
@@ -210,21 +213,17 @@ class StakeInForm extends Component {
     const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
     const WALLET_ID_LEDGER = 0x02;
     const WALLET_ID_TREZOR = 0x03;
-    
-    let walletID = WALLET_ID_NATIVE;
 
-    let hardware = false
+    let walletID = WALLET_ID_NATIVE;
 
     if (from.includes('Ledger')) {
       from = from.replace('Ledger: ', '')
       walletID = WALLET_ID_LEDGER;
-      hardware = true;
     }
 
     if (from.includes('Trezor')) {
       from = from.replace('Trezor: ', '')
       walletID = WALLET_ID_TREZOR;
-      hardware = true;
     }
 
     let tx = {
@@ -237,13 +236,18 @@ class StakeInForm extends Component {
       "walletID": walletID
     }
 
-    wand.request('staking_delegateIn', tx, (err, ret) => {
-      if (err) {
-        message.warn(err.message);
-      } else {
-        console.log('delegateIn ret:', ret);
-      }
-    });
+    if (walletID == WALLET_ID_TREZOR) {
+      await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+      this.props.onSend(walletID);
+    } else {
+      wand.request('staking_delegateIn', tx, (err, ret) => {
+        if (err) {
+          message.warn(err.message);
+        } else {
+          console.log('delegateIn ret:', ret);
+        }
+      });
+    }
 
     this.props.onSend(walletID);
   }
@@ -255,6 +259,103 @@ class StakeInForm extends Component {
     wand.shell.openExternal(href);
   }
 
+  trezorDelegateIn = async (path, from, validator, value) => {
+    console.log('trezorDelegateIn:', path, from, validator, value);
+    let chainId = await getChainId();
+    console.log('chainId', chainId);
+    let func = 'delegateIn';
+    try {
+      console.log('ready to get nonce, gasPrice, data');
+      console.log('getNonce');
+      let nonce = await getNonce(from, 'wan');
+      console.log('getNonce', nonce);
+      console.log('getGasPrice');
+      let gasPrice = await getGasPrice('wan');
+      console.log('getGasPrice', gasPrice);
+      console.log('getContractData');
+      let data = await getContractData(func, validator);
+      console.log('getContractData', data);
+      //let [nonce, gasPrice, data] = await Promise.all([getNonce(from, 'wan'), getGasPrice('wan'), getContractData(func, validator)]);
+      console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
+      let amountWei = toWei(value);
+      console.log('amountWei', amountWei);
+      const cscContractAddr = "0x00000000000000000000000000000000000000d8";
+      let rawTx = {};
+      rawTx.from = from;
+      rawTx.to = cscContractAddr;
+      rawTx.value = amountWei;
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = '0x' + Number(200000).toString(16);
+      rawTx.gasPrice = toWei(gasPrice, "gwei");
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+
+      console.log('rawTx:', rawTx);
+      let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
+      console.log('signTransaction finish, ready to send.')
+      console.log('raw:', raw);
+
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      console.log('transaction_raw finish, txHash:', txHash);
+      let params = {
+        srcSCAddrKey: 'WAN',
+        srcChainType: 'WAN',
+        tokenSymbol: 'WAN',
+        hashX: txHash,
+        txHash,
+        from: from.toLowerCase(),
+        validator: validator,
+        annotate: 'DelegateIn',
+        status: 'Sent',
+        source: "external",
+        ...rawTx
+      }
+
+      await pu.promisefy(wand.request, ['staking_insertTransToDB', { rawTx: params }], this);
+      console.log('staking_insertTransToDB finish')
+      this.props.updateStakeInfo();
+      this.props.updateTransHistory();
+    } catch (error) {
+      message.error(error)
+    }
+  }
+
+  signTrezorTransaction = (path, tx, callback) => {
+    console.log('signTrezorTransaction:', path, tx);
+    TrezorConnect.ethereumSignTransaction({
+      path: path,
+      transaction: {
+        to: tx.to,
+        value: tx.value,
+        data: tx.data,
+        chainId: tx.chainId,
+        nonce: tx.nonce,
+        gasLimit: tx.gasLimit,
+        gasPrice: tx.gasPrice,
+        txType: tx.Txtype, // Txtype case is required by wanTx
+      },
+    }).then((result) => {
+      console.log('signTrezorTransaction result:', result);
+
+      if (!result.success) {
+        message.warn(intl.get('Trezor.signTransactionFailed'));
+        callback(intl.get('Trezor.signFailed'), null);
+        return;
+      }
+
+      tx.v = result.payload.v;
+      tx.r = result.payload.r;
+      tx.s = result.payload.s;
+      let eTx = new wanTx(tx);
+      let signedTx = '0x' + eTx.serialize().toString('hex');
+      console.log('signed', signedTx);
+      console.log('tx:', tx);
+      callback(null, signedTx);
+    });
+  }
+
+
   render() {
     let { onlineValidatorList, form } = this.props;
 
@@ -263,7 +364,7 @@ class StakeInForm extends Component {
       const v = onlineValidatorList[i];
       validatorListSelect.push(
         //(<Validator img={v.icon} name={v.name} address={v.address} />)
-        (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small"/>{" "}{v.name}</div>)
+        (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" />{" "}{v.name}</div>)
       )
     }
 

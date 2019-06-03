@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col } from 'antd';
 import Validator from '../Validators/Validator';
 import './index.less';
-import validatorImg from 'static/image/validator.png';
 import intl from 'react-intl-universal';
 
-@inject(stores => ({
-  getAddrList: stores.wanAddress.getAddrList,
-  ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  trezorAddrList: stores.wanAddress.trezorAddrList,
-}))
 
-@observer
-class WithdrawForm extends Component {
+
+class StakeConfirmForm extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      title: props.title,
+      note: props.note,
+    }
   }
 
   componentWillUnmount() {
@@ -24,52 +20,6 @@ class WithdrawForm extends Component {
   }
 
   onSend = () => {
-
-    let from = this.props.record.accountAddress;
-
-    const { ledgerAddrList, trezorAddrList } = this.props;
-
-    const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
-    const WALLET_ID_LEDGER = 0x02;
-    const WALLET_ID_TREZOR = 0x03;
-    
-    let walletID = WALLET_ID_NATIVE;
-
-    for (let i = 0; i < ledgerAddrList.length; i++) {
-      const hdAddr = ledgerAddrList[i].address;
-      if (hdAddr.toLowerCase() == from.toLowerCase()) {
-        walletID = WALLET_ID_LEDGER
-        break;
-      }
-    }
-
-    for (let i = 0; i < trezorAddrList.length; i++) {
-      const hdAddr = trezorAddrList[i].address;
-      if (hdAddr.toLowerCase() == from.toLowerCase()) {
-        walletID = WALLET_ID_TREZOR
-        break;
-      }
-    }
-
-    let tx = {
-      "from": this.props.record.accountAddress,
-      "validator": this.props.record.validator.address,
-      "path": this.props.record.accountPath,
-      "walletID": walletID,
-    }
-
-    if(walletID == 2) {
-      message.info(intl.get('Ledger.signTransactionInLedger'))
-    }
-
-    wand.request('staking_delegateOut', tx, (err, ret) => {
-      if (err) {
-        message.warn("Estimate gas failed. Please try again");
-      } else {
-        console.log('delegateOut ret:', ret);
-      }
-    });
-
     this.props.onSend()
   }
 
@@ -80,7 +30,7 @@ class WithdrawForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title={intl.get('WithdrawForm.title')}
+          title={this.state.title}
           onCancel={this.props.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
@@ -89,7 +39,7 @@ class WithdrawForm extends Component {
           className="withdraw-modal"
         >
           <div className="withdraw-bg">
-            <div className="withdraw-title">Validator's Account:</div>
+            <div className="withdraw-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
@@ -124,11 +74,11 @@ class WithdrawForm extends Component {
               </Row>
             </div>
           </div>
-          <p className="withdraw-note">{intl.get('WithdrawForm.note')}</p>
+          <p className="withdraw-note">{this.state.note}</p>
         </Modal>
       </div>
     );
   }
 }
 
-export default WithdrawForm;
+export default StakeConfirmForm;

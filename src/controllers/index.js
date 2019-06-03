@@ -263,6 +263,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'getNonce':
             try {
+                console.log('getNonce called');
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
                 logger.info('Nonce: ' + payload.addr + ',' + nonce);
@@ -310,7 +311,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.isWanAddress(payload.address);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                if(!info || info.feeRate == 10000) {
+                if (!info || info.feeRate == 10000) {
                     ret = false;
                 }
             } catch (e) {
@@ -620,7 +621,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
         case 'delegateOut':
@@ -649,8 +650,48 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_STAKING, action].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getContractData':
+            try {
+                console.log('getContractData:', payload);
+
+                let validatorAddr = payload.validatorAddr;
+                let func = payload.func;
+
+                var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
+                var cscContractAddr = "0x00000000000000000000000000000000000000d8";
+
+                let data = ccUtil.getDataByFuncInterface(cscDefinition,
+                    cscContractAddr,
+                    func,
+                    validatorAddr);
+
+                ret = data;
+                console.log(JSON.stringify(ret, null, 4));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'insertTransToDB':
+            try {
+                console.log('insertTransToDB:', payload);
+                let satellite = {
+                    validator: payload.rawTx.validator,
+                    annotate: payload.rawTx.annotate,
+                }
+                await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
+                console.log('insert finish');
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 
@@ -693,7 +734,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             mainWin.show()
             switchWin.close()
-            
+
             break
     }
 })
@@ -861,7 +902,7 @@ function buildStakingList(delegateInfo, incentive, epochID, base) {
         //console.log('list[i].distributeRewards', list[i].distributeRewards);
 
         let d = new Date()
-        d.setDate( d.getDate() - longestDays );
+        d.setDate(d.getDate() - longestDays);
         base.startFrom = "From " + d.toDateString();
     }
 

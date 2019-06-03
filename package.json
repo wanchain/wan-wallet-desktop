@@ -59,6 +59,7 @@
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
     "postcss-flexbugs-fixes": "^3.2.0",
+    "promisefy-util": "^1.2.0",
     "qrcode": "^1.3.3",
     "rc-tween-one": "^2.4.1",
     "react": "^16.8.4",

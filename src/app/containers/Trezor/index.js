@@ -83,6 +83,7 @@ class Trezor extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
+    console.log('signTransaction:', tx);
     TrezorConnect.ethereumSignTransaction({
       path: path,
       transaction: {

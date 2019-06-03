@@ -282,7 +282,7 @@ class WanAddress {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
           if(!self.transHistory[item].validator) {
-            return;
+            //return;
           }
 
           historyList.push({
