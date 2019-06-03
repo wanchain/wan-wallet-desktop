@@ -31,7 +31,9 @@ win:
 linux:
   category: Finance
   icon: build/assets/icon.png
-  target: deb
+  target: 
+    - deb
+    - AppImage
 
 dmg:
   artifactName: Wan-Wallet-${version}.dmg
@@ -44,3 +46,6 @@ nsis:
 
 deb:
   artifactName: Wan-Wallet-${version}.deb
+
+AppImage:
+  artifactName: Wan-Wallet-${version}.AppImage
