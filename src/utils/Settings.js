@@ -128,6 +128,10 @@ class Settings {
         return 1 * 60 * 1000
     }
 
+    get(key) {
+        return this._get(key)
+    }
+
     _get(key) {
         let val = this._db.get(key).value()
 
@@ -136,6 +140,10 @@ class Settings {
         }
 
         return val
+    }
+
+    set(key, value) {
+        this._set(key, value)
     }
 
     _set(key, value) {

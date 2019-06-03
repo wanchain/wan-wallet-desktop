@@ -532,7 +532,7 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
-    let ret, err
+    let ret, err, keys, vals
     const [action, id] = actionUni.split('#')
 
     switch (action) {
@@ -572,6 +572,39 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             
             break
     
+        case 'set':
+            keys = Object.keys(payload)
+            vals = Object.values(payload)
+
+            try {
+                keys.forEach((key, index) => {
+                    setting.set(key, vals[index])
+                })
+                ret = true
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                ret = false
+            }
+
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'get':
+            let { keys } = payload
+            
+            try {
+                keys.forEach((key, index) => {
+                    vals[index] = setting.get(key)
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
+            break
     }
 })
 
