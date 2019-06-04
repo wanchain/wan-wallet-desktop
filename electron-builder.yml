@@ -43,7 +43,6 @@ nsis:
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
   artifactName: Wan-Wallet-${version}.exe
-  differentialPackage: false
 
 deb:
   artifactName: Wan-Wallet-${version}.deb
