@@ -226,6 +226,8 @@ const en_US = {
     'StakeInForm.address': 'Address',
     'StakeInForm.capacity': 'Capacity',
     'StakeInForm.stake': 'Stake',
+    'StakeInForm.stakeTooLow': 'Stake amount is too low',
+    'StakeInForm.stakeExceed': 'Stake amount is out of validator\'s capacity',
     'StakeInForm.balance': 'Balance',
     'StakeInForm.more': 'More Info',
     'StakeInForm.selectName': 'Select a FROM name',

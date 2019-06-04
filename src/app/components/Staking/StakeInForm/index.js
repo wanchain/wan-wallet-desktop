@@ -76,6 +76,8 @@ class StakeInForm extends Component {
 
       form.setFieldsValue({ validatorName: validatorName });
 
+      form.setFieldsValue({capacity: this.getCapacity(this.props.record.validator.address)})
+
       let from = this.props.record.accountAddress;
 
       const { ledgerAddrList, trezorAddrList } = this.props;
@@ -112,8 +114,10 @@ class StakeInForm extends Component {
   onValidatorChange = value => {
     console.log('select:', value);
     let { form } = this.props;
-    form.setFieldsValue({ to: this.getAddr(value) });
+    let addr = this.getAddr(value);
+    form.setFieldsValue({ to: addr });
     form.setFieldsValue({ validatorName: value });
+    form.setFieldsValue({capacity: this.getCapacity(addr)});
     this.validator = value;
   }
 
@@ -167,11 +171,26 @@ class StakeInForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 100) {
-      callback();
-    } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+    let { form } = this.props;
+    let capacity = form.getFieldValue('capacity');
+    let balance = form.getFieldValue('balance');
+
+    if (Number(value) < 100) {
+      callback(intl.get('StakeInForm.stakeTooLow'));
+      return;
     }
+
+    if (Number(value) > Number(balance)) {
+      callback(intl.get('SendNormalTrans.hasBalance'));
+      return;
+    }
+
+    if (Number(value) > Number(capacity)) {
+      callback(intl.get('StakeInForm.stakeExceed'));
+      return;
+    }
+
+    callback();
   }
 
   getPath = (from) => {
@@ -210,6 +229,20 @@ class StakeInForm extends Component {
       const v = onlineValidatorList[i];
       if (name.toLowerCase() == v.name.toLowerCase()) {
         return v.address;
+      }
+    }
+  }
+
+  getCapacity = (addr) => {
+    if (!addr) {
+      return "";
+    }
+
+    let { onlineValidatorList } = this.props;
+    for (let i = 0; i < onlineValidatorList.length; i++) {
+      const v = onlineValidatorList[i];
+      if (addr.toLowerCase() == v.address.toLowerCase()) {
+        return v.capacity;
       }
     }
   }
@@ -577,7 +610,7 @@ class StakeInForm extends Component {
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAmount'), validator: this.checkAmount }] })
+                      {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
                         (<Input min={100} placeholder="Enter stake amount" prefix={<Icon type="money-collect" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>

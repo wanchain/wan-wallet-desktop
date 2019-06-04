@@ -225,6 +225,8 @@ const zh_CN = {
     'StakeInForm.address': '地址',
     'StakeInForm.capacity': '可用额度',
     'StakeInForm.stake': '委托金额',
+    'StakeInForm.stakeTooLow': '委托金额低于最低限额',
+    'StakeInForm.stakeExceed': '委托金额超出验证节点最大额度',
     'StakeInForm.balance': '余额',
     'StakeInForm.more': '更多信息',
     'StakeInForm.selectName': '选择一个名称',

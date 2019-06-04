@@ -7,6 +7,7 @@ import validatorImg from 'static/image/validator.png';
 import arrow from 'static/image/arrow.png';
 import pu from 'promisefy-util';
 import { getNameAndIcon } from 'utils/helper';
+import { timeFormat, fromWei } from 'utils/support';
 
 
 class Staking {
@@ -37,9 +38,11 @@ class Staking {
 
     try {
       let val = await pu.promisefy(wand.request, ['staking_info', addrList], this);
+      console.log('val', val);
       if (val) {
         this.stakeInfo = val.base;
         this.stakerList = val.list;
+        console.log('val.list', val.list);
         this.validatorList = val.stakerInfo;
         let reward = await this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = reward * 100 / val.base.stakePool
@@ -70,7 +73,7 @@ class Staking {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log('updateStakeInfo error', error);
     }
 
     console.log('updateStakeInfo finish');
@@ -107,15 +110,22 @@ class Staking {
       }
 
       let capacity = 0;
-      capacity += this.validatorList[i].amount;
-      if(this.validatorList[i].partners.length > 0) {
+      capacity += Number(fromWei(this.validatorList[i].amount));
+      if (this.validatorList[i].partners.length > 0) {
         for (let m = 0; m < this.validatorList[i].partners.length; m++) {
           const partner = this.validatorList[i].partners[m];
-          capacity += partner.amount;
+          capacity += Number(fromWei(partner.amount));
         }
       }
 
       capacity *= 5;
+
+      if (this.validatorList[i].clients.length > 0) {
+        for (let m = 0; m < this.validatorList[i].clients.length; m++) {
+          const client = this.validatorList[i].clients[m];
+          capacity -= Number(fromWei(client.amount));
+        }
+      }
 
       console.log('validator', this.validatorList[i], 'capacity', capacity);
 

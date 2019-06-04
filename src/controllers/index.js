@@ -571,12 +571,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        //console.log('account', account.address, 'info', info);
+                        console.log('account', account.address, 'info', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    //console.log('account', account.address, 'incentive.length', inc.length);
+                    console.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
                         console.log('account:', account.address);
                         console.log('incentive length:', inc.length);
@@ -728,7 +728,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 console.log('get firstEpochId');
                 let info = await ccUtil.getPosInfo('wan')
                 console.log('info:', info);
-                if(info) {
+                if (info) {
                     ret = info.firstEpochId;
                 }
             } catch (e) {
@@ -942,6 +942,8 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         }
     }
 
+    console.log('list:', list);
+
     let longestDays = 0;
     //console.log('list.length', list.length);
     for (let i = 0; i < list.length; i++) {
@@ -993,5 +995,6 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         base.startFrom = "From " + d.toDateString();
     }
 
+    console.log('list:', list);
     return list;
 }
