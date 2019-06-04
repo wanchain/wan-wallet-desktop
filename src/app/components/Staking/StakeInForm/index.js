@@ -76,7 +76,7 @@ class StakeInForm extends Component {
 
       form.setFieldsValue({ validatorName: validatorName });
 
-      form.setFieldsValue({capacity: this.getCapacity(this.props.record.validator.address)})
+      form.setFieldsValue({ capacity: this.getCapacity(this.props.record.validator.address) })
 
       let from = this.props.record.accountAddress;
 
@@ -117,7 +117,7 @@ class StakeInForm extends Component {
     let addr = this.getAddr(value);
     form.setFieldsValue({ to: addr });
     form.setFieldsValue({ validatorName: value });
-    form.setFieldsValue({capacity: this.getCapacity(addr)});
+    form.setFieldsValue({ capacity: this.getCapacity(addr) });
     this.validator = value;
   }
 
@@ -158,7 +158,6 @@ class StakeInForm extends Component {
   }
 
   onChange = value => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
     if (!value) {
       return
     }
@@ -592,10 +591,10 @@ class StakeInForm extends Component {
                           >
                             {this.state.addrList.map((item, index) => <Option value={item} key={index}>
                               <Row>
-                                <Col span={20}>{item}</Col>
-                                <Col span={4} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(0)}</Col>
+                                <Col span={16}>{item}</Col>
+                                <Col span={8} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(1)}</Col>
                               </Row>
-                              </Option>)}
+                            </Option>)}
                           </Select>
                         )}
                     </Form.Item>
@@ -608,7 +607,7 @@ class StakeInForm extends Component {
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={20}>
-                <Form layout="inline">
+                  <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('balance', { initialValue: this.state.balance })
                         (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
