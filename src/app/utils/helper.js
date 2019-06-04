@@ -165,6 +165,13 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   return balance;
 }
 
+export const checkAmountUnit = function (decimals, amount) {
+  if(!Number.isInteger(decimals)) {
+    throw new Error('Decimals must be a integer');
+  }
+  return !!(amount >= 1 / (10 ** decimals));
+}
+
 export const getChainIdByAddr = function (addrInfo) {
   Object.keys(addrInfo).forEach(type => {
     Object.keys(addrInfo[type]).forEach(() => {})

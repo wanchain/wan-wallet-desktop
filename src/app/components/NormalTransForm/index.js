@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { toWei } from 'utils/support';
-import { checkWanAddr, getBalanceByAddr } from 'utils/helper';
+import { checkWanAddr, getBalanceByAddr, checkAmountUnit } from 'utils/helper';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 
@@ -85,10 +85,9 @@ class NormalTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo } = this.props;
+    const { updateTransParams, addrInfo, settings } = this.props;
     let form = this.props.form;
     let from = this.props.from;
-
     form.validateFields(err => {
       if (err) return;
       let pwd = form.getFieldValue('pwd');
@@ -99,18 +98,23 @@ class NormalTransForm extends Component {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
-      if(!pwd) {
-        message.warn(intl.get('Backup.invalidPassword'));
-        return;
-      }
-      wand.request('phrase_reveal', { pwd: pwd }, (err) => {
-        if (err) {
+      if(settings.reinput_pwd) {
+        if(!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
-        } else {
-          updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
-          this.setState({ advanced: false, confirmVisible: true });
+          return;
         }
-      })
+        wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+          if (err) {
+            message.warn(intl.get('Backup.invalidPassword'));
+          } else {
+            updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+            this.setState({ advanced: false, confirmVisible: true });
+          }
+        })
+      } else {
+        updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+        this.setState({ advanced: false, confirmVisible: true });
+      }
     });
   }
 
@@ -169,7 +173,7 @@ class NormalTransForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 0) {
+    if (value >= 0 && checkAmountUnit(18, value)) {
       if (!this.state.advanced) {
         this.updateGasLimit();
       }
