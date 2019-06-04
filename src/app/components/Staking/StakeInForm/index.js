@@ -3,6 +3,8 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
 import './index.less';
 import { checkWanValidatorAddr } from 'utils/helper';
+import StakeConfirmForm from '../StakeConfirmForm';
+const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
@@ -32,6 +34,12 @@ class StakeInForm extends Component {
     this.state = {
       balance: "0",
       addrList: [],
+      confirmVisible: false,
+      record: {
+        validator: {},
+        accountAddress: '',
+        myStake: { title: '' },
+      }
     }
   }
 
@@ -106,6 +114,7 @@ class StakeInForm extends Component {
     let { form } = this.props;
     form.setFieldsValue({ to: this.getAddr(value) });
     form.setFieldsValue({ validatorName: value });
+    this.validator = value;
   }
 
   onChange = value => {
@@ -150,7 +159,7 @@ class StakeInForm extends Component {
       if (ret) {
         callback();
       } else {
-        callback('Invalid address');
+        callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }).catch((err) => {
       callback(err);
@@ -158,10 +167,10 @@ class StakeInForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 0) {
+    if (value >= 100) {
       callback();
     } else {
-      callback('Invalid amount');
+      callback(intl.get('NormalTransForm.invalidAmount'));
     }
   }
 
@@ -203,6 +212,56 @@ class StakeInForm extends Component {
         return v.address;
       }
     }
+  }
+
+  showConfirmForm = () => {
+    let form = this.props.form;
+    form.validateFields(err => {
+      if (err) return;
+
+      let from = form.getFieldValue('from');
+      let to = form.getFieldValue('to');
+
+      let path = this.getPath(from);
+
+      let amount = form.getFieldValue('amount');
+      if (!amount || amount < 100) {
+        message.error("Please input a valid amount.");
+        return;
+      }
+
+      if (this.state.balance <= amount) {
+        message.error("Balance is not enough.")
+        return;
+      }
+
+      let validator = {}
+      let { onlineValidatorList } = this.props;
+
+      console.log('onlineValidatorList', onlineValidatorList)
+      console.log('to', from);
+
+      for (let i = 0; i < onlineValidatorList.length; i++) {
+        const v = onlineValidatorList[i];
+        if (to == v.address) {
+          validator = v;
+          break;
+        }
+      }
+
+      this.setState({
+        confirmVisible: true,
+        record: {
+          accountAddress: from,
+          validator: { name: validator.name, img: validator.icon, address: validator.address },
+          myStake: { title: amount },
+        }
+      });
+    })
+  }
+
+  onConfirmCancel = () => {
+    this.setState({ confirmVisible: false });
   }
 
   onSend = async () => {
@@ -263,7 +322,12 @@ class StakeInForm extends Component {
       });
     }
 
+    this.setState({ confirmVisible: false });
+
     this.props.onSend(walletID);
+
+    this.props.updateStakeInfo();
+    this.props.updateTransHistory();
   }
 
   onClick = () => {
@@ -393,7 +457,7 @@ class StakeInForm extends Component {
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.onSend}>{intl.get('SendNormalTrans.send')}</Button>,
+            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
           className="stakein-modal"
         >
@@ -455,7 +519,7 @@ class StakeInForm extends Component {
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('from', { rules: [{ required: true, message: 'Address is incorrect' }] })
+                      {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
                         (
                           <Select
                             showSearch
@@ -492,8 +556,8 @@ class StakeInForm extends Component {
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
-                        (<Input min={100} placeholder="100" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                      {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAmount'), validator: this.checkAmount }] })
+                        (<Input min={100} placeholder="Enter stake amount" prefix={<Icon type="money-collect" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -502,6 +566,16 @@ class StakeInForm extends Component {
             </div>
           </div>
         </Modal>
+        {
+          this.state.confirmVisible ?
+            (<Confirm visible={this.state.confirmVisible}
+              onCancel={this.onConfirmCancel} onSend={this.onSend}
+              record={this.state.record}
+              title={'Confirm'}
+              note={''}
+            />) : ''
+        }
+
       </div>
     );
   }
