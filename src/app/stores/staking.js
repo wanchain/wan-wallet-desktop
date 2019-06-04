@@ -41,7 +41,7 @@ class Staking {
         this.stakeInfo = val.base;
         this.stakerList = val.list;
         this.validatorList = val.stakerInfo;
-        let reward = this.getYearReward(val.base.epochIDRaw);
+        let reward = await this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = reward * 100 / val.base.stakePool
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
         this.stakeInfo.epochID = "Epoch " + this.stakeInfo.epochIDRaw;
@@ -116,9 +116,9 @@ class Staking {
     return validators;
   }
 
-  getYearReward(epochID) {
+  async getYearReward(epochID) {
     if (global.firstEpochId == undefined) {
-      global.firstEpochId = 6496392;
+      global.firstEpochId = await pu.promisefy(wand.request, ['staking_firstEpochId'], this)//6496392;
     }
 
     if (epochID < global.firstEpochId) {

@@ -5,7 +5,7 @@ module.exports = {
     account: [ 'create', 'get', 'getAll', 'update', 'delete' ],
     transaction: [ 'normal', 'raw', 'estimateGas', 'showRecords', 'insertTransToDB' ],
     query: [ 'config', 'getGasPrice' ],
-    staking: [ 'info', 'delegateIn', 'delegateOut', 'getContractData', 'insertTransToDB', 'getNameAndIcon' ],
+    staking: [ 'info', 'delegateIn', 'delegateOut', 'getContractData', 'insertTransToDB', 'getNameAndIcon', 'firstEpochId' ],
     setting: ['switchNetwork', 'set', 'get'],
     upgrade: ['start']
 }

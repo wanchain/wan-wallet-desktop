@@ -722,6 +722,21 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'firstEpochId':
+            try {
+                console.log('get firstEpochId');
+                let info = await ccUtil.getPosInfo('wan')
+                console.log('info:', info);
+                if(info) {
+                    ret = info.firstEpochId;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 
