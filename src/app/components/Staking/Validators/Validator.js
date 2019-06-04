@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Avatar } from 'antd';
 import './index.less';
 
 class Validator extends Component {
@@ -17,7 +17,7 @@ class Validator extends Component {
       <div className="validator">
         <Row>
           <Col>
-            <img src={this.state.img}/><span className="name">{this.state.name}</span>
+            <div name={this.state.name}><Avatar src={this.state.img} size="large" />{" "}{this.state.name}</div>
           </Col>
         </Row>
       </div>

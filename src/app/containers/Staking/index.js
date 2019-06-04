@@ -40,7 +40,7 @@ class Staking extends Component {
       //console.log('time up staking info.')
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
-    }, 5000)
+    }, 20000)
   }
 
   componentWillUnmount() {

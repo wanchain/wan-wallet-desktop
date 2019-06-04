@@ -588,7 +588,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
-                ret.list = buildStakingList(delegateInfo, incentive, epochID, ret.base);
+                ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
                 ret.stakerInfo = stakerInfo;
             } catch (e) {
                 logger.error(actionUni + (e.message || e.stack))
@@ -692,6 +692,36 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'getNameAndIcon':
+            try {
+                console.log('getContractData:', payload);
+                let addr = payload.address;
+                if (!global.nameIcon) {
+                    global.nameIcon = {};
+                }
+
+                let value = global.nameIcon[addr];
+                if (!value) {
+                    console.log('new getRegisteredValidator', addr);
+                    value = await ccUtil.getRegisteredValidator(addr);
+                    if (!value || value.length == 0) {
+                        console.log(value);
+                    } else {
+                        //console.log(value);
+                        global.nameIcon[addr] = value;
+                        ret = value;
+                    }
+                } else {
+                    ret = value;
+                    console.log('getNameAndIcon already have.')
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 
@@ -705,7 +735,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             let choice = parseInt(payload.choice)
             let mainWin = Windows.getByType('main')
             let switchWin = Windows.getByType('changeNetwork')
-            
+
             if (choice === 1) {
                 try {
 
@@ -723,7 +753,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             } else if (choice === 0) {
                 try {
                     const networkMenu = menuFactoryService.networkMenu
-                    const [ targetMenu ] = networkMenu.items.filter(i => !i.checked)
+                    const [targetMenu] = networkMenu.items.filter(i => !i.checked)
                     targetMenu.checked = true
                 } catch (e) {
                     logger.error(e.message || e.stack)
@@ -735,7 +765,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             switchWin.close()
 
             break
-    
+
         case 'set':
             keys = Object.keys(payload)
             vals = Object.values(payload)
@@ -758,7 +788,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
         case 'get':
             let { keys } = payload
-            
+
             try {
                 keys.forEach((key, index) => {
                     vals[index] = setting.get(key)
@@ -866,13 +896,20 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     return base;
 }
 
-function buildStakingList(delegateInfo, incentive, epochID, base) {
+async function buildStakingList(delegateInfo, incentive, epochID, base) {
     let list = [];
 
     for (let i = 0; i < delegateInfo.length; i++) {
         const di = delegateInfo[i];
         for (let m = 0; m < di.stake.length; m++) {
             const sk = di.stake[m]
+            let ret = await ccUtil.getRegisteredValidator(sk.address);
+            let img, name;
+            if (ret && ret.length > 0) {
+                img = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
+                name = ret[0].name;
+            }
+
             list.push({
                 myAccount: di.account.name,
                 balance: di.account.balance,
@@ -880,7 +917,8 @@ function buildStakingList(delegateInfo, incentive, epochID, base) {
                 accountPath: di.account.path,
                 myStake: { title: web3.utils.fromWei(sk.amount), bottom: "0 days ago" },
                 validator: {
-                    name: sk.address
+                    name: name ? name : sk.address,
+                    img: img,
                 },
                 validatorAddress: sk.address,
                 distributeRewards: { title: "50,000", bottom: "from 50 epochs" },

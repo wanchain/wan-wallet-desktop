@@ -195,3 +195,15 @@ export const getContractData = function (func, validatorAddr) {
     });
   })
 };
+
+export const getNameAndIcon = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('staking_getNameAndIcon', {address}, (err, val) => {
+      if (err) {
+        return reject('staking_getNameAndIcon failed', err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+};

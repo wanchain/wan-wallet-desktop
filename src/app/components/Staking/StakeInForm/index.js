@@ -104,7 +104,7 @@ class StakeInForm extends Component {
   onValidatorChange = value => {
     console.log('select:', value);
     let { form } = this.props;
-    form.setFieldsValue({ to: value });
+    form.setFieldsValue({ to: this.getAddr(value) });
     form.setFieldsValue({ validatorName: value });
   }
 
@@ -187,6 +187,20 @@ class StakeInForm extends Component {
       console.log('addr,from', addr, fromAddr)
       if (addr.address == fromAddr) {
         return addr.path;
+      }
+    }
+  }
+
+  getAddr = (name) => {
+    if (!name) {
+      return "";
+    }
+    
+    let {onlineValidatorList} = this.props;
+    for (let i = 0; i < onlineValidatorList.length; i++) {
+      const v = onlineValidatorList[i];
+      if (name.toLowerCase() == v.name.toLowerCase()) {
+        return v.address;
       }
     }
   }
@@ -363,7 +377,6 @@ class StakeInForm extends Component {
     for (let i = 0; i < onlineValidatorList.length; i++) {
       const v = onlineValidatorList[i];
       validatorListSelect.push(
-        //(<Validator img={v.icon} name={v.name} address={v.address} />)
         (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" />{" "}{v.name}</div>)
       )
     }

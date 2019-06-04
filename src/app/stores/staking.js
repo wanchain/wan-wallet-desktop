@@ -5,6 +5,9 @@ import wanAddress from './wanAddress';
 
 import validatorImg from 'static/image/validator.png';
 import arrow from 'static/image/arrow.png';
+import pu from 'promisefy-util';
+import { getNameAndIcon } from 'utils/helper';
+
 
 class Staking {
   @observable stakeInfo = {
@@ -25,23 +28,22 @@ class Staking {
   rewardRate = 0;
   epochID = 0;
 
-  @action updateStakeInfo() {
-    //console.log("updateStakeInfo")
+  @action async updateStakeInfo() {
+    console.log("updateStakeInfo")
     let addrList = [];
     addrList.push(...wanAddress.getAddrList.slice())
     addrList.push(...wanAddress.ledgerAddrList.slice())
     addrList.push(...wanAddress.trezorAddrList.slice())
 
-    wand.request('staking_info', addrList, (err, val) => {
-      //console.log('wand returned.', val)
-      if (!err && val) {
+    try {
+      let val = await pu.promisefy(wand.request, ['staking_info', addrList], this);
+      if (val) {
         this.stakeInfo = val.base;
         this.stakerList = val.list;
         this.validatorList = val.stakerInfo;
         let reward = this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = reward * 100 / val.base.stakePool
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
-        //console.log('rewardRate:', this.stakeInfo.currentRewardRate);
         this.stakeInfo.epochID = "Epoch " + this.stakeInfo.epochIDRaw;
 
         if (val.base.epochID != this.epochID) {
@@ -56,13 +58,29 @@ class Staking {
           this.epochID = val.base.epochID;
         }
 
-        //console.log('stakeInfo:', this.stakeInfo);
+        if (this.validatorList && this.validatorList.length > 0) {
+          for (let i = 0; i < this.validatorList.length; i++) {
+            let ret = await getNameAndIcon(this.validatorList[i].address);
+            console.log('getNameAndIcon', ret);
+            if (ret && ret.length > 0) {
+              this.validatorList[i].name = ret[0].name;
+              this.validatorList[i].iconData = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
+            }
+          }
+        }
       }
-    })
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log('updateStakeInfo finish');
+
+
   }
 
   @computed get stakingList() {
     let validators = []
+
     for (let i = 0; i < this.stakerList.length; i++) {
       validators.push({
         myAccount: this.stakerList[i].myAccount,
@@ -71,7 +89,7 @@ class Staking {
         balance: this.stakerList[i].balance,
         myStake: this.stakerList[i].myStake,
         arrow1: arrow,
-        validator: { img: validatorImg, name: this.stakerList[i].validator.name, address: this.stakerList[i].validatorAddress },
+        validator: { img: this.stakerList[i].validator.img ? this.stakerList[i].validator.img : validatorImg, name: this.stakerList[i].validator.name, address: this.stakerList[i].validatorAddress },
         arrow2: arrow,
         distributeRewards: this.stakerList[i].distributeRewards,
         modifyStake: ["+", "-"],
@@ -91,7 +109,7 @@ class Staking {
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
-        icon: this.validatorList[i].icon? this.validatorList[i].icon : validatorImg,
+        icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : validatorImg,
         key: this.validatorList[i],
       })
     }
