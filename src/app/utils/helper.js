@@ -64,6 +64,7 @@ export const checkWanAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isWanAddress', { address: address }, (err, val) => {
       if (err) {
+        console.log(err, 'errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
         return reject('Check WAN address failed ', err)
       } else {
         return resolve(val);
@@ -147,6 +148,13 @@ export const getBalanceByAddr = function (addr, addrInfo) {
     }
   })
   return balance;
+}
+
+export const checkAmountUnit = function (decimals, amount) {
+  if(!Number.isInteger(decimals)) {
+    throw new Error('Decimals must be a integer');
+  }
+  return !!(amount >= 1 / (10 ** decimals));
 }
 
 export const getChainIdByAddr = function (addrInfo) {

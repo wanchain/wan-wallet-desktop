@@ -5,7 +5,9 @@ class Session {
   @observable hasMnemonicOrNot = false;
   @observable chainId = 1;
   @observable auth = false;
-  @observable settings = {};
+  @observable settings = {
+    reinput_pwd: false,
+  };
 
   @action setChainId(id) {
     self.chainId = id;
