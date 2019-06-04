@@ -195,8 +195,8 @@ class StakeInForm extends Component {
     if (!name) {
       return "";
     }
-    
-    let {onlineValidatorList} = this.props;
+
+    let { onlineValidatorList } = this.props;
     for (let i = 0; i < onlineValidatorList.length; i++) {
       const v = onlineValidatorList[i];
       if (name.toLowerCase() == v.name.toLowerCase()) {
@@ -316,7 +316,7 @@ class StakeInForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        hashX: txHash,
+        //hashX: txHash,
         txHash,
         from: from.toLowerCase(),
         validator: validator,
@@ -448,26 +448,7 @@ class StakeInForm extends Component {
           </div>
           <div className="stakein-bg">
             <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
-            <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={20}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
-                        (<InputNumber min={100} placeholder="100" prefix={<Icon type="money-collect" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-                {/* <Col span={4}><span className="stakein-addr">WAN</span></Col> */}
-              </Row>
-            </div>
-            <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={5}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={19}><span className="stakein-addr">{this.state.balance} WAN</span></Col>
-              </Row>
-            </div>
+
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
@@ -495,6 +476,28 @@ class StakeInForm extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
+              </Row>
+            </div>
+
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={5}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={19}><span className="stakein-addr">{this.state.balance} WAN</span></Col>
+              </Row>
+            </div>
+
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
+                <Col span={20}>
+                  <Form layout="inline">
+                    <Form.Item>
+                      {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
+                        (<InputNumber min={100} placeholder="100" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
+                {/* <Col span={4}><span className="stakein-addr">WAN</span></Col> */}
               </Row>
             </div>
           </div>
