@@ -121,7 +121,7 @@ class StakeInForm extends Component {
     this.validator = value;
   }
 
-  onChange = value => {
+  getBalance = (value) => {
     const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
     if (!value) {
       return
@@ -132,7 +132,7 @@ class StakeInForm extends Component {
         const element = ledgerAddrList[i];
         value = value.replace('Ledger: ', '')
         if (element.address == value) {
-          this.setState({ balance: element.balance })
+          return element.balance;
         }
       }
       return;
@@ -143,7 +143,7 @@ class StakeInForm extends Component {
         const element = trezorAddrList[i];
         value = value.replace('Trezor: ', '')
         if (element.address == value) {
-          this.setState({ balance: element.balance })
+          return element.balance;
         }
       }
       return;
@@ -152,9 +152,18 @@ class StakeInForm extends Component {
     for (let i = 0; i < getAddrList.length; i++) {
       const element = getAddrList[i];
       if (element.address == value) {
-        this.setState({ balance: element.balance })
+        return element.balance;
       }
     }
+  }
+
+  onChange = value => {
+    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    if (!value) {
+      return
+    }
+
+    this.setState({ balance: this.getBalance(value) })
   }
 
 
@@ -550,7 +559,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('capacity')
-                        (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -571,7 +580,7 @@ class StakeInForm extends Component {
                           <Select
                             showSearch
                             allowClear
-                            style={{ width: 355 }}
+                            style={{ width: 470 }}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             onChange={this.onChange}
@@ -581,7 +590,12 @@ class StakeInForm extends Component {
                             filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             className="colorInput"
                           >
-                            {this.state.addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+                            {this.state.addrList.map((item, index) => <Option value={item} key={index}>
+                              <Row>
+                                <Col span={20}>{item}</Col>
+                                <Col span={4} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(0)}</Col>
+                              </Row>
+                              </Option>)}
                           </Select>
                         )}
                     </Form.Item>
@@ -597,7 +611,7 @@ class StakeInForm extends Component {
                 <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('balance', { initialValue: this.state.balance })
-                        (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -611,7 +625,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input min={100} placeholder="Enter stake amount" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                        (<Input min={100} placeholder="Enter stake amount" prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
