@@ -100,12 +100,33 @@ p {
     width: 100%;
     height: 100%;
     /* background: rgba(255,255,255,0.3); */
-    background: rgba(39, 40, 64, 1);
+    background: rgb(99, 100, 117);
     position: absolute;
     left: 0px;
     top: 0px;
     z-index: 2;
     text-align: center;
+}
+
+.icon-loading {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    position: relative;
+    top: calc(50% - 24px);
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spin {
+    width: 2em;
+    height: 2em;
+    fill: white;
+    animation: spin 1s infinite linear;
 }
 
 #mask-container {

@@ -247,13 +247,13 @@ class NormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                 <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               </Form.Item>
               {settings.reinput_pwd 
                 ? <Form.Item label={intl.get('NormalTransForm.password')}>
                     {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
-                    (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                    (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
                   </Form.Item>
                 : ''}
               {
