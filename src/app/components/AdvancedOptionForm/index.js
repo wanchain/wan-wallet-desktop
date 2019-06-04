@@ -36,11 +36,16 @@ class AdvancedOptionForm extends Component {
 
   handleSave = () => {
     let from = this.props.from;
-    let gasLimit = this.props.form.getFieldValue('gasLimit');
-    let gasPrice = this.props.form.getFieldValue('gasPrice');
-    let nonce = this.props.form.getFieldValue('nonce');
-    this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
-    this.props.onSave();
+    let form = this.props.form;
+
+    form.validateFields(err => {
+      if(err) return;
+      let gasLimit = this.props.form.getFieldValue('gasLimit');
+      let gasPrice = this.props.form.getFieldValue('gasPrice');
+      let nonce = this.props.form.getFieldValue('nonce');
+      this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
+      this.props.onSave();
+    })
   }
 
   render() {
