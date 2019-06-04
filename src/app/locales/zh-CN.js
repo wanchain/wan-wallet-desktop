@@ -2,7 +2,7 @@ const zh_CN = {
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
-    'Login.restore': '忘记密码，是否重置钱包？',
+    'Login.restore': '忘记密码？导入助记词重置密码',
 
     'Loading.tips': '钱包正在加载，请耐心等待......',
     'Loading.transData': '加载中...',
