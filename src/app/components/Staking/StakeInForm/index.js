@@ -493,7 +493,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('amount', { rules: [{ required: true, message: 'Amount is incorrect', validator: this.checkAmount }] })
-                        (<InputNumber min={100} placeholder="100" prefix={<Icon type="money-collect" className="colorInput" />} />)}
+                        (<Input min={100} placeholder="100" prefix={<Icon type="money-collect" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>

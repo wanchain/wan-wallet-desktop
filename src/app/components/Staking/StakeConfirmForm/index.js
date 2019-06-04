@@ -61,12 +61,12 @@ class StakeConfirmForm extends Component {
                 <Col span={18}><span className="withdraw-addr">{this.props.record.myStake.title} WAN</span></Col>
               </Row>
             </div>
-            <div className="withdraw-line">
+            {/* <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.balance} WAN</span></Col>
               </Row>
-            </div>
+            </div> */}
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
