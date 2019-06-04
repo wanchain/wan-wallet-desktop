@@ -224,6 +224,7 @@ const en_US = {
     'StakeInForm.myAccount': 'My Account:',
     'StakeInForm.name': 'Name',
     'StakeInForm.address': 'Address',
+    'StakeInForm.capacity': 'Capacity',
     'StakeInForm.stake': 'Stake',
     'StakeInForm.balance': 'Balance',
     'StakeInForm.more': 'More Info',

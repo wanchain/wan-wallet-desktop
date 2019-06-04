@@ -106,11 +106,25 @@ class Staking {
         continue;
       }
 
+      let capacity = 0;
+      capacity += this.validatorList[i].amount;
+      if(this.validatorList[i].partners.length > 0) {
+        for (let m = 0; m < this.validatorList[i].partners.length; m++) {
+          const partner = this.validatorList[i].partners[m];
+          capacity += partner.amount;
+        }
+      }
+
+      capacity *= 5;
+
+      console.log('validator', this.validatorList[i], 'capacity', capacity);
+
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
         icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : validatorImg,
         key: this.validatorList[i],
+        capacity: capacity,
       })
     }
     return validators;

@@ -226,12 +226,13 @@ class StakeInForm extends Component {
 
       let amount = form.getFieldValue('amount');
       if (!amount || amount < 100) {
-        message.error("Please input a valid amount.");
+        message.error(intl.get('NormalTransForm.amountIsIncorrect'));
         return;
       }
 
-      if (this.state.balance <= amount) {
-        message.error("Balance is not enough.")
+      console.log('balance:', this.state.balance, typeof this.state.balance);
+      if (Number(this.state.balance) <= amount) {
+        message.error(intl.get('NormalTransForm.overBalance'))
         return;
       }
 
@@ -509,6 +510,19 @@ class StakeInForm extends Component {
                 </Col>
               </Row>
             </div>
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.capacity')}</span></Col>
+                <Col span={20}>
+                  <Form layout="inline">
+                    <Form.Item >
+                      {getFieldDecorator('capacity')
+                        (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
           </div>
           <div className="stakein-bg">
             <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
@@ -545,8 +559,15 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={5}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={19}><span className="stakein-addr">{this.state.balance} WAN</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={20}>
+                <Form layout="inline">
+                    <Form.Item >
+                      {getFieldDecorator('balance', { initialValue: this.state.balance })
+                        (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
               </Row>
             </div>
 

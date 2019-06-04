@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col } from 'antd';
+import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
 import Validator from '../Validators/Validator';
 import './index.less';
 import intl from 'react-intl-universal';
@@ -43,7 +43,10 @@ class StakeConfirmForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
-                <Col span={18}><Validator img={this.props.record.validator.img} name={this.props.record.validator.name} /></Col>
+                <Col span={18}>
+                  {/* <Validator img={this.props.record.validator.img} name={this.props.record.validator.name} /> */}
+                  <div><Avatar src={this.props.record.validator.img}/>{' '}{this.props.record.validator.name}</div>
+                  </Col>
               </Row>
             </div>
             <div className="withdraw-line">

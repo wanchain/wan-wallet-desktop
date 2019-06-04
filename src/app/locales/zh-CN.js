@@ -223,6 +223,7 @@ const zh_CN = {
     'StakeInForm.myAccount': '我的账户:',
     'StakeInForm.name': '名称',
     'StakeInForm.address': '地址',
+    'StakeInForm.capacity': '可用额度',
     'StakeInForm.stake': '委托金额',
     'StakeInForm.balance': '余额',
     'StakeInForm.more': '更多信息',
