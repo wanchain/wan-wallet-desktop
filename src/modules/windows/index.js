@@ -152,10 +152,6 @@ class Window extends EventEmitter {
             return
         }
 
-        // console.log(arguments)
-
-        // this._logger.debug(`Sending data ${arguments.toString()}`)
-
         this.webContents.send(...Array.prototype.slice.call(arguments))
     }
 
@@ -337,10 +333,6 @@ class Windows {
                 app.quit()
             }
         }
-    }
-
-    size() {
-        return Object.keys(this._windows).length
     }
 }
 

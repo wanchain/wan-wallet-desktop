@@ -82,10 +82,6 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.app.services'),
                 role: 'services',
             },
-            // {
-            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-            //     click: updater.run
-            // },
             { type: 'separator' },
             {
                 label: i18n.t('main.applicationMenu.app.hide', { app: APP_NAME }),
@@ -192,29 +188,6 @@ export default (i18n) => {
                     }
                 ]
             },
-            // {
-            //     label: i18n.t('main.applicationMenu.setting.mode.label'),
-            //     submenu: [
-            //         {
-            //             label: i18n.t('main.applicationMenu.setting.mode.light'),
-            //             accelerator: 'Shift+CommandOrControl+L',
-            //             checked: setting.mode === 'light',
-            //             type: 'radio',
-            //             click: () => {
-                            
-            //             }
-            //         },
-            //         {
-            //             label: i18n.t('main.applicationMenu.setting.mode.full'),
-            //             accelerator: 'Shift+CommandOrControl+F',
-            //             checked: setting.mode === 'full',
-            //             type: 'radio',
-            //             click: () => {
-    
-            //             }
-            //         }
-            //     ]
-            // },
             { type: 'separator' }
         ],
     }
