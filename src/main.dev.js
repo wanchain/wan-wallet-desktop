@@ -37,8 +37,8 @@ if (!i18n.isIintialized) {
 
 let mainWindow
 
-async function createWindow () {
-  logger.info('creating main window')
+async function createMain () {
+  logger.info('creating main window...')
 
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1220,
@@ -62,8 +62,6 @@ async function createWindow () {
 
   mainWindowState.manage(mainWindow.window)
  
-  
-
   if (setting.isDev) {
     mainWindow.load(`file://${__dirname}/app/index.html`)
   } else {
@@ -72,7 +70,7 @@ async function createWindow () {
   
   // Open the DevTools under development.
   if (setting.isDev) {
-    installExtensions()
+    mainWindow.webContents.openDevTools()
   }
 
   mainWindow.on('ready', () => {
@@ -81,7 +79,7 @@ async function createWindow () {
     Windows.broadcast('notification', 'language', setting.language)
     if (global.chainManager) {
       sendReadyNotifications();
-      } else {
+    } else {
       Windows.broadcast('notification', 'sdk', 'init')
     }
   })
@@ -89,10 +87,6 @@ async function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
-}
-
-function installExtensions() {
-  mainWindow.webContents.openDevTools()
 }
 
 function sendReadyNotifications() {
@@ -107,16 +101,18 @@ process.on('uncaughtException', (err) => {
 })
 
 async function onReady() {
-  // initiate windows manager
+  // 1. initiate windows manager
   Windows.init()
 
-  // register handler for walletbackend init 
+  // 2. register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
     sendReadyNotifications();
   })
 
-  await createWindow()
+  // 3. create main window for frontend renderering, hide this window in the first place
+  await createMain()
   
+  // 4. init wallet sdk
   await walletBackend.init()
 
   // check updates only if under production mode
@@ -137,6 +133,6 @@ app.on('window-all-closed', function () {
 
 app.on('activate', async function () {
   if (mainWindow === null) {
-    await createWindow()
+    await createMain()
   }
 })
