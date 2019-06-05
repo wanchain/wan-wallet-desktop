@@ -7,6 +7,7 @@ class Session {
   @observable auth = false;
   @observable settings = {
     reinput_pwd: false,
+    staking_advance: false,
   };
 
   @action setChainId(id) {

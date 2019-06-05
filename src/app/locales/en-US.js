@@ -245,6 +245,8 @@ const en_US = {
     'staking.startFrom2': '',
     'TransHistory.delegatein': 'Delegate In',
     'TransHistory.delegateout': 'Delegate Out',
+    'Config.staking': 'Staking Option',
+    'Config.stakingAdvance': 'Advance Mode',
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',

@@ -245,6 +245,9 @@ const zh_CN = {
     'TransHistory.delegatein': '委托',
     'TransHistory.delegateout': '撤回',
 
+    'Config.staking': '挖矿选项',
+    'Config.stakingAdvance': '高级功能',
+
     'popup.ok': '确定',
     'popup.cancel': '取消',
     'title.imported': '已导入的地址',

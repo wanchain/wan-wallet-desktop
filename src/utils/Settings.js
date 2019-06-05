@@ -19,7 +19,8 @@ const defaultConfig = {
     network: 'main',
     lang: 'en',
     settings: {
-      reinput_pwd: false
+      reinput_pwd: false,
+      staking_advance: false,
     }
 }
 
