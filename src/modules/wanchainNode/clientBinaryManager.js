@@ -50,7 +50,6 @@ class Manager extends EventEmitter {
             logger.info(`got BINARY_URL clients Gwan version: ${latestConfig.clients[nodeType].version}`)
             const nodeVersion = latestConfig.clients[nodeType].version
         } catch (err) {
-            // logger.error(err.stack)
             console.log(err)
 
             logger.error(err.code)

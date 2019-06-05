@@ -1,9 +1,9 @@
 import path from 'path';
 import webpack from 'webpack';
 import { WDS_PORT, isDev } from '../common';
-const autoprefixer = require('autoprefixer');
-const publicPath = `http://localhost:${WDS_PORT}/dist`;
 import { spawn } from 'child_process';
+
+const publicPath = `http://localhost:${WDS_PORT}/dist`;
 
 function resolve (dir) {
   return path.join(__dirname, '../../', dir)
@@ -16,7 +16,6 @@ export default {
     entry: [
         'react-hot-loader/patch',
         './src/app/App.js',
-        // './src/cases/app.js',
     ],
     output: {
         path: path.resolve(__dirname, '..', '..', 'dist'),
@@ -47,16 +46,7 @@ export default {
                 {loader: 'postcss-loader', options: {
                   ident: 'postcss',
                   plugins: () => [
-                    require('postcss-flexbugs-fixes'),
-                    autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9',
-                      ],
-                      flexbox: 'no-2009',
-                    }),
+                    require('postcss-flexbugs-fixes')
                   ],
                 }},
                 {
@@ -82,16 +72,7 @@ export default {
                 {loader: 'postcss-loader', options: {
                   ident: 'postcss',
                   plugins: () => [
-                    require('postcss-flexbugs-fixes'),
-                    autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9',
-                      ],
-                      flexbox: 'no-2009',
-                    }),
+                    require('postcss-flexbugs-fixes')
                   ],
                 }},
               ]

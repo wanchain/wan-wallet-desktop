@@ -29,7 +29,6 @@ class Window extends EventEmitter {
             height: 720,
             acceptFirstMouse: true,
             darkTheme: true,
-            // titleBarStyle: 'hiddenInset',
             webPreferences: {
                 webaudio: true,
                 webgl: false,
@@ -45,7 +44,6 @@ class Window extends EventEmitter {
         this.window = new BrowserWindow(electronOptions)
 
         this.session = this.window.webContents.session
-        // this.session.setUserAgent(this.session.getUserAgent(), setting.language)
 
         this.webContents = this.window.webContents
 
@@ -151,10 +149,6 @@ class Window extends EventEmitter {
         if (this.isClosed) {
             return
         }
-
-        // console.log(arguments)
-
-        // this._logger.debug(`Sending data ${arguments.toString()}`)
 
         this.webContents.send(...Array.prototype.slice.call(arguments))
     }
@@ -300,8 +294,6 @@ class Windows {
     }
 
     getById(id) {
-        // logger.debug(`Get window by id, ${id}`)
-
         return _.find(this._windows, (w) => w.id === id )
     }
 
@@ -337,10 +329,6 @@ class Windows {
                 app.quit()
             }
         }
-    }
-
-    size() {
-        return Object.keys(this._windows).length
     }
 }
 

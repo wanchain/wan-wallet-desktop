@@ -1,7 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
 import nodeExternals from 'webpack-node-externals'
-const autoprefixer = require('autoprefixer');
 
 function resolve (dir) {
     return path.join(__dirname, '../../', dir)
@@ -50,16 +49,7 @@ const options = {
                 {loader: 'postcss-loader', options: {
                   ident: 'postcss',
                   plugins: () => [
-                    require('postcss-flexbugs-fixes'),
-                    autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9',
-                      ],
-                      flexbox: 'no-2009',
-                    }),
+                    require('postcss-flexbugs-fixes')
                   ],
                 }},
                 {
@@ -84,16 +74,7 @@ const options = {
                 {loader: 'postcss-loader', options: {
                   ident: 'postcss',
                   plugins: () => [
-                    require('postcss-flexbugs-fixes'),
-                    autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9',
-                      ],
-                      flexbox: 'no-2009',
-                    }),
+                    require('postcss-flexbugs-fixes')
                   ],
                 }},
               ]

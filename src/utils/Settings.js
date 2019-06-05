@@ -47,7 +47,7 @@ const argv = yargs
 /** Setting class */
 class Settings {
     /**
-     * Create an instance of Settings class, with a logger appended
+     * Create an instance of Settings with a logger appended
      */
     constructor() {
         this._logger = Logger.getLogger('settings')
@@ -181,49 +181,6 @@ class Settings {
 
         _lang = langCode
     }
-
-    loadUserData(filename) {
-        const fullPath = this.constructUserDataPath(filename)
-
-        this._logger.info(`loading content from file  ${fullPath}`)
-
-        if (!fs.existsSync(fullPath)) {
-            this._logger.info(`${fullPath} does not exist, trying create a file and write default config`)
-            console.log(defaultConfig[filename])
-            this.saveUserData(filename, defaultConfig[filename])
-            return null
-        }
-
-        try {
-            const content = fs.readFileSync(fullPath, { encoding: 'utf8' })
-            this._logger.info(`reading ${content} from ${fullPath}`)
-            return content
-        } catch (err) {
-            this._logger.error(`failed to read from ${fullPath}`)
-        }
-
-        return null
-    }
-
-    saveUserData(filename, content) {
-        if (!content) {
-            return
-        }
-
-        const fullPath = this.constructUserDataPath(filename)
-
-        try {
-            this._logger.info(`saving ${content} to file ${fullPath}`)
-            fs.writeFileSync(fullPath, content, { encoding: 'utf8' })
-        } catch (err) {
-            this._logger.error(`failed to write ${content} to file ${fullPath} with an error ${err.stack}`)
-        }
-    }
-
-    constructUserDataPath(filePath) {
-        return path.join(this.userDataPath, filePath)
-    }
-
 }
 
 export default new Settings()
