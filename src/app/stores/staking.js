@@ -142,15 +142,20 @@ class Staking {
 
   async getYearReward(epochID) {
     if (global.firstEpochId == undefined) {
-      global.firstEpochId = await pu.promisefy(wand.request, ['staking_firstEpochId'], this)//6496392;
+      let info = await pu.promisefy(wand.request, ['staking_posInfo'], this)//6496392;
+      global.firstEpochId = info.firstEpochId;
+      global.slotCount = info.slotCount;
+      global.slotTime = info.slotTime;
     }
+
+    console.log('firstEpochID', global.firstEpochId);
 
     if (epochID < global.firstEpochId) {
       return 0;
     }
 
     let epochIdOffset = epochID - global.firstEpochId
-    var epochTime = 1440 * 12 * 10; // slotCount * slotTime
+    var epochTime = global.slotCount * global.slotTime; // slotCount * slotTime
     var epochCountInYear = (365 * 24 * 3600) / epochTime
     var redutionTimes = Math.floor(epochIdOffset / epochCountInYear)
     var reduceRate = 0.88

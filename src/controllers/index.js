@@ -566,6 +566,11 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let blockNumber = await ccUtil.getBlockNumber('wan');
                 let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
 
+                if (!global.slotCount) {
+                    global.slotCount = await ccUtil.getSlotCount('wan');
+                    global.slotTime = await ccUtil.getSlotTime('wan');
+                }
+
                 //console.log('accounts.length', accounts.length)
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
@@ -723,14 +728,22 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
-        case 'firstEpochId':
+        case 'posInfo':
             try {
-                console.log('get firstEpochId');
+                console.log('get posInfo');
+                ret = {};
                 let info = await ccUtil.getPosInfo('wan')
                 console.log('info:', info);
                 if (info) {
-                    ret = info.firstEpochId;
+                    ret.firstEpochId = info.firstEpochId;
                 }
+
+                ret.slotCount = await ccUtil.getSlotCount('wan');
+                ret.slotTime = await ccUtil.getSlotTime('wan');
+                global.slotCount = ret.slotCount;
+                global.slotTime = ret.slotTime;
+                global.firstEpochId = ret.firstEpochId;
+
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -942,30 +955,22 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         }
     }
 
-    console.log('list:', list);
-
     let longestDays = 0;
-    //console.log('list.length', list.length);
     for (let i = 0; i < list.length; i++) {
         let validatorAddress = list[i].validatorAddress;
         let accountAddress = list[i].accountAddress;
         let distributeRewards = web3.utils.toBN(0);
         let epochs = [];
 
-        //console.log('incentive.length', incentive.length);
         for (let m = 0; m < incentive.length; m++) {
             const inc = incentive[m];
-            //console.log('accountAddress == inc.account.address', accountAddress, inc.account.address);
             if (accountAddress == inc.account.address) {
 
-                //console.log('inc.incentive.length', inc.incentive.length);
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
 
-                    //console.log('obj.address.toLowerCase() == validatorAddress.toLowerCase()', obj.address.toLowerCase(), validatorAddress.toLowerCase());
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
-                        //console.log('distributeRewards', distributeRewards)
                         if (!epochs.includes(obj.epochId)) {
                             epochs.push(obj.epochId);
                         }
@@ -974,27 +979,24 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
             }
         }
 
-        //console.log('epochs.length', epochs.length)
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
-            let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
-            list[i].myStake.bottom = days; // + " days ago";
+            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
+            list[i].myStake.bottom = days.toFixed(0); 
 
             if (days > longestDays) {
                 longestDays = days;
             }
         } else {
-            list[i].myStake.bottom = "0"; //"Less than 2 days ago";
+            list[i].myStake.bottom = "0"; 
         }
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (epochs.length) };
-        //console.log('list[i].distributeRewards', list[i].distributeRewards);
 
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
     }
 
-    console.log('list:', list);
     return list;
 }
