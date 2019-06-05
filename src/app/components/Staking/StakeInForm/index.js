@@ -10,7 +10,7 @@ import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
 const pu = require('promisefy-util')
-import { getNonce, getGasPrice, estimateGas, getChainId, getContractData } from 'utils/helper';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
 
 const main = 'https://www.wanscan.org/address/'
@@ -162,7 +162,11 @@ class StakeInForm extends Component {
       return
     }
 
-    this.setState({ balance: this.getBalance(value) })
+    //this.props.form.setFieldsValue({from: 'hello'});
+
+    this.setState({
+      balance: this.getBalance(value),
+    })
   }
 
 
@@ -182,6 +186,10 @@ class StakeInForm extends Component {
     let { form } = this.props;
     let capacity = form.getFieldValue('capacity');
     let balance = form.getFieldValue('balance');
+
+    if (!checkAmountUnit(18, value)) {
+      callback(intl.get('NormalTransForm.invalidAmount'));
+    }
 
     if (Number(value) < 100) {
       callback(intl.get('StakeInForm.stakeTooLow'));
@@ -583,6 +591,7 @@ class StakeInForm extends Component {
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             onChange={this.onChange}
+                            onSelect={this.onChange}
                             onFocus={this.onFocus}
                             onBlur={this.onBlur}
                             onSearch={this.onSearch}
