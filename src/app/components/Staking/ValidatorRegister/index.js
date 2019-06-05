@@ -29,7 +29,7 @@ const Option = Select.Option;
 }))
 
 @observer
-class StakeInForm extends Component {
+class ValidatorRegister extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -66,60 +66,6 @@ class StakeInForm extends Component {
     });
 
     this.setState({ addrList: addrList })
-  }
-
-  componentDidMount() {
-    if (this.props.record) {
-      let { form } = this.props;
-      form.setFieldsValue({ to: this.props.record.validator.address });
-
-      let validatorName = ((<div name={this.props.record.validator.name.toString()}><Avatar src={this.props.record.validator.img} name={this.props.record.validator.name} value={this.props.record.validator.name} size="small" />{" "}{this.props.record.validator.name}</div>))
-
-      form.setFieldsValue({ validatorName: validatorName });
-
-      form.setFieldsValue({ capacity: this.getCapacity(this.props.record.validator.address) })
-
-      let from = this.props.record.accountAddress;
-
-      const { ledgerAddrList, trezorAddrList } = this.props;
-
-      for (let i = 0; i < ledgerAddrList.length; i++) {
-        const hdAddr = ledgerAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
-          from = 'Ledger: ' + from;
-          break;
-        }
-      }
-
-      for (let i = 0; i < trezorAddrList.length; i++) {
-        const hdAddr = trezorAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
-          from = 'Trezor: ' + from;
-          break;
-        }
-      }
-
-      form.setFieldsValue({ from: from });
-      this.onChange(from);
-    }
-  }
-
-  componentDidUpdate() {
-
-  }
-
-  componentWillUnmount() {
-
-  }
-
-  onValidatorChange = value => {
-    console.log('select:', value);
-    let { form } = this.props;
-    let addr = this.getAddr(value);
-    form.setFieldsValue({ to: addr });
-    form.setFieldsValue({ validatorName: value });
-    form.setFieldsValue({ capacity: this.getCapacity(addr) });
-    this.validator = value;
   }
 
   getBalance = (value) => {
@@ -163,24 +109,18 @@ class StakeInForm extends Component {
       return
     }
 
-    //this.props.form.setFieldsValue({from: 'hello'});
-
     this.setState({
       balance: this.getBalance(value),
     })
   }
 
 
-  checkToWanAddr = (rule, value, callback) => {
-    checkWanValidatorAddr(value).then(ret => {
-      if (ret) {
-        callback();
-      } else {
-        callback(intl.get('NormalTransForm.invalidAddress'));
-      }
-    }).catch((err) => {
-      callback(err);
-    })
+  checkSecPK = (rule, value, callback) => {
+    callback();
+  }
+
+  checkG1PK = (rule, value, callback) => {
+    callback();
   }
 
   checkAmount = (rule, value, callback) => {
@@ -192,7 +132,7 @@ class StakeInForm extends Component {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
 
-    if (Number(value) < 100) {
+    if (Number(value) < 10000) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -236,34 +176,6 @@ class StakeInForm extends Component {
     }
   }
 
-  getAddr = (name) => {
-    if (!name) {
-      return "";
-    }
-
-    let { onlineValidatorList } = this.props;
-    for (let i = 0; i < onlineValidatorList.length; i++) {
-      const v = onlineValidatorList[i];
-      if (name.toLowerCase() == v.name.toLowerCase()) {
-        return v.address;
-      }
-    }
-  }
-
-  getCapacity = (addr) => {
-    if (!addr) {
-      return "";
-    }
-
-    let { onlineValidatorList } = this.props;
-    for (let i = 0; i < onlineValidatorList.length; i++) {
-      const v = onlineValidatorList[i];
-      if (addr.toLowerCase() == v.address.toLowerCase()) {
-        return v.capacity;
-      }
-    }
-  }
-
   showConfirmForm = () => {
     let { form, settings } = this.props;
     form.validateFields(async (err) => {
@@ -272,14 +184,6 @@ class StakeInForm extends Component {
       let from = form.getFieldValue('from');
       let to = form.getFieldValue('to');
       let pwd = form.getFieldValue('pwd');
-
-      let path = this.getPath(from);
-
-      let amount = form.getFieldValue('amount');
-      if (!amount || amount < 100) {
-        message.error(intl.get('NormalTransForm.amountIsIncorrect'));
-        return;
-      }
 
       console.log('balance:', this.state.balance, typeof this.state.balance);
       if (Number(this.state.balance) <= amount) {
@@ -301,27 +205,8 @@ class StakeInForm extends Component {
         }
       }
 
-      let validator = {}
-      let { onlineValidatorList } = this.props;
-
-      console.log('onlineValidatorList', onlineValidatorList)
-      console.log('to', from);
-
-      for (let i = 0; i < onlineValidatorList.length; i++) {
-        const v = onlineValidatorList[i];
-        if (to == v.address) {
-          validator = v;
-          break;
-        }
-      }
-
       this.setState({
         confirmVisible: true,
-        record: {
-          accountAddress: from,
-          validator: { name: validator.name, img: validator.icon, address: validator.address },
-          myStake: { title: amount },
-        }
       });
     })
   }
@@ -375,33 +260,24 @@ class StakeInForm extends Component {
       "walletID": walletID
     }
 
-    if (walletID == WALLET_ID_TREZOR) {
-      await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-      this.props.onSend(walletID);
-    } else {
-      wand.request('staking_delegateIn', tx, (err, ret) => {
-        if (err) {
-          message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
-        }
-      });
-    }
+    // if (walletID == WALLET_ID_TREZOR) {
+    //   await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+    //   this.props.onSend(walletID);
+    // } else {
+    //   wand.request('staking_delegateIn', tx, (err, ret) => {
+    //     if (err) {
+    //       message.warn(err.message);
+    //     } else {
+    //       console.log('delegateIn ret:', ret);
+    //     }
+    //   });
+    // }
 
     this.setState({ confirmVisible: false });
 
     this.props.onSend(walletID);
-
-    this.props.updateStakeInfo();
-    this.props.updateTransHistory();
   }
 
-  onClick = () => {
-    let { form } = this.props;
-    let to = form.getFieldValue('to');
-    let href = this.props.chainId === 1 ? `${main}${to}` : `${testnet}${to}`
-    wand.shell.openExternal(href);
-  }
 
   trezorDelegateIn = async (path, from, validator, value) => {
     console.log('trezorDelegateIn:', path, from, validator, value);
@@ -519,57 +395,24 @@ class StakeInForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title={intl.get('StakeInForm.title')}
+          title={intl.get('staking.validatorRegister')}
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
-          className="stakein-modal"
+          className="validator-register-modal"
         >
           <div className="stakein-bg">
             <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
-                <Col span={16}>
-
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('validatorName', {
-                        rules: [{ required: false }],
-                      })(
-                        <Select
-                          showSearch
-                          allowClear
-                          style={{ width: 355 }}
-                          placeholder={intl.get('StakeInForm.selectName')}
-                          optionFilterProp="children"
-                          onChange={this.onValidatorChange}
-                          onFocus={this.onFocus}
-                          onBlur={this.onBlur}
-                          onSearch={this.onSearch}
-                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        >
-                          {validatorListSelect.map((item, index) => <Option value={item.props.name} key={index}>{item}</Option>)}
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Form>
-                </Col>
-                <Col span={4}>
-                  <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
-                </Col>
-              </Row>
-            </div>
-            <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('ValidatorRegister.secPk')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                      {getFieldDecorator('secPk', { rules: [{ required: true, message: 'Public key is incorrect', validator: this.checkSecPK }] })
+                        (<Input placeholder={intl.get('ValidatorRegister.enterSecPk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -577,12 +420,38 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.capacity')}</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('ValidatorRegister.g1Pk')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
-                    <Form.Item >
-                      {getFieldDecorator('capacity')
-                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                    <Form.Item>
+                      {getFieldDecorator('g1Pk', { rules: [{ required: true, message: 'G1 public key is incorrect', validator: this.checkG1PK }] })
+                        (<Input placeholder={intl.get('ValidatorRegister.enterG1Pk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={4}><span className="stakein-name">{intl.get('ValidatorRegister.g1Pk')}</span></Col>
+                <Col span={20}>
+                  <Form layout="inline">
+                    <Form.Item>
+                      {getFieldDecorator('lockTime', { rules: [{ required: true, message: 'G1 public key is incorrect', validator: this.checkG1PK }] })
+                        (<Input placeholder={intl.get('ValidatorRegister.enterG1Pk')} prefix={<Icon type="calendar" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={4}><span className="stakein-name">{intl.get('ValidatorRegister.g1Pk')}</span></Col>
+                <Col span={20}>
+                  <Form layout="inline">
+                    <Form.Item>
+                      {getFieldDecorator('feeRate', { rules: [{ required: true, message: 'G1 public key is incorrect', validator: this.checkG1PK }] })
+                        (<Input placeholder={10.00} prefix={<Icon type="percentage" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -689,4 +558,4 @@ class StakeInForm extends Component {
   }
 }
 
-export default StakeInForm;
+export default ValidatorRegister;

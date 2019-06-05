@@ -244,9 +244,17 @@ const zh_CN = {
     'staking.startFrom2': ' 起至今',
     'TransHistory.delegatein': '委托',
     'TransHistory.delegateout': '撤回',
-
     'Config.staking': '挖矿选项',
     'Config.stakingAdvance': '高级功能',
+    'staking.validatorRegister': '验证节点注册',
+    'staking.validatorUpdate': '验证节点修改',
+    'ValidatorRegister.secPk': '公钥1',
+    'ValidatorRegister.enterSecPk': '输入公钥1',
+    'ValidatorRegister.g1Pk': '公钥2',
+    'ValidatorRegister.enterG1Pk': '输入公钥2',
+    'ValidatorRegister.lockTime': '锁定时间',
+    'ValidatorRegister.feeRate': '费率',
+
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

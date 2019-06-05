@@ -29,7 +29,7 @@ const Option = Select.Option;
 }))
 
 @observer
-class StakeInForm extends Component {
+class ValidatorUpdate extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -523,7 +523,7 @@ class StakeInForm extends Component {
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
           className="stakein-modal"
         >
@@ -689,4 +689,4 @@ class StakeInForm extends Component {
   }
 }
 
-export default StakeInForm;
+export default ValidatorUpdate;
