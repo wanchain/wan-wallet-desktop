@@ -1,23 +1,22 @@
-import React, { Component } from 'react';
-import { Button, Table, Row, Col, message } from 'antd';
-import { observer, inject } from 'mobx-react';
-import intl from 'react-intl-universal';
 import wanUtil from "wanchain-util";
+import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Button, Table, Row, Col, message } from 'antd';
 
 import './index.less';
-
-import { EditableFormRow, EditableCell } from './Rename';
-import SendNormalTrans from 'components/SendNormalTrans';
-import CopyAndQrcode from 'components/CopyAndQrcode';
-import TransHistory from 'components/TransHistory';
-import { checkAddrType, hasSameName } from 'utils/helper'
 import totalImg from 'static/image/wan.png';
+import TransHistory from 'components/TransHistory';
+import CopyAndQrcode from 'components/CopyAndQrcode';
+import SendNormalTrans from 'components/SendNormalTrans';
+import { checkAddrType, hasSameName } from 'utils/helper';
+import { EditableFormRow, EditableCell } from 'components/Rename';
 
-const WAN = "m/44'/5718350'/0'/0/";
-const CHAINTYPE = 'WAN';
-const SYMBOL = 'WAN';
 const WALLETID = 1;
 const KEYSTOREID = 5;
+const SYMBOL = 'WAN';
+const CHAINTYPE = 'WAN';
+const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
