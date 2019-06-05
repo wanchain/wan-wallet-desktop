@@ -55,7 +55,7 @@ class Validators extends Component {
         dataIndex: 'myStake',
         key: 'myStake',
         render: stake => (
-          <Cell title={stake.title} bottom={stake.bottom} />
+          <Cell title={stake.title} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
         ),
       }, {
         title: this.props.validatorColumns[2].title,
@@ -83,7 +83,7 @@ class Validators extends Component {
         dataIndex: 'distributeRewards',
         key: 'distributeRewards',
         render: stake => (
-          <Cell title={stake.title} bottom={stake.bottom} />
+          <Cell title={stake.title} bottom={intl.get('staking.fromEpochs1') + stake.bottom + intl.get('staking.fromEpochs2')} />
         ),
       }, {
         title: this.props.validatorColumns[6].title,

@@ -34,6 +34,13 @@ export function timeFormat(time) {
   return `${current.getFullYear()}-${month}-${date} ${hours}:${minutes}:${secondes}`;
 }
 
+export function dateFormat(time) {
+  const current = new Date(time * 1000);
+  let date = ('0' + current.getDate()).substr(-2);
+  let month = ('0' + (current.getMonth() + 1)).substr(-2);
+  return `${current.getFullYear()}-${month}-${date}`;
+}
+
 export function promiseTimeout(ms, p, desc) {
   // Create a promise that rejects in <ms> milliseconds
   let id;

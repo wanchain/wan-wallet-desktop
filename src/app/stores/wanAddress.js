@@ -235,6 +235,7 @@ class WanAddress {
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
           let status = self.transHistory[item].status;
+          let type = self.transHistory[item].annotate;
           if(!self.transHistory[item].validator) {
             return;
           }
@@ -245,9 +246,9 @@ class WanAddress {
             from: self.addrInfo[page][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
-            annotate: self.transHistory[item].annotate,
+            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
             validator: self.transHistory[item].validator,
           });
         }
@@ -257,6 +258,7 @@ class WanAddress {
       addrList = Object.keys(self.addrInfo[page]);
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
+          let type = self.transHistory[item].annotate;
           let status = self.transHistory[item].status;
           if(!self.transHistory[item].validator) {
             return;
@@ -268,9 +270,9 @@ class WanAddress {
             from: self.addrInfo[page][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
-            annotate: self.transHistory[item].annotate,
+            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
             validator: self.transHistory[item].validator,
           });
         }
@@ -280,6 +282,7 @@ class WanAddress {
       addrList = Object.keys(self.addrInfo[page]);
       Object.keys(self.transHistory).forEach(item => {
         if(addrList.includes(self.transHistory[item]["from"])) {
+          let type = self.transHistory[item].annotate;
           let status = self.transHistory[item].status;
           if(!self.transHistory[item].validator) {
             //return;
@@ -291,9 +294,9 @@ class WanAddress {
             from: self.addrInfo[page][self.transHistory[item]["from"]].name,
             to: self.transHistory[item].to,
             value: fromWei(self.transHistory[item].value),
-            status: ['Failed', 'Success'].includes(status) ? status : 'Pending',
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
-            annotate: self.transHistory[item].annotate,
+            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
             validator: self.transHistory[item].validator,
           });
         }

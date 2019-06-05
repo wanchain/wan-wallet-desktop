@@ -23,7 +23,7 @@ class Cards extends Component {
               title={intl.get('staking.myStake')}
               value={this.props.stakeInfo.myStake}
               tail="WAN"
-              bottom={this.props.stakeInfo.validatorCnt}
+              bottom={intl.get('staking.inValidators1') + this.props.stakeInfo.validatorCnt + intl.get('staking.inValidators2')}
             />
           </Col>
           <Col span={6}>
@@ -31,7 +31,7 @@ class Cards extends Component {
               title={intl.get('staking.totalReward')}
               value={this.props.stakeInfo.totalDistributedRewards}
               tail="WAN"
-              bottom={this.props.stakeInfo.startFrom}
+              bottom={intl.get('staking.startFrom1') + this.props.stakeInfo.startFrom + intl.get('staking.startFrom2')}
             />
 
           </Col>

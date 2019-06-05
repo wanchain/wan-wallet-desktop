@@ -7,19 +7,19 @@ import validatorImg from 'static/image/validator.png';
 import arrow from 'static/image/arrow.png';
 import pu from 'promisefy-util';
 import { getNameAndIcon } from 'utils/helper';
-import { timeFormat, fromWei } from 'utils/support';
+import { fromWei, dateFormat } from 'utils/support';
 
 
 class Staking {
   @observable stakeInfo = {
     myStake: "N/A",
-    validatorCnt: "In N/A validators",
+    validatorCnt: "N/A",
     pendingWithdrawal: "N/A",
     epochID: "Epoch N/A",
     currentRewardRate: "N/A %",
     currentRewardRateChange: "↑",
     totalDistributedRewards: "N/A",
-    startFrom: "From " + (new Date()).toDateString(),
+    startFrom: dateFormat((new Date())/1000),
   };
 
   @observable stakerList = [];

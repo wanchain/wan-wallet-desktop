@@ -7,7 +7,7 @@ import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
-import { toWei } from '../app/utils/support';
+import { dateFormat } from '../app/utils/support';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -837,7 +837,7 @@ function errorWrapper(err) {
 function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     let base = {
         myStake: "N/A",
-        validatorCnt: "In N/A validators",
+        validatorCnt: "N/A",
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
         epochIDRaw: 0,
@@ -845,7 +845,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
         stakePool: 0,
         currentRewardRateChange: "↑",
         totalDistributedRewards: "N/A",
-        startFrom: "From " + (new Date()).toDateString(),
+        startFrom: dateFormat((new Date()) / 1000),
     };
 
     let totalStake = web3.utils.toBN(0);
@@ -885,7 +885,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     base.pendingWithdrawal = Number(web3.utils.fromWei(withdrawStake.toString())).toFixed(0);
     base.totalDistributedRewards = Number(web3.utils.fromWei(totalReward.toString())).toFixed(2);
 
-    base.validatorCnt = "In " + Object.getOwnPropertyNames(validator).length + " validators";
+    base.validatorCnt = Object.getOwnPropertyNames(validator).length;
 
     base.epochIDRaw = epochID;
 
@@ -930,7 +930,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
                 balance: di.account.balance,
                 accountAddress: di.account.address,
                 accountPath: di.account.path,
-                myStake: { title: web3.utils.fromWei(sk.amount), bottom: "0 days ago" },
+                myStake: { title: web3.utils.fromWei(sk.amount), bottom: "0" },
                 validator: {
                     name: name ? name : sk.address,
                     img: img,
@@ -978,21 +978,21 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * 2; // 1 epoch last 2 days.
-            list[i].myStake.bottom = days + " days ago";
+            list[i].myStake.bottom = days; // + " days ago";
 
             if (days > longestDays) {
                 longestDays = days;
             }
         } else {
-            list[i].myStake.bottom = "Less than 2 days ago";
+            list[i].myStake.bottom = "0"; //"Less than 2 days ago";
         }
 
-        list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: ("from " + epochs.length + " epochs") };
+        list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (epochs.length) };
         //console.log('list[i].distributeRewards', list[i].distributeRewards);
 
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
-        base.startFrom = "From " + d.toDateString();
+        base.startFrom = dateFormat(d / 1000);
     }
 
     console.log('list:', list);
