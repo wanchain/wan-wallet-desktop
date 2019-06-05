@@ -19,6 +19,7 @@ const testnet = 'http://testnet.wanscan.org/address/';
 const Option = Select.Option;
 
 @inject(stores => ({
+  settings: stores.session.settings,
   getAddrList: stores.wanAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
@@ -264,12 +265,13 @@ class StakeInForm extends Component {
   }
 
   showConfirmForm = () => {
-    let form = this.props.form;
-    form.validateFields(err => {
+    let { form, settings } = this.props;
+    form.validateFields(async (err) => {
       if (err) return;
 
       let from = form.getFieldValue('from');
       let to = form.getFieldValue('to');
+      let pwd = form.getFieldValue('pwd');
 
       let path = this.getPath(from);
 
@@ -283,6 +285,20 @@ class StakeInForm extends Component {
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
         return;
+      }
+
+      if (settings.reinput_pwd) {
+        if (!pwd) {
+          message.warn(intl.get('Backup.invalidPassword'));
+          return;
+        }
+
+        try {
+          await pu.promisefy(wand.request, ['phrase_reveal', { pwd: pwd }], this);
+        } catch (error) {
+          message.warn(intl.get('Backup.invalidPassword'));
+          return;
+        }
       }
 
       let validator = {}
@@ -485,7 +501,7 @@ class StakeInForm extends Component {
 
 
   render() {
-    let { onlineValidatorList, form } = this.props;
+    let { onlineValidatorList, form, settings } = this.props;
 
     let validatorListSelect = []
     for (let i = 0; i < onlineValidatorList.length; i++) {
@@ -633,13 +649,29 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input min={100} placeholder="Enter stake amount" prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                        (<Input placeholder="100" prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
-                {/* <Col span={4}><span className="stakein-addr">WAN</span></Col> */}
               </Row>
             </div>
+            {settings.reinput_pwd
+              ? <div className="stakein-line">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={4}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+                  <Col span={20}>
+                    <Form layout="inline">
+                      <Form.Item>
+                        {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
+                          (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+              : ''
+            }
+
           </div>
         </Modal>
         {
