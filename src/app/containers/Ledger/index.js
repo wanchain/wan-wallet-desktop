@@ -97,13 +97,32 @@ class Ledger extends Component {
     });
   }
 
+  setAddresses = newAddr => {
+    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+      if(err) return;
+      let hdInfoFromDb = [];
+      Object.values(ret.accounts).forEach(item => {
+        if(item[WALLET_ID]) {
+          hdInfoFromDb.push(item[WALLET_ID]);
+        }
+      })
+      newAddr.forEach(item => {
+        let matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
+        if(matchValue) {
+          item.name = matchValue.name;
+        }
+      });
+      this.props.addLedgerAddr(newAddr)
+    })
+  }
+
   render() {
-    const { ledgerAddrList, addLedgerAddr } = this.props;
+    const { ledgerAddrList } = this.props;
     return (
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={addLedgerAddr} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
+            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
             : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>

@@ -98,15 +98,29 @@ class WanAddress {
       })
     }
 
-    @action updateName(arr) {
+    @action updateName(arr, chainType) {
       let walletID, type;
-      if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
-        walletID = 1;
-        type = 'normal';
-      } else {
-        walletID = KEYSTOREID;
-        type = 'import';
-      };
+      switch(chainType) {
+        case 'normal':
+          if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
+            walletID = 1;
+            type = 'normal';
+          } else {
+            walletID = KEYSTOREID;
+            type = 'import';
+          };
+          break;
+
+        case 'ledger':
+          walletID = 2;
+          type = 'ledger';
+          break;
+
+        case 'trezor':
+          walletID = 4;
+          type = 'trezor';
+          break;
+      }
       wand.request('account_update', { walletID, path: arr.path, meta: {name: arr.name, addr: arr.address.toLowerCase()} }, (err, val) => {
         if(!err && val) {
           self.addrInfo[type][arr['address']]['name'] = arr.name;

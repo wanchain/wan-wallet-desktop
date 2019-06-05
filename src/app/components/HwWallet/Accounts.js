@@ -3,6 +3,7 @@ import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
+import { hasSameName } from 'utils/helper';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -10,8 +11,10 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
 
 @inject(stores => ({
   rawTx: stores.sendTransParams.rawTx,
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
+  updateName: arr => stores.wanAddress.updateName(arr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
@@ -52,7 +55,14 @@ class Accounts extends Component {
   });
 
   handleSave = row => {
-    console.log(row, 'handleSave')
+    console.log(row)
+    let type = this.props.name[0]
+    return;
+    if(hasSameName(type, row, this.props.addrInfo)) {
+      message.warn(intl.get('WanAccount.notSameName'));
+    } else {
+      this.props.updateName(row, type);
+    }
   }
 
   handleSend = from => {

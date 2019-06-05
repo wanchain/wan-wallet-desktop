@@ -123,12 +123,17 @@ export const checkAddrType = function (addr, addrInfo) {
   }
 }
 
-export const hasSameName = function (record, addrInfo) {
+export const hasSameName = function (type, record, addrInfo) {
+  let tmp;
   let bool = false;
-  let tmp = Object.assign({}, addrInfo['normal'], addrInfo['import']);
+  if(type === 'normal') {
+    tmp = Object.assign({}, addrInfo[type], addrInfo['import']);
+  } else {
+    tmp = Object.assign({}, addrInfo[type]);
+  }
   Object.values(tmp).forEach(item => {
     if(item.name === record.name && item.address !== record.address) {
-      bool = true
+      bool = true;
     }
   })
   return bool;
