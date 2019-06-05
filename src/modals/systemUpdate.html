@@ -109,7 +109,6 @@
                     }
                 })
             }).then((res) => {
-                console.log(res);
                 let lan = res;
                 $.i18n({
                     locale: lan
@@ -120,7 +119,6 @@
                     switch (key) {
                         case 'versionInfo':
                             const infoObj = JSON.parse(val)
-                            console.log('infoObj: ', infoObj)
                             currentVersion = infoObj.currVersion
                             releaseVersion = infoObj.releaseVersion
                             releaseDate = infoObj.releaseDate
