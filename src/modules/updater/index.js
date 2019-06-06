@@ -35,7 +35,9 @@ class WalletUpdater {
                 this._logger.info(`user update choice ${choice}`)
 
                 if (choice === 1) {
-                      this.updater.downloadUpdate()
+                      this.updater
+                        .downloadUpdate()
+                        .catch(err => this._logger.error(err.message || err.stack))
                 } else if (choice === 0) {
                   try {
                     updateModal.close()
@@ -94,6 +96,7 @@ class WalletUpdater {
         })
 
         this.updater.checkForUpdates()
+          .catch(err => this._logger.error(err.message || err.stack))
     }
 }
 
