@@ -122,7 +122,7 @@ class WanAddress {
           break;
 
         case 'trezor':
-          walletID = 4;
+          walletID = 3;
           type = 'trezor';
           break;
       }
