@@ -80,10 +80,10 @@ export default class Layout extends Component {
       } else {
         return (
           <Row className="container">
-            <Col span={4} className="nav-left">
+            <Col /* span={4} */ className="nav-left">
               <SideBar />
             </Col>
-            <Col span={20} className="main">
+            <Col /* span={20} */ className="main">
               <MHeader />
               <Row className="content">
                 {this.props.children}
