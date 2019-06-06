@@ -17,14 +17,14 @@ class WalletUpdater {
         this.updater.allowDowngrade = false
     }
 
-    start() {
+    async start() {
         if (process.env.NODE_ENV === 'development') {
             return
         }
 
         let updateModal
 
-        ipc.on('upgrade', (event, actionUni, payload) => {
+        ipc.on('upgrade', async (event, actionUni, payload) => {
             let ret, err
             const [action, id] = actionUni.split('#')
         
@@ -32,20 +32,22 @@ class WalletUpdater {
               case 'start': 
         
                 let choice = parseInt(payload.choice)
-                this._logger.info(`user update choice ${choice}`)
 
-                if (choice === 1) {
-                      this.updater
-                        .downloadUpdate()
-                        .catch(err => this._logger.error(err.message || err.stack))
-                } else if (choice === 0) {
-                  try {
-                    updateModal.close()
-                  } catch (e) {
-                    this._logger.error(`error inside updater: ${err.stack}`)
+                let updateChoiceMsg = choice === 1 ? 'Upgrade' : "Do not upgrade"
+
+                this._logger.info(`user update choice ${updateChoiceMsg}`)
+
+                try {
+                  if (choice === 1) {
+                      await this.updater.downloadUpdate()
+                  } else if (choice === 0) {
+                      updateModal.close()
                   }
+                } catch (e) {
+                  let msg = e.message || e.stack
+                  this._logger.error(`updater error: ${msg}`)
                 }
-        
+
                 break
             }
         })
@@ -74,19 +76,16 @@ class WalletUpdater {
         })
 
         this.updater.on('error', (err) => {
+            console.log('updater error', err)
             this._logger.error(`updater error: ${err.stack}`)
         })
 
-        // this.updater.on('download-progress', (progressObj) => {
-        //   console.log('progressObj: ', progressObj)
-          
-        //   let logMsg = 'Download speed: ' + parseFloat(progressObj.bytesPerSecond / 125) + ' kbps'
-        //   logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
-        //   logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-        //   this._logger.info(`download progess: ${logMsg}`)
-        
-        //   updateModal.webContents.send('updateInfo', 'upgradeProgress', JSON.stringify(progressObj))
-        // })
+        this.updater.on('download-progress', (progressObj) => {
+          let logMsg = 'Download speed: ' + parseFloat(progressObj.bytesPerSecond / 125) + ' kbps'
+          logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
+          logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+          this._logger.info(`download progess: ${logMsg}`)
+        })
 
         this.updater.on('update-downloaded', (info) => {
             updateModal.webContents.send('updateInfo', 'upgradeProgress', 'done')
@@ -95,8 +94,12 @@ class WalletUpdater {
             }, 3 * 1000)
         })
 
-        this.updater.checkForUpdates()
-          .catch(err => this._logger.error(err.message || err.stack))
+        try {
+          await this.updater.checkForUpdates()
+        } catch (e) {
+          let msg = e.message || e.stack
+          this._logger.error(`updater error: ${msg}`)
+        }
     }
 }
 

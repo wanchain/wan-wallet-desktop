@@ -117,7 +117,7 @@ async function onReady() {
 
   // check updates only if under production mode
   if (process.env.NODE_ENV === 'production') {
-    updater.start()
+    await updater.start()
   }
 }
 
