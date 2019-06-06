@@ -141,12 +141,14 @@ class WanAddress {
           let typeFunc = id => id === '1' ? 'normal': 'import';
           Object.keys(info).forEach(path => {
             Object.keys(info[path]).forEach(id => {
-              let address = info[path][id]['addr'];
-              self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
-                name: info[path][id]['name'],
-                balance: 0,
-                path: path.substr(path.lastIndexOf('\/')+1),
-                address: wanUtil.toChecksumAddress(address)
+              if(['1', '5'].includes(id)) {
+                let address = info[path][id]['addr'];
+                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
+                  name: info[path][id]['name'],
+                  balance: 0,
+                  path: path.substr(path.lastIndexOf('\/')+1),
+                  address: wanUtil.toChecksumAddress(address)
+                }
               }
             })
           })
