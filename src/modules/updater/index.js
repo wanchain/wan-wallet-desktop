@@ -92,17 +92,13 @@ class WalletUpdater {
         })
     }
 
-    async start() {
+    start() {
         if (process.env.NODE_ENV === 'development') {
             return
         }
 
-        try {
-          await this.updater.checkForUpdates()
-        } catch (e) {
-          let msg = e.message || e.stack
-          this._logger.error(`updater error: ${msg}`)
-        }
+        this.updater.checkForUpdates()
+
     }
 }
 
