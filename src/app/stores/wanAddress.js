@@ -41,8 +41,11 @@ class WanAddress {
     @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+          if(addr.name === undefined) {
+            addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
           self.addrInfo[type][addr.address] = {
-            name: `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`,
+            name: addr.name,
             balance: addr.balance || '0',
             address: addr.address,
             path: addr.path
@@ -99,7 +102,7 @@ class WanAddress {
     }
 
     @action updateName(arr, chainType) {
-      let walletID, type;
+      let walletID, type, index;
       switch(chainType) {
         case 'normal':
           if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
@@ -114,6 +117,8 @@ class WanAddress {
         case 'ledger':
           walletID = 2;
           type = 'ledger';
+          index =  arr.path.lastIndexOf('\/') + 1
+          arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
           break;
 
         case 'trezor':

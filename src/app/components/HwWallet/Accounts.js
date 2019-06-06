@@ -14,7 +14,7 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  updateName: arr => stores.wanAddress.updateName(arr),
+  updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
@@ -56,8 +56,7 @@ class Accounts extends Component {
 
   handleSave = row => {
     console.log(row)
-    let type = this.props.name[0]
-    return;
+    let type = this.props.name[0];
     if(hasSameName(type, row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
