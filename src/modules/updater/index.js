@@ -15,6 +15,12 @@ class WalletUpdater {
         this.updater.autoInstallOnAppQuit = false
         this.updater.autoDownload = false
         this.updater.allowDowngrade = false
+    }
+
+    start() {
+        if (process.env.NODE_ENV === 'development') {
+            return
+        }
 
         let updateModal
 
@@ -31,15 +37,10 @@ class WalletUpdater {
 
               this._logger.info(`user update choice ${updateChoiceMsg}`)
 
-              try {
-                if (choice === 1) {
-                    await this.updater.downloadUpdate()
-                } else if (choice === 0) {
-                    updateModal.close()
-                }
-              } catch (e) {
-                let msg = e.message || e.stack
-                this._logger.error(`updater error: ${msg}`)
+              if (choice === 1) {
+                  this.updater.downloadUpdate()
+              } else if (choice === 0) {
+                  updateModal.close()
               }
 
               break
@@ -56,8 +57,6 @@ class WalletUpdater {
             height: 720, 
             alwaysOnTop: true
           })    
-
-          updateModal.hide()
       
           const updateInfo = {
             currVersion: app.getVersion(),
@@ -67,7 +66,6 @@ class WalletUpdater {
           }
       
           updateModal.on('ready', () => {
-            updateModal.show()
             updateModal.webContents.send('updateInfo', 'versionInfo', JSON.stringify(updateInfo))
           })
         })
@@ -90,12 +88,6 @@ class WalletUpdater {
               this.updater.quitAndInstall()
             }, 3 * 1000)
         })
-    }
-
-    start() {
-        if (process.env.NODE_ENV === 'development') {
-            return
-        }
 
         this.updater.checkForUpdates()
 
