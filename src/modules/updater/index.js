@@ -56,8 +56,12 @@ class WalletUpdater {
             width: 1024 + 208, 
             height: 720, 
             alwaysOnTop: true
-          })    
-      
+          })
+
+          updateModal.window.webContents.once('dom-ready', () => {
+            updateModal.window.webContents.openDevTools()
+          })
+                
           const updateInfo = {
             currVersion: app.getVersion(),
             releaseVersion: info.version,
