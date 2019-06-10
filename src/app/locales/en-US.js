@@ -209,7 +209,7 @@ const en_US = {
 
     'staking.dashboard': 'Dashboard',
     'staking.title': 'Staking',
-    'staking.newDelegate': 'New Delegate',
+    'staking.newDelegate': 'New Delegation',
     'staking.myStake': 'My Stake',
     'staking.pending': 'Pending Withdrawal',
     'staking.rewardRate': 'Current Reward Rate',
