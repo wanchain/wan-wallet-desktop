@@ -222,7 +222,7 @@ const en_US = {
     'staking.table.topup': 'Top-up',
     'staking.table.exit': 'Exit',
     'staking.table.type': 'TYPE',
-    'staking.delegateHistory': 'Delegate History',
+    'staking.delegateHistory': 'Delegation History',
 
     'StakeInForm.title': 'Delegate Now',
     'StakeInForm.validatorAccount': 'Validator\'s Account:',
@@ -257,7 +257,7 @@ const en_US = {
     'ValidatorRegister.secPk': 'Public Key 1',
     'ValidatorRegister.enterSecPk': 'Enter public key 1',
     'ValidatorRegister.g1Pk': 'Public Key 2',
-    'ValidatorRegister.enterG1Pk': 'Enter pulbic key 2',
+    'ValidatorRegister.enterG1Pk': 'Enter public key 2',
     'ValidatorRegister.lockTime': 'Lock Time',
     'ValidatorRegister.feeRate': 'Commission Rate',
     'ValidatorUpdate.note': 'Note: When selecting a local account, you must select the same account as when validator registration.',

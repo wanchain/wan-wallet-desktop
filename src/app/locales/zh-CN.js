@@ -222,7 +222,7 @@ const zh_CN = {
     'staking.table.topup': '充值',
     'staking.table.exit': '退出',
     'staking.table.type': '类型',
-    'staking.delegateHistory': '委托历史',
+    'staking.delegateHistory': '委托历史记录',
     
     'StakeInForm.title': '开始委托',
     'StakeInForm.validatorAccount': '验证人账户:',
