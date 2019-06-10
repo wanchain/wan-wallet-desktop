@@ -34,7 +34,7 @@ class StakingHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
+          <img src={history} /><span>{intl.get('staking.delegateHistory')}</span>
         </div>
         <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.stakingColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
       </div>

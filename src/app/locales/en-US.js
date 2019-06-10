@@ -222,6 +222,8 @@ const en_US = {
     'staking.table.topup': 'Top-up',
     'staking.table.exit': 'Exit',
     'staking.table.type': 'TYPE',
+    'staking.delegateHistory': 'Delegate History',
+
     'StakeInForm.title': 'Delegate Now',
     'StakeInForm.validatorAccount': 'Validator\'s Account:',
     'StakeInForm.myAccount': 'My Account:',
