@@ -193,7 +193,7 @@ const zh_CN = {
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
     'menuConfig.galaxyPos': '星系共识',
-    'menuConfig.delegator': '委托人',
+    'menuConfig.delegation': '委托',
     'menuConfig.validator': '验证节点',
 
     'menuConfig.staking': '权益挖矿',

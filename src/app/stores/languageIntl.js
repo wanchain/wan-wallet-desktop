@@ -139,7 +139,7 @@ class LanguageIntl {
         icon: 'pie-chart',
         children: [
           {
-            title: intl.get('menuConfig.delegator'),
+            title: intl.get('menuConfig.delegation'),
             key: '/staking',
             icon: 'block'
           },
