@@ -192,6 +192,9 @@ const en_US = {
     'menuConfig.hardwareWallet': 'Hardware Wallet',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.galaxyPos': 'Galaxy Pos',
+    'menuConfig.delegator': 'Delegator',
+    'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
 

@@ -133,10 +133,22 @@ class LanguageIntl {
         ]
       },
       {
-        title: intl.get('menuConfig.staking'),
+        title: intl.get('menuConfig.galaxyPos'),
         step: '1',
         key: '/staking',
-        icon: 'pie-chart'
+        icon: 'pie-chart',
+        children: [
+          {
+            title: intl.get('menuConfig.delegator'),
+            key: '/staking',
+            icon: 'block'
+          },
+          // {
+          //   title: intl.get('menuConfig.validator'),
+          //   key: '/wanAccount',
+          //   icon: 'block'
+          // },
+        ]
       },
       {
         title: intl.get('menuConfig.settings'),

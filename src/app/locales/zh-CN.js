@@ -192,6 +192,10 @@ const zh_CN = {
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.galaxyPos': '星系共识',
+    'menuConfig.delegator': '委托人',
+    'menuConfig.validator': '验证节点',
+
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
 
@@ -208,8 +212,8 @@ const zh_CN = {
     'staking.newDelegate': '新建委托',
     'staking.myStake': '我的委托',
     'staking.pending': '等待退款',
-    'staking.rewardRate': '当前收益率',
-    'staking.totalReward': '累积收到奖励',
+    'staking.rewardRate': '全网收益率',
+    'staking.totalReward': '累积奖励',
     'staking.table.myAccount': '我的账户',
     'staking.table.myStake': '我的委托',
     'staking.table.validator': '验证人',
