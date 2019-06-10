@@ -36,3 +36,6 @@ package-lock.json
 
 # Node environment
 .env
+
+# Backup file
+*.bak
