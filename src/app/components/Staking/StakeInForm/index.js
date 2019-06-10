@@ -679,7 +679,7 @@ class StakeInForm extends Component {
             (<Confirm visible={this.state.confirmVisible}
               onCancel={this.onConfirmCancel} onSend={this.onSend}
               record={this.state.record}
-              title={'Confirm'}
+              title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
               note={''}
             />) : ''
         }

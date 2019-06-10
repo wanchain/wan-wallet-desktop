@@ -254,6 +254,7 @@ const zh_CN = {
     'ValidatorRegister.enterG1Pk': '输入公钥2',
     'ValidatorRegister.lockTime': '锁定时间',
     'ValidatorRegister.feeRate': '费率',
+    'ValidatorUpdate.note': '注意：在选取本地账户时，必须选择与验证节点注册时相同的账户',
 
 
     'popup.ok': '确定',

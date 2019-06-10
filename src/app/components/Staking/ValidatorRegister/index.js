@@ -29,6 +29,7 @@ class ValidatorRegister extends Component {
       balance: "0",
       addrList: [],
       confirmVisible: false,
+      locktime: 14,
       record: {
         validator: {},
         accountAddress: '',
@@ -368,6 +369,10 @@ class ValidatorRegister extends Component {
     });
   }
 
+  onSliderChange = (value)=>{
+    this.setState({locktime: value})
+  }
+
 
   render() {
     let { form, settings } = this.props;
@@ -426,11 +431,11 @@ class ValidatorRegister extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { rules: [{ required: true, validator: this.checkG1PK }] })
-                        (<Slider className='locktime-slider' min={14} max={180} step={2}/>)}
+                        (<Slider className='locktime-slider' min={14} max={180} step={2} onChange={this.onSliderChange}/>)}
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4} align="right"><span className="locktime-span">14 days</span></Col>
+                <Col span={4} align="left"><span className="locktime-span">{this.state.locktime} days</span></Col>
               </Row>
             </div>
             <div className="validator-line">
@@ -537,7 +542,7 @@ class ValidatorRegister extends Component {
             (<Confirm visible={this.state.confirmVisible}
               onCancel={this.onConfirmCancel} onSend={this.onSend}
               record={this.state.record}
-              title={'Confirm'}
+              title={intl.get( 'NormalTransForm.ConfirmForm.transactionConfirm')}
               note={''}
             />) : ''
         }

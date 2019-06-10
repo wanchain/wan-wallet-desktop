@@ -255,6 +255,7 @@ const en_US = {
     'ValidatorRegister.enterG1Pk': 'Enter pulbic key 2',
     'ValidatorRegister.lockTime': 'Lock Time',
     'ValidatorRegister.feeRate': 'Commission Rate',
+    'ValidatorUpdate.note': 'Note: When selecting a local account, you must select the same account as when validator registration.',
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',

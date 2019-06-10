@@ -12,6 +12,7 @@ import TrezorConnect from 'trezor-connect';
 const pu = require('promisefy-util')
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
+import Notice from './Notice';
 
 
 const Option = Select.Option;
@@ -34,6 +35,8 @@ class ValidatorUpdate extends Component {
       balance: "0",
       addrList: [],
       confirmVisible: false,
+      locktime: 14,
+      noticeVisbile: true,
       record: {
         validator: {},
         accountAddress: '',
@@ -208,6 +211,10 @@ class ValidatorUpdate extends Component {
     this.setState({ confirmVisible: false });
   }
 
+  onNoticeCancel = () => {
+    this.setState({ noticeVisible: false });
+  }
+
   onSend = async () => {
 
     let { form } = this.props;
@@ -368,6 +375,16 @@ class ValidatorUpdate extends Component {
     });
   }
 
+  onSliderChange = (value)=>{
+    this.setState({locktime: value})
+  }
+
+  checkLockTime = (rule, value, callback) => {
+    if (value != 0 && value < 14) {
+      callback('Invalid Value. Must > 14 or == 0')
+    }
+    callback();
+  }
 
   render() {
     let { onlineValidatorList, form, settings } = this.props;
@@ -382,8 +399,8 @@ class ValidatorUpdate extends Component {
 
     const { getFieldDecorator } = form;
 
-    let left = 4;
-    let right = 20;
+    let left = 8;
+    let right = 16;
 
     return (
       <div className="stakein">
@@ -407,7 +424,7 @@ class ValidatorUpdate extends Component {
                 <Col span={right}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('to', { rules: [{ required: true, validator: this.checkSecPK }] })
+                      {getFieldDecorator('to', { rules: [{ required: true, validator: this.checkValidatorAddr }] })
                         (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
@@ -420,12 +437,12 @@ class ValidatorUpdate extends Component {
                 <Col span={right-4}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('lockTime', { rules: [{ required: true }] })
-                        (<Slider className='locktime-slider' min={14} max={180} step={2}/>)}
+                      {getFieldDecorator('lockTime', { rules: [{ required: true, validator: this.checkLockTime }] })
+                        (<Slider className='locktime-slider' min={0} max={180} step={2} onChange={this.onSliderChange}/>)}
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4} align="left"><span className="locktime-span">14 days</span></Col>
+                <Col span={4} align="left"><span className="locktime-span">{this.state.locktime} days</span></Col>
                 
               </Row>
             </div>
@@ -482,20 +499,6 @@ class ValidatorUpdate extends Component {
                 </Col>
               </Row>
             </div>
-
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={right}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input placeholder="100" prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
             {settings.reinput_pwd
               ? <div className="validator-line">
                 <Row type="flex" justify="space-around" align="middle">
@@ -514,13 +517,20 @@ class ValidatorUpdate extends Component {
             }
 
           </div>
+          <p className="withdraw-note">{intl.get('ValidatorUpdate.note')}</p>
         </Modal>
+
+        {/* {
+          this.state.noticeVisbile?
+          (<Notice onCancel={this.onNoticeCancel} note={''} />) : ''
+        } */}
+
         {
           this.state.confirmVisible ?
             (<Confirm visible={this.state.confirmVisible}
               onCancel={this.onConfirmCancel} onSend={this.onSend}
               record={this.state.record}
-              title={'Confirm'}
+              title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
               note={''}
             />) : ''
         }
