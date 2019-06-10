@@ -35,7 +35,7 @@ class ValidatorUpdate extends Component {
       balance: "0",
       addrList: [],
       confirmVisible: false,
-      locktime: 14,
+      locktime: 0,
       noticeVisbile: true,
       record: {
         validator: {},
