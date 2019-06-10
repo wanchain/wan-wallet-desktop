@@ -41,14 +41,14 @@ class MHeader extends Component {
     return (
       <div className="header">
         <Row className="header-top">
-            <Col span={22} className="title">
+            <Col span={12} className="title">
               <em className = "comLine"></em><span>{ pageTitle }</span>
               { (pageTitle === 'Ledger' && ledgerAddrList.length !== 0) || (pageTitle === 'Trezor' && trezorAddrList.length !== 0)
                   ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
                   : ''
               }
             </Col>
-            <Col span={2} className="user">
+            <Col span={12} className="user">
               <div className="log">
                 <Icon className="logOutIco" type="poweroff" />
                 <span onClick={this.logOut} className="logOut">{intl.get('MHeader.logout')}</span>

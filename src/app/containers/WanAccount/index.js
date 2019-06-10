@@ -24,10 +24,10 @@ const WAN = "m/44'/5718350'/0'/0/";
   getAddrList: stores.wanAddress.getAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   transParams: stores.sendTransParams.transParams,
-  updateName: arr => stores.wanAddress.updateName(arr),
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
 }))
 
 @observer
@@ -143,10 +143,10 @@ class WanAccount extends Component {
   }
 
   handleSave = row => {
-    if(hasSameName(row, this.props.addrInfo)) {
+    if(hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row);
+      this.props.updateName(row, 'normal');
     }
   }
 

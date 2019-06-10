@@ -1,17 +1,21 @@
 @nav-left-bg: #151625!important;
 @content-right-bg: #1A1B2C!important;
+@nav-width: 230px;
 .ant-menu-dark, .ant-menu-dark .ant-menu-sub{
   color: rgba(255,255,255,0.6);
   background-color: @nav-left-bg!important;
 }
 .nav-left {
   color: #fff;
+  width: @nav-width;
   height: calc(100vh);
+  float:left;
   background-color: @nav-left-bg!important;
 }
 .container {
   .main {
     background-color: @content-right-bg;
+    margin-left: @nav-width;
     height: calc(100vh);
     overflow: auto;
   }

@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
-import './index.less';
-import TrezorConnect from 'trezor-connect';
-import ConnectHwWallet from 'components/HwWallet/Connect';
-import Accounts from 'components/HwWallet/Accounts';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import TrezorConnect from 'trezor-connect';
+import { observer, inject } from 'mobx-react';
 import { Icon, message } from 'antd';
 
 const wanTx = require('wanchainjs-tx');
 
-const WAN_PATH = "m/44'/5718350'/0'/0";
-const CHAIN_TYPE = 'WAN';
+import './index.less';
+import Accounts from 'components/HwWallet/Accounts';
+import ConnectHwWallet from 'components/HwWallet/Connect';
+
+const WALLET_ID = 0x03;
 const TREZOR = 'trezor';
+const CHAIN_TYPE = 'WAN';
+const WAN_PATH = "m/44'/5718350'/0'/0";
 
 // Initialize TrezorConnect 
 TrezorConnect.init({
@@ -39,8 +41,8 @@ TrezorConnect.init({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
-  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
 }))
 
@@ -117,14 +119,32 @@ class Trezor extends Component {
     });
   }
 
+  setAddresses = newAddr => {
+    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+      if(err) return;
+      let hdInfoFromDb = [];
+      Object.values(ret.accounts).forEach(item => {
+        if(item[WALLET_ID]) {
+          hdInfoFromDb.push(item[WALLET_ID]);
+        }
+      })
+      newAddr.forEach(item => {
+        let matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
+        if(matchValue) {
+          item.name = matchValue.name;
+        }
+      });
+      this.props.addTrezorAddr(newAddr)
+    })
+  }
+
   render() {
-    const { trezorAddrList, addTrezorAddr } = this.props;
+    const { trezorAddrList } = this.props;
     return (
       <div>
         {
           trezorAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={addTrezorAddr}
-              Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
+            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
             : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>

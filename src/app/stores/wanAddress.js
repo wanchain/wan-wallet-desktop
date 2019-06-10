@@ -41,8 +41,11 @@ class WanAddress {
     @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+          if(addr.name === undefined) {
+            addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
           self.addrInfo[type][addr.address] = {
-            name: `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`,
+            name: addr.name,
             balance: addr.balance || '0',
             address: addr.address,
             path: addr.path
@@ -98,15 +101,31 @@ class WanAddress {
       })
     }
 
-    @action updateName(arr) {
-      let walletID, type;
-      if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
-        walletID = 1;
-        type = 'normal';
-      } else {
-        walletID = KEYSTOREID;
-        type = 'import';
-      };
+    @action updateName(arr, chainType) {
+      let walletID, type, index;
+      switch(chainType) {
+        case 'normal':
+          if(Object.keys(self.addrInfo['normal']).includes(arr.address)) {
+            walletID = 1;
+            type = 'normal';
+          } else {
+            walletID = KEYSTOREID;
+            type = 'import';
+          };
+          break;
+
+        case 'ledger':
+          walletID = 2;
+          type = 'ledger';
+          index =  arr.path.lastIndexOf('\/') + 1
+          arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
+          break;
+
+        case 'trezor':
+          walletID = 3;
+          type = 'trezor';
+          break;
+      }
       wand.request('account_update', { walletID, path: arr.path, meta: {name: arr.name, addr: arr.address.toLowerCase()} }, (err, val) => {
         if(!err && val) {
           self.addrInfo[type][arr['address']]['name'] = arr.name;
@@ -122,12 +141,14 @@ class WanAddress {
           let typeFunc = id => id === '1' ? 'normal': 'import';
           Object.keys(info).forEach(path => {
             Object.keys(info[path]).forEach(id => {
-              let address = info[path][id]['addr'];
-              self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
-                name: info[path][id]['name'],
-                balance: 0,
-                path: path.substr(path.lastIndexOf('\/')+1),
-                address: wanUtil.toChecksumAddress(address)
+              if(['1', '5'].includes(id)) {
+                let address = info[path][id]['addr'];
+                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
+                  name: info[path][id]['name'],
+                  balance: 0,
+                  path: path.substr(path.lastIndexOf('\/')+1),
+                  address: wanUtil.toChecksumAddress(address)
+                }
               }
             })
           })
