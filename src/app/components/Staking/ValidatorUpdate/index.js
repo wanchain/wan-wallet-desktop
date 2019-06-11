@@ -121,7 +121,7 @@ class ValidatorUpdate extends Component {
 
   checkAmount = (rule, value, callback) => {
     let { form } = this.props;
-    let capacity = form.getFieldValue('capacity');
+    let quota = form.getFieldValue('quota');
     let balance = form.getFieldValue('balance');
 
     if (!checkAmountUnit(18, value)) {
@@ -138,7 +138,7 @@ class ValidatorUpdate extends Component {
       return;
     }
 
-    if (Number(value) > Number(capacity)) {
+    if (Number(value) > Number(quota)) {
       callback(intl.get('StakeInForm.stakeExceed'));
       return;
     }

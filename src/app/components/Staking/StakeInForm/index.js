@@ -77,7 +77,7 @@ class StakeInForm extends Component {
 
       form.setFieldsValue({ validatorName: validatorName });
 
-      form.setFieldsValue({ capacity: this.getCapacity(this.props.record.validator.address) })
+      form.setFieldsValue({ quota: this.getCapacity(this.props.record.validator.address) })
 
       let from = this.props.record.accountAddress;
 
@@ -118,7 +118,7 @@ class StakeInForm extends Component {
     let addr = this.getAddr(value);
     form.setFieldsValue({ to: addr });
     form.setFieldsValue({ validatorName: value });
-    form.setFieldsValue({ capacity: this.getCapacity(addr) });
+    form.setFieldsValue({ quota: this.getCapacity(addr) });
     this.validator = value;
   }
 
@@ -185,7 +185,7 @@ class StakeInForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     let { form } = this.props;
-    let capacity = form.getFieldValue('capacity');
+    let quota = form.getFieldValue('quota');
     let balance = form.getFieldValue('balance');
 
     if (!checkAmountUnit(18, value)) {
@@ -202,7 +202,7 @@ class StakeInForm extends Component {
       return;
     }
 
-    if (Number(value) > Number(capacity)) {
+    if (Number(value) > Number(quota)) {
       callback(intl.get('StakeInForm.stakeExceed'));
       return;
     }
@@ -259,7 +259,7 @@ class StakeInForm extends Component {
     for (let i = 0; i < onlineValidatorList.length; i++) {
       const v = onlineValidatorList[i];
       if (addr.toLowerCase() == v.address.toLowerCase()) {
-        return v.capacity;
+        return v.quota;
       }
     }
   }
@@ -575,11 +575,11 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.capacity')}</span></Col>
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item >
-                      {getFieldDecorator('capacity')
+                      {getFieldDecorator('quota')
                         (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
