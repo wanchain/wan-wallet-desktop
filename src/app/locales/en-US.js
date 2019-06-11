@@ -208,7 +208,7 @@ const en_US = {
     'utils.helper.getSdkStatusFailed': 'Get SDK status failed',
 
     'staking.dashboard': 'Dashboard',
-    'staking.title': 'Staking',
+    'staking.title': 'Delegation',
     'staking.newDelegate': 'New Delegation',
     'staking.myStake': 'My Stake',
     'staking.pending': 'Pending Withdrawal',
