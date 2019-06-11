@@ -309,8 +309,12 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'isValidatorAddress':
             try {
+                console.log('isValidatorAddress', payload.address);
                 ret = await ccUtil.isWanAddress(payload.address);
+                console.log('isWanAddress', ret);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
+                console.log('getValidatorInfo', info);
+
                 if (!info || info.feeRate == 10000) {
                     ret = false;
                 }

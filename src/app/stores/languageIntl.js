@@ -143,11 +143,6 @@ class LanguageIntl {
             key: '/staking',
             icon: 'block'
           },
-          // {
-          //   title: intl.get('menuConfig.validator'),
-          //   key: '/wanAccount',
-          //   icon: 'block'
-          // },
         ]
       },
       {

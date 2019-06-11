@@ -11,6 +11,7 @@ const SubMenu = Menu.SubMenu;
 
 @inject(stores => ({
   sidebarColumns: stores.languageIntl.sidebarColumns,
+  settings: stores.session.settings,
 }))
 
 @observer
@@ -36,7 +37,31 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns } = this.props;
+    const { sidebarColumns, settings } = this.props;
+
+    if(settings.staking_advance) {
+      if(sidebarColumns.length >= 4) {
+        for (let i = 0; i < sidebarColumns.length; i++) {
+          if (sidebarColumns[i].key == "/staking" ) {
+            sidebarColumns[i].children.push({
+              title: intl.get('menuConfig.validator'),
+              key: '/validator',
+              icon: 'block'
+            })
+          }
+        }
+      }
+    } else {
+      if(sidebarColumns.length >= 4) {
+        for (let i = 0; i < sidebarColumns.length; i++) {
+          if (sidebarColumns[i].key == "/staking" ) {
+            if(sidebarColumns[i].children.length > 1) {
+              sidebarColumns[i].children.pop();
+            }
+          }
+        }
+      }
+    }
 
     return (
       <div className="sidebar">
