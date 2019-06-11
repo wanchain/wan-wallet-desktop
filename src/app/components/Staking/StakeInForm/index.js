@@ -77,7 +77,9 @@ class StakeInForm extends Component {
 
       form.setFieldsValue({ validatorName: validatorName });
 
-      form.setFieldsValue({ quota: this.getCapacity(this.props.record.validator.address) })
+      form.setFieldsValue({ quota: this.getQuota(this.props.record.validator.address) })
+      form.setFieldsValue({ commission: this.getFeeRate(this.props.record.validator.address) })
+
 
       let from = this.props.record.accountAddress;
 
@@ -118,7 +120,9 @@ class StakeInForm extends Component {
     let addr = this.getAddr(value);
     form.setFieldsValue({ to: addr });
     form.setFieldsValue({ validatorName: value });
-    form.setFieldsValue({ quota: this.getCapacity(addr) });
+    form.setFieldsValue({ quota: this.getQuota(addr) });
+    form.setFieldsValue({ commission: this.getFeeRate(addr) })
+
     this.validator = value;
   }
 
@@ -250,7 +254,7 @@ class StakeInForm extends Component {
     }
   }
 
-  getCapacity = (addr) => {
+  getQuota = (addr) => {
     if (!addr) {
       return "";
     }
@@ -260,6 +264,20 @@ class StakeInForm extends Component {
       const v = onlineValidatorList[i];
       if (addr.toLowerCase() == v.address.toLowerCase()) {
         return v.quota;
+      }
+    }
+  }
+
+  getFeeRate = (addr) => {
+    if (!addr) {
+      return "";
+    }
+
+    let { onlineValidatorList } = this.props;
+    for (let i = 0; i < onlineValidatorList.length; i++) {
+      const v = onlineValidatorList[i];
+      if (addr.toLowerCase() == v.address.toLowerCase()) {
+        return v.feeRate;
       }
     }
   }
@@ -580,6 +598,19 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('quota')
+                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+            <div className="stakein-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={20}>
+                  <Form layout="inline">
+                    <Form.Item >
+                      {getFieldDecorator('commission')
                         (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>

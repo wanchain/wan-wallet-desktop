@@ -135,6 +135,7 @@ class Staking {
         icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : validatorImg,
         key: this.validatorList[i],
         quota: quota,
+        feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),
       })
     }
     return validators;

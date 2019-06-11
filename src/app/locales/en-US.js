@@ -232,6 +232,8 @@ const en_US = {
     'StakeInForm.name': 'Name',
     'StakeInForm.address': 'Address',
     'StakeInForm.quota': 'Quota',
+    'StakeInForm.commission': 'Fee Rate %',
+
     'StakeInForm.stake': 'Amount',
     'StakeInForm.stakeTooLow': 'Stake amount is too low',
     'StakeInForm.stakeExceed': 'Stake amount is out of validator\'s quota',
