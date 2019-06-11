@@ -48,6 +48,8 @@ async function createMain () {
   mainWindow = Windows.create('main', {
     primary: true,
     electronOptions: {
+      minWidth:1440,
+      minHeight: 768,
       width: mainWindowState.width,
       height: mainWindowState.height,
       x: mainWindowState.x,
