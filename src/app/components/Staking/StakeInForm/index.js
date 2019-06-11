@@ -534,7 +534,7 @@ class StakeInForm extends Component {
                 <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={16}>
 
-                  <Form layout="inline">
+                  <Form layout="inline" id="posNameSelect">
                     <Form.Item>
                       {getFieldDecorator('validatorName', {
                         rules: [{ required: false }],
@@ -546,9 +546,7 @@ class StakeInForm extends Component {
                           placeholder={intl.get('StakeInForm.selectName')}
                           optionFilterProp="children"
                           onChange={this.onValidatorChange}
-                          onFocus={this.onFocus}
-                          onBlur={this.onBlur}
-                          onSearch={this.onSearch}
+                          getPopupContainer={() => document.getElementById('posNameSelect')}
                           filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
                           {validatorListSelect.map((item, index) => <Option value={item.props.name} key={index}>{item}</Option>)}
@@ -596,11 +594,12 @@ class StakeInForm extends Component {
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={20}>
-                  <Form layout="inline">
+                  <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
                       {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
                         (
                           <Select
+                            autoFocus
                             showSearch
                             allowClear
                             style={{ width: 470 }}
@@ -608,18 +607,17 @@ class StakeInForm extends Component {
                             optionFilterProp="children"
                             onChange={this.onChange}
                             onSelect={this.onChange}
-                            onFocus={this.onFocus}
-                            onBlur={this.onBlur}
-                            onSearch={this.onSearch}
+                            getPopupContainer={() => document.getElementById('posAddrSelect')}
                             filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             className="colorInput"
                           >
-                            {this.state.addrList.map((item, index) => <Option value={item} key={index}>
-                              <Row>
-                                <Col span={16}>{item}</Col>
-                                <Col span={8} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(1)}</Col>
-                              </Row>
-                            </Option>)}
+                            {this.state.addrList.map((item, index) => 
+                              <Option value={item} key={index}>
+                                <Row>
+                                  <Col span={16}>{item}</Col>
+                                  <Col span={8} align="left" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
+                                </Row>
+                              </Option>)}
                           </Select>
                         )}
                     </Form.Item>
