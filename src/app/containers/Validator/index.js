@@ -27,10 +27,10 @@ const ValidatorUpdateForm = Form.create({ name: 'ValidatorUpdate' })(ValidatorUp
 }))
 
 @observer
-class Staking extends Component {
+class Validator extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('staking.title');
+    this.props.changeTitle('validator.title');
     this.state = {
       delegateIn: false,
       validatorRegister: false,
@@ -89,7 +89,7 @@ class Staking extends Component {
             <span className="dashboard">{intl.get('staking.dashboard')}</span> */}
             </Col>
           <Col span={12} className="col-right">
-            {/* {
+            {
               this.props.settings.staking_advance ?
                 <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleValidatorRegister}>{intl.get('staking.validatorRegister')}</Button>
                 : ''
@@ -98,9 +98,9 @@ class Staking extends Component {
               this.props.settings.staking_advance ?
                 <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleValidatorUpdate}>{intl.get('staking.validatorUpdate')}</Button>
                 : ''
-            } */}
+            }
 
-            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleDelegateNew}>{intl.get('staking.newDelegate')}</Button>
+            {/* <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleDelegateNew}>{intl.get('staking.newDelegate')}</Button> */}
             {this.state.delegateIn
               ? <DelegateInForm onCancel={this.handleCancel} onSend={this.handleSend} />
               : ''
@@ -135,4 +135,4 @@ class Staking extends Component {
   }
 }
 
-export default Staking;
+export default Validator;

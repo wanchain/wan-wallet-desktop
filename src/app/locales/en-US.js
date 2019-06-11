@@ -224,6 +224,8 @@ const en_US = {
     'staking.table.type': 'TYPE',
     'staking.delegateHistory': 'Delegation History',
 
+    'validator.title': 'Validator',
+
     'StakeInForm.title': 'Delegate Now',
     'StakeInForm.validatorAccount': 'Validator\'s Account:',
     'StakeInForm.myAccount': 'My Account:',
