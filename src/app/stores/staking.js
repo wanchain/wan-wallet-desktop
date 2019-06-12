@@ -104,6 +104,7 @@ class Staking {
 
   @computed get onlineValidatorList() {
     let validators = []
+    let minValidatorAmount = 50000;
     for (let i = 0; i < this.validatorList.length; i++) {
       if (this.validatorList[i].feeRate == 10000) {
         continue;
@@ -116,6 +117,11 @@ class Staking {
           const partner = this.validatorList[i].partners[m];
           quota += Number(fromWei(partner.amount));
         }
+      }
+
+      // Do not display the amount less than 50000.
+      if (quota < minValidatorAmount) {
+        continue;
       }
 
       quota *= 5;
