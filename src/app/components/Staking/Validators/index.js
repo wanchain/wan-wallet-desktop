@@ -10,6 +10,7 @@ import intl from 'react-intl-universal';
 import Validator from "./Validator";
 import DelegateIn from "./DelegateIn";
 import DelegateOut from "./DelegateOut";
+
 @inject(stores => ({
   language: stores.languageIntl.language,
   validatorColumns: stores.languageIntl.validatorColumns,
@@ -19,22 +20,14 @@ import DelegateOut from "./DelegateOut";
 
 @observer
 class Validators extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      withdrawVisible: false,
-      stakeInVisible: false,
-      language: this.props.language,
-      stakingList: this.props.stakingList,
-    }
+  state = {
+    withdrawVisible: false,
+    stakeInVisible: false,
   }
 
   modifyWithdraw = () => {
     this.setState({ withdrawVisible: true });
   }
-
-
 
   handleCancel = () => {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
@@ -69,7 +62,7 @@ class Validators extends Component {
         dataIndex: 'validator',
         key: 'validator',
         render: validator => (
-          <Validator img={validator.img} name={validator.name} />
+          <Validator img={validator.img} name={validator.name} title={validator.address}/>
         ),
       }, {
         title: this.props.validatorColumns[4].title,
