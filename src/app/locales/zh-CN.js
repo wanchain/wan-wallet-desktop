@@ -231,6 +231,7 @@ const zh_CN = {
     'StakeInForm.myAccount': '我的账户:',
     'StakeInForm.name': '名称',
     'StakeInForm.address': '地址',
+    'StakeInForm.password': '密码',
     'StakeInForm.quota': '可用额度',
     'StakeInForm.commission': '佣金 (%)',
 

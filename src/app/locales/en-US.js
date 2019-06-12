@@ -231,6 +231,7 @@ const en_US = {
     'StakeInForm.myAccount': 'My Account:',
     'StakeInForm.name': 'Name',
     'StakeInForm.address': 'Address',
+    'StakeInForm.password': 'Password',
     'StakeInForm.quota': 'Quota',
     'StakeInForm.commission': 'Fee (%)',
 
