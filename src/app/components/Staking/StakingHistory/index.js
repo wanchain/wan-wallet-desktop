@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { Table, Select } from 'antd';
+import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import history from 'static/image/history.png';
 import './index.less';
+import history from 'static/image/history.png';
 
 const main = 'https://www.wanscan.org/tx/'
 const testnet = 'http://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
-  language: stores.languageIntl.language,
-  stakingColumns: stores.languageIntl.stakingColumns,
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   historyList: stores.wanAddress.stakingHistoryList,
-  setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
+  stakingColumns: stores.languageIntl.stakingColumns,
+  setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr),
 }))
 
 @observer
@@ -25,8 +25,13 @@ class StakingHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}`
+    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}`;
     wand.shell.openExternal(href);
+  }
+
+  stakingColumnsTree = () => {
+    this.props.stakingColumns[3].render = validator => <span title={validator}>{validator}</span>;
+    return this.props.stakingColumns;
   }
 
   render() {
@@ -37,7 +42,7 @@ class StakingHistory extends Component {
           <img src={history} /><span>{intl.get('staking.delegateHistory')}</span>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.stakingColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

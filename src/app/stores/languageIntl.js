@@ -60,7 +60,7 @@ class LanguageIntl {
       }, {
         title: intl.get('staking.table.validator'),
         dataIndex: 'validator',
-        key: 'validator',
+        key: 'validator'
       }, {
         title: intl.get('TransHistory.value'),
         dataIndex: 'value',
