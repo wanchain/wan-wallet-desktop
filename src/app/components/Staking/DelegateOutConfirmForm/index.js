@@ -55,7 +55,7 @@ class DelegateOutConfirmForm extends Component {
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="withdraw-line">
-              <Row type="flex" justify="space-around" align="top">
+              <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={18}>
                   <div><Avatar src={record.validator.img}/>{' '}{record.validator.name}</div>
@@ -63,7 +63,7 @@ class DelegateOutConfirmForm extends Component {
               </Row>
             </div>
             <div className="withdraw-line">
-              <Row type="flex" justify="space-around" align="top">
+              <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{record.validator.address}</span></Col>
               </Row>
@@ -72,7 +72,7 @@ class DelegateOutConfirmForm extends Component {
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('StakeInForm.myAccount')}</div>
             <div className="withdraw-line">
-              <Row type="flex" justify="space-around" align="top">
+              <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.stake')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{record.myStake.title} WAN</span></Col>
               </Row>
