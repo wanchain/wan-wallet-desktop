@@ -13,8 +13,8 @@ const pu = require('promisefy-util')
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
 
-const main = 'https://www.wanscan.org/address/'
-const testnet = 'http://testnet.wanscan.org/address/';
+const main = 'https://www.wanscan.org/vlds'
+const testnet = 'http://testnet.wanscan.org/vlds';
 
 const Option = Select.Option;
 
@@ -415,9 +415,7 @@ class StakeInForm extends Component {
   }
 
   onClick = () => {
-    let { form } = this.props;
-    let to = form.getFieldValue('to');
-    let href = this.props.chainId === 1 ? `${main}${to}` : `${testnet}${to}`
+    let href = this.props.chainId === 1 ? `${main}` : `${testnet}`;
     wand.shell.openExternal(href);
   }
 

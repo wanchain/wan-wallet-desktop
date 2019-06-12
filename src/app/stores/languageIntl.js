@@ -118,7 +118,7 @@ class LanguageIntl {
         title: intl.get('menuConfig.hardwareWallet'),
         step: '1',
         key: '/hardwareWallet',
-        icon: 'credit-card',
+        icon: 'usb',
         children: [
           {
             title: intl.get('menuConfig.ledger'),

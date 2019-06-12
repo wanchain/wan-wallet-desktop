@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Select  } from 'antd';
+import { Table, Select } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -36,7 +36,9 @@ class StakingHistory extends Component {
         <div className="historyCon">
           <img src={history} /><span>{intl.get('staking.delegateHistory')}</span>
         </div>
-        <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.stakingColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }}/>
+        <div className="historyRow">
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.stakingColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        </div>
       </div>
     );
   }
