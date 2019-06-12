@@ -73,11 +73,13 @@ class StakeInForm extends Component {
       let { form } = this.props;
       form.setFieldsValue({ to: this.props.record.validator.address });
 
-      let validatorName = ((<div name={this.props.record.validator.name.toString()}><Avatar src={this.props.record.validator.img} name={this.props.record.validator.name} value={this.props.record.validator.name} size="small" />{" "}{this.props.record.validator.name}</div>))
+      let name = this.props.record.validator.name;
+      // let validatorName = ((<div name={name}><Avatar src={this.props.record.validator.img} name={name} value={name} size="small" />{" "}{name}</div>))
 
-      form.setFieldsValue({ validatorName: validatorName });
+      form.setFieldsValue({ validatorName: name });
 
-      form.setFieldsValue({ quota: this.getQuota(this.props.record.validator.address) })
+      let quota = this.getQuota(this.props.record.validator.address);
+      form.setFieldsValue({ quota: quota})
       form.setFieldsValue({ commission: this.getFeeRate(this.props.record.validator.address) })
 
 
@@ -256,7 +258,7 @@ class StakeInForm extends Component {
 
   getQuota = (addr) => {
     if (!addr) {
-      return "";
+      return " ";
     }
 
     let { onlineValidatorList } = this.props;
@@ -266,11 +268,12 @@ class StakeInForm extends Component {
         return v.quota;
       }
     }
+    return " ";
   }
 
   getFeeRate = (addr) => {
     if (!addr) {
-      return "";
+      return " ";
     }
 
     let { onlineValidatorList } = this.props;
@@ -280,6 +283,7 @@ class StakeInForm extends Component {
         return v.feeRate;
       }
     }
+    return " ";
   }
 
   showConfirmForm = () => {
@@ -532,7 +536,7 @@ class StakeInForm extends Component {
     return (
       <div className="stakein">
         <Modal
-          visible
+          visible={this.props.visible}
           destroyOnClose={true}
           closable={false}
           title={intl.get('StakeInForm.title')}
@@ -640,7 +644,7 @@ class StakeInForm extends Component {
                             filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             className="colorInput"
                           >
-                            {this.state.addrList.map((item, index) => 
+                            {this.state.addrList.map((item, index) =>
                               <Option value={item} key={index}>
                                 <Row>
                                   <Col span={16}>{item}</Col>
@@ -675,8 +679,8 @@ class StakeInForm extends Component {
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input placeholder="100" prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                      {getFieldDecorator('amount', { initialValue: 100, rules: [{ required: true, validator: this.checkAmount }] })
+                        (<Input min={100} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>

@@ -236,7 +236,7 @@ const en_US = {
     'StakeInForm.commission': 'Fee (%)',
 
     'StakeInForm.stake': 'Amount',
-    'StakeInForm.stakeTooLow': 'Stake amount is too low',
+    'StakeInForm.stakeTooLow': 'Minimum amount should be 100 WAN',
     'StakeInForm.stakeExceed': 'Stake amount is out of validator\'s quota',
     'StakeInForm.balance': 'Balance',
     'StakeInForm.more': 'More Info',

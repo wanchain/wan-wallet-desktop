@@ -567,8 +567,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let delegateInfo = [];
                 let incentive = [];
                 let epochID = await ccUtil.getEpochID('wan');
-                let blockNumber = await ccUtil.getBlockNumber('wan');
-                let stakerInfo = await ccUtil.getStakerInfo('wan', blockNumber);
+                let stakerInfo = await ccUtil.getCurrentStakerInfo('wan');
 
                 if (!global.slotCount) {
                     global.slotCount = await ccUtil.getSlotCount('wan');

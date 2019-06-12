@@ -236,8 +236,8 @@ const zh_CN = {
     'StakeInForm.commission': '佣金 (%)',
 
     'StakeInForm.stake': '委托金额',
-    'StakeInForm.stakeTooLow': '委托金额低于最低限额',
-    'StakeInForm.stakeExceed': '委托金额超出验证节点最大额度',
+    'StakeInForm.stakeTooLow': '最低委托金额是100WAN',
+    'StakeInForm.stakeExceed': '委托金额超出验证节点的可用额度',
     'StakeInForm.balance': '余额',
     'StakeInForm.more': '更多信息',
     'StakeInForm.selectName': '选择一个名称',

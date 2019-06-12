@@ -34,10 +34,7 @@ class DelegateIn extends Component {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.showDialog} />
-        {this.state.visible
-          ? <DelegateInForm onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} />
-          : ''
-        }
+        <DelegateInForm visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} />
       </div>
     );
   }
