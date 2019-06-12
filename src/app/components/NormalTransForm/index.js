@@ -137,12 +137,18 @@ class NormalTransForm extends Component {
   }
 
   updateGasLimit = () => {
+    let val;
     let { form } = this.props;
     let from = form.getFieldValue('from');
+    try {
+      val = toWei((form.getFieldValue('amount') || 0).toString(10))
+    } catch(err) {
+      return;
+    }
     let tx = {
       from: from,
       to: form.getFieldValue('to'),
-      value: toWei((form.getFieldValue('amount') || 0).toString(10)),
+      value: val,
       data: this.props.transParams[from].data,
       gas: DEFAULT_GAS
     };

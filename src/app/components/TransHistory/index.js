@@ -46,7 +46,7 @@ class TransHistory extends Component {
 
     return (
       <div>
-        <div className="historyCon">
+        <div className="historyCon" id="wanAddrSelect">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
           <Select
             showSearch
@@ -55,9 +55,7 @@ class TransHistory extends Component {
             placeholder={intl.get('TransHistory.selectAFromAddress')}
             optionFilterProp="children"
             onChange={this.onChange}
-            onFocus={this.onFocus}
-            onBlur={this.onBlur}
-            onSearch={this.onSearch}
+            getPopupContainer = {() => document.getElementById('wanAddrSelect')}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
             {addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}

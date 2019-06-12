@@ -37,3 +37,6 @@ yarn.lock
 
 # Node environment
 .env
+
+# Backup file
+*.bak
