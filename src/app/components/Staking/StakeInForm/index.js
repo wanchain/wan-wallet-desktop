@@ -560,6 +560,8 @@ class StakeInForm extends Component {
                         rules: [{ required: false }],
                       })(
                         <Select
+                          disabled={this.props.disabled}
+                          showArrow={!this.props.disabled}
                           showSearch
                           allowClear
                           style={{ width: 355 }}
@@ -587,7 +589,7 @@ class StakeInForm extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        (<Input disabled={this.props.disabled} placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
