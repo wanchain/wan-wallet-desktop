@@ -80,14 +80,6 @@ class StakeConfirmForm extends Component {
                 <Col span={18}><span className="withdraw-addr">{this.props.record.accountAddress}</span></Col>
               </Row>
             </div>
-            {this.props.settings.reinput_pwd 
-              ? <div className="withdraw-line">
-                  <Row type="flex" justify="space-around" align="middle">
-                    <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.password')}1</span></Col>
-                    <Col span={18}><Input.Password className="withdraw-pwd" placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" />} /></Col>
-                  </Row>
-                </div>
-              : ''}
           </div>
           <p className="withdraw-note">{this.state.note}</p>
         </Modal>

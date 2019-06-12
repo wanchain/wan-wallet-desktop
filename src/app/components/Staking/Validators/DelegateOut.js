@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Form, message } from 'antd';
 import './index.less';
-import StakeConfirmForm from '../StakeConfirmForm';
-const DelegateOutForm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
+import DelegateOutConfirmForm from '../DelegateOutConfirmForm';
+const DelegateOutForm = Form.create({ name: 'DelegateOutConfirmForm' })(DelegateOutConfirmForm);
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import intl from 'react-intl-universal';
