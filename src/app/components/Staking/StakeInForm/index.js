@@ -547,7 +547,7 @@ class StakeInForm extends Component {
             <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={16}>
 
                   <Form layout="inline" id="posNameSelect">
@@ -577,8 +577,8 @@ class StakeInForm extends Component {
               </Row>
             </div>
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
@@ -590,8 +590,8 @@ class StakeInForm extends Component {
               </Row>
             </div>
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item >
@@ -603,8 +603,8 @@ class StakeInForm extends Component {
               </Row>
             </div>
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item >
@@ -620,8 +620,8 @@ class StakeInForm extends Component {
             <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
 
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
@@ -656,8 +656,8 @@ class StakeInForm extends Component {
             </div>
 
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item >
@@ -670,8 +670,8 @@ class StakeInForm extends Component {
             </div>
 
             <div className="stakein-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={4}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
+              <Row type="flex" justify="space-around">
+                <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
@@ -684,8 +684,8 @@ class StakeInForm extends Component {
             </div>
             {settings.reinput_pwd
               ? <div className="stakein-line">
-                <Row type="flex" justify="space-around" align="middle">
-                  <Col span={4}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+                <Row type="flex" justify="space-around" align="top">
+                  <Col span={4} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
                   <Col span={20}>
                     <Form layout="inline">
                       <Form.Item>
@@ -698,7 +698,6 @@ class StakeInForm extends Component {
               </div>
               : ''
             }
-
           </div>
         </Modal>
         {
