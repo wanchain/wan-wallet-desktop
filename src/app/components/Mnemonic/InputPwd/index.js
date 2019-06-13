@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Radio  } from 'antd';
+import { Input, Radio, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -31,8 +31,10 @@ class InputPwd extends Component {
       <div className="textc">
         <h1 className="mneCom-h1">{intl.get('Mnemonic.InputPwd.createAWANWallet')}</h1>
         <div className="mne-input">
-          <Input.Password placeholder={intl.get('Mnemonic.InputPwd.enterPassword')} onChange={this.inputChanged} />
-          <Input.Password placeholder={intl.get('Mnemonic.InputPwd.confirmPassword')} onChange={this.inputConfirm} />
+          <p className="pwdTitle">{intl.get('Mnemonic.InputPwd.newPassword')}: <Tooltip defaultVisible={true} title={intl.get('Mnemonic.InputPwd.pwdTitle')}><Icon type="info-circle" theme="twoTone" /></Tooltip></p>
+          <Input.Password onChange={this.inputChanged} />
+          <p className="pwdTitle">{intl.get('Mnemonic.InputPwd.confirmPassword')}:</p>
+          <Input.Password onChange={this.inputConfirm} />
         </div>
         <Radio.Group onChange={this.onChange} value={this.props.method} buttonStyle="solid" className="groupCon">
           <Radio.Button value='create' className="creat-button">{intl.get('Mnemonic.InputPwd.createPhrase')}</Radio.Button>
