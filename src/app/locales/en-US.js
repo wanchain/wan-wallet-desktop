@@ -119,6 +119,8 @@ const en_US = {
     'Mnemonic.ConfirmPhrase.confirmYourSeedPhrase': 'Confirm Your Seed Phrase',
 
     'Mnemonic.InputPwd.createAWANWallet': 'Create a WAN Wallet',
+    'Mnemonic.InputPwd.newPassword': 'New Password',
+    'Mnemonic.InputPwd.pwdTitle': 'At least 6 characters, and Must contain upper and lower case characters and Numbers',
     'Mnemonic.InputPwd.enterPassword': 'Enter Password',
     'Mnemonic.InputPwd.confirmPassword': 'Confirm Password',
     'Mnemonic.InputPwd.createPhrase': 'Create Phrase',
