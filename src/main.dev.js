@@ -17,23 +17,21 @@ env.config()
 
 const logger = Logger.getLogger('main')
 
-if (!i18n.isIintialized) {
-  i18n.on('languageChanged', () => {
-    menuFactoryService.buildMenu(i18n)
-    Windows.broadcast('notification', 'language', setting.language)
-  })
+i18n.on('languageChanged', () => {
+  menuFactoryService.buildMenu(i18n)
+  Windows.broadcast('notification', 'language', setting.language)
+})
 
-  i18n.on('loaded', (loaded) => {
-    i18n.changeLanguage(setting.language)
-    i18n.off('loaded')
-  })
-  
-  i18n.init(i18nOptions, (err) => {
-    if (err) {
-      logger.error('i18n change language error')
-    }
-  })
-}
+i18n.on('loaded', (loaded) => {
+  i18n.changeLanguage(setting.language)
+  i18n.off('loaded')
+})
+
+i18n.init(i18nOptions, (err) => {
+  if (err) {
+    logger.error('i18n change language error')
+  }
+})
 
 let mainWindow
 
