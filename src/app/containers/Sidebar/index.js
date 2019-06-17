@@ -39,7 +39,7 @@ class Sidebar extends Component {
   render() {
     const { sidebarColumns, settings } = this.props;
 
-    if(settings.staking_advance) {
+    if(settings && settings.staking_advance) {
       if(sidebarColumns.length >= 4) {
         for (let i = 0; i < sidebarColumns.length; i++) {
           if (sidebarColumns[i].key == "/staking" ) {

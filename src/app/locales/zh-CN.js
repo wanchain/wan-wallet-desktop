@@ -120,7 +120,6 @@ const zh_CN = {
 
     'Mnemonic.InputPwd.createAWANWallet': '创建新钱包',
     'Mnemonic.InputPwd.newPassword': '新密码',
-    'Mnemonic.InputPwd.pwdTitle': '至少6个字符，必须包含大小写字母以及数字',
     'Mnemonic.InputPwd.enterPassword': '输入密码',
     'Mnemonic.InputPwd.confirmPassword': '再次输入密码',
     'Mnemonic.InputPwd.createPhrase': '创建助记词',

@@ -125,11 +125,12 @@ class LanguageIntl {
             key: '/ledger',
             icon: 'block'
           },
-          {
-            title: intl.get('menuConfig.trezor'),
-            key: '/trezor',
-            icon: 'block'
-          }
+          /** TODO */
+          // {
+          //   title: intl.get('menuConfig.trezor'),
+          //   key: '/trezor',
+          //   icon: 'block'
+          // }
         ]
       },
       {

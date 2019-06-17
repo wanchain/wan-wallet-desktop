@@ -31,7 +31,7 @@ class InputPwd extends Component {
       <div className="textc">
         <h1 className="mneCom-h1">{intl.get('Mnemonic.InputPwd.createAWANWallet')}</h1>
         <div className="mne-input">
-          <p className="pwdTitle">{intl.get('Mnemonic.InputPwd.newPassword')}: <Tooltip defaultVisible={true} title={intl.get('Mnemonic.InputPwd.pwdTitle')}><Icon type="info-circle" theme="twoTone" /></Tooltip></p>
+          <p className="pwdTitle">{intl.get('Mnemonic.InputPwd.newPassword')}: <Tooltip defaultVisible={true} title={intl.get('Register.passwordTip')}><Icon type="info-circle" theme="twoTone" /></Tooltip></p>
           <Input.Password onChange={this.inputChanged} />
           <p className="pwdTitle">{intl.get('Mnemonic.InputPwd.confirmPassword')}:</p>
           <Input.Password onChange={this.inputConfirm} />

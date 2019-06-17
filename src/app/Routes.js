@@ -12,7 +12,8 @@ export default () => {
             <Route exact path="/" component={Portfolio} />
             <Route path="/wanaccount" component={WanAccount} />
             <Route path="/settings" component={Settings} />
-            <Route path="/trezor" component={Trezor} />
+            {/* TODO */}
+            {/* <Route path="/trezor" component={Trezor} /> */}
             <Route path="/ledger" component={Ledger} />
             <Route path="/staking" component={Staking} />
             <Route path="/validator" component={Validator} />
