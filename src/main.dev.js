@@ -17,6 +17,7 @@ env.config()
 
 const logger = Logger.getLogger('main')
 
+// register i18n event handlers
 i18n.on('languageChanged', () => {
   menuFactoryService.buildMenu(i18n)
   Windows.broadcast('notification', 'language', setting.language)
@@ -39,8 +40,8 @@ async function createMain () {
   logger.info('creating main window...')
 
   const mainWindowState = windowStateKeeper({
-    defaultWidth: 1220,
-    defaultHeight: process.platform === 'darwin' ? 680 : 720
+    defaultWidth: 1440,
+    defaultHeight: 768
   });
 
   mainWindow = Windows.create('main', {
@@ -106,7 +107,7 @@ async function onReady() {
 
   // 2. register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
-    sendReadyNotifications();
+    sendReadyNotifications()
   })
 
   // 3. create main window for frontend renderering, hide this window in the first place
