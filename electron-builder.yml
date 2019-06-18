@@ -20,6 +20,10 @@ publish:
 mac:
   category: public.app-category.finance
   icon: build/assets/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
   target:
     - dmg
     - zip
@@ -37,6 +41,7 @@ linux:
 
 dmg:
   artifactName: Wan-Wallet-${version}.dmg
+  sign: false
 
 nsis:
   oneClick: false
@@ -49,3 +54,5 @@ deb:
 
 appImage:
   artifactName: Wan-Wallet-${version}.AppImage
+
+afterSign: scripts/notarize.js
