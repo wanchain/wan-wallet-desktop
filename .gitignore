@@ -6,7 +6,7 @@ logs
 docs
 out
 
-# webpack bundle dir
+# electron package dir
 /dist
 /build
 
