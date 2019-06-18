@@ -20,6 +20,7 @@ publish:
 mac:
   category: public.app-category.finance
   icon: build/assets/icon.icns
+  gatekeeperAssess: false
   target:
     - dmg
     - zip
