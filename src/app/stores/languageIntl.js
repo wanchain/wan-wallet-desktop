@@ -63,8 +63,8 @@ class LanguageIntl {
         key: 'validator'
       }, {
         title: intl.get('TransHistory.value'),
-        dataIndex: 'value',
-        key: 'value'
+        dataIndex: 'stakeAmount',
+        key: 'stakeAmount'
       }, {
         title: intl.get('TransHistory.status'),
         dataIndex: 'status',

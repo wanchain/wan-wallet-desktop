@@ -650,6 +650,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     "gasLimit": gasLimit,
                     "BIP44Path": tx.path,
                     "walletID": tx.walletID,
+                    "stakeAmount": tx.stakeAmount,
                 }
 
                 let ret = await global.crossInvoker.PosDelegateOut(input);

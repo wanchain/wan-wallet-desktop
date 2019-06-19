@@ -275,7 +275,8 @@ class WanAddress {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
               img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
-            }
+            },
+            stakeAmount: self.transHistory[item].stakeAmount,
           });
         }
       });
