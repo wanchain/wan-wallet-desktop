@@ -634,10 +634,12 @@ class StakeInForm extends Component {
                             autoFocus
                             showSearch
                             allowClear
-                            style={{ width: 470 }}
+                            optionLabelProp="value"
+                            dropdownMatchSelectWidth={false}
+                            dropdownStyle={{width: "470px"}}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
-                            onChange={this.onChange}
+                            // onChange={this.onChange}
                             onSelect={this.onChange}
                             getPopupContainer={() => document.getElementById('posAddrSelect')}
                             filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
