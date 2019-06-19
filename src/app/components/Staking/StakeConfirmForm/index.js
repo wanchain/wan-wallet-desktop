@@ -28,6 +28,7 @@ class StakeConfirmForm extends Component {
   }
 
   render() {
+    console.log("validator", this.props.record.validator)
     return (
       <div className="withdraw">
         <Modal
@@ -57,6 +58,12 @@ class StakeConfirmForm extends Component {
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={18}><span className="withdraw-addr">{this.props.record.validator.address}</span></Col>
+              </Row>
+            </div>
+            <div className="withdraw-line">
+              <Row type="flex" justify="space-around" align="middle">
+                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={18}><span className="withdraw-addr">{this.props.record.validator.commission}</span></Col>
               </Row>
             </div>
           </div>

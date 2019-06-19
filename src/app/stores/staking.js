@@ -92,7 +92,11 @@ class Staking {
         balance: this.stakerList[i].balance,
         myStake: this.stakerList[i].myStake,
         arrow1: arrow,
-        validator: { img: this.stakerList[i].validator.img ? this.stakerList[i].validator.img : validatorImg, name: this.stakerList[i].validator.name, address: this.stakerList[i].validatorAddress },
+        validator: { 
+          img: this.stakerList[i].validator.img ? this.stakerList[i].validator.img : validatorImg, 
+          name: this.stakerList[i].validator.name, 
+          address: this.stakerList[i].validatorAddress,
+        },
         arrow2: arrow,
         distributeRewards: this.stakerList[i].distributeRewards,
         modifyStake: ["+", "-"],
@@ -133,7 +137,7 @@ class Staking {
         }
       }
 
-      console.log('validator', this.validatorList[i], 'quota', quota);
+      // console.log('validator', this.validatorList[i], 'quota', quota);
 
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,

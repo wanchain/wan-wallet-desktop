@@ -326,9 +326,6 @@ class StakeInForm extends Component {
       let validator = {}
       let { onlineValidatorList } = this.props;
 
-      console.log('onlineValidatorList', onlineValidatorList)
-      console.log('to', from);
-
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
         if (to == v.address) {
@@ -341,7 +338,7 @@ class StakeInForm extends Component {
         confirmVisible: true,
         record: {
           accountAddress: from,
-          validator: { name: validator.name, img: validator.icon, address: validator.address },
+          validator: { name: validator.name, img: validator.icon, address: validator.address, commission: validator.feeRate },
           myStake: { title: amount },
         }
       });
