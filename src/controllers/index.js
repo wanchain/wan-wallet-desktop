@@ -692,6 +692,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let satellite = {
                     validator: payload.rawTx.validator,
                     annotate: payload.rawTx.annotate,
+                    stakeAmount: payload.rawTx.stakeAmount,
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
                 console.log('insert finish');

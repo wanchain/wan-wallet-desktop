@@ -69,10 +69,11 @@ class DelegateOut extends Component {
       "validator": this.props.record.validator.address,
       "path": this.props.record.accountPath,
       "walletID": walletID,
+      "stakeAmount": this.props.record.myStake.title,
     }
 
     if (walletID == WALLET_ID_TREZOR) {
-      await this.trezorDelegateOut(tx.path, tx.from, tx.validator, "0");
+      await this.trezorDelegateOut(tx.path, tx.from, tx.validator, "0", tx.stakeAmount);
       this.setState({ visible: false });
       return;
     }
@@ -93,7 +94,7 @@ class DelegateOut extends Component {
   }
 
 
-  trezorDelegateOut = async (path, from, validator, value) => {
+  trezorDelegateOut = async (path, from, validator, value, stakeAmount) => {
     console.log('trezorDelegateOut:', path, from, validator, value);
     let chainId = await getChainId();
     console.log('chainId', chainId);
@@ -143,6 +144,7 @@ class DelegateOut extends Component {
         annotate: 'DelegateIn',
         status: 'Sent',
         source: "external",
+        stakeAmount: "stakeAmount",
         ...rawTx
       }
 
