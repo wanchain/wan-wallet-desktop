@@ -862,7 +862,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
         validatorCnt: "N/A",
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
-        epochIDRaw: 0,
+        epochIDRaw: "N/A",
         currentRewardRate: "N/A %",
         stakePool: 0,
         currentRewardRateChange: "↑",
@@ -909,7 +909,9 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
 
     base.validatorCnt = Object.getOwnPropertyNames(validator).length;
 
-    base.epochIDRaw = epochID;
+    if (typeof epochID === "number") {
+        base.epochIDRaw = epochID;
+    }
 
     let stakePool = web3.utils.toBN(0)
     if (stakerInfo) {

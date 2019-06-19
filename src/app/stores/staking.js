@@ -154,6 +154,10 @@ class Staking {
   }
 
   async getYearReward(epochID) {
+    if(epochID === "N/A") {
+      return 0;
+    }
+    
     if (global.firstEpochId == undefined) {
       let info = await pu.promisefy(wand.request, ['staking_posInfo'], this)//6496392;
       global.firstEpochId = info.firstEpochId;
