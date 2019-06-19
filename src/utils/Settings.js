@@ -26,6 +26,8 @@ const defaultConfig = {
     }
 }
 
+const cscContractAddr = "0x00000000000000000000000000000000000000da";
+
 const argv = yargs
                 .options({
                     'network': {
@@ -59,7 +61,11 @@ class Settings {
     }
 
     get appName() {
-        return 'Wan Wallet'
+        return 'WAN Wallet'
+    }
+
+    get cscContractAddr() {
+        return cscContractAddr;
     }
 
     get isDev() {

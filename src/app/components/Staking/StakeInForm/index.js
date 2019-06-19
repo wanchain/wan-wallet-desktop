@@ -10,7 +10,7 @@ import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
 const pu = require('promisefy-util')
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
 
 const main = 'https://www.wanscan.org/vlds'
@@ -441,7 +441,8 @@ class StakeInForm extends Component {
       console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
       let amountWei = toWei(value);
       console.log('amountWei', amountWei);
-      const cscContractAddr = "0x00000000000000000000000000000000000000da";
+      const cscContractAddr = await getContractAddr();
+      console.log('cscContractAddr', cscContractAddr)
       let rawTx = {};
       rawTx.from = from;
       rawTx.to = cscContractAddr;

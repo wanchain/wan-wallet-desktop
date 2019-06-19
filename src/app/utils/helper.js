@@ -195,6 +195,18 @@ export const initEmitterHandler = function () {
   })
 };
 
+export const getContractAddr = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('staking_getContractAddr', {}, (err, val) => {
+      if (err) {
+        return reject('staking_getContractAddr failed', err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+};
+
 export const getContractData = function (func, validatorAddr) {
   return new Promise((resolve, reject) => {
     wand.request('staking_getContractData', {func, validatorAddr}, (err, val) => {
