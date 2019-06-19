@@ -391,7 +391,8 @@ class StakeInForm extends Component {
       "gasPrice": 0,
       "gasLimit": 0,
       "BIP44Path": path,
-      "walletID": walletID
+      "walletID": walletID,
+      "stakeAmount": (form.getFieldValue('amount') || 0).toString(),
     }
 
     if (walletID == WALLET_ID_TREZOR) {
@@ -470,6 +471,7 @@ class StakeInForm extends Component {
         annotate: 'DelegateIn',
         status: 'Sent',
         source: "external",
+        stakeAmount: value,
         ...rawTx
       }
 
