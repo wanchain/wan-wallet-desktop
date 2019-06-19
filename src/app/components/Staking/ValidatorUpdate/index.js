@@ -299,7 +299,7 @@ class ValidatorUpdate extends Component {
       console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
       let amountWei = toWei(value);
       console.log('amountWei', amountWei);
-      const cscContractAddr = "0x00000000000000000000000000000000000000d8";
+      const cscContractAddr = "0x00000000000000000000000000000000000000da";
       let rawTx = {};
       rawTx.from = from;
       rawTx.to = cscContractAddr;

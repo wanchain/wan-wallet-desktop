@@ -670,7 +670,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let func = payload.func;
 
                 var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-                var cscContractAddr = "0x00000000000000000000000000000000000000d8";
+                var cscContractAddr = "0x00000000000000000000000000000000000000da";
 
                 let data = ccUtil.getDataByFuncInterface(cscDefinition,
                     cscContractAddr,
