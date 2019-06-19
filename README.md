@@ -101,3 +101,6 @@ Then, create a file named ".env" in the root directory of the project and add yo
 ## License
 
 WAN Wallet is open source software licensed as GPL-3.0
+
+[license]: https://img.shields.io/badge/license-GNUGPL3-blue.svg
+[license-url]:https://github.com/wanchain/wan-wallet-desktop/blob/master/LICENSE
