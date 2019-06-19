@@ -32,7 +32,7 @@ class ConfigFactoryService {
             "port": 8443,
             "wallet": {
                 "apikey": process.env.API_KEY,
-                "secret": process.env.API_SECRET
+                "secret": process.env.SECRET_KEY
             }
         }
     }
