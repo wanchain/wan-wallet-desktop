@@ -1,14 +1,16 @@
 
-import { observable, action, computed } from 'mobx';
-import { timeFormat, fromWei } from 'utils/support';
 import wanUtil from "wanchain-util";
 import intl from 'react-intl-universal';
+import { observable, action, computed, toJS } from 'mobx';
 
-import { checkAddrType } from 'utils/helper'
+import staking from './staking';
 import languageIntl from './languageIntl';
+import { checkAddrType } from 'utils/helper';
+import { timeFormat, fromWei } from 'utils/support';
+import validatorImg from 'static/image/validator.png';
 
-const WAN = "m/44'/5718350'/0'/0/";
 const KEYSTOREID = 5;
+const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
     @observable addrInfo = {
@@ -249,8 +251,7 @@ class WanAddress {
 
     //TODO: need add hd
     @computed get stakingHistoryList() {
-      let historyList = [], page = 'normal';//self.currentPage;
-
+      let historyList = [], page = 'normal';//self.currentPage; 
 
       let addrList = Object.keys(self.addrInfo[page]);
       Object.keys(self.transHistory).forEach(item => {
@@ -260,7 +261,7 @@ class WanAddress {
           if(!self.transHistory[item].validator) {
             return;
           }
-
+          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -270,7 +271,11 @@ class WanAddress {
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
             annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
-            validator: self.transHistory[item].validator,
+            validator: {
+              address: self.transHistory[item].validator,
+              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+            }
           });
         }
       });
@@ -285,6 +290,7 @@ class WanAddress {
             return;
           }
 
+          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -294,7 +300,11 @@ class WanAddress {
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
             annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
-            validator: self.transHistory[item].validator,
+            validator: {
+              address: self.transHistory[item].validator,
+              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+            }
           });
         }
       });
@@ -309,6 +319,7 @@ class WanAddress {
             //return;
           }
 
+          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -318,7 +329,11 @@ class WanAddress {
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]["sendTime"],
             annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
-            validator: self.transHistory[item].validator,
+            validator: {
+              address: self.transHistory[item].validator,
+              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+            }
           });
         }
       });
