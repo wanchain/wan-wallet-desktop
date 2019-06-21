@@ -30,7 +30,6 @@ class Staking {
   epochID = 0;
 
   @action async updateStakeInfo() {
-    console.log("updateStakeInfo")
     let addrList = [];
     addrList.push(...wanAddress.getAddrList.slice())
     addrList.push(...wanAddress.ledgerAddrList.slice())
@@ -38,11 +37,9 @@ class Staking {
 
     try {
       let val = await pu.promisefy(wand.request, ['staking_info', addrList], this);
-      console.log('val', val);
       if (val) {
         this.stakeInfo = val.base;
         this.stakeList = val.list;
-        console.log('val.list', val.list);
         this.validatorList = val.stakerInfo;
         let reward = await this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = 0;
@@ -77,10 +74,6 @@ class Staking {
     } catch (error) {
       console.log('updateStakeInfo error', error);
     }
-
-    console.log('updateStakeInfo finish');
-
-
   }
 
   @computed get stakingList() {
@@ -139,8 +132,6 @@ class Staking {
         }
       }
 
-      // console.log('validator', this.validatorList[i], 'quota', quota);
-
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
@@ -157,15 +148,13 @@ class Staking {
     if(epochID === "N/A") {
       return 0;
     }
-    
+
     if (global.firstEpochId == undefined) {
       let info = await pu.promisefy(wand.request, ['staking_posInfo'], this)//6496392;
       global.firstEpochId = info.firstEpochId;
       global.slotCount = info.slotCount;
       global.slotTime = info.slotTime;
     }
-
-    console.log('firstEpochID', global.firstEpochId);
 
     if (epochID < global.firstEpochId) {
       return 0;

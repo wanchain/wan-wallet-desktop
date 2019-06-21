@@ -151,8 +151,6 @@ class ValidatorUpdate extends Component {
     let addrs = getAddrList
     let fromAddr = from
 
-    console.log('getPath called', addrs)
-
     if (from.includes('Ledger')) {
       fromAddr = from.replace('Ledger: ', '')
       addrs = ledgerAddrList
@@ -165,7 +163,6 @@ class ValidatorUpdate extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      console.log('addr,from', addr, fromAddr)
       if (addr.address == fromAddr) {
         return addr.path;
       }
@@ -181,7 +178,6 @@ class ValidatorUpdate extends Component {
       let to = form.getFieldValue('to');
       let pwd = form.getFieldValue('pwd');
 
-      console.log('balance:', this.state.balance, typeof this.state.balance);
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
         return;

@@ -107,7 +107,7 @@ class WanAccount extends Component {
           reject(false)
         } else {
           this.props.updateTransHistory();
-          console.log("TxHash:", txHash);
+          console.log("Tx hash: ", txHash);
           resolve(txHash)
         }
       }.bind(this));

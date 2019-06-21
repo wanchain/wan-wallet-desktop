@@ -149,8 +149,6 @@ class ValidatorRegister extends Component {
     let addrs = getAddrList
     let fromAddr = from
 
-    console.log('getPath called', addrs)
-
     if (from.includes('Ledger')) {
       fromAddr = from.replace('Ledger: ', '')
       addrs = ledgerAddrList
@@ -163,7 +161,6 @@ class ValidatorRegister extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      console.log('addr,from', addr, fromAddr)
       if (addr.address == fromAddr) {
         return addr.path;
       }
@@ -179,7 +176,6 @@ class ValidatorRegister extends Component {
       let to = form.getFieldValue('to');
       let pwd = form.getFieldValue('pwd');
 
-      console.log('balance:', this.state.balance, typeof this.state.balance);
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
         return;
@@ -278,7 +274,6 @@ class ValidatorRegister extends Component {
   }
 
   signTrezorTransaction = (path, tx, callback) => {
-    console.log('signTrezorTransaction:', path, tx);
     TrezorConnect.ethereumSignTransaction({
       path: path,
       transaction: {
@@ -292,8 +287,6 @@ class ValidatorRegister extends Component {
         txType: tx.Txtype, // Txtype case is required by wanTx
       },
     }).then((result) => {
-      console.log('signTrezorTransaction result:', result);
-
       if (!result.success) {
         message.warn(intl.get('Trezor.signTransactionFailed'));
         callback(intl.get('Trezor.signFailed'), null);

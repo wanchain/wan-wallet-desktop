@@ -66,7 +66,6 @@ export const checkWanAddr = function (address) {
       if (err) {
         return reject('Check WAN address failed ', err)
       } else {
-        console.log("Check WAN address success")        
         return resolve(val);
       }
     })
@@ -77,10 +76,8 @@ export const checkWanValidatorAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isValidatorAddress', { address: address }, (err, val) => {
       if (err) {
-        console.log("Check WAN address failed")
         return reject('Check WAN address failed ', err)
       } else {
-        console.log("Check WAN address success")        
         return resolve(val);
       }
     })
@@ -188,7 +185,7 @@ export const regEmitterHandler = function (key, callback) {
 
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
-    console.log('emitter', key, val)
+    console.log('Emitter: ', key, val)
     if (emitterHandlers.hasOwnProperty(key)) {
       emitterHandlers[key](val);
     }

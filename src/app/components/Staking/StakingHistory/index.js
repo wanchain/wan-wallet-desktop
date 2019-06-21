@@ -20,7 +20,6 @@ const testnet = 'http://testnet.wanscan.org/tx/';
 @observer
 class StakingHistory extends Component {
   onChange = value => {
-    console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
   }
 

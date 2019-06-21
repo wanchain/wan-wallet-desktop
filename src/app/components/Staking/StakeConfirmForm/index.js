@@ -28,7 +28,6 @@ class StakeConfirmForm extends Component {
   }
 
   render() {
-    console.log("validator", this.props.record.validator)
     return (
       <div className="withdraw">
         <Modal

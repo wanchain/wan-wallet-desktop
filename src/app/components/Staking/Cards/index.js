@@ -12,9 +12,6 @@ import intl from 'react-intl-universal';
 @observer
 class Cards extends Component {
   render() {
-    //console.log("Cards render", this.props.stakeInfo);
-    //console.log("epoch ID", this.props.stakeInfo.epochID)
-
     return (
       <div className="cards">
         <Row gutter={16}>

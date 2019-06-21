@@ -109,9 +109,7 @@ class App extends React.Component {
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             const addresses = val.addresses.map(obj => obj.address)
-            console.log(addresses)
             this.setState({
                 addresses: addresses
             })
@@ -124,7 +122,6 @@ class App extends React.Component {
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             this.setState({
                 balances: Object.values(val)
             })
@@ -137,7 +134,6 @@ class App extends React.Component {
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             this.setState({
                 balances: Object.values(val)
             })
@@ -186,7 +182,6 @@ class App extends React.Component {
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             this.setState({
                 accountNumber: val.length
             })
@@ -212,7 +207,6 @@ class App extends React.Component {
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             this.setState({
                 accountDeleteResult: val === false ? 'Failed': 'Succeed'
             })
@@ -231,12 +225,10 @@ class App extends React.Component {
             gasPrice: 200, 
             gasLimit: 200000 
         }, function(err, val) {
-            console.log('here')
             if (err) { 
                 console.log('error printed inside callback: ', err)
                 return
             }
-            console.log(val)
             this.setState({
                 txWanNormalResult: val.code === false ? 'Failed': 'Succeed',
                 txWanNormalHash: val.result
@@ -253,7 +245,7 @@ class App extends React.Component {
         })
     }
 
-    getNetowrk = () => {
+    getNetwork = () => {
         wand.request('query_config', {
             param: 'network'
         }, function(err, val) {
@@ -276,7 +268,6 @@ class App extends React.Component {
     showRecords() {
         wand.request('transaction_showRecords', function(err, val) {
             if (err) { console.log(err); return }
-            console.log(val)
         })
     }
 
@@ -315,7 +306,7 @@ class App extends React.Component {
                 <button onClick={this.getSingleBalance}>Show balance of 1st addr!!!</button>
                 <button onClick={this.txNormal}>Send wan coin !!!</button>
                 <button onClick={this.txRaw}>Send raw tx !!!</button>
-                <button onClick={this.getNetowrk}>Show me network !!!</button>
+                <button onClick={this.getNetwork}>Show me network !!!</button>
                 <button onClick={this.getPubKey}>Show my ledger public key !!!</button>
                 <button onClick={this.showRecords}>Show transaction records !!!</button>
             </div>
