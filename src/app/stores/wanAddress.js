@@ -189,6 +189,23 @@ class WanAddress {
       return addrList;
     }
 
+    @computed get getNormalAddrList() {
+      let addrList = [];
+      let normalArr = Object.keys(self.addrInfo['normal']);
+      normalArr.forEach((item, index) => {
+        let type = 'normal';
+        addrList.push({
+          key: item,
+          name: self.addrInfo[type][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: self.addrInfo[type][item].balance,
+          path: `${WAN}${self.addrInfo[type][item].path}`,
+          action: 'send'
+        });
+      });
+      return addrList;
+    }
+
     @computed get ledgerAddrList() {
       let addrList = [];
       let type = 'ledger';

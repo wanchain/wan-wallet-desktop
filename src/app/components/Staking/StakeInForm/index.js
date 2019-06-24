@@ -20,7 +20,7 @@ const Option = Select.Option;
 
 @inject(stores => ({
   settings: stores.session.settings,
-  getAddrList: stores.wanAddress.getAddrList,
+  getAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   onlineValidatorList: stores.staking.onlineValidatorList,
