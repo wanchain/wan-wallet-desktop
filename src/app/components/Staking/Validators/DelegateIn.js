@@ -27,7 +27,6 @@ class DelegateIn extends Component {
     if(walletID == 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
-    console.log('send finish');
   }
 
   render() {

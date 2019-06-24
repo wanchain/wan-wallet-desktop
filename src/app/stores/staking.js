@@ -22,7 +22,7 @@ class Staking {
     startFrom: dateFormat((new Date())/1000),
   };
 
-  @observable stakerList = [];
+  @observable stakeList = [];
 
   @observable validatorList = [];
 
@@ -30,7 +30,6 @@ class Staking {
   epochID = 0;
 
   @action async updateStakeInfo() {
-    console.log("updateStakeInfo")
     let addrList = [];
     addrList.push(...wanAddress.getAddrList.slice())
     addrList.push(...wanAddress.ledgerAddrList.slice())
@@ -38,14 +37,15 @@ class Staking {
 
     try {
       let val = await pu.promisefy(wand.request, ['staking_info', addrList], this);
-      console.log('val', val);
       if (val) {
         this.stakeInfo = val.base;
-        this.stakerList = val.list;
-        console.log('val.list', val.list);
+        this.stakeList = val.list;
         this.validatorList = val.stakerInfo;
         let reward = await this.getYearReward(val.base.epochIDRaw);
-        let rewardRateNow = reward * 100 / val.base.stakePool
+        let rewardRateNow = 0;
+        if (val.base.stakePool !== "0") {
+          rewardRateNow = reward * 100 / val.base.stakePool
+        }
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
         this.stakeInfo.epochID = "Epoch " + this.stakeInfo.epochIDRaw;
 
@@ -64,7 +64,6 @@ class Staking {
         if (this.validatorList && this.validatorList.length > 0) {
           for (let i = 0; i < this.validatorList.length; i++) {
             let ret = await getNameAndIcon(this.validatorList[i].address);
-            console.log('getNameAndIcon', ret);
             if (ret && ret.length > 0) {
               this.validatorList[i].name = ret[0].name;
               this.validatorList[i].iconData = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
@@ -75,26 +74,26 @@ class Staking {
     } catch (error) {
       console.log('updateStakeInfo error', error);
     }
-
-    console.log('updateStakeInfo finish');
-
-
   }
 
   @computed get stakingList() {
     let validators = []
 
-    for (let i = 0; i < this.stakerList.length; i++) {
+    for (let i = 0; i < this.stakeList.length; i++) {
       validators.push({
-        myAccount: this.stakerList[i].myAccount,
-        accountAddress: this.stakerList[i].accountAddress,
-        accountPath: this.stakerList[i].accountPath,
-        balance: this.stakerList[i].balance,
-        myStake: this.stakerList[i].myStake,
+        myAccount: this.stakeList[i].myAccount,
+        accountAddress: this.stakeList[i].accountAddress,
+        accountPath: this.stakeList[i].accountPath,
+        balance: this.stakeList[i].balance,
+        myStake: this.stakeList[i].myStake,
         arrow1: arrow,
-        validator: { img: this.stakerList[i].validator.img ? this.stakerList[i].validator.img : validatorImg, name: this.stakerList[i].validator.name, address: this.stakerList[i].validatorAddress },
+        validator: { 
+          img: this.stakeList[i].validator.img ? this.stakeList[i].validator.img : validatorImg, 
+          name: this.stakeList[i].validator.name, 
+          address: this.stakeList[i].validatorAddress,
+        },
         arrow2: arrow,
-        distributeRewards: this.stakerList[i].distributeRewards,
+        distributeRewards: this.stakeList[i].distributeRewards,
         modifyStake: ["+", "-"],
         key: i,
       })
@@ -133,8 +132,6 @@ class Staking {
         }
       }
 
-      console.log('validator', this.validatorList[i], 'quota', quota);
-
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
@@ -148,14 +145,16 @@ class Staking {
   }
 
   async getYearReward(epochID) {
+    if(epochID === "N/A") {
+      return 0;
+    }
+
     if (global.firstEpochId == undefined) {
       let info = await pu.promisefy(wand.request, ['staking_posInfo'], this)//6496392;
       global.firstEpochId = info.firstEpochId;
       global.slotCount = info.slotCount;
       global.slotTime = info.slotTime;
     }
-
-    console.log('firstEpochID', global.firstEpochId);
 
     if (epochID < global.firstEpochId) {
       return 0;
@@ -164,10 +163,10 @@ class Staking {
     let epochIdOffset = epochID - global.firstEpochId
     var epochTime = global.slotCount * global.slotTime; // slotCount * slotTime
     var epochCountInYear = (365 * 24 * 3600) / epochTime
-    var redutionTimes = Math.floor(epochIdOffset / epochCountInYear)
+    var reductionTimes = Math.floor(epochIdOffset / epochCountInYear)
     var reduceRate = 0.88
 
-    reduceRate = Math.pow(reduceRate, redutionTimes)
+    reduceRate = Math.pow(reduceRate, reductionTimes)
     var yearReward = reduceRate * 2.5e6
     return yearReward
   }

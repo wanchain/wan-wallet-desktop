@@ -10,7 +10,7 @@ import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
 const pu = require('promisefy-util')
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
 
 const main = 'https://www.wanscan.org/vlds'
@@ -117,7 +117,6 @@ class StakeInForm extends Component {
   }
 
   onValidatorChange = value => {
-    console.log('select:', value);
     let { form } = this.props;
     let addr = this.getAddr(value);
     form.setFieldsValue({ to: addr });
@@ -221,8 +220,6 @@ class StakeInForm extends Component {
     let addrs = getAddrList
     let fromAddr = from
 
-    console.log('getPath called', addrs)
-
     if (from.includes('Ledger')) {
       fromAddr = from.replace('Ledger: ', '')
       addrs = ledgerAddrList
@@ -235,7 +232,6 @@ class StakeInForm extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      console.log('addr,from', addr, fromAddr)
       if (addr.address == fromAddr) {
         return addr.path;
       }
@@ -303,7 +299,6 @@ class StakeInForm extends Component {
         return;
       }
 
-      console.log('balance:', this.state.balance, typeof this.state.balance);
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
         return;
@@ -326,9 +321,6 @@ class StakeInForm extends Component {
       let validator = {}
       let { onlineValidatorList } = this.props;
 
-      console.log('onlineValidatorList', onlineValidatorList)
-      console.log('to', from);
-
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
         if (to == v.address) {
@@ -341,7 +333,7 @@ class StakeInForm extends Component {
         confirmVisible: true,
         record: {
           accountAddress: from,
-          validator: { name: validator.name, img: validator.icon, address: validator.address },
+          validator: { name: validator.name, img: validator.icon, address: validator.address, commission: validator.feeRate },
           myStake: { title: amount },
         }
       });
@@ -394,7 +386,8 @@ class StakeInForm extends Component {
       "gasPrice": 0,
       "gasLimit": 0,
       "BIP44Path": path,
-      "walletID": walletID
+      "walletID": walletID,
+      "stakeAmount": (form.getFieldValue('amount') || 0).toString(),
     }
 
     if (walletID == WALLET_ID_TREZOR) {
@@ -424,26 +417,14 @@ class StakeInForm extends Component {
   }
 
   trezorDelegateIn = async (path, from, validator, value) => {
-    console.log('trezorDelegateIn:', path, from, validator, value);
     let chainId = await getChainId();
-    console.log('chainId', chainId);
     let func = 'delegateIn';
     try {
-      console.log('ready to get nonce, gasPrice, data');
-      console.log('getNonce');
       let nonce = await getNonce(from, 'wan');
-      console.log('getNonce', nonce);
-      console.log('getGasPrice');
       let gasPrice = await getGasPrice('wan');
-      console.log('getGasPrice', gasPrice);
-      console.log('getContractData');
       let data = await getContractData(func, validator);
-      console.log('getContractData', data);
-      //let [nonce, gasPrice, data] = await Promise.all([getNonce(from, 'wan'), getGasPrice('wan'), getContractData(func, validator)]);
-      console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
       let amountWei = toWei(value);
-      console.log('amountWei', amountWei);
-      const cscContractAddr = "0x00000000000000000000000000000000000000d8";
+      const cscContractAddr = await getContractAddr();
       let rawTx = {};
       rawTx.from = from;
       rawTx.to = cscContractAddr;
@@ -455,13 +436,11 @@ class StakeInForm extends Component {
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
-      console.log('rawTx:', rawTx);
       let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
-      console.log('signTransaction finish, ready to send.')
-      console.log('raw:', raw);
+      console.log('Raw tx:', raw);
 
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('transaction_raw finish, txHash:', txHash);
+      console.log('Sending transaction finished, txHash:', txHash);
       let params = {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
@@ -473,11 +452,11 @@ class StakeInForm extends Component {
         annotate: 'DelegateIn',
         status: 'Sent',
         source: "external",
+        stakeAmount: value,
         ...rawTx
       }
 
       await pu.promisefy(wand.request, ['staking_insertTransToDB', { rawTx: params }], this);
-      console.log('staking_insertTransToDB finish')
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
@@ -486,7 +465,6 @@ class StakeInForm extends Component {
   }
 
   signTrezorTransaction = (path, tx, callback) => {
-    console.log('signTrezorTransaction:', path, tx);
     TrezorConnect.ethereumSignTransaction({
       path: path,
       transaction: {
@@ -500,8 +478,6 @@ class StakeInForm extends Component {
         txType: tx.Txtype, // Txtype case is required by wanTx
       },
     }).then((result) => {
-      console.log('signTrezorTransaction result:', result);
-
       if (!result.success) {
         message.warn(intl.get('Trezor.signTransactionFailed'));
         callback(intl.get('Trezor.signFailed'), null);
@@ -513,8 +489,8 @@ class StakeInForm extends Component {
       tx.s = result.payload.s;
       let eTx = new wanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('signed', signedTx);
-      console.log('tx:', tx);
+      console.log('Signed tx', signedTx);
+      console.log('Tx:', tx);
       callback(null, signedTx);
     });
   }
@@ -637,10 +613,12 @@ class StakeInForm extends Component {
                             autoFocus
                             showSearch
                             allowClear
-                            style={{ width: 470 }}
+                            optionLabelProp="value"
+                            dropdownMatchSelectWidth={false}
+                            dropdownStyle={{width: "470px"}}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
-                            onChange={this.onChange}
+                            // onChange={this.onChange}
                             onSelect={this.onChange}
                             getPopupContainer={() => document.getElementById('posAddrSelect')}
                             filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}

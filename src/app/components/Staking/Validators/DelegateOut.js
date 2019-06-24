@@ -9,7 +9,7 @@ import intl from 'react-intl-universal';
 const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
 const pu = require('promisefy-util')
-import { getNonce, getGasPrice, estimateGas, getChainId, getContractData} from 'utils/helper';
+import { getNonce, getGasPrice, estimateGas, getChainId, getContractAddr, getContractData} from 'utils/helper';
 import { toWei } from 'utils/support.js';
 
 @inject(stores => ({
@@ -69,10 +69,11 @@ class DelegateOut extends Component {
       "validator": this.props.record.validator.address,
       "path": this.props.record.accountPath,
       "walletID": walletID,
+      "stakeAmount": this.props.record.myStake.title,
     }
 
     if (walletID == WALLET_ID_TREZOR) {
-      await this.trezorDelegateOut(tx.path, tx.from, tx.validator, "0");
+      await this.trezorDelegateOut(tx.path, tx.from, tx.validator, "0", tx.stakeAmount);
       this.setState({ visible: false });
       return;
     }
@@ -93,7 +94,7 @@ class DelegateOut extends Component {
   }
 
 
-  trezorDelegateOut = async (path, from, validator, value) => {
+  trezorDelegateOut = async (path, from, validator, value, stakeAmount) => {
     console.log('trezorDelegateOut:', path, from, validator, value);
     let chainId = await getChainId();
     console.log('chainId', chainId);
@@ -113,7 +114,8 @@ class DelegateOut extends Component {
       console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
       let amountWei = toWei(value);
       console.log('amountWei', amountWei);
-      const cscContractAddr = "0x00000000000000000000000000000000000000d8";
+      const cscContractAddr = await getContractAddr();
+      console.log('cscContractAddr', cscContractAddr)
       let rawTx = {};
       rawTx.from = from;
       rawTx.to = cscContractAddr;
@@ -143,6 +145,7 @@ class DelegateOut extends Component {
         annotate: 'DelegateIn',
         status: 'Sent',
         source: "external",
+        stakeAmount: "stakeAmount",
         ...rawTx
       }
 

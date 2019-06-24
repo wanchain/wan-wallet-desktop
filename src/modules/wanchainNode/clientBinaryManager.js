@@ -61,7 +61,6 @@ class Manager extends EventEmitter {
 
         try {
             localConfig = JSON.parse(fs.readFileSync(path.join(setting.userDataPath, 'clientBinaries.json')).toString())
-            console.log('localconfig ', localConfig)
         } catch (err) {
 
         }

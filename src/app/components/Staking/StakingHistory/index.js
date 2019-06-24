@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'antd';
+import { Table, Avatar } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -20,7 +20,6 @@ const testnet = 'http://testnet.wanscan.org/tx/';
 @observer
 class StakingHistory extends Component {
   onChange = value => {
-    console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
   }
 
@@ -30,7 +29,7 @@ class StakingHistory extends Component {
   }
 
   stakingColumnsTree = () => {
-    this.props.stakingColumns[3].render = validator => <span title={validator}>{validator}</span>;
+    this.props.stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.stakingColumns;
   }
 

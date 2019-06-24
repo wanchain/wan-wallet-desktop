@@ -561,7 +561,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
     const [action, id] = actionUni.split('#')
 
     switch (action) {
-        case 'info':
+        case 'getContractAddr':
+            ret = setting.cscContractAddr;
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+            case 'info':
             try {
                 let accounts = payload;
                 let delegateInfo = [];
@@ -574,7 +579,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     global.slotTime = await ccUtil.getSlotTime('wan');
                 }
 
-                //console.log('accounts.length', accounts.length)
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
@@ -588,7 +592,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     if (inc && inc.length && inc.length > 0) {
                         console.log('account:', account.address);
                         console.log('incentive length:', inc.length);
-                        //console.log('incentive:', inc);
 
                         incentive.push({ account: account, incentive: inc });
                     }
@@ -650,6 +653,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     "gasLimit": gasLimit,
                     "BIP44Path": tx.path,
                     "walletID": tx.walletID,
+                    "stakeAmount": tx.stakeAmount,
                 }
 
                 let ret = await global.crossInvoker.PosDelegateOut(input);
@@ -669,10 +673,9 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let func = payload.func;
 
                 var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-                var cscContractAddr = "0x00000000000000000000000000000000000000d8";
 
                 let data = ccUtil.getDataByFuncInterface(cscDefinition,
-                    cscContractAddr,
+                    setting.cscContractAddr,
                     func,
                     validatorAddr);
 
@@ -691,6 +694,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let satellite = {
                     validator: payload.rawTx.validator,
                     annotate: payload.rawTx.annotate,
+                    stakeAmount: payload.rawTx.stakeAmount,
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
                 console.log('insert finish');
@@ -856,7 +860,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
         validatorCnt: "N/A",
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
-        epochIDRaw: 0,
+        epochIDRaw: "N/A",
         currentRewardRate: "N/A %",
         stakePool: 0,
         currentRewardRateChange: "↑",
@@ -868,11 +872,8 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     let withdrawStake = web3.utils.toBN(0);
     let validator = {};
     let totalReward = web3.utils.toBN(0);
-    //console.log("delegateInfo length:", delegateInfo.length);
     for (let i = 0; i < delegateInfo.length; i++) {
         const info = delegateInfo[i].stake;
-        //console.log("info", info);
-        //[{address:"xxxx", amount:3, quitEpoch:0},{address:"xxxxxx", amount:7, quitEpoch:10}]
         for (let m = 0; m < info.length; m++) {
             const staker = info[m];
             totalStake = web3.utils.toBN(staker.amount).add(totalStake);
@@ -890,7 +891,6 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
 
     for (let i = 0; i < incentive.length; i++) {
         const inc = incentive[i].incentive;
-        // [{address:"xxxx", amount:3, epochId:0},{address:"xxxxxx", amount:7, epochId:10}]
         for (let m = 0; m < inc.length; m++) {
             const one = inc[m];
             totalReward = web3.utils.toBN(one.amount).add(totalReward);
@@ -903,7 +903,9 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
 
     base.validatorCnt = Object.getOwnPropertyNames(validator).length;
 
-    base.epochIDRaw = epochID;
+    if (typeof epochID === "number") {
+        base.epochIDRaw = epochID;
+    }
 
     let stakePool = web3.utils.toBN(0)
     if (stakerInfo) {

@@ -28,7 +28,6 @@ class TransHistory extends Component {
   }
 
   onChange = value => {
-    console.log(`selected ${value}`);
     this.props.setSelectedAddr(value);
   }
 

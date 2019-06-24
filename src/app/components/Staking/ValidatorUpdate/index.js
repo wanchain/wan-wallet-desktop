@@ -151,8 +151,6 @@ class ValidatorUpdate extends Component {
     let addrs = getAddrList
     let fromAddr = from
 
-    console.log('getPath called', addrs)
-
     if (from.includes('Ledger')) {
       fromAddr = from.replace('Ledger: ', '')
       addrs = ledgerAddrList
@@ -165,7 +163,6 @@ class ValidatorUpdate extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      console.log('addr,from', addr, fromAddr)
       if (addr.address == fromAddr) {
         return addr.path;
       }
@@ -181,7 +178,6 @@ class ValidatorUpdate extends Component {
       let to = form.getFieldValue('to');
       let pwd = form.getFieldValue('pwd');
 
-      console.log('balance:', this.state.balance, typeof this.state.balance);
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
         return;
@@ -281,64 +277,6 @@ class ValidatorUpdate extends Component {
 
   trezorDelegateIn = async (path, from, validator, value) => {
     console.log('trezorDelegateIn:', path, from, validator, value);
-    let chainId = await getChainId();
-    console.log('chainId', chainId);
-    let func = 'delegateIn';
-    try {
-      console.log('ready to get nonce, gasPrice, data');
-      console.log('getNonce');
-      let nonce = await getNonce(from, 'wan');
-      console.log('getNonce', nonce);
-      console.log('getGasPrice');
-      let gasPrice = await getGasPrice('wan');
-      console.log('getGasPrice', gasPrice);
-      console.log('getContractData');
-      let data = await getContractData(func, validator);
-      console.log('getContractData', data);
-      //let [nonce, gasPrice, data] = await Promise.all([getNonce(from, 'wan'), getGasPrice('wan'), getContractData(func, validator)]);
-      console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, "gwei"), data);
-      let amountWei = toWei(value);
-      console.log('amountWei', amountWei);
-      const cscContractAddr = "0x00000000000000000000000000000000000000d8";
-      let rawTx = {};
-      rawTx.from = from;
-      rawTx.to = cscContractAddr;
-      rawTx.value = amountWei;
-      rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, "gwei");
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
-
-      console.log('rawTx:', rawTx);
-      let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
-      console.log('signTransaction finish, ready to send.')
-      console.log('raw:', raw);
-
-      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('transaction_raw finish, txHash:', txHash);
-      let params = {
-        srcSCAddrKey: 'WAN',
-        srcChainType: 'WAN',
-        tokenSymbol: 'WAN',
-        //hashX: txHash,
-        txHash,
-        from: from.toLowerCase(),
-        validator: validator,
-        annotate: 'DelegateIn',
-        status: 'Sent',
-        source: "external",
-        ...rawTx
-      }
-
-      await pu.promisefy(wand.request, ['staking_insertTransToDB', { rawTx: params }], this);
-      console.log('staking_insertTransToDB finish')
-      this.props.updateStakeInfo();
-      this.props.updateTransHistory();
-    } catch (error) {
-      message.error(error)
-    }
   }
 
   signTrezorTransaction = (path, tx, callback) => {

@@ -89,7 +89,6 @@ class Trezor extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
-    console.log('signTransaction:', tx);
     TrezorConnect.ethereumSignTransaction({
       path: path,
       transaction: {
@@ -114,7 +113,7 @@ class Trezor extends Component {
       tx.s = result.payload.s;
       let eTx = new wanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('signed', signedTx);
+      console.log('Signed tx: ', signedTx);
       callback(null, signedTx);
     });
   }

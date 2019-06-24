@@ -43,7 +43,6 @@ class Validator extends Component {
 
   componentDidMount() {
     this.timer = setInterval(() => {
-      //console.log('time up staking info.')
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     }, 20000)
