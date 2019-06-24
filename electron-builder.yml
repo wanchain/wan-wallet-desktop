@@ -14,8 +14,8 @@ files:
 
 publish:
   - provider: github
-    owner: Anson5555555Lee
-    repo: wandWallet
+    owner: wanchain
+    repo: wan-wallet-desktop
 
 mac:
   category: public.app-category.finance
