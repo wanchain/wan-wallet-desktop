@@ -6,7 +6,7 @@
   "main": "./build/main.js",
   "author": {
     "name": "Wanchain Foundation",
-    "email": "dev@wanchain.org"
+    "email": "dev-team@wanchain.org"
   },
   "scripts": {
     "start": "electron .",
