@@ -46,7 +46,7 @@ nsis:
   artifactName: Wan-Wallet-${os}-${version}.exe
 
 deb:
-  artifactName: Wan-Wallet-${version}.deb
+  artifactName: Wan-Wallet-${os}-${version}.deb
 
 appImage:
-  artifactName: Wan-Wallet-${version}.AppImage
+  artifactName: Wan-Wallet-${os}-${version}.AppImage
