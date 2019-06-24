@@ -23,7 +23,7 @@ body {
 }
 
 .container {
-    padding: 100px 0 0;
+    padding: 40px 0 0;
 }
 
 .container h1 {
@@ -103,7 +103,7 @@ body {
     width: 150px;
     line-height: 40px;
     padding: 0;
-    margin: 60px auto;
+    margin: 0px;
 
     border-radius: 20px;
 }
