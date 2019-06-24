@@ -358,10 +358,10 @@ class StakeInForm extends Component {
       return;
     }
 
-    if (this.state.balance <= amount) {
-      message.error("Balance is not enough.")
-      return;
-    }
+    // if (this.state.balance <= amount) {
+    //   message.error("Balance is not enough.")
+    //   return;
+    // }
 
     const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
     const WALLET_ID_LEDGER = 0x02;
