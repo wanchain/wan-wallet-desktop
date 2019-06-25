@@ -224,6 +224,7 @@ const en_US = {
     'staking.table.exit': 'Exit',
     'staking.table.type': 'TYPE',
     'staking.delegateHistory': 'Delegation History',
+    'staking.delegateList': 'Delegation List',
 
     'validator.title': 'Validator',
 

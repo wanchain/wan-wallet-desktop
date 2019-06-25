@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Row, Col, message, Form } from 'antd';
+import { Button, Row, Col, message, Form, Icon } from 'antd';
 import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
 import './index.less';
@@ -7,6 +7,7 @@ import Cards from 'components/Staking/Cards';
 import Validators from 'components/Staking/Validators';
 import StakingHistory from 'components/Staking/StakingHistory';
 import StakeInForm from 'components/Staking/StakeInForm';
+import total from 'static/image/total.png';
 
 const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
@@ -64,20 +65,21 @@ class Staking extends Component {
   render() {
     return (
       <div className="staking">
-        <Row className="title">
-          <Col span={12} className="col-left">
-            {/* <img className="totalImg" src={totalImg} alt="Wanchain" />
-            <span className="dashboard">{intl.get('staking.dashboard')}</span> */}
-          </Col>
-          <Col span={12} className="col-right">
-            <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleDelegateNew}>{intl.get('staking.newDelegate')}</Button>
-            <DelegateInForm visible={this.state.delegateInFormVisible} onCancel={this.handleCancel} onSend={this.handleSend} />
-          </Col>
-        </Row>
         <Row>
           <Col>
             <Cards />
           </Col>
+        </Row>
+        <Row>
+          <div className="historyCon">
+            <Col span={12} className="col-left">
+              <img src={total} /><span>{intl.get('staking.delegateList')}</span>
+            </Col>
+            <Col span={12} className="col-right">
+              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleDelegateNew}>{intl.get('staking.newDelegate')}</Button>
+              <DelegateInForm visible={this.state.delegateInFormVisible} onCancel={this.handleCancel} onSend={this.handleSend} />
+            </Col>
+          </div>
         </Row>
         <Row>
           <Col>

@@ -224,6 +224,7 @@ const zh_CN = {
     'staking.table.exit': '退出',
     'staking.table.type': '类型',
     'staking.delegateHistory': '委托历史记录',
+    'staking.delegateList': '委托列表',
 
     'validator.title': '验证节点',
     
