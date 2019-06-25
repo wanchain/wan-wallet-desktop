@@ -278,7 +278,7 @@ class WanAddress {
           if(!self.transHistory[item].validator) {
             return;
           }
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -308,7 +308,7 @@ class WanAddress {
             return;
           }
 
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -338,7 +338,7 @@ class WanAddress {
             //return;
           }
 
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
