@@ -1,14 +1,11 @@
-import { observable, action, computed, runInAction } from 'mobx';
-import axios from 'axios';
+import pu from 'promisefy-util';
+import { observable, action, computed } from 'mobx';
 
 import wanAddress from './wanAddress';
-
-import validatorImg from 'static/image/validator.png';
-import arrow from 'static/image/arrow.png';
-import pu from 'promisefy-util';
 import { getNameAndIcon } from 'utils/helper';
 import { fromWei, dateFormat } from 'utils/support';
-
+import arrow from 'static/image/arrow.png';
+import validatorImg from 'static/image/validator.png';
 
 class Staking {
   @observable stakeInfo = {
@@ -78,26 +75,25 @@ class Staking {
 
   @computed get stakingList() {
     let validators = []
-
-    for (let i = 0; i < this.stakeList.length; i++) {
+    this.stakeList.forEach((item, index) => {
       validators.push({
-        myAccount: this.stakeList[i].myAccount,
-        accountAddress: this.stakeList[i].accountAddress,
-        accountPath: this.stakeList[i].accountPath,
-        balance: this.stakeList[i].balance,
-        myStake: this.stakeList[i].myStake,
+        myAccount: item.myAccount,
+        accountAddress: item.accountAddress,
+        accountPath: item.accountPath,
+        balance: item.balance,
+        myStake: item.myStake,
         arrow1: arrow,
         validator: { 
-          img: this.stakeList[i].validator.img ? this.stakeList[i].validator.img : validatorImg, 
-          name: this.stakeList[i].validator.name, 
-          address: this.stakeList[i].validatorAddress,
+          img: item.validator.img ? item.validator.img : validatorImg, 
+          name: item.validator.name, 
+          address: item.validatorAddress,
         },
         arrow2: arrow,
-        distributeRewards: this.stakeList[i].distributeRewards,
+        distributeRewards: item.distributeRewards,
         modifyStake: ["+", "-"],
-        key: i,
+        key: index,
       })
-    }
+    })
     return validators;
   }
 
