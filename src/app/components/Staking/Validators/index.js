@@ -86,12 +86,12 @@ class Validators extends Component {
           return (
             <div>
               <Row>
-                <Col span={12} align="center"><DelegateIn record={record} /></Col>
-                <Col span={12} align="center"><DelegateOut record={record} /></Col>
+                <Col span={6} align="left"><DelegateIn record={record} /></Col>
+                <Col span={6} align="center"><DelegateOut record={record} /></Col>
               </Row>
               <Row>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
+                <Col span={6} className="modifyBtnText" align="left">{intl.get('staking.table.topup')}</Col>
+                <Col span={6} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
               </Row>
             </div>
           )
