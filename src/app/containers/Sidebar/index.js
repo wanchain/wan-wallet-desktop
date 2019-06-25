@@ -68,7 +68,7 @@ class Sidebar extends Component {
         <div className="logo">
           <img src={logo} alt={intl.get('Sidebar.wanchain')} />
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} className="menuTreeNode">
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.props.path]} className="menuTreeNode">
           { this.renderMenu(sidebarColumns) }
         </Menu>
       </div>

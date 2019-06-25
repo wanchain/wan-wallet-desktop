@@ -47,6 +47,7 @@ export default class Layout extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props, 'pppppppppppppppppppppppppp')
     this.wanTimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
     this.waitUntilSdkReady();
   }
@@ -69,7 +70,7 @@ export default class Layout extends Component {
   }
 
   render() {
-    const { hasMnemonicOrNot, auth } = this.props;
+    const { hasMnemonicOrNot, auth, location } = this.props;
     if (this.state.loading) {
       return <Loading />
     } else {
@@ -81,7 +82,7 @@ export default class Layout extends Component {
         return (
           <Row className="container">
             <Col /* span={4} */ className="nav-left">
-              <SideBar />
+              <SideBar path={location.pathname}/>
             </Col>
             <Col /* span={20} */ className="main">
               <MHeader />
