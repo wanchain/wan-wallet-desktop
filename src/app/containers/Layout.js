@@ -47,7 +47,6 @@ export default class Layout extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props, 'pppppppppppppppppppppppppp')
     this.wanTimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
     this.waitUntilSdkReady();
   }
