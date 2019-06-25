@@ -37,7 +37,7 @@ linux:
     - appImage
 
 dmg:
-  artifactName: Wan-Wallet-${version}.dmg
+  artifactName: Wan-Wallet-${os}-${version}.dmg
 
 nsis:
   oneClick: false
