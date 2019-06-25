@@ -119,7 +119,7 @@ class Staking {
         continue;
       }
 
-      quota *= 5;
+      quota *= 10;
 
       if (this.validatorList[i].clients.length > 0) {
         for (let m = 0; m < this.validatorList[i].clients.length; m++) {
