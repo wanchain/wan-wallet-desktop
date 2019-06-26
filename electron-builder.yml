@@ -20,7 +20,6 @@ publish:
 mac:
   category: public.app-category.finance
   icon: build/assets/icon.icns
-  gatekeeperAssess: false
   target:
     - dmg
     - zip
@@ -37,16 +36,16 @@ linux:
     - appImage
 
 dmg:
-  artifactName: Wan-Wallet-${os}-${version}.dmg
+  artifactName: Wan-Wallet-${version}-${os}.dmg
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
-  artifactName: Wan-Wallet-${os}-${version}.exe
+  artifactName: Wan-Wallet-${version}-${os}.exe
 
 deb:
-  artifactName: Wan-Wallet-${os}-${version}.deb
+  artifactName: Wan-Wallet-${version}-${os}.deb
 
 appImage:
-  artifactName: Wan-Wallet-${os}-${version}.AppImage
+  artifactName: Wan-Wallet-${version}-${os}.AppImage
