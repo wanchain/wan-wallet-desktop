@@ -170,7 +170,8 @@ export const checkAmountUnit = function (decimals, amount) {
   if(!Number.isInteger(decimals)) {
     throw new Error('Decimals must be a integer');
   }
-  return !!(amount >= 1 / (10 ** decimals));
+  let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
+  return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
 }
 
 export const getChainIdByAddr = function (addrInfo) {
