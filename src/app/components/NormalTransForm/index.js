@@ -131,7 +131,7 @@ class NormalTransForm extends Component {
     })
     if(this.state.disabledAmount) {
       form.setFieldsValue({
-        amount: getBalanceByAddr(from, addrInfo) - e.target.value
+        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(e.target.value)
       });
     }
   }
@@ -196,11 +196,11 @@ class NormalTransForm extends Component {
       if(this.state.advanced) {
         let fee = form.getFieldValue('fee');
         form.setFieldsValue({
-          amount: getBalanceByAddr(from, addrInfo) - fee
+          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(fee)
         });
       } else {
         form.setFieldsValue({
-          amount: getBalanceByAddr(from, addrInfo) - this.state.gasFee
+          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(this.state.gasFee)
         });
       }
 
