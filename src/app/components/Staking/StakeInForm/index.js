@@ -627,8 +627,8 @@ class StakeInForm extends Component {
                             {this.state.addrList.map((item, index) =>
                               <Option value={item} key={index}>
                                 <Row>
-                                  <Col span={18}>{item}</Col>
-                                  <Col span={6} align="left" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
+                                  <Col span={20}>{item}</Col>
+                                  <Col span={4} align="right" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
                                 </Row>
                               </Option>)}
                           </Select>
