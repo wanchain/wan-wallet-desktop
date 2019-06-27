@@ -64,12 +64,11 @@ class WanAddress {
         if(!err && val.length !== 0) {
           val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
-            if(item.txHash !== item.hashX || item.status === 'Failed') {
-              if(item.txHash === '') {
-                self.transHistory[item.hashX] = item;
-              } else {
-                self.transHistory[item.txHash] = item;
-              }
+            if(item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
+              self.transHistory[item.txHash] = item;
+            }
+            if(item.txHash === '' && item.status === 'Failed') {
+              self.transHistory[item.hashX] = item;
             }
           })
         }
