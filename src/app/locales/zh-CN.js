@@ -13,6 +13,7 @@ const zh_CN = {
     'Register.createSeedPhraseFailed': '创建助记词失败',
     'Register.passwordTip': '密码必须6位字符及以上，必须包含1个大写字母、1个小写字母和1个数字',
     'Register.passwordsMismatched': '密码不匹配',
+    'Register.passwordsEmpty': '请输入密码',
     'Register.seedPhraseIsInvalid': '助记词不正确',
     'Register.writeSeedPhraseToDatabaseFailed': '往数据库写入助记词失败',
     'Register.unlockWalletFailed': '解锁钱包失败',

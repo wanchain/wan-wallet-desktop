@@ -13,6 +13,7 @@ const en_US = {
     'Register.createSeedPhraseFailed': 'Create seed phrase failed',
     'Register.passwordTip': 'Password must have a minimum of 6 characters; must contain at least one uppercase letter, one lowercase letter, and one numeric digit',
     'Register.passwordsMismatched': 'Passwords mismatched',
+    'Register.passwordsEmpty': 'Please enter the password',
     'Register.seedPhraseIsInvalid': 'Seed phrase is invalid',
     'Register.writeSeedPhraseToDatabaseFailed': 'Write seed phrase to database failed',
     'Register.unlockWalletFailed': 'Unlock wallet failed',

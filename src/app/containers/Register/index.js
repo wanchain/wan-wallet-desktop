@@ -20,6 +20,7 @@ const Step = Steps.Step;
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
   language: stores.languageIntl.language,
+  isAllEmptyPwd: stores.mnemonic.isAllEmptyPwd,
   setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
@@ -42,8 +43,12 @@ class Register extends Component {
   }
 
   next = () => {
-    const { current, isSamePwd, setIndex, pwd, method, mnemonic } = this.props;
+    const { current, isSamePwd, isAllEmptyPwd, setIndex, pwd, method, mnemonic } = this.props;
     if (current === 0) {
+      if(isAllEmptyPwd) {
+        message.error(intl.get('Register.passwordsEmpty'));
+        return;
+      }
       if (isSamePwd) {
         if (checkCryptographic(pwd)) {
           if (method === 'create') {
