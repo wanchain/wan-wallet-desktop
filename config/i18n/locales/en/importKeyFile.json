@@ -14,6 +14,6 @@
     "ERR_WRONG_PWD_KEYFILE": "Invalid keystore password",
     "ERR_WRONG_PWD_WALLET": "Invalid WAN wallet password",
     "ERR_INVALID_KEYFILE": "Invalid keystore file format",
-    "TEXT_SUCCESS": "Import is successful. Please close this window manually",
+    "TEXT_SUCCESS": "Import is successful. This window will close in 5 seconds",
     "browse": "Browse"
 }
