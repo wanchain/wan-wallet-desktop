@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { toWei } from 'utils/support';
-import { checkWanAddr, getBalanceByAddr, checkAmountUnit } from 'utils/helper';
+import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 
@@ -92,7 +92,7 @@ class NormalTransForm extends Component {
       if (err) return;
       let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
-      let sendAmount = parseFloat(form.getFieldValue('amount'));
+      let sendAmount = form.getFieldValue('amount');
       let currfee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
       if(addrAmount - currfee < sendAmount) {
         message.warn(intl.get('NormalTransForm.overBalance'));
@@ -107,12 +107,12 @@ class NormalTransForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+            updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) })
             this.setState({ advanced: false, confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: form.getFieldValue('to'), amount: form.getFieldValue('amount') })
+        updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) })
         this.setState({ advanced: false, confirmVisible: true });
       }
     });

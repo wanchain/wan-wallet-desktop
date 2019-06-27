@@ -174,6 +174,18 @@ export const checkAmountUnit = function (decimals, amount) {
   return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
 }
 
+export const formatAmount = function (amount) {
+  let amountStr = amount.toString();
+  if(amountStr.indexOf('.') === 0) {
+    amount = new BigNumber(`0${amount}`);
+  }
+  if(amountStr.indexOf('.') === amountStr.length - 1) {
+    amount = new BigNumber(`${amount}0`);
+  }
+  
+  return amount.toString();
+}
+
 export const getChainIdByAddr = function (addrInfo) {
   Object.keys(addrInfo).forEach(type => {
     Object.keys(addrInfo[type]).forEach(() => {})
