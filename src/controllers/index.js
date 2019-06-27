@@ -333,8 +333,8 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
 
-                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}` });
-                Windows.broadcast('notification', 'keyfilepath', { path, addr: keyStoreObj.address });
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}`.toLowerCase() });
+                Windows.broadcast('notification', 'keyfilepath', { path, addr: keyStoreObj.address.toLowerCase() });
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {

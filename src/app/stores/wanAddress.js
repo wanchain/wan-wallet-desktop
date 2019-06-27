@@ -65,7 +65,11 @@ class WanAddress {
           val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
             if(item.txHash !== item.hashX || item.status === 'Failed') {
-              self.transHistory[item.txHash] = item;
+              if(item.txHash === '') {
+                self.transHistory[item.hashX] = item;
+              } else {
+                self.transHistory[item.txHash] = item;
+              }
             }
           })
         }
@@ -145,11 +149,11 @@ class WanAddress {
             Object.keys(info[path]).forEach(id => {
               if(['1', '5'].includes(id)) {
                 let address = info[path][id]['addr'];
-                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
+                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address.toLowerCase())] = {
                   name: info[path][id]['name'],
                   balance: 0,
                   path: path.substr(path.lastIndexOf('\/')+1),
-                  address: wanUtil.toChecksumAddress(address)
+                  address: wanUtil.toChecksumAddress(address.toLowerCase())
                 }
               }
             })
@@ -159,11 +163,11 @@ class WanAddress {
     }
 
     @action addKeyStoreAddr({path, addr}) {
-      self.addrInfo['import'][`0x${addr}`] = {
+      self.addrInfo['import'][wanUtil.toChecksumAddress(`0x${addr}`)] = {
         name: `Imported${path + 1}`,
         balance: '0',
         path: path,
-        address: `0x${addr}`
+        address: wanUtil.toChecksumAddress(`0x${addr}`)
       };
     }
 
