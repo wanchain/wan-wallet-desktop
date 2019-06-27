@@ -43,6 +43,9 @@ class WanAddress {
     @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+          if(addr.name === undefined && type === 'ledger') {
+            addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
           if(addr.name === undefined) {
             addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
           }
