@@ -15,12 +15,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.changeLanguage('en_US');
-    stores.session.initChainId();
-    stores.session.initSettings();
     initEmitterHandler();
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
+        stores.session.initChainId();
+        stores.session.initSettings();
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         clearInterval(id);
@@ -34,11 +34,11 @@ class App extends Component {
     });
 
     regEmitterHandler('uiAction', action => {
-      if(action === 'lockWallet' && stores.session.auth === true) {
+      if (action === 'lockWallet' && stores.session.auth === true) {
         wand.request('wallet_lock', null, (err, val) => {
-          if (err) { 
-              console.log('Lock failed ', err)
-              return
+          if (err) {
+            console.log('Lock failed ', err)
+            return
           }
           stores.session.setAuth(false);
         })
@@ -46,7 +46,7 @@ class App extends Component {
     });
 
     regEmitterHandler('hdwallet', val => {
-      if(['Ledger', 'Trezor'].includes(val.Device)) {
+      if (['Ledger', 'Trezor'].includes(val.Device)) {
         message.warn(intl.get('HwWallet.disconnected'));
         wand.request('wallet_deleteLedger');
         stores.wanAddress.updateAddress(val.Device.toLowerCase());
@@ -55,9 +55,9 @@ class App extends Component {
 
     regEmitterHandler('network', net => {
       wand.request('wallet_lock', null, (err, val) => {
-        if (err) { 
-            console.log('Lock failed ', err)
-            return
+        if (err) {
+          console.log('Lock failed ', err)
+          return
         }
         stores.session.setAuth(false);
         stores.session.setChainId(net.includes('main') ? 1 : 3);
@@ -72,7 +72,6 @@ class App extends Component {
   }
 
   changeLanguage = lan => {
-    console.log(lan);
     intl.init({
       currentLocale: lan,
       locales

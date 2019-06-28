@@ -43,6 +43,9 @@ class WanAddress {
     @action addAddresses(type, addrArr) {
       addrArr.forEach(addr => {
         if(!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+          if(addr.name === undefined && type === 'ledger') {
+            addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
           if(addr.name === undefined) {
             addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
           }
@@ -64,8 +67,11 @@ class WanAddress {
         if(!err && val.length !== 0) {
           val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
-            if(item.txHash !== item.hashX || item.status === 'Failed') {
+            if(item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
               self.transHistory[item.txHash] = item;
+            }
+            if(item.txHash === '' && item.status === 'Failed') {
+              self.transHistory[item.hashX] = item;
             }
           })
         }
@@ -145,11 +151,11 @@ class WanAddress {
             Object.keys(info[path]).forEach(id => {
               if(['1', '5'].includes(id)) {
                 let address = info[path][id]['addr'];
-                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address)] = {
+                self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address.toLowerCase())] = {
                   name: info[path][id]['name'],
                   balance: 0,
                   path: path.substr(path.lastIndexOf('\/')+1),
-                  address: wanUtil.toChecksumAddress(address)
+                  address: wanUtil.toChecksumAddress(address.toLowerCase())
                 }
               }
             })
@@ -159,11 +165,11 @@ class WanAddress {
     }
 
     @action addKeyStoreAddr({path, addr}) {
-      self.addrInfo['import'][`0x${addr}`] = {
+      self.addrInfo['import'][wanUtil.toChecksumAddress(`0x${addr}`)] = {
         name: `Imported${path + 1}`,
         balance: '0',
         path: path,
-        address: `0x${addr}`
+        address: wanUtil.toChecksumAddress(`0x${addr}`)
       };
     }
 
@@ -177,6 +183,23 @@ class WanAddress {
       let importArr = Object.keys(self.addrInfo['import']);
       normalArr.concat(importArr).forEach((item, index) => {
         let type = normalArr.length -1 < index ? 'import' : 'normal';
+        addrList.push({
+          key: item,
+          name: self.addrInfo[type][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: self.addrInfo[type][item].balance,
+          path: `${WAN}${self.addrInfo[type][item].path}`,
+          action: 'send'
+        });
+      });
+      return addrList;
+    }
+
+    @computed get getNormalAddrList() {
+      let addrList = [];
+      let normalArr = Object.keys(self.addrInfo['normal']);
+      normalArr.forEach((item, index) => {
+        let type = 'normal';
         addrList.push({
           key: item,
           name: self.addrInfo[type][item].name,
@@ -261,7 +284,7 @@ class WanAddress {
           if(!self.transHistory[item].validator) {
             return;
           }
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -291,7 +314,7 @@ class WanAddress {
             return;
           }
 
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -305,7 +328,8 @@ class WanAddress {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
               img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
-            }
+            },
+            stakeAmount: self.transHistory[item].stakeAmount,
           });
         }
       });
@@ -320,7 +344,7 @@ class WanAddress {
             //return;
           }
 
-          let getIndex = staking.stakingList.findIndex(value => value.accountAddress === self.transHistory[item]["from"]);
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]["sendTime"]),
@@ -334,7 +358,8 @@ class WanAddress {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
               img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
-            }
+            },
+            stakeAmount: self.transHistory[item].stakeAmount
           });
         }
       });

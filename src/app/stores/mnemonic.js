@@ -35,6 +35,10 @@ class Mnemonic {
     return (self.pwd !== '') && (self.pwd === self.confirmPwd);
   }
 
+  @computed get isAllEmptyPwd() {
+    return self.pwd === '' && self.confirmPwd === '';
+  }
+
 }
 
 const self = new Mnemonic();

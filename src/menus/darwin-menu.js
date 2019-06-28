@@ -111,19 +111,19 @@ export default (i18n) => {
     const editMenu = {
         label: i18n.t('main.applicationMenu.edit.label'),
         submenu: [
-            {
-                label: i18n.t('main.applicationMenu.edit.undo'),
-                role: 'undo',
-            },
-            {
-                label: i18n.t('main.applicationMenu.edit.redo'),
-                role: 'redo',
-            },
-            { type: 'separator' },
-            {
-                label: i18n.t('main.applicationMenu.edit.cut'),
-                role: 'cut',
-            },
+            // {
+            //     label: i18n.t('main.applicationMenu.edit.undo'),
+            //     role: 'undo',
+            // },
+            // {
+            //     label: i18n.t('main.applicationMenu.edit.redo'),
+            //     role: 'redo',
+            // },
+            // { type: 'separator' },
+            // {
+            //     label: i18n.t('main.applicationMenu.edit.cut'),
+            //     role: 'cut',
+            // },
             {
                 label: i18n.t('main.applicationMenu.edit.copy'),
                 role: 'copy'

@@ -20,7 +20,7 @@ const Option = Select.Option;
 
 @inject(stores => ({
   settings: stores.session.settings,
-  getAddrList: stores.wanAddress.getAddrList,
+  getAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   onlineValidatorList: stores.staking.onlineValidatorList,
@@ -358,10 +358,10 @@ class StakeInForm extends Component {
       return;
     }
 
-    if (this.state.balance <= amount) {
-      message.error("Balance is not enough.")
-      return;
-    }
+    // if (this.state.balance <= amount) {
+    //   message.error("Balance is not enough.")
+    //   return;
+    // }
 
     const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
     const WALLET_ID_LEDGER = 0x02;
@@ -627,8 +627,8 @@ class StakeInForm extends Component {
                             {this.state.addrList.map((item, index) =>
                               <Option value={item} key={index}>
                                 <Row>
-                                  <Col span={16}>{item}</Col>
-                                  <Col span={8} align="left" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
+                                  <Col span={20}>{item}</Col>
+                                  <Col span={4} align="right" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
                                 </Row>
                               </Option>)}
                           </Select>

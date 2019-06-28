@@ -11,7 +11,7 @@
                         "label": "资产",
                         "wan": {
                             "label": "万维币",
-                            "import": "从Key File导入地址"
+                            "import": "从秘钥文件导入地址"
                         }
                     },
                     "data": {

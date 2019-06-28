@@ -77,6 +77,24 @@
             </div>
         </div>
     </div>
+
+    <div id="mask">
+        <i class="icon-loading">
+            <svg viewBox="0 0 1024 1024" class="loading-spin">
+                <path
+                    d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 0 0-94.3-139.9 437.71 437.71 0 0 0-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z">
+                </path>
+            </svg>
+            <br/><br/>
+            <span id="downloadingProgress">
+                <!-- Downloading... -->
+            </span>
+            <span id="downloadingComplete" style="display: none;">
+                <!-- Download Complete. Will Quit and Install Updates Now! -->
+            </span>
+        </i>
+    </div>
+
 </body>
 <script type="application/javascript">
     (function () {
@@ -121,7 +139,6 @@
             const kFBtn = document.querySelector('#kFButton')
 
             form.addEventListener('keypress', (e) => {
-                console.log(e);
                 if(e.key === "Enter") {
                     e.preventDefault();
                     let event = document.createEvent('MouseEvents');
@@ -158,7 +175,7 @@
                     setLanguage();
                     ERR_NOT_FOUND = $.i18n('ERR_NOT_FOUND');
                     ERR_WRONG_PWD_KEYFILE = $.i18n('ERR_WRONG_PWD_KEYFILE');
-                    ERR_WRONG_PWD_WAL = $.i18n('ERR_WRONG_PWD_WAL');
+                    ERR_WRONG_PWD_WALLET = $.i18n('ERR_WRONG_PWD_WALLET');
                     ERR_INVALID_KEYFILE = $.i18n('ERR_INVALID_KEYFILE');
                     TEXT_SUCCESS = $.i18n('TEXT_SUCCESS');
                     kFBtn.setAttribute('data-content', $.i18n('browse'));
@@ -190,42 +207,46 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                errText.innerHTML = ''
-                successText.innerHTML = ''
+                errText.innerHTML = '';
+                successText.innerHTML = '';
 
-                if (alertError.classList.contains('show')) alertError.classList.remove('show')
-                if (alertSuccess.classList.contains('show')) alertSuccess.classList.remove('show')
+                if (alertError.classList.contains('show')) alertError.classList.remove('show');
+                if (alertSuccess.classList.contains('show')) alertSuccess.classList.remove('show');
 
                 form.classList.add('was-validated');
 
-                const formData = new FormData(form)
-                const keyFilePwd = formData.get('oldpwd')
-                const hdWalletPwd = formData.get('newpwd')
-                const fileDesc = formData.get('keyfile')
-
+                const formData = new FormData(form);
+                const keyFilePwd = formData.get('oldpwd');
+                const hdWalletPwd = formData.get('newpwd');
+                const fileDesc = formData.get('keyfile');
                 if (keyFilePwd && hdWalletPwd && fileDesc.path) {
+                    document.getElementById('mask').style.display = 'block';
                     wand.request('address_fromKeyFile', {
                         keyFilePwd,
                         hdWalletPwd,
                         keyFilePath: fileDesc.path
                     }, function (err, val) {
+                        document.getElementById('mask').style.display = 'none';
                         if (err) {
-                            const desc = err.desc || err.message
+                            const desc = err.desc || err.message;
                             if (desc.includes('not found')) {
-                                errText.innerHTML = ERR_NOT_FOUND
+                                errText.innerHTML = ERR_NOT_FOUND;
                             } else if (desc.includes('authentication code mismatch')) {
-                                errText.innerHTML = ERR_WRONG_PWD_KEYFILE
+                                errText.innerHTML = ERR_WRONG_PWD_KEYFILE;
                             } else if (desc.includes('Invalid password')) {
-                                errText.innerHTML = ERR_WRONG_PWD_WALLET
+                                errText.innerHTML = ERR_WRONG_PWD_WALLET;
                             } else {
-                                errText.innerHTML = ERR_INVALID_KEYFILE
+                                errText.innerHTML = ERR_INVALID_KEYFILE;
                             }
-                            alertError.classList.add('show')
+                            alertError.classList.add('show');
                             return
                         }
                         if (val) {
-                            successText.innerHTML = TEXT_SUCCESS
-                            alertSuccess.classList.add('show')
+                            successText.innerHTML = TEXT_SUCCESS;
+                            alertSuccess.classList.add('show');
+                            setTimeout(() => {
+                                window.close();
+                            }, 5000);
                         }
                     })
                 }

@@ -5,10 +5,11 @@ This is a desktop wallet
 
 ## Features
 
-* BIP39 support
+* BIP39/BIP44 support
 * WAN coin transaction support
 * Ledger support
 * Galaxy PoS delegation support
+* English/Chinese support
 
 ## Development
 

@@ -14,8 +14,8 @@ files:
 
 publish:
   - provider: github
-    owner: Anson5555555Lee
-    repo: wandWallet
+    owner: wanchain
+    repo: wan-wallet-desktop
 
 mac:
   category: public.app-category.finance
@@ -40,19 +40,16 @@ linux:
     - appImage
 
 dmg:
-  artifactName: Wan-Wallet-${version}.dmg
-  sign: false
+  artifactName: Wan-Wallet-${version}-${os}.dmg
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
-  artifactName: Wan-Wallet-${version}.exe
+  artifactName: Wan-Wallet-${version}-${os}.exe
 
 deb:
-  artifactName: Wan-Wallet-${version}.deb
+  artifactName: Wan-Wallet-${version}-${os}.deb
 
 appImage:
-  artifactName: Wan-Wallet-${version}.AppImage
-
-afterSign: scripts/notarize.js
+  artifactName: Wan-Wallet-${version}-${os}.AppImage

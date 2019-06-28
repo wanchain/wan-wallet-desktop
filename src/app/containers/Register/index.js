@@ -1,3 +1,4 @@
+import wanUtil from "wanchain-util";
 import React, { Component } from 'react';
 import { Button, message, Steps } from 'antd';
 import { observer, inject } from 'mobx-react';
@@ -20,9 +21,11 @@ const Step = Steps.Step;
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
   language: stores.languageIntl.language,
+  isAllEmptyPwd: stores.mnemonic.isAllEmptyPwd,
   setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
+  addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
 }))
 
@@ -42,8 +45,12 @@ class Register extends Component {
   }
 
   next = () => {
-    const { current, isSamePwd, setIndex, pwd, method, mnemonic } = this.props;
+    const { current, isSamePwd, isAllEmptyPwd, setIndex, pwd, method, mnemonic } = this.props;
     if (current === 0) {
+      if(isAllEmptyPwd) {
+        message.error(intl.get('Register.passwordsEmpty'));
+        return;
+      }
       if (isSamePwd) {
         if (checkCryptographic(pwd)) {
           if (method === 'create') {
@@ -82,7 +89,7 @@ class Register extends Component {
   }
 
   done = () => {
-    const { mnemonic, newPhrase, pwd } = this.props;
+    const { mnemonic, newPhrase, pwd, addAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
         if (err) {
@@ -93,9 +100,23 @@ class Register extends Component {
           if (err) {
             console.log(intl.get('Register.unlockWalletFailed'), err)
           } else {
-            this.props.setMnemonicStatus(true);
-            this.props.setAuth(true);
-            }
+            let path = "m/44'/5718350'/0'/0/0";
+            wand.request('address_getOne', { walletID: 1, chainType: 'WAN', path: path }, (err, val_address_get) => {
+              if (!err) {
+                wand.request('account_create', { walletID: 1, path: path, meta: { name: 'Account1', addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+                  if (!err && val_account_create) {
+                    let addressInfo = {
+                      start: 0,
+                      address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`)
+                    }
+                    addAddress(addressInfo);
+                    this.props.setMnemonicStatus(true);
+                    this.props.setAuth(true);
+                  }
+                });
+              }
+            });
+          }
         })
       });
     } else {

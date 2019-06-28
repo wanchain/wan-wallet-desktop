@@ -13,6 +13,7 @@ const zh_CN = {
     'Register.createSeedPhraseFailed': '创建助记词失败',
     'Register.passwordTip': '密码必须6位字符及以上，必须包含1个大写字母、1个小写字母和1个数字',
     'Register.passwordsMismatched': '密码不匹配',
+    'Register.passwordsEmpty': '请输入密码',
     'Register.seedPhraseIsInvalid': '助记词不正确',
     'Register.writeSeedPhraseToDatabaseFailed': '往数据库写入助记词失败',
     'Register.unlockWalletFailed': '解锁钱包失败',
@@ -224,6 +225,7 @@ const zh_CN = {
     'staking.table.exit': '退出',
     'staking.table.type': '类型',
     'staking.delegateHistory': '委托历史记录',
+    'staking.delegateList': '委托列表',
 
     'validator.title': '验证节点',
     
@@ -248,7 +250,7 @@ const zh_CN = {
     'WithdrawForm.note': '注意：在退出委托后，委托金额将在3个epoch内返回原账户，委托金额将被清零',
     'staking.fromDaysAgo1': '已委托 ',
     'staking.fromDaysAgo2': ' 天',
-    'staking.fromEpochs1': '',
+    'staking.fromEpochs1': ' ',
     'staking.fromEpochs2': ' 个epoch已计入',
     'staking.inValidators1': '分布在 ',
     'staking.inValidators2': ' 个验证节点',

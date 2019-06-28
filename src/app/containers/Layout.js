@@ -69,7 +69,7 @@ export default class Layout extends Component {
   }
 
   render() {
-    const { hasMnemonicOrNot, auth } = this.props;
+    const { hasMnemonicOrNot, auth, location } = this.props;
     if (this.state.loading) {
       return <Loading />
     } else {
@@ -81,7 +81,7 @@ export default class Layout extends Component {
         return (
           <Row className="container">
             <Col /* span={4} */ className="nav-left">
-              <SideBar />
+              <SideBar path={location.pathname}/>
             </Col>
             <Col /* span={20} */ className="main">
               <MHeader />

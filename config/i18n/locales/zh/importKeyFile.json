@@ -12,8 +12,8 @@
     "submit": "提交",
     "ERR_NOT_FOUND": "无法继续, 钱包没有创建或已经被锁住",
     "ERR_WRONG_PWD_KEYFILE": "密钥文件密码错误",
-    "ERR_WRONG_PWD_WAL": "WAN钱包密码错误",
+    "ERR_WRONG_PWD_WALLET": "WAN钱包密码错误",
     "ERR_INVALID_KEYFILE": "密钥文件格式错误",
-    "TEXT_SUCCESS": "导入成功",
+    "TEXT_SUCCESS": "导入成功，窗口将在五秒后关闭。",
     "browse": "浏览"
 }

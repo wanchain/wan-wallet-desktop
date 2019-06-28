@@ -170,7 +170,20 @@ export const checkAmountUnit = function (decimals, amount) {
   if(!Number.isInteger(decimals)) {
     throw new Error('Decimals must be a integer');
   }
-  return !!(amount >= 1 / (10 ** decimals));
+  let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
+  return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
+}
+
+export const formatAmount = function (amount) {
+  let amountStr = amount.toString();
+  if(amountStr.indexOf('.') === 0) {
+    amount = new BigNumber(`0${amount}`);
+  }
+  if(amountStr.indexOf('.') === amountStr.length - 1) {
+    amount = new BigNumber(`${amount}0`);
+  }
+  
+  return amount.toString();
 }
 
 export const getChainIdByAddr = function (addrInfo) {

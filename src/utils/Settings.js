@@ -57,7 +57,9 @@ class Settings {
     constructor() {
         this._logger = Logger.getLogger('settings')
         this._logger.info('setting initialized')
-        this._db = low(new FileSync(app.getPath('userData') + '/config.json'))
+        let path = app.getPath('userData');
+        this._logger.info('User data path: ' + path);
+        this._db = low(new FileSync(path + '/config.json'))
     }
 
     get appName() {
