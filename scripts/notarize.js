@@ -13,9 +13,8 @@ exports.default = async function notarizing(context) {
     console.log('electronPlatformName: ', electronPlatformName)
     console.log('appOutDir: ', appOutDir)
     console.log('appName: ', appName)
-    console.log('appleId: ', process.env.APPLEID)
-    console.log('appleIdPassword: ', process.env.APPLEIDPASS)
 
+    console.log('start notarizing...')
     try {
         return await notarize({
             appBundleId: 'org.wallet.wanchain',

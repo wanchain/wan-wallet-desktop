@@ -1,7 +1,7 @@
 {
   "name": "wanwallet",
   "productName": "Wan Wallet",
-  "version": "1.0.0-beta.1",
+  "version": "2.0.0",
   "description": "Wanchain's new multicoin wallet",
   "main": "./build/main.js",
   "author": {
@@ -18,7 +18,7 @@
     "pack:mac": "run-s copy:mac transpile:renderer transpile:main build:mac",
     "pack:win": "run-s copy:win transpile:renderer transpile:main build:win",
     "pack:linux": "run-s copy transpile:renderer transpile:main build:linux",
-    "build:mac": "electron-builder --mac -p never",
+    "build:mac": "electron-builder --mac -p always",
     "build:win": "electron-builder --win -p never",
     "build:linux": "electron-builder --linux -p never",
     "build:all": "electron-builder -mwl -p never",
@@ -92,7 +92,7 @@
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
     "electron": "^5.0.0",
-    "electron-builder": "^20.43.0",
+    "electron-builder": "20.44.4",
     "electron-notarize": "^0.1.1",
     "electron-packager": "^13.1.1",
     "file-loader": "^3.0.1",
