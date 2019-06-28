@@ -1,6 +1,7 @@
 appId: org.wallet.wanchain
 copyright: Wanchain Foundation
 productName: Wan Wallet
+artifactName: Wan-Wallet-${version}-${os}.${ext}
 
 asar: true
 
@@ -40,19 +41,11 @@ linux:
     - appImage
 
 dmg:
-  artifactName: Wan-Wallet-${version}.dmg
   sign: false
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
-  artifactName: Wan-Wallet-${version}.exe
-
-deb:
-  artifactName: Wan-Wallet-${version}.deb
-
-appImage:
-  artifactName: Wan-Wallet-${version}.AppImage
 
 afterSign: scripts/notarize.js
