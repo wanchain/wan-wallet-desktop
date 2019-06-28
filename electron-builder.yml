@@ -47,4 +47,4 @@ nsis:
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
 
-# afterSign: scripts/notarize.js
+afterSign: scripts/notarize.js
