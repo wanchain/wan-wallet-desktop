@@ -60,12 +60,14 @@ class WalletUpdater {
               height: 720, 
               alwaysOnTop: true
             })    
-        
+
+            const releaseNote = info.releaseNotes[0].note.split('<table>')[0]
+
             const updateInfo = {
               currVersion: app.getVersion(),
               releaseVersion: info.version,
               releaseDate: new Date(info.releaseDate),
-              releaseNotes: info.releaseNotes[0].note
+              releaseNotes: releaseNote
             }
         
             updateModal.on('ready', () => {
