@@ -250,7 +250,7 @@ const zh_CN = {
     'WithdrawForm.note': '注意：在退出委托后，委托金额将在3个epoch内返回原账户，委托金额将被清零',
     'staking.fromDaysAgo1': '已委托 ',
     'staking.fromDaysAgo2': ' 天',
-    'staking.fromEpochs1': '',
+    'staking.fromEpochs1': ' ',
     'staking.fromEpochs2': ' 个epoch已计入',
     'staking.inValidators1': '分布在 ',
     'staking.inValidators2': ' 个验证节点',
