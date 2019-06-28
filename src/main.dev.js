@@ -5,6 +5,7 @@
  */
 
 import env from 'dotenv'
+import path from 'path'
 import { app } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
@@ -42,11 +43,11 @@ async function createMain () {
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1440,
     defaultHeight: 768
-  });
+  })
 
-  mainWindow = Windows.create('main', {
+  const opts = {
     primary: true,
-    electronOptions: {
+    electronOptions: { 
       minWidth:1440,
       minHeight: 768,
       width: mainWindowState.width,
@@ -59,7 +60,13 @@ async function createMain () {
         preload: setting.isDev ?  `${__dirname}/modules/preload` : `${__dirname}/preload.js`
       }
     }
-  })
+  }
+
+  if (process.platform === 'linux') {
+    opts.electronOptions.icon = path.join(__dirname, '/icons/icon-512x512.png')
+  }
+
+  mainWindow = Windows.create('main', opts)
 
   mainWindowState.manage(mainWindow.window)
  

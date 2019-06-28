@@ -15,27 +15,26 @@ files:
 
 publish:
   - provider: github
-    owner: Anson5555555Lee
-    repo: wandWallet
+    owner: wanchain
+    repo: wan-wallet-desktop
 
 mac:
   category: public.app-category.finance
-  icon: build/assets/icon.icns
+  icon: build/icons/icon.icns
   hardenedRuntime: true
   gatekeeperAssess: false
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   target:
     - dmg
-    - zip
+    # - zip
 
 win:
-  icon: build/assets/icon.ico
+  icon: build/icons/icon.ico
   target: nsis
 
 linux:
   category: Finance
-  icon: build/assets/icon.png
   target: 
     - deb
     - appImage
@@ -48,4 +47,4 @@ nsis:
   allowToChangeInstallationDirectory: true
   installerIcon: build/assets/icon.ico
 
-afterSign: scripts/notarize.js
+# afterSign: scripts/notarize.js

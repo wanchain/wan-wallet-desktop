@@ -9,3 +9,4 @@ cp -rf icons build/
 cp -rf src/modals build/
 cp -rf config/i18n/locales build/
 cp src/index.html build/
+cp entitlements.mac.plist build/
