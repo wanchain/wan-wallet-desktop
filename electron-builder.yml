@@ -1,7 +1,7 @@
 appId: org.wallet.wanchain
 copyright: Wanchain Foundation
 productName: Wan Wallet
-artifactName: Wan-Wallet-${version}-${os}.${ext}
+artifactName: Wan-Wallet-${os}-${version}.${ext}
 
 asar: true
 
@@ -27,7 +27,7 @@ mac:
   entitlementsInherit: build/entitlements.mac.plist
   target:
     - dmg
-    # - zip
+    - zip
 
 win:
   icon: build/icons/icon.ico
