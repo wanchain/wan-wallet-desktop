@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   stakeInfo: stores.staking.stakeInfo,
 }))
 
