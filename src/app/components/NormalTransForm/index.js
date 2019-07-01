@@ -94,7 +94,8 @@ class NormalTransForm extends Component {
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
       let currfee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
-      if(addrAmount - currfee < sendAmount) {
+
+      if(new BigNumber(addrAmount).minus(currfee) < sendAmount) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
