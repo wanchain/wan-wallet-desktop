@@ -198,7 +198,7 @@ class StakeInForm extends Component {
     }
 
     let valueStringPre = value.toString().slice(0, 4)
-    if (Math.floor(valueStringPre) < 100) {
+    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -295,7 +295,7 @@ class StakeInForm extends Component {
       let path = this.getPath(from);
 
       let amount = form.getFieldValue('amount');
-      if (!amount || amount < 100) {
+      if (!amount || (!this.props.topUp && amount < 100)) {
         message.error(intl.get('NormalTransForm.amountIsIncorrect'));
         return;
       }
@@ -354,7 +354,7 @@ class StakeInForm extends Component {
     let path = this.getPath(from);
 
     let amount = form.getFieldValue('amount');
-    if (!amount || amount < 100) {
+    if (!amount || (!this.props.topUp && amount < 100)) {
       message.error("Please input a valid amount.");
       return;
     }
@@ -660,8 +660,8 @@ class StakeInForm extends Component {
                 <Col span={20}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('amount', { initialValue: 100, rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input min={100} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                      {getFieldDecorator('amount', { initialValue: (this.props.topUp ? 0 : 100), rules: [{ required: true, validator: this.checkAmount }] })
+                        (<Input prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
