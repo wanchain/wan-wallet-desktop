@@ -197,7 +197,8 @@ class StakeInForm extends Component {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
 
-    if (Number(value) < 100) {
+    let valueStringPre = value.toString().slice(0, 4)
+    if (Math.floor(valueStringPre) < 100) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
