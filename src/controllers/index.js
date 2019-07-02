@@ -600,6 +600,17 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
+
+                if (stakerInfo.length > 0) {
+                    for (let i = 0; i < stakerInfo.length; i++) {
+                        let ret = await getNameAndIcon(stakerInfo[i].address);
+                        if (ret && ret.length > 0) {
+                            stakerInfo[i].name = ret[0].name;
+                            stakerInfo[i].iconData = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
+                        }
+                    }
+                }
+
                 ret.stakerInfo = stakerInfo;
             } catch (e) {
                 logger.error(actionUni + (e.message || e.stack))
@@ -698,36 +709,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
                 console.log('insert finish');
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break;
-
-        case 'getNameAndIcon':
-            try {
-                console.log('getContractData:', payload);
-                let addr = payload.address;
-                if (!global.nameIcon) {
-                    global.nameIcon = {};
-                }
-
-                let value = global.nameIcon[addr];
-                if (!value) {
-                    console.log('new getRegisteredValidator', addr);
-                    value = await ccUtil.getRegisteredValidator(addr);
-                    if (!value || value.length == 0) {
-                        console.log(value);
-                    } else {
-                        //console.log(value);
-                        global.nameIcon[addr] = value;
-                        ret = value;
-                    }
-                } else {
-                    ret = value;
-                    console.log('getNameAndIcon already have.')
-                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -987,13 +968,13 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
-            list[i].myStake.bottom = days.toFixed(0); 
+            list[i].myStake.bottom = days.toFixed(0);
 
             if (days > longestDays) {
                 longestDays = days;
             }
         } else {
-            list[i].myStake.bottom = "0"; 
+            list[i].myStake.bottom = "0";
         }
 
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (epochs.length) };
@@ -1004,4 +985,33 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
     }
 
     return list;
+}
+
+async function getNameAndIcon(address) {
+    let addr = address;
+    let ret = undefined;
+    if (!global.nameIcon) {
+        global.nameIcon = {};
+        global.nameIconUpdateTime = {};
+    }
+
+    let value = global.nameIcon[addr];
+    if (!value) {
+        let nowTime = Date.now()
+        if (!global.nameIconUpdateTime[addr] || (nowTime > (global.nameIconUpdateTime[addr] + 3 * 60 * 1000))) {
+            value = await ccUtil.getRegisteredValidator(addr);
+            if (!value || value.length == 0) {
+                console.log('address has no icon', addr);
+            } else {
+                global.nameIcon[addr] = value;
+                ret = value;
+                console.log('getNameAndIcon get from iWan.', addr);
+            }
+
+            global.nameIconUpdateTime[addr] = Date.now();
+        }
+    } else {
+        ret = value;
+    }
+    return ret;
 }
