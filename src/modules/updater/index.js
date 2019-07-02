@@ -79,11 +79,22 @@ class WalletUpdater {
             this._logger.error(`updater error: ${err.stack}`)
         })
 
+        if (process.platform === 'darwin') {
+          this.updater.on('download-progress', (progressObj) => {
+            let logMsg = 'Download speed: ' + progressObj.bytesPerSecond + ' bps'
+            logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
+            logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+            this._logger.info(`download progess: ${logMsg}`)
+        
+            updateModal.webContents.send('updateInfo', 'downloadPercentage', JSON.stringify(progressObj))
+          })
+        }
+
         this.updater.on('update-downloaded', (info) => {
-            updateModal.webContents.send('updateInfo', 'upgradeProgress', 'done')
-            setTimeout(() => {
-              this.updater.quitAndInstall()
-            }, 3 * 1000)
+          if (process.platform !== 'darwin') updateModal.webContents.send('updateInfo', 'upgradeProgress', 'done')
+          setTimeout(() => {
+            this.updater.quitAndInstall()
+          }, 3 * 1000)
         })
 
         this.updater.checkForUpdates()

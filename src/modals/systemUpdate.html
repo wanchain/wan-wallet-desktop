@@ -63,6 +63,15 @@
             </span>
         </i>
     </div>
+    <div id="downloading-mask">
+        <div id='downloading-container'>
+            <p id='downloading'></p>
+            <div id="loading-outer">
+                <div id="loading-bar"></div>
+            </div>
+            <span id="percentage">0%</span>
+        </div>
+    </div>
 </body>
 <script type="application/javascript">
     const ids = [
@@ -133,6 +142,16 @@
                                 downloadingProgress.style.display = 'none'
                                 downloadingComplete.style.display = 'inline'
                             }
+
+                            break
+
+                        case 'downloadPercentage':
+                            const progressObj = JSON.parse(val)
+                            document.getElementById('mask').style.display = 'none'
+                            document.getElementById('main-container').style.display = 'none'
+                            document.getElementById('downloading-mask').style.display = 'block'
+                        
+                            setLoadingPercentage(parseInt(progressObj.percent))
 
                             break
                     }

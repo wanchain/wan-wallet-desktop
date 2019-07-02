@@ -108,6 +108,19 @@ p {
     text-align: center;
 }
 
+#downloading-mask {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    background: rgb(99, 100, 117);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 2;
+    text-align: center;
+}
+
 .icon-loading {
     font-size: 24px;
     width: 48px;
@@ -129,7 +142,7 @@ p {
     animation: spin 1s infinite linear;
 }
 
-#mask-container {
+#downloading-container {
     box-sizing: border-box;
     width: 100%;
     position: absolute;
