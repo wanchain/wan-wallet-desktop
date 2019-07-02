@@ -4,7 +4,7 @@ import { observable, action, computed } from 'mobx';
 import wanAddress from './wanAddress';
 import { fromWei, dateFormat } from 'utils/support';
 import arrow from 'static/image/arrow.png';
-import validatorImg from 'static/image/validator.png';
+import Identicon from 'identicon.js';
 
 class Staking {
   @observable stakeInfo = {
@@ -73,7 +73,7 @@ class Staking {
         myStake: item.myStake,
         arrow1: arrow,
         validator: { 
-          img: item.validator.img ? item.validator.img : validatorImg, 
+          img: item.validator.img ? item.validator.img : ('data:image/png;base64,' + new Identicon(item.validatorAddress).toString()), 
           name: item.validator.name, 
           address: item.validatorAddress,
         },
@@ -120,7 +120,7 @@ class Staking {
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
-        icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : validatorImg,
+        icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : ('data:image/png;base64,' + new Identicon(this.validatorList[i].address).toString()),
         key: this.validatorList[i],
         quota: quota,
         feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),

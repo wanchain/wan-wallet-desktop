@@ -8,6 +8,7 @@ import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
 import { dateFormat } from '../app/utils/support';
+import Identicon from 'identicon.js';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -606,7 +607,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                         let ret = await getNameAndIcon(stakerInfo[i].address);
                         if (ret && ret.length > 0) {
                             stakerInfo[i].name = ret[0].name;
-                            stakerInfo[i].iconData = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
+                            stakerInfo[i].iconData = ret[0].iconData ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(stakerInfo[i].address).toString()) ;
                         }
                     }
                 }

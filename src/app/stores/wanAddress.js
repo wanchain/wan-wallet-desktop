@@ -7,7 +7,7 @@ import staking from './staking';
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
 import { timeFormat, fromWei } from 'utils/support';
-import validatorImg from 'static/image/validator.png';
+import Identicon from 'identicon.js';
 
 const KEYSTOREID = 5;
 const WAN = "m/44'/5718350'/0'/0/";
@@ -297,7 +297,7 @@ class WanAddress {
             validator: {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator).toString()) : staking.stakingList[getIndex].validator.img,
             },
             stakeAmount: self.transHistory[item].stakeAmount,
           });
@@ -327,7 +327,7 @@ class WanAddress {
             validator: {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator).toString()) : staking.stakingList[getIndex].validator.img,
             },
             stakeAmount: self.transHistory[item].stakeAmount,
           });
@@ -357,7 +357,7 @@ class WanAddress {
             validator: {
               address: self.transHistory[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? validatorImg : staking.stakingList[getIndex].validator.img,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator)) : staking.stakingList[getIndex].validator.img,
             },
             stakeAmount: self.transHistory[item].stakeAmount
           });
