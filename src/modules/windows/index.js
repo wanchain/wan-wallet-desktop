@@ -25,8 +25,8 @@ class Window extends EventEmitter {
         let electronOptions = {
             title: setting.appName,
             show: false,
-            width: 1100,
-            height: 720,
+            width: 1200,
+            height: 800,
             acceptFirstMouse: true,
             darkTheme: true,
             webPreferences: {
@@ -244,8 +244,8 @@ class Windows {
             show: true,
             ownerId: null,
             electronOptions: {
-                width: 1220,
-                height: process.platform === 'darwin' ? 720 : 760,
+                width: 1456,
+                height: 900,
                 fullscreen: false,
                 center: true,
                 useContentSize: true,

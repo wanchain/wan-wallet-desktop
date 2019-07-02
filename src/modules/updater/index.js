@@ -81,7 +81,7 @@ class WalletUpdater {
 
         if (process.platform === 'darwin') {
           this.updater.on('download-progress', (progressObj) => {
-            let logMsg = 'Download speed: ' + progressObj.bytesPerSecond + ' bps'
+            let logMsg = 'Download speed: ' + Math.ceil(progressObj.bytesPerSecond / 1024) + ' kbps'
             logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
             logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
             this._logger.info(`download progess: ${logMsg}`)
