@@ -566,7 +566,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-            case 'info':
+        case 'info':
             try {
                 let accounts = payload;
                 let delegateInfo = [];
