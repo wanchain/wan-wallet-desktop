@@ -2,7 +2,6 @@ import pu from 'promisefy-util';
 import { observable, action, computed } from 'mobx';
 
 import wanAddress from './wanAddress';
-import { getNameAndIcon } from 'utils/helper';
 import { fromWei, dateFormat } from 'utils/support';
 import arrow from 'static/image/arrow.png';
 import validatorImg from 'static/image/validator.png';
@@ -56,16 +55,6 @@ class Staking {
           }
           this.rewardRate = rewardRateNow;
           this.epochID = val.base.epochID;
-        }
-
-        if (this.validatorList && this.validatorList.length > 0) {
-          for (let i = 0; i < this.validatorList.length; i++) {
-            let ret = await getNameAndIcon(this.validatorList[i].address);
-            if (ret && ret.length > 0) {
-              this.validatorList[i].name = ret[0].name;
-              this.validatorList[i].iconData = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
-            }
-          }
         }
       }
     } catch (error) {
