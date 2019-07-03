@@ -607,7 +607,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                         let ret = await getNameAndIcon(stakerInfo[i].address);
                         if (ret && ret.length > 0) {
                             stakerInfo[i].name = ret[0].name;
-                            stakerInfo[i].iconData = ret[0].iconData ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(stakerInfo[i].address).toString()) ;
+                            stakerInfo[i].iconData = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(stakerInfo[i].address).toString()) ;
                         }
                     }
                 }
@@ -921,7 +921,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
             let ret = await ccUtil.getRegisteredValidator(sk.address);
             let img, name;
             if (ret && ret.length > 0) {
-                img = 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData;
+                img = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData :('data:image/png;base64,' + new Identicon(sk.address).toString())  ;
                 name = ret[0].name;
             }
 
