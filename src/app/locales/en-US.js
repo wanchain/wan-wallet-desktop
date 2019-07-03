@@ -186,7 +186,7 @@ const en_US = {
     'TransHistory.failed': 'Failed',
     'TransHistory.pending': 'Pending',
     'TransHistory.transactionHistory': 'Transaction History',
-    'TransHistory.selectAFromAddress': 'Select a FROM address',
+    'TransHistory.selectAFromAddress': 'Select an account name',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',
@@ -243,7 +243,7 @@ const en_US = {
     'StakeInForm.stakeExceed': 'Stake amount is out of validator\'s quota',
     'StakeInForm.balance': 'Balance',
     'StakeInForm.more': 'More Info',
-    'StakeInForm.selectName': 'Select a FROM name',
+    'StakeInForm.selectName': 'Select a validator',
     'StakeInForm.enterAddress': 'Please enter address',
     'StakeInForm.selectAddress': 'Select a FROM address',
     'WithdrawForm.title': 'Register to Withdraw',

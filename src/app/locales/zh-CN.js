@@ -186,7 +186,7 @@ const zh_CN = {
     'TransHistory.failed': '失败',
     'TransHistory.pending': '进行中',
     'TransHistory.transactionHistory': '转账历史',
-    'TransHistory.selectAFromAddress': '选择转出方地址',
+    'TransHistory.selectAFromAddress': '请选择账户',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',
@@ -243,7 +243,7 @@ const zh_CN = {
     'StakeInForm.stakeExceed': '委托金额超出验证节点的可用额度',
     'StakeInForm.balance': '余额',
     'StakeInForm.more': '更多信息',
-    'StakeInForm.selectName': '选择一个名称',
+    'StakeInForm.selectName': '请选择验证人节点',
     'StakeInForm.enterAddress': '请输入地址',
     'StakeInForm.selectAddress': '选择一个地址',
     'WithdrawForm.title': '退出委托',
