@@ -58,6 +58,9 @@ export class EditableCell extends Component {
                     rules: [{
                       required: true,
                       message: intl.get('Rename.name'),
+                    }, {
+                      max: 20,
+                      // message: 'Too long!',
                     }],
                     initialValue: record[dataIndex],
                   })(
