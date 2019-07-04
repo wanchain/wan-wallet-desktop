@@ -2,17 +2,18 @@
 @sidebar-right-hover-bg: #2E3657;
 .sidebar {
   .logo {
-    height: 115px;
-    margin: 28px 0 0 30px;
+    height: 100px;
+    padding: 28px 0 0 30px;
     vertical-align: -webkit-baseline-middle;
   
     img {
-      height: 60px;
+      height: 48px;
     }
   }
 
   .menuTreeNode {
     color: #A1A2A8;
+    padding: 0px 15px;
   }
   .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title{
     height: 60px!important;
@@ -22,12 +23,12 @@
     font-size: 16px;
   }
   .ant-menu-dark.ant-menu-inline .ant-menu-item, .ant-menu-dark.ant-menu-inline .ant-menu-submenu-title{
-    width: 96%;
-    margin: 0 2% 0 2%;
+    // width: 96%;
+    // margin: 0 2% 0 2%;
   }
   .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
-    width: 96%;
-    margin: 0 2% 0 2%;
+    // width: 96%;
+    // margin: 0 2% 0 2%;
     background: @sidebar-right-bg;
   }
   .ant-menu-item:hover{
@@ -47,4 +48,7 @@
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px;
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub{
+  box-shadow: none;
 }
