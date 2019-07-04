@@ -37,7 +37,7 @@ class Cards extends Component {
             <Card className="card3"
               title={intl.get('staking.rewardRate')}
               value={this.props.stakeInfo.currentRewardRate}
-              tail={this.props.stakeInfo.currentRewardRateChange}
+              // tail={this.props.stakeInfo.currentRewardRateChange}
               bottom={this.props.stakeInfo.epochID}
             />
           </Col>
