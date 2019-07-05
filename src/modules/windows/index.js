@@ -268,7 +268,7 @@ class Windows {
             opts.electronOptions.parent = parent.window
         }
 
-        if (type === 'changeNetwork') {
+        if (type === 'changeNetwork' || type === 'systemUpdate') {
             opts.electronOptions.frame = false
         }
 

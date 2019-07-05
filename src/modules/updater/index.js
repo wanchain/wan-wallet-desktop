@@ -67,7 +67,8 @@ class WalletUpdater {
               currVersion: app.getVersion(),
               releaseVersion: info.version,
               releaseDate: new Date(info.releaseDate),
-              releaseNotes: releaseNote
+              releaseNotes: releaseNote,
+              releasePlatform: process.platform
             }
         
             updateModal.on('ready', () => {
