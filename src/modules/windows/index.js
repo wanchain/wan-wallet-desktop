@@ -59,7 +59,7 @@ class Window extends EventEmitter {
             if (this.type === 'main') {
                 if (global.chainManager && !this.isClosed) {
                     if (this._idleChecker) {
-                        this._logger.info('main window losing focus, clear idel time checker')
+                        this._logger.info('main window losing focus, clear idle time checker')
                         try {
                             clearInterval(this._idleChecker)
                             this._logger.info('idle checker cleared')
