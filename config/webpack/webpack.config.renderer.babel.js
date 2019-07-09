@@ -107,6 +107,7 @@ export default {
         static: resolve('static/'),
         constants: resolve('src/app/constants/'),
         components: resolve('src/app/components/'),
+        componentUtils: resolve('src/app/componentUtils/'),
         containers: resolve('src/app/containers/'),
         utils: resolve('src/app/utils/')
       }
@@ -128,16 +129,16 @@ export default {
         headers: { 'Access-Control-Allow-Origin': '*' },
         disableHostCheck: true,
         /** TODO */
-        after: function() {
-            if (process.env.NODE_ENV === 'development') {
-                spawn('npm', ['run', 'dev:main'], {
-                    shell: true,
-                    env: process.env,
-                    stdio: 'inherit'
-                  })
-                    .on('close', code => process.exit(code))
-                    .on('error', spawnError => console.error(spawnError));
-            }
-        }
+        // after: function() {
+        //     if (process.env.NODE_ENV === 'development') {
+        //         spawn('npm', ['run', 'dev:main'], {
+        //             shell: true,
+        //             env: process.env,
+        //             stdio: 'inherit'
+        //           })
+        //             .on('close', code => process.exit(code))
+        //             .on('error', spawnError => console.error(spawnError));
+        //     }
+        // }
     }
 }

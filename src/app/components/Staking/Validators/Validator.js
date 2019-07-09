@@ -9,7 +9,7 @@ class Validator extends Component {
       <div className="validator">
         <Row>
           <Col>
-            <div name={this.props.name} title={this.props.title}><Avatar src={this.props.img} size="large" />&nbsp;{this.props.name}</div>
+            <div name={this.props.name} title={this.props.title}><Avatar className="avatarSty" src={this.props.img} size="large" />{this.props.name}</div>
           </Col>
         </Row>
       </div>

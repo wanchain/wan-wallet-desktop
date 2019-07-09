@@ -38,28 +38,20 @@ class Sidebar extends Component {
 
   render() {
     const { sidebarColumns, settings } = this.props;
+    let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
+    let stakChildren = sidebarColumns[stakeIndex].children;
 
-    if(settings && settings.staking_advance) {
-      if(sidebarColumns.length >= 4) {
-        for (let i = 0; i < sidebarColumns.length; i++) {
-          if (sidebarColumns[i].key == "/staking" ) {
-            sidebarColumns[i].children.push({
-              title: intl.get('menuConfig.validator'),
-              key: '/validator',
-              icon: 'block'
-            })
-          }
-        }
+    if(settings.staking_advance) {
+      if(stakChildren.findIndex(item => item.key === '/validator') === -1) {
+        stakChildren.push({
+          title: intl.get('menuConfig.validator'),
+          key: '/validator',
+          icon: 'block'
+        })
       }
     } else {
-      if(sidebarColumns.length >= 4) {
-        for (let i = 0; i < sidebarColumns.length; i++) {
-          if (sidebarColumns[i].key == "/staking" ) {
-            if(sidebarColumns[i].children.length > 1) {
-              sidebarColumns[i].children.pop();
-            }
-          }
-        }
+      if(stakChildren.length > 1) {
+        stakChildren.pop();
       }
     }
 

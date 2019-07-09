@@ -1,203 +1,99 @@
-import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Slider } from 'antd';
-import './index.less';
-import StakeConfirmForm from '../StakeConfirmForm';
-const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
-
 import intl from 'react-intl-universal';
-const wanTx = require('wanchainjs-tx');
+import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
-const pu = require('promisefy-util')
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
-import { toWei } from 'utils/support.js';
+import { observer, inject } from 'mobx-react';
+import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
+import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Slider } from 'antd';
+
+import './index.less';
+import PwdForm from 'componentUtils/PwdForm';
+import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 
 const Option = Select.Option;
+const wanTx = require('wanchainjs-tx');
+const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
+
+const COLLEFT = 8;
+const COLRIGHT = 16;
+const MINDAYS = 7;
+const MAXDAYS = 90;
+const WALLET_ID_NATIVE = 0x01;
+const WALLET_ID_LEDGER = 0x02;
+const WALLET_ID_TREZOR = 0x03;
 
 @inject(stores => ({
   settings: stores.session.settings,
-  getAddrList: stores.wanAddress.getAddrList,
-  ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  trezorAddrList: stores.wanAddress.trezorAddrList,
+  addrInfo: stores.wanAddress.addrInfo,
+  addrSelectedList: stores.wanAddress.addrSelectedList,
 }))
 
 @observer
 class ValidatorRegister extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      balance: "0",
-      addrList: [],
-      confirmVisible: false,
-      locktime: 14,
-      record: {
-        validator: {},
-        accountAddress: '',
-        myStake: { title: '' },
-      }
-    }
-  }
-
-  componentWillMount() {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrList = []
-    getAddrList.forEach(addr => {
-      addrList.push(
-        addr.address
-      )
-    });
-
-    ledgerAddrList.forEach(addr => {
-      addrList.push(
-        'Ledger: ' + addr.address
-      )
-    });
-
-    trezorAddrList.forEach(addr => {
-      addrList.push(
-        'Trezor: ' + addr.address
-      )
-    });
-
-    this.setState({ addrList: addrList })
-  }
-
-  getBalance = (value) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    if (!value) {
-      return
-    }
-
-    if (value.includes('Ledger')) {
-      for (let i = 0; i < ledgerAddrList.length; i++) {
-        const element = ledgerAddrList[i];
-        value = value.replace('Ledger: ', '')
-        if (element.address == value) {
-          return element.balance;
-        }
-      }
-      return;
-    }
-
-    if (value.includes('Trezor')) {
-      for (let i = 0; i < trezorAddrList.length; i++) {
-        const element = trezorAddrList[i];
-        value = value.replace('Trezor: ', '')
-        if (element.address == value) {
-          return element.balance;
-        }
-      }
-      return;
-    }
-
-    for (let i = 0; i < getAddrList.length; i++) {
-      const element = getAddrList[i];
-      if (element.address == value) {
-        return element.balance;
-      }
-    }
-  }
+  state = {
+    balance: 0,
+    confirmVisible: false,
+    locktime: MINDAYS,
+  };
 
   onChange = value => {
-    if (!value) {
-      return
-    }
-
-    this.setState({
-      balance: this.getBalance(value),
+    this.setState((state, props) => {
+      let balance = value ?  getValueByAddrInfo(value, 'balance', props.addrInfo) : 0;
+      return { balance }
     })
   }
 
-
-  checkSecPK = (rule, value, callback) => {
-    callback();
-  }
-
-  checkG1PK = (rule, value, callback) => {
-    callback();
+  checkPublicKey = (rule, value, callback) => {
+    if(value === undefined) {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+      return;
+    }
+    if(value.startsWith('0x') && [130, 132].includes(value.length)) {
+      callback();
+    } else {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+    }
   }
 
   checkAmount = (rule, value, callback) => {
     let { form } = this.props;
-    let quota = form.getFieldValue('quota');
     let balance = form.getFieldValue('balance');
-
-    if (!checkAmountUnit(18, value)) {
+    if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
-
-    if (Number(value) < 10000) {
-      callback(intl.get('StakeInForm.stakeTooLow'));
+    if (new BigNumber(value).minus(10000) < 0) {
+      callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
-
-    if (Number(value) > Number(balance)) {
+    if (new BigNumber(value).minus(balance) >= 0) {
       callback(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
-
-    if (Number(value) > Number(quota)) {
-      callback(intl.get('StakeInForm.stakeExceed'));
-      return;
-    }
-
     callback();
-  }
-
-  getPath = (from) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrs = getAddrList
-    let fromAddr = from
-
-    if (from.includes('Ledger')) {
-      fromAddr = from.replace('Ledger: ', '')
-      addrs = ledgerAddrList
-    }
-
-    if (from.includes('Trezor')) {
-      fromAddr = from.replace('Trezor: ', '')
-      addrs = trezorAddrList
-    }
-
-    for (let i = 0; i < addrs.length; i++) {
-      const addr = addrs[i];
-      if (addr.address == fromAddr) {
-        return addr.path;
-      }
-    }
   }
 
   showConfirmForm = () => {
     let { form, settings } = this.props;
-    form.validateFields(async (err) => {
+    form.validateFields(err => {
       if (err) return;
-
-      let from = form.getFieldValue('from');
-      let to = form.getFieldValue('to');
-      let pwd = form.getFieldValue('pwd');
-
-      if (Number(this.state.balance) <= amount) {
-        message.error(intl.get('NormalTransForm.overBalance'))
+      if (new BigNumber(this.state.balance).minus(form.getFieldValue('amount')) <= 0) {
+        message.error(intl.get('NormalTransForm.overBalance'));
         return;
       }
 
-      if (settings.reinput_pwd) {
-        if (!pwd) {
-          message.warn(intl.get('Backup.invalidPassword'));
-          return;
-        }
-
-        try {
-          await pu.promisefy(wand.request, ['phrase_reveal', { pwd: pwd }], this);
-        } catch (error) {
-          message.warn(intl.get('Backup.invalidPassword'));
-          return;
-        }
+      let pwd = form.getFieldValue('pwd');
+      if (!settings.reinput_pwd) {
+        this.setState({ confirmVisible: true });
+      } else {
+        wand.request('phrase_reveal', { pwd }, err => {
+          if (err) {
+            message.warn(intl.get('Backup.invalidPassword'));
+          } else {
+            this.setState({ confirmVisible: true });
+          }
+        })
       }
 
-      this.setState({
-        confirmVisible: true,
-      });
     })
   }
 
@@ -206,68 +102,39 @@ class ValidatorRegister extends Component {
   }
 
   onSend = async () => {
-
-    let { form } = this.props;
-    let from = form.getFieldValue('from');
-    let to = form.getFieldValue('to');
-
-    let path = this.getPath(from);
-
-    let amount = form.getFieldValue('amount');
-    if (!amount || amount < 100) {
-      message.error("Please input a valid amount.");
-      return;
-    }
-
-    if (this.state.balance <= amount) {
-      message.error("Balance is not enough.")
-      return;
-    }
-
-    const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
-    const WALLET_ID_LEDGER = 0x02;
-    const WALLET_ID_TREZOR = 0x03;
-
-    let walletID = WALLET_ID_NATIVE;
-
-    if (from.includes('Ledger')) {
-      from = from.replace('Ledger: ', '')
-      walletID = WALLET_ID_LEDGER;
-    }
-
-    if (from.includes('Trezor')) {
-      from = from.replace('Trezor: ', '')
-      walletID = WALLET_ID_TREZOR;
-    }
+    let { form, addrInfo } = this.props;
+    let to = form.getFieldValue('to'), 
+        from = form.getFieldValue('myAddr'), 
+        amount = form.getFieldValue('amount');
+    let path = getValueByAddrInfo(from, 'path', addrInfo);
+    let walletID = from.indexOf(':') !== -1 ? `${`WALLET_ID_${form.split(':')[0].toUpperCase()}`}` : WALLET_ID_NATIVE;
 
     let tx = {
-      "from": from,
-      "validatorAddr": to,
-      "amount": (form.getFieldValue('amount') || 0).toString(),
-      "gasPrice": 0,
-      "gasLimit": 0,
-      "BIP44Path": path,
-      "walletID": walletID
+      from: from,
+      amount: amount.toString(),
+      BIP44Path: path,
+      walletID: walletID,
+      secpub: form.getFieldValue('publicKey1'),
+      g1pub: form.getFieldValue('publicKey2'),
+      lockTime: form.getFieldValue('lockTime'),
+      feeRate: form.getFieldValue('feeRate') * 100,
     }
-
-    // if (walletID == WALLET_ID_TREZOR) {
-    //   await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-    //   this.props.onSend(walletID);
-    // } else {
-    //   wand.request('staking_delegateIn', tx, (err, ret) => {
-    //     if (err) {
-    //       message.warn(err.message);
-    //     } else {
-    //       console.log('delegateIn ret:', ret);
-    //     }
-    //   });
-    // }
-
-    this.setState({ confirmVisible: false });
-
-    this.props.onSend(walletID);
+    if (WALLET_ID_TREZOR === walletID) {
+      await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+      this.setState({ confirmVisible: false });
+      this.props.onSend(walletID);
+    } else {
+      wand.request('staking_registValidator', { tx }, (err, ret) => {
+        if (err) {
+          message.warn(err.message);
+        } else {
+          console.log('delegateIn ret:', ret);
+        }
+        this.setState({ confirmVisible: false });
+        this.props.onSend(walletID);
+      });
+    }
   }
-
 
   trezorDelegateIn = async (path, from, validator, value) => {
     console.log('trezorDelegateIn:', path, from, validator, value);
@@ -304,42 +171,31 @@ class ValidatorRegister extends Component {
     });
   }
 
-  onSliderChange = (value)=>{
+  onSliderChange = value => {
     this.setState({locktime: value})
   }
 
-
   render() {
-    let { form, settings } = this.props;
-
+    const { form, settings, addrSelectedList, onCancel, addrInfo } = this.props;
     const { getFieldDecorator } = form;
-
-    let left = 8;
-    let right = 16;
-
+    const record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
     return (
       <div className="stakein">
-        <Modal
-          visible
-          destroyOnClose={true}
-          closable={false}
-          title={intl.get('staking.validatorRegister')}
-          onCancel={this.onCancel}
+        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
-          className="validator-register-modal"
         >
           <div className="validator-bg">
-            <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
+            <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.secPk')}</span></Col>
-                <Col span={right}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.publicKey1')}</span></Col>
+                <Col span={COLRIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('secPk', { rules: [{ required: true, validator: this.checkSecPK }] })
+                      {getFieldDecorator('publicKey1', { rules: [{ required: true, validator: this.checkPublicKey }] })
                         (<Input placeholder={intl.get('ValidatorRegister.enterSecPk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
@@ -347,12 +203,12 @@ class ValidatorRegister extends Component {
               </Row>
             </div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.g1Pk')}</span></Col>
-                <Col span={right}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.publicKey2')}</span></Col>
+                <Col span={COLRIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('g1Pk', { rules: [{ required: true, validator: this.checkG1PK }] })
+                      {getFieldDecorator('publicKey2', { rules: [{ required: true, validator: this.checkPublicKey }] })
                         (<Input placeholder={intl.get('ValidatorRegister.enterG1Pk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
@@ -360,26 +216,26 @@ class ValidatorRegister extends Component {
               </Row>
             </div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={right-4}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
+                <Col span={COLRIGHT-4}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('lockTime', { rules: [{ required: true, validator: this.checkG1PK }] })
-                        (<Slider className='locktime-slider' min={14} max={180} step={2} onChange={this.onSliderChange}/>)}
+                      {getFieldDecorator('lockTime', { initialValue: MINDAYS, rules: [{ required: true }] })
+                        (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange}/>)}
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4} align="left"><span className="locktime-span">{this.state.locktime} days</span></Col>
+                <Col span={4}><span className="locktime-span">{this.state.locktime} days</span></Col>
               </Row>
             </div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
-                <Col span={right}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
+                <Col span={COLRIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('feeRate', { rules: [{ required: true, validator: this.checkG1PK }] })
+                      {getFieldDecorator('feeRate', { rules: [{ required: true }] })
                         (<Input placeholder={'10.00'} prefix={<Icon type="percentage" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
@@ -388,36 +244,38 @@ class ValidatorRegister extends Component {
             </div>
           </div>
           <div className="validator-bg">
-            <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
-
+            <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={right}>
-                  <Form layout="inline">
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.address')}</span></Col>
+                <Col span={COLRIGHT}>
+                  <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
-                      {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
+                      {getFieldDecorator('myAddr', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
                         (
                           <Select
+                            autoFocus
                             showSearch
                             allowClear
-                            style={{ width: 470 }}
-                            placeholder={intl.get('StakeInForm.selectAddress')}
-                            optionFilterProp="children"
-                            onChange={this.onChange}
-                            onSelect={this.onChange}
-                            onFocus={this.onFocus}
-                            onBlur={this.onBlur}
-                            onSearch={this.onSearch}
-                            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             className="colorInput"
+                            optionLabelProp="value"
+                            optionFilterProp="children"
+                            dropdownStyle={{width: "470px"}}
+                            dropdownMatchSelectWidth={false}
+                            placeholder={intl.get('StakeInForm.selectAddress')}
+                            onChange={this.onChange}
+                            getPopupContainer={() => document.getElementById('posAddrSelect')}
+                            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                           >
-                            {this.state.addrList.map((item, index) => <Option value={item} key={index}>
-                              <Row>
-                                <Col span={16}>{item}</Col>
-                                <Col span={8} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(1)}</Col>
-                              </Row>
-                            </Option>)}
+                            {
+                              addrSelectedList.map((item, index) =>
+                              <Option value={item} key={index}>
+                                <Row>
+                                  <Col span={20}>{item}</Col>
+                                  <Col span={4} align="right" className="stakein-selection-balance">- {Number(getValueByAddrInfo(item, 'balance', addrInfo)).toFixed(1)}</Col>
+                                </Row>
+                              </Option>)
+                            }
                           </Select>
                         )}
                     </Form.Item>
@@ -425,11 +283,10 @@ class ValidatorRegister extends Component {
                 </Col>
               </Row>
             </div>
-
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={right}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.balance')}</span></Col>
+                <Col span={COLRIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('balance', { initialValue: this.state.balance })
@@ -439,49 +296,23 @@ class ValidatorRegister extends Component {
                 </Col>
               </Row>
             </div>
-
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={left}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={right}>
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.entrustedAmount')}</span></Col>
+                <Col span={COLRIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input placeholder="100" prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                      {getFieldDecorator('amount', { initialValue: 10000, rules: [{ required: true, validator: this.checkAmount }] })
+                        (<Input prefix={<Icon type="credit-card" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
               </Row>
             </div>
-            {settings.reinput_pwd
-              ? <div className="validator-line">
-                <Row type="flex" justify="space-around" align="middle">
-                  <Col span={left}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
-                  <Col span={right}>
-                    <Form layout="inline">
-                      <Form.Item>
-                        {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
-                          (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
-                      </Form.Item>
-                    </Form>
-                  </Col>
-                </Row>
-              </div>
-              : ''
-            }
-
+            { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        {
-          this.state.confirmVisible ?
-            (<Confirm visible={this.state.confirmVisible}
-              onCancel={this.onConfirmCancel} onSend={this.onSend}
-              record={this.state.record}
-              title={intl.get( 'NormalTransForm.ConfirmForm.transactionConfirm')}
-              note={''}
-            />) : ''
-        }
-
+        { this.state.confirmVisible && <Confirm onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }

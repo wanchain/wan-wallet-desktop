@@ -19,6 +19,7 @@ import { getBalance } from 'utils/helper';
   addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
 }))
 
@@ -47,7 +48,10 @@ export default class Layout extends Component {
   }
 
   componentDidMount() {
-    this.wanTimer = setInterval(() => this.updateWANBalanceForInter(), 5000);
+    this.wanTimer = setInterval(() => {
+      this.props.updateStakeInfo();
+      this.updateWANBalanceForInter();
+    }, 5000);
     this.waitUntilSdkReady();
   }
 

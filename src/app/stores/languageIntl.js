@@ -93,6 +93,52 @@ class LanguageIntl {
     ]
   }
 
+  @computed get myValidatorColumns() {
+    return self.language && [
+      {
+        key: 'myAccount',
+        dataIndex: 'myAccount',
+        title: intl.get('ValidatorNode.table.myAccount'),
+      },
+      {
+        key: 'principal',
+        dataIndex: 'principal',
+        title: intl.get('ValidatorNode.table.principal'),
+      },
+      {
+        key: 'entrustment',
+        dataIndex: 'entrustment',
+        title: intl.get('ValidatorNode.table.entrustment'),
+      },
+      {
+        title: '',
+        key: 'arrow1',
+        dataIndex: 'arrow1',
+      },
+      {
+        key: 'validator',
+        dataIndex: 'validator',
+        title: intl.get('ValidatorNode.table.validator'),
+      },
+      {
+        title: '',
+        key: 'arrow2',
+        dataIndex: 'arrow2',
+      },
+      {
+        key: 'distributeRewards',
+        dataIndex: 'distributeRewards',
+        title: intl.get('ValidatorNode.table.distributedReward'),
+      },
+      {
+        key: 'modifyStake',
+        align: 'center',
+        dataIndex: 'modifyStake',
+        title: intl.get('ValidatorNode.table.modifyStake'),
+      }
+    ]
+  }
+
   @computed get sidebarColumns() {
     return self.language && [
       {
@@ -143,7 +189,7 @@ class LanguageIntl {
             title: intl.get('menuConfig.delegation'),
             key: '/staking',
             icon: 'block'
-          },
+          }
         ]
       },
       {

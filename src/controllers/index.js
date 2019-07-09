@@ -9,6 +9,7 @@ import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
 import { dateFormat } from '../app/utils/support';
 import Identicon from 'identicon.js';
+import keccak from 'keccak';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -620,6 +621,18 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'validatorInfo':
+            try {
+              let { addr } = payload
+              ret = await ccUtil.getValidatorStakeInfo('wan', addr);
+
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
         case 'delegateIn':
             try {
                 console.log('delegateIn:', payload);
@@ -670,6 +683,27 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 let ret = await global.crossInvoker.PosDelegateOut(input);
                 console.log(JSON.stringify(ret, null, 4));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+      case 'registValidator':
+          try {
+              console.log('stakeIn:', payload);
+
+              let { tx } = payload;
+              let key = Buffer.from(tx.secpub.toLowerCase().replace('0x', '').substring(2), 'hex');
+              let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
+              let gasPrice = await ccUtil.getGasPrice('wan');
+
+              tx.gasLimit = 200000;
+              tx.minerAddr = address;
+              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+              let ret = await global.crossInvoker.PosMinerRegister(tx);
+              console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

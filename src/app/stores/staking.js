@@ -1,10 +1,14 @@
 import pu from 'promisefy-util';
-import { observable, action, computed } from 'mobx';
+import Identicon from 'identicon.js';
+import BigNumber from 'bignumber.js';
+import intl from 'react-intl-universal';
+import { observable, action, computed, toJS } from 'mobx';
+import { getAddrByTypes, getInfoByAddress } from 'utils/helper';
+import { fromWei, dateFormat, timeFormat } from 'utils/support';
 
 import wanAddress from './wanAddress';
-import { fromWei, dateFormat } from 'utils/support';
+import languageIntl from './languageIntl';
 import arrow from 'static/image/arrow.png';
-import Identicon from 'identicon.js';
 
 class Staking {
   @observable stakeInfo = {
@@ -86,6 +90,50 @@ class Staking {
     return validators;
   }
 
+  @computed get myValidators() {
+    let newArr = [];
+    let addrArr = getAddrByTypes(wanAddress.addrInfo).flat();
+    addrArr.forEach(item => {
+      let index = self.validatorList.findIndex(val => val.from === item.toLowerCase());
+      if(index !== -1) {
+        newArr.push(self.validatorList[index]);
+      }
+    });
+    return newArr;
+  }
+
+  @computed get myValidatorList() {
+    let validators = []
+    self.myValidators.forEach((item, index) => {
+      let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
+      validators.push({
+        myAccount: addr.name,
+        principal: {
+          value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
+          days: 1
+        },
+        entrustment: {
+          value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
+          person: item.clients.length,
+        },
+        arrow1: arrow,
+        validator: { 
+          img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()), 
+          name: item.name ? item.name : item.address, 
+          address: item.address,
+        },
+        arrow2: arrow,
+        distributeRewards: {
+          value: 10,
+          num: 100
+        },
+        modifyStake: ['topup', 'exit', 'modify'],
+        key: index,
+      })
+    })
+    return validators;
+  }
+
   @computed get onlineValidatorList() {
     let validators = []
     let minValidatorAmount = 50000;
@@ -127,6 +175,33 @@ class Staking {
       })
     }
     return validators;
+  }
+
+  @computed get registValidatorHistoryList() {
+    let historyList = [], page = 'normal';
+    let histories = wanAddress.transHistory;
+    let addrList = Object.keys(Object.assign(wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
+    Object.keys(wanAddress.transHistory).forEach(item => {
+      if(histories[item].validator && addrList.includes(histories[item].from)) {
+        let { status, annotate } = histories[item];
+        let getIndex = self.stakingList.findIndex(value => value.validator.address === histories[item].validator);
+        historyList.push({
+          key: item,
+          time: timeFormat(histories[item].sendTime),
+          from: wanAddress.addrInfo[page][histories[item].from].name,
+          stakeAmount: fromWei(histories[item].value),
+          annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(annotate) ? intl.get(`TransHistory.${annotate.toLowerCase()}`) : annotate,
+          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+          validator: {
+            address: histories[item].validator,
+            name: (getIndex === -1 || self.stakingList[getIndex].validator.name === undefined) ? histories[item].validator : self.stakingList[getIndex].validator.name,
+            img: (getIndex === -1 || self.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(histories[item].validator).toString()) : self.stakingList[getIndex].validator.img,
+          },
+        });
+      }
+    });
+
+    return historyList.sort((a, b) => b.sendTime - a.sendTime);      
   }
 
   async getYearReward(epochID) {

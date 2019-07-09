@@ -1,6 +1,7 @@
 import { fromWei } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
+const WAN = "m/44'/5718350'/0'/0/";
 let emitterHandlers = {};
 
 export const getBalance = function (arr) {
@@ -21,6 +22,39 @@ export const getBalance = function (arr) {
     })
   })
 };
+
+export const getValueByAddrInfo = function (value, type, addrInfo) {
+  if(value.indexOf(':') !== -1) {
+    let addrArr = value.split(':');
+    let addrType = addrArr[0].toLowerCase();
+    let addr = addrArr[1].trimStart();
+    return addrInfo[addrType][addr] && addrInfo[addrType][addr][type];
+  } else {
+    if(addrInfo['normal'][value]) {
+      switch(type) {
+        case 'path':
+          return `${WAN}${addrInfo['normal'][value][type]}`
+        default:
+          return addrInfo['normal'][value][type]
+      } 
+    } else {
+      return undefined
+    }
+  }
+}
+
+export const getInfoByAddress = function(address, infos, addrInfo) {
+  let value;
+  Object.keys(addrInfo).forEach(type => {
+    let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address);
+    if(index !== -1) {
+      let addr = Object.keys(addrInfo[type])[index];
+      value = { type, addr }
+      infos.forEach(item => value[item] = addrInfo[type][addr][item]);
+    }
+  });
+  return value;
+}
 
 export const getNonce = function (addrArr, chainType) {
   return new Promise((resolve, reject) => {
@@ -186,10 +220,19 @@ export const formatAmount = function (amount) {
   return amount.toString();
 }
 
-export const getChainIdByAddr = function (addrInfo) {
-  Object.keys(addrInfo).forEach(type => {
-    Object.keys(addrInfo[type]).forEach(() => {})
-  })
+export const getAddrByTypes = function (addrInfo, types) {
+  let addrs = [];
+  if(types) {
+    types.forEach(type => {
+      addrs.push(Object.keys(addrInfo[type]));
+    })
+  } else {
+    Object.keys(addrInfo).forEach(type => {
+      addrs.push(Object.keys(addrInfo[type]));
+    })
+  }
+  // return [['normal], ['Ledger], ... , ['Trzeor]]
+  return addrs;
 }
 
 export const regEmitterHandler = function (key, callback) {

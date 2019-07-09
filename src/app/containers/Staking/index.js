@@ -17,26 +17,23 @@ const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
   language: stores.languageIntl.language,
   stakingList: stores.staking.stakingList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
 class Staking extends Component {
+  state = {
+    delegateInFormVisible: false
+  }
+
   constructor(props) {
     super(props);
     this.props.changeTitle('staking.title');
-    this.state = {
-      delegateInFormVisible: false
-    }
-
-    this.props.updateStakeInfo();
     this.props.updateTransHistory();
   }
 
   componentDidMount() {
     this.timer = setInterval(() => {
-      this.props.updateStakeInfo();
       this.props.updateTransHistory();
     }, 20000)
   }
@@ -45,21 +42,17 @@ class Staking extends Component {
     clearInterval(this.timer);
   }
 
-  handleDelegateNew = () => {
-    this.setState({ delegateInFormVisible: true });
-  }
-
-  handleCancel = () => {
-    this.setState({ delegateInFormVisible: false });
+  handleStateToggle = () => {
+    this.setState(state => ({ delegateInFormVisible: !state.delegateInFormVisible }));
   }
 
   handleSend = (walletID) => {
     console.log('walletID', walletID)
-    if (walletID == 2) {
+    if (walletID === 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
 
-    this.handleCancel();
+    this.handleStateToggle();
   }
 
   render() {
@@ -76,8 +69,8 @@ class Staking extends Component {
               <img src={total} /><span>{intl.get('staking.delegateList')}</span>
             </Col>
             <Col span={12} className="col-right">
-              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleDelegateNew}>{intl.get('staking.newDelegate')}</Button>
-              <DelegateInForm visible={this.state.delegateInFormVisible} onCancel={this.handleCancel} onSend={this.handleSend} />
+              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
+              <DelegateInForm visible={this.state.delegateInFormVisible} onCancel={this.handleStateToggle} onSend={this.handleSend} />
             </Col>
           </div>
         </Row>

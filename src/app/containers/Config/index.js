@@ -28,10 +28,9 @@ class Config extends Component {
         <Card title={intl.get('Config.option')}>
           <Checkbox checked={reinput_pwd} onChange={this.handleChange}>{intl.get('Config.inputPwd')}</Checkbox>
         </Card>
-        {/* TODO */}
-        {/* <Card title={intl.get('Config.staking')}>
+        <Card title={intl.get('Config.staking')}>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
-        </Card> */}
+        </Card>
       </div>
     );
   }

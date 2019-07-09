@@ -366,6 +366,26 @@ class WanAddress {
       return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 
+    @computed get addrSelectedList() {
+      let addrList = []
+      self.getAddrList.forEach(addr => {
+        addrList.push(
+          addr.address
+        )
+      });
+      self.ledgerAddrList.forEach(addr => {
+        addrList.push(
+          'Ledger: ' + addr.address
+        )
+      });
+      self.trezorAddrList.forEach(addr => {
+        addrList.push(
+          'Trezor: ' + addr.address
+        )
+      });
+      return addrList;
+    }
+
     @computed get getNormalAmount() {
       let sum = 0;
       Object.values({normal: self.addrInfo.normal, import: self.addrInfo.import}).forEach(value => sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0));
