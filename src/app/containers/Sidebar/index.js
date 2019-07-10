@@ -52,19 +52,19 @@ class Sidebar extends Component {
   render() {
     const { sidebarColumns, settings } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-    let stakChildren = sidebarColumns[stakeIndex].children;
+    let stakeChildren = sidebarColumns[stakeIndex].children;
 
     if(settings.staking_advance) {
-      if(stakChildren.findIndex(item => item.key === '/validator') === -1) {
-        stakChildren.push({
+      if(stakeChildren.findIndex(item => item.key === '/validator') === -1) {
+        stakeChildren.push({
           title: intl.get('menuConfig.validator'),
           key: '/validator',
           icon: 'block'
         })
       }
     } else {
-      if(stakChildren.length > 1) {
-        stakChildren.pop();
+      if(stakeChildren.length > 1) {
+        stakeChildren.pop();
       }
     }
 

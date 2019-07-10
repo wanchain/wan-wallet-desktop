@@ -96,8 +96,7 @@ class DelegateOut extends Component {
 
   trezorDelegateOut = async (path, from, validator, value, stakeAmount) => {
     console.log('trezorDelegateOut:', path, from, validator, value);
-    let chainId = await getChainId();
-    console.log('chainId', chainId);
+    let chainId = this.props.chainId;
     let func = 'delegateOut';
     try {
       console.log('ready to get nonce, gasPrice, data');

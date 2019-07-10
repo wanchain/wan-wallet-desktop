@@ -10,6 +10,7 @@ const main = 'https://www.wanscan.org/tx/'
 const testnet = 'http://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
+  chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   historyList: stores.wanAddress.stakingHistoryList,

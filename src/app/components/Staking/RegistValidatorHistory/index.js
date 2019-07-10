@@ -11,6 +11,7 @@ const MAIN = 'https://www.wanscan.org/tx/'
 const TESTNET = 'http://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
+  chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   stakingColumns: stores.languageIntl.stakingColumns,
@@ -19,7 +20,7 @@ const TESTNET = 'http://testnet.wanscan.org/tx/';
 }))
 
 @observer
-class RegistValidatorHistory extends Component {
+class RegisterValidatorHistory extends Component {
   onClickRow = record => {
     let href = this.props.chainId === 1 ? `${MAIN}${record.key}` : `${TESTNET}${record.key}`;
     wand.shell.openExternal(href);
@@ -45,4 +46,4 @@ class RegistValidatorHistory extends Component {
   }
 }
 
-export default RegistValidatorHistory;
+export default RegisterValidatorHistory;

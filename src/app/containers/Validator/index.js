@@ -6,7 +6,7 @@ import { Button, Row, Col, message, Form } from 'antd';
 import MyValidatorsList from 'components/Staking/MyValidatorsList';
 import ValidatorCards from 'components/Staking/Cards/validatorCards';
 import ValidatorRegister from 'components/Staking/ValidatorRegister';
-import RegistValidatorHistory from 'components/Staking/RegistValidatorHistory';
+import RegisterValidatorHistory from 'components/Staking/RegistValidatorHistory';
 
 import './index.less';
 import total from 'static/image/total.png';
@@ -75,7 +75,7 @@ class Validator extends Component {
           <MyValidatorsList />
         </Row>
         <Row>
-          <RegistValidatorHistory name="normal" />
+          <RegisterValidatorHistory name="normal" />
         </Row>
       </div>
     );
