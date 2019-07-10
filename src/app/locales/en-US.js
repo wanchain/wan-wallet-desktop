@@ -278,7 +278,7 @@ const en_US = {
     'ValidatorUpdate.note': 'Note: When selecting a local account, you must select the same account as when validator registration.',
 
     'ValidatorNode.nodeList': 'Validator List',
-    'ValidatorNode.registValidatorNode': 'Regist Node',
+    'ValidatorNode.registerValidatorNode': 'Regist Node',
     'ValidatorNode.table.myAccount': 'ACCOUNT',
     'ValidatorNode.table.principal': 'PRINCIPAL',
     'ValidatorNode.table.entrustment': 'ENTRUSTMENT',

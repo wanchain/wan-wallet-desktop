@@ -398,8 +398,6 @@ class StakeInForm extends Component {
       wand.request('staking_delegateIn', tx, (err, ret) => {
         if (err) {
           message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
         }
       });
     }

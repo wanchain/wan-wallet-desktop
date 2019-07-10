@@ -34,7 +34,7 @@ export default (i18n) => {
                             {
                                 label: i18n.t('main.applicationMenu.app.developer.assets.wan.label'),
                                 submenu: [
-                                    {   
+                                    {
                                         label: i18n.t('main.applicationMenu.app.developer.assets.wan.import'),
                                         click: () => {
 
@@ -128,7 +128,7 @@ export default (i18n) => {
                 label: i18n.t('main.applicationMenu.edit.copy'),
                 role: 'copy'
             },
-            {   
+            {
                 label: i18n.t('main.applicationMenu.edit.paste'),
                 role: 'paste'
             },
@@ -145,51 +145,50 @@ export default (i18n) => {
     const settingMenu = {
         label: i18n.t('main.applicationMenu.setting.label'),
         submenu: [
-            // {
-                /** TODO */
-                // label: i18n.t('main.applicationMenu.setting.network.label'),
-                // submenu: [
-                    // {
-                    //     label: i18n.t('main.applicationMenu.setting.network.main'),
-                    //     accelerator: 'Shift+CommandOrControl+M',
-                    //     checked: setting.network === 'main',
-                    //     type: 'radio',
-                    //     click: async (m) => {
-                    //         if (!setting.network.includes('main')) {
-                    //             menuFactoryService.networkMenu = m.menu
-                    //             const mainWin = Windows.getByType('main')
-                    //             mainWin.hide()
-                    //             Windows.createModal('changeNetwork', {
-                    //                 width: 1024 + 208, 
-                    //                 height: 720, 
-                    //                 alwaysOnTop: true
-                    //             })
-                    //         }
+            {
+                label: i18n.t('main.applicationMenu.setting.network.label'),
+                submenu: [
+                    {
+                        label: i18n.t('main.applicationMenu.setting.network.main'),
+                        accelerator: 'Shift+CommandOrControl+M',
+                        checked: setting.network === 'main',
+                        type: 'radio',
+                        click: async (m) => {
+                            if (!setting.network.includes('main')) {
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1024 + 208,
+                                    height: 720,
+                                    alwaysOnTop: true
+                                })
+                            }
 
-                    //         return 
-                    //     }
-                    // },
-                    // {
-                    //     label: i18n.t('main.applicationMenu.setting.network.test'),
-                    //     accelerator: 'Shift+CommandOrControl+P',
-                    //     checked: setting.network === 'testnet',
-                    //     type: 'radio',
-                    //     click: async (m) => {
-                    //         if (setting.network.includes('main')) {
-                    //             menuFactoryService.networkMenu = m.menu
-                    //             const mainWin = Windows.getByType('main')
-                    //             mainWin.hide()
-                    //             Windows.createModal('changeNetwork', {
-                    //                 width: 1024 + 208, height: 720, alwaysOnTop: true
-                    //             })
-                    //         }
+                            return
+                        }
+                    },
+                    {
+                        label: i18n.t('main.applicationMenu.setting.network.test'),
+                        accelerator: 'Shift+CommandOrControl+P',
+                        checked: setting.network === 'testnet',
+                        type: 'radio',
+                        click: async (m) => {
+                            if (setting.network.includes('main')) {
+                                menuFactoryService.networkMenu = m.menu
+                                const mainWin = Windows.getByType('main')
+                                mainWin.hide()
+                                Windows.createModal('changeNetwork', {
+                                    width: 1024 + 208, height: 720, alwaysOnTop: true
+                                })
+                            }
 
-                    //         return 
-                    //     }
-                    // }
-                // ]
-            // },
-            // { type: 'separator' }
+                            return
+                        }
+                    }
+                ]
+            },
+            { type: 'separator' }
         ],
     }
 

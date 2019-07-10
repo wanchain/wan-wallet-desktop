@@ -66,7 +66,7 @@ class Validator extends Component {
               <img src={total} /><span>{intl.get('ValidatorNode.nodeList')}</span>
             </Col>
             <Col span={12} className="col-right">
-              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('ValidatorNode.registValidatorNode')}</Button>
+              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('ValidatorNode.registerValidatorNode')}</Button>
               { this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleSend} /> }
             </Col>
           </div>

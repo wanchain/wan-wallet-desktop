@@ -278,7 +278,7 @@ const zh_CN = {
     'ValidatorUpdate.note': '注意：在选取本地账户时，必须选择与验证节点注册时相同的账户',
 
     'ValidatorNode.nodeList': '验证人列表',
-    'ValidatorNode.registValidatorNode': '注册验证节点',
+    'ValidatorNode.registerValidatorNode': '注册验证节点',
 
     'ValidatorNode.table.myAccount': '我的账户',
     'ValidatorNode.table.principal': '本金',

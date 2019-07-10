@@ -14,7 +14,7 @@ const TESTNET = 'http://testnet.wanscan.org/tx/';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   stakingColumns: stores.languageIntl.stakingColumns,
-  historyList: stores.staking.registValidatorHistoryList,
+  historyList: stores.staking.registerValidatorHistoryList,
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr),
 }))
 

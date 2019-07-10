@@ -143,11 +143,9 @@ class ValidatorRegister extends Component {
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
-      wand.request('staking_registValidator', { tx }, (err, ret) => {
+      wand.request('staking_registerValidator', { tx }, (err, ret) => {
         if (err) {
           message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
         }
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);

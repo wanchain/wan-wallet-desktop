@@ -574,7 +574,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let delegateInfo = [];
                 let incentive = [];
                 let epochID = await ccUtil.getEpochID('wan');
-                let stakerInfo = await ccUtil.getCurrentStakerInfo('wan');
+                let stakeInfo = await ccUtil.getCurrentStakerInfo('wan');
 
                 if (!global.slotCount) {
                     global.slotCount = await ccUtil.getSlotCount('wan');
@@ -600,20 +600,20 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 }
 
                 ret = { base: {}, list: [] }
-                ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo);
+                ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
 
-                if (stakerInfo.length > 0) {
-                    for (let i = 0; i < stakerInfo.length; i++) {
-                        let ret = await getNameAndIcon(stakerInfo[i].address);
-                        if (ret && ret.length > 0) {
-                            stakerInfo[i].name = ret[0].name;
-                            stakerInfo[i].iconData = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(stakerInfo[i].address).toString()) ;
+                if (stakeInfo.length > 0) {
+                    for (let i = 0; i < stakeInfo.length; i++) {
+                        let info = await getNameAndIcon(stakeInfo[i].address);
+                        if (info && info.length > 0) {
+                            stakeInfo[i].name = info[0].name;
+                            stakeInfo[i].iconData = (info[0].iconData && info[0].iconData.length > 10) ? 'data:image/' + info[0].iconType + ';base64,' + info[0].iconData : ('data:image/png;base64,' + new Identicon(stakeInfo[i].address).toString());
                         }
                     }
                 }
 
-                ret.stakerInfo = stakerInfo;
+                ret.stakeInfo = stakeInfo;
             } catch (e) {
                 logger.error(actionUni + (e.message || e.stack))
                 err = e
@@ -623,12 +623,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'validatorInfo':
             try {
-              let { addr } = payload
-              ret = await ccUtil.getValidatorStakeInfo('wan', addr);
+                let { addr } = payload
+                ret = await ccUtil.getValidatorStakeInfo('wan', addr);
 
             } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
+                logger.error(e.message || e.stack)
+                err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
@@ -651,7 +651,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');;
                 tx.gasLimit = gasLimit;
 
-                let ret = await global.crossInvoker.PosDelegateIn(tx);
+                ret = await global.crossInvoker.PosDelegateIn(tx);
                 console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -681,7 +681,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     "stakeAmount": tx.stakeAmount,
                 }
 
-                let ret = await global.crossInvoker.PosDelegateOut(input);
+                ret = await global.crossInvoker.PosDelegateOut(input);
                 console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -690,20 +690,20 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-      case 'registValidator':
-          try {
-              console.log('stakeIn:', payload);
+        case 'registerValidator':
+            try {
+                console.log('stakeIn:', payload);
 
-              let { tx } = payload;
-              let key = Buffer.from(tx.secpub.toLowerCase().replace('0x', '').substring(2), 'hex');
-              let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
-              let gasPrice = await ccUtil.getGasPrice('wan');
+                let { tx } = payload;
+                let key = Buffer.from(tx.secpub.toLowerCase().replace('0x', '').substring(2), 'hex');
+                let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
+                let gasPrice = await ccUtil.getGasPrice('wan');
 
-              tx.gasLimit = 200000;
-              tx.minerAddr = address;
-              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-              let ret = await global.crossInvoker.PosMinerRegister(tx);
-              console.log(JSON.stringify(ret, null, 4));
+                tx.gasLimit = 200000;
+                tx.minerAddr = address;
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                ret = await global.crossInvoker.PosMinerRegister(tx);
+                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -886,7 +886,7 @@ function errorWrapper(err) {
     return { desc: err.message, code: err.errno, cat: err.name }
 }
 
-function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
+function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
     let base = {
         myStake: "N/A",
         validatorCnt: "N/A",
@@ -942,9 +942,9 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
     }
 
     let stakePool = web3.utils.toBN(0)
-    if (stakerInfo) {
-        for (let i = 0; i < stakerInfo.length; i++) {
-            const si = stakerInfo[i];
+    if (stakeInfo) {
+        for (let i = 0; i < stakeInfo.length; i++) {
+            const si = stakeInfo[i];
             stakePool = web3.utils.toBN(si.amount).add(stakePool);
             for (let m = 0; m < si.clients.length; m++) {
                 const cl = si.clients[m];
@@ -973,7 +973,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
             let ret = await ccUtil.getRegisteredValidator(sk.address);
             let img, name;
             if (ret && ret.length > 0) {
-                img = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData :('data:image/png;base64,' + new Identicon(sk.address).toString())  ;
+                img = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(sk.address).toString());
                 name = ret[0].name;
             }
 

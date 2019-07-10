@@ -42,7 +42,7 @@ class Staking {
       if (val) {
         this.stakeInfo = val.base;
         this.stakeList = val.list;
-        this.validatorList = val.stakerInfo;
+        this.validatorList = val.stakeInfo;
         let reward = await this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = 0;
         if (val.base.stakePool !== "0") {
@@ -181,7 +181,7 @@ class Staking {
     return validators;
   }
 
-  @computed get registValidatorHistoryList() {
+  @computed get registerValidatorHistoryList() {
     let historyList = [], page = 'normal';
     let histories = wanAddress.transHistory;
     let addrList = Object.keys(Object.assign(wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));

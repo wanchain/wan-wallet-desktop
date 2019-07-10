@@ -47,7 +47,6 @@ class Staking extends Component {
   }
 
   handleSend = (walletID) => {
-    console.log('walletID', walletID)
     if (walletID === 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
