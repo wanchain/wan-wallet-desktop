@@ -38,7 +38,7 @@ class Cards extends Component {
               title={intl.get('staking.rewardRate')}
               value={this.props.stakeInfo.currentRewardRate}
               // tail={this.props.stakeInfo.currentRewardRateChange}
-              bottom={this.props.stakeInfo.epochID}
+              bottom={this.props.stakeInfo.epochEndTime}
             />
           </Col>
           <Col span={6}>
@@ -46,7 +46,7 @@ class Cards extends Component {
               title={intl.get('staking.pending')}
               value={this.props.stakeInfo.pendingWithdrawal}
               tail="WAN"
-              bottom={this.props.stakeInfo.epochID}
+              bottom={this.props.stakeInfo.currentTime}
             />
           </Col>
         </Row>

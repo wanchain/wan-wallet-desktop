@@ -877,6 +877,8 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakerInfo) {
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
         epochIDRaw: "N/A",
+        epochEndTime: "N/A",
+        currentTime: "N/A",
         currentRewardRate: "N/A %",
         stakePool: 0,
         currentRewardRateChange: "↑",
@@ -1002,7 +1004,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
 
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
-            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
+            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 1 days.
             list[i].myStake.bottom = days.toFixed(0);
 
             if (days > longestDays) {

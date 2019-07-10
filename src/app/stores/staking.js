@@ -16,6 +16,8 @@ class Staking {
     validatorCnt: "N/A",
     pendingWithdrawal: "N/A",
     epochID: "Epoch N/A",
+    epochEndTime: "N/A",
+    currentTime: "N/A",
     currentRewardRate: "N/A %",
     currentRewardRateChange: "↑",
     totalDistributedRewards: "N/A",
@@ -36,7 +38,7 @@ class Staking {
     addrList.push(...wanAddress.trezorAddrList.slice())
 
     try {
-      let val = await pu.promisefy(wand.request, ['staking_info', addrList], this);
+      let val = await pu.promisefy(wand.request, ['staking_info', addrList]);
       if (val) {
         this.stakeInfo = val.base;
         this.stakeList = val.list;
@@ -47,7 +49,8 @@ class Staking {
           rewardRateNow = reward * 100 / val.base.stakePool
         }
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
-        this.stakeInfo.epochID = "Epoch " + this.stakeInfo.epochIDRaw;
+        this.stakeInfo.epochEndTime = timeFormat(val.base.epochIDRaw * (global.slotCount * global.slotTime));
+        this.stakeInfo.currentTime = timeFormat(Date.now()/1000);
 
         if (val.base.epochID != this.epochID) {
           if (rewardRateNow > this.rewardRate) {
@@ -210,7 +213,7 @@ class Staking {
     }
 
     if (global.firstEpochId == undefined) {
-      let info = await pu.promisefy(wand.request, ['staking_posInfo'], this)//6496392;
+      let info = await pu.promisefy(wand.request, ['staking_posInfo'])//6496392;
       global.firstEpochId = info.firstEpochId;
       global.slotCount = info.slotCount;
       global.slotTime = info.slotTime;

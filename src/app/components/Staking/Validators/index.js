@@ -76,7 +76,7 @@ class Validators extends Component {
         dataIndex: 'distributeRewards',
         key: 'distributeRewards',
         render: stake => (
-          <Cell title={stake.title} bottom={intl.get('staking.fromEpochs1') + stake.bottom + intl.get('staking.fromEpochs2')} />
+          <Cell title={stake.title} />
         ),
       }, {
         title: this.props.validatorColumns[6].title,

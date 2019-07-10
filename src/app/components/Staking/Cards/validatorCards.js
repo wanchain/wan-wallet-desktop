@@ -40,8 +40,7 @@ class ValidatorCards extends Component {
             <Card className="card3"
               title={intl.get('staking.rewardRate')}
               value={stakeInfo.currentRewardRate}
-              tail={stakeInfo.currentRewardRateChange}
-              bottom={stakeInfo.epochID}
+              bottom={stakeInfo.epochEndTime}
             />
           </Col>
           <Col span={6}>
@@ -49,7 +48,7 @@ class ValidatorCards extends Component {
               title={intl.get('staking.pending')}
               value={stakeInfo.pendingWithdrawal}
               tail="WAN"
-              bottom={stakeInfo.epochID}
+              bottom={stakeInfo.epochEndTime}
             />
           </Col>
         </Row>
