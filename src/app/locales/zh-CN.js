@@ -308,6 +308,8 @@ const zh_CN = {
     'popup.ok': '确定',
     'popup.cancel': '取消',
     'title.imported': '已导入的地址',
+    'title.copy': '复制',
+    'title.QRCode': '二维码',
 
 }
 export default zh_CN;

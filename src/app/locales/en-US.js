@@ -307,6 +307,8 @@ const en_US = {
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',
     'title.imported': 'Imported Address',
+    'title.copy': 'Copy',
+    'title.QRCode': 'QR Code',
 
 }
 export default en_US;
