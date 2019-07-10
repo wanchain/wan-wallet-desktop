@@ -265,7 +265,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'getNonce':
             try {
-                console.log('getNonce called');
+                Logger.log('getNonce called');
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
                 logger.info('Nonce: ' + payload.addr + ',' + nonce);
@@ -311,11 +311,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'isValidatorAddress':
             try {
-                console.log('isValidatorAddress', payload.address);
+                Logger.log('isValidatorAddress', payload.address);
                 ret = await ccUtil.isWanAddress(payload.address);
-                console.log('isWanAddress', ret);
+                Logger.log('isWanAddress', ret);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                console.log('getValidatorInfo', info);
+                Logger.log('getValidatorInfo', info);
 
                 if (!info || info.feeRate == 10000) {
                     ret = false;
@@ -585,15 +585,15 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        console.log('account', account.address, 'info', info);
+                        Logger.log('account', account.address, 'info', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    console.log('account', account.address, 'incentive.length', inc.length);
+                    Logger.log('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
-                        console.log('account:', account.address);
-                        console.log('incentive length:', inc.length);
+                        Logger.log('account:', account.address);
+                        Logger.log('incentive length:', inc.length);
 
                         incentive.push({ account: account, incentive: inc });
                     }
@@ -635,7 +635,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateIn':
             try {
-                console.log('delegateIn:', payload);
+                Logger.log('delegateIn:', payload);
                 let tx = payload;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
@@ -643,7 +643,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     throw new Error('Validator Address is Invalid');
                 }
 
-                console.log('validatorInfo', validatorInfo);
+                Logger.log('validatorInfo', validatorInfo);
 
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
@@ -662,7 +662,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateOut':
             try {
-                console.log('delegateOut:', payload);
+                Logger.log('delegateOut:', payload);
 
                 let tx = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
@@ -729,7 +729,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getContractData':
             try {
-                console.log('getContractData:', payload);
+                Logger.log('getContractData:', payload);
 
                 let validatorAddr = payload.validatorAddr;
                 let func = payload.func;
@@ -742,7 +742,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     validatorAddr);
 
                 ret = data;
-                console.log(JSON.stringify(ret, null, 4));
+                // console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -752,14 +752,14 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'insertTransToDB':
             try {
-                console.log('insertTransToDB:', payload);
+                Logger.log('insertTransToDB:', payload);
                 let satellite = {
                     validator: payload.rawTx.validator,
                     annotate: payload.rawTx.annotate,
                     stakeAmount: payload.rawTx.stakeAmount,
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
-                console.log('insert finish');
+                Logger.log('insert finish');
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -769,10 +769,10 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'posInfo':
             try {
-                console.log('get posInfo');
+                Logger.log('get posInfo');
                 ret = {};
                 let info = await ccUtil.getPosInfo('wan')
-                console.log('info:', info);
+                Logger.log('info:', info);
                 if (info) {
                     ret.firstEpochId = info.firstEpochId;
                 }
@@ -893,8 +893,6 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
         epochIDRaw: "N/A",
-        epochEndTime: "N/A",
-        currentTime: "N/A",
         currentRewardRate: "N/A %",
         stakePool: 0,
         currentRewardRateChange: "↑",
@@ -1020,7 +1018,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
 
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
-            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 1 days.
+            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
             list[i].myStake.bottom = days.toFixed(0);
 
             if (days > longestDays) {
@@ -1054,11 +1052,11 @@ async function getNameAndIcon(address) {
         if (!global.nameIconUpdateTime[addr] || (nowTime > (global.nameIconUpdateTime[addr] + 3 * 60 * 1000))) {
             value = await ccUtil.getRegisteredValidator(addr);
             if (!value || value.length == 0) {
-                console.log('address has no icon', addr);
+                // console.log('address has no icon', addr);
             } else {
                 global.nameIcon[addr] = value;
                 ret = value;
-                console.log('getNameAndIcon get from iWan.', addr);
+                // console.log('getNameAndIcon get from iWan.', addr);
             }
 
             global.nameIconUpdateTime[addr] = Date.now();

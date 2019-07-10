@@ -176,8 +176,13 @@ class Staking {
         key: this.validatorList[i],
         quota: quota,
         feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),
+        stakeAmount: fromWei(this.validatorList[i].stakeAmount)
       })
     }
+    //sort by stake amount DESC.
+    validators.sort((m, n) => {
+      return Number.parseInt(m.stakeAmount) < Number.parseInt(n.stakeAmount) ? 1 : -1;
+    });
     return validators;
   }
 

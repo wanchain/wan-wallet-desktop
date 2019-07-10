@@ -614,7 +614,7 @@ class StakeInForm extends Component {
                             allowClear
                             optionLabelProp="value"
                             dropdownMatchSelectWidth={false}
-                            dropdownStyle={{width: "470px"}}
+                            dropdownStyle={{width: "420px"}}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             // onChange={this.onChange}
@@ -625,9 +625,9 @@ class StakeInForm extends Component {
                           >
                             {this.state.addrList.map((item, index) =>
                               <Option value={item} key={index}>
-                                <Row>
-                                  <Col span={20}>{item}</Col>
-                                  <Col span={4} align="right" className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
+                                <Row className="ant-row-flex">
+                                  <Col>{item}</Col>&nbsp;
+                                  <Col className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
                                 </Row>
                               </Option>)}
                           </Select>
