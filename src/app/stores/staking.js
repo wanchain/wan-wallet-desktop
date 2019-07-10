@@ -110,6 +110,7 @@ class Staking {
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
       validators.push({
+        myAddress: {addr: addr.addr, type: addr.type},
         myAccount: addr.name,
         principal: {
           value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),

@@ -710,6 +710,22 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+      case 'validatorAppend':
+          try {
+              console.log('validatorAppend:', payload);
+
+              let { tx } = payload;
+              let gasPrice = await ccUtil.getGasPrice('wan');
+              tx.gasLimit = 200000;
+              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+              let ret = await global.crossInvoker.PosStakeAppend(tx);
+              console.log(JSON.stringify(ret, null, 4));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
         case 'getContractData':
             try {
