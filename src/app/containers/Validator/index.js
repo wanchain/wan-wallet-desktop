@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Row, Col, message, Form } from 'antd';
 
+import MyValidatorsList from 'components/Staking/MyValidatorsList';
 import ValidatorCards from 'components/Staking/Cards/validatorCards';
 import ValidatorRegister from 'components/Staking/ValidatorRegister';
-import MyValidators from 'components/Staking/Validators/MyValidators';
 import RegistValidatorHistory from 'components/Staking/RegistValidatorHistory';
 
 import './index.less';
@@ -72,7 +72,7 @@ class Validator extends Component {
           </div>
         </Row>
         <Row>
-          <MyValidators />
+          <MyValidatorsList />
         </Row>
         <Row>
           <RegistValidatorHistory name="normal" />

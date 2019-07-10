@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Row, Col } from 'antd';
+import { wanPubKey2Address } from 'utils/helper';
 
 import './index.less';
 
@@ -41,8 +42,14 @@ class ValidatorConfirmForm extends Component {
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
+                <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.validatorAccount')}</span></Col>
+                <Col span={RIGHT}><span className="withdraw-addr">{wanPubKey2Address(record.publicKey1)}</span></Col>
+              </Row>
+            </div>
+            <div className="withdraw-line">
+              <Row type="flex" justify="space-around" align="middle">
                 <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={RIGHT}><span className="withdraw-addr">{record.lockTime}</span></Col>
+                <Col span={RIGHT}><span className="withdraw-addr">{record.lockTime}{intl.get('days')}</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">

@@ -1,4 +1,6 @@
 const zh_CN = {
+    'days': ' 天',
+    
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
@@ -297,7 +299,7 @@ const zh_CN = {
     'ValidatorRegister.enterG1Pk': '输入公钥2',
     'ValidatorRegister.publicKeyIsWrong': '公钥错误',
     'ValidatorRegister.lockTime': '锁定时间',
-    'ValidatorRegister.feeRate': '费率',
+    'ValidatorRegister.feeRate': '费率 (%)',
     'ValidatorRegister.myAccount': '我的账户',
     'ValidatorRegister.address': '地址',
     'ValidatorRegister.balance': '余额',

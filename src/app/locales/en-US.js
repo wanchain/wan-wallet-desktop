@@ -1,4 +1,6 @@
 const en_US = {
+    'days': ' days',
+    
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
@@ -296,7 +298,7 @@ const en_US = {
     'ValidatorRegister.enterG1Pk': 'Enter public key 2',
     'ValidatorRegister.publicKeyIsWrong': 'Public Key is Wrong',
     'ValidatorRegister.lockTime': 'Locking Time',
-    'ValidatorRegister.feeRate': 'Commission Rate',
+    'ValidatorRegister.feeRate': 'Commission Rate (%)',
     'ValidatorRegister.myAccount': 'My Account',
     'ValidatorRegister.address': 'Address',
     'ValidatorRegister.balance': 'Balance',
