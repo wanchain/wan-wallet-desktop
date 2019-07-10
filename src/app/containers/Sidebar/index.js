@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
 import logo from 'static/image/logo.png';
+import collapse from 'static/image/navbar-collapse.png';
+import open from 'static/image/navbar-open.png';
 
-const SubMenu = Menu.SubMenu;
+const { SubMenu, Item } = Menu;
 
 @inject(stores => ({
   sidebarColumns: stores.languageIntl.sidebarColumns,
@@ -16,6 +18,17 @@ const SubMenu = Menu.SubMenu;
 
 @observer
 class Sidebar extends Component {
+  state = {
+    collapsed: false
+  }
+
+  toggleMenu = () => {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+    this.props.handleNav();
+  }
+
   renderMenu = data => {
     return data.map(item => {
       if(item.children) {
@@ -26,12 +39,12 @@ class Sidebar extends Component {
         );
       }
       return (
-        <Menu.Item key={item.key}>
+        <Item key={item.key}>
           <Link to={item.key}>
             {item.step === '1' ? <Icon type={item.icon} /> : <em className="com-circle"></em>}
-            {item.title}
+            <span>{item.title}</span>
           </Link>
-        </Menu.Item>
+        </Item>
       )
     });
   }
@@ -56,13 +69,19 @@ class Sidebar extends Component {
     }
 
     return (
-      <div className="sidebar">
-        <div className="logo">
-          <img src={logo} alt={intl.get('Sidebar.wanchain')} />
+      <div>
+        <div className="sidebar">
+          <div className="logo">
+            <img className="expandedLogo" src={logo} alt={intl.get('Sidebar.wanchain')} />
+          </div>
+          <Menu theme="dark" mode="inline" /* inlineCollapsed={this.state.collapsed} */ defaultSelectedKeys={[this.props.path]} className="menuTreeNode">
+            { this.renderMenu(sidebarColumns) }
+          </Menu>
+          
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.props.path]} className="menuTreeNode">
-          { this.renderMenu(sidebarColumns) }
-        </Menu>
+        <div className="collapseItem">
+          <img src={this.state.collapsed ? open : collapse} className="collapseButton" onClick={this.toggleMenu} />
+        </div>
       </div>
     );
   }

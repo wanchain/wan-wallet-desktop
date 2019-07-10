@@ -57,6 +57,13 @@ class Window extends EventEmitter {
 
         this.window.on('blur', () => {
             if (this.type === 'main') {
+                if(setting.autoLockTimeout === 0) {
+                    if (this._idleChecker) {
+                        clearInterval(this._idleChecker);
+                        this._idleChecker = null;
+                    }
+                    return false;
+                }
                 if (global.chainManager && !this.isClosed) {
                     if (this._idleChecker) {
                         this._logger.info('main window losing focus, clear idle time checker')
@@ -84,6 +91,13 @@ class Window extends EventEmitter {
 
         this.window.on('focus', () => {
             if (this.type === 'main') {
+                if(setting.autoLockTimeout === 0) {
+                    if(this._timer) {
+                        clearTimeout(timer);
+                        this._timer = null;
+                    }
+                    return false;
+                }
                 if (this._timer) {
                     this._logger.info('main window getting focus again, clear autolock timer')
                     let timer = this._timer

@@ -23,6 +23,7 @@ const defaultConfig = {
     settings: {
       reinput_pwd: false,
       staking_advance: false,
+      logout_timeout: '5'
     }
 }
 
@@ -144,7 +145,8 @@ class Settings {
 
     get autoLockTimeout() {
         // auto lock the wallet if main window loses focus for a period of time. 5 min
-        return 5 * 60 * 1000
+        const logout = Number.parseInt(this._get('settings').logout_timeout);
+        return Number.isNaN(logout) ?  Number.parseInt(defaultConfig.settings.logout_timeout) * 60 * 1000 : logout * 60 * 1000;
     }
 
     get idleCheckInterval() {
@@ -157,7 +159,7 @@ class Settings {
 
     _get(key) {
         let val = this._db.get(key).value()
-
+        
         if (!val) {
             this._set(key, defaultConfig[key])
         }

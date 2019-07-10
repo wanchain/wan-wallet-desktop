@@ -1,16 +1,17 @@
 @sidebar-right-bg: linear-gradient(90deg,#4e5cf4 0%,#272d68 100%)!important;
 @sidebar-right-hover-bg: #2E3657;
+@sidebar-width: 230px;
 .sidebar {
+  width: @sidebar-width;
   .logo {
     height: 100px;
     padding: 28px 0 0 30px;
+    position: relative;
     vertical-align: -webkit-baseline-middle;
-  
     img {
       height: 48px;
     }
   }
-
   .menuTreeNode {
     color: #A1A2A8;
     padding: 0px 15px;
@@ -38,6 +39,48 @@
     height: 60px!important;
     line-height: 60px!important;
     border-radius:6px!important;
+  }
+  .ant-menu-inline-collapsed {
+    width: 120px;
+    >li {
+      text-align: center;
+    }
+  }
+}
+.nav-left.nav-collapsed {
+  .sidebar {
+    display: none;
+  }
+  .collapseItem {
+    left: 0px;
+    background-color: #1A1B2C;
+    img {
+      left: -1px;
+    }
+  }
+}
+.main.nav-collapsed {
+  margin-left: 20px;
+}
+.collapseItem {
+  display: inline-block;
+  width: 20px;
+  height: 100%;
+  position: absolute;
+  right: -19px;
+  top: 0px;
+  z-index: 1;
+
+  .collapseButton {
+    display: inline-block;
+    width: 18px;
+    height: 60px;
+    font-weight: bold;
+    position: relative;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
   }
 }
 .com-circle{

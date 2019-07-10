@@ -26,7 +26,8 @@ import { getBalance } from 'utils/helper';
 @observer
 export default class Layout extends Component {
   state = {
-    loading: true
+    loading: true,
+    collapsed: false
   }
 
   waitUntilSdkReady() {
@@ -72,6 +73,12 @@ export default class Layout extends Component {
     });
   }
 
+  toggleNav = () => {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+  }
+
   render() {
     const { hasMnemonicOrNot, auth, location } = this.props;
     if (this.state.loading) {
@@ -84,10 +91,10 @@ export default class Layout extends Component {
       } else {
         return (
           <Row className="container">
-            <Col /* span={4} */ className="nav-left">
-              <SideBar path={location.pathname}/>
+            <Col className={"nav-left " + (this.state.collapsed ? "nav-collapsed" : "")}>
+              <SideBar handleNav={this.toggleNav} path={location.pathname}/>
             </Col>
-            <Col /* span={20} */ className="main">
+            <Col className={"main " + (this.state.collapsed ? "nav-collapsed" : "")}>
               <MHeader />
               <Row className="content">
                 {this.props.children}

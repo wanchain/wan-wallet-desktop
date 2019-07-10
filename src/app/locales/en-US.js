@@ -62,6 +62,16 @@ const en_US = {
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',
+    'Config.pwdConfirm': 'Password confirm',
+    'Config.loginTimeout': 'Login timeout',
+    'Config.selectLoginTimeout': 'Please select login timeout',
+    'Config.disableTimeout': 'Disable timeout',
+    'Config.fiveMinutes': '5 minutes',
+    'Config.tenMinutes': '10 minutes',
+    'Config.fifteenMinutes': '15 minutes',
+    'Config.thirtyMinutes': '30 minutes',
+    'Config.oneHour': '1 hour',
+    'Config.twoHours': '2 hours',
 
     'Sidebar.wanchain': 'Wanchain',
 

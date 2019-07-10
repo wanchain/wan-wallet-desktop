@@ -8,6 +8,7 @@ class Session {
   @observable settings = {
     reinput_pwd: false,
     staking_advance: false,
+    logout_timeout: '5',
   };
 
   @action setChainId(id) {

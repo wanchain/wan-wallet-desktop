@@ -63,6 +63,16 @@ const zh_CN = {
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',
+    'Config.pwdConfirm': '密码确认',
+    'Config.loginTimeout': '登陆超时',
+    'Config.selectLoginTimeout': '请设置登陆超时时间',
+    'Config.disableTimeout': '超时不可用',
+    'Config.fiveMinutes': '5分钟',
+    'Config.tenMinutes': '10分钟',
+    'Config.fifteenMinutes': '15分钟',
+    'Config.thirtyMinutes': '30分钟',
+    'Config.oneHour': '1小时',
+    'Config.twoHours': '2小时',
 
     'Sidebar.wanchain': 'Wanchain',
 
