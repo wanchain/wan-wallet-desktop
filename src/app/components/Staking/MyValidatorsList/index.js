@@ -4,10 +4,10 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
-import Cell from './Cell';
-import Validator from './Validator';
 import ValidatorIn from './ValidatorIn';
 import ValidatorModify from './ValidatorModify';
+import Cell from 'components/Staking/Validators/Cell';
+import Validator from 'components/Staking/Validators/Validator';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -17,7 +17,7 @@ import ValidatorModify from './ValidatorModify';
 }))
 
 @observer
-class MyValidators extends Component {
+class MyValidatorsList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
@@ -93,4 +93,4 @@ class MyValidators extends Component {
   }
 }
 
-export default MyValidators;
+export default MyValidatorsList;

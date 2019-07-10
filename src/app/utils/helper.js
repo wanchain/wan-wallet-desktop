@@ -1,8 +1,17 @@
+import keccak from 'keccak';
 import { fromWei } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
+
 const WAN = "m/44'/5718350'/0'/0/";
 let emitterHandlers = {};
+
+
+export const wanPubKey2Address = function(pubKey) {
+  let key = Buffer.from(pubKey.toLowerCase().replace('0x', '').substring(2), 'hex');
+  let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
+  return '0x' + address;
+}
 
 export const getBalance = function (arr) {
   const addrArr = arr.map(item => item.substr(2));

@@ -29,7 +29,7 @@ class ValidatorIn extends Component {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.showDialog} />
-
+        {this.state.visible && 1}
       </div>
     );
   }

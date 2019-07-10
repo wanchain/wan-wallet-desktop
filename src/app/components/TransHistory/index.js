@@ -40,9 +40,14 @@ class TransHistory extends Component {
     const { addrInfo, historyList, name } = this.props;
     let addrList = [];
     name.forEach(val => {
-      addrList = addrList.concat(Object.keys(addrInfo[val]));
-    })
-
+      let values = Object.entries(addrInfo[val]).map((v, i) => {
+        return {
+          address: v[0],
+          name: v[1].name
+        }
+      });
+      addrList = addrList.concat(values);
+    });
     return (
       <div>
         <div className="historyCon" id="wanAddrSelect">
@@ -57,7 +62,7 @@ class TransHistory extends Component {
             getPopupContainer = {() => document.getElementById('wanAddrSelect')}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            {addrList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+            {addrList.map((item, index) => <Option value={item.address} key={index}>{item.name}</Option>)}
           </Select>
         </div>
         <div className="historyRow">

@@ -4,18 +4,17 @@ import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
-import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Slider } from 'antd';
+import { Button, Modal, Form, Icon, message, Row, Col, Slider } from 'antd';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
+import CommonFormItem from 'componentUtils/CommonFormItem';
+import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 
-const Option = Select.Option;
 const wanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 
-const COLLEFT = 8;
-const COLRIGHT = 16;
 const MINDAYS = 7;
 const MAXDAYS = 90;
 const WALLET_ID_NATIVE = 0x01;
@@ -36,9 +35,13 @@ class ValidatorRegister extends Component {
     locktime: MINDAYS,
   };
 
-  onChange = value => {
-    this.setState((state, props) => {
-      let balance = value ?  getValueByAddrInfo(value, 'balance', props.addrInfo) : 0;
+  getValueByAddrInfoArgs = (...args) => {
+    return getValueByAddrInfo(...args, this.props.addrInfo);
+  }
+
+  onChangePosAddrSelect = value => {
+    this.setState(() => {
+      let balance = value ?  this.getValueByAddrInfoArgs(value, 'balance') : 0;
       return { balance }
     })
   }
@@ -72,6 +75,22 @@ class ValidatorRegister extends Component {
     callback();
   }
 
+  checkFeeRate = (rule, value, callback) => {
+    try {
+      if(value < 0 || value > 100) {
+        callback(intl.get('NormalTransForm.invalidAmount'));
+        return;
+      }
+      if(value.split('.')[1] && value.split('.')[1].length > 2) {
+        callback(intl.get('NormalTransForm.invalidAmount'));
+        return;
+      }
+      callback();
+    } catch(err) {
+      callback(intl.get('NormalTransForm.invalidAmount'));
+    }
+  }
+
   showConfirmForm = () => {
     let { form, settings } = this.props;
     form.validateFields(err => {
@@ -102,11 +121,11 @@ class ValidatorRegister extends Component {
   }
 
   onSend = async () => {
-    let { form, addrInfo } = this.props;
-    let to = form.getFieldValue('to'), 
-        from = form.getFieldValue('myAddr'), 
+    let { form } = this.props;
+    let to = form.getFieldValue('to'),
+        from = form.getFieldValue('myAddr'),
         amount = form.getFieldValue('amount');
-    let path = getValueByAddrInfo(from, 'path', addrInfo);
+    let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? `${`WALLET_ID_${form.split(':')[0].toUpperCase()}`}` : WALLET_ID_NATIVE;
 
     let tx = {
@@ -176,7 +195,7 @@ class ValidatorRegister extends Component {
   }
 
   render() {
-    const { form, settings, addrSelectedList, onCancel, addrInfo } = this.props;
+    const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
     const record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
     return (
@@ -189,36 +208,22 @@ class ValidatorRegister extends Component {
         >
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
+            <CommonFormItem form={form} formName='publicKey1'
+              options={{rules: [{ required: true, validator: this.checkPublicKey }]}}
+              prefix={<Icon type="wallet" className="colorInput" />}
+              title={intl.get('ValidatorRegister.publicKey1')}
+              placeholder={intl.get('ValidatorRegister.enterSecPk')}
+            />
+            <CommonFormItem form={form} formName='publicKey2'
+              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+              prefix={<Icon type="wallet" className="colorInput" />}
+              title={intl.get('ValidatorRegister.enterG1Pk')}
+              placeholder={intl.get('ValidatorRegister.enterG1Pk')}
+            />
             <div className="validator-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.publicKey1')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('publicKey1', { rules: [{ required: true, validator: this.checkPublicKey }] })
-                        (<Input placeholder={intl.get('ValidatorRegister.enterSecPk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.publicKey2')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('publicKey2', { rules: [{ required: true, validator: this.checkPublicKey }] })
-                        (<Input placeholder={intl.get('ValidatorRegister.enterG1Pk')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={COLRIGHT-4}>
+                <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
+                <Col span={12}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { initialValue: MINDAYS, rules: [{ required: true }] })
@@ -229,86 +234,27 @@ class ValidatorRegister extends Component {
                 <Col span={4}><span className="locktime-span">{this.state.locktime} days</span></Col>
               </Row>
             </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('feeRate', { rules: [{ required: true }] })
-                        (<Input placeholder={'10.00'} prefix={<Icon type="percentage" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
+            <CommonFormItem form={form} formName='feeRate'
+              options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
+              title={intl.get('ValidatorRegister.feeRate')}
+              placeholder={'10.00'}
+            />
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.address')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline" id="posAddrSelect">
-                    <Form.Item>
-                      {getFieldDecorator('myAddr', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
-                        (
-                          <Select
-                            autoFocus
-                            showSearch
-                            allowClear
-                            className="colorInput"
-                            optionLabelProp="value"
-                            optionFilterProp="children"
-                            dropdownStyle={{width: "470px"}}
-                            dropdownMatchSelectWidth={false}
-                            placeholder={intl.get('StakeInForm.selectAddress')}
-                            onChange={this.onChange}
-                            getPopupContainer={() => document.getElementById('posAddrSelect')}
-                            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                          >
-                            {
-                              addrSelectedList.map((item, index) =>
-                              <Option value={item} key={index}>
-                                <Row>
-                                  <Col span={20}>{item}</Col>
-                                  <Col span={4} align="right" className="stakein-selection-balance">- {Number(getValueByAddrInfo(item, 'balance', addrInfo)).toFixed(1)}</Col>
-                                </Row>
-                              </Option>)
-                            }
-                          </Select>
-                        )}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
+              <AddrSelectForm form={form} addrSelectedList={addrSelectedList} handleChange={this.onChangePosAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
             </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.balance')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline">
-                    <Form.Item >
-                      {getFieldDecorator('balance', { initialValue: this.state.balance })
-                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={COLLEFT}><span className="stakein-name">{intl.get('ValidatorRegister.entrustedAmount')}</span></Col>
-                <Col span={COLRIGHT}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('amount', { initialValue: 10000, rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
+            <CommonFormItem form={form} formName='balance' disabled={true}
+              options={{ initialValue: this.state.balance }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title={intl.get('ValidatorRegister.balance')}
+            />
+            <CommonFormItem form={form} formName='amount'
+              options={{ initialValue: 10000, rules: [{ required: true, validator: this.checkAmount }] }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title={intl.get('ValidatorRegister.entrustedAmount')}
+            />
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
