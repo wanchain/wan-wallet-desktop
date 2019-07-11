@@ -110,31 +110,36 @@ class Staking {
     let validators = []
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
-      validators.push({
-        myAddress: {addr: addr.addr, type: addr.type},
-        myAccount: addr.name,
-        principal: {
-          value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
-          days: 1
-        },
-        entrustment: {
-          value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
-          person: item.clients.length,
-        },
-        arrow1: arrow,
-        validator: { 
-          img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()), 
-          name: item.name ? item.name : item.address, 
-          address: item.address,
-        },
-        arrow2: arrow,
-        distributeRewards: {
-          value: 10,
-          num: 100
-        },
-        modifyStake: ['topup', 'exit', 'modify'],
-        key: index,
-      })
+      console.log(toJS(item), 'pppppppppppppppppppppppppppppppppppppp')
+      if(item.nextLockEpochs !== 0 ) {
+        validators.push({
+          lockTime: item.lockEpochs,
+          publicKey1: item.pubSec256,
+          myAddress: {addr: addr.addr, type: addr.type},
+          myAccount: addr.name,
+          principal: {
+            value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
+            days: 1
+          },
+          entrustment: {
+            value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
+            person: item.clients.length,
+          },
+          arrow1: arrow,
+          validator: { 
+            img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()), 
+            name: item.name ? item.name : item.address, 
+            address: item.address,
+          },
+          arrow2: arrow,
+          distributeRewards: {
+            value: 10,
+            num: 100
+          },
+          modifyStake: ['topup', 'exit', 'modify'],
+          key: index,
+        })
+      }
     })
     return validators;
   }
@@ -196,15 +201,16 @@ class Staking {
     let histories = wanAddress.transHistory;
     let addrList = Object.keys(Object.assign(wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
     Object.keys(wanAddress.transHistory).forEach(item => {
-      if(histories[item].validator && addrList.includes(histories[item].from)) {
+      if(histories[item].validator && addrList.includes(histories[item].from) && ['StakeIn', 'StakeUpdate', 'StakeAppend'].includes(histories[item].annotate)) {
         let { status, annotate } = histories[item];
         let getIndex = self.stakingList.findIndex(value => value.validator.address === histories[item].validator);
         historyList.push({
           key: item,
+          sendTime: histories[item].sendTime,
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[page][histories[item].from].name,
           stakeAmount: fromWei(histories[item].value),
-          annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(annotate) ? intl.get(`TransHistory.${annotate.toLowerCase()}`) : annotate,
+          annotate: languageIntl.language && ['StakeIn', 'StakeUpdate', 'StakeAppend'].includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           validator: {
             address: histories[item].validator,

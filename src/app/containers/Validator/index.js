@@ -6,7 +6,7 @@ import { Button, Row, Col, message, Form } from 'antd';
 import MyValidatorsList from 'components/Staking/MyValidatorsList';
 import ValidatorCards from 'components/Staking/Cards/validatorCards';
 import ValidatorRegister from 'components/Staking/ValidatorRegister';
-import RegisterValidatorHistory from 'components/Staking/RegistValidatorHistory';
+import RegisterValidatorHistory from 'components/Staking/RegisterValidatorHistory';
 
 import './index.less';
 import total from 'static/image/total.png';
