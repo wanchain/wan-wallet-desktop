@@ -30,7 +30,18 @@ class App extends Component {
 
   componentDidMount() {
     regEmitterHandler('language', (val) => {
-      this.changeLanguage(val === 'en' ? 'en_US' : 'zh_CN');
+      let lng;
+      switch (val) {
+        case 'en':
+          lng = 'en_US';
+          break;
+        case 'zh':
+          lng = 'zh_CN';
+          break;
+        default:
+          lng = val.replace('-', '_');
+      }
+      this.changeLanguage(lng);
     });
 
     regEmitterHandler('uiAction', action => {

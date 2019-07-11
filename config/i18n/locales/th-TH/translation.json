@@ -1,0 +1,77 @@
+{
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{app}}",
+                "about": "เกี่ยวกับ {{app}}",
+                "version": "เวอร์ชั่นของกระเป๋า WAN คือ {{version}}",
+                "developer": {
+                    "label": "นักพัฒนา",
+                    "assets": {
+                        "label": "ทรัพย์สิน",
+                        "wan": {
+                            "label": "Wanchain",
+                            "import": "นำเข้าไฟล์คีย์สโตร์"
+                        }
+                    },
+                    "data": {
+                        "label": "โฟลเดอร์ข้อมูล",
+                        "db": "เปิดโฟลเดอร์ข้อมูล",
+                        "log": "เปิดโฟลเดอร์ Log"
+                    }
+                },
+                "services": "บริการ",
+                "checkForUpdate": "ตรวจสอบการอัพเดท...",
+                "hide": "ซ่อน {{ app }}",
+                "hideOthers": "ซ่อนอื่นๆ",
+                "showAll": "แสดงทั้งหมด",
+                "quit": "ออกจาก {{ app }}"
+            },
+            "edit": {
+                "label": "แก้ไข",
+                "undo": "ยกเลิกคำสั่งที่ทำไปแล้ว",
+                "redo": "ทำซ้ำ",
+                "cut": "ตัด",
+                "copy": "คัดลอก",
+                "paste": "แปะ",
+                "selectAll": "เลือกทั้งหมด"
+            },
+            "setting": {
+                "label": "ตั้งค่า",
+                "network": {
+                    "label": "เครือข่าย",
+                    "main": "เครือข่ายหลัก",
+                    "test": "เครือข่ายทดสอบ"
+                },
+                "mode": {
+                    "label": "โหมด",
+                    "full": "กระเป๋าแบบเต็ม (Full Node)",
+                    "light": "กระเป๋าแบบเบา (Light)"
+                },
+                "lang": {
+                    "label": "ภาษา",
+                    "code": {
+                        "en": "English",
+                        "zh": "中文(简体)",
+                        "th-TH": "ไทย"
+                    }
+                }
+            },
+            "window": {
+                "label": "หน้าต่าง",
+                "fullscreen": "เต็มหน้าจอ",
+                "minimize": "ลดขนาด",
+                "close": "ปิด",
+                "front": "นำหน้าต่างทั้งหมดไว้ข้างหน้าสุด"
+            },
+            "help": {
+                "label": "ช่วยเหลือ",
+                "web": "เวบไซต์ทางการของ Wanchain",
+                "explorer": "เอ็กพลอเรอร์ของ Wanchain",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "เปิดเครื่องมือนักพัฒนา"
+            }
+        }
+    }
+}
