@@ -27,10 +27,12 @@ export default (i18n) => {
             // },
             {
                 label: i18n.t('main.applicationMenu.edit.copy'),
+                accelerator: 'CommandOrControl+C',
                 role: 'copy'
             },
             {
                 label: i18n.t('main.applicationMenu.edit.paste'),
+                accelerator: 'CommandOrControl+V',
                 role: 'paste'
             },
             {
@@ -40,7 +42,7 @@ export default (i18n) => {
         ]
     }
 
-    menu.push(editMenu)
+    // menu.push(editMenu)
 
     // Setting menu
     const settingMenu = {
