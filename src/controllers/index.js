@@ -963,7 +963,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
 
 async function buildStakingList(delegateInfo, incentive, epochID, base) {
     let list = [];
-
+    
     for (let i = 0; i < delegateInfo.length; i++) {
         const di = delegateInfo[i];
         for (let m = 0; m < di.stake.length; m++) {
@@ -987,7 +987,8 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
                 },
                 validatorAddress: sk.address,
                 distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
-                modifyStake: ["+", "-"]
+                modifyStake: ["+", "-"],
+                quitEpoch: sk.quitEpoch
             })
         }
     }
