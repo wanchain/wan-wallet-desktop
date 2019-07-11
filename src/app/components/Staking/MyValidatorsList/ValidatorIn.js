@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -31,7 +32,7 @@ class InForm extends Component {
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
-    if (new BigNumber(value).minus(10000) < 0) {
+    if (new BigNumber(value).minus(100) < 0) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
@@ -69,11 +70,10 @@ class InForm extends Component {
 
   onSend = () => {
     let { form, record, addrInfo } = this.props;
-    let from = record.myAddress;
-    let type = recod.myAddress.type
-
+    let from = record.myAddress.addr;
+    let type = record.myAddress.type;
     let amount = form.getFieldValue('amount');
-    let path = addrInfo[type][from].path;
+    let path = "m/44'/5718350'/0'/0/" + addrInfo[type][from].path;
     let walletID = type !== 'normal' ? `${`WALLET_ID_${type.toUpperCase()}`}` : WALLET_ID_NATIVE;
 
     let tx = {
@@ -106,7 +106,9 @@ class InForm extends Component {
 
   render() {
     const { onCancel, form, settings, record, addrInfo } = this.props;
-    const formValues = form.getFieldsValue(['amount']);
+    let showConfirmItem = { validatorAccount: true, myAddr: true, amount: true };
+    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, amount: form.getFieldValue('amount') };
+
     return (
       <div className="stakein">
         <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
@@ -142,7 +144,7 @@ class InForm extends Component {
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }

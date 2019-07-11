@@ -2,7 +2,7 @@ import Web3 from 'web3';
 const web3 = new Web3();
 
 export function fromWei(data) {
-  return web3.utils.fromWei(data);
+  return web3.utils.fromWei(data.toString());
 }
 
 export function toWei(data, unit) {
