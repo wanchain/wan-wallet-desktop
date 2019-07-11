@@ -195,7 +195,9 @@ class ValidatorRegister extends Component {
   render() {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
-    const record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
+    let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
+    let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount:true, lockTime: true, feeRate: true, myAddr: true, amount: true };
+
     return (
       <div className="stakein">
         <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
@@ -256,7 +258,7 @@ class ValidatorRegister extends Component {
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }

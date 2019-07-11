@@ -306,6 +306,9 @@ const zh_CN = {
     'ValidatorRegister.entrustedAmount': '委托金额',
     'ValidatorRegister.stakeTooLow': '最低委托金额是10000WAN',
     'ValidatorRegister.historyTitle': '委托历史记录',
+    'TransHistory.StakeIn': 'StakeIn',
+    'TransHistory.StakeUpdate': 'StakeUpdate',
+    'TransHistory.StakeAppend': 'StakeAppend',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

@@ -71,8 +71,8 @@ class MyValidatorsList extends Component {
           <div>
             <Row>
               <Col span={8} align="center"><ValidatorIn record={record} /></Col>
-              <Col span={8} align="center"><ValidatorModify record={record} /></Col>
-              <Col span={8} align="center"><ValidatorModify record={record} /></Col>
+              <Col span={8} align="center"><ValidatorModify record={record} type={record.modifyStake[1]}/></Col>
+              <Col span={8} align="center"><ValidatorModify record={record} type={record.modifyStake[2]}/></Col>
             </Row>
             <Row>
               <Col span={8} className="modifyBtnText" align="center">{intl.get(`staking.table.${text[0]}`)}</Col>
