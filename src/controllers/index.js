@@ -265,7 +265,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'getNonce':
             try {
-                Logger.log('getNonce called');
+                logger.info('getNonce called');
                 // nonce = await ccUtil.getNonceByLocal(payload.addr, payload.chainType)
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
                 logger.info('Nonce: ' + payload.addr + ',' + nonce);
@@ -311,11 +311,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'isValidatorAddress':
             try {
-                Logger.log('isValidatorAddress', payload.address);
+                logger.info('isValidatorAddress', payload.address);
                 ret = await ccUtil.isWanAddress(payload.address);
-                Logger.log('isWanAddress', ret);
+                logger.info('isWanAddress', ret);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                Logger.log('getValidatorInfo', info);
+                logger.info('getValidatorInfo', info);
 
                 if (!info || info.feeRate == 10000) {
                     ret = false;
@@ -585,15 +585,15 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        Logger.log('account', account.address, 'info', info);
+                        logger.info('account', account.address, 'info', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    Logger.log('account', account.address, 'incentive.length', inc.length);
+                    logger.info('account', account.address, 'incentive.length', inc.length);
                     if (inc && inc.length && inc.length > 0) {
-                        Logger.log('account:', account.address);
-                        Logger.log('incentive length:', inc.length);
+                        logger.info('account:', account.address);
+                        logger.info('incentive length:', inc.length);
 
                         incentive.push({ account: account, incentive: inc });
                     }
@@ -635,7 +635,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateIn':
             try {
-                Logger.log('delegateIn:', payload);
+                logger.info('delegateIn:', payload);
                 let tx = payload;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
@@ -643,7 +643,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     throw new Error('Validator Address is Invalid');
                 }
 
-                Logger.log('validatorInfo', validatorInfo);
+                logger.info('validatorInfo', validatorInfo);
 
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
@@ -662,7 +662,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateOut':
             try {
-                Logger.log('delegateOut:', payload);
+                logger.info('delegateOut:', payload);
 
                 let tx = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
@@ -729,7 +729,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getContractData':
             try {
-                Logger.log('getContractData:', payload);
+                logger.info('getContractData:', payload);
 
                 let validatorAddr = payload.validatorAddr;
                 let func = payload.func;
@@ -752,14 +752,14 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'insertTransToDB':
             try {
-                Logger.log('insertTransToDB:', payload);
+                logger.info('insertTransToDB:', payload);
                 let satellite = {
                     validator: payload.rawTx.validator,
                     annotate: payload.rawTx.annotate,
                     stakeAmount: payload.rawTx.stakeAmount,
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
-                Logger.log('insert finish');
+                logger.info('insert finish');
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -769,10 +769,10 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'posInfo':
             try {
-                Logger.log('get posInfo');
+                logger.info('get posInfo');
                 ret = {};
                 let info = await ccUtil.getPosInfo('wan')
-                Logger.log('info:', info);
+                logger.info('info:', info);
                 if (info) {
                     ret.firstEpochId = info.firstEpochId;
                 }
