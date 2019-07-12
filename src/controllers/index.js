@@ -313,9 +313,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 logger.info('isValidatorAddress:' + payload.address);
                 ret = await ccUtil.isWanAddress(payload.address);
-                logger.info('isWanAddress:' + ret);
+                console.log('isWanAddress:', ret);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                console.log('getValidatorInfo:' + info);
+                console.log('getValidatorInfo:', info);
 
                 if (!info || info.feeRate == 10000) {
                     ret = false;
@@ -462,7 +462,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 logger.info('Send raw transaction: ' + JSON.stringify(payload))
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
-                logger.info('Transaction hash: ' + ret);
+                console.log('Transaction hash: ', ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -584,9 +584,10 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 for (let i = 0; i < accounts.length; i++) {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
+                    console.log('info', info);
                     if (info && info.length && info.length > 0) {
                         logger.info('account:' + account.address);
-                        console.log('info:' + info);
+                        console.log('info:', info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
@@ -600,7 +601,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                         incentive.push({ account: account, incentive: inc });
                     }
                 }
-
+                console.log('delegateInfo:', delegateInfo);
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
