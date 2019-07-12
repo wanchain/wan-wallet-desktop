@@ -13,7 +13,6 @@ import { getNonce, getGasPrice, estimateGas, getChainId, getContractAddr, getCon
 import { toWei } from 'utils/support.js';
 
 @inject(stores => ({
-  getAddrList: stores.wanAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   updateStakeInfo: () => stores.staking.updateStakeInfo(),

@@ -11,7 +11,6 @@ import Validator from 'components/Staking/Validators/Validator';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  getAddrList: stores.wanAddress.getAddrList,
   myValidatorList: stores.staking.myValidatorList,
   myValidatorColumns: stores.languageIntl.myValidatorColumns,
 }))

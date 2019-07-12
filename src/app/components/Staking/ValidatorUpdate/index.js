@@ -19,7 +19,7 @@ const Option = Select.Option;
 
 @inject(stores => ({
   settings: stores.session.settings,
-  getAddrList: stores.wanAddress.getAddrList,
+  getNormalAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   onlineValidatorList: stores.staking.onlineValidatorList,
@@ -46,9 +46,9 @@ class ValidatorUpdate extends Component {
   }
 
   componentWillMount() {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
-    getAddrList.forEach(addr => {
+    getNormalAddrList.forEach(addr => {
       addrList.push(
         addr.address
       )
@@ -70,7 +70,7 @@ class ValidatorUpdate extends Component {
   }
 
   getBalance = (value) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     if (!value) {
       return
     }
@@ -97,8 +97,8 @@ class ValidatorUpdate extends Component {
       return;
     }
 
-    for (let i = 0; i < getAddrList.length; i++) {
-      const element = getAddrList[i];
+    for (let i = 0; i < getNormalAddrList.length; i++) {
+      const element = getNormalAddrList[i];
       if (element.address == value) {
         return element.balance;
       }
@@ -147,8 +147,8 @@ class ValidatorUpdate extends Component {
   }
 
   getPath = (from) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrs = getAddrList
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    let addrs = getNormalAddrList
     let fromAddr = from
 
     if (from.includes('Ledger')) {
@@ -313,8 +313,8 @@ class ValidatorUpdate extends Component {
     });
   }
 
-  onSliderChange = (value)=>{
-    this.setState({locktime: value})
+  onSliderChange = (value) => {
+    this.setState({ locktime: value })
   }
 
   checkLockTime = (rule, value, callback) => {
@@ -372,16 +372,16 @@ class ValidatorUpdate extends Component {
             <div className="validator-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={right-4}>
+                <Col span={right - 4}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { rules: [{ required: true, validator: this.checkLockTime }] })
-                        (<Slider className='locktime-slider' min={0} max={180} step={2} onChange={this.onSliderChange}/>)}
+                        (<Slider className='locktime-slider' min={0} max={180} step={2} onChange={this.onSliderChange} />)}
                     </Form.Item>
                   </Form>
                 </Col>
                 <Col span={4} align="left"><span className="locktime-span">{this.state.locktime} days</span></Col>
-                
+
               </Row>
             </div>
           </div>
@@ -411,9 +411,9 @@ class ValidatorUpdate extends Component {
                             className="colorInput"
                           >
                             {this.state.addrList.map((item, index) => <Option value={item} key={index}>
-                              <Row>
-                                <Col span={16}>{item}</Col>
-                                <Col span={8} align="right" className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(1)}</Col>
+                              <Row className="ant-row-flex">
+                                <Col>{item}</Col>&nbsp;
+                                <Col className="stakein-selection-balance">{'Balance: '}{Number(this.getBalance(item)).toFixed(1)}</Col>
                               </Row>
                             </Option>)}
                           </Select>

@@ -14,7 +14,6 @@ import DelegateOut from "./DelegateOut";
 @inject(stores => ({
   language: stores.languageIntl.language,
   validatorColumns: stores.languageIntl.validatorColumns,
-  getAddrList: stores.wanAddress.getAddrList,
   stakingList: stores.staking.stakingList,
 }))
 

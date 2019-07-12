@@ -21,7 +21,7 @@ const Option = Select.Option;
 @inject(stores => ({
   settings: stores.session.settings,
   chainId: stores.session.chainId,
-  getAddrList: stores.wanAddress.getNormalAddrList,
+  getNormalAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   onlineValidatorList: stores.staking.onlineValidatorList,
@@ -46,9 +46,9 @@ class StakeInForm extends Component {
   }
 
   componentWillMount() {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
-    getAddrList.forEach(addr => {
+    getNormalAddrList.forEach(addr => {
       addrList.push(
         addr.address
       )
@@ -129,7 +129,7 @@ class StakeInForm extends Component {
   }
 
   getBalance = (value) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     if (!value) {
       return
     }
@@ -156,8 +156,8 @@ class StakeInForm extends Component {
       return;
     }
 
-    for (let i = 0; i < getAddrList.length; i++) {
-      const element = getAddrList[i];
+    for (let i = 0; i < getNormalAddrList.length; i++) {
+      const element = getNormalAddrList[i];
       if (element.address == value) {
         return element.balance;
       }
@@ -218,8 +218,8 @@ class StakeInForm extends Component {
   }
 
   getPath = (from) => {
-    const { getAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrs = getAddrList
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
+    let addrs = getNormalAddrList
     let fromAddr = from
 
     if (from.includes('Ledger')) {
