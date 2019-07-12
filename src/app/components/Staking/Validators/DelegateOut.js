@@ -27,15 +27,22 @@ class DelegateOut extends Component {
 
     this.state = {
       visible: false,
+      canExit: true,
     }
   }
 
   showDialog = () => {
-    this.setState({ visible: true });
+    this.setState({ 
+      visible: true,
+      canExit: false
+    });
   }
 
   handleCancel = () => {
-    this.setState({ visible: false });
+    this.setState({ 
+      visible: false,
+      canExit: true
+    });
   }
 
   handleSend = async () => {
@@ -84,9 +91,11 @@ class DelegateOut extends Component {
 
     wand.request('staking_delegateOut', tx, (err, ret) => {
       if (err) {
-        message.warn("Estimate gas failed. Please try again");
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
+        this.setState({ canExit: true });
       } else {
         console.log('delegateOut ret:', ret);
+        this.setState({ canExit: false });
       }
     });
 
@@ -153,7 +162,8 @@ class DelegateOut extends Component {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      message.error(error)
+      message.error(error);
+      this.setState({ canExit: true });
     }
   }
 
@@ -194,7 +204,7 @@ class DelegateOut extends Component {
   render() {
     return (
       <div>
-        <Button className="modifyExititBtn" onClick={this.showDialog} />
+        <Button className="modifyExititBtn" onClick={this.showDialog} disabled={this.props.isPending ? true : (!this.state.canExit)} />
         {this.state.visible
           ? <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
             record={this.props.record}

@@ -311,11 +311,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'isValidatorAddress':
             try {
-                logger.info('isValidatorAddress', payload.address);
+                logger.info('isValidatorAddress:' + payload.address);
                 ret = await ccUtil.isWanAddress(payload.address);
-                logger.info('isWanAddress', ret);
+                logger.info('isWanAddress:' + ret);
                 let info = await ccUtil.getValidatorInfo('wan', payload.address);
-                logger.info('getValidatorInfo', info);
+                console.log('getValidatorInfo:' + info);
 
                 if (!info || info.feeRate == 10000) {
                     ret = false;
@@ -585,15 +585,17 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     const account = accounts[i];
                     const info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                     if (info && info.length && info.length > 0) {
-                        logger.info('account', account.address, 'info', info);
+                        logger.info('account:' + account.address);
+                        console.log('info:' + info);
                         delegateInfo.push({ account: account, stake: info });
                     }
 
                     const inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    logger.info('account', account.address, 'incentive.length', inc.length);
+                    logger.info('account:' + account.address);
+                    logger.info('incentive.length:' + inc.length);
                     if (inc && inc.length && inc.length > 0) {
-                        logger.info('account:', account.address);
-                        logger.info('incentive length:', inc.length);
+                        logger.info('account:' + account.address);
+                        logger.info('incentive length:' + inc.length);
 
                         incentive.push({ account: account, incentive: inc });
                     }
@@ -635,7 +637,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateIn':
             try {
-                logger.info('delegateIn:', payload);
+                logger.info('delegateIn:' + payload);
                 let tx = payload;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
@@ -643,7 +645,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     throw new Error('Validator Address is Invalid');
                 }
 
-                logger.info('validatorInfo', validatorInfo);
+                console.log('validatorInfo:' + validatorInfo);
 
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
@@ -662,7 +664,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateOut':
             try {
-                logger.info('delegateOut:', payload);
+                logger.info('delegateOut:' + payload);
 
                 let tx = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
@@ -745,7 +747,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getContractData':
             try {
-                logger.info('getContractData:', payload);
+                logger.info('getContractData:' + payload);
 
                 let validatorAddr = payload.validatorAddr;
                 let func = payload.func;
@@ -768,7 +770,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'insertTransToDB':
             try {
-                logger.info('insertTransToDB:', payload);
+                logger.info('insertTransToDB:' + payload);
                 let satellite = {
                     validator: payload.rawTx.validator,
                     annotate: payload.rawTx.annotate,
@@ -788,7 +790,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 logger.info('get posInfo');
                 ret = {};
                 let info = await ccUtil.getPosInfo('wan')
-                logger.info('info:', info);
+                console.log('info:', info);
                 if (info) {
                     ret.firstEpochId = info.firstEpochId;
                 }
@@ -1003,7 +1005,8 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
                 },
                 validatorAddress: sk.address,
                 distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
-                modifyStake: ["+", "-"]
+                modifyStake: ["+", "-"],
+                quitEpoch: sk.quitEpoch
             })
         }
     }

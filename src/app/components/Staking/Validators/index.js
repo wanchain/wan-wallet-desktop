@@ -86,8 +86,8 @@ class Validators extends Component {
           return (
             <div>
               <Row>
-                <Col span={6} align="left"><DelegateIn record={record} /></Col>
-                <Col span={6} align="center"><DelegateOut record={record} /></Col>
+                <Col span={6} align="left"><DelegateIn record={record}/></Col>
+                <Col span={6} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
               </Row>
               <Row>
                 <Col span={6} className="modifyBtnText" align="left">{intl.get('staking.table.topup')}</Col>

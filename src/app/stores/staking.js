@@ -87,6 +87,7 @@ class Staking {
         arrow2: arrow,
         distributeRewards: item.distributeRewards,
         modifyStake: ["+", "-"],
+        quitEpoch: item.quitEpoch,
         key: index,
       })
     })
@@ -151,12 +152,15 @@ class Staking {
         continue;
       }
 
-      let quota = 0;
+      let quota = 0,
+          totalStake = 0;
       quota += Number(fromWei(this.validatorList[i].amount));
+      totalStake += quota;
       if (this.validatorList[i].partners.length > 0) {
         for (let m = 0; m < this.validatorList[i].partners.length; m++) {
           const partner = this.validatorList[i].partners[m];
           quota += Number(fromWei(partner.amount));
+          totalStake += Number(fromWei(partner.amount));
         }
       }
 
@@ -171,6 +175,7 @@ class Staking {
         for (let m = 0; m < this.validatorList[i].clients.length; m++) {
           const client = this.validatorList[i].clients[m];
           quota -= Number(fromWei(client.amount));
+          totalStake += Number(fromWei(client.amount));
         }
       }
 
@@ -181,12 +186,12 @@ class Staking {
         key: this.validatorList[i],
         quota: quota,
         feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),
-        stakeAmount: fromWei(this.validatorList[i].stakeAmount)
+        totalStake: totalStake
       })
     }
     //sort by stake amount DESC.
     validators.sort((m, n) => {
-      return Number.parseInt(m.stakeAmount) < Number.parseInt(n.stakeAmount) ? 1 : -1;
+      return Number.parseInt(m.totalStake) < Number.parseInt(n.totalStake) ? 1 : -1;
     });
     return validators;
   }
