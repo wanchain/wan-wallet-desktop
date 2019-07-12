@@ -590,9 +590,10 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 });
 
                 let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan')].concat(stakeInfoArray).concat(DelegateIncentiveArray);
-                let ret = await Promise.all(promiseArray);
-                let epochID = ret[0];
-                let stakeInfo = ret[1]; 
+                let retArray = await Promise.all(promiseArray);
+                let epochID = retArray[0];
+                let stakeInfo = retArray[1];
+                logger.info('Get PoS info: epochId', epochID);
 
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
