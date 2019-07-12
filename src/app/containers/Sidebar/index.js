@@ -53,7 +53,7 @@ class Sidebar extends Component {
   render() {
     const { sidebarColumns, settings } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-    let stakeChildren = sidebarColumns[stakeIndex].children;
+    // let stakeChildren = sidebarColumns[stakeIndex].children;
 
     // let index = stakeChildren.findIndex(item => item.key === '/validator');
     // if (index === -1 && settings.staking_advance) {
@@ -73,7 +73,7 @@ class Sidebar extends Component {
       }
     } else {
       if (stakeIndex === -1) {
-        sidebarColumns.splice(stakeChildren.findIndex(item => item.key === '/settings'), 0,
+        sidebarColumns.splice(sidebarColumns.findIndex(item => item.key === '/settings'), 0,
           {
             title: intl.get('menuConfig.galaxyPos'),
             step: '1',
@@ -88,6 +88,7 @@ class Sidebar extends Component {
             ]
           })
       }
+      let stakeChildren = sidebarColumns[stakeIndex].children;
       let index = stakeChildren.findIndex(item => item.key === '/validator');
       if (index === -1 && settings.staking_advance) {
         stakeChildren.push({
