@@ -64,11 +64,11 @@ class ValidatorRegister extends Component {
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
-    if (new BigNumber(value).minus(10000) < 0) {
+    if (new BigNumber(value).minus(10000).lt(0)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
-    if (new BigNumber(value).minus(balance) >= 0) {
+    if (new BigNumber(value).minus(balance).gte(0)) {
       callback(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
@@ -95,7 +95,7 @@ class ValidatorRegister extends Component {
     let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
-      if (new BigNumber(this.state.balance).minus(form.getFieldValue('amount')) <= 0) {
+      if (new BigNumber(this.state.balance).minus(form.getFieldValue('amount')).lte(0)) {
         message.error(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -217,7 +217,7 @@ class ValidatorRegister extends Component {
             <CommonFormItem form={form} formName='publicKey2'
               options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
-              title={intl.get('ValidatorRegister.enterG1Pk')}
+              title={intl.get('ValidatorRegister.publicKey2')}
               placeholder={intl.get('ValidatorRegister.enterG1Pk')}
             />
             <div className="validator-line">

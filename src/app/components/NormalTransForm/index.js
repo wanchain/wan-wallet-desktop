@@ -93,9 +93,9 @@ class NormalTransForm extends Component {
       let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
-      let currfee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
+      let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
 
-      if(new BigNumber(addrAmount).minus(currfee) < sendAmount) {
+      if(new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -132,7 +132,7 @@ class NormalTransForm extends Component {
     })
     if(this.state.disabledAmount) {
       form.setFieldsValue({
-        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(e.target.value)
+        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(e.target.value))
       });
     }
   }
@@ -197,11 +197,11 @@ class NormalTransForm extends Component {
       if(this.state.advanced) {
         let fee = form.getFieldValue('fee');
         form.setFieldsValue({
-          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(fee)
+          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
         });
       } else {
         form.setFieldsValue({
-          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(this.state.gasFee)
+          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(this.state.gasFee))
         });
       }
 

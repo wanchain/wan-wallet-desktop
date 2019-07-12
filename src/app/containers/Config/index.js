@@ -69,6 +69,7 @@ class Config extends Component {
           </div>
         </Card>
         <Card title={intl.get('Config.staking')}>
+        <p className="set_title">{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
         </Card>
       </div>

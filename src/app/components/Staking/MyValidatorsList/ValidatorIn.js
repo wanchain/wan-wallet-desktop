@@ -32,11 +32,11 @@ class InForm extends Component {
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
-    if (new BigNumber(value).minus(100) < 0) {
+    if (new BigNumber(value).minus(100).lt(0)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
-    if (new BigNumber(value).minus(balance) >= 0) {
+    if (new BigNumber(value).minus(balance).gte(0)) {
       callback(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
@@ -48,7 +48,7 @@ class InForm extends Component {
     let balance = addrInfo[record.myAddress.type][record.myAddress.addr].balance;
     form.validateFields(err => {
       if (err) return;
-      if (new BigNumber(balance).minus(form.getFieldValue('amount')) <= 0) {
+      if (new BigNumber(balance).minus(form.getFieldValue('amount')).lte(0)) {
         message.error(intl.get('NormalTransForm.overBalance'));
         return;
       }
