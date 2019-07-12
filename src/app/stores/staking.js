@@ -107,7 +107,7 @@ class Staking {
   }
 
   @computed get myValidatorList() {
-    let validators = []
+    let validators = [];
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
       if(item.nextLockEpochs !== 0 ) {
@@ -126,8 +126,8 @@ class Staking {
           },
           arrow1: arrow,
           validator: { 
-            img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()), 
-            name: item.name ? item.name : item.address, 
+            img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()),
+            name: item.name ? item.name : item.address,
             address: item.address,
           },
           arrow2: arrow,
@@ -136,7 +136,7 @@ class Staking {
           },
           modifyStake: ['topup', 'exit', 'modify'],
           key: index,
-        })
+        });
       }
     })
     return validators;
@@ -149,6 +149,11 @@ class Staking {
       entrusted: ['N/A', 'N/A'],
       withdrawal: ['N/A', 'N/A']
     };
+    cardsList.principal[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10);
+    cardsList.principal[1] = self.myValidatorList.length;
+    cardsList.entrusted[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10);
+    cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
+
     return cardsList;
   }
 

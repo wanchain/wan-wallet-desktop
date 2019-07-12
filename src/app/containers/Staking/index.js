@@ -16,6 +16,7 @@ const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   stakingList: stores.staking.stakingList,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
@@ -34,6 +35,7 @@ class Staking extends Component {
 
   componentDidMount() {
     this.timer = setInterval(() => {
+      this.props.updateStakeInfo();
       this.props.updateTransHistory();
     }, 20000)
   }

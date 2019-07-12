@@ -50,10 +50,10 @@ export default class Layout extends Component {
 
   componentDidMount() {
     this.wanTimer = setInterval(() => {
-      this.props.updateStakeInfo();
       this.updateWANBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
+    this.props.updateStakeInfo();
   }
 
   componentWillUnmount() {

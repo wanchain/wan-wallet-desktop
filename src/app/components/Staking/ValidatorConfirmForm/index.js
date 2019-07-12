@@ -17,7 +17,7 @@ const RIGHT = 16;
 class ValidatorConfirmForm extends Component {
   render() {
     const { onCancel, record, onSend, title, showConfirmItem } = this.props;
-    const { publicKey1, publicKey2, validatorAccount, lockTime, feeRate, myAddr, amount } = showConfirmItem;
+    const { publicKey1, publicKey2, validatorAccount, lockTime, feeRate, myAddr, amount, acceptDelegation } = showConfirmItem;
 
     return (
       <div className="withdraw">
@@ -62,6 +62,15 @@ class ValidatorConfirmForm extends Component {
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.lockTime}{intl.get('days')}</span></Col>
+                </Row>
+              </div>
+            }
+            {
+              acceptDelegation && 
+              <div className="withdraw-line">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.agency')}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{feeRate ? intl.get('ValidatorRegister.acceptAgency') : intl.get('ValidatorRegister.notAcceptAgency')}</span></Col>
                 </Row>
               </div>
             }

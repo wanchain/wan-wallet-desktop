@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
-import { Button, Modal, Form, Icon, message, Row, Col, Slider } from 'antd';
+import { Button, Modal, Form, Icon, message, Row, Col, Slider, Checkbox, Radio } from 'antd';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -33,7 +33,14 @@ class ValidatorRegister extends Component {
     balance: 0,
     confirmVisible: false,
     locktime: MINDAYS,
+    isAgency: false,
   };
+
+  handleSelectAgency = e => {
+    this.setState({
+      isAgency: e.target.value,
+    });
+  }
 
   getValueByAddrInfoArgs = (...args) => {
     return getValueByAddrInfo(...args, this.props.addrInfo);
@@ -127,6 +134,7 @@ class ValidatorRegister extends Component {
         amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? `${`WALLET_ID_${from.split(':')[0].toUpperCase()}`}` : WALLET_ID_NATIVE;
+    let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
 
     let tx = {
       from: from,
@@ -136,7 +144,7 @@ class ValidatorRegister extends Component {
       secpub: form.getFieldValue('publicKey1'),
       g1pub: form.getFieldValue('publicKey2'),
       lockTime: form.getFieldValue('lockTime'),
-      feeRate: form.getFieldValue('feeRate') * 100,
+      feeRate: feeRate * 100,
     }
     if (WALLET_ID_TREZOR === walletID) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
@@ -196,7 +204,7 @@ class ValidatorRegister extends Component {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
-    let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount:true, lockTime: true, feeRate: true, myAddr: true, amount: true };
+    let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount:true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
 
     return (
       <div className="stakein">
@@ -234,11 +242,29 @@ class ValidatorRegister extends Component {
                 <Col span={4}><span className="locktime-span">{this.state.locktime} days</span></Col>
               </Row>
             </div>
-            <CommonFormItem form={form} formName='feeRate'
-              options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
-              title={intl.get('ValidatorRegister.feeRate')}
-              placeholder={'10.00'}
-            />
+            <div className="validator-line">
+              <Row type="flex" justify="space-around" align="top">
+                <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.agency')}</span></Col>
+                <Col span={16}>
+                  <Form layout="inline">
+                    <Form.Item>
+                      <Radio.Group onChange={this.handleSelectAgency} value={this.state.isAgency}>
+                        <Radio value={true}>{intl.get('ValidatorRegister.acceptAgency')}</Radio>
+                        <Radio value={false}>{intl.get('ValidatorRegister.notAcceptAgency')}</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+            {
+              this.state.isAgency && 
+              <CommonFormItem form={form} formName='feeRate'
+                options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
+                title={intl.get('ValidatorRegister.feeRate')}
+                placeholder={'10.00'}
+              />
+            }
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
@@ -258,7 +284,7 @@ class ValidatorRegister extends Component {
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { acceptDelegation: this.state.isAgency })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }

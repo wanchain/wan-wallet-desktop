@@ -17,6 +17,7 @@ const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(Validat
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   stakingList: stores.staking.stakingList,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
@@ -36,6 +37,7 @@ class Validator extends Component {
   componentDidMount() {
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
+      this.props.updateStakeInfo();
     }, 20000);
   }
 
