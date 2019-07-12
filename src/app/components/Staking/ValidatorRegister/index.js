@@ -84,17 +84,17 @@ class ValidatorRegister extends Component {
 
   checkFeeRate = (rule, value, callback) => {
     try {
-      if(value < 0 || value > 100) {
-        callback(intl.get('NormalTransForm.invalidAmount'));
+      if(value < 0 || value >= 100) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
       if(value.split('.')[1] && value.split('.')[1].length > 2) {
-        callback(intl.get('NormalTransForm.invalidAmount'));
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
       callback();
     } catch(err) {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('NormalTransForm.invalidFeeRate'));
     }
   }
 

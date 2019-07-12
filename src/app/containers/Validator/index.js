@@ -35,6 +35,7 @@ class Validator extends Component {
   }
 
   componentDidMount() {
+    this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.updateStakeInfo();

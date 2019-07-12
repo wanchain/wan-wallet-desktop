@@ -459,7 +459,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 logger.info('Send raw transaction: ' + JSON.stringify(payload))
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
-                console.log('Transaction hash: ', ret);
+                logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -570,6 +570,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let accounts = payload;
                 let delegateInfo = [];
                 let incentive = [];
+                logger.info('Get PoS info...')
 
                 if (!global.slotCount) {
                     [global.slotCount, global.slotTime] = await Promise.all([ccUtil.getSlotCount('wan'), ccUtil.getSlotTime('wan')]);
@@ -593,8 +594,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
-                logger.info('Get PoS info: epochId', epochID);
-
+                logger.info('Get PoS info: epochId ' + epochID);
 
                 if (stakeInfo.length > 0) {
                     let prms = []
@@ -603,7 +603,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
 
                     let prmsRet = await Promise.all(prms);
-                    
+
                     for (let i = 0; i < stakeInfo.length; i++) {
                         if (prmsRet && prmsRet[i]) {
                             let info = prmsRet[i];
@@ -617,12 +617,12 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
 
-
                 ret.stakeInfo = stakeInfo;
             } catch (e) {
                 logger.error(actionUni + (e.message || e.stack))
                 err = e
             }
+            logger.info('Get PoS info finished')
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
@@ -648,8 +648,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     throw new Error('Validator Address is Invalid');
                 }
 
-                console.log('validatorInfo:' + validatorInfo);
-
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
                 let gasLimit = 200000;
@@ -657,7 +655,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.gasLimit = gasLimit;
 
                 ret = await global.crossInvoker.PosDelegateIn(tx);
-                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -687,7 +684,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 }
 
                 ret = await global.crossInvoker.PosDelegateOut(input);
-                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -706,37 +702,35 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.minerAddr = address;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
                 ret = await global.crossInvoker.PosMinerRegister(tx);
-                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-      case 'validatorAppend':
-          try {
-              console.log('validatorAppend:', payload);
+        case 'validatorAppend':
+            try {
+                logger.info('validatorAppend: ' + payload);
 
-              let { tx } = payload;
-              let gasPrice = await ccUtil.getGasPrice('wan');
-              tx.gasLimit = 200000;
-              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-              let ret = await global.crossInvoker.PosStakeAppend(tx);
-              console.log(JSON.stringify(ret, null, 4));
+                let { tx } = payload;
+                let gasPrice = await ccUtil.getGasPrice('wan');
+                tx.gasLimit = 200000;
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                let ret = await global.crossInvoker.PosStakeAppend(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-      case 'validatorUpdate':
-          try {
-              let { tx } = payload;
-              let gasPrice = await ccUtil.getGasPrice('wan');
-              tx.gasLimit = 200000;
-              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-              let ret = await global.crossInvoker.PosStakeUpdate(tx);
-              console.log(JSON.stringify(ret, null, 4));
+        case 'validatorUpdate':
+            try {
+                logger.info('validatorUpdate: ' + payload);
+                let { tx } = payload;
+                let gasPrice = await ccUtil.getGasPrice('wan');
+                tx.gasLimit = 200000;
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                let ret = await global.crossInvoker.PosStakeUpdate(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -784,7 +778,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             try {
                 ret = {};
                 let info = await ccUtil.getPosInfo('wan')
-                console.log('info:', info);
                 if (info) {
                     ret.firstEpochId = info.firstEpochId;
                 }
@@ -1065,11 +1058,9 @@ async function getNameAndIcon(address) {
         if (!global.nameIconUpdateTime[addr] || (nowTime > (global.nameIconUpdateTime[addr] + 3 * 60 * 1000))) {
             value = await ccUtil.getRegisteredValidator(addr);
             if (!value || value.length == 0) {
-                // console.log('address has no icon', addr);
             } else {
                 global.nameIcon[addr] = value;
                 ret = value;
-                // console.log('getNameAndIcon get from iWan.', addr);
             }
 
             global.nameIconUpdateTime[addr] = Date.now();

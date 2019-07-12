@@ -53,7 +53,7 @@ export default class Layout extends Component {
       this.updateWANBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
-    this.props.updateStakeInfo();
+    // this.props.updateStakeInfo();
   }
 
   componentWillUnmount() {

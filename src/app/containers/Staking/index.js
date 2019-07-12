@@ -34,6 +34,7 @@ class Staking extends Component {
   }
 
   componentDidMount() {
+    this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();

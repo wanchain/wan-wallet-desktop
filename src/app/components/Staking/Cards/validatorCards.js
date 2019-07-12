@@ -30,18 +30,19 @@ class ValidatorCards extends Component {
           </Col>
           <Col span={6}>
             <Card className="card2"
-              title={intl.get('staking.totalReward')}
-              value={myValidatorCards.reward[0]}
+              title={intl.get('ValidatorRegister.myEntrusted')}
+              value={myValidatorCards.entrusted[0]}
               tail="WAN"
-              bottom={intl.get('staking.startFrom1') + myValidatorCards.reward[1] + intl.get('staking.startFrom2')}
+              bottom={intl.get('staking.inValidators1') + myValidatorCards.entrusted[1] + intl.get('staking.delegations')}
             />
 
           </Col>
           <Col span={6}>
             <Card className="card3"
-              title={intl.get('ValidatorRegister.myEntrusted')}
-              value={myValidatorCards.entrusted[0]}
-              bottom={myValidatorCards.entrusted[1]}
+              title={intl.get('staking.totalReward')}
+              value={myValidatorCards.reward[0]}
+              tail="WAN"
+              bottom={intl.get('staking.startFrom1') + myValidatorCards.reward[1] + intl.get('staking.startFrom2')}
             />
           </Col>
           <Col span={6}>
