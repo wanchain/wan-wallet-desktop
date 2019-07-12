@@ -62,7 +62,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[6],
-        render: distributeRewards => <Cell title={distributeRewards.value} bottom={distributeRewards.num + intl.get('staking.fromEpochs2')} />,
+        render: distributeRewards => <Cell title={distributeRewards.value} />,
       },
       {
         ...myValidatorColumns[7],

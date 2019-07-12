@@ -368,11 +368,10 @@ class WanAddress {
 
     @computed get addrSelectedList() {
       let addrList = []
-      self.getAddrList.forEach(addr => {
-        addrList.push(
-          addr.address
-        )
+      Object.keys(self.addrInfo['normal']).forEach(addr => {
+        addrList.push(addr);
       });
+
       self.ledgerAddrList.forEach(addr => {
         addrList.push(
           'Ledger: ' + addr.address

@@ -292,7 +292,10 @@ const zh_CN = {
     'ValidatorNode.table.type': '类型',
     'ValidatorNode.table.validatorNum': '个委托人',
 
-    'ValidatorRegister.verifyRegistration': '验证人注册',
+    'ValidatorRegister.myPrincipal': '我的本金',
+    'ValidatorRegister.myEntrusted': '我的委托',
+
+    'ValidatorRegister.verifyRegistration': '验证节点注册',
     'ValidatorRegister.validatorAccount': '验证人账户',
     'ValidatorRegister.publicKey1': '公钥1',
     'ValidatorRegister.enterSecPk': '输入公钥1',

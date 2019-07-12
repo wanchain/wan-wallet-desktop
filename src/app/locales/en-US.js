@@ -291,7 +291,10 @@ const en_US = {
     'ValidatorNode.table.type': 'TYPE',
     'ValidatorNode.table.validatorNum': 'validators',
 
-    'ValidatorRegister.verifyRegistration': 'Validator Registration',
+    'ValidatorRegister.myPrincipal': 'My Principal',
+    'ValidatorRegister.myEntrusted': 'My Entrusted',
+
+    'ValidatorRegister.verifyRegistration': 'Verify Note Registration',
     'ValidatorRegister.validatorAccount': 'Validator Account',
     'ValidatorRegister.publicKey1': 'Public Key 1',
     'ValidatorRegister.enterSecPk': 'Enter public key 1',

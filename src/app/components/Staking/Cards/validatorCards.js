@@ -7,48 +7,49 @@ import './index.less';
 import Card from './Card'
 
 @inject(stores => ({
-  language: stores.languageIntl.language,
   stakeInfo: stores.staking.stakeInfo,
+  language: stores.languageIntl.language,
+  myValidatorCards: stores.staking.myValidatorCards,
 }))
 
 @observer
 class ValidatorCards extends Component {
   render() {
-    const { stakeInfo } = this.props;
+    const { myValidatorCards } = this.props;
 
     return (
       <div className="cards">
         <Row gutter={16}>
           <Col span={6}>
             <Card className="card1"
-              title={intl.get('staking.myStake')}
-              value={stakeInfo.myStake}
+              title={intl.get('ValidatorRegister.myPrincipal')}
+              value={myValidatorCards.principal[0]}
               tail="WAN"
-              bottom={intl.get('staking.inValidators1') + stakeInfo.validatorCnt + intl.get('staking.inValidators2')}
+              bottom={intl.get('staking.inValidators1') + myValidatorCards.principal[1] + intl.get('staking.inValidators2')}
             />
           </Col>
           <Col span={6}>
             <Card className="card2"
               title={intl.get('staking.totalReward')}
-              value={stakeInfo.totalDistributedRewards}
+              value={myValidatorCards.reward[0]}
               tail="WAN"
-              bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')}
+              bottom={intl.get('staking.startFrom1') + myValidatorCards.reward[1] + intl.get('staking.startFrom2')}
             />
 
           </Col>
           <Col span={6}>
             <Card className="card3"
-              title={intl.get('staking.rewardRate')}
-              value={stakeInfo.currentRewardRate}
-              bottom={stakeInfo.epochEndTime}
+              title={intl.get('ValidatorRegister.myEntrusted')}
+              value={myValidatorCards.entrusted[0]}
+              bottom={myValidatorCards.entrusted[1]}
             />
           </Col>
           <Col span={6}>
             <Card className="card4"
               title={intl.get('staking.pending')}
-              value={stakeInfo.pendingWithdrawal}
+              value={myValidatorCards.withdrawal[0]}
               tail="WAN"
-              bottom={stakeInfo.epochEndTime}
+              bottom={myValidatorCards.withdrawal[1]}
             />
           </Col>
         </Row>

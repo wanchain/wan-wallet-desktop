@@ -110,7 +110,6 @@ class Staking {
     let validators = []
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
-      console.log(toJS(item), 'pppppppppppppppppppppppppppppppppppppp')
       if(item.nextLockEpochs !== 0 ) {
         validators.push({
           lockTime: item.lockEpochs,
@@ -134,7 +133,6 @@ class Staking {
           arrow2: arrow,
           distributeRewards: {
             value: 10,
-            num: 100
           },
           modifyStake: ['topup', 'exit', 'modify'],
           key: index,
@@ -142,6 +140,16 @@ class Staking {
       }
     })
     return validators;
+  }
+
+  @computed get myValidatorCards() {
+    let cardsList = {
+      principal: ['N/A', 'N/A'],
+      reward: ['N/A', 'N/A'],
+      entrusted: ['N/A', 'N/A'],
+      withdrawal: ['N/A', 'N/A']
+    };
+    return cardsList;
   }
 
   @computed get onlineValidatorList() {
