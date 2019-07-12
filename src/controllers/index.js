@@ -595,19 +595,28 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let stakeInfo = retArray[1];
                 logger.info('Get PoS info: epochId', epochID);
 
-                ret = { base: {}, list: [] }
-                ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
-                ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
 
                 if (stakeInfo.length > 0) {
+                    let prms = []
                     for (let i = 0; i < stakeInfo.length; i++) {
-                        let info = await getNameAndIcon(stakeInfo[i].address);
-                        if (info && info.length > 0) {
+                        prms.push(getNameAndIcon(stakeInfo[i].address));
+                    }
+
+                    let prmsRet = await Promise.all(prms);
+                    
+                    for (let i = 0; i < stakeInfo.length; i++) {
+                        if (prmsRet && prmsRet[i]) {
+                            let info = prmsRet[i];
                             stakeInfo[i].name = info[0].name;
                             stakeInfo[i].iconData = (info[0].iconData && info[0].iconData.length > 10) ? 'data:image/' + info[0].iconType + ';base64,' + info[0].iconData : ('data:image/png;base64,' + new Identicon(stakeInfo[i].address).toString());
                         }
                     }
                 }
+
+                ret = { base: {}, list: [] }
+                ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
+                ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
+
 
                 ret.stakeInfo = stakeInfo;
             } catch (e) {
@@ -971,7 +980,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         const di = delegateInfo[i];
         for (let m = 0; m < di.stake.length; m++) {
             const sk = di.stake[m]
-            let ret = await ccUtil.getRegisteredValidator(sk.address);
+            let ret = await getNameAndIcon(sk.address);
             let img, name;
             if (ret && ret.length > 0) {
                 img = (ret[0].iconData && ret[0].iconData.length > 10) ? 'data:image/' + ret[0].iconType + ';base64,' + ret[0].iconData : ('data:image/png;base64,' + new Identicon(sk.address).toString());
