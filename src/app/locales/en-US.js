@@ -314,9 +314,9 @@ const en_US = {
     'ValidatorRegister.entrustedAmount': 'Amount',
     'ValidatorRegister.stakeTooLow': 'Minimum amount should be 10000 WAN',
     'ValidatorRegister.historyTitle': 'Validator History',
-    'TransHistory.StakeIn': 'StakeIn',
-    'TransHistory.StakeUpdate': 'StakeUpdate',
-    'TransHistory.StakeAppend': 'StakeAppend',
+    'TransHistory.StakeIn': 'Stake In',
+    'TransHistory.StakeUpdate': 'Stake Update',
+    'TransHistory.StakeAppend': 'Stake Append',
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',
