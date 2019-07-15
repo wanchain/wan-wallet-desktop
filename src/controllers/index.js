@@ -898,6 +898,8 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
         pendingWithdrawal: "N/A",
         epochID: "Epoch N/A",
         epochIDRaw: "N/A",
+        epochEndTime: "N/A",
+        currentTime: "N/A",
         currentRewardRate: "N/A %",
         stakePool: 0,
         currentRewardRateChange: "↑",
