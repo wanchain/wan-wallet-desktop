@@ -46,7 +46,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[2],
-        render: entrustment => <Cell title={entrustment.value} bottom={entrustment.person + intl.get('ValidatorNode.table.validatorNum')} />,
+        render: entrustment => <Cell title={entrustment.value} />,
       },
       {
         ...myValidatorColumns[3],

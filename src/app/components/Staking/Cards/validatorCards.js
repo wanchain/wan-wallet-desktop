@@ -16,6 +16,17 @@ import Card from './Card'
 class ValidatorCards extends Component {
   render() {
     const { myValidatorCards } = this.props;
+    let stakeBottom = intl.get('staking.inValidators1') + myValidatorCards.principal[1] + intl.get('staking.inValidators2');
+    let delegationBottom = intl.get('staking.inValidators1') + myValidatorCards.entrusted[1] + intl.get('staking.delegations');
+
+    if (this.props.language === 'en_US') {
+      if (Number(myValidatorCards.principal[1]) !== 1) {
+        stakeBottom += 's';
+      }
+      if (Number(myValidatorCards.entrusted[1]) !== 1) {
+        delegationBottom += 's';
+      }
+    }
 
     return (
       <div className="cards">
@@ -25,7 +36,7 @@ class ValidatorCards extends Component {
               title={intl.get('ValidatorRegister.myPrincipal')}
               value={myValidatorCards.principal[0]}
               tail="WAN"
-              bottom={intl.get('staking.inValidators1') + myValidatorCards.principal[1] + intl.get('staking.inValidators2')}
+              bottom={stakeBottom}
             />
           </Col>
           <Col span={6}>
@@ -33,7 +44,7 @@ class ValidatorCards extends Component {
               title={intl.get('ValidatorRegister.myEntrusted')}
               value={myValidatorCards.entrusted[0]}
               tail="WAN"
-              bottom={intl.get('staking.inValidators1') + myValidatorCards.entrusted[1] + intl.get('staking.delegations')}
+              bottom={delegationBottom}
             />
 
           </Col>

@@ -13,6 +13,11 @@ import intl from 'react-intl-universal';
 @observer
 class Cards extends Component {
   render() {
+    let stakeBottom = intl.get('staking.inValidators1') + this.props.stakeInfo.validatorCnt + intl.get('staking.inValidators2');
+    if (this.props.language === 'en_US' && Number(this.props.stakeInfo.validatorCnt) !== 1) {
+      stakeBottom += 's';
+    }
+
     return (
       <div className="cards">
         <Row gutter={16}>
@@ -21,7 +26,7 @@ class Cards extends Component {
               title={intl.get('staking.myStake')}
               value={this.props.stakeInfo.myStake}
               tail="WAN"
-              bottom={intl.get('staking.inValidators1') + this.props.stakeInfo.validatorCnt + intl.get('staking.inValidators2')}
+              bottom={stakeBottom}
             />
           </Col>
           <Col span={6}>
