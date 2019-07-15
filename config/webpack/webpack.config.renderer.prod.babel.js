@@ -109,6 +109,7 @@ const options = {
         static: resolve('static/'),
         constants: resolve('src/app/constants/'),
         components: resolve('src/app/components/'),
+        componentUtils: resolve('src/app/componentUtils/'),
         containers: resolve('src/app/containers/'),
         utils: resolve('src/app/utils/')
       }
