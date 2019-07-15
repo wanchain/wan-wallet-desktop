@@ -83,7 +83,7 @@ class ModifyForm extends Component {
   }
 
   onSliderChange = value => {
-    this.setState({locktime: value})
+    this.setState({lockTime: value})
   }
 
   onConfirmCancel = () => {
