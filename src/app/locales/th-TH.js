@@ -296,6 +296,7 @@ const th_TH = {
     'ValidatorRegister.myPrincipal': 'My Stake',
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
 
+    'ValidatorRegister.warning': 'warning',
     'ValidatorRegister.verifyRegistration': 'Validator Registration',
     'ValidatorRegister.validatorAccount': 'Validator Account',
     'ValidatorRegister.publicKey1': 'Public Key 1',

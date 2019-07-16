@@ -135,11 +135,11 @@ class ValidatorRegister extends Component {
         from = form.getFieldValue('myAddr'),
         amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
-    let walletID = from.indexOf(':') !== -1 ? `${`WALLET_ID_${from.split(':')[0].toUpperCase()}`}` : WALLET_ID_NATIVE;
+    let walletID = from.indexOf(':') !== -1 ? eval(`WALLET_ID_${from.split(':')[0].toUpperCase()}`) : WALLET_ID_NATIVE;
     let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
 
     let tx = {
-      from: from,
+      from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       amount: amount.toString(),
       BIP44Path: path,
       walletID: walletID,

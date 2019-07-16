@@ -1,7 +1,8 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Row, Col } from 'antd';
+import { Button, Modal, Row, Col, Alert  } from 'antd';
 import { wanPubKey2Address } from 'utils/helper';
 
 import './index.less';
@@ -27,6 +28,16 @@ class ValidatorConfirmForm extends Component {
             <Button key="submit" type="primary" onClick={onSend}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
         >
+          {
+            new BigNumber(record.amount).lt(50000) &&
+            <Alert
+              message={intl.get('ValidatorRegister.warning')}
+              type="warning"
+              closable
+              showIcon
+              className="alert-text"
+            />
+          }
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             {

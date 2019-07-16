@@ -33,7 +33,7 @@ class InForm extends Component {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
     if (new BigNumber(value).minus(100).lt(0)) {
-      callback(intl.get('ValidatorRegister.stakeTooLow'));
+      callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
     if (new BigNumber(value).minus(balance).gte(0)) {

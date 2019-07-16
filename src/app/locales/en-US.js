@@ -296,6 +296,7 @@ const en_US = {
     'ValidatorRegister.myPrincipal': 'My Stake',
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
 
+    'ValidatorRegister.warning': 'warning',
     'ValidatorRegister.verifyModification': 'Validator Modification',
     'ValidatorRegister.verifyRegistration': 'Validator Registration',
     'ValidatorRegister.validatorAccount': 'Validator Account',

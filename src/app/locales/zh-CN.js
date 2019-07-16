@@ -297,6 +297,7 @@ const zh_CN = {
     'ValidatorRegister.myPrincipal': '我的本金',
     'ValidatorRegister.myEntrusted': '接受的委托',
 
+    'ValidatorRegister.warning': 'warning',
     'ValidatorRegister.verifyModification': '修改参数',
     'ValidatorRegister.verifyRegistration': '验证人注册',
     'ValidatorRegister.validatorAccount': '验证人账户',
