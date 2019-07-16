@@ -83,7 +83,7 @@ class ModifyForm extends Component {
   }
 
   onSliderChange = value => {
-    this.setState({lockTime: value})
+    this.setState({ lockTime: value })
   }
 
   onConfirmCancel = () => {
@@ -95,10 +95,15 @@ class ModifyForm extends Component {
     const { getFieldDecorator } = form;
     let showConfirmItem = { validatorAccount: true, myAddr: true, lockTime: true };
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: form.getFieldValue('lockTime') };
-
+    let title;
+    if (type === 'exit') {
+      title = intl.get('ValidatorRegister.exit');
+    } else {
+      title = intl.get('ValidatorRegister.verifyModification')
+    }
     return (
       <div className="stakein">
-        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyModification')} className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
@@ -111,19 +116,19 @@ class ModifyForm extends Component {
               title={intl.get('ValidatorRegister.validatorAccount')}
             />
             {
-              type === 'exit' 
-              ? <CommonFormItem form={form} formName='lockTime' disabled={true}
+              type === 'exit'
+                ? <CommonFormItem form={form} formName='lockTime' disabled={true}
                   options={{ initialValue: 0, rules: [{ required: true }] }}
                   title={intl.get('ValidatorRegister.lockTime')}
                 />
-              : <div className="validator-line">
+                : <div className="validator-line">
                   <Row type="flex" justify="space-around" align="top">
                     <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
                     <Col span={12}>
                       <Form layout="inline">
                         <Form.Item>
                           {getFieldDecorator('lockTime', { initialValue: this.state.lockTime, rules: [{ required: true }] })
-                            (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange}/>)}
+                            (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
                         </Form.Item>
                       </Form>
                     </Col>
@@ -144,10 +149,10 @@ class ModifyForm extends Component {
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
             />
-            { settings.reinput_pwd && <PwdForm form={form}/> }
+            {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        {this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
@@ -165,7 +170,7 @@ class ValidatorModify extends Component {
 
   handleSend = walletID => {
     this.setState({ visible: false });
-    if(walletID === 2) {
+    if (walletID === 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
   }
@@ -174,7 +179,7 @@ class ValidatorModify extends Component {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} />
-        {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} type={this.props.type}/>}
+        {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} type={this.props.type} />}
       </div>
     );
   }

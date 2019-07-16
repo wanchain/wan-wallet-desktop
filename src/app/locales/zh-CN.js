@@ -297,7 +297,9 @@ const zh_CN = {
     'ValidatorRegister.myPrincipal': '我的本金',
     'ValidatorRegister.myEntrusted': '接受的委托',
 
-    'ValidatorRegister.verifyModification': '修改参数',
+    'ValidatorRegister.topup': '充值',
+    'ValidatorRegister.verifyModification': '修改验证人参数',
+    'ValidatorRegister.exit': '验证人退出',
     'ValidatorRegister.verifyRegistration': '验证人注册',
     'ValidatorRegister.validatorAccount': '验证人账户',
     'ValidatorRegister.publicKey1': '公钥1',
