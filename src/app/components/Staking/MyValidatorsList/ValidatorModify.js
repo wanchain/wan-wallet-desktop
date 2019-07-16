@@ -98,7 +98,7 @@ class ModifyForm extends Component {
 
     return (
       <div className="stakein">
-        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyModification')} className="validator-register-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,

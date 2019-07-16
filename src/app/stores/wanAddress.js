@@ -274,95 +274,33 @@ class WanAddress {
 
     //TODO: need add hd
     @computed get stakingHistoryList() {
-      let historyList = [], page = 'normal';//self.currentPage; 
-
-      let addrList = Object.keys(self.addrInfo[page]);
+      let historyList = [], page = 'normal';
+      let histories = self.transHistory;
+      let addrList = Object.keys(Object.assign({}, self.addrInfo.normal, self.addrInfo.ledger, self.addrInfo.trezor));
       Object.keys(self.transHistory).forEach(item => {
-        if(addrList.includes(self.transHistory[item]["from"])) {
-          let status = self.transHistory[item].status;
-          let type = self.transHistory[item].annotate;
-          if(!self.transHistory[item].validator) {
-            return;
-          }
-          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
+        if(histories[item].validator && addrList.includes(histories[item].from) && ['DelegateIn', 'DelegateOut'].includes(histories[item].annotate)) {
+          let status = histories[item].status;
+          let type = histories[item].annotate;
+          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item].validator);
           historyList.push({
             key: item,
-            time: timeFormat(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
-            to: self.transHistory[item].to,
-            value: fromWei(self.transHistory[item].value),
+            time: timeFormat(histories[item].sendTime),
+            from: self.addrInfo[page][histories[item].from].name,
+            to: histories[item].to,
+            value: fromWei(histories[item].value),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]["sendTime"],
+            sendTime: histories[item].sendTime,
             annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
             validator: {
-              address: self.transHistory[item].validator,
-              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator).toString()) : staking.stakingList[getIndex].validator.img,
+              address: histories[item].validator,
+              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? histories[item].validator : staking.stakingList[getIndex].validator.name,
+              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(histories[item].validator).toString()) : staking.stakingList[getIndex].validator.img,
             },
-            stakeAmount: self.transHistory[item].stakeAmount,
+            stakeAmount: histories[item].stakeAmount,
           });
         }
       });
 
-      page = 'ledger';
-      addrList = Object.keys(self.addrInfo[page]);
-      Object.keys(self.transHistory).forEach(item => {
-        if(addrList.includes(self.transHistory[item]["from"])) {
-          let type = self.transHistory[item].annotate;
-          let status = self.transHistory[item].status;
-          if(!self.transHistory[item].validator) {
-            return;
-          }
-
-          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
-          historyList.push({
-            key: item,
-            time: timeFormat(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
-            to: self.transHistory[item].to,
-            value: fromWei(self.transHistory[item].value),
-            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]["sendTime"],
-            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
-            validator: {
-              address: self.transHistory[item].validator,
-              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator).toString()) : staking.stakingList[getIndex].validator.img,
-            },
-            stakeAmount: self.transHistory[item].stakeAmount,
-          });
-        }
-      });
-
-      page = 'trezor';
-      addrList = Object.keys(self.addrInfo[page]);
-      Object.keys(self.transHistory).forEach(item => {
-        if(addrList.includes(self.transHistory[item]["from"])) {
-          let type = self.transHistory[item].annotate;
-          let status = self.transHistory[item].status;
-          if(!self.transHistory[item].validator) {
-            //return;
-          }
-
-          let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item]["validator"]);
-          historyList.push({
-            key: item,
-            time: timeFormat(self.transHistory[item]["sendTime"]),
-            from: self.addrInfo[page][self.transHistory[item]["from"]].name,
-            to: self.transHistory[item].to,
-            value: fromWei(self.transHistory[item].value),
-            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]["sendTime"],
-            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
-            validator: {
-              address: self.transHistory[item].validator,
-              name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? self.transHistory[item].validator : staking.stakingList[getIndex].validator.name,
-              img: (getIndex === -1 || staking.stakingList[getIndex].validator.img === undefined) ? ('data:image/png;base64,' + new Identicon(self.transHistory[item].validator)) : staking.stakingList[getIndex].validator.img,
-            },
-            stakeAmount: self.transHistory[item].stakeAmount
-          });
-        }
-      });
       return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 
