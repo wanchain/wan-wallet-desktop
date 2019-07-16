@@ -240,7 +240,7 @@ class Staking {
   @computed get registerValidatorHistoryList() {
     let historyList = [], page = 'normal';
     let histories = wanAddress.transHistory;
-    let addrList = Object.keys(Object.assign(wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
+    let addrList = Object.keys(Object.assign({}, wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
     Object.keys(wanAddress.transHistory).forEach(item => {
       if(histories[item].validator && addrList.includes(histories[item].from) && ['StakeIn', 'StakeUpdate', 'StakeAppend'].includes(histories[item].annotate)) {
         let { status, annotate } = histories[item];
