@@ -28,6 +28,9 @@ class Staking {
 
   @observable validatorList = [];
 
+  @observable validatorsInfo = {};
+
+
   rewardRate = 0;
   epochID = 0;
 
@@ -69,6 +72,21 @@ class Staking {
     }
   }
 
+  @action getValidatorsInfo() {
+    let address = self.myValidators.map(item => item.address);
+    wand.request('staking_getValidatorsInfo', { address }, (err, ret) => {
+      if(err) {
+        console.log(err)
+        return;
+      }
+      ret.forEach(item => {
+        self.validatorsInfo[item.address] = {
+          reward: fromWei(item.amount)
+        }
+      })
+    })
+  }
+
   @computed get stakingList() {
     let validators = []
     this.stakeList.forEach((item, index) => {
@@ -90,7 +108,7 @@ class Staking {
         quitEpoch: item.quitEpoch,
         key: index,
       })
-    })
+    });
     return validators;
   }
 
@@ -98,10 +116,11 @@ class Staking {
     let newArr = [];
     let addrArr = getAddrByTypes(wanAddress.addrInfo).flat();
     addrArr.forEach(item => {
-      let index = self.validatorList.findIndex(val => val.from === item.toLowerCase());
-      if(index !== -1) {
-        newArr.push(self.validatorList[index]);
-      }
+      self.validatorList.forEach(val => {
+        if(val.from === item.toLowerCase()) {
+          newArr.push(val);
+        }
+      })
     });
     return newArr;
   }
@@ -110,34 +129,32 @@ class Staking {
     let validators = [];
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
-      if(item.nextLockEpochs !== 0 ) {
-        validators.push({
-          lockTime: item.lockEpochs,
-          publicKey1: item.pubSec256,
-          myAddress: {addr: addr.addr, type: addr.type},
-          myAccount: addr.name,
-          principal: {
-            value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
-            days: 1
-          },
-          entrustment: {
-            value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
-            person: item.clients.length,
-          },
-          arrow1: arrow,
-          validator: { 
-            img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()),
-            name: item.name ? item.name : item.address,
-            address: item.address,
-          },
-          arrow2: arrow,
-          distributeRewards: {
-            value: 10,
-          },
-          modifyStake: ['topup', 'exit', 'modify'],
-          key: index,
-        });
-      }
+      validators.push({
+        lockTime: item.lockEpochs,
+        publicKey1: item.pubSec256,
+        myAddress: {addr: addr.addr, type: addr.type},
+        myAccount: addr.name,
+        principal: {
+          value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
+          days: 1
+        },
+        entrustment: {
+          value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
+          person: item.clients.length,
+        },
+        arrow1: arrow,
+        validator: { 
+          img: item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.address).toString()),
+          name: item.name ? item.name : item.address,
+          address: item.address,
+        },
+        arrow2: arrow,
+        distributeRewards: {
+          value: self.validatorsInfo[item.address] ? self.validatorsInfo[item.address].reward : 0,
+        },
+        modifyStake: ['topup', 'exit', 'modify'],
+        key: index,
+      });
     })
     return validators;
   }
@@ -151,8 +168,19 @@ class Staking {
     };
     cardsList.principal[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10);
     cardsList.principal[1] = self.myValidatorList.length;
+    cardsList.reward[0] = Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10);
+    cardsList.reward[1] = 0;
+
     cardsList.entrusted[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
+    cardsList.withdrawal[0] = self.myValidators.reduce((prev, curr) => {
+      if(curr.nextLockEpochs == 0) {
+        return prev.plus(new BigNumber(fromWei(curr.amount)).plus(curr.partners.reduce((pre, cur) => pre.plus(fromWei(cur.amount)), new BigNumber(0))));
+      } else {
+        return prev;
+      }
+    }, new BigNumber(0)).toString(10)
+    cardsList.withdrawal[1] = 0;
 
     return cardsList;
   }

@@ -34,11 +34,13 @@ class ValidatorRegister extends Component {
     confirmVisible: false,
     locktime: MINDAYS,
     isAgency: false,
+    initAmount: 10000
   };
 
   handleSelectAgency = e => {
     this.setState({
       isAgency: e.target.value,
+      initAmount: e.target.value ? 50000 : 10000
     });
   }
 
@@ -277,7 +279,7 @@ class ValidatorRegister extends Component {
               title={intl.get('ValidatorRegister.balance')}
             />
             <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: 10000, rules: [{ required: true, validator: this.checkAmount }] }}
+              options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.entrustedAmount')}
             />

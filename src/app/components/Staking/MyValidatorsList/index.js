@@ -13,6 +13,7 @@ import Validator from 'components/Staking/Validators/Validator';
   language: stores.languageIntl.language,
   myValidatorList: stores.staking.myValidatorList,
   myValidatorColumns: stores.languageIntl.myValidatorColumns,
+  getValidatorsInfo: () => stores.staking.getValidatorsInfo()
 }))
 
 @observer
@@ -20,6 +21,15 @@ class MyValidatorsList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.props.getValidatorsInfo()
+    }, 3000)
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer)
   }
 
   modifyWithdraw = () => {

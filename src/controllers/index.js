@@ -695,7 +695,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             try {
                 let { tx } = payload;
                 let key = Buffer.from(tx.secpub.toLowerCase().replace('0x', '').substring(2), 'hex');
-                let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
+                let address = '0x' + keccak('keccak256').update(key).digest().slice(-20).toString('hex');
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
                 tx.gasLimit = 200000;
@@ -789,6 +789,19 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 global.firstEpochId = ret.firstEpochId;
 
             } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'getValidatorsInfo':
+            try {
+              let { address } = payload;
+              ret = await ccUtil.getValidatorTotalIncentive('wan', address);
+
+            } catch (e) {
+              logger.info(e)
                 logger.error(e.message || e.stack)
                 err = e
             }
