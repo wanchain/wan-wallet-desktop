@@ -274,23 +274,23 @@ class WanAddress {
 
     //TODO: need add hd
     @computed get stakingHistoryList() {
-      let historyList = [], page = 'normal';
+      let historyList = [];
       let histories = self.transHistory;
       let addrList = Object.keys(Object.assign({}, self.addrInfo.normal, self.addrInfo.ledger, self.addrInfo.trezor));
       Object.keys(self.transHistory).forEach(item => {
         if(histories[item].validator && addrList.includes(histories[item].from) && ['DelegateIn', 'DelegateOut'].includes(histories[item].annotate)) {
-          let status = histories[item].status;
-          let type = histories[item].annotate;
+          let type = checkAddrType(histories[item].from, self.addrInfo);
+          let { status, annotate } = histories[item];
           let getIndex = staking.stakingList.findIndex(value => value.validator.address === self.transHistory[item].validator);
           historyList.push({
             key: item,
             time: timeFormat(histories[item].sendTime),
-            from: self.addrInfo[page][histories[item].from].name,
+            from: self.addrInfo[type][histories[item].from].name,
             to: histories[item].to,
             value: fromWei(histories[item].value),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: histories[item].sendTime,
-            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(type) ? intl.get(`TransHistory.${type.toLowerCase()}`) : type,
+            annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(annotate) ? intl.get(`TransHistory.${annotate.toLowerCase()}`) : annotate,
             validator: {
               address: histories[item].validator,
               name: (getIndex === -1 || staking.stakingList[getIndex].validator.name === undefined) ? histories[item].validator : staking.stakingList[getIndex].validator.name,

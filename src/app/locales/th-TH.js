@@ -297,6 +297,7 @@ const th_TH = {
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
 
     'ValidatorRegister.topup': 'Validator Top-up',
+    'ValidatorRegister.warning': 'Warning',
     'ValidatorRegister.verifyModification': 'Validator Modification',
     'ValidatorRegister.exit': 'Validator Exit',
     'ValidatorRegister.verifyRegistration': 'Validator Registration',
@@ -306,7 +307,8 @@ const th_TH = {
     'ValidatorRegister.publicKey2': 'Public Key 2',
     'ValidatorRegister.enterG1Pk': 'Enter public key 2',
     'ValidatorRegister.publicKeyIsWrong': 'Public Key is Wrong',
-    'ValidatorRegister.lockTime': 'Lock Period',
+    'ValidatorRegister.lockTime': 'Current Lock Period',
+    'ValidatorRegister.nextLockTime': 'Next Lock Period',
     'ValidatorRegister.agency': 'Accept Delegation',
     'ValidatorRegister.acceptAgency': 'Yes',
     'ValidatorRegister.notAcceptAgency': 'No',

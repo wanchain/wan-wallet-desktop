@@ -81,16 +81,17 @@ class Validators extends Component {
         title: this.props.validatorColumns[6].title,
         dataIndex: 'modifyStake',
         key: 'modifyStake',
+        align: 'center',
         render: (text, record) => {
           return (
             <div>
               <Row>
-                <Col span={6} align="left"><DelegateIn record={record}/></Col>
-                <Col span={6} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
+                <Col span={12} align="center"><DelegateIn record={record}/></Col>
+                <Col span={12} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
               </Row>
               <Row>
-                <Col span={6} className="modifyBtnText" align="left">{intl.get('staking.table.topup')}</Col>
-                <Col span={6} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
+                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
+                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
               </Row>
             </div>
           )

@@ -298,6 +298,7 @@ const zh_CN = {
     'ValidatorRegister.myEntrusted': '接受的委托',
 
     'ValidatorRegister.topup': '充值',
+    'ValidatorRegister.warning': '告警',
     'ValidatorRegister.verifyModification': '修改验证人参数',
     'ValidatorRegister.exit': '验证人退出',
     'ValidatorRegister.verifyRegistration': '验证人注册',
@@ -307,7 +308,8 @@ const zh_CN = {
     'ValidatorRegister.publicKey2': '公钥2',
     'ValidatorRegister.enterG1Pk': '输入公钥2',
     'ValidatorRegister.publicKeyIsWrong': '公钥错误',
-    'ValidatorRegister.lockTime': '锁定周期',
+    'ValidatorRegister.lockTime': '目前锁定周期',
+    'ValidatorRegister.nextLockTime': '下一个锁定周期',
     'ValidatorRegister.agency': '代理模式',
     'ValidatorRegister.acceptAgency': '接受',
     'ValidatorRegister.notAcceptAgency': '不接受',
