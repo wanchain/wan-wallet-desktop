@@ -57,7 +57,7 @@ class Config extends Component {
           <Checkbox checked={reinput_pwd} onChange={this.handleChange}>{intl.get('Config.inputPwd')}</Checkbox>
           <div className="timeout">
             <p className="set_title">{intl.get('Config.loginTimeout')}</p>
-            <Select className="timeoutSelect" value={logout_timeout === undefined ? defaultTimeout : logout_timeout} defaultValue={defaultTimeout} placeholder={intl.get('Config.selectLoginTimeout')} onChange={this.handleTimeoutChange}>
+            <Select className="timeoutSelect" value={logout_timeout === undefined ? defaultTimeout : logout_timeout} placeholder={intl.get('Config.selectLoginTimeout')} onChange={this.handleTimeoutChange}>
               {
                 options.map((item)=>{
                   return (

@@ -143,8 +143,8 @@ class Settings {
 
     get autoLockTimeout() {
         // auto lock the wallet if main window loses focus for a period of time. 5 min
-        const logout = Number.parseInt(this._get('settings').logout_timeout);
-        return Number.isNaN(logout) ?  Number.parseInt(defaultConfig.settings.logout_timeout) * 60 * 1000 : logout * 60 * 1000;
+        const logout = this._get('settings').logout_timeout;
+        return logout === undefined ?  Number.parseInt(defaultConfig.settings.logout_timeout) * 60 * 1000 : Number.parseInt(logout) * 60 * 1000;
     }
 
     get idleCheckInterval() {
