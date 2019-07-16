@@ -31,6 +31,12 @@ class ModifyForm extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   showConfirmForm = () => {
     let { form, settings } = this.props;
     form.validateFields(err => {
@@ -55,16 +61,17 @@ class ModifyForm extends Component {
     let { form, record, addrInfo } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
-    let walletID = type !== 'normal' ? `${`WALLET_ID_${type.toUpperCase()}`}` : WALLET_ID_NATIVE;
+    let walletID = type !== 'normal' ? eval(`WALLET_ID_${type.toUpperCase()}`) : WALLET_ID_NATIVE;
 
     let tx = {
       from: from,
       amount: 0,
-      BIP44Path: "m/44'/5718350'/0'/0/" + addrInfo[type][from].path,
+      BIP44Path: type !== 'normal' ? addrInfo[type][from].path : "m/44'/5718350'/0'/0/" + addrInfo[type][from].path,
       walletID: walletID,
       lockTime: form.getFieldValue('lockTime'),
       minerAddr: record.validator.address
     }
+
     if (WALLET_ID_TREZOR === walletID) {
       // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       // this.setState({ confirmVisible: false });
@@ -131,6 +138,10 @@ class ModifyForm extends Component {
                   </Row>
                 </div>
             }
+            <CommonFormItem form={form} formName='nextLockTime' disabled={true}
+              options={{ initialValue: record.nextLockTime, rules: [{ required: true }] }}
+              title={intl.get('ValidatorRegister.nextLockTime')}
+            />
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>

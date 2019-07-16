@@ -29,7 +29,7 @@ class ValidatorConfirmForm extends Component {
           ]}
         >
           {
-            new BigNumber(record.amount).lt(50000) &&
+            new BigNumber(record.amount).lt(50000) && publicKey1 &&
             <Alert
               message={intl.get('ValidatorRegister.warning')}
               type="warning"

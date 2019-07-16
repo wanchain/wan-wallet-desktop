@@ -131,6 +131,7 @@ class Staking {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
       validators.push({
         lockTime: item.lockEpochs,
+        nextLockTime: item.nextLockEpochs,
         publicKey1: item.pubSec256,
         myAddress: {addr: addr.addr, type: addr.type},
         myAccount: addr.name,

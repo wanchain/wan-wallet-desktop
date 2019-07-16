@@ -37,6 +37,12 @@ class ValidatorRegister extends Component {
     initAmount: 10000
   };
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   handleSelectAgency = e => {
     this.setState({
       isAgency: e.target.value,

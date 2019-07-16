@@ -26,13 +26,19 @@ class InForm extends Component {
     confirmVisible: false,
   };
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   checkAmount = (rule, value, callback) => {
     let { form } = this.props;
     let balance = form.getFieldValue('balance');
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('NormalTransForm.invalidAmount'));
     }
-    if (new BigNumber(value).minus(100).lt(0)) {
+    if (new BigNumber(value).lt(0)) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -73,8 +79,8 @@ class InForm extends Component {
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
     let amount = form.getFieldValue('amount');
-    let path = "m/44'/5718350'/0'/0/" + addrInfo[type][from].path;
-    let walletID = type !== 'normal' ? `${`WALLET_ID_${type.toUpperCase()}`}` : WALLET_ID_NATIVE;
+    let path = type === 'normal' ? "m/44'/5718350'/0'/0/" + addrInfo[type][from].path : addrInfo[type][from].path;
+    let walletID = type !== 'normal' ? eval(`WALLET_ID_${type.toUpperCase()}`) : WALLET_ID_NATIVE;
 
     let tx = {
       from: from,
@@ -83,6 +89,7 @@ class InForm extends Component {
       walletID: walletID,
       minerAddr: record.validator.address
     }
+
     if (WALLET_ID_TREZOR === walletID) {
       // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       // this.setState({ confirmVisible: false });
