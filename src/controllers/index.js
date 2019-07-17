@@ -91,6 +91,7 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
         case 'reset':
             try {
                 fsExtra.removeSync(path.join(setting.userDataPath, 'Db'))
+                fsExtra.removeSync(path.join(setting.userDataPath, 'config.json'))
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
