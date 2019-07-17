@@ -1,7 +1,7 @@
 # WAN Wallet
 [![GitHub License][license]][license-url]
 
-This is a desktop wallet
+This is a desktop wallet.
 
 ## Features
 
