@@ -23,19 +23,16 @@
             background-color: #555;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="http://localhost:7000/dist/main.css"></link>
     <title>Wan Wallet</title>
 </head>
 
 <body>
     <div id="root"></div>
-    <!-- <script src="${isProd ? STATIC_PATH : `http://localhost:${WDS_PORT}/dist`}/js/bundle.js"></script> -->
-    <!-- <script src="http://localhost:7000/dist/js/bundle.js"></script> -->
     <script>
-        // dynamically insert the bundled app script into the renderer process
-        // const { isDev, WDS_PORT } = require('../config/common')
         const scripts = []
         scripts.push(
-            true ? 'http://localhost:7000/dist/js/bundle.js' : './dist/renderer.prod.js'
+          'http://localhost:7000/dist/js/bundle.js'
         )
         document.write(
             scripts
