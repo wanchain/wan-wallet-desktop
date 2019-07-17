@@ -86,7 +86,7 @@ class Validators extends Component {
           return (
             <div>
               <Row>
-                <Col span={12} align="center"><DelegateIn record={record}/></Col>
+                <Col span={12} align="center"><DelegateIn record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
                 <Col span={12} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
               </Row>
               <Row>
