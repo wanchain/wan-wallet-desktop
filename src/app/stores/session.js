@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 import { getChainId } from 'utils/helper';
 
 class Session {
@@ -51,7 +51,7 @@ class Session {
         return;
       };
       self.settings = ret[0];
-      console.log('Setting:', self.settings);
+      console.log('Setting:', toJS(self.settings));
     })
   }
 

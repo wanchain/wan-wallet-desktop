@@ -1,7 +1,7 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Tag } from 'antd';
-import intl from 'react-intl-universal';
 import { TweenOneGroup } from 'rc-tween-one';
 
 import './index.less';
@@ -21,9 +21,8 @@ import { randomSort } from 'utils/support';
 class ConfirmPhrase extends Component {
   constructor(props) {
     super(props);
-    const { mnemonic } = this.props;
     this.state = {
-      mnemonicArr: mnemonic.split(' '),
+      mnemonicArr: this.props.mnemonic.split(' '),
       tags: [],
     }
   }

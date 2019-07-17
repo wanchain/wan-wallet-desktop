@@ -313,6 +313,7 @@ const th_TH = {
     'ValidatorRegister.acceptAgency': 'Yes',
     'ValidatorRegister.notAcceptAgency': 'No',
     'ValidatorRegister.feeRate': 'Delegation Fee (%)',
+    'ValidatorRegister.feeRateLimite': 'Two decimal places are allowed at most',
     'ValidatorRegister.myAccount': 'My Account',
     'ValidatorRegister.address': 'Address',
     'ValidatorRegister.balance': 'Balance',

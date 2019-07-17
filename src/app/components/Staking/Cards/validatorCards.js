@@ -2,6 +2,7 @@ import { Row, Col } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
+import { timeFormat } from 'utils/support';
 
 import './index.less';
 import Card from './Card'
@@ -61,7 +62,7 @@ class ValidatorCards extends Component {
               title={intl.get('staking.pending')}
               value={myValidatorCards.withdrawal[0]}
               tail="WAN"
-              bottom={myValidatorCards.withdrawal[1]}
+              bottom={timeFormat(Date.now()/1000)}
             />
           </Col>
         </Row>
