@@ -12,7 +12,7 @@ let _mode = undefined
 let _network = undefined
 let _lang = undefined
 let _isDev = undefined
-let _setting = undefined
+let _settings = undefined
 
 const defaultConfig = {
     mode: 'light',
@@ -143,8 +143,8 @@ class Settings {
 
     get autoLockTimeout() {
         // auto lock the wallet if main window loses focus for a period of time. 5 min
-        const logout = this._get('settings').logout_timeout;
-        return logout === undefined ?  Number.parseInt(defaultConfig.settings.logout_timeout) * 60 * 1000 : Number.parseInt(logout) * 60 * 1000;
+        const logout = this.settings.logout_timeout;
+        return Number.parseInt(logout) * 60 * 1000;
     }
 
     get idleCheckInterval() {
