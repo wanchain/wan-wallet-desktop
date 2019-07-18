@@ -31,6 +31,7 @@ class ConfigFactoryService {
             // "url" :  this.config.network.includes('main') ? '192.168.1.58' : "192.168.1.58",
             // "url" :  this.config.network.includes('main') ? '54.183.204.219' : "54.183.204.219",
             "port": 8443,
+            // "port": 58443,
             "wallet": {
                 "apikey": process.env.API_KEY,
                 "secret": process.env.SECRET_KEY

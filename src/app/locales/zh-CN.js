@@ -325,6 +325,9 @@ const zh_CN = {
     'TransHistory.StakeIn': '质押',
     'TransHistory.StakeUpdate': '更新',
     'TransHistory.StakeAppend': '追加',
+    'ValidatorRegister.modifyTypeTitle': '修改种类',
+    'ValidatorRegister.invalidType':  '不可用的修改类型',
+    'ValidatorRegister.selectType': '选择一个修改类型',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

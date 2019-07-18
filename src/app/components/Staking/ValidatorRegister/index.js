@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
-import { isNumber } from 'utils/support';
-import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
-import { Button, Modal, Form, Icon, message, Row, Col, Slider, Checkbox, Radio } from 'antd';
+import { checkAmountUnit, getValueByAddrInfo, checkFeeRate } from 'utils/helper';
+import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'antd';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -84,26 +83,6 @@ class ValidatorRegister extends Component {
       return;
     }
     callback();
-  }
-
-  checkFeeRate = (rule, value, callback) => {
-    try {
-      if(!isNumber(value)) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      if(value < 0 || value >= 100) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      if(value.split('.')[1] && value.split('.')[1].length > 2) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      callback();
-    } catch(err) {
-      callback(intl.get('NormalTransForm.invalidFeeRate'));
-    }
   }
 
   showConfirmForm = () => {
@@ -268,7 +247,7 @@ class ValidatorRegister extends Component {
             {
               this.state.isAgency && 
               <CommonFormItem form={form} formName='feeRate'
-                options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
+                options={{ rules: [{ required: true, validator: checkFeeRate }] }}
                 title={intl.get('ValidatorRegister.feeRate')}
                 placeholder={intl.get('ValidatorRegister.feeRateLimite')}
               />

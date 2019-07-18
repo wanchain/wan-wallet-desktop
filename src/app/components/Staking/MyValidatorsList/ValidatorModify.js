@@ -6,14 +6,21 @@ import { Button, Modal, Form, Icon, message, Row, Col, Slider } from 'antd';
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+import ValidatorModifySelect from 'componentUtils/ValidatorModifySelect';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
+import { checkFeeRate } from 'utils/helper';
 import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WALLET_ID_LEDGER, WALLET_ID_TREZOR } from 'utils/settings'
 
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
+const modifyTypes = {
+  lockTime: 'ValidatorRegister.nextLockTime',
+  feeRate: 'ValidatorRegister.feeRate'
+}
 
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
 }))
 
 @observer
@@ -21,6 +28,7 @@ class ModifyForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectType: '',
       confirmVisible: false,
       lockTime: this.props.record.lockTime
     }
@@ -84,6 +92,10 @@ class ModifyForm extends Component {
     }
   }
 
+  onChangeModifyTypeSelect = (value, option) => {
+    this.setState(() => ({selectType: option.key}));
+  }
+
   onSliderChange = value => {
     this.setState({ lockTime: value })
   }
@@ -94,15 +106,11 @@ class ModifyForm extends Component {
 
   render() {
     const { onCancel, form, settings, record, addrInfo, type } = this.props;
-    const { getFieldDecorator } = form;
+    const { getFieldDecorator, getFieldValue } = form;
     let showConfirmItem = { validatorAccount: true, myAddr: true, lockTime: true };
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: form.getFieldValue('lockTime') };
-    let title;
-    if (type === 'exit') {
-      title = intl.get('ValidatorRegister.exit');
-    } else {
-      title = intl.get('ValidatorRegister.verifyModification')
-    }
+    let title = type === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
+
     return (
       <div className="stakein">
         <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal"
@@ -117,31 +125,59 @@ class ModifyForm extends Component {
               options={{ initialValue: record.validator.address, rules: [{ required: true }] }}
               title={intl.get('ValidatorRegister.validatorAccount')}
             />
+            <CommonFormItem form={form} formName='nextLockTime' disabled={true}
+              options={{ initialValue: record.nextLockTime, rules: [{ required: true }] }}
+              title={intl.get('ValidatorRegister.nextLockTime')}
+            />
             {
-              type === 'exit'
-                ? <CommonFormItem form={form} formName='lockTime' disabled={true}
-                  options={{ initialValue: 0, rules: [{ required: true }] }}
-                  title={intl.get('ValidatorRegister.lockTime')}
+              type === 'exit' &&
+              <CommonFormItem form={form} formName='lockTime' disabled={true}
+                options={{ initialValue: 0, rules: [{ required: true }] }}
+                title={intl.get('ValidatorRegister.lockTime')}
+              />
+            }
+            {
+              type === 'modify' &&
+              <div className="validator-line">
+                <ValidatorModifySelect
+                  form={form}
+                  types={[intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)]}
+                  handleChange={this.onChangeModifyTypeSelect}
+                  title={intl.get('ValidatorRegister.modifyTypeTitle')}
+                  message={intl.get('ValidatorRegister.invalidType')}
+                  placeholder={intl.get('ValidatorRegister.selectType')}
                 />
-                : <div className="validator-line">
+              </div>
+            }
+            {
+              type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString() &&
+              <React.Fragment>
+                <div>
+                </div>
+                <div className="validator-line">
                   <Row type="flex" justify="space-around" align="top">
                     <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
                     <Col span={12}>
                       <Form layout="inline">
                         <Form.Item>
-                          {getFieldDecorator('lockTime', { initialValue: this.state.lockTime, rules: [{ required: true }] })
+                          {getFieldDecorator('lockTime', { initialValue: record.lockTime, rules: [{ required: true }] })
                             (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
                         </Form.Item>
                       </Form>
                     </Col>
-                    <Col span={4}><span className="locktime-span">{this.state.lockTime} days</span></Col>
+                    <Col span={4}><span className="locktime-span">{getFieldValue('lockTime')} days</span></Col>
                   </Row>
                 </div>
+              </React.Fragment>
             }
-            <CommonFormItem form={form} formName='nextLockTime' disabled={true}
-              options={{ initialValue: record.nextLockTime, rules: [{ required: true }] }}
-              title={intl.get('ValidatorRegister.nextLockTime')}
-            />
+            {
+              type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
+              <CommonFormItem form={form} formName='feeRate'
+                options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                title={intl.get('ValidatorRegister.feeRate')}
+                placeholder={intl.get('ValidatorRegister.feeRateLimite')}
+              />
+            }
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>

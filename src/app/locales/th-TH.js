@@ -322,7 +322,10 @@ const th_TH = {
     'TransHistory.StakeIn': 'ทำการ Stake',
     'TransHistory.StakeUpdate': 'อัพเดทการ Stake',
     'TransHistory.StakeAppend': 'เพิ่ม Stake',
-
+    'ValidatorRegister.modifyTypeTitle': 'Modify Type',
+    'ValidatorRegister.invalidType':  'Invalid Modify Type',
+    'ValidatorRegister.selectType': 'Select a type',
+    
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
     'title.imported': 'นำเข้าแอดเดรส',

@@ -5,7 +5,7 @@ import { spawn } from 'child_process';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-const publicPath = `http://localhost:${WDS_PORT}/dist`;
+const publicPath = `http://localhost:${WDS_PORT}/dist/`;
 
 function resolve (dir) {
   return path.join(__dirname, '../../', dir)
@@ -20,7 +20,7 @@ export default {
         './src/app/App.js',
     ],
     output: {
-        path: path.resolve(__dirname, '..', '..', 'dist'),
+        path: resolve('dist'),
         filename: "js/bundle.js",
         publicPath: isDev ? publicPath : '/static'
     },
@@ -96,7 +96,6 @@ export default {
                   options: {
                     name: '[path][hash:5].min.[ext]',
                     limit: 40000,
-                    mimetype: 'application/octet-stream'
                   }
                 }
               ],
