@@ -311,7 +311,7 @@ const zh_CN = {
     'ValidatorRegister.publicKeyIsWrong': '公钥错误',
     'ValidatorRegister.lockTime': '目前锁定周期',
     'ValidatorRegister.nextLockTime': '下一个锁定周期',
-    'ValidatorRegister.agency': '代理模式',
+    'ValidatorRegister.agency': '接受委托',
     'ValidatorRegister.acceptAgency': '接受',
     'ValidatorRegister.notAcceptAgency': '不接受',
     'ValidatorRegister.feeRate': '委托费率 (%)',
