@@ -69,8 +69,8 @@ const th_TH = {
     'Config.disableTimeout': 'ไม่ใช้งาน',
     'Config.fiveMinutes': '5 นาที',
     'Config.tenMinutes': '10 นาที',
-    'Config.fifteenMinutes': '15 นาที',',
-    'Config.thirtyMinutes': '30 นาที',',
+    'Config.fifteenMinutes': '15 นาที',
+    'Config.thirtyMinutes': '30 นาที',
     'Config.oneHour': '1 ชั่วโมง',
     'Config.twoHours': '2 ชั่วโมง',
 
@@ -325,7 +325,7 @@ const th_TH = {
     'ValidatorRegister.modifyTypeTitle': 'Modify Type',
     'ValidatorRegister.invalidType':  'Invalid Modify Type',
     'ValidatorRegister.selectType': 'Select a type',
-    
+
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
     'title.imported': 'นำเข้าแอดเดรส',
