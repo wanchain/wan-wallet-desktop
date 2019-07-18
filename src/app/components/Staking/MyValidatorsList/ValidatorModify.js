@@ -13,7 +13,7 @@ import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WALLET_ID_LEDGER, WALLET_ID_TREZOR 
 
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 const modifyTypes = {
-  lockTime: 'ValidatorRegister.nextLockTime',
+  lockTime: 'ValidatorRegister.lockTime',
   feeRate: 'ValidatorRegister.feeRate'
 }
 
@@ -30,7 +30,8 @@ class ModifyForm extends Component {
     this.state = {
       selectType: '',
       confirmVisible: false,
-      lockTime: this.props.record.lockTime
+      lockTime: this.props.record.lockTime,
+      showConfirmItem: {}
     }
   }
 
@@ -93,7 +94,18 @@ class ModifyForm extends Component {
   }
 
   onChangeModifyTypeSelect = (value, option) => {
-    this.setState(() => ({selectType: option.key}));
+    let showConfirmItem;
+    if(this.props.type === 'exit') {
+      showConfirmItem = { validatorAccount: true, myAddr: true };
+    } else  {
+      if(Object.keys(modifyTypes)[option.key] === 'lockTime') {
+        showConfirmItem = {validatorAccount: true, myAddr: true, lockTime: true}
+      }
+      if(Object.keys(modifyTypes)[option.key] === 'feeRate') {
+        showConfirmItem = {validatorAccount: true, myAddr: true, feeRate: true}
+      }
+    }
+    this.setState(() => ({selectType: option.key, showConfirmItem}));
   }
 
   onSliderChange = value => {
@@ -107,8 +119,7 @@ class ModifyForm extends Component {
   render() {
     const { onCancel, form, settings, record, addrInfo, type } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
-    let showConfirmItem = { validatorAccount: true, myAddr: true, lockTime: true };
-    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: form.getFieldValue('lockTime') };
+    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate') };
     let title = type === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
 
     return (
@@ -125,17 +136,6 @@ class ModifyForm extends Component {
               options={{ initialValue: record.validator.address, rules: [{ required: true }] }}
               title={intl.get('ValidatorRegister.validatorAccount')}
             />
-            <CommonFormItem form={form} formName='nextLockTime' disabled={true}
-              options={{ initialValue: record.nextLockTime, rules: [{ required: true }] }}
-              title={intl.get('ValidatorRegister.nextLockTime')}
-            />
-            {
-              type === 'exit' &&
-              <CommonFormItem form={form} formName='lockTime' disabled={true}
-                options={{ initialValue: 0, rules: [{ required: true }] }}
-                title={intl.get('ValidatorRegister.lockTime')}
-              />
-            }
             {
               type === 'modify' &&
               <div className="validator-line">
@@ -152,8 +152,14 @@ class ModifyForm extends Component {
             {
               type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString() &&
               <React.Fragment>
-                <div>
-                </div>
+                <CommonFormItem form={form} formName='currentLockTime' disabled={true}
+                  options={{ initialValue: record.lockTime, rules: [{ required: true }] }}
+                  title={intl.get('ValidatorRegister.currentLockTime')}
+                />
+                <CommonFormItem form={form} formName='nextLockTime' disabled={true}
+                  options={{ initialValue: record.nextLockTime, rules: [{ required: true }] }}
+                  title={intl.get('ValidatorRegister.nextLockTime')}
+                />
                 <div className="validator-line">
                   <Row type="flex" justify="space-around" align="top">
                     <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
@@ -172,11 +178,21 @@ class ModifyForm extends Component {
             }
             {
               type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
-              <CommonFormItem form={form} formName='feeRate'
-                options={{ rules: [{ required: true, validator: checkFeeRate }] }}
-                title={intl.get('ValidatorRegister.feeRate')}
-                placeholder={intl.get('ValidatorRegister.feeRateLimite')}
-              />
+              <React.Fragment>
+                <CommonFormItem form={form} formName='maxFeeRate' disabled={true}
+                  options={{ initialValue: 20, rules: [{ required: true }] }}
+                  title={intl.get('ValidatorRegister.maxFeeRate')}
+                />
+                <CommonFormItem form={form} formName='currentFeeRate' disabled={true}
+                  options={{ initialValue: 10, rules: [{ required: true }] }}
+                  title={intl.get('ValidatorRegister.currentFeeRate')}
+                />
+                <CommonFormItem form={form} formName='feeRate'
+                  options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                  title={intl.get('ValidatorRegister.feeRate')}
+                  placeholder={intl.get('ValidatorRegister.feeRateLimite')}
+                />
+              </React.Fragment>
             }
           </div>
           <div className="validator-bg">
@@ -194,7 +210,7 @@ class ModifyForm extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm showConfirmItem={this.state.showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
