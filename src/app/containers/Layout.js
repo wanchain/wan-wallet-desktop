@@ -19,7 +19,6 @@ import { getBalance } from 'utils/helper';
   addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
 }))
 
@@ -28,6 +27,23 @@ export default class Layout extends Component {
   state = {
     loading: true,
     collapsed: false
+  }
+
+  componentDidMount() {
+    this.wanTimer = setInterval(() => {
+      this.updateWANBalanceForInter();
+    }, 5000);
+    this.waitUntilSdkReady();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      document.getElementById('main-content').scrollTo(0, 0);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.wanTimer);
   }
 
   waitUntilSdkReady() {
@@ -46,18 +62,6 @@ export default class Layout extends Component {
         }
       }
     }, 1000);
-  }
-
-  componentDidMount() {
-    this.wanTimer = setInterval(() => {
-      this.updateWANBalanceForInter();
-    }, 5000);
-    this.waitUntilSdkReady();
-    // this.props.updateStakeInfo();
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.wanTimer);
   }
 
   updateWANBalanceForInter = () => {
@@ -94,7 +98,7 @@ export default class Layout extends Component {
             <Col className={"nav-left " + (this.state.collapsed ? "nav-collapsed" : "")}>
               <SideBar handleNav={this.toggleNav} path={location.pathname}/>
             </Col>
-            <Col className={"main " + (this.state.collapsed ? "nav-collapsed" : "")}>
+            <Col id="main-content" className={"main " + (this.state.collapsed ? "nav-collapsed" : "")}>
               <MHeader />
               <Row className="content">
                 {this.props.children}
