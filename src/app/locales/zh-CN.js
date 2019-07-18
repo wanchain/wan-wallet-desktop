@@ -186,6 +186,7 @@ const zh_CN = {
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
     'Rename.name': '名字不正确',
+    'Rename.edit': '修改',
 
     'SendNormalTrans.send': '发送',
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',

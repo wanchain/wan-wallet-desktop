@@ -46,8 +46,8 @@ class CopyAndQrcode extends Component {
     const { addr, addrInfo } = this.props;
     return (
       <div className="handleIco">
-        <Icon type="copy" title={intl.get('title.copy')} onClick={e => this.copy2Clipboard(addr, e)} />
-        <Icon type="qrcode" title={intl.get('title.QRCode')} onClick={e => this.createQrCode(addr, e)} />
+        <Tooltip placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
+        <Tooltip placement="bottom" title={intl.get('title.QRCode')}><Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} /></Tooltip>
         { Object.keys(addrInfo['import']).includes(addr) 
             ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
             : ''

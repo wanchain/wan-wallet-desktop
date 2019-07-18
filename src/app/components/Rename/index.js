@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Form } from 'antd';
+import { Input, Form, Tooltip, Icon } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -79,6 +79,7 @@ export class EditableCell extends Component {
                   onClick={this.toggleEdit}
                 >
                   {restProps.children}
+                  <Tooltip placement="bottom" title={intl.get('Rename.edit')} className="editName"><Icon type="edit" /></Tooltip>
                 </div>
               )
             );
