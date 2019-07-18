@@ -9,11 +9,9 @@ import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
+import { WALLET_ID_NATIVE, WALLET_ID_LEDGER, WALLET_ID_TREZOR } from 'utils/settings'
 
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
-const WALLET_ID_NATIVE = 0x01;
-const WALLET_ID_LEDGER = 0x02;
-const WALLET_ID_TREZOR = 0x03;
 
 @inject(stores => ({
   settings: stores.session.settings,

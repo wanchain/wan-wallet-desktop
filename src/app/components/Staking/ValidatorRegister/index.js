@@ -12,15 +12,10 @@ import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
+import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WALLET_ID_LEDGER, WALLET_ID_TREZOR } from 'utils/settings'
 
 const wanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
-
-const MINDAYS = 7;
-const MAXDAYS = 90;
-const WALLET_ID_NATIVE = 0x01;
-const WALLET_ID_LEDGER = 0x02;
-const WALLET_ID_TREZOR = 0x03;
 
 @inject(stores => ({
   settings: stores.session.settings,

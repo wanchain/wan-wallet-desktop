@@ -6,11 +6,11 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { toWei } from 'utils/support';
-import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { DEFAULT_GAS } from 'utils/settings'
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
+import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 
-const DEFAULT_GAS = 4700000;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 

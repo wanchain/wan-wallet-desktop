@@ -5,9 +5,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import history from 'static/image/history.png';
-
-const main = 'https://www.wanscan.org/tx/'
-const testnet = 'http://testnet.wanscan.org/tx/';
+import { MAIN, TESTNET } from 'utils/settings'
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -25,7 +23,7 @@ class StakingHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${main}${record.key}` : `${testnet}${record.key}`;
+    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
     wand.shell.openExternal(href);
   }
 

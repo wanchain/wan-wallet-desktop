@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
-import Validator from '../Validators/Validator';
+import { Button, Modal, Row, Col, Avatar } from 'antd';
+
 import './index.less';
 import intl from 'react-intl-universal';
 
@@ -17,10 +17,6 @@ class StakeConfirmForm extends Component {
       title: props.title,
       note: props.note,
     }
-  }
-
-  componentWillUnmount() {
-
   }
 
   onSend = () => {

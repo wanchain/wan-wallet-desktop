@@ -1,22 +1,19 @@
-import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar } from 'antd';
-import './index.less';
-import { checkWanValidatorAddr } from 'utils/helper';
-import StakeConfirmForm from '../StakeConfirmForm';
-const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
-
 import intl from 'react-intl-universal';
-const wanTx = require('wanchainjs-tx');
+import React, { Component } from 'react';
 import TrezorConnect from 'trezor-connect';
-const pu = require('promisefy-util')
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData } from 'utils/helper';
+import { observer, inject } from 'mobx-react';
+import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
+
+import './index.less';
+import { MAIN, TESTNET } from 'utils/settings'
+import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
 
-const main = 'https://www.wanscan.org/vlds'
-const testnet = 'http://testnet.wanscan.org/vlds';
-
+const wanTx = require('wanchainjs-tx');
+const pu = require('promisefy-util');
 const Option = Select.Option;
+const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -412,7 +409,7 @@ class StakeInForm extends Component {
   }
 
   onClick = () => {
-    let href = this.props.chainId === 1 ? `${main}` : `${testnet}`;
+    let href = this.props.chainId === 1 ? `${MAIN}/vlds` : `${TESTNET}/vlds`;
     wand.shell.openExternal(href);
   }
 

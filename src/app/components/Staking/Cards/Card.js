@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'antd';
+
 import './index.less';
 import mountain from 'static/image/mountain.png';
 
 class Card extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className={this.props.className}>

@@ -4,11 +4,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
-
 import history from 'static/image/history.png';
-
-const MAIN = 'https://www.wanscan.org/tx/'
-const TESTNET = 'http://testnet.wanscan.org/tx/';
+import { MAIN, TESTNET } from 'utils/settings'
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -21,7 +18,7 @@ const TESTNET = 'http://testnet.wanscan.org/tx/';
 @observer
 class RegisterValidatorHistory extends Component {
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${MAIN}${record.key}` : `${TESTNET}${record.key}`;
+    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
     wand.shell.openExternal(href);
   }
 
