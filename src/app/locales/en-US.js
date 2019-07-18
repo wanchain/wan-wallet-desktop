@@ -279,7 +279,7 @@ const en_US = {
     'Config.stakingAdvance': 'Show validator in the sidebar',
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',
-    'ValidatorUpdate.note': 'Note: When selecting a local account, you must select the same account as when validator registration.',
+    'ValidatorUpdate.note': 'Note: You should select the account that the validator registration transaction was sent from.',
 
     'ValidatorNode.nodeList': 'Validator List',
     'ValidatorNode.registerValidatorNode': 'Register',
