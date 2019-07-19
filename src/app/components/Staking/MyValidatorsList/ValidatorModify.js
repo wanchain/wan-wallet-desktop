@@ -42,10 +42,13 @@ class ModifyForm extends Component {
   }
 
   showConfirmForm = () => {
-    let { form, settings } = this.props;
+    let { form, settings, modifyType } = this.props;
+    console.log(modifyType, 'ppppppppppppppp')
     form.validateFields(err => {
       if (err) return;
-
+      if(modifyType === 'exit') {
+        this.setState({ showConfirmItem: { validatorAccount: true, myAddr: true } })
+      }
       let pwd = form.getFieldValue('pwd');
       if (!settings.reinput_pwd) {
         this.setState({ confirmVisible: true });
@@ -62,17 +65,17 @@ class ModifyForm extends Component {
   }
 
   onSend = () => {
-    let { form, record, addrInfo } = this.props;
+    let { form, record, addrInfo, modifyType } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
     let walletID = type !== 'normal' ? eval(`WALLET_ID_${type.toUpperCase()}`) : WALLET_ID_NATIVE;
-
+    
     let tx = {
       from: from,
       amount: 0,
       BIP44Path: type !== 'normal' ? addrInfo[type][from].path : "m/44'/5718350'/0'/0/" + addrInfo[type][from].path,
       walletID: walletID,
-      lockTime: form.getFieldValue('lockTime'),
+      lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
       minerAddr: record.validator.address
     }
 
@@ -95,15 +98,11 @@ class ModifyForm extends Component {
 
   onChangeModifyTypeSelect = (value, option) => {
     let showConfirmItem;
-    if(this.props.type === 'exit') {
-      showConfirmItem = { validatorAccount: true, myAddr: true };
-    } else  {
-      if(Object.keys(modifyTypes)[option.key] === 'lockTime') {
-        showConfirmItem = {validatorAccount: true, myAddr: true, lockTime: true}
-      }
-      if(Object.keys(modifyTypes)[option.key] === 'feeRate') {
-        showConfirmItem = {validatorAccount: true, myAddr: true, feeRate: true}
-      }
+    if(Object.keys(modifyTypes)[option.key] === 'lockTime') {
+      showConfirmItem = {validatorAccount: true, myAddr: true, lockTime: true}
+    }
+    if(Object.keys(modifyTypes)[option.key] === 'feeRate') {
+      showConfirmItem = {validatorAccount: true, myAddr: true, feeRate: true}
     }
     this.setState(() => ({selectType: option.key, showConfirmItem}));
   }
@@ -117,10 +116,10 @@ class ModifyForm extends Component {
   }
 
   render() {
-    const { onCancel, form, settings, record, addrInfo, type } = this.props;
+    const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate') };
-    let title = type === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
+    let title = modifyType === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
 
     return (
       <div className="stakein">
@@ -137,7 +136,7 @@ class ModifyForm extends Component {
               title={intl.get('ValidatorRegister.validatorAccount')}
             />
             {
-              type === 'modify' &&
+              modifyType === 'modify' &&
               <div className="validator-line">
                 <ValidatorModifySelect
                   form={form}
@@ -150,7 +149,7 @@ class ModifyForm extends Component {
               </div>
             }
             {
-              type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString() &&
+              modifyType === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString() &&
               <React.Fragment>
                 <CommonFormItem form={form} formName='currentLockTime' disabled={true}
                   options={{ initialValue: record.lockTime, rules: [{ required: true }] }}
@@ -177,7 +176,7 @@ class ModifyForm extends Component {
               </React.Fragment>
             }
             {
-              type === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
+              modifyType === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
               <React.Fragment>
                 <CommonFormItem form={form} formName='maxFeeRate' disabled={true}
                   options={{ initialValue: 20, rules: [{ required: true }] }}
@@ -237,7 +236,7 @@ class ValidatorModify extends Component {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} />
-        {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} type={this.props.type} />}
+        {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />}
       </div>
     );
   }
