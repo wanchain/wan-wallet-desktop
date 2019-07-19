@@ -249,7 +249,7 @@ class ValidatorRegister extends Component {
               <CommonFormItem form={form} formName='feeRate'
                 options={{ rules: [{ required: true, validator: checkFeeRate }] }}
                 title={intl.get('ValidatorRegister.feeRate')}
-                placeholder={intl.get('ValidatorRegister.feeRateLimite')}
+                placeholder={intl.get('ValidatorRegister.feeRateLimit')}
               />
             }
           </div>

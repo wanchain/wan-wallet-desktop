@@ -1,6 +1,5 @@
 const en_US = {
     'days': ' days',
-    
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
@@ -279,8 +278,8 @@ const en_US = {
     'Config.stakingAdvance': 'Show validator in the sidebar',
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',
-    'ValidatorUpdate.note': 'Note: You should select the account that the validator registration transaction was sent from.',
 
+    'ValidatorUpdate.note': 'Note: You should select the account that the validator registration transaction was sent from.',
     'ValidatorNode.nodeList': 'Validator List',
     'ValidatorNode.registerValidatorNode': 'Register',
     'ValidatorNode.table.myAccount': 'ACCOUNT',
@@ -293,10 +292,8 @@ const en_US = {
     'ValidatorNode.table.exit': 'Exit',
     'ValidatorNode.table.type': 'TYPE',
     'ValidatorNode.table.validatorNum': 'validators',
-
     'ValidatorRegister.myPrincipal': 'My Stake',
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
-
     'ValidatorRegister.topup': 'Validator Top-up',
     'ValidatorRegister.warning': 'Warning',
     'ValidatorRegister.verifyModification': 'Validator Modification',
@@ -317,7 +314,7 @@ const en_US = {
     'ValidatorRegister.feeRate': 'Delegation Fee (%)',
     'ValidatorRegister.currentFeeRate': 'Current Delegation Fee',
     'ValidatorRegister.maxFeeRate': 'Max Delegation Fee',
-    'ValidatorRegister.feeRateLimite': 'Two decimal places are allowed at most',
+    'ValidatorRegister.feeRateLimit': 'Two decimal places are allowed at most',
     'ValidatorRegister.myAccount': 'My Account',
     'ValidatorRegister.address': 'Address',
     'ValidatorRegister.balance': 'Balance',

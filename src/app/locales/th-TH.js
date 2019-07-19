@@ -185,6 +185,7 @@ const th_TH = {
 
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
+    'Rename.edit': 'Edit',
     
     'SendNormalTrans.send': 'ส่ง',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
@@ -315,7 +316,7 @@ const th_TH = {
     'ValidatorRegister.feeRate': 'ค่าคอมมิชชั่นที่เรียกเก็บ (%)',
     'ValidatorRegister.currentFeeRate': 'Current Delegation Fee',
     'ValidatorRegister.maxFeeRate': 'Max Delegation Fee',
-    'ValidatorRegister.feeRateLimite': 'สามารถใช้ทศนิยมได้สูงสุด 2 ตำแหน่ง',
+    'ValidatorRegister.feeRateLimit': 'สามารถใช้ทศนิยมได้สูงสุด 2 ตำแหน่ง',
     'ValidatorRegister.myAccount': 'บัญชีของฉัน',
     'ValidatorRegister.address': 'แอดเดรส',
     'ValidatorRegister.balance': 'ยอดคงเหลือ',
