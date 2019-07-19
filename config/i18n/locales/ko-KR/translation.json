@@ -1,0 +1,78 @@
+﻿{
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{app}}",
+                "about": "정보 {{app}}",
+                "version": "WAN 지갑 버젼 정보：{{version}}",
+                "developer": {
+                    "label": "개발자",
+                    "assets": {
+                        "label": "저작권",
+                        "wan": {
+                            "label": "완체인",
+                            "import": "시크릿 키 파일로부터 주소를 임포트 하세요"
+                        }
+                    },
+                    "data": {
+                        "label": "어플리케이션 데이터",
+                        "db": "지갑 및 거래내역 폴더 표시",
+                        "log": "어플리케이션 로그 폴더 표시"
+                    }
+                },
+                "services": "서비스",
+                "checkForUpdate": "업데이트 체크",
+                "hide": "숨김 {{ app }}",
+                "hideOthers": "기타 숨기기",
+                "showAll": "전부 보이기",
+                "quit": "종료 {{ app }}"
+            },
+            "edit": {
+                "label": "수정",
+                "undo": "취소",
+                "redo": "되돌리기",
+                "cut": "잘라내기",
+                "copy": "복사하기",
+                "paste": "붙여넣기",
+                "selectAll": "모두 선택"
+            },
+            "setting": {
+                "label": "설정",
+                "network": {
+                    "label": "네트워크",
+                    "main": "Wanchain 메인 네트워크",
+                    "test": "Wanchain 테스트 네트워크"
+                },
+                "mode": {
+                    "label": "모드",
+                    "full": "전체 노드 지갑",
+                    "light": "부분 노드 지갑"
+                },
+                "lang": {
+                    "label": "언어",
+                    "code": {
+                        "en": "English",
+                        "zh": "中文(简体)",
+                        "th-TH": "ไทย",
+                        "ko-KR": "한국어"
+                    }
+                }
+            },
+            "window": {
+                "label": "창(화면)",
+                "fullscreen": "전체 화면",
+                "minimize": "최소화",
+                "close": "닫기",
+                "front": "프론트 창(화면)"
+            },
+            "help": {
+                "label": "도움",
+                "web": "Wanchain 공식 홈페이지",
+                "explorer": "Wanchain 블록체인 트랜잭션 익스플로어",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "개발자 도구"
+            }
+        }
+    }
+}
