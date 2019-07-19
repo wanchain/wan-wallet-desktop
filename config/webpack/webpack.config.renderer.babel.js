@@ -1,7 +1,8 @@
 import path from 'path';
 import webpack from 'webpack';
-import { WDS_PORT, isDev } from '../common';
 import { spawn } from 'child_process';
+import { WDS_PORT, isDev } from '../common';
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -117,7 +118,14 @@ export default {
       }
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
+        new HtmlWebpackPlugin({
+          title: 'Wan Wallet',
+          filename: 'index.html',
+          template: resolve('src/app/index.html'),
+          minify: {
+            collapseWhitespace:  true
+          }
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
@@ -126,7 +134,7 @@ export default {
           filename: '[name].css',
           chunkFilename: '[id].css',
           ignoreOrder: false,
-        }),
+        })
     ],
     node: {
         __dirname: false,

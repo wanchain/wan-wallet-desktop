@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,23 +22,9 @@
             background-color: #555;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="http://localhost:7000/dist/main.css"></link>
-    <title>Wan Wallet</title>
 </head>
-
 <body>
     <div id="root"></div>
-    <script>
-        const scripts = []
-        scripts.push(
-          'http://localhost:7000/dist/js/bundle.js'
-        )
-        document.write(
-            scripts
-            .map(script => `<script defer src="${script}"><\/script>`)
-            .join('')
-        )
-    </script>
 </body>
 
 </html>
