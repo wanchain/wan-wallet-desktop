@@ -26,8 +26,8 @@ class ConfigFactoryService {
         this.config.MIN_CONFIRM_BLKS = 0
 
         this.config.iWAN = {
-            // "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
-            "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "192.168.1.179",            
+            "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
+            // "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "192.168.1.179",            
             // "url" :  this.config.network.includes('main') ? '192.168.1.58' : "192.168.1.58",
             // "url" :  this.config.network.includes('main') ? '54.183.204.219' : "54.183.204.219",
             "port": 8443,
