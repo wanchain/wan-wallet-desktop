@@ -40,7 +40,6 @@ linux:
     - appImage
 
 dmg:
-  artifactName: Wan-Wallet-${version}-${os}.dmg
   sign: false
 
 nsis:
