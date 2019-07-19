@@ -325,9 +325,9 @@ const th_TH = {
     'TransHistory.StakeIn': 'ทำการ Stake',
     'TransHistory.StakeUpdate': 'อัพเดทการ Stake',
     'TransHistory.StakeAppend': 'เพิ่ม Stake',
-    'ValidatorRegister.modifyTypeTitle': 'Modify Type',
-    'ValidatorRegister.invalidType':  'Invalid Modify Type',
-    'ValidatorRegister.selectType': 'Select a type',
+    'ValidatorRegister.modifyTypeTitle': 'ประเภทการแก้ไข',
+    'ValidatorRegister.invalidType':  'ประเภทการแก้ไขไม่ถูกต้อง',
+    'ValidatorRegister.selectType': 'กรุณาเลือกประเภท',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
