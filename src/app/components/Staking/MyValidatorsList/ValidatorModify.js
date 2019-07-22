@@ -8,9 +8,11 @@ import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorModifySelect from 'componentUtils/ValidatorModifySelect';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
-import { checkFeeRate } from 'utils/helper';
-import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WALLET_ID_LEDGER, WALLET_ID_TREZOR } from 'utils/settings'
+import { isNumber } from 'utils/support';
+import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WANPATH } from 'utils/settings'
 
+const WALLET_ID_LEDGER = 0x02;
+const WALLET_ID_TREZOR = 0x03;
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 const modifyTypes = {
   lockTime: 'ValidatorRegister.lockTime',
@@ -31,7 +33,7 @@ class ModifyForm extends Component {
       selectType: '',
       confirmVisible: false,
       lockTime: this.props.record.lockTime,
-      showConfirmItem: {}
+      showConfirmItem: {},
     }
   }
 
@@ -43,7 +45,6 @@ class ModifyForm extends Component {
 
   showConfirmForm = () => {
     let { form, settings, modifyType } = this.props;
-    console.log(modifyType, 'ppppppppppppppp')
     form.validateFields(err => {
       if (err) return;
       if(modifyType === 'exit') {
@@ -66,33 +67,65 @@ class ModifyForm extends Component {
 
   onSend = () => {
     let { form, record, addrInfo, modifyType } = this.props;
-    let from = record.myAddress.addr;
-    let type = record.myAddress.type;
+    let from = record.myAddress.addr, type = record.myAddress.type;
     let walletID = type !== 'normal' ? eval(`WALLET_ID_${type.toUpperCase()}`) : WALLET_ID_NATIVE;
-    
-    let tx = {
+    let tx ={
       from: from,
       amount: 0,
-      BIP44Path: type !== 'normal' ? addrInfo[type][from].path : "m/44'/5718350'/0'/0/" + addrInfo[type][from].path,
+      BIP44Path: type !== 'normal' ? addrInfo[type][from].path : WANPATH + addrInfo[type][from].path,
       walletID: walletID,
-      lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
       minerAddr: record.validator.address
-    }
+    };
 
-    if (WALLET_ID_TREZOR === walletID) {
-      // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-      // this.setState({ confirmVisible: false });
-      // this.props.onSend(walletID);
-    } else {
-      wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
-        if (err) {
-          message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
-        }
-        this.setState({ confirmVisible: false });
-        this.props.onSend(walletID);
-      });
+    if(modifyType === 'exit' || this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString()) {
+      Object.assign(tx, {
+        lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
+      })
+
+      if (WALLET_ID_TREZOR === walletID) {
+        // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+        // this.setState({ confirmVisible: false });
+        // this.props.onSend(walletID);
+      } else {
+        wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
+          if (err) {
+            message.warn(err.message);
+          } else {
+            console.log('delegateIn ret:', ret);
+          }
+          this.props.onSend(walletID);
+        });
+      }
+    }
+    if(this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString()) {
+      Object.assign(tx, {
+        feeRate: form.getFieldValue('feeRate') * 100,
+      })
+
+      if (WALLET_ID_TREZOR === walletID) {
+        // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+        // this.setState({ confirmVisible: false });
+        // this.props.onSend(walletID);
+      } else {
+        wand.request('staking_getCurrentEpochInfo', null, (err, ret) => {
+          if(err) {
+            message.warn(err.message);
+          } else {
+            if(ret.epochId === record.feeRateChangedEpoch) {
+              message.warn('不能在同一个EpochId里修改两次')
+              return;
+            }
+            wand.request('staking_PosStakeUpdateFeeRate', { tx }, (err, ret) => {
+              if (err) {
+                message.warn(err.message);
+              } else {
+                console.log('PosStakeUpdateFeeRate ret:', ret);
+              }
+              this.props.onSend(walletID);
+            });
+          }
+        })
+      }
     }
   }
 
@@ -113,6 +146,31 @@ class ModifyForm extends Component {
 
   onConfirmCancel = () => {
     this.setState({ confirmVisible: false });
+  }
+
+  checkFeeRate = (rule, value, callback) => {
+    let { feeRate, maxFeeRate } = this.props.record;
+    try {
+      if(!isNumber(value)) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
+        return;
+      }
+      if(value < 0 || value > maxFeeRate) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
+        return;
+      }
+      if(value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
+        return;
+      }
+      if(value > feeRate && value > feeRate + 1) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
+        return;
+      }
+      callback();
+    } catch(err) {
+      callback(intl.get('NormalTransForm.invalidFeeRate'));
+    }
   }
 
   render() {
@@ -179,15 +237,15 @@ class ModifyForm extends Component {
               modifyType === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
               <React.Fragment>
                 <CommonFormItem form={form} formName='maxFeeRate' disabled={true}
-                  options={{ initialValue: 20, rules: [{ required: true }] }}
+                  options={{ initialValue: record.maxFeeRate, rules: [{ required: true }] }}
                   title={intl.get('ValidatorRegister.maxFeeRate')}
                 />
                 <CommonFormItem form={form} formName='currentFeeRate' disabled={true}
-                  options={{ initialValue: 10, rules: [{ required: true }] }}
+                  options={{ initialValue: record.feeRate, rules: [{ required: true }] }}
                   title={intl.get('ValidatorRegister.currentFeeRate')}
                 />
                 <CommonFormItem form={form} formName='feeRate'
-                  options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                  options={{ initialValue: record.feeRate, rules: [{ required: true, validator: this.checkFeeRate }] }}
                   title={intl.get('ValidatorRegister.feeRate')}
                   placeholder={intl.get('ValidatorRegister.feeRateLimit')}
                 />

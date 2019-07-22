@@ -564,7 +564,33 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
         case 'getContractAddr':
             ret = setting.cscContractAddr;
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
+            break;
+
+        case 'getCurrentEpochInfo':
+            try {
+              ret = await ccUtil.getCurrentEpochInfo('wan');
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'PosStakeUpdateFeeRate':
+            try {
+              logger.info('PosStakeUpdateFeeRate: ' + payload);
+
+              let { tx } = payload;
+              let gasPrice = await ccUtil.getGasPrice('wan');
+              tx.gasLimit = 200000;
+              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+              ret = await global.crossInvoker.PosStakeUpdateFeeRate(tx);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'info':
             try {

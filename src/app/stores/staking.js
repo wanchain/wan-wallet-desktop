@@ -3,8 +3,9 @@ import Identicon from 'identicon.js';
 import BigNumber from 'bignumber.js';
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
+import { STAKEACT } from 'utils/settings'
 import { getAddrByTypes, getInfoByAddress, checkAddrType } from 'utils/helper';
-import { fromWei, dateFormat, timeFormat } from 'utils/support';
+import { fromWei, dateFormat, timeFormat, keep2Decimals } from 'utils/support';
 
 import wanAddress from './wanAddress';
 import languageIntl from './languageIntl';
@@ -130,6 +131,9 @@ class Staking {
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
       validators.push({
+        feeRate: item.feeRate / 100,
+        feeRateChangedEpoch: item.feeRateChangedEpoch,
+        maxFeeRate: item.maxFeeRate / 100,
         lockTime: item.lockEpochs,
         nextLockTime: item.nextLockEpochs,
         publicKey1: item.pubSec256,
@@ -243,7 +247,7 @@ class Staking {
     let histories = wanAddress.transHistory;
     let addrList = Object.keys(Object.assign({}, wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
     Object.keys(wanAddress.transHistory).forEach(item => {
-      if(histories[item].validator && addrList.includes(histories[item].from) && ['StakeIn', 'StakeUpdate', 'StakeAppend'].includes(histories[item].annotate)) {
+      if(histories[item].validator && addrList.includes(histories[item].from) && STAKEACT.includes(histories[item].annotate)) {
         let type = checkAddrType(histories[item].from, wanAddress.addrInfo);
         let { status, annotate } = histories[item];
         let getIndex = self.stakingList.findIndex(value => value.validator.address === histories[item].validator);
@@ -253,7 +257,7 @@ class Staking {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           stakeAmount: fromWei(histories[item].value),
-          annotate: languageIntl.language && ['StakeIn', 'StakeUpdate', 'StakeAppend'].includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
+          annotate: languageIntl.language && STAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           validator: {
             address: histories[item].validator,

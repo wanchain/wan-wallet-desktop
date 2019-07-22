@@ -5,6 +5,10 @@ export function fromWei(data) {
   return web3.utils.fromWei(data.toString());
 }
 
+export function keep2Decimals(value) {
+  return Math.round(value * 100) / 100;
+}
+
 export function toWei(data, unit) {
   return '0x' + web3.utils.toBN(web3.utils.toWei(data, unit)).toString(16);
 }

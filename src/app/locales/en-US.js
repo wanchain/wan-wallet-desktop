@@ -324,6 +324,7 @@ const en_US = {
     'TransHistory.StakeIn': 'Stake In',
     'TransHistory.StakeUpdate': 'Stake Update',
     'TransHistory.StakeAppend': 'Stake Append',
+    'TransHistory.StakeUpdateFeeRate': 'Stake Update FeeRate',
     'ValidatorRegister.modifyTypeTitle': 'Modify Type',
     'ValidatorRegister.invalidType':  'Invalid Modify Type',
     'ValidatorRegister.selectType': 'Select a type',

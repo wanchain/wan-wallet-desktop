@@ -9,3 +9,7 @@ export const DEFAULT_GAS = 4700000;
 
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'http://testnet.wanscan.org';
+
+export const WANPATH = "m/44'/5718350'/0'/0/";
+
+export const STAKEACT = ['StakeIn', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];

@@ -16,7 +16,7 @@ export const checkFeeRate = function(rule, value, callback) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
       return;
     }
-    if(value.split('.')[1] && value.split('.')[1].length > 2) {
+    if(value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
       return;
     }
