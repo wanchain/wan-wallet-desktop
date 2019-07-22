@@ -167,20 +167,20 @@ class Staking {
       entrusted: ['N/A', 'N/A'],
       withdrawal: ['N/A', 'N/A']
     };
-    cardsList.principal[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10);
+    cardsList.principal[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.principal[1] = self.myValidatorList.length;
-    cardsList.reward[0] = Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10);
+    cardsList.reward[0] = Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2);
     cardsList.reward[1] = 0;
 
-    cardsList.entrusted[0] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10);
+    cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
-    cardsList.withdrawal[0] = self.myValidators.reduce((prev, curr) => {
+    cardsList.withdrawal[0] = Number(self.myValidators.reduce((prev, curr) => {
       if(curr.nextLockEpochs == 0) {
         return prev.plus(new BigNumber(fromWei(curr.amount)).plus(curr.partners.reduce((pre, cur) => pre.plus(fromWei(cur.amount)), new BigNumber(0))));
       } else {
         return prev;
       }
-    }, new BigNumber(0)).toString(10)
+    }, new BigNumber(0)).toString(10)).toFixed(0)
     cardsList.withdrawal[1] = 0;
 
     return cardsList;

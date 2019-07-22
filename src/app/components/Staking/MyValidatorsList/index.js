@@ -52,11 +52,11 @@ class MyValidatorsList extends Component {
       }, 
       {
         ...myValidatorColumns[1],
-        render: principal => <Cell title={principal.value} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
+        render: principal => <Cell title={Number(principal.value).toFixed(0)} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
       },
       {
         ...myValidatorColumns[2],
-        render: entrustment => <Cell title={entrustment.value} />,
+        render: entrustment => <Cell title={Number(entrustment.value).toFixed(0)} />,
       },
       {
         ...myValidatorColumns[3],
@@ -72,7 +72,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[6],
-        render: distributeRewards => <Cell title={distributeRewards.value} />,
+        render: distributeRewards => <Cell title={Number(distributeRewards.value).toFixed(2)} />,
       },
       {
         ...myValidatorColumns[7],
