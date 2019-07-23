@@ -38,6 +38,11 @@ export function timeFormat(time) {
   return `${current.getFullYear()}-${month}-${date} ${hours}:${minutes}:${secondes}`;
 }
 
+export function daysAgo(time) {
+  let data = (new Date().getTime() / 1000 - time) / ( 24 * 3600 );
+  return Math.round(data);
+}
+
 export function dateFormat(time) {
   const current = new Date(time * 1000);
   let date = ('0' + current.getDate()).substr(-2);

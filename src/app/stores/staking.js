@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import { STAKEACT } from 'utils/settings'
 import { getAddrByTypes, getInfoByAddress, checkAddrType } from 'utils/helper';
-import { fromWei, dateFormat, timeFormat, keep2Decimals } from 'utils/support';
+import { fromWei, dateFormat, timeFormat, keep2Decimals, daysAgo } from 'utils/support';
 
 import wanAddress from './wanAddress';
 import languageIntl from './languageIntl';
@@ -82,7 +82,9 @@ class Staking {
       }
       ret.forEach(item => {
         self.validatorsInfo[item.address] = {
-          reward: fromWei(item.amount)
+          minEpochId: item.minEpochId,
+          reward: fromWei(item.amount),
+          timestamp: daysAgo(item.timestamp),
         }
       })
     })
@@ -141,7 +143,7 @@ class Staking {
         myAccount: addr.name,
         principal: {
           value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
-          days: 1
+          days: self.validatorsInfo[item.address] ? self.validatorsInfo[item.address].timestamp : 0,
         },
         entrustment: {
           value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
@@ -171,10 +173,11 @@ class Staking {
       entrusted: ['N/A', 'N/A'],
       withdrawal: ['N/A', 'N/A']
     };
+    let minEpochId = Math.min.apply(null, Object.values(self.validatorsInfo).map(item => item.minEpochId)) || 0;
     cardsList.principal[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.principal[1] = self.myValidatorList.length;
     cardsList.reward[0] = Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2);
-    cardsList.reward[1] = 0;
+    cardsList.reward[1] = minEpochId !== 0 ? timeFormat(Date.now()/1000 - (self.stakeInfo.epochIDRaw - minEpochId) * (global.slotCount * global.slotTime)) : timeFormat(Date.now()/1000);
 
     cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
