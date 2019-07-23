@@ -84,7 +84,7 @@ class Staking {
         self.validatorsInfo[item.address] = {
           minEpochId: item.minEpochId,
           reward: fromWei(item.amount),
-          timestamp: daysAgo(item.timestamp),
+          timestamp: item.timestamp,
         }
       })
     })
@@ -143,7 +143,7 @@ class Staking {
         myAccount: addr.name,
         principal: {
           value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
-          days: self.validatorsInfo[item.address] ? self.validatorsInfo[item.address].timestamp : 0,
+          days: self.validatorsInfo[item.address] ? daysAgo(self.validatorsInfo[item.address].timestamp) : 0,
         },
         entrustment: {
           value: item.clients.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0)).toString(10),
@@ -174,12 +174,12 @@ class Staking {
       withdrawal: ['N/A', 'N/A']
     };
 
-    let EpochIdArr = Object.values(self.validatorsInfo).map(item => item.minEpochId);
-    let minEpochId = EpochIdArr.length === 0 ? 0 : Math.min.apply(null, EpochIdArr);
+    let timestampArr = Object.values(self.validatorsInfo).map(item => item.timestamp);
+    let minTimestampArr = timestampArr.length === 0 ? 0 : Math.min.apply(null, timestampArr);
     cardsList.principal[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.principal[1] = self.myValidatorList.length;
     cardsList.reward[0] = Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2);
-    cardsList.reward[1] = minEpochId !== 0 && !Number.isNaN(global.slotCount * global.slotTime) ? timeFormat(minEpochId * (global.slotCount * global.slotTime)) : 'N/A';
+    cardsList.reward[1] = minTimestampArr !== 0 ? timeFormat(minTimestampArr) : 'N/A';
 
     cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
