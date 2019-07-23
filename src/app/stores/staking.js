@@ -84,7 +84,7 @@ class Staking {
         self.validatorsInfo[item.address] = {
           minEpochId: item.minEpochId,
           reward: fromWei(item.amount),
-          timestamp: item.timestamp,
+          timestamp: item.stakeInTimestamp,
         }
       })
     })

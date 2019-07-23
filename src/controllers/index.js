@@ -828,13 +828,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
               let [ ret0, ret1 ] = await Promise.all([ccUtil.getValidatorTotalIncentive('wan', address), ccUtil.getValidatorSupStakeInfo('wan', address)])
               ret0.forEach(item => {
                 let index = ret1.findIndex(val => val.address === item.address);
-                item.stakeInBlockNumber = index !== -1 ? ret1[index].stakeIn : 0;
-              });
-              let arrPromise = ret0.map(item => ccUtil.getBlockByNumber(item.stakeInBlockNumber, 'wan'))
-              let ret2 = await Promise.all(arrPromise);
-              ret0.forEach(item => {
-                let index = ret2.findIndex(val => val.number === item.stakeInBlockNumber);
-                item.timestamp = index !== -1 ? ret2[index].timestamp : 0;
+                item.stakeInTimestamp = index !== -1 ? ret1[index].stakeInTimestamp : 0;
               });
               ret = ret0;
             } catch (e) {
