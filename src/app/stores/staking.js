@@ -173,11 +173,13 @@ class Staking {
       entrusted: ['N/A', 'N/A'],
       withdrawal: ['N/A', 'N/A']
     };
-    let minEpochId = Math.min.apply(null, Object.values(self.validatorsInfo).map(item => item.minEpochId)) || 0;
+
+    let EpochIdArr = Object.values(self.validatorsInfo).map(item => item.minEpochId);
+    let minEpochId = EpochIdArr.length === 0 ? 0 : Math.min.apply(null, EpochIdArr);
     cardsList.principal[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.principal[1] = self.myValidatorList.length;
     cardsList.reward[0] = Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2);
-    cardsList.reward[1] = minEpochId !== 0 ? timeFormat(Date.now()/1000 - (self.stakeInfo.epochIDRaw - minEpochId) * (global.slotCount * global.slotTime)) : timeFormat(Date.now()/1000);
+    cardsList.reward[1] = minEpochId !== 0 && !Number.isNaN(global.slotCount * global.slotTime) ? timeFormat(minEpochId * (global.slotCount * global.slotTime)) : 'N/A';
 
     cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
