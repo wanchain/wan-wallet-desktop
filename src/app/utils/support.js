@@ -25,7 +25,11 @@ export function checkPhrase(phrase) {
 }
 
 export function randomSort(arr) {
-  return arr.sort(() => Math.random()>.5 ? -1 : 1);
+  return arr.sort(() => Math.random() > .5 ? -1 : 1);
+}
+
+export function roundFun(value, n) {
+  return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
 }
 
 export function timeFormat(time) {
@@ -50,7 +54,7 @@ export function dateFormat(time) {
   return `${current.getFullYear()}-${month}-${date}`;
 }
 
-export function isNumber(val){
+export function isNumber(val) {
   let regPos = /^\d+(\.\d+)?$/; //非负浮点数
   let regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
   return !!(regPos.test(val) || regNeg.test(val));
@@ -60,15 +64,15 @@ export function promiseTimeout(ms, p, desc) {
   // Create a promise that rejects in <ms> milliseconds
   let id;
   let timeout = new Promise((resolve, reject) => {
-      id = setTimeout(() => {
-          clearTimeout(id);
-          desc = desc || `Timed out in ${ms} ms!`;
-          reject(desc);
-      }, ms);
+    id = setTimeout(() => {
+      clearTimeout(id);
+      desc = desc || `Timed out in ${ms} ms!`;
+      reject(desc);
+    }, ms);
   });
 
   // Returns a race between our timeout and the passed in promise
   return Promise.race([
-      p,
-      timeout]);
+    p,
+    timeout]);
 };

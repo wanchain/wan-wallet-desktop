@@ -1,10 +1,11 @@
 import { observable, action, computed, toJS } from 'mobx';
 import BigNumber from 'bignumber.js';
+import { roundFun } from 'utils/support'
 
 class SendTransParams {
     @observable currentFrom = '';
     @observable transParams = {};
-    @observable gasLimit = '21000';
+    @observable gasLimit = 21000;
     @observable defaultGasPrice = 200;
     @observable minGasPrice = 180;
     @observable currentGasPrice = 200;
@@ -48,9 +49,9 @@ class SendTransParams {
       let minFee = new BigNumber(self.minGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
       let averageFee = new BigNumber(self.averageGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
       return {
-        minFee: minFee.toString(10),
-        averageFee: averageFee.toString(10),
-        maxFee: averageFee.times(2).toString(10)
+        minFee: roundFun(Number(minFee.toString(10)), 8),
+        averageFee: roundFun(Number(averageFee.toString(10)), 8),
+        maxFee: roundFun(Number(averageFee.times(2).toString(10)), 8)
       }
     }
 
