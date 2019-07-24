@@ -316,7 +316,7 @@ const zh_CN = {
     'ValidatorRegister.notAcceptAgency': '不接受',
     'ValidatorRegister.feeRate': '委托费率 (%)',
     'ValidatorRegister.currentFeeRate': '当前委托费率',
-    'ValidatorRegister.maxFeeRate': '最大委托费率',
+    'ValidatorRegister.maxFeeRate': '委托费率上限 (%)',
     'ValidatorRegister.feeRateLimit': '最多允许两位小数',
     'ValidatorRegister.myAccount': '我的账户',
     'ValidatorRegister.address': '地址',

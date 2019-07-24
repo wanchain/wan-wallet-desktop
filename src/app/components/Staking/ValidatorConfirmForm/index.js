@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Row, Col, Alert  } from 'antd';
+import { Button, Modal, Row, Col, Alert } from 'antd';
 import { wanPubKey2Address } from 'utils/helper';
 
 import './index.less';
@@ -41,16 +41,16 @@ class ValidatorConfirmForm extends Component {
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             {
-              publicKey1 && 
+              publicKey1 &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.publicKey1')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.publicKey1}</span></Col>
                 </Row>
-              </div> 
+              </div>
             }
             {
-              publicKey2 && 
+              publicKey2 &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.publicKey2')}</span></Col>
@@ -59,7 +59,7 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              validatorAccount && 
+              validatorAccount &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.validatorAccount')}</span></Col>
@@ -68,7 +68,7 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              lockTime && 
+              lockTime &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
@@ -77,7 +77,7 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              acceptDelegation && 
+              acceptDelegation &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.agency')}</span></Col>
@@ -86,13 +86,21 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              feeRate &&             
-              <div className="withdraw-line">
-                <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.feeRate}</span></Col>
-                </Row>
-              </div>
+              feeRate ?
+                <div>
+                  <div className="withdraw-line">
+                    <Row type="flex" justify="space-around" align="middle">
+                      <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                      <Col span={RIGHT}><span className="withdraw-addr">{record.maxFeeRate}</span></Col>
+                    </Row>
+                  </div>
+                  <div className="withdraw-line">
+                    <Row type="flex" justify="space-around" align="middle">
+                      <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
+                      <Col span={RIGHT}><span className="withdraw-addr">{record.feeRate}</span></Col>
+                    </Row>
+                  </div>
+                </div>:<div />
             }
           </div>
           <div className="withdraw-bg">
@@ -107,7 +115,7 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              amount && 
+              amount &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.entrustedAmount')}</span></Col>

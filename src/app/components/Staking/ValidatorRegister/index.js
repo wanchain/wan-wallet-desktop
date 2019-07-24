@@ -53,17 +53,17 @@ class ValidatorRegister extends Component {
 
   onChangePosAddrSelect = value => {
     this.setState(() => {
-      let balance = value ?  this.getValueByAddrInfoArgs(value, 'balance') : 0;
+      let balance = value ? this.getValueByAddrInfoArgs(value, 'balance') : 0;
       return { balance }
     })
   }
 
   checkPublicKey = (rule, value, callback) => {
-    if(value === undefined) {
+    if (value === undefined) {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
     }
-    if(value.startsWith('0x') && [130, 132].includes(value.length)) {
+    if (value.startsWith('0x') && [130, 132].includes(value.length)) {
       callback();
     } else {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
@@ -119,8 +119,8 @@ class ValidatorRegister extends Component {
   onSend = async () => {
     let { form } = this.props;
     let to = form.getFieldValue('to'),
-        from = form.getFieldValue('myAddr'),
-        amount = form.getFieldValue('amount');
+      from = form.getFieldValue('myAddr'),
+      amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? eval(`WALLET_ID_${from.split(':')[0].toUpperCase()}`) : WALLET_ID_NATIVE;
     let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
@@ -186,14 +186,14 @@ class ValidatorRegister extends Component {
   }
 
   onSliderChange = value => {
-    this.setState({locktime: value})
+    this.setState({ locktime: value })
   }
 
   render() {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
-    let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount:true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
+    let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount: true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
 
     return (
       <div className="stakein">
@@ -206,7 +206,7 @@ class ValidatorRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             <CommonFormItem form={form} formName='publicKey1'
-              options={{rules: [{ required: true, validator: this.checkPublicKey }]}}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('ValidatorRegister.publicKey1')}
               placeholder={intl.get('ValidatorRegister.enterSecPk')}
@@ -220,15 +220,15 @@ class ValidatorRegister extends Component {
             <div className="validator-line">
               <Row type="flex" justify="space-around" align="top">
                 <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={12}>
+                <Col span={13}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { initialValue: MINDAYS, rules: [{ required: true }] })
-                        (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange}/>)}
+                        (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4}><span className="locktime-span">{this.state.locktime} days</span></Col>
+                <Col span={3}><span className="locktime-span">{this.state.locktime} {intl.get('days')}</span></Col>
               </Row>
             </div>
             <div className="validator-line">
@@ -247,12 +247,20 @@ class ValidatorRegister extends Component {
               </Row>
             </div>
             {
-              this.state.isAgency && 
-              <CommonFormItem form={form} formName='feeRate'
-                options={{ rules: [{ required: true, validator: checkFeeRate }] }}
-                title={intl.get('ValidatorRegister.feeRate')}
-                placeholder={intl.get('ValidatorRegister.feeRateLimit')}
-              />
+              this.state.isAgency ?
+                <div>
+                  <CommonFormItem form={form} formName='maxFeeRate'
+                    options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                    title={intl.get('ValidatorRegister.maxFeeRate')}
+                    placeholder={intl.get('ValidatorRegister.feeRateLimit')}
+                  />
+                  <CommonFormItem form={form} formName='feeRate'
+                    options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                    title={intl.get('ValidatorRegister.feeRate')}
+                    placeholder={intl.get('ValidatorRegister.feeRateLimit')}
+                  />
+                </div> : <div />
+
             }
           </div>
           <div className="validator-bg">
@@ -270,10 +278,10 @@ class ValidatorRegister extends Component {
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.entrustedAmount')}
             />
-            { settings.reinput_pwd && <PwdForm form={form}/> }
+            {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { acceptDelegation: this.state.isAgency })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        {this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { acceptDelegation: this.state.isAgency })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }

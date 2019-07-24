@@ -372,7 +372,7 @@ class ValidatorUpdate extends Component {
             <div className="validator-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={left}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                <Col span={right - 4}>
+                <Col span={right - 3}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { rules: [{ required: true, validator: this.checkLockTime }] })
@@ -380,7 +380,7 @@ class ValidatorUpdate extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4} align="left"><span className="locktime-span">{this.state.locktime} days</span></Col>
+                <Col span={3} align="right"><span className="locktime-span">{this.state.locktime} {intl.get('days')}</span></Col>
 
               </Row>
             </div>

@@ -220,7 +220,7 @@ class ModifyForm extends Component {
                 <div className="validator-line">
                   <Row type="flex" justify="space-around" align="top">
                     <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                    <Col span={12}>
+                    <Col span={13}>
                       <Form layout="inline">
                         <Form.Item>
                           {getFieldDecorator('lockTime', { initialValue: record.lockTime, rules: [{ required: true }] })
@@ -228,7 +228,7 @@ class ModifyForm extends Component {
                         </Form.Item>
                       </Form>
                     </Col>
-                    <Col span={4}><span className="locktime-span">{getFieldValue('lockTime')} days</span></Col>
+                    <Col span={3}><span className="locktime-span">{getFieldValue('lockTime')} {intl.get('days')}</span></Col>
                   </Row>
                 </div>
               </React.Fragment>
