@@ -124,6 +124,7 @@ class ValidatorRegister extends Component {
       amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? eval(`WALLET_ID_${from.split(':')[0].toUpperCase()}`) : WALLET_ID_NATIVE;
+    let maxFeeRate = form.getFieldValue('maxFeeRate') === undefined ? 100 : form.getFieldValue('maxFeeRate');
     let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
 
     let tx = {
@@ -134,6 +135,7 @@ class ValidatorRegister extends Component {
       secpub: form.getFieldValue('publicKey1'),
       g1pub: form.getFieldValue('publicKey2'),
       lockTime: form.getFieldValue('lockTime'),
+      maxFeeRate: maxFeeRate * 100,
       feeRate: feeRate * 100,
     }
     if (WALLET_ID_TREZOR === walletID) {

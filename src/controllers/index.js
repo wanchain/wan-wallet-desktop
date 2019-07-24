@@ -728,6 +728,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.gasLimit = 200000;
                 tx.minerAddr = address;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                logger.info('Register validator:' + JSON.stringify(tx));
                 ret = await global.crossInvoker.PosMinerRegister(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
