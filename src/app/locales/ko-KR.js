@@ -304,7 +304,7 @@ const ko_KR = {
     'ValidatorRegister.enterSecPk': 'Enter public key 1',
     'ValidatorRegister.publicKey2': 'Public Key 2',
     'ValidatorRegister.enterG1Pk': 'Enter public key 2',
-    'ValidatorRegister.publicKeyIsWrong': 'Public Key is Wrong',
+    'ValidatorRegister.publicKeyIsWrong': 'Invalid public key',
     'ValidatorRegister.lockTime': 'Lock Period',
     'ValidatorRegister.currentLockTime': 'Current Lock Period',
     'ValidatorRegister.nextLockTime': 'Next Lock Period',

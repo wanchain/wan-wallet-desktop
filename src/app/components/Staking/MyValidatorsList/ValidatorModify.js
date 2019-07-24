@@ -148,7 +148,7 @@ class ModifyForm extends Component {
     this.setState({ confirmVisible: false });
   }
 
-  checkFeeRate = (rule, value, callback) => {
+  checkMaxFeeRate = (rule, value, callback) => {
     let { feeRate, maxFeeRate } = this.props.record;
     try {
       if(!isNumber(value)) {
@@ -245,7 +245,7 @@ class ModifyForm extends Component {
                   title={intl.get('ValidatorRegister.currentFeeRate')}
                 />
                 <CommonFormItem form={form} formName='feeRate'
-                  options={{ initialValue: record.feeRate, rules: [{ required: true, validator: this.checkFeeRate }] }}
+                  options={{ initialValue: record.feeRate, rules: [{ required: true, validator: this.checkMaxFeeRate }] }}
                   title={intl.get('ValidatorRegister.feeRate')}
                   placeholder={intl.get('ValidatorRegister.feeRateLimit')}
                 />

@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, checkFeeRate } from 'utils/helper';
+import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate } from 'utils/helper';
+import { isNumber } from 'utils/support';
 import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'antd';
 
 import './index.less';
@@ -29,8 +30,8 @@ class ValidatorRegister extends Component {
   state = {
     balance: 0,
     confirmVisible: false,
-    locktime: MINDAYS,
-    isAgency: false,
+    lockTime: MINDAYS,
+    isAgency: true,
     initAmount: 10000
   };
 
@@ -150,6 +151,19 @@ class ValidatorRegister extends Component {
     }
   }
 
+  checkFeeRate = (rule, value, callback) => {
+    let { form } = this.props;
+    let maxFee = form.getFieldValue('maxFeeRate') || 0;
+    try {
+      if (!isNumber(value) || Number(value) > Number(maxFee)) {
+        callback(intl.get('NormalTransForm.invalidFeeRate'));
+      }
+      checkMaxFeeRate(rule, value, callback);
+    } catch (err) {
+      callback(intl.get('NormalTransForm.invalidFeeRate'));
+    }
+  }
+
   trezorDelegateIn = async (path, from, validator, value) => {
     console.log('trezorDelegateIn:', path, from, validator, value);
   }
@@ -186,13 +200,13 @@ class ValidatorRegister extends Component {
   }
 
   onSliderChange = value => {
-    this.setState({ locktime: value })
+    this.setState({ lockTime: value })
   }
 
   render() {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
-    let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'feeRate', 'myAddr', 'amount']);
+    let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'maxFeeRate', 'feeRate', 'myAddr', 'amount']);
     let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount: true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
 
     return (
@@ -228,7 +242,7 @@ class ValidatorRegister extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={3}><span className="locktime-span">{this.state.locktime} {intl.get('days')}</span></Col>
+                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('days')}</span></Col>
               </Row>
             </div>
             <div className="validator-line">
@@ -250,12 +264,12 @@ class ValidatorRegister extends Component {
               this.state.isAgency ?
                 <div>
                   <CommonFormItem form={form} formName='maxFeeRate'
-                    options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                    options={{ rules: [{ required: true, validator: checkMaxFeeRate }] }}
                     title={intl.get('ValidatorRegister.maxFeeRate')}
                     placeholder={intl.get('ValidatorRegister.feeRateLimit')}
                   />
                   <CommonFormItem form={form} formName='feeRate'
-                    options={{ rules: [{ required: true, validator: checkFeeRate }] }}
+                    options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
                     title={intl.get('ValidatorRegister.feeRate')}
                     placeholder={intl.get('ValidatorRegister.feeRateLimit')}
                   />

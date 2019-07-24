@@ -6,27 +6,27 @@ import { fromWei, isNumber } from 'utils/support';
 const WAN = "m/44'/5718350'/0'/0/";
 let emitterHandlers = {};
 
-export const checkFeeRate = function(rule, value, callback) {
+export const checkMaxFeeRate = function (rule, value, callback) {
   try {
-    if(!isNumber(value)) {
+    if (!isNumber(value)) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
       return;
     }
-    if(value < 0 || value >= 100) {
+    if (value < 0 || value >= 100) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
       return;
     }
-    if(value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
+    if (value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
       return;
     }
     callback();
-  } catch(err) {
+  } catch (err) {
     callback(intl.get('NormalTransForm.invalidFeeRate'));
   }
 }
 
-export const wanPubKey2Address = function(pubKey) {
+export const wanPubKey2Address = function (pubKey) {
   let key = Buffer.from(pubKey.toLowerCase().replace('0x', '').substring(2), 'hex');
   let address = keccak('keccak256').update(key).digest().slice(-20).toString('hex');
   return '0x' + address;
@@ -52,30 +52,30 @@ export const getBalance = function (arr) {
 };
 
 export const getValueByAddrInfo = function (value, type, addrInfo) {
-  if(value.indexOf(':') !== -1) {
+  if (value.indexOf(':') !== -1) {
     let addrArr = value.split(':');
     let addrType = addrArr[0].toLowerCase();
     let addr = addrArr[1].trimStart();
     return addrInfo[addrType][addr] && addrInfo[addrType][addr][type];
   } else {
-    if(addrInfo['normal'][value]) {
-      switch(type) {
+    if (addrInfo['normal'][value]) {
+      switch (type) {
         case 'path':
           return `${WAN}${addrInfo['normal'][value][type]}`
         default:
           return addrInfo['normal'][value][type]
-      } 
+      }
     } else {
       return undefined
     }
   }
 }
 
-export const getInfoByAddress = function(address, infos, addrInfo) {
+export const getInfoByAddress = function (address, infos, addrInfo) {
   let value;
   Object.keys(addrInfo).forEach(type => {
     let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address);
-    if(index !== -1) {
+    if (index !== -1) {
       let addr = Object.keys(addrInfo[type])[index];
       value = { type, addr }
       infos.forEach(item => value[item] = addrInfo[type][addr][item]);
@@ -184,11 +184,11 @@ export const isSdkReady = function () {
 
 export const checkAddrType = function (addr, addrInfo) {
   let type = false;
-  if(typeof addr === 'string') {
+  if (typeof addr === 'string') {
     addr = addr.startsWith('0x') ? addr : `0x${addr}`.toLowerCase();
     Object.keys(addrInfo).forEach(item => {
       let has = Object.keys(addrInfo[item]).find(val => val.toLowerCase() === addr.toLowerCase());
-      if(has) {
+      if (has) {
         type = item;
         return type;
       }
@@ -200,13 +200,13 @@ export const checkAddrType = function (addr, addrInfo) {
 export const hasSameName = function (type, record, addrInfo) {
   let tmp;
   let bool = false;
-  if(type === 'normal') {
+  if (type === 'normal') {
     tmp = Object.assign({}, addrInfo[type], addrInfo['import']);
   } else {
     tmp = Object.assign({}, addrInfo[type]);
   }
   Object.values(tmp).forEach(item => {
-    if(item.name === record.name && item.address !== record.address) {
+    if (item.name === record.name && item.address !== record.address) {
       bool = true;
     }
   })
@@ -220,7 +220,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
     tmp = Object.assign(tmp, addrInfo[item])
   })
   Object.values(tmp).forEach(item => {
-    if(item.address === addr) {
+    if (item.address === addr) {
       balance = item.balance;
       return;
     }
@@ -229,7 +229,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
 }
 
 export const checkAmountUnit = function (decimals, amount) {
-  if(!Number.isInteger(decimals)) {
+  if (!Number.isInteger(decimals)) {
     throw new Error('Decimals must be a integer');
   }
   let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
@@ -238,19 +238,19 @@ export const checkAmountUnit = function (decimals, amount) {
 
 export const formatAmount = function (amount) {
   let amountStr = amount.toString();
-  if(amountStr.indexOf('.') === 0) {
+  if (amountStr.indexOf('.') === 0) {
     amount = new BigNumber(`0${amount}`);
   }
-  if(amountStr.indexOf('.') === amountStr.length - 1) {
+  if (amountStr.indexOf('.') === amountStr.length - 1) {
     amount = new BigNumber(`${amount}0`);
   }
-  
+
   return amount.toString();
 }
 
 export const getAddrByTypes = function (addrInfo, types) {
   let addrs = [];
-  if(types) {
+  if (types) {
     types.forEach(type => {
       addrs.push(Object.keys(addrInfo[type]));
     })
@@ -290,7 +290,7 @@ export const getContractAddr = function () {
 
 export const getContractData = function (func, validatorAddr) {
   return new Promise((resolve, reject) => {
-    wand.request('staking_getContractData', {func, validatorAddr}, (err, val) => {
+    wand.request('staking_getContractData', { func, validatorAddr }, (err, val) => {
       if (err) {
         return reject('staking_getContractData failed', err);
       } else {
