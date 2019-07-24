@@ -325,6 +325,7 @@ const zh_CN = {
     'ValidatorRegister.stakeTooLow': '最低金额是10000WAN',
     'ValidatorRegister.historyTitle': '历史记录',
     'TransHistory.StakeIn': '质押',
+    'TransHistory.StakeRegister': '质押',
     'TransHistory.StakeUpdate': '更新锁定周期',
     'TransHistory.StakeAppend': '追加资金',
     'TransHistory.StakeUpdateFeeRate': '更新费率',

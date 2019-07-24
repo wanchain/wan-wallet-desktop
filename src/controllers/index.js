@@ -721,7 +721,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
         case 'registerValidator':
             try {
                 let { tx } = payload;
-                let key = Buffer.from(tx.secpub.toLowerCase().replace('0x', '').substring(2), 'hex');
+                let key = Buffer.from(tx.secPk.toLowerCase().replace('0x', '').substring(2), 'hex');
                 let address = '0x' + keccak('keccak256').update(key).digest().slice(-20).toString('hex');
                 let gasPrice = await ccUtil.getGasPrice('wan');
 
@@ -729,7 +729,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 tx.minerAddr = address;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
                 logger.info('Register validator:' + JSON.stringify(tx));
-                ret = await global.crossInvoker.PosMinerRegister(tx);
+                ret = await global.crossInvoker.PosStakeRegister(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

@@ -322,6 +322,7 @@ const en_US = {
     'ValidatorRegister.stakeTooLow': 'Minimum amount should be 10000 WAN',
     'ValidatorRegister.historyTitle': 'Validator History',
     'TransHistory.StakeIn': 'Stake In',
+    'TransHistory.StakeRegister': 'Stake In',
     'TransHistory.StakeUpdate': 'Lock Period Update',
     'TransHistory.StakeAppend': 'Stake Append',
     'TransHistory.StakeUpdateFeeRate': 'Fee Rate Update',

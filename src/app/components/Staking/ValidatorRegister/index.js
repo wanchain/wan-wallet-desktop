@@ -132,9 +132,9 @@ class ValidatorRegister extends Component {
       amount: amount.toString(),
       BIP44Path: path,
       walletID: walletID,
-      secpub: form.getFieldValue('publicKey1'),
-      g1pub: form.getFieldValue('publicKey2'),
-      lockTime: form.getFieldValue('lockTime'),
+      secPk: form.getFieldValue('publicKey1'),
+      bn256Pk: form.getFieldValue('publicKey2'),
+      lockEpoch: (form.getFieldValue('lockTime') * 24 * 3600)/(global.slotCount * global.slotTime),
       maxFeeRate: maxFeeRate * 100,
       feeRate: feeRate * 100,
     }

@@ -12,4 +12,4 @@ export const TESTNET = 'http://testnet.wanscan.org';
 
 export const WANPATH = "m/44'/5718350'/0'/0/";
 
-export const STAKEACT = ['StakeIn', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
+export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];

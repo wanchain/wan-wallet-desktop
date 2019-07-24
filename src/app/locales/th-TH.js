@@ -324,6 +324,7 @@ const th_TH = {
     'ValidatorRegister.stakeTooLow': 'จำนวนจะต้องไม่ต่ำกว่า 10,000 WAN',
     'ValidatorRegister.historyTitle': 'ประวัติของ Validator',
     'TransHistory.StakeIn': 'ทำการ Stake',
+    'TransHistory.StakeRegister': 'ทำการ Stake',
     'TransHistory.StakeUpdate': 'อัพเดทระยะเวลาที่ล็อค',
     'TransHistory.StakeAppend': 'เพิ่ม Stake',
     'TransHistory.StakeUpdateFeeRate': 'อัพเดทค่าธรรมเนียม',
