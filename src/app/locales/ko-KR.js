@@ -295,7 +295,7 @@ const ko_KR = {
     'ValidatorRegister.myPrincipal': 'My Stake',
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
     'ValidatorRegister.topup': 'Validator Top-up',
-    'ValidatorRegister.warning': 'Warning',
+    'ValidatorRegister.warning': 'Warning: Validators which accept delegation should have at least 50,000 WAN stake',
     'ValidatorRegister.verifyModification': 'Validator Modification',
     'ValidatorRegister.exit': 'Validator Exit',
     'ValidatorRegister.verifyRegistration': 'Validator Registration',

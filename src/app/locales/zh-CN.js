@@ -298,7 +298,7 @@ const zh_CN = {
     'ValidatorRegister.myEntrusted': '接受的委托',
 
     'ValidatorRegister.topup': '充值',
-    'ValidatorRegister.warning': '告警',
+    'ValidatorRegister.warning': '警告: 接受委托的验证人至少要质押 50,000 WAN',
     'ValidatorRegister.verifyModification': '修改验证人参数',
     'ValidatorRegister.exit': '验证人退出',
     'ValidatorRegister.verifyRegistration': '验证人注册',

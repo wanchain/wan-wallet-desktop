@@ -32,7 +32,7 @@ class ValidatorRegister extends Component {
     confirmVisible: false,
     lockTime: MINDAYS,
     isAgency: true,
-    initAmount: 10000
+    initAmount: 50000
   };
 
   componentWillUnmount() {

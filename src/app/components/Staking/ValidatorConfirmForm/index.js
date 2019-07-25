@@ -28,13 +28,12 @@ class ValidatorConfirmForm extends Component {
             <Button key="submit" type="primary" onClick={onSend}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
         >
-          {
-            new BigNumber(record.amount).lt(50000) && publicKey1 &&
+          {/* Show warning when validator accepts delegations, but stake-in amount is less than 50,000 WAN */
+            new BigNumber(record.amount).lt(50000) && publicKey1 && feeRate &&
             <Alert
               message={intl.get('ValidatorRegister.warning')}
               type="warning"
               closable
-              showIcon
               className="alert-text"
             />
           }

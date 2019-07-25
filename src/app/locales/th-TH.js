@@ -297,7 +297,7 @@ const th_TH = {
     'ValidatorRegister.myEntrusted': 'จำนวน Stake ของ Delegation',
 
     'ValidatorRegister.topup': 'เพิ่ม Stake ให้กับ Validator',
-    'ValidatorRegister.warning': 'ระวัง',
+    'ValidatorRegister.warning': 'Warning: Validators which accept delegation should have at least 50,000 WAN stake',
     'ValidatorRegister.verifyModification': 'แก้ไขค่าของ Validator',
     'ValidatorRegister.exit': 'ยกเลิกการเป็น Validator',
     'ValidatorRegister.verifyRegistration': 'ลงทะเบียน Validator',
