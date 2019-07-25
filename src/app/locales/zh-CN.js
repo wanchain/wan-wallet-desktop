@@ -332,6 +332,7 @@ const zh_CN = {
     'ValidatorRegister.modifyTypeTitle': '修改参数',
     'ValidatorRegister.invalidType':  '参数不合法',
     'ValidatorRegister.selectType': '选择参数',
+    'ValidatorRegister.modifyFeeRateWarning': '不能在同一个EpochID内修改两次以上的费率',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

@@ -331,6 +331,7 @@ const th_TH = {
     'ValidatorRegister.modifyTypeTitle': 'แก้ไขพารามิเตอร์',
     'ValidatorRegister.invalidType':  'พารามิเตอร์ไม่ถูกต้อง',
     'ValidatorRegister.selectType': 'กรุณาเลือกพารามิเตอร์',
+    'ValidatorRegister.modifyFeeRateWarning': 'Can not change the feeRate twice in the same EpochID!',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',

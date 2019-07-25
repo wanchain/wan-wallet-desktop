@@ -110,7 +110,7 @@ class ModifyForm extends Component {
             message.warn(err.message);
           } else {
             if(ret.epochId === record.feeRateChangedEpoch) {
-              message.warn('不能在同一个EpochId里修改两次')
+              message.warn(intl.get('ValidatorRegister.modifyFeeRateWarning'))
               return;
             }
             wand.request('staking_PosStakeUpdateFeeRate', { tx }, (err, ret) => {

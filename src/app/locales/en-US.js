@@ -329,6 +329,7 @@ const en_US = {
     'ValidatorRegister.modifyTypeTitle': 'Modified Parameter',
     'ValidatorRegister.invalidType':  'Invalid parameter',
     'ValidatorRegister.selectType': 'Select a parameter',
+    'ValidatorRegister.modifyFeeRateWarning': 'Can not change the feeRate twice in the same EpochID!',
 
     'popup.ok': 'Ok',
     'popup.cancel': 'Cancel',
