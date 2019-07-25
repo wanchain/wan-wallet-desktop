@@ -178,6 +178,7 @@ class ModifyForm extends Component {
     const { getFieldDecorator, getFieldValue } = form;
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate') };
     let title = modifyType === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
+    let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
 
     return (
       <div className="stakein">
@@ -198,7 +199,7 @@ class ModifyForm extends Component {
               <div className="validator-line">
                 <ValidatorModifySelect
                   form={form}
-                  types={[intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)]}
+                  types={selectTypes}
                   handleChange={this.onChangeModifyTypeSelect}
                   title={intl.get('ValidatorRegister.modifyTypeTitle')}
                   message={intl.get('ValidatorRegister.invalidType')}
