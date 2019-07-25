@@ -12,12 +12,10 @@ import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
-import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE } from 'utils/settings'
+import { MINDAYS, MAXDAYS, WALLETID } from 'utils/settings'
 
 const wanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
-const WALLET_ID_LEDGER = 0x02;
-const WALLET_ID_TREZOR = 0x03;
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -123,7 +121,7 @@ class ValidatorRegister extends Component {
       from = form.getFieldValue('myAddr'),
       amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
-    let walletID = from.indexOf(':') !== -1 ? eval(`WALLET_ID_${from.split(':')[0].toUpperCase()}`) : WALLET_ID_NATIVE;
+    let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
     let maxFeeRate = form.getFieldValue('maxFeeRate') === undefined ? 100 : form.getFieldValue('maxFeeRate');
     let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
 
@@ -138,7 +136,7 @@ class ValidatorRegister extends Component {
       maxFeeRate: maxFeeRate * 100,
       feeRate: feeRate * 100,
     }
-    if (WALLET_ID_TREZOR === walletID) {
+    if (WALLETID.TREZOR === walletID) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);

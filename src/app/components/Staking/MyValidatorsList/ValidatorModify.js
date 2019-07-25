@@ -9,10 +9,8 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorModifySelect from 'componentUtils/ValidatorModifySelect';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 import { isNumber } from 'utils/support';
-import { MINDAYS, MAXDAYS, WALLET_ID_NATIVE, WANPATH } from 'utils/settings'
+import { MINDAYS, MAXDAYS, WANPATH, WALLETID } from 'utils/settings'
 
-const WALLET_ID_LEDGER = 0x02;
-const WALLET_ID_TREZOR = 0x03;
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 const modifyTypes = {
   lockTime: 'ValidatorRegister.lockTime',
@@ -68,7 +66,7 @@ class ModifyForm extends Component {
   onSend = () => {
     let { form, record, addrInfo, modifyType } = this.props;
     let from = record.myAddress.addr, type = record.myAddress.type;
-    let walletID = type !== 'normal' ? eval(`WALLET_ID_${type.toUpperCase()}`) : WALLET_ID_NATIVE;
+    let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
     let tx ={
       from: from,
       amount: 0,
@@ -82,7 +80,7 @@ class ModifyForm extends Component {
         lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
       })
 
-      if (WALLET_ID_TREZOR === walletID) {
+      if (WALLETID.TREZOR === walletID) {
         // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
         // this.setState({ confirmVisible: false });
         // this.props.onSend(walletID);
@@ -102,7 +100,7 @@ class ModifyForm extends Component {
         feeRate: form.getFieldValue('feeRate') * 100,
       })
 
-      if (WALLET_ID_TREZOR === walletID) {
+      if (WALLETID.TREZOR === walletID) {
         // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
         // this.setState({ confirmVisible: false });
         // this.props.onSend(walletID);

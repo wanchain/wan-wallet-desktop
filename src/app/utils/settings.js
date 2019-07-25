@@ -1,6 +1,9 @@
-export const WALLET_ID_NATIVE = 0x01;
-export const WALLET_ID_LEDGER = 0x02;
-export const WALLET_ID_TREZOR = 0x03;
+
+export const WALLETID ={
+  NATIVE: 0x01,
+  LEDGER: 0x02,
+  TREZOR: 0x03,
+}
 
 export const MINDAYS = 7;
 export const MAXDAYS = 90;
