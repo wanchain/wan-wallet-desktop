@@ -93,6 +93,9 @@ class Staking {
   @computed get stakingList() {
     let validators = []
     this.stakeList.forEach((item, index) => {
+      if(item.myStake.bottom !== "0") {
+        item.myStake.bottom = daysAgo(item.myStake.bottom);
+      }
       validators.push({
         myAccount: item.myAccount,
         accountAddress: item.accountAddress,

@@ -617,10 +617,11 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
                 });
 
-                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan')].concat(stakeInfoArray).concat(DelegateIncentiveArray);
+                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan'), ccUtil.getDelegatorSupStakeInfo('wan', accounts.map(val=>val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
+
                 logger.info('Get PoS info: epochId ' + epochID);
 
                 if (stakeInfo.length > 0) {
@@ -642,7 +643,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 ret = { base: {}, list: [] }
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
-                ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base);
+                ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base, retArray[2]);
 
                 ret.stakeInfo = stakeInfo;
             } catch (e) {
@@ -1013,7 +1014,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
     return base;
 }
 
-async function buildStakingList(delegateInfo, incentive, epochID, base) {
+async function buildStakingList(delegateInfo, incentive, epochID, base, delegatorSupStakeInfo) {
     let list = [];
 
     for (let i = 0; i < delegateInfo.length; i++) {
@@ -1072,20 +1073,22 @@ async function buildStakingList(delegateInfo, incentive, epochID, base) {
         if (epochs.length > 0) {
             epochs.sort((a, b) => { return a - b })
             let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
-            list[i].myStake.bottom = days.toFixed(0);
-
             if (days > longestDays) {
                 longestDays = days;
             }
-        } else {
-            list[i].myStake.bottom = "0";
         }
-
         list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (epochs.length) };
-
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
+
+        delegatorSupStakeInfo.forEach(item => {
+          let index = list.findIndex(val => val.accountAddress === item.address);
+          if (index !== -1) {
+            list[index].myStake.bottom = item.delegateInTimestamp;
+          }
+        })
+
     }
 
     return list;
