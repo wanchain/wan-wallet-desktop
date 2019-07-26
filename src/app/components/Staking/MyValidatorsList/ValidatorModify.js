@@ -284,7 +284,7 @@ class ValidatorModify extends Component {
 
   handleSend = walletID => {
     this.setState({ visible: false });
-    if (walletID === 2) {
+    if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
   }
