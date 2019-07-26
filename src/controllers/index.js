@@ -1082,7 +1082,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
         delegatorSupStakeInfo.forEach(item => {
-          let index = list.findIndex(val => val.accountAddress.toLowerCase() === item.address);
+          let index = list.findIndex(val => val.accountAddress.toLowerCase() === item.address && val.validatorAddress === item.vAddress);
           if (index !== -1) {
             list[index].myStake.bottom = item.delegateInTimestamp;
           }
