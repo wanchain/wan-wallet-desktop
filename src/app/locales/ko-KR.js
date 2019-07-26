@@ -329,7 +329,7 @@ const ko_KR = {
     'ValidatorRegister.modifyTypeTitle': 'Modified Parameter',
     'ValidatorRegister.invalidType':  'Invalid parameter',
     'ValidatorRegister.selectType': 'Select a parameter',
-    'ValidatorRegister.modifyFeeRateWarning': 'Can not change the feeRate twice in the same EpochID!',
+    'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
 
 
     'popup.ok': '확인',
