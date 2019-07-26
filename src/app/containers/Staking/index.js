@@ -72,7 +72,9 @@ class Staking extends Component {
             </Col>
             <Col span={12} className="col-right">
               <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
-              <DelegateInForm visible={this.state.delegateInFormVisible} onCancel={this.handleStateToggle} onSend={this.handleSend} />
+              {this.state.delegateInFormVisible &&
+                <DelegateInForm onCancel={this.handleStateToggle} onSend={this.handleSend} />
+              }
             </Col>
           </div>
         </Row>

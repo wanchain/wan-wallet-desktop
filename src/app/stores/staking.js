@@ -232,13 +232,13 @@ class Staking {
           totalStake += Number(fromWei(client.amount));
         }
       }
-
       validators.push({
         name: this.validatorList[i].name ? this.validatorList[i].name : this.validatorList[i].address,
         address: this.validatorList[i].address,
         icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : ('data:image/png;base64,' + new Identicon(this.validatorList[i].address).toString()),
         key: this.validatorList[i],
         quota: quota,
+        maxFeeRate: (Number(this.validatorList[i].maxFeeRate)/100.0).toFixed(2),
         feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),
         totalStake: totalStake
       })
