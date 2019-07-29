@@ -30,6 +30,7 @@ class ModifyForm extends Component {
     this.state = {
       selectType: '',
       confirmVisible: false,
+      confirmLoading: false,
       lockTime: this.props.record.lockTime,
       showConfirmItem: {},
     }
@@ -64,6 +65,9 @@ class ModifyForm extends Component {
   }
 
   onSend = () => {
+    this.setState({
+      confirmLoading: true
+    })
     let { form, record, addrInfo, modifyType } = this.props;
     let from = record.myAddress.addr, type = record.myAddress.type;
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
@@ -74,6 +78,10 @@ class ModifyForm extends Component {
       walletID: walletID,
       minerAddr: record.validator.address
     };
+
+    if (walletID === WALLETID.LEDGER) {
+      message.info(intl.get('Ledger.signTransactionInLedger'));
+    }
 
     if(modifyType === 'exit' || this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString()) {
       Object.assign(tx, {
@@ -91,7 +99,8 @@ class ModifyForm extends Component {
           } else {
             console.log('delegateIn ret:', ret);
           }
-          this.props.onSend(walletID);
+          this.setState({ confirmVisible: false, confirmLoading: false });
+          this.props.onSend();
         });
       }
     }
@@ -119,7 +128,8 @@ class ModifyForm extends Component {
               } else {
                 console.log('PosStakeUpdateFeeRate ret:', ret);
               }
-              this.props.onSend(walletID);
+              this.setState({ confirmVisible: false, confirmLoading: false });
+              this.props.onSend();
             });
           }
         })
@@ -143,7 +153,7 @@ class ModifyForm extends Component {
   }
 
   onConfirmCancel = () => {
-    this.setState({ confirmVisible: false });
+    this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
   checkMaxFeeRate = (rule, value, callback) => {
@@ -174,7 +184,7 @@ class ModifyForm extends Component {
   render() {
     const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
-    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate') };
+    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate'), maxFeeRate:getFieldValue('maxFeeRate') };
     let title = modifyType === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
     let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
 
@@ -266,7 +276,7 @@ class ModifyForm extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm showConfirmItem={this.state.showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={this.state.showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
@@ -282,11 +292,8 @@ class ValidatorModify extends Component {
     this.setState(state => ({ visible: !state.visible }));
   }
 
-  handleSend = walletID => {
+  handleSend = () => {
     this.setState({ visible: false });
-    if (walletID === WALLETID.LEDGER) {
-      message.info(intl.get('Ledger.signTransactionInLedger'));
-    }
   }
 
   render() {

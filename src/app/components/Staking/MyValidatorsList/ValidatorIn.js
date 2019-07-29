@@ -22,6 +22,7 @@ const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmFo
 class InForm extends Component {
   state = {
     confirmVisible: false,
+    confirmLoading: false,
   };
 
   componentWillUnmount() {
@@ -73,6 +74,9 @@ class InForm extends Component {
   }
 
   onSend = () => {
+    this.setState({
+      confirmLoading: true
+    })
     let { form, record, addrInfo } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
@@ -93,6 +97,9 @@ class InForm extends Component {
       // this.setState({ confirmVisible: false });
       // this.props.onSend(walletID);
     } else {
+      if(walletID === WALLETID.LEDGER) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('staking_validatorAppend', { tx }, (err, ret) => {
         if (err) {
           message.warn(err.message);
@@ -100,13 +107,13 @@ class InForm extends Component {
           console.log('delegateIn ret:', ret);
         }
         this.setState({ confirmVisible: false });
-        this.props.onSend(walletID);
+        this.props.onSend();
       });
     }
   }
 
   onConfirmCancel = () => {
-    this.setState({ confirmVisible: false });
+    this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
   render() {
@@ -149,7 +156,7 @@ class InForm extends Component {
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        { this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }
@@ -165,11 +172,8 @@ class ValidatorIn extends Component {
     this.setState(state => ({ visible: !state.visible }));
   }
 
-  handleSend = walletID => {
+  handleSend = () => {
     this.setState({ visible: false });
-    if(walletID === WALLETID.LEDGER) {
-      message.info(intl.get('Ledger.signTransactionInLedger'))
-    }
   }
 
   render() {

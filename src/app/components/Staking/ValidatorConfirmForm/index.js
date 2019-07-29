@@ -17,7 +17,7 @@ const RIGHT = 16;
 @observer
 class ValidatorConfirmForm extends Component {
   render() {
-    const { onCancel, record, onSend, title, showConfirmItem } = this.props;
+    const { onCancel, record, onSend, title, showConfirmItem, confirmLoading } = this.props;
     const { publicKey1, publicKey2, validatorAccount, lockTime, feeRate, myAddr, amount, acceptDelegation } = showConfirmItem;
 
     return (
@@ -25,7 +25,7 @@ class ValidatorConfirmForm extends Component {
         <Modal visible destroyOnClose={true} closable={false} title={title} onCancel={onCancel} className="withdraw-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={onSend}>{intl.get('SendNormalTrans.send')}</Button>,
+            <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
         >
           {/* Show warning when validator accepts delegations, but stake-in amount is less than 50,000 WAN */

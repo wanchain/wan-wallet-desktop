@@ -30,7 +30,8 @@ class ValidatorRegister extends Component {
     confirmVisible: false,
     lockTime: MINDAYS,
     isAgency: true,
-    initAmount: 50000
+    initAmount: 50000,
+    confirmLoading: false,
   };
 
   componentWillUnmount() {
@@ -112,10 +113,13 @@ class ValidatorRegister extends Component {
   }
 
   onConfirmCancel = () => {
-    this.setState({ confirmVisible: false });
+    this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
   onSend = async () => {
+    this.setState({
+      confirmLoading: true
+    })
     let { form } = this.props;
     let to = form.getFieldValue('to'),
       from = form.getFieldValue('myAddr'),
@@ -136,6 +140,9 @@ class ValidatorRegister extends Component {
       maxFeeRate: maxFeeRate * 100,
       feeRate: feeRate * 100,
     }
+    if (walletID === WALLETID.LEDGER) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
+    }
     if (WALLETID.TREZOR === walletID) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       this.setState({ confirmVisible: false });
@@ -145,8 +152,8 @@ class ValidatorRegister extends Component {
         if (err) {
           message.warn(err.message);
         }
-        this.setState({ confirmVisible: false });
-        this.props.onSend(walletID);
+        this.setState({ confirmVisible: false, confirmLoading: false  });
+        this.props.onSend();
       });
     }
   }
@@ -295,7 +302,7 @@ class ValidatorRegister extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { acceptDelegation: this.state.isAgency })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { acceptDelegation: this.state.isAgency })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }

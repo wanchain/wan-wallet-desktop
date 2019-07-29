@@ -18,6 +18,10 @@ class Login extends Component {
     visible: false
   }
 
+  componentDidMount() {
+    document.querySelector('.ant-input').focus();
+  }
+
   login = () => {
     const pwd = this.state.pwd;
     wand.request('wallet_lock', () => {

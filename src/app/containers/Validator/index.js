@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Row, Col, message, Form } from 'antd';
+import { Button, Row, Col, Form } from 'antd';
 
 import MyValidatorsList from 'components/Staking/MyValidatorsList';
 import ValidatorCards from 'components/Staking/Cards/validatorCards';
@@ -50,13 +50,6 @@ class Validator extends Component {
     this.setState(state => ({ validatorRegister: !state.validatorRegister }));
   }
 
-  handleSend = walletID => {
-    if (walletID === 2) {
-      message.info(intl.get('Ledger.signTransactionInLedger'))
-    }
-    this.handleStateToggle();
-  }
-
   render() {
     return (
       <div className="staking">
@@ -70,7 +63,7 @@ class Validator extends Component {
             </Col>
             <Col span={12} className="col-right">
               <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('ValidatorNode.registerValidatorNode')}</Button>
-              { this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleSend} /> }
+              { this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} /> }
             </Col>
           </div>
         </Row>
