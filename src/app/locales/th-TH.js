@@ -160,7 +160,7 @@ const th_TH = {
     'NormalTransForm.estimateGasFailed': 'ค่าแก๊สไม่เพียงพอต่อการดำเนินการ กรุณาลองใหม่อีกครั้ง',
     'NormalTransForm.invalidAddress': 'แอดเดรสไม่ถูกต้อง',
     'NormalTransForm.invalidAmount': 'จำนวนไม่ถูกต้อง',
-    'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
+    'NormalTransForm.invalidFeeRate': 'ค่าธรรมเนียมไม่ถูกต้อง',
     'NormalTransForm.transaction': 'การทำรายการ',
     'NormalTransForm.cancel': 'ยกเลิก',
     'NormalTransForm.next': 'ถัดไป',
@@ -185,7 +185,7 @@ const th_TH = {
 
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
-    'Rename.edit': 'Edit',
+    'Rename.edit': 'แก้ไข',
     
     'SendNormalTrans.send': 'ส่ง',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
@@ -331,7 +331,7 @@ const th_TH = {
     'ValidatorRegister.modifyTypeTitle': 'แก้ไขพารามิเตอร์',
     'ValidatorRegister.invalidType':  'พารามิเตอร์ไม่ถูกต้อง',
     'ValidatorRegister.selectType': 'กรุณาเลือกพารามิเตอร์',
-    'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
+    'ValidatorRegister.modifyFeeRateWarning': 'สามารถแก้ไขได้มากที่สุด 1 ครั้งต่อวัน',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
