@@ -34,6 +34,7 @@ class StakeInForm extends Component {
       balance: "0",
       addrList: [],
       confirmVisible: false,
+      confirmLoading: false,
       record: {
         validator: {},
         accountAddress: '',
@@ -288,10 +289,13 @@ class StakeInForm extends Component {
   }
 
   onConfirmCancel = () => {
-    this.setState({ confirmVisible: false });
+    this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
   onSend = async () => {
+    this.setState({
+      confirmLoading: true
+    });
     let { form } = this.props;
     let from = form.getFieldValue('from');
     let to = form.getFieldValue('to');
@@ -325,7 +329,9 @@ class StakeInForm extends Component {
       "walletID": walletID,
       "stakeAmount": (form.getFieldValue('amount') || 0).toString(),
     }
-
+    if (walletID === WALLETID.LEDGER) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
+    }
     if (walletID == WALLETID.TREZOR) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       this.props.onSend(walletID);
@@ -333,14 +339,13 @@ class StakeInForm extends Component {
       wand.request('staking_delegateIn', tx, (err, ret) => {
         if (err) {
           message.warn(err.message);
+        } else {
+          console.log('delegateIn ret:', ret);
         }
+        this.setState({ confirmVisible: false });
+        this.props.onSend();
       });
     }
-
-    this.setState({ confirmVisible: false });
-
-    this.props.onSend(walletID);
-
     this.props.updateStakeInfo();
     this.props.updateTransHistory();
   }
@@ -616,7 +621,9 @@ class StakeInForm extends Component {
           </div>
         </Modal>
         { this.state.confirmVisible &&
-          <Confirm visible={this.state.confirmVisible}
+          <Confirm
+            confirmLoading={this.state.confirmLoading}
+            visible={this.state.confirmVisible}
             onCancel={this.onConfirmCancel} onSend={this.onSend}
             record={this.state.record}
             title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}

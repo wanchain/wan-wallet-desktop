@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Form, message } from 'antd';
+import { Button, Form } from 'antd';
+
 import './index.less';
-import intl from 'react-intl-universal'
 import StakeInForm from '../StakeInForm';
+
 const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
 class DelegateIn extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      visible: false,
-    }
+  state = {
+    visible: false, 
   }
 
   showDialog = () => {
@@ -22,11 +19,8 @@ class DelegateIn extends Component {
     this.setState({ visible: false });
   }
 
-  handleSend = (walletID) => {
+  handleSend = () => {
     this.setState({ visible: false });
-    if(walletID == 2) {
-      message.info(intl.get('Ledger.signTransactionInLedger'))
-    }
   }
 
   render() {
@@ -34,9 +28,8 @@ class DelegateIn extends Component {
       <div>
         <Button className="modifyTopUpBtn" disabled={this.props.isPending} onClick={this.showDialog} />
         {
-          this.state.visible
-          ? <DelegateInForm disabled={true} visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} topUp={true} />
-          : ''
+          this.state.visible &&
+          <DelegateInForm disabled={true} visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} topUp={true} />
         }
       </div>
     );

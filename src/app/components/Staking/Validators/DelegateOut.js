@@ -1,16 +1,18 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import TrezorConnect from 'trezor-connect';
 import { Button, Form, message } from 'antd';
+import { observer, inject } from 'mobx-react';
+
+const pu = require('promisefy-util');
+const wanTx = require('wanchainjs-tx');
+
 import './index.less';
 import DelegateOutConfirmForm from '../DelegateOutConfirmForm';
-const DelegateOutForm = Form.create({ name: 'DelegateOutConfirmForm' })(DelegateOutConfirmForm);
-import { observer, inject } from 'mobx-react';
-import { BigNumber } from 'bignumber.js';
-import intl from 'react-intl-universal';
-const wanTx = require('wanchainjs-tx');
-import TrezorConnect from 'trezor-connect';
-const pu = require('promisefy-util')
-import { getNonce, getGasPrice, estimateGas, getChainId, getContractAddr, getContractData} from 'utils/helper';
 import { toWei } from 'utils/support.js';
+import { getNonce, getGasPrice, getContractAddr, getContractData} from 'utils/helper';
+
+const DelegateOutForm = Form.create({ name: 'DelegateOutConfirmForm' })(DelegateOutConfirmForm);
 
 @inject(stores => ({
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
@@ -21,13 +23,10 @@ import { toWei } from 'utils/support.js';
 
 @observer
 class DelegateOut extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      visible: false,
-      canExit: true,
-    }
+  state = {
+    visible: false,
+    canExit: true,
+    confirmLoading: false,
   }
 
   showDialog = () => {
@@ -40,11 +39,15 @@ class DelegateOut extends Component {
   handleCancel = () => {
     this.setState({ 
       visible: false,
-      canExit: true
+      canExit: true,
+      confirmLoading: false
     });
   }
 
   handleSend = async () => {
+    this.setState({
+      confirmLoading: true
+    });
     let from = this.props.record.accountAddress;
     const { ledgerAddrList, trezorAddrList } = this.props;
 
@@ -94,11 +97,9 @@ class DelegateOut extends Component {
         this.setState({ canExit: true });
       } else {
         console.log('delegateOut ret:', ret);
-        this.setState({ canExit: false });
+        this.setState({ canExit: false, confirmLoading: false, visible: false });
       }
     });
-
-    this.setState({ visible: false });
   }
 
 
@@ -204,13 +205,13 @@ class DelegateOut extends Component {
     return (
       <div>
         <Button className="modifyExititBtn" onClick={this.showDialog} disabled={this.props.isPending ? true : (!this.state.canExit)} />
-        {this.state.visible
-          ? <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
+        {this.state.visible &&
+           <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
+            confirmLoading={this.state.confirmLoading}
             record={this.props.record}
             title={intl.get('WithdrawForm.title')}
             note={intl.get('WithdrawForm.note')}
           />
-          : ''
         }
       </div>
     );

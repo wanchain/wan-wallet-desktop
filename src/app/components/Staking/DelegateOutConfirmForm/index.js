@@ -35,7 +35,7 @@ class DelegateOutConfirmForm extends Component {
   }
 
   render() {
-    const { title, note, onCancel, record, settings, form } = this.props;
+    const { title, note, onCancel, record, settings, form, confirmLoading } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -48,7 +48,7 @@ class DelegateOutConfirmForm extends Component {
           onCancel={onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.onSend}>{intl.get('SendNormalTrans.send')}</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend} loading={!!confirmLoading}>{intl.get('SendNormalTrans.send')}</Button>,
           ]}
           className="withdraw-modal"
         >

@@ -76,7 +76,7 @@ class InForm extends Component {
   onSend = () => {
     this.setState({
       confirmLoading: true
-    })
+    });
     let { form, record, addrInfo } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
@@ -104,7 +104,7 @@ class InForm extends Component {
         if (err) {
           message.warn(err.message);
         } else {
-          console.log('delegateIn ret:', ret);
+          console.log('validatorIn ret:', ret);
         }
         this.setState({ confirmVisible: false });
         this.props.onSend();

@@ -49,14 +49,6 @@ class Staking extends Component {
     this.setState(state => ({ delegateInFormVisible: !state.delegateInFormVisible }));
   }
 
-  handleSend = (walletID) => {
-    if (walletID === 2) {
-      message.info(intl.get('Ledger.signTransactionInLedger'))
-    }
-
-    this.handleStateToggle();
-  }
-
   render() {
     return (
       <div className="staking">
@@ -73,7 +65,7 @@ class Staking extends Component {
             <Col span={12} className="col-right">
               <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
               {this.state.delegateInFormVisible &&
-                <DelegateInForm onCancel={this.handleStateToggle} onSend={this.handleSend} />
+                <DelegateInForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />
               }
             </Col>
           </div>

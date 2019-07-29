@@ -97,7 +97,7 @@ class ModifyForm extends Component {
           if (err) {
             message.warn(err.message);
           } else {
-            console.log('delegateIn ret:', ret);
+            console.log('validatorModify ret:', ret);
           }
           this.setState({ confirmVisible: false, confirmLoading: false });
           this.props.onSend();
