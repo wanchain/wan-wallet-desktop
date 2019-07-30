@@ -31,7 +31,7 @@ class ModifyForm extends Component {
       selectType: '',
       confirmVisible: false,
       confirmLoading: false,
-      lockTime: this.props.record.lockTime,
+      lockTime: props.record.lockTime,
       showConfirmItem: {},
     }
   }
@@ -83,7 +83,7 @@ class ModifyForm extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
 
-    if(modifyType === 'exit' || this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString()) {
+    if(modifyType === 'exit' || this.handleShowSelectType('lockTime')) {
       Object.assign(tx, {
         lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
       })
@@ -104,7 +104,7 @@ class ModifyForm extends Component {
         });
       }
     }
-    if(this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString()) {
+    if(this.handleShowSelectType('feeRate')) {
       Object.assign(tx, {
         feeRate: form.getFieldValue('feeRate') * 100,
       })
@@ -181,6 +181,10 @@ class ModifyForm extends Component {
     }
   }
 
+  handleShowSelectType(type) {
+    return this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === type).toString();
+  }
+
   render() {
     const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
@@ -216,7 +220,7 @@ class ModifyForm extends Component {
               </div>
             }
             {
-              modifyType === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'lockTime').toString() &&
+              modifyType === 'modify' && this.handleShowSelectType('lockTime') &&
               <React.Fragment>
                 <CommonFormItem form={form} formName='currentLockTime' disabled={true}
                   options={{ initialValue: record.lockTime, rules: [{ required: true }] }}
@@ -243,7 +247,7 @@ class ModifyForm extends Component {
               </React.Fragment>
             }
             {
-              modifyType === 'modify' && this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === 'feeRate').toString() &&
+              modifyType === 'modify' && this.handleShowSelectType('feeRate') &&
               <React.Fragment>
                 <CommonFormItem form={form} formName='maxFeeRate' disabled={true}
                   options={{ initialValue: record.maxFeeRate, rules: [{ required: true }] }}

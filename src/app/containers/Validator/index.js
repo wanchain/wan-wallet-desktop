@@ -14,7 +14,6 @@ import total from 'static/image/total.png';
 const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(ValidatorRegister);
 
 @inject(stores => ({
-  settings: stores.session.settings,
   language: stores.languageIntl.language,
   stakingList: stores.staking.stakingList,
   updateStakeInfo: () => stores.staking.updateStakeInfo(),

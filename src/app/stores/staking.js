@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import { STAKEACT } from 'utils/settings'
 import { getAddrByTypes, getInfoByAddress, checkAddrType } from 'utils/helper';
-import { fromWei, dateFormat, timeFormat, keep2Decimals, daysAgo } from 'utils/support';
+import { fromWei, dateFormat, timeFormat, daysAgo } from 'utils/support';
 
 import wanAddress from './wanAddress';
 import languageIntl from './languageIntl';

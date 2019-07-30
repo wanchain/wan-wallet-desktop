@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'antd';
 
-import './index.less';
 import mountain from 'static/image/mountain.png';
 
 function Card(props) {

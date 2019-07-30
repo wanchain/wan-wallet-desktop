@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Button } from 'antd';
+import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
 import logo from 'static/image/logo.png';
-import collapse from 'static/image/navbar-collapse.png';
 import open from 'static/image/navbar-open.png';
+import collapse from 'static/image/navbar-collapse.png';
 
 const { SubMenu, Item } = Menu;
 
