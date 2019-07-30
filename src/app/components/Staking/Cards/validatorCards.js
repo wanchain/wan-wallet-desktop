@@ -2,10 +2,10 @@ import { Row, Col } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { timeFormat } from 'utils/support';
 
 import './index.less';
-import Card from './Card'
+import Card from './Card';
+import { timeFormat } from 'utils/support';
 
 @inject(stores => ({
   stakeInfo: stores.staking.stakeInfo,
@@ -21,10 +21,10 @@ class ValidatorCards extends Component {
     let delegationBottom = intl.get('staking.inValidators1') + myValidatorCards.entrusted[1] + intl.get('staking.delegations');
 
     if (this.props.language === 'en_US') {
-      if (Number(myValidatorCards.principal[1]) !== 1) {
+      if (myValidatorCards.principal[1] > 1) {
         stakeBottom += 's';
       }
-      if (Number(myValidatorCards.entrusted[1]) !== 1) {
+      if (myValidatorCards.entrusted[1] > 1) {
         delegationBottom += 's';
       }
     }
@@ -71,4 +71,4 @@ class ValidatorCards extends Component {
   }
 }
 
-export default ValidatorCards
+export default ValidatorCards;
