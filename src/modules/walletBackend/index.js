@@ -15,6 +15,8 @@ class WalletBackend extends EventEmitter {
     }
   
     async init(config) {
+
+        this.emit('initiationBegin')
         this.config = Object.assign(configService.getConfig(), config)
         try {
             this.logger.info('start creating walletbackend')
