@@ -1,8 +1,9 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell, dialog } from 'electron'
-import { walletBackend, updater, Windows } from '~/src/modules'
+import { app, shell } from 'electron'
+import { walletBackend, Windows } from '~/src/modules'
+import i18n from '~/config/i18n'
 import menuFactoryService from '~/src/services/menuFactory'
 
 let sdkInitialized = false
