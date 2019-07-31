@@ -179,7 +179,7 @@ class ValidatorIn extends Component {
   render() {
     return (
       <div>
-        <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} />
+        <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
         {this.state.visible && <ValidatorInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
       </div>
     );
