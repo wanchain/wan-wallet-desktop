@@ -2,7 +2,7 @@ import wanUtil from "wanchain-util";
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message, Tooltip } from 'antd';
+import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/wan.png';
@@ -61,9 +61,9 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>,
+      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '10%'
-    }, 
+    },
     {
       dataIndex: '',
       key: 'expand',
@@ -110,7 +110,7 @@ class WanAccount extends Component {
       nonce: params.nonce
     };
     return new Promise((resolve, reject) => {
-      wand.request('transaction_normal', trans, function(err, txHash) {
+      wand.request('transaction_normal', trans, function (err, txHash) {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
@@ -153,7 +153,7 @@ class WanAccount extends Component {
   }
 
   handleSave = row => {
-    if(hasSameName('normal', row, this.props.addrInfo)) {
+    if (hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
       this.props.updateName(row, 'normal');
@@ -180,14 +180,23 @@ class WanAccount extends Component {
   expandContent = record => {
     const privateAddress = "0x022b49af7f2a4fd132acee36ce22a81e89f5abc9c824e2cee5e193f8c3b43c314d02aefe897a20968f424dbef269e4aad165a631097548e9fb20c4932beb152e9d32";
     return (
-      <table style={{width: 'calc(100% + 32px)', position: 'relative', left: '-16px'}}>
+      <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
         <tbody>
           <tr>
-            <td style={{width: '15%', padding: '0px 16px'}}></td>
-            <td style={{width: '50%', padding: '0px 16px'}}><div className="addrText"><p className="privateAddress"><Tooltip placement="bottomLeft" title={privateAddress}>{privateAddress}</Tooltip>{privateAddress}</p><CopyAndQrcode addr={privateAddress}/></div></td>
-            <td style={{width: '20%', padding: '0px 16px'}}>100.00</td>
-            <td style={{width: '10%', padding: '0px 16px'}}><Button className="redeemButton" type="primary">Redeem</Button></td>
-            <td style={{width: '5%', padding: '0px 16px'}}></td>
+            <td style={{ width: '15%', padding: '0px 16px' }}></td>
+            <td style={{ width: '50%', padding: '0px 16px' }}>
+              <div className="addrText">
+                <p className="privateAddress">
+                  <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{width: 400}} >{privateAddress}</Tooltip>
+                  {privateAddress}
+                </p>
+                <CopyAndQrcode addr={privateAddress} />
+                <Tooltip placement="bottom" title={'Question'}><Icon type="question-circle" style={{marginLeft: '5px'}} /></Tooltip>
+              </div>
+            </td>
+            <td style={{ width: '20%', padding: '0px 16px' }}>100.00</td>
+            <td style={{ width: '10%', padding: '0px 16px' }}><Button className="redeemButton" type="primary">{intl.get('WanAccount.redeem')}</Button></td>
+            <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>
       </table>

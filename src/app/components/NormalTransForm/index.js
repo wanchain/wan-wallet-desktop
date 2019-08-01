@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
 import './index.less';
@@ -13,7 +13,7 @@ import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'u
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
-
+const { Option } = Select;
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
@@ -35,6 +35,7 @@ class NormalTransForm extends Component {
     confirmVisible: false,
     disabledAmount: false,
     advancedVisible: false,
+    isPrivate: false
   }
 
   componentWillUnmount() {
@@ -179,6 +180,21 @@ class NormalTransForm extends Component {
     })
   }
 
+  checkToWanPrivateAddr = (rule, value, callback) => {
+    checkWanAddr(value).then(ret => {
+      if (ret) {
+        if (!this.state.advanced) {
+          this.updateGasLimit();
+        }
+        callback();
+      } else {
+        callback(intl.get('NormalTransForm.invalidAddress'));
+      }
+    }).catch((err) => {
+      callback(err);
+    })
+  }
+
   checkAmount = (rule, value, callback) => {
     if (value >= 0 && checkAmountUnit(18, value)) {
       if (!this.state.advanced) {
@@ -219,6 +235,12 @@ class NormalTransForm extends Component {
     }
   }
 
+  modeChange = (v) => {
+    this.setState({
+      isPrivate: v == "1" ? false : true
+    });
+  }
+
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
@@ -248,15 +270,48 @@ class NormalTransForm extends Component {
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
+
+              <Form.Item label={'Transaction mode'}>
+                {getFieldDecorator('mode', { initialValue: this.state.isPrivate ? '2' : '1' })
+                  (<Select onChange={this.modeChange}><Option value="1">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="2">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
+              </Form.Item>
+
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                {
+                  this.state.isPrivate ? (
+                    getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.privateAddressIsIncorrect'), validator: this.checkToWanPrivateAddr }] })
+                    (<Input placeholder={intl.get('NormalTransForm.recipientPrivateAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)
+                  ) : (
+                    getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                    (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)
+                  )
+                }
               </Form.Item>
-              <Form.Item label={intl.get('NormalTransForm.amount')}>
-                {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
-              </Form.Item>
+
+              {
+                  this.state.isPrivate ?
+                    <Form.Item label={intl.get('NormalTransForm.amount')}>
+                      {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
+                        (<Select placeholder={intl.get('NormalTransForm.chooseValue')} >
+                          <Option value="10">10</Option>
+                          <Option value="20">20</Option>
+                          <Option value="50">50</Option>
+                          <Option value="100">100</Option>
+                          <Option value="200">200</Option>
+                          <Option value="500">500</Option>
+                          <Option value="1000">1000</Option>
+                          <Option value="5000">5000</Option>
+                          <Option value="50000">50000</Option>
+                        </Select>)}
+                    </Form.Item>
+                    :
+                    <Form.Item label={intl.get('NormalTransForm.amount')}>
+                      {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
+                        (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                      <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
+                    </Form.Item>
+              }
+
               {settings.reinput_pwd 
                 ? <Form.Item label={intl.get('NormalTransForm.password')}>
                     {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
