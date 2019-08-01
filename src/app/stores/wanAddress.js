@@ -1,16 +1,14 @@
 
 import wanUtil from "wanchain-util";
+import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
 import staking from './staking';
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
+import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei } from 'utils/support';
-import Identicon from 'identicon.js';
-
-const KEYSTOREID = 5;
-const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
     @observable addrInfo = {
@@ -117,7 +115,7 @@ class WanAddress {
             walletID = 1;
             type = 'normal';
           } else {
-            walletID = KEYSTOREID;
+            walletID = WALLETID.KEYSTOREID;
             type = 'import';
           };
           break;
@@ -188,7 +186,7 @@ class WanAddress {
           name: self.addrInfo[type][item].name,
           address: wanUtil.toChecksumAddress(item),
           balance: self.addrInfo[type][item].balance,
-          path: `${WAN}${self.addrInfo[type][item].path}`,
+          path: `${WANPATH}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
       });
@@ -205,7 +203,7 @@ class WanAddress {
           name: self.addrInfo[type][item].name,
           address: wanUtil.toChecksumAddress(item),
           balance: self.addrInfo[type][item].balance,
-          path: `${WAN}${self.addrInfo[type][item].path}`,
+          path: `${WANPATH}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
       });

@@ -3,6 +3,7 @@ export const WALLETID ={
   NATIVE: 0x01,
   LEDGER: 0x02,
   TREZOR: 0x03,
+  KEYSTOREID: 0x05,
 }
 
 export const MINDAYS = 7;
