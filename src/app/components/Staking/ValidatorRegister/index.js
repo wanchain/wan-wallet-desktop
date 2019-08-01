@@ -137,8 +137,8 @@ class ValidatorRegister extends Component {
       secPk: form.getFieldValue('publicKey1'),
       bn256Pk: form.getFieldValue('publicKey2'),
       lockEpoch: (form.getFieldValue('lockTime') * 24 * 3600)/(global.slotCount * global.slotTime),
-      maxFeeRate: maxFeeRate * 100,
-      feeRate: feeRate * 100,
+      maxFeeRate: Math.round(maxFeeRate * 100),
+      feeRate: Math.round(feeRate * 100),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))

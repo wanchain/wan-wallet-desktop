@@ -106,7 +106,7 @@ class ModifyForm extends Component {
     }
     if(this.handleShowSelectType('feeRate')) {
       Object.assign(tx, {
-        feeRate: form.getFieldValue('feeRate') * 100,
+        feeRate: Math.round(form.getFieldValue('feeRate') * 100),
       })
 
       if (WALLETID.TREZOR === walletID) {
