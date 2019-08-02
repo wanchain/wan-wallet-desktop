@@ -13,10 +13,6 @@ export default merge(common, {
     target: 'electron-renderer',
     devtool: 'cheap-module-eval-source-map',
     mode: 'development',
-    entry: [
-        'react-hot-loader/patch',
-        './src/app/App.js',
-    ],
     output: {
         publicPath: publicPath
     },
