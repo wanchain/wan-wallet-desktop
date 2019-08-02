@@ -15,6 +15,9 @@ const pu = require('promisefy-util');
 const wanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
+const LEFT = 6;
+const RIGHT = 18;
+
 @inject(stores => ({
   settings: stores.session.settings,
   chainId: stores.session.chainId,
@@ -452,8 +455,7 @@ class StakeInForm extends Component {
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
-                <Col span={15}>
-
+                <Col span={14}>
                   <Form layout="inline" id="posNameSelect">
                     <Form.Item>
                       {getFieldDecorator('validatorName', {
@@ -477,15 +479,15 @@ class StakeInForm extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4}>
+                <Col span={3} align="right" className="col-stakein-info">
                   <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
@@ -497,8 +499,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('quota')
@@ -510,8 +512,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('maxFeeRate')
@@ -523,8 +525,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('commission')
@@ -540,8 +542,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
                       {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
@@ -577,8 +579,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('balance', { initialValue: this.state.balance })
@@ -591,8 +593,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('amount', { initialValue: (this.props.topUp ? 0 : 100), rules: [{ required: true, validator: this.checkAmount }] })
@@ -606,8 +608,8 @@ class StakeInForm extends Component {
             {settings.reinput_pwd &&
               <div className="stakein-line">
                 <Row type="flex" justify="space-around" align="top">
-                  <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
-                  <Col span={19}>
+                  <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+                  <Col span={RIGHT}>
                     <Form layout="inline">
                       <Form.Item>
                         {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
