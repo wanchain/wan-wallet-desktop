@@ -12,7 +12,7 @@
     "start": "electron .",
     "dev": "npm run dev:renderer",
     "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js ",
-    "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --config ./config/webpack/webpack.config.renderer.babel.js --color",
+    "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --config ./config/webpack/webpack.config.renderer.env.babel.js --color",
     "transpile:renderer": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.renderer.prod.babel.js --colors",
     "transpile:main": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.main.prod.babel.js --colors",
     "pack:mac": "run-s copy:mac transpile:renderer transpile:main build:mac",
