@@ -42,7 +42,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/runtime": "^7.4.0",
     "@hot-loader/react-dom": "^16.8.6",
-    "antd": "^3.15.2",
+    "antd": "3.19.8",
     "autoprefixer": "^9.5.0",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
