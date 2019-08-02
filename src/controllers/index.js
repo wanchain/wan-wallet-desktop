@@ -568,7 +568,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getCurrentEpochInfo':
             try {
-              ret = await ccUtil.getCurrentEpochInfo('wan');
+                ret = await ccUtil.getCurrentEpochInfo('wan');
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -578,16 +578,16 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'PosStakeUpdateFeeRate':
             try {
-              logger.info('PosStakeUpdateFeeRate: ' + payload);
+                logger.info('PosStakeUpdateFeeRate: ' + payload);
 
-              let { tx } = payload;
-              let gasPrice = await ccUtil.getGasPrice('wan');
-              tx.gasLimit = 200000;
-              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-              ret = await global.crossInvoker.PosStakeUpdateFeeRate(tx);
+                let { tx } = payload;
+                let gasPrice = await ccUtil.getGasPrice('wan');
+                tx.gasLimit = 200000;
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                ret = await global.crossInvoker.PosStakeUpdateFeeRate(tx);
             } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
+                logger.error(e.message || e.stack)
+                err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
@@ -617,7 +617,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
                 });
 
-                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan'), ccUtil.getDelegatorSupStakeInfo('wan', accounts.map(val=>val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
+                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan'), ccUtil.getDelegatorSupStakeInfo('wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
@@ -826,15 +826,19 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getValidatorsInfo':
             try {
-              let { address } = payload;
-              let [ ret0, ret1 ] = await Promise.all([ccUtil.getValidatorTotalIncentive('wan', address), ccUtil.getValidatorSupStakeInfo('wan', address)])
-              ret0.forEach(item => {
-                let index = ret1.findIndex(val => val.address === item.address);
-                item.stakeInTimestamp = index !== -1 ? ret1[index].stakeInTimestamp : 0;
-              });
-              ret = ret0;
+                let { address } = payload;
+                if (address.length === 0) {
+                    ret = []
+                } else {
+                    let [ret0, ret1] = await Promise.all([ccUtil.getValidatorTotalIncentive('wan', address), ccUtil.getValidatorSupStakeInfo('wan', address)])
+                    ret0.forEach(item => {
+                        let index = ret1.findIndex(val => val.address === item.address);
+                        item.stakeInTimestamp = index !== -1 ? ret1[index].stakeInTimestamp : 0;
+                    });
+                    ret = ret0;
+                }
             } catch (e) {
-              logger.info(e)
+                logger.info(e)
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1082,10 +1086,10 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
         delegatorSupStakeInfo.forEach(item => {
-          let index = list.findIndex(val => val.accountAddress.toLowerCase() === item.address && val.validatorAddress === item.vAddress);
-          if (index !== -1) {
-            list[index].myStake.bottom = item.delegateInTimestamp;
-          }
+            let index = list.findIndex(val => val.accountAddress.toLowerCase() === item.address && val.validatorAddress === item.vAddress);
+            if (index !== -1) {
+                list[index].myStake.bottom = item.delegateInTimestamp;
+            }
         })
 
     }

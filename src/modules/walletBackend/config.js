@@ -24,10 +24,13 @@ class ConfigFactoryService {
 
         this.config.MAX_CONFIRM_BLKS = 100000000
         this.config.MIN_CONFIRM_BLKS = 0
+        // this.config.loglevel = 'debug'
 
         this.config.iWAN = {
-            "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
-            "port": 8443,
+            // "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
+            "url" :  this.config.network.includes('main') ? '192.168.1.179' : "apitest.wanchain.org",
+            // "port": 8443,
+            "port": this.config.network.includes('main') ? 18443 : 8443,
             "wallet": {
                 "apikey": process.env.API_KEY,
                 "secret": process.env.SECRET_KEY
