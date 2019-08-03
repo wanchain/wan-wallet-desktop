@@ -7,16 +7,12 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const publicPath = `http://localhost:${WDS_PORT}/dist/`;
 
-common.entry.unshift('react-hot-loader/patch',);
+common.entry.unshift('react-hot-loader/patch');
 
 export default merge(common, {
     target: 'electron-renderer',
     devtool: 'cheap-module-eval-source-map',
     mode: 'development',
-    entry: [
-        'react-hot-loader/patch',
-        './src/app/App.js',
-    ],
     output: {
         publicPath: publicPath
     },
