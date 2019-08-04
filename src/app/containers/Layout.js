@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import { isSdkReady } from 'utils/helper';
 
 import './Layout.less';
 import SideBar from './Sidebar';
-import Register from './Register';
-import Login from 'containers/Login';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
-
-
 import { getBalance } from 'utils/helper';
+
+const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
+const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
 
 @inject(stores => ({
   auth: stores.session.auth,
@@ -89,9 +88,9 @@ export default class Layout extends Component {
       return <Loading />
     } else {
       if (!hasMnemonicOrNot) {
-        return <Register />;
+        return <Suspense fallback={<div>Loading...</div>}><Register /></Suspense>;
       } else if (!auth) {
-        return <Login />
+        return <Suspense fallback={<div>Loading......</div>}><Login /></Suspense>
       } else {
         return (
           <Row className="container">
