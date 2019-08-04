@@ -37,8 +37,10 @@ class Loading extends Component {
   render() {
     return (
       <div className="loadingBg">
-        <Progress className="progressSty" strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
-        <p>{intl.get('Loading.tips')}</p>
+        <div className="loadingCont">
+          <Progress className="progressSty" strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
+          <p>{intl.get('Loading.tips')}</p>
+        </div>
       </div>
     );
   }
