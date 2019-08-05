@@ -25,21 +25,18 @@ const DelegateOutForm = Form.create({ name: 'DelegateOutConfirmForm' })(Delegate
 class DelegateOut extends Component {
   state = {
     visible: false,
-    canExit: true,
     confirmLoading: false,
   }
 
   showDialog = () => {
     this.setState({ 
-      visible: true,
-      canExit: false
+      visible: true
     });
   }
 
   handleCancel = () => {
     this.setState({ 
       visible: false,
-      canExit: true,
       confirmLoading: false
     });
   }
@@ -94,10 +91,10 @@ class DelegateOut extends Component {
     wand.request('staking_delegateOut', tx, (err, ret) => {
       if (err) {
         message.warn(intl.get('NormalTransForm.estimateGasFailed'));
-        this.setState({ canExit: true });
       } else {
         console.log('delegateOut ret:', ret);
-        this.setState({ canExit: false, confirmLoading: false, visible: false });
+        this.setState({ confirmLoading: false, visible: false });
+        this.props.handleDisableGroup();
       }
     });
   }
@@ -163,7 +160,6 @@ class DelegateOut extends Component {
       this.props.updateTransHistory();
     } catch (error) {
       message.error(error);
-      this.setState({ canExit: true });
     }
   }
 
@@ -204,7 +200,7 @@ class DelegateOut extends Component {
   render() {
     return (
       <div>
-        <Button className="modifyExititBtn" onClick={this.showDialog} disabled={this.props.isPending ? true : (!this.state.canExit)} />
+        <Button className="modifyExititBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
         {this.state.visible &&
            <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
             confirmLoading={this.state.confirmLoading}
