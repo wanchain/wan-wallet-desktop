@@ -12,7 +12,7 @@
     "start": "electron .",
     "dev": "npm run dev:renderer",
     "dev:main": "cross-env NODE_ENV=development electron -r @babel/register ./src/main.dev.js ",
-    "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --config ./config/webpack/webpack.config.renderer.babel.js --color",
+    "dev:renderer": "cross-env NODE_ENV=development webpack-dev-server --config ./config/webpack/webpack.config.renderer.dev.babel.js --color",
     "transpile:renderer": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.renderer.prod.babel.js --colors",
     "transpile:main": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.main.prod.babel.js --colors",
     "pack:mac": "run-s copy:mac transpile:renderer transpile:main build:mac",
@@ -42,7 +42,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/runtime": "^7.4.0",
     "@hot-loader/react-dom": "^16.8.6",
-    "antd": "^3.15.2",
+    "antd": "3.19.8",
     "autoprefixer": "^9.5.0",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
@@ -84,6 +84,7 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-decorators": "^7.4.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-regenerator": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.0",
     "@babel/preset-env": "^7.4.1",
@@ -115,6 +116,7 @@
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.7.2"
   }
 }
