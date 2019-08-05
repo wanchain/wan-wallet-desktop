@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Select, Row, Col } from 'antd';
 
-function ValidatorModifySelect(props) {
+function ValidatorModifySelect (props) {
   const { form, types, handleChange, title, message, placeholder } = props;
   const { getFieldDecorator } = form;
 

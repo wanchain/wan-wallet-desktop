@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Card, Modal, Table, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import wanUtil from "wanchain-util";
+import wanUtil from 'wanchain-util';
 import './index.less';
 
 import HwWallet from 'utils/HwWallet';
@@ -15,7 +15,7 @@ import { getBalance } from 'utils/helper';
 
 @observer
 class Connect extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       visible: false,
@@ -26,9 +26,9 @@ class Connect extends Component {
     this.selectedAddrs = [];
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.setState = (state, callback) => {
-      return;
+      return false;
     };
   }
 
@@ -126,8 +126,7 @@ class Connect extends Component {
     },
   };
 
-
-  render() {
+  render () {
     const { visible, addresses } = this.state;
 
     return (
@@ -139,8 +138,8 @@ class Connect extends Component {
             <div>
               <Table rowSelection={this.rowSelection} pagination={false} columns={this.props.selectAddrColumns} dataSource={addresses}></Table>
               <div className="rollPage">
-                {this.page !== 0 
-                  ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p> 
+                {this.page !== 0
+                  ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p>
                   : ''
                 }
                 <p onClick={this.showNextPageAddrs} className="nextPage">{intl.get('HwWallet.Connect.nextAddresses')}</p>
@@ -154,7 +153,3 @@ class Connect extends Component {
 }
 
 export default Connect;
-
-
-
-

@@ -23,7 +23,7 @@ const testnet = 'http://testnet.wanscan.org/tx/';
 
 @observer
 class TransHistory extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.setCurrPage(this.props.name);
   }
@@ -37,7 +37,7 @@ class TransHistory extends Component {
     wand.shell.openExternal(href);
   }
 
-  render() {
+  render () {
     const { addrInfo, historyList, name } = this.props;
     let addrList = [];
     name.forEach(val => {
@@ -75,4 +75,4 @@ class TransHistory extends Component {
   }
 }
 
-export default TransHistory
+export default TransHistory;

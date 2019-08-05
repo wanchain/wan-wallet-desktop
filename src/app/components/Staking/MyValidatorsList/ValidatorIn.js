@@ -25,9 +25,9 @@ class InForm extends Component {
     confirmLoading: false,
   };
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.setState = (state, callback) => {
-      return;
+      return false;
     };
   }
 
@@ -97,7 +97,7 @@ class InForm extends Component {
       // this.setState({ confirmVisible: false });
       // this.props.onSend(walletID);
     } else {
-      if(walletID === WALLETID.LEDGER) {
+      if (walletID === WALLETID.LEDGER) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
       }
       wand.request('staking_validatorAppend', { tx }, (err, ret) => {
@@ -116,7 +116,7 @@ class InForm extends Component {
     this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
-  render() {
+  render () {
     const { onCancel, form, settings, record, addrInfo } = this.props;
     let showConfirmItem = { validatorAccount: true, myAddr: true, amount: true };
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, amount: form.getFieldValue('amount') };
@@ -176,7 +176,7 @@ class ValidatorIn extends Component {
     this.setState({ visible: false });
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>

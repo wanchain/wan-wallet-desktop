@@ -3,9 +3,9 @@ import { observer, inject } from 'mobx-react';
 import { Input, Tag } from 'antd';
 import intl from 'react-intl-universal';
 
-const { TextArea } = Input;
-
 import './index.less';
+
+const { TextArea } = Input;
 
 @inject(stores => ({
   method: stores.mnemonic.method,
@@ -21,7 +21,7 @@ class ShowPhrase extends Component {
     this.props.setMnemonic(e.target.value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' '));
   }
 
-  render() {
+  render () {
     const { mnemonic, method } = this.props;
     if (method === 'import') {
       return (

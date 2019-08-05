@@ -1,5 +1,5 @@
 
-export const WALLETID ={
+export const WALLETID = {
   NATIVE: 0x01,
   LEDGER: 0x02,
   TREZOR: 0x03,

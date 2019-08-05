@@ -13,16 +13,16 @@ import arrow from 'static/image/arrow.png';
 
 class Staking {
   @observable stakeInfo = {
-    myStake: "N/A",
-    validatorCnt: "N/A",
-    pendingWithdrawal: "N/A",
-    epochID: "Epoch N/A",
-    epochEndTime: "N/A",
-    currentTime: "N/A",
-    currentRewardRate: "N/A %",
-    currentRewardRateChange: "↑",
-    totalDistributedRewards: "N/A",
-    startFrom: dateFormat((new Date())/1000),
+    myStake: 'N/A',
+    validatorCnt: 'N/A',
+    pendingWithdrawal: 'N/A',
+    epochID: 'Epoch N/A',
+    epochEndTime: 'N/A',
+    currentTime: 'N/A',
+    currentRewardRate: 'N/A %',
+    currentRewardRateChange: '↑',
+    totalDistributedRewards: 'N/A',
+    startFrom: dateFormat((new Date()) / 1000),
   };
 
   @observable stakeList = [];
@@ -31,11 +31,11 @@ class Staking {
 
   @observable validatorsInfo = {};
 
-
   rewardRate = 0;
+
   epochID = 0;
 
-  @action async updateStakeInfo() {
+  @action async updateStakeInfo () {
     let addrList = [];
     addrList.push(...wanAddress.getAddrList.slice())
     addrList.push(...wanAddress.ledgerAddrList.slice())
@@ -49,20 +49,20 @@ class Staking {
         this.validatorList = val.stakeInfo;
         let reward = await this.getYearReward(val.base.epochIDRaw);
         let rewardRateNow = 0;
-        if (val.base.stakePool !== "0") {
+        if (val.base.stakePool !== '0') {
           rewardRateNow = reward * 100 / val.base.stakePool
         }
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
         this.stakeInfo.epochEndTime = timeFormat(val.base.epochIDRaw * (global.slotCount * global.slotTime));
-        this.stakeInfo.currentTime = timeFormat(Date.now()/1000);
+        this.stakeInfo.currentTime = timeFormat(Date.now() / 1000);
 
-        if (val.base.epochID != this.epochID) {
+        if (val.base.epochID !== this.epochID) {
           if (rewardRateNow > this.rewardRate) {
-            this.stakeInfo.currentRewardRateChange = "↑";
+            this.stakeInfo.currentRewardRateChange = '↑';
           } else if (rewardRateNow < this.rewardRate) {
-            this.stakeInfo.currentRewardRateChange = "↓";
+            this.stakeInfo.currentRewardRateChange = '↓';
           } else {
-            this.stakeInfo.currentRewardRateChange = "";
+            this.stakeInfo.currentRewardRateChange = '';
           }
           this.rewardRate = rewardRateNow;
           this.epochID = val.base.epochID;
@@ -73,10 +73,10 @@ class Staking {
     }
   }
 
-  @action getValidatorsInfo() {
+  @action getValidatorsInfo () {
     let address = self.myValidators.map(item => item.address);
     wand.request('staking_getValidatorsInfo', { address }, (err, ret) => {
-      if(err) {
+      if (err) {
         console.log(err)
         return;
       }
@@ -90,10 +90,10 @@ class Staking {
     })
   }
 
-  @computed get stakingList() {
+  @computed get stakingList () {
     let validators = []
     this.stakeList.forEach((item, index) => {
-      if(item.myStake.bottom !== "0") {
+      if (item.myStake.bottom !== '0') {
         item.myStake.bottom = daysAgo(item.myStake.bottom);
       }
       validators.push({
@@ -103,14 +103,14 @@ class Staking {
         balance: item.balance,
         myStake: item.myStake,
         arrow1: arrow,
-        validator: { 
-          img: item.validator.img ? item.validator.img : ('data:image/png;base64,' + new Identicon(item.validatorAddress).toString()), 
-          name: item.validator.name, 
+        validator: {
+          img: item.validator.img ? item.validator.img : ('data:image/png;base64,' + new Identicon(item.validatorAddress).toString()),
+          name: item.validator.name,
           address: item.validatorAddress,
         },
         arrow2: arrow,
         distributeRewards: item.distributeRewards,
-        modifyStake: ["+", "-"],
+        modifyStake: ['+', '-'],
         quitEpoch: item.quitEpoch,
         key: index,
       })
@@ -118,12 +118,12 @@ class Staking {
     return validators;
   }
 
-  @computed get myValidators() {
+  @computed get myValidators () {
     let newArr = [];
     let addrArr = getAddrByTypes(wanAddress.addrInfo).flat();
     addrArr.forEach(item => {
       self.validatorList.forEach(val => {
-        if(val.from === item.toLowerCase()) {
+        if (val.from === item.toLowerCase()) {
           newArr.push(val);
         }
       })
@@ -131,7 +131,7 @@ class Staking {
     return newArr;
   }
 
-  @computed get myValidatorList() {
+  @computed get myValidatorList () {
     let validators = [];
     self.myValidators.forEach((item, index) => {
       let addr = getInfoByAddress(item.from, ['name'], wanAddress.addrInfo);
@@ -142,7 +142,7 @@ class Staking {
         lockTime: item.lockEpochs,
         nextLockTime: item.nextLockEpochs,
         publicKey1: item.pubSec256,
-        myAddress: {addr: addr.addr, type: addr.type},
+        myAddress: { addr: addr.addr, type: addr.type },
         myAccount: addr.name,
         principal: {
           value: new BigNumber(fromWei(item.amount)).plus(item.partners.reduce((prev, curr) => prev.plus(fromWei(curr.amount)), new BigNumber(0))).toString(10),
@@ -169,7 +169,7 @@ class Staking {
     return validators;
   }
 
-  @computed get myValidatorCards() {
+  @computed get myValidatorCards () {
     let cardsList = {
       principal: ['N/A', 'N/A'],
       reward: ['N/A', 'N/A'],
@@ -187,7 +187,7 @@ class Staking {
     cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
     cardsList.withdrawal[0] = Number(self.myValidators.reduce((prev, curr) => {
-      if(curr.nextLockEpochs == 0) {
+      if (curr.nextLockEpochs.toString() === '0') {
         return prev.plus(new BigNumber(fromWei(curr.amount)).plus(curr.partners.reduce((pre, cur) => pre.plus(fromWei(cur.amount)), new BigNumber(0))));
       } else {
         return prev;
@@ -198,16 +198,16 @@ class Staking {
     return cardsList;
   }
 
-  @computed get onlineValidatorList() {
+  @computed get onlineValidatorList () {
     let validators = []
     let minValidatorAmount = 50000;
     for (let i = 0; i < this.validatorList.length; i++) {
-      if (this.validatorList[i].feeRate == 10000) {
+      if (this.validatorList[i].feeRate.toString === '10000') {
         continue;
       }
 
-      let quota = 0,
-          totalStake = 0;
+      let quota = 0;
+      let totalStake = 0;
       quota += Number(fromWei(this.validatorList[i].amount));
       totalStake += quota;
       if (this.validatorList[i].partners.length > 0) {
@@ -238,24 +238,24 @@ class Staking {
         icon: this.validatorList[i].iconData ? this.validatorList[i].iconData : ('data:image/png;base64,' + new Identicon(this.validatorList[i].address).toString()),
         key: this.validatorList[i],
         quota: quota,
-        maxFeeRate: (Number(this.validatorList[i].maxFeeRate)/100.0).toFixed(2),
-        feeRate: (Number(this.validatorList[i].feeRate)/100.0).toFixed(2),
+        maxFeeRate: (Number(this.validatorList[i].maxFeeRate) / 100.0).toFixed(2),
+        feeRate: (Number(this.validatorList[i].feeRate) / 100.0).toFixed(2),
         totalStake: totalStake
       })
     }
-    //sort by stake amount DESC.
+    // sort by stake amount DESC.
     validators.sort((m, n) => {
       return Number.parseInt(m.totalStake) < Number.parseInt(n.totalStake) ? 1 : -1;
     });
     return validators;
   }
 
-  @computed get registerValidatorHistoryList() {
+  @computed get registerValidatorHistoryList () {
     let historyList = [];
     let histories = wanAddress.transHistory;
     let addrList = Object.keys(Object.assign({}, wanAddress.addrInfo.normal, wanAddress.addrInfo.ledger, wanAddress.addrInfo.trezor));
     Object.keys(wanAddress.transHistory).forEach(item => {
-      if(histories[item].validator && addrList.includes(histories[item].from) && STAKEACT.includes(histories[item].annotate)) {
+      if (histories[item].validator && addrList.includes(histories[item].from) && STAKEACT.includes(histories[item].annotate)) {
         let type = checkAddrType(histories[item].from, wanAddress.addrInfo);
         let { status, annotate } = histories[item];
         let getIndex = self.stakingList.findIndex(value => value.validator.address === histories[item].validator);
@@ -276,16 +276,16 @@ class Staking {
       }
     });
 
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);      
+    return historyList.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  async getYearReward(epochID) {
-    if(epochID === "N/A") {
+  async getYearReward (epochID) {
+    if (epochID === 'N/A') {
       return 0;
     }
 
-    if (global.firstEpochId == undefined) {
-      let info = await pu.promisefy(wand.request, ['staking_posInfo'])//6496392;
+    if (global.firstEpochId === undefined) {
+      let info = await pu.promisefy(wand.request, ['staking_posInfo'])// 6496392;
       global.firstEpochId = info.firstEpochId;
       global.slotCount = info.slotCount;
       global.slotTime = info.slotTime;

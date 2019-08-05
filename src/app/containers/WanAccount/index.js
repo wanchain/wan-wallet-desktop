@@ -1,4 +1,4 @@
-import wanUtil from "wanchain-util";
+import wanUtil from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -32,7 +32,7 @@ const WAN = "m/44'/5718350'/0'/0/";
 
 @observer
 class WanAccount extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       bool: true,
@@ -77,11 +77,11 @@ class WanAccount extends Component {
     };
   });
 
-  componentDidMount() {
+  componentDidMount () {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
@@ -100,14 +100,14 @@ class WanAccount extends Component {
       nonce: params.nonce
     };
     return new Promise((resolve, reject) => {
-      wand.request('transaction_normal', trans, function(err, txHash) {
+      wand.request('transaction_normal', trans, function (err, txHash) {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
-          reject(false)
+          reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
           this.props.updateTransHistory();
-          console.log("Tx hash: ", txHash);
+          console.log('Tx hash: ', txHash);
           resolve(txHash)
         }
       }.bind(this));
@@ -143,14 +143,14 @@ class WanAccount extends Component {
   }
 
   handleSave = row => {
-    if(hasSameName('normal', row, this.props.addrInfo)) {
+    if (hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
       this.props.updateName(row, 'normal');
     }
   }
 
-  render() {
+  render () {
     const { getAmount, getAddrList } = this.props;
     const components = {
       body: {

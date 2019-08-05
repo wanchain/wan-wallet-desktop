@@ -33,7 +33,7 @@ class StakingHistory extends Component {
     return this.props.stakingColumns;
   }
 
-  render() {
+  render () {
     const { historyList } = this.props;
     return (
       <div>
@@ -48,4 +48,4 @@ class StakingHistory extends Component {
   }
 }
 
-export default StakingHistory
+export default StakingHistory;

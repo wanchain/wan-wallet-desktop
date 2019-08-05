@@ -16,8 +16,8 @@ class DelegateOutConfirmForm extends Component {
     form.validateFields(err => {
       if (err) return;
       let pwd = form.getFieldValue('pwd');
-      if(settings.reinput_pwd) {
-        if(!pwd) {
+      if (settings.reinput_pwd) {
+        if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
@@ -34,7 +34,7 @@ class DelegateOutConfirmForm extends Component {
     });
   }
 
-  render() {
+  render () {
     const { title, note, onCancel, record, settings, form, confirmLoading } = this.props;
     const { getFieldDecorator } = form;
 
@@ -83,8 +83,8 @@ class DelegateOutConfirmForm extends Component {
                 <Col span={18}><span className="withdraw-addr">{record.accountAddress}</span></Col>
               </Row>
             </div>
-            {settings.reinput_pwd 
-              ? <div className="withdraw-line" style={{height: "65px"}}>
+            {settings.reinput_pwd
+              ? <div className="withdraw-line" style={{ height: '65px' }}>
                   <Row type="flex" justify="space-around" align="top">
                     <Col span={6} className="col-stakein-name"><span className="withdraw-name">{intl.get('StakeInForm.password')}</span></Col>
                     <Col span={18}>

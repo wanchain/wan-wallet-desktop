@@ -25,7 +25,7 @@ const modifyTypes = {
 
 @observer
 class ModifyForm extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       selectType: '',
@@ -36,9 +36,9 @@ class ModifyForm extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.setState = (state, callback) => {
-      return;
+      return false;
     };
   }
 
@@ -46,7 +46,7 @@ class ModifyForm extends Component {
     let { form, settings, modifyType } = this.props;
     form.validateFields(err => {
       if (err) return;
-      if(modifyType === 'exit') {
+      if (modifyType === 'exit') {
         this.setState({ showConfirmItem: { validatorAccount: true, myAddr: true } })
       }
       let pwd = form.getFieldValue('pwd');
@@ -69,9 +69,10 @@ class ModifyForm extends Component {
       confirmLoading: true
     })
     let { form, record, addrInfo, modifyType } = this.props;
-    let from = record.myAddress.addr, type = record.myAddress.type;
+    let from = record.myAddress.addr
+    let type = record.myAddress.type;
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
-    let tx ={
+    let tx = {
       from: from,
       amount: 0,
       BIP44Path: type !== 'normal' ? addrInfo[type][from].path : WANPATH + addrInfo[type][from].path,
@@ -83,7 +84,7 @@ class ModifyForm extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
 
-    if(modifyType === 'exit' || this.handleShowSelectType('lockTime')) {
+    if (modifyType === 'exit' || this.handleShowSelectType('lockTime')) {
       Object.assign(tx, {
         lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
       })
@@ -104,7 +105,7 @@ class ModifyForm extends Component {
         });
       }
     }
-    if(this.handleShowSelectType('feeRate')) {
+    if (this.handleShowSelectType('feeRate')) {
       Object.assign(tx, {
         feeRate: Math.round(form.getFieldValue('feeRate') * 100),
       })
@@ -115,10 +116,10 @@ class ModifyForm extends Component {
         // this.props.onSend(walletID);
       } else {
         wand.request('staking_getCurrentEpochInfo', null, (err, ret) => {
-          if(err) {
+          if (err) {
             message.warn(err.message);
           } else {
-            if(ret.epochId === record.feeRateChangedEpoch) {
+            if (ret.epochId === record.feeRateChangedEpoch) {
               message.warn(intl.get('ValidatorRegister.modifyFeeRateWarning'))
               return;
             }
@@ -139,13 +140,13 @@ class ModifyForm extends Component {
 
   onChangeModifyTypeSelect = (value, option) => {
     let showConfirmItem;
-    if(Object.keys(modifyTypes)[option.key] === 'lockTime') {
-      showConfirmItem = {validatorAccount: true, myAddr: true, lockTime: true}
+    if (Object.keys(modifyTypes)[option.key] === 'lockTime') {
+      showConfirmItem = { validatorAccount: true, myAddr: true, lockTime: true }
     }
-    if(Object.keys(modifyTypes)[option.key] === 'feeRate') {
-      showConfirmItem = {validatorAccount: true, myAddr: true, feeRate: true}
+    if (Object.keys(modifyTypes)[option.key] === 'feeRate') {
+      showConfirmItem = { validatorAccount: true, myAddr: true, feeRate: true }
     }
-    this.setState(() => ({selectType: option.key, showConfirmItem}));
+    this.setState(() => ({ selectType: option.key, showConfirmItem }));
   }
 
   onSliderChange = value => {
@@ -159,36 +160,36 @@ class ModifyForm extends Component {
   checkMaxFeeRate = (rule, value, callback) => {
     let { feeRate, maxFeeRate } = this.props.record;
     try {
-      if(!isNumber(value)) {
+      if (!isNumber(value)) {
         callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
-      if(value < 0 || value > maxFeeRate) {
+      if (value < 0 || value > maxFeeRate) {
         callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
-      if(value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
+      if (value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
         callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
-      if(value > feeRate && value > feeRate + 1) {
+      if (value > feeRate && value > feeRate + 1) {
         callback(intl.get('NormalTransForm.invalidFeeRate'));
         return;
       }
       callback();
-    } catch(err) {
+    } catch (err) {
       callback(intl.get('NormalTransForm.invalidFeeRate'));
     }
   }
 
-  handleShowSelectType(type) {
+  handleShowSelectType (type) {
     return this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === type).toString();
   }
 
-  render() {
+  render () {
     const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
-    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate'), maxFeeRate:getFieldValue('maxFeeRate') };
+    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate'), maxFeeRate: getFieldValue('maxFeeRate') };
     let title = modifyType === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
     let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
 
@@ -300,7 +301,7 @@ class ValidatorModify extends Component {
     this.setState({ visible: false });
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>

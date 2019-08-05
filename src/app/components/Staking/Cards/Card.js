@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 
 import mountain from 'static/image/mountain.png';
 
-function Card(props) {
+function Card (props) {
   return (
     <div className={props.className}>
       <Row>

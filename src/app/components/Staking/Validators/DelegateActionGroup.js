@@ -5,8 +5,8 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import './index.less';
 
-import DelegateIn from "./DelegateIn";
-import DelegateOut from "./DelegateOut";
+import DelegateIn from './DelegateIn';
+import DelegateOut from './DelegateOut';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -17,15 +17,15 @@ import DelegateOut from "./DelegateOut";
 @observer
 class DelegateActionGroup extends Component {
   state = {
-    enableGroup: true, 
+    enableGroup: true,
   }
 
   handleDisableGroup = () => {
     this.setState({ enableGroup: false });
   }
 
-  render() {
-    //quitEpoch === 0 ? Pending finished: is Pending;
+  render () {
+    // quitEpoch === 0 ? Pending finished: is Pending;
     // console.log('quitEpoch:', this.props.record.quitEpoch);
     return (
       <div>
@@ -42,4 +42,4 @@ class DelegateActionGroup extends Component {
   }
 }
 
-export default DelegateActionGroup
+export default DelegateActionGroup;

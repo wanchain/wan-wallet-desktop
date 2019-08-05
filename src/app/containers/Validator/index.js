@@ -27,13 +27,13 @@ class Validator extends Component {
     validatorRegister: false,
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('validator.title');
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
@@ -41,7 +41,7 @@ class Validator extends Component {
     }, 20000);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
@@ -49,7 +49,7 @@ class Validator extends Component {
     this.setState(state => ({ validatorRegister: !state.validatorRegister }));
   }
 
-  render() {
+  render () {
     return (
       <div className="staking">
         <Row>

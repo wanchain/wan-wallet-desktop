@@ -40,10 +40,11 @@ export const getBalance = function (arr) {
     wand.request('address_balance', { addr: addrArr }, (err, val) => {
       thisVal = Object.assign({}, val);
       if (err) {
-        return reject('Get balance failed ', err)
+        console.log('Get balance failed ', err)
+        return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {
-          return thisVal[item] = fromWei(thisVal[item])
+          thisVal[item] = fromWei(thisVal[item]);
         });
         return resolve(thisVal);
       }
@@ -78,7 +79,7 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
     if (index !== -1) {
       let addr = Object.keys(addrInfo[type])[index];
       value = { type, addr }
-      infos.forEach(item => value[item] = addrInfo[type][addr][item]);
+      infos.forEach(item => { value[item] = addrInfo[type][addr][item] });
     }
   });
   return value;
@@ -88,7 +89,8 @@ export const getNonce = function (addrArr, chainType) {
   return new Promise((resolve, reject) => {
     wand.request('address_getNonce', { addr: addrArr, chainType: chainType }, (err, val) => {
       if (err) {
-        return reject('Get nonce failed', err);
+        console.log('Get nonce failed', err)
+        return reject(err);
       } else {
         let nonce = parseInt(val, 16);
         return resolve(nonce);
@@ -101,7 +103,8 @@ export const getGasPrice = function (chainType) {
   return new Promise((resolve, reject) => {
     wand.request('query_getGasPrice', { chainType: chainType }, (err, val) => {
       if (err) {
-        return reject('Get gas price failed ', err)
+        console.log('Get gas price failed ', err);
+        return reject(err)
       } else {
         let gasPrice = new BigNumber(val).div(BigNumber(10).pow(9)).toString(10);
         return resolve(gasPrice);
@@ -114,7 +117,8 @@ export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
     wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
       if (err) {
-        return reject('Estimate gas failed ', err)
+        console.log('Estimate gas failed ', err);
+        return reject(err);
       } else {
         return resolve(val);
       }
@@ -126,7 +130,8 @@ export const checkWanAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isWanAddress', { address: address }, (err, val) => {
       if (err) {
-        return reject('Check WAN address failed ', err)
+        console.log('Check WAN address failed ', err);
+        return reject(err);
       } else {
         return resolve(val);
       }
@@ -138,7 +143,8 @@ export const checkWanValidatorAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isValidatorAddress', { address: address }, (err, val) => {
       if (err) {
-        return reject('Check WAN address failed ', err)
+        err = 'Check WAN address failed: ' + err
+        return reject(err)
       } else {
         return resolve(val);
       }
@@ -152,7 +158,8 @@ export const getChainId = function () {
       param: 'network'
     }, function (err, val) {
       if (err) {
-        return reject('Get chain ID failed', err);
+        err = 'Get chain ID failed:' + err;
+        return reject(err);
       } else {
         if (val['network'].includes('main')) {
           return resolve(1);
@@ -170,7 +177,8 @@ export const isSdkReady = function () {
       param: 'sdkStatus'
     }, function (err, val) {
       if (err) {
-        return reject('Get SDK status failed ', err);
+        err = 'Get SDK status failed: ' + err;
+        return reject(err);
       } else {
         if (val['sdkStatus'].includes('ready')) {
           return resolve(true);
@@ -222,7 +230,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   Object.values(tmp).forEach(item => {
     if (item.address === addr) {
       balance = item.balance;
-      return;
+      return; // eslint-disable-line no-useless-return
     }
   })
   return balance;
@@ -270,7 +278,7 @@ export const regEmitterHandler = function (key, callback) {
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
     console.log('Emitter: ', key, val)
-    if (emitterHandlers.hasOwnProperty(key)) {
+    if (emitterHandlers.hasOwnProperty(key)) { // eslint-disable-line no-prototype-builtins
       emitterHandlers[key](val);
     }
   })
@@ -280,7 +288,8 @@ export const getContractAddr = function () {
   return new Promise((resolve, reject) => {
     wand.request('staking_getContractAddr', {}, (err, val) => {
       if (err) {
-        return reject('staking_getContractAddr failed', err);
+        err = 'staking_getContractAddr failed: ' + err;
+        return reject(err);
       } else {
         return resolve(val);
       }
@@ -292,11 +301,11 @@ export const getContractData = function (func, validatorAddr) {
   return new Promise((resolve, reject) => {
     wand.request('staking_getContractData', { func, validatorAddr }, (err, val) => {
       if (err) {
-        return reject('staking_getContractData failed', err);
+        err = 'staking_getContractData failed: ' + err;
+        return reject(err);
       } else {
         return resolve(val);
       }
     });
   })
 };
-

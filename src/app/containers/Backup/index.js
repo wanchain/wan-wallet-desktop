@@ -61,7 +61,7 @@ class Backup extends Component {
     message.success(intl.get('Backup.copySuccessfully'));
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Card title={intl.get('Backup.revealSeedPhrase')}>
@@ -103,7 +103,3 @@ class Backup extends Component {
 }
 
 export default Backup;
-
-
-
-

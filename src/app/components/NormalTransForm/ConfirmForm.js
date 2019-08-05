@@ -21,7 +21,7 @@ class ConfirmForm extends Component {
     this.props.sendTrans();
   }
 
-  render() {
+  render () {
     const { visible, form, from, loading, sendTrans } = this.props;
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce } = this.props.transParams[from];

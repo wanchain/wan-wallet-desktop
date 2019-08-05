@@ -20,7 +20,7 @@ import './index.less';
 class MHeader extends Component {
   logOut = () => {
     wand.request('wallet_lock', null, (err, val) => {
-      if (err) { 
+      if (err) {
           console.log('error printed inside callback: ', err)
           return
       }
@@ -29,7 +29,7 @@ class MHeader extends Component {
   }
 
   handleDisconnect = () => {
-    if(this.props.pageTitle === 'Ledger') {
+    if (this.props.pageTitle === 'Ledger') {
       wand.request('wallet_deleteLedger');
     }
     this.props.updateAddress(this.props.pageTitle.toLowerCase())

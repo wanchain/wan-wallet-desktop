@@ -1,5 +1,5 @@
 const ko_KR = {
-    'days': ' days',
+    days: ' days',
     'Login.login': '로그인',
     'Login.wrongPassword': '암호가 틀렸습니다.',
     'Login.inputPassword': '비밀번호를 입력하세요',
@@ -183,7 +183,6 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
-
     'Rename.name': '잘못된 이름',
     'Rename.edit': 'Edit',
 
@@ -213,7 +212,6 @@ const ko_KR = {
     'menuConfig.staking': '스테이킹',
     'menuConfig.settings': '설정',
 
-
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',
     'utils.helper.getGasPriceFailed': 'Gas 가격을 가져 오지 못했습니다.',
@@ -242,7 +240,7 @@ const ko_KR = {
     'staking.delegateList': '위임인 리스트',
 
     'validator.title': '노드 확인',
-    
+
     'StakeInForm.title': '타이틀',
     'StakeInForm.validatorAccount': '검증인 계정:',
     'StakeInForm.myAccount': '나의 계정:',
@@ -327,7 +325,7 @@ const ko_KR = {
     'TransHistory.StakeAppend': '스테이킹 추가',
     'TransHistory.StakeUpdateFeeRate': '수수료 업데이트',
     'ValidatorRegister.modifyTypeTitle': '수정된 파라미터',
-    'ValidatorRegister.invalidType':  '유효하지 않은 파라미터',
+    'ValidatorRegister.invalidType': '유효하지 않은 파라미터',
     'ValidatorRegister.selectType': '파라미터를 선택하세요',
 
     'popup.ok': '확인',
@@ -337,4 +335,5 @@ const ko_KR = {
     'title.QRCode': 'QR Code',
 
 }
+
 export default ko_KR;

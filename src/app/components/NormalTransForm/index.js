@@ -37,9 +37,9 @@ class NormalTransForm extends Component {
     advancedVisible: false,
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.setState = (state, callback) => {
-      return;
+      return false;
     };
   }
 
@@ -75,7 +75,7 @@ class NormalTransForm extends Component {
       advancedVisible: false,
       advanced: true,
     }, () => {
-      if(this.state.disabledAmount) {
+      if (this.state.disabledAmount) {
         let fee = form.getFieldValue('fee');
         form.setFieldsValue({
           amount: getBalanceByAddr(from, addrInfo) - fee
@@ -95,12 +95,12 @@ class NormalTransForm extends Component {
       let sendAmount = form.getFieldValue('amount');
       let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
 
-      if(new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
+      if (new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
-      if(settings.reinput_pwd) {
-        if(!pwd) {
+      if (settings.reinput_pwd) {
+        if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
@@ -130,7 +130,7 @@ class NormalTransForm extends Component {
     this.setState({
       gasFee: e.target.value
     })
-    if(this.state.disabledAmount) {
+    if (this.state.disabledAmount) {
       form.setFieldsValue({
         amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(e.target.value))
       });
@@ -143,7 +143,7 @@ class NormalTransForm extends Component {
     let from = form.getFieldValue('from');
     try {
       val = toWei((form.getFieldValue('amount') || 0).toString(10))
-    } catch(err) {
+    } catch (err) {
       return;
     }
     let tx = {
@@ -193,8 +193,8 @@ class NormalTransForm extends Component {
   sendAllAmount = e => {
     let { form, addrInfo } = this.props;
     let from = form.getFieldValue('from');
-    if(e.target.checked) {
-      if(this.state.advanced) {
+    if (e.target.checked) {
+      if (this.state.advanced) {
         let fee = form.getFieldValue('fee');
         form.setFieldsValue({
           amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
@@ -219,7 +219,7 @@ class NormalTransForm extends Component {
     }
   }
 
-  render() {
+  render () {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
@@ -230,7 +230,6 @@ class NormalTransForm extends Component {
 
     return (
       <div>
-
         <Modal
           visible
           destroyOnClose={true}
@@ -257,19 +256,19 @@ class NormalTransForm extends Component {
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                 <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               </Form.Item>
-              {settings.reinput_pwd 
+              {settings.reinput_pwd
                 ? <Form.Item label={intl.get('NormalTransForm.password')}>
                     {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
                     (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
                   </Form.Item>
                 : ''}
               {
-              advanced 
+              advanced
               ? <Form.Item label={intl.get('NormalTransForm.fee')}>
                   {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                     <Input disabled={true} className="colorInput" />
                   )}
-                </Form.Item> 
+                </Form.Item>
               : <Form.Item label={intl.get('NormalTransForm.fee')}>
                   {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                     <Radio.Group>

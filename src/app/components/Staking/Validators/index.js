@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Table, Form } from 'antd';
+import { Table } from 'antd';
 
 import './index.less';
 import Cell from './Cell';
@@ -7,8 +7,8 @@ import { observer, inject } from 'mobx-react';
 
 import intl from 'react-intl-universal';
 
-import Validator from "./Validator";
-import DelegateActionGroup from "./DelegateActionGroup";
+import Validator from './Validator';
+import DelegateActionGroup from './DelegateActionGroup';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -35,7 +35,7 @@ class Validators extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  getColumns() {
+  getColumns () {
     let columns = [
       {
         title: this.props.validatorColumns[0].title,
@@ -92,7 +92,7 @@ class Validators extends Component {
     return columns
   }
 
-  render() {
+  render () {
     return (
       <div className="validators">
         <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
@@ -101,4 +101,4 @@ class Validators extends Component {
   }
 }
 
-export default Validators
+export default Validators;

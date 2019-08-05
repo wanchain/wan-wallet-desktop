@@ -18,22 +18,29 @@ export default {
   module: {
       rules: [
           {
-              test: /\.(js|jsx)$/,
-              exclude: /node_modules/,
-              use: {
-                  loader: "babel-loader",
-                  options: {
-                    cacheDirectory: true,
-                    presets: ['@babel/preset-env'],
-                    plugins: [
-                      '@babel/transform-runtime',
-                      ['import', {
-                        libraryName: 'antd',
-                        style: true
-                      }]
-                    ]
-                  }
+            test: /\.(js|jsx)$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: "babel-loader",
+                options: {
+                  cacheDirectory: true,
+                  presets: ['@babel/preset-env'],
+                  plugins: [
+                    '@babel/transform-runtime',
+                    ['import', {
+                      libraryName: 'antd',
+                      style: true
+                    }]
+                  ]
+                }
               }
+            ].concat(process.env.NODE_ENV === 'production' ? [] : [{
+                loader: 'eslint-loader',
+                options: {
+                  formatter: require('eslint-friendly-formatter')
+                }
+            }])
           },
           {
             test: /\.(le|c)ss$/,

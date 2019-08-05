@@ -1,6 +1,5 @@
 const zh_CN = {
-    'days': ' 天',
-    
+    days: ' 天',
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
@@ -242,7 +241,7 @@ const zh_CN = {
     'staking.delegateList': '委托列表',
 
     'validator.title': '验证人',
-    
+
     'StakeInForm.title': '开始委托',
     'StakeInForm.validatorAccount': '验证人账户:',
     'StakeInForm.myAccount': '我的账户:',
@@ -330,7 +329,7 @@ const zh_CN = {
     'TransHistory.StakeAppend': '追加资金',
     'TransHistory.StakeUpdateFeeRate': '更新费率',
     'ValidatorRegister.modifyTypeTitle': '修改参数',
-    'ValidatorRegister.invalidType':  '参数不合法',
+    'ValidatorRegister.invalidType': '参数不合法',
     'ValidatorRegister.selectType': '选择参数',
     'ValidatorRegister.modifyFeeRateWarning': '同一天只允许修改一次委托费率',
 

@@ -1,5 +1,5 @@
 const th_TH = {
-    'days': ' วัน',
+    days: ' วัน',
     'Login.login': 'เข้าสู่กระเป๋า',
     'Login.wrongPassword': 'รหัสผ่านผิด',
     'Login.inputPassword': 'กรุณากรอกรหัสผ่าน',
@@ -42,7 +42,7 @@ const th_TH = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'เลือกแอป Wanchain และกดเข้าสู่แอป',
     'Ledger.signTransactionInLedger': 'กรุณายืนยันใน Ledger',
     'Ledger.signTransactionFailed': 'การทำรายการผิดพลาด กรุณาลองใหม่อีกครั้ง',
-    
+
     'Portfolio.portfolio': 'พอร์ตฟอลิโอ',
     'Portfolio.name': 'ชื่อทรัพย์สิน',
     'Portfolio.price': 'ราคา',
@@ -55,7 +55,7 @@ const th_TH = {
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'หากคุณกู้กระเป๋าโดยใช้ "กลุ่มคำลับ" ข้อมูลในปัจจุบันทั้งหมดจะถูกลบทิ้งและกระเป๋าจะทำการปิดและเปิดใหม่ กรุณายืนยันเพื่อดำเนินการต่อ',
     'Restore.continue': 'ดำเนินการต่อ',
     'Restore.allLocalDataWillBeLost': 'ข้อมูลปัจจุบันจะถูกลบทิ้งทั้งหมดเช่น กลุ่มคำลับที่ถูกใช้งานในปัจจุบัน, ประวัติการทำรายการ, แอดเดรสและอื่นๆ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?',
-    
+
     'Settings.settings': 'การตั้งค่า',
     'Settings.config': 'ตั้งค่า',
     'Settings.backup': 'การสำรองข้อมูลกระเป๋า',
@@ -103,7 +103,7 @@ const th_TH = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'ค่าแก๊สสูงสุดไม่ถูกต้อง',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce ไม่ถูกต้อง',
-    
+
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
 
     'HwWallet.Accounts.name': 'ชื่อ',
@@ -183,10 +183,9 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
-
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',
-    
+
     'SendNormalTrans.send': 'ส่ง',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
 
@@ -212,7 +211,6 @@ const th_TH = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'การตั้งค่า',
-
 
     'utils.helper.getBalanceFailed': 'ไม่สามารถดึงยอดคงเหลือได้',
     'utils.helper.getNonceFailed': 'ไม่สามารถดึง nonce ได้',
@@ -329,7 +327,7 @@ const th_TH = {
     'TransHistory.StakeAppend': 'เพิ่ม Stake',
     'TransHistory.StakeUpdateFeeRate': 'อัพเดทค่าธรรมเนียม',
     'ValidatorRegister.modifyTypeTitle': 'แก้ไขพารามิเตอร์',
-    'ValidatorRegister.invalidType':  'พารามิเตอร์ไม่ถูกต้อง',
+    'ValidatorRegister.invalidType': 'พารามิเตอร์ไม่ถูกต้อง',
     'ValidatorRegister.selectType': 'กรุณาเลือกพารามิเตอร์',
     'ValidatorRegister.modifyFeeRateWarning': 'สามารถแก้ไขได้มากที่สุด 1 ครั้งต่อวัน',
 

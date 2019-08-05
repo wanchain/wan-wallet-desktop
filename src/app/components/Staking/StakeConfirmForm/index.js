@@ -11,7 +11,7 @@ import intl from 'react-intl-universal';
 
 @observer
 class StakeConfirmForm extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       title: props.title,
@@ -23,7 +23,7 @@ class StakeConfirmForm extends Component {
     this.props.onSend()
   }
 
-  render() {
+  render () {
     return (
       <div className="withdraw">
         <Modal

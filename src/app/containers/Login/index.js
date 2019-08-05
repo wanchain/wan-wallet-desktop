@@ -18,7 +18,7 @@ class Login extends Component {
     visible: false
   }
 
-  componentDidMount() {
+  componentDidMount () {
     document.querySelector('.ant-input').focus();
   }
 
@@ -29,7 +29,7 @@ class Login extends Component {
         if (err) {
           message.error(intl.get('Login.wrongPassword'))
           return;
-        } 
+        }
         this.props.setAuth(true);
       })
     })

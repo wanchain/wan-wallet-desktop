@@ -18,7 +18,7 @@ export default () => {
             <Route path="/staking" component={Staking} />
             <Route path="/validator" component={Validator} />
           </Switch>
-        </Main>      
+        </Main>
       </HashRouter>
   );
 };

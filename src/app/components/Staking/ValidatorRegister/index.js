@@ -14,7 +14,7 @@ import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 import { MINDAYS, MAXDAYS, WALLETID } from 'utils/settings'
 
-const wanTx = require('wanchainjs-tx');
+const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 
 @inject(stores => ({
@@ -34,9 +34,9 @@ class ValidatorRegister extends Component {
     confirmLoading: false,
   };
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.setState = (state, callback) => {
-      return;
+      return false;
     };
   }
 
@@ -108,7 +108,6 @@ class ValidatorRegister extends Component {
           }
         })
       }
-
     })
   }
 
@@ -121,9 +120,9 @@ class ValidatorRegister extends Component {
       confirmLoading: true
     })
     let { form } = this.props;
-    let to = form.getFieldValue('to'),
-      from = form.getFieldValue('myAddr'),
-      amount = form.getFieldValue('amount');
+    let to = form.getFieldValue('to');
+    let from = form.getFieldValue('myAddr');
+    let amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
     let maxFeeRate = form.getFieldValue('maxFeeRate') === undefined ? 100 : form.getFieldValue('maxFeeRate');
@@ -136,7 +135,7 @@ class ValidatorRegister extends Component {
       walletID: walletID,
       secPk: form.getFieldValue('publicKey1'),
       bn256Pk: form.getFieldValue('publicKey2'),
-      lockEpoch: (form.getFieldValue('lockTime') * 24 * 3600)/(global.slotCount * global.slotTime),
+      lockEpoch: (form.getFieldValue('lockTime') * 24 * 3600) / (global.slotCount * global.slotTime),
       maxFeeRate: Math.round(maxFeeRate * 100),
       feeRate: Math.round(feeRate * 100),
     }
@@ -152,7 +151,7 @@ class ValidatorRegister extends Component {
         if (err) {
           message.warn(err.message);
         }
-        this.setState({ confirmVisible: false, confirmLoading: false  });
+        this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
     }
@@ -198,7 +197,7 @@ class ValidatorRegister extends Component {
       tx.v = result.payload.v;
       tx.r = result.payload.r;
       tx.s = result.payload.s;
-      let eTx = new wanTx(tx);
+      let eTx = new WanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
       console.log('signed', signedTx);
       console.log('tx:', tx);
@@ -210,7 +209,7 @@ class ValidatorRegister extends Component {
     this.setState({ lockTime: value })
   }
 
-  render() {
+  render () {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'maxFeeRate', 'feeRate', 'myAddr', 'amount']);
@@ -268,20 +267,19 @@ class ValidatorRegister extends Component {
               </Row>
             </div>
             {
-              this.state.isAgency ?
-                <div>
-                  <CommonFormItem form={form} formName='maxFeeRate'
-                    options={{ rules: [{ required: true, validator: checkMaxFeeRate }] }}
-                    title={intl.get('ValidatorRegister.maxFeeRate')}
-                    placeholder={intl.get('ValidatorRegister.feeRateLimit')}
-                  />
-                  <CommonFormItem form={form} formName='feeRate'
-                    options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
-                    title={intl.get('ValidatorRegister.feeRate')}
-                    placeholder={intl.get('ValidatorRegister.feeRateLimit')}
-                  />
-                </div> : <div />
-
+              this.state.isAgency &&
+              <div>
+                <CommonFormItem form={form} formName='maxFeeRate'
+                  options={{ rules: [{ required: true, validator: checkMaxFeeRate }] }}
+                  title={intl.get('ValidatorRegister.maxFeeRate')}
+                  placeholder={intl.get('ValidatorRegister.feeRateLimit')}
+                />
+                <CommonFormItem form={form} formName='feeRate'
+                  options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
+                  title={intl.get('ValidatorRegister.feeRate')}
+                  placeholder={intl.get('ValidatorRegister.feeRateLimit')}
+                />
+              </div>
             }
           </div>
           <div className="validator-bg">

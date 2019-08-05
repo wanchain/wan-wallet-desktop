@@ -15,7 +15,7 @@ import { timeFormat } from 'utils/support';
 
 @observer
 class ValidatorCards extends Component {
-  render() {
+  render () {
     const { myValidatorCards } = this.props;
     let stakeBottom = intl.get('staking.inValidators1') + myValidatorCards.principal[1] + intl.get('staking.inValidators2');
     let delegationBottom = intl.get('staking.inValidators1') + myValidatorCards.entrusted[1] + intl.get('staking.delegations');
@@ -62,7 +62,7 @@ class ValidatorCards extends Component {
               title={intl.get('staking.pending')}
               value={myValidatorCards.withdrawal[0]}
               tail="WAN"
-              bottom={timeFormat(Date.now()/1000)}
+              bottom={timeFormat(Date.now() / 1000)}
             />
           </Col>
         </Row>

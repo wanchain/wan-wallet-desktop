@@ -23,12 +23,13 @@ class MyValidatorsList extends Component {
     stakeInVisible: false,
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.timer = setInterval(() => {
       this.props.getValidatorsInfo()
     }, 3000)
   }
-  componentWillUnmount() {
+
+  componentWillUnmount () {
     clearInterval(this.timer)
   }
 
@@ -44,12 +45,12 @@ class MyValidatorsList extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  getColumns() {
+  getColumns () {
     const { myValidatorColumns } = this.props;
     return [
       {
         ...myValidatorColumns[0]
-      }, 
+      },
       {
         ...myValidatorColumns[1],
         render: principal => <Cell title={Number(principal.value).toFixed(0)} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
@@ -76,7 +77,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[7],
-        render: (text, record) => 
+        render: (text, record) =>
           <div>
             <Row>
               <Col span={8} align="center"><ValidatorIn record={record} /></Col>
@@ -93,7 +94,7 @@ class MyValidatorsList extends Component {
     ];
   }
 
-  render() {
+  render () {
     return (
       <div className="validators">
         <Table columns={this.getColumns()} dataSource={this.props.myValidatorList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />

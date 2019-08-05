@@ -13,7 +13,7 @@ import Card from './Card';
 
 @observer
 class Cards extends Component {
-  render() {
+  render () {
     const { stakeInfo, language } = this.props;
     let stakeBottom = intl.get('staking.inValidators1') + stakeInfo.validatorCnt + intl.get('staking.inValidators2');
     if (language === 'en_US' && stakeInfo.validatorCnt > 1) {
@@ -29,7 +29,7 @@ class Cards extends Component {
           <Col span={6}>
             <Card className="card2" title={intl.get('staking.totalReward')} value={stakeInfo.totalDistributedRewards} tail="WAN" bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')} />
           </Col>
-          <Col span={6}> 
+          <Col span={6}>
             <Card className="card3" title={intl.get('staking.rewardRate')} value={stakeInfo.currentRewardRate} bottom={stakeInfo.epochEndTime} />
           </Col>
           <Col span={6}>

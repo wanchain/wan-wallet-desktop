@@ -3,19 +3,22 @@ import { getChainId } from 'utils/helper';
 
 class Session {
   @observable hasMnemonicOrNot = false;
+
   @observable chainId = 1;
+
   @observable auth = false;
+
   @observable settings = {
     reinput_pwd: false,
     staking_advance: false,
     logout_timeout: '5',
   };
 
-  @action setChainId(id) {
+  @action setChainId (id) {
     self.chainId = id;
   }
 
-  @action getMnemonic() {
+  @action getMnemonic () {
     return new Promise((resolve, reject) => {
       wand.request('phrase_has', null, (err, val) => {
         if (!err) {
@@ -29,24 +32,24 @@ class Session {
     })
   }
 
-  @action initChainId() {
+  @action initChainId () {
     getChainId().then((chainId) => {
       self.chainId = chainId;
       console.log('Chain ID:', chainId);
     });
   }
 
-  @action setMnemonicStatus(status) {
+  @action setMnemonicStatus (status) {
     self.hasMnemonicOrNot = status;
   }
 
-  @action setAuth(val) {
+  @action setAuth (val) {
     self.auth = val;
   }
 
-  @action initSettings() {
+  @action initSettings () {
     wand.request('setting_get', { keys: ['settings'] }, (err, ret) => {
-      if(err) {
+      if (err) {
         console.log(`err: ${JSON.stringify(err)}`);
         return;
       };
@@ -55,11 +58,11 @@ class Session {
     })
   }
 
-  @action updateSettings(newValue) {
+  @action updateSettings (newValue) {
     let obj = self.settings;
     wand.request('setting_set', { settings: newValue }, (err, ret) => {
-      if(err) return;
-      if(ret) {
+      if (err) return;
+      if (ret) {
         self.settings = Object.assign(obj, newValue);
       }
     })

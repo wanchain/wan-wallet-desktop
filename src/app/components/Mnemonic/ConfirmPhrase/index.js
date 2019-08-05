@@ -19,7 +19,7 @@ import { randomSort } from 'utils/support';
 
 @observer
 class ConfirmPhrase extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       mnemonicArr: this.props.mnemonic.split(' '),
@@ -61,7 +61,7 @@ class ConfirmPhrase extends Component {
     );
   }
 
-  render() {
+  render () {
     const { tags, mnemonicArr } = this.state;
     const tagChild = tags.map(this.forMap);
 

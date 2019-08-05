@@ -12,7 +12,7 @@ import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, ge
 
 const Option = Select.Option;
 const pu = require('promisefy-util');
-const wanTx = require('wanchainjs-tx');
+const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 const LEFT = 6;
@@ -31,10 +31,10 @@ const RIGHT = 18;
 
 @observer
 class StakeInForm extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
-      balance: "0",
+      balance: '0',
       addrList: [],
       confirmVisible: false,
       confirmLoading: false,
@@ -46,7 +46,7 @@ class StakeInForm extends Component {
     }
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
     getNormalAddrList.forEach(addr => {
@@ -70,7 +70,7 @@ class StakeInForm extends Component {
     this.setState({ addrList: addrList })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { form, record, ledgerAddrList, trezorAddrList } = this.props;
 
     if (record) {
@@ -88,14 +88,14 @@ class StakeInForm extends Component {
 
       for (let i = 0; i < ledgerAddrList.length; i++) {
         const hdAddr = ledgerAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        if (hdAddr.toLowerCase() === from.toLowerCase()) {
           from = 'Ledger: ' + from;
           break;
         }
       }
       for (let i = 0; i < trezorAddrList.length; i++) {
         const hdAddr = trezorAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        if (hdAddr.toLowerCase() === from.toLowerCase()) {
           from = 'Trezor: ' + from;
           break;
         }
@@ -129,7 +129,7 @@ class StakeInForm extends Component {
       for (let i = 0; i < ledgerAddrList.length; i++) {
         const element = ledgerAddrList[i];
         value = value.replace('Ledger: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -140,7 +140,7 @@ class StakeInForm extends Component {
       for (let i = 0; i < trezorAddrList.length; i++) {
         const element = trezorAddrList[i];
         value = value.replace('Trezor: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -149,7 +149,7 @@ class StakeInForm extends Component {
 
     for (let i = 0; i < getNormalAddrList.length; i++) {
       const element = getNormalAddrList[i];
-      if (element.address == value) {
+      if (element.address === value) {
         return element.balance;
       }
     }
@@ -163,7 +163,6 @@ class StakeInForm extends Component {
       balance: this.getBalance(value),
     })
   }
-
 
   checkToWanAddr = (rule, value, callback) => {
     checkWanValidatorAddr(value).then(ret => {
@@ -187,7 +186,7 @@ class StakeInForm extends Component {
     }
 
     let valueStringPre = value.toString().slice(0, 4)
-    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) {
+    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) { // eslint-disable-line no-mixed-operators
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -222,14 +221,14 @@ class StakeInForm extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      if (addr.address == fromAddr) {
+      if (addr.address === fromAddr) {
         return addr.path;
       }
     }
   }
 
   getDataFromValidatorList = (addr, type) => {
-    if(!addr) return ' ';
+    if (!addr) return ' ';
     let { onlineValidatorList } = this.props;
     let value = type === 'address' ? onlineValidatorList.find(item => addr.toLowerCase() === item.name.toLowerCase()) : onlineValidatorList.find(item => addr.toLowerCase() === item.address.toLowerCase());
     return value ? value[type] : ' '
@@ -274,7 +273,7 @@ class StakeInForm extends Component {
 
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
-        if (to == v.address) {
+        if (to === v.address) {
           validator = v;
           break;
         }
@@ -307,7 +306,7 @@ class StakeInForm extends Component {
 
     let amount = form.getFieldValue('amount');
     if (!amount || (!this.props.topUp && amount < 100)) {
-      message.error("Please input a valid amount.");
+      message.error('Please input a valid amount.');
       return;
     }
     let walletID = WALLETID.NATIVE;
@@ -323,19 +322,19 @@ class StakeInForm extends Component {
     }
 
     let tx = {
-      "from": from,
-      "validatorAddr": to,
-      "amount": (form.getFieldValue('amount') || 0).toString(),
-      "gasPrice": 0,
-      "gasLimit": 0,
-      "BIP44Path": path,
-      "walletID": walletID,
-      "stakeAmount": (form.getFieldValue('amount') || 0).toString(),
+      from: from,
+      validatorAddr: to,
+      amount: (form.getFieldValue('amount') || 0).toString(),
+      gasPrice: 0,
+      gasLimit: 0,
+      BIP44Path: path,
+      walletID: walletID,
+      stakeAmount: (form.getFieldValue('amount') || 0).toString(),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
-    if (walletID == WALLETID.TREZOR) {
+    if (walletID === WALLETID.TREZOR) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       this.props.onSend(walletID);
     } else {
@@ -374,7 +373,7 @@ class StakeInForm extends Component {
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, "gwei");
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
@@ -387,13 +386,13 @@ class StakeInForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        //hashX: txHash,
+        // hashX: txHash,
         txHash,
         from: from.toLowerCase(),
         validator: validator,
         annotate: 'DelegateIn',
         status: 'Sent',
-        source: "external",
+        source: 'external',
         stakeAmount: value,
         ...rawTx
       }
@@ -429,7 +428,7 @@ class StakeInForm extends Component {
       tx.v = result.payload.v;
       tx.r = result.payload.r;
       tx.s = result.payload.s;
-      let eTx = new wanTx(tx);
+      let eTx = new WanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
       console.log('Signed tx', signedTx);
       console.log('Tx:', tx);
@@ -437,7 +436,7 @@ class StakeInForm extends Component {
     });
   }
 
-  render() {
+  render () {
     const { onlineValidatorList, form, settings, disabled, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let validatorListSelect = onlineValidatorList.map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
@@ -554,7 +553,7 @@ class StakeInForm extends Component {
                             allowClear
                             optionLabelProp="value"
                             dropdownMatchSelectWidth={false}
-                            dropdownStyle={{width: "420px"}}
+                            dropdownStyle={{ width: '420px' }}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             onSelect={this.onChange}

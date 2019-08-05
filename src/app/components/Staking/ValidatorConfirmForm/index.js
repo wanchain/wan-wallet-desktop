@@ -16,7 +16,7 @@ const RIGHT = 16;
 
 @observer
 class ValidatorConfirmForm extends Component {
-  render() {
+  render () {
     const { onCancel, record, onSend, title, showConfirmItem, confirmLoading } = this.props;
     const { publicKey1, publicKey2, validatorAccount, lockTime, feeRate, myAddr, amount, acceptDelegation } = showConfirmItem;
 
@@ -85,21 +85,21 @@ class ValidatorConfirmForm extends Component {
               </div>
             }
             {
-              feeRate ?
-                <div>
-                  <div className="withdraw-line">
-                    <Row type="flex" justify="space-around" align="middle">
-                      <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
-                      <Col span={RIGHT}><span className="withdraw-addr">{record.maxFeeRate}</span></Col>
-                    </Row>
-                  </div>
-                  <div className="withdraw-line">
-                    <Row type="flex" justify="space-around" align="middle">
-                      <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
-                      <Col span={RIGHT}><span className="withdraw-addr">{record.feeRate}</span></Col>
-                    </Row>
-                  </div>
-                </div>:<div />
+              feeRate &&
+              <div>
+                <div className="withdraw-line">
+                  <Row type="flex" justify="space-around" align="middle">
+                    <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                    <Col span={RIGHT}><span className="withdraw-addr">{record.maxFeeRate}</span></Col>
+                  </Row>
+                </div>
+                <div className="withdraw-line">
+                  <Row type="flex" justify="space-around" align="middle">
+                    <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
+                    <Col span={RIGHT}><span className="withdraw-addr">{record.feeRate}</span></Col>
+                  </Row>
+                </div>
+              </div>
             }
           </div>
           <div className="withdraw-bg">

@@ -50,7 +50,7 @@ class Sidebar extends Component {
     });
   }
 
-  render() {
+  render () {
     const { sidebarColumns, settings } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let stakeChildren = sidebarColumns[stakeIndex].children;

@@ -1,4 +1,4 @@
-import wanUtil from "wanchain-util";
+import wanUtil from 'wanchain-util';
 import React, { Component } from 'react';
 import { Button, message, Steps } from 'antd';
 import { observer, inject } from 'mobx-react';
@@ -47,7 +47,7 @@ class Register extends Component {
   next = () => {
     const { current, isSamePwd, isAllEmptyPwd, setIndex, pwd, method, mnemonic } = this.props;
     if (current === 0) {
-      if(isAllEmptyPwd) {
+      if (isAllEmptyPwd) {
         message.error(intl.get('Register.passwordsEmpty'));
         return;
       }
@@ -124,7 +124,7 @@ class Register extends Component {
     }
   }
 
-  render() {
+  render () {
     const { steps } = this.state;
     const { current } = this.props;
 
@@ -134,15 +134,13 @@ class Register extends Component {
           <div className="steps-content">{steps[current].content}</div>
           <div className="steps-action">
             {
-              current < steps.length - 1
-              && <Button type="primary" onClick={this.next}>{intl.get('Register.next')}</Button>
+              current < steps.length - 1 && <Button type="primary" onClick={this.next}>{intl.get('Register.next')}</Button>
             }
             {
               current > 1 && (<Button onClick={this.prev} className="cancel">{intl.get('Register.previous')}</Button>)
             }
             {
-              current === steps.length - 1
-              && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>{intl.get('Register.done')}</Button>
+              current === steps.length - 1 && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>{intl.get('Register.done')}</Button>
             }
           </div>
         </div>

@@ -8,7 +8,7 @@ const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
 class DelegateIn extends Component {
   state = {
-    visible: false, 
+    visible: false,
   }
 
   showDialog = () => {
@@ -23,7 +23,7 @@ class DelegateIn extends Component {
     this.setState({ visible: false });
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Button className="modifyTopUpBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
@@ -36,4 +36,4 @@ class DelegateIn extends Component {
   }
 }
 
-export default DelegateIn
+export default DelegateIn;

@@ -12,7 +12,7 @@ import locales from './locales';
 import { initEmitterHandler, regEmitterHandler, isSdkReady } from 'utils/helper';
 
 class App extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.changeLanguage('en_US');
     initEmitterHandler();
@@ -28,7 +28,7 @@ class App extends Component {
     }, 1000);
   }
 
-  componentDidMount() {
+  componentDidMount () {
     regEmitterHandler('language', (val) => {
       let lng;
       switch (val) {
@@ -91,7 +91,7 @@ class App extends Component {
     });
   }
 
-  render() {
+  render () {
     return (
       <AppContainer>
         <Provider {...stores}>
@@ -101,7 +101,6 @@ class App extends Component {
     );
   }
 }
-
 
 render(<App />, document.getElementById('root'));
 

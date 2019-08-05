@@ -8,14 +8,13 @@ import sendTransParams from './sendTransParams';
 import staking from './staking';
 
 const stores = {
-    session,
-    mnemonic,
-    portfolio,
-    wanAddress,
-    sendTransParams,
-    staking,
-    languageIntl,
-    sendTransParams,
+  session,
+  mnemonic,
+  portfolio,
+  wanAddress,
+  sendTransParams,
+  staking,
+  languageIntl,
 };
 
 export default stores;

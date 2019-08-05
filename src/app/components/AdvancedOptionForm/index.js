@@ -39,7 +39,7 @@ class AdvancedOptionForm extends Component {
     let form = this.props.form;
 
     form.validateFields(err => {
-      if(err) return;
+      if (err) return;
       let gasLimit = this.props.form.getFieldValue('gasLimit');
       let gasPrice = this.props.form.getFieldValue('gasPrice');
       let nonce = this.props.form.getFieldValue('nonce');
@@ -48,7 +48,7 @@ class AdvancedOptionForm extends Component {
     })
   }
 
-  render() {
+  render () {
     const { visible, form, minGasPrice, from, transParams } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce } = transParams[from];
@@ -87,6 +87,3 @@ class AdvancedOptionForm extends Component {
 }
 
 export default AdvancedOptionForm;
-
-
-
