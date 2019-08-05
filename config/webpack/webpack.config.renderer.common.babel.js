@@ -12,6 +12,7 @@ export default {
   ],
   output: {
     path: resolve('build'),
+    chunkFilename: '[name].bundle.js',
     filename: "renderer.js",
   },
   module: {
@@ -73,8 +74,10 @@ export default {
             test: /\.(png|jpg|gif)$/,
             use: [
               {
-                loader: 'file-loader',
-                options: {},
+                loader: 'url-loader',
+                options: {
+                  limit: 50000
+                }
               }
             ]
           },
@@ -117,12 +120,12 @@ export default {
       }),
       new MiniCssExtractPlugin({
         filename: '[name].css',
-        chunkFilename: '[id].css',
+        chunkFilename: '[name].css',
         ignoreOrder: false,
       })
   ],
   node: {
       __dirname: false,
       __filename: false
-  },
+  }
 }
