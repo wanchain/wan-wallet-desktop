@@ -8,8 +8,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import Validator from "./Validator";
-import DelegateIn from "./DelegateIn";
-import DelegateOut from "./DelegateOut";
+import DelegateActionGroup from "./DelegateActionGroup";
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -84,16 +83,7 @@ class Validators extends Component {
         align: 'center',
         render: (text, record) => {
           return (
-            <div>
-              <Row>
-                <Col span={12} align="center"><DelegateIn record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
-                <Col span={12} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
-              </Row>
-              <Row>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
-              </Row>
-            </div>
+            <DelegateActionGroup record={record}/>
           )
         }
       }
