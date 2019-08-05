@@ -15,6 +15,7 @@ const testnet = 'http://testnet.wanscan.org/tx/';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   historyList: stores.wanAddress.historyList,
+  selectedAddr: stores.wanAddress.selectedAddr,
   transColumns: stores.languageIntl.transColumns,
   setCurrPage: page => stores.wanAddress.setCurrPage(page),
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
@@ -24,7 +25,7 @@ const testnet = 'http://testnet.wanscan.org/tx/';
 class TransHistory extends Component {
   constructor(props) {
     super(props);
-    this.props.setCurrPage(this.props.name)
+    this.props.setCurrPage(this.props.name);
   }
 
   onChange = value => {
@@ -59,6 +60,7 @@ class TransHistory extends Component {
             placeholder={intl.get('TransHistory.selectAFromAddress')}
             optionFilterProp="children"
             onChange={this.onChange}
+            defaultValue={this.props.selectedAddr ? this.props.selectedAddr[0] : undefined}
             getPopupContainer = {() => document.getElementById('wanAddrSelect')}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >

@@ -5,6 +5,7 @@ import EventEmitter from 'events'
 import setting from '~/src/utils/Settings'
 import desktopIdle from 'desktop-idle'
 
+const MAX_LOCKTIME = Math.pow(2, 31) - 1
 const logger = Logger.getLogger('Windows')
 
 class Window extends EventEmitter {
@@ -57,13 +58,10 @@ class Window extends EventEmitter {
 
         this.window.on('blur', () => {
             if (this.type === 'main') {
-                if(setting.autoLockTimeout === 0) {
-                    if (this._idleChecker) {
-                        clearInterval(this._idleChecker);
-                        this._idleChecker = null;
-                    }
-                    return false;
-                }
+                let lockTimeThreshold = setting.autoLockTimeout 
+                if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME
+                this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`)
+
                 if (global.chainManager && !this.isClosed) {
                     if (this._idleChecker) {
                         this._logger.info('main window losing focus, clear idle time checker')
@@ -77,34 +75,31 @@ class Window extends EventEmitter {
                         this._idleChecker = null
                     }
 
-                    this._logger.info('main window losing focus, start autolock timer')
+                    this._logger.info('main window losing focus, start an away-from-main-window timer')
                     this._timer = setTimeout(() => {
                         this._logger.info('time out, lock the wallet')
                         this._mgr.broadcast('notification', 'uiAction', 'lockWallet')
                         clearTimeout(this._timer)
                         this._timer = null
-                        this._logger.info('autolock timer cleared')
-                    }, setting.autoLockTimeout)
+                        this._logger.info('away-from-main-window timer cleared')
+                    }, lockTimeThreshold)
                 }
             }
         })
 
         this.window.on('focus', () => {
             if (this.type === 'main') {
-                if(setting.autoLockTimeout === 0) {
-                    if(this._timer) {
-                        clearTimeout(timer);
-                        this._timer = null;
-                    }
-                    return false;
-                }
+                let lockTimeThreshold = setting.autoLockTimeout 
+                if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME
+                this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`)
+
                 if (this._timer) {
-                    this._logger.info('main window getting focus again, clear autolock timer')
+                    this._logger.info('main window getting focus again, clear away-from-main-window timer')
                     let timer = this._timer
                     
                     try {
                         clearTimeout(timer)
-                        this._logger.info('autolock timer cleared')
+                        this._logger.info('away-from-main-window timer cleared')
                     } catch (e) {
                         this._logger.error(e.message || e.stack)
                     }
@@ -116,8 +111,8 @@ class Window extends EventEmitter {
                     this._logger.info('start an interval checker for idle time')
                     this._idleChecker = setInterval(() => {
                         let idleTime = desktopIdle.getIdleTime()
-                        this._logger.info(`user idle time ${idleTime}`)
-                        if (idleTime * 1000 > setting.autoLockTimeout) {
+                        this._logger.info(`user idle time in seconds is: ${idleTime}`)
+                        if (idleTime * 1000 > lockTimeThreshold) {
                             this._logger.info('user idle or away from key board, lock the wallet')
                             this._mgr.broadcast('notification', 'uiAction', 'lockWallet')
                             clearInterval(this._idleChecker)
