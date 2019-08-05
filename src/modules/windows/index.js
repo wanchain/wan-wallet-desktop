@@ -94,12 +94,12 @@ class Window extends EventEmitter {
                 this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`)
 
                 if (this._timer) {
-                    this._logger.info('main window getting focus again, clear autolock timer')
+                    this._logger.info('main window getting focus again, clear away-from-main-window timer')
                     let timer = this._timer
                     
                     try {
                         clearTimeout(timer)
-                        this._logger.info('autolock timer cleared')
+                        this._logger.info('away-from-main-window timer cleared')
                     } catch (e) {
                         this._logger.error(e.message || e.stack)
                     }
