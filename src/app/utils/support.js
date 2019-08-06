@@ -1,6 +1,5 @@
 import Web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
-import { totalmem } from 'os';
 
 const web3 = new Web3();
 
