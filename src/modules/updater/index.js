@@ -91,10 +91,6 @@ class WalletUpdater {
           })
         }
 
-        this.updater.on('download-progress', (progressObj) => {
-          console.log('progressObj: ', progressObj)
-        })
-
         this.updater.on('update-downloaded', (info) => {
           if (process.platform !== 'darwin') updateModal.webContents.send('updateInfo', 'upgradeProgress', 'done')
           setTimeout(() => {
