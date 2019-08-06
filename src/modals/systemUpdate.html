@@ -192,6 +192,7 @@
                         clearInterval(walker)
                     } else {
                         width = width >= 99 ? 99 : width + Math.floor(Math.random() * (15 - 3)) + 3;
+                        width = width >= 99 ? 99 : width
                         percentage.innerHTML = width + '%'
                     }
                 }, 500)
