@@ -1,4 +1,7 @@
 import Web3 from 'web3';
+import { BigNumber } from 'bignumber.js';
+import { totalmem } from 'os';
+
 const web3 = new Web3();
 
 export function fromWei (data) {
@@ -58,6 +61,36 @@ export function isNumber (val) {
   let regPos = /^\d+(\.\d+)?$/; // 非负浮点数
   let regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; // 负浮点数
   return !!(regPos.test(val) || regNeg.test(val));
+}
+
+export function formatNum (num) {
+  if (num && num !== 'N/A') {
+    let tempNum = new BigNumber(num).toString();
+    let [left, right] = tempNum.split('.');
+    let tempLeft = left.split('').reverse().join('').match(/(\d{1,3})/g);
+    let tempRight = right ? `.${right}` : '';
+    return tempLeft.join(',').split('').reverse().join('') + tempRight;
+  } else {
+    return num;
+  }
+}
+
+export function normalNum (num, type = 'string') {
+  let tempNum;
+  if (num) {
+    if (typeof num === 'number') {
+      tempNum = new BigNumber(num).toString().split(',').join('');
+    } else {
+      tempNum = num.split(',').join('');
+    }
+    if (type === 'string') {
+      return new BigNumber(tempNum).toString();
+    } else {
+      return new BigNumber(tempNum).toNumber();
+    }
+  } else {
+    return num;
+  }
 }
 
 export function promiseTimeout (ms, p, desc) {

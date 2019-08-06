@@ -1,14 +1,13 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
 import './index.less';
 import Cell from './Cell';
-import { observer, inject } from 'mobx-react';
-
-import intl from 'react-intl-universal';
-
 import Validator from './Validator';
 import DelegateActionGroup from './DelegateActionGroup';
+import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -46,7 +45,7 @@ class Validators extends Component {
         dataIndex: 'myStake',
         key: 'myStake',
         render: stake => (
-          <Cell title={stake.title} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
+          <Cell title={formatNum(stake.title)} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
         ),
       }, {
         title: this.props.validatorColumns[2].title,
@@ -74,7 +73,7 @@ class Validators extends Component {
         dataIndex: 'distributeRewards',
         key: 'distributeRewards',
         render: stake => (
-          <Cell title={stake.title} />
+          <Cell title={formatNum(stake.title)} />
         ),
       }, {
         title: this.props.validatorColumns[6].title,

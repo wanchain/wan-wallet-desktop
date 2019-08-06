@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, Input, Icon } from 'antd';
+import { Button, Modal, Form, Input } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 
 import './index.less';
+import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -50,7 +51,7 @@ class ConfirmForm extends Component {
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.amount')}>
-            {getFieldDecorator('amount', { initialValue: amount })
+            {getFieldDecorator('amount', { initialValue: formatNum(amount) })
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {
@@ -61,7 +62,7 @@ class ConfirmForm extends Component {
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasLimit')}>
             {getFieldDecorator(
-              'gasLimit', { initialValue: gasLimit })
+              'gasLimit', { initialValue: formatNum(gasLimit) })
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.nonce')}>

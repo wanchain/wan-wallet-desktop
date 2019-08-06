@@ -3,6 +3,7 @@ import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
+import { formatNum } from 'utils/support';
 import { hasSameName } from 'utils/helper';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -30,7 +31,8 @@ class Accounts extends Component {
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
-      dataIndex: 'balance'
+      dataIndex: 'balance',
+      render: balance => <span>{formatNum(balance)}</span>
     },
     {
       dataIndex: 'action',

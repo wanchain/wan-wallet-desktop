@@ -4,6 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Row, Col, Alert } from 'antd';
 import { wanPubKey2Address } from 'utils/helper';
+import { formatNum } from 'utils/support';
 
 import './index.less';
 
@@ -118,7 +119,7 @@ class ValidatorConfirmForm extends Component {
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.entrustedAmount')}</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.amount} WAN</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{formatNum(record.amount)} WAN</span></Col>
                 </Row>
               </div>
             }

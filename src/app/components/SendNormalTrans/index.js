@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
-import { getNonce, getGasPrice, getBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
+import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 

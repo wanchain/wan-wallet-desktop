@@ -8,6 +8,7 @@ import ValidatorIn from './ValidatorIn';
 import ValidatorModify from './ValidatorModify';
 import Cell from 'components/Staking/Validators/Cell';
 import Validator from 'components/Staking/Validators/Validator';
+import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -53,11 +54,11 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[1],
-        render: principal => <Cell title={Number(principal.value).toFixed(0)} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
+        render: principal => <Cell title={formatNum(Number(principal.value).toFixed(0))} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
       },
       {
         ...myValidatorColumns[2],
-        render: entrustment => <Cell title={Number(entrustment.value).toFixed(0)} />,
+        render: entrustment => <Cell title={formatNum(Number(entrustment.value).toFixed(0))} />,
       },
       {
         ...myValidatorColumns[3],
@@ -73,7 +74,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[6],
-        render: distributeRewards => <Cell title={Number(distributeRewards.value).toFixed(2)} />,
+        render: distributeRewards => <Cell title={formatNum(Number(distributeRewards.value).toFixed(2))} />,
       },
       {
         ...myValidatorColumns[7],

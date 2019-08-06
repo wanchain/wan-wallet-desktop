@@ -8,7 +8,7 @@ import staking from './staking';
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
-import { timeFormat, fromWei } from 'utils/support';
+import { timeFormat, fromWei, formatNum } from 'utils/support';
 
 class WanAddress {
     @observable addrInfo = {
@@ -188,7 +188,7 @@ class WanAddress {
           key: item,
           name: self.addrInfo[type][item].name,
           address: wanUtil.toChecksumAddress(item),
-          balance: self.addrInfo[type][item].balance,
+          balance: formatNum(self.addrInfo[type][item].balance),
           path: `${WANPATH}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
@@ -265,7 +265,7 @@ class WanAddress {
             time: timeFormat(self.transHistory[item]['sendTime']),
             from: self.addrInfo[type][self.transHistory[item]['from']].name,
             to: self.transHistory[item].to,
-            value: fromWei(self.transHistory[item].value),
+            value: formatNum(fromWei(self.transHistory[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]['sendTime'],
           });
@@ -289,7 +289,7 @@ class WanAddress {
             time: timeFormat(histories[item].sendTime),
             from: self.addrInfo[type][histories[item].from].name,
             to: histories[item].to,
-            value: fromWei(histories[item].value),
+            value: formatNum(fromWei(histories[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: histories[item].sendTime,
             annotate: languageIntl.language && ['DelegateIn', 'DelegateOut'].includes(annotate) ? intl.get(`TransHistory.${annotate.toLowerCase()}`) : annotate,
@@ -328,7 +328,7 @@ class WanAddress {
     @computed get getNormalAmount () {
       let sum = 0;
       Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-      return sum;
+      return formatNum(sum);
     }
 
     @computed get getAllAmount () {

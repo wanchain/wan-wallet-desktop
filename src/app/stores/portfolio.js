@@ -1,7 +1,8 @@
-import { observable, action, computed, runInAction } from 'mobx';
+import { observable, action, computed, runInAction, toJS } from 'mobx';
 import axios from 'axios';
 
 import wanAddress from './wanAddress';
+import { formatNum } from 'utils/support';
 
 class Portfolio {
   @observable coinPriceArr;
@@ -53,7 +54,7 @@ class Portfolio {
                 break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
-            val.value = '$' + (val.price.substr(1) * val.balance).toFixed(2);
+            val.value = '$' + (val.price.substr(1) * wanAddress.getAllAmount).toFixed(2);
             amountValue += parseFloat(val.value.substr(1));
           }
         });
@@ -66,6 +67,11 @@ class Portfolio {
         });
       });
     }
+    list.forEach(item => {
+      item.price = `$${formatNum(item.price.substr(1))}`;
+      item.balance = formatNum(item.balance);
+      item.value = `$${formatNum(item.value.substr(1))}`
+    })
     return list;
   }
 }

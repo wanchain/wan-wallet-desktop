@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import { STAKEACT } from 'utils/settings'
 import { getAddrByTypes, getInfoByAddress, checkAddrType } from 'utils/helper';
-import { fromWei, dateFormat, timeFormat, daysAgo } from 'utils/support';
+import { fromWei, dateFormat, timeFormat, daysAgo, formatNum } from 'utils/support';
 
 import wanAddress from './wanAddress';
 import languageIntl from './languageIntl';
@@ -179,20 +179,20 @@ class Staking {
     let timestampArr = Object.values(self.validatorsInfo).map(item => item.timestamp);
     let minTimestampArr = timestampArr.length === 0 ? 0 : Math.min.apply(null, timestampArr);
 
-    cardsList.principal[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0);
+    cardsList.principal[0] = formatNum(Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0));
     cardsList.principal[1] = self.myValidatorList.length;
-    cardsList.reward[0] = Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2);
+    cardsList.reward[0] = formatNum(Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2));
     cardsList.reward[1] = (minTimestampArr !== 0 && !Number.isNaN(minTimestampArr)) ? timeFormat(minTimestampArr) : 'N/A';
 
-    cardsList.entrusted[0] = Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0);
+    cardsList.entrusted[0] = formatNum(Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.value), new BigNumber(0))).toString(10)).toFixed(0));
     cardsList.entrusted[1] = (self.myValidatorList.reduce((prev, curr) => prev.plus(curr.entrustment.person), new BigNumber(0))).toString(10);
-    cardsList.withdrawal[0] = Number(self.myValidators.reduce((prev, curr) => {
+    cardsList.withdrawal[0] = formatNum(Number(self.myValidators.reduce((prev, curr) => {
       if (curr.nextLockEpochs.toString() === '0') {
         return prev.plus(new BigNumber(fromWei(curr.amount)).plus(curr.partners.reduce((pre, cur) => pre.plus(fromWei(cur.amount)), new BigNumber(0))));
       } else {
         return prev;
       }
-    }, new BigNumber(0)).toString(10)).toFixed(0)
+    }, new BigNumber(0)).toString(10)).toFixed(0))
     cardsList.withdrawal[1] = 0;
 
     return cardsList;
@@ -264,7 +264,7 @@ class Staking {
           sendTime: histories[item].sendTime,
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
-          stakeAmount: fromWei(histories[item].value),
+          stakeAmount: formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && STAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           validator: {
