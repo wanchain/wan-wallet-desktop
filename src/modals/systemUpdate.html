@@ -185,13 +185,13 @@
                 document.getElementById('downloading-mask').style.display = 'block'
             } else {
                 document.getElementById('mask').style.display = 'block'
-                width = 1 
+                width = 3 
                 percentage.innerHTML = width + '%'
                 walker = setInterval(function() {
                     if (width == 100) {
                         clearInterval(walker)
                     } else {
-                        width = width >= 99 ? 99 : width + Math.random(1, 5)
+                        width = width >= 99 ? 99 : width + Math.floor(Math.random() * (15 - 3)) + 3;
                         percentage.innerHTML = width + '%'
                     }
                 }, 500)
