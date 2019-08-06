@@ -160,7 +160,7 @@ const ko_KR = {
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
     'NormalTransForm.invalidAmount': '유효하지 않은 값',
-    'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
+    'NormalTransForm.invalidFeeRate': '유효하지 않은 값',
     'NormalTransForm.transaction': '전송',
     'NormalTransForm.cancel': '취소',
     'NormalTransForm.next': '다음',
@@ -184,7 +184,7 @@ const ko_KR = {
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
     'Rename.name': '잘못된 이름',
-    'Rename.edit': 'Edit',
+    'Rename.edit': '수정',
 
     'SendNormalTrans.send': '전송',
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
@@ -234,7 +234,7 @@ const ko_KR = {
     'staking.table.modifyStake': '실행',
     'staking.table.topup': '재충전',
     'staking.table.exit': '종료',
-    'staking.table.modify': 'Modify',
+    'staking.table.modify': '수정',
     'staking.table.type': '종류',
     'staking.delegateHistory': '위임 내역',
     'staking.delegateList': '위임인 리스트',
@@ -331,8 +331,8 @@ const ko_KR = {
     'popup.ok': '확인',
     'popup.cancel': '취소',
     'title.imported': '가져온 주소',
-    'title.copy': 'Copy',
-    'title.QRCode': 'QR Code',
+    'title.copy': '복사',
+    'title.QRCode': 'QR코드',
 
 }
 
