@@ -6,17 +6,14 @@ import { Button, Table, Row, Col, message } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/wan.png';
+import { WANPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import { checkAddrType, hasSameName } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
-const WALLETID = 1;
-const KEYSTOREID = 5;
-const SYMBOL = 'WAN';
 const CHAINTYPE = 'WAN';
-const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -87,11 +84,11 @@ class WanAccount extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID : KEYSTOREID;
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
-      symbol: SYMBOL,
+      symbol: CHAINTYPE,
       path: params.path,
       to: params.to,
       amount: params.amount,
@@ -123,10 +120,10 @@ class WanAccount extends Component {
     });
 
     if (this.state.bool) {
-      let path = `${WAN}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
+      let path = `${WANPATH}${addrLen}`;
+      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,
