@@ -18,7 +18,8 @@ module.exports = {
     'no-unexpected-multiline': 0,
     'func-call-spacing': 0,
     'camelcase': 0,
-    'no-useless-escape': 0
+    'no-useless-escape': 0,
+    'space-before-function-paren': 0,
   },
   globals: {
     wand: "readonly",

@@ -103,6 +103,8 @@ const en_US = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas limit is incorrect',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce is incorrect',
+    'AdvancedOptionForm.inputData': 'Input Data',
+    'AdvancedOptionForm.inputDataIsIncorrect': 'Input data is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copy successfully',
 
@@ -156,6 +158,7 @@ const en_US = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas Limit',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'Fee',
+    'NormalTransForm.ConfirmForm.inputData': 'Input Data',
 
     'NormalTransForm.estimateGasFailed': 'Estimate gas failed. Please try again',
     'NormalTransForm.invalidAddress': 'Invalid address',

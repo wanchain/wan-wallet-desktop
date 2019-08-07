@@ -22,10 +22,10 @@ class ConfirmForm extends Component {
     this.props.sendTrans();
   }
 
-  render () {
+  render() {
     const { visible, form, from, loading, sendTrans } = this.props;
     const { getFieldDecorator } = form;
-    const { to, amount, gasLimit, gasPrice, nonce } = this.props.transParams[from];
+    const { to, amount, gasLimit, gasPrice, nonce, data } = this.props.transParams[from];
 
     let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
 
@@ -75,6 +75,14 @@ class ConfirmForm extends Component {
               <Input disabled={true} />
             )}
           </Form.Item>
+          {
+            data !== '0x' &&
+            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.inputData')}>
+              {getFieldDecorator('inputData', { initialValue: data })(
+                <Input disabled={true} />
+              )}
+            </Form.Item>
+          }
         </Form>
       </Modal>
     );

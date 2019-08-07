@@ -97,7 +97,8 @@ class WanAccount extends Component {
       amount: params.amount,
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
-      nonce: params.nonce
+      nonce: params.nonce,
+      data: params.data
     };
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, function (err, txHash) {

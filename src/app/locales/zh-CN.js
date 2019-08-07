@@ -103,6 +103,8 @@ const zh_CN = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas上限输入不正确',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce输入不正确',
+    'AdvancedOptionForm.inputData': '附加数据',
+    'AdvancedOptionForm.inputDataIsIncorrect': '附加数据输入不正确',
 
     'CopyAndQrcode.copySuccessfully': '复制成功',
 
@@ -156,6 +158,7 @@ const zh_CN = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas上限',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': '费用',
+    'NormalTransForm.ConfirmForm.inputData': '附加数据',
 
     'NormalTransForm.estimateGasFailed': '估算gas失败，请重试',
     'NormalTransForm.invalidAddress': '非法地址',

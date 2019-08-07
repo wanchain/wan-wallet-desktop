@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, InputNumber } from 'antd';
+import { Button, Modal, Form, InputNumber, Input } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -30,6 +30,14 @@ class AdvancedOptionForm extends Component {
     }
   }
 
+  checkInputData = (rule, value, callback) => {
+    if (value.slice(0, 2) === '0x') {
+      callback();
+    } else {
+      callback(intl.get('AdvancedOptionForm.inputDataIsIncorrect'));
+    }
+  }
+
   handleCancel = () => {
     this.props.onCancel();
   }
@@ -43,7 +51,8 @@ class AdvancedOptionForm extends Component {
       let gasLimit = this.props.form.getFieldValue('gasLimit');
       let gasPrice = this.props.form.getFieldValue('gasPrice');
       let nonce = this.props.form.getFieldValue('nonce');
-      this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
+      let data = this.props.form.getFieldValue('inputData');
+      this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
       this.props.onSave();
     })
   }
@@ -79,6 +88,11 @@ class AdvancedOptionForm extends Component {
             {getFieldDecorator(
               'nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
               (<InputNumber min={0} />)}
+          </Form.Item>
+          <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
+            {getFieldDecorator(
+              'inputData', { initialValue: '0x', rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
+              (<Input />)}
           </Form.Item>
         </Form>
       </Modal>

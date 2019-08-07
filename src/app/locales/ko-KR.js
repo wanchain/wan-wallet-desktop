@@ -103,6 +103,8 @@ const ko_KR = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas 상한 가격이 잘못 입력 되었습니다.',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce 입력이 잘못 되었습니다.',
+    'AdvancedOptionForm.inputData': '데이터를 입력하세요',
+    'AdvancedOptionForm.inputDataIsIncorrect': '데이터 입력이 잘못 되었습니다.',
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
 
@@ -156,6 +158,7 @@ const ko_KR = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas 상한선',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': '비용',
+    'NormalTransForm.ConfirmForm.inputData': '데이터를 입력하세요',
 
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',

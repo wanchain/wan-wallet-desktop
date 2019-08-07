@@ -103,6 +103,8 @@ const th_TH = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'ค่าแก๊สสูงสุดไม่ถูกต้อง',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce ไม่ถูกต้อง',
+    'AdvancedOptionForm.inputData': 'Input Data',
+    'AdvancedOptionForm.inputDataIsIncorrect': 'Input data is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
 
@@ -156,6 +158,7 @@ const th_TH = {
     'NormalTransForm.ConfirmForm.gasLimit': 'ค่าแก๊สสูงสุด',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'ค่าธรรมเนียม',
+    'NormalTransForm.ConfirmForm.inputData': 'Input Data',
 
     'NormalTransForm.estimateGasFailed': 'ค่าแก๊สไม่เพียงพอต่อการดำเนินการ กรุณาลองใหม่อีกครั้ง',
     'NormalTransForm.invalidAddress': 'แอดเดรสไม่ถูกต้อง',
