@@ -79,7 +79,7 @@ class ConfirmForm extends Component {
             data !== '0x' &&
             <Form.Item label={intl.get('NormalTransForm.ConfirmForm.inputData')}>
               {getFieldDecorator('inputData', { initialValue: data })(
-                <Input disabled={true} />
+                <Input.TextArea disabled={true} />
               )}
             </Form.Item>
           }

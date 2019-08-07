@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, InputNumber, Input } from 'antd';
+import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
+import { estimateGas } from 'utils/helper';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -14,6 +15,10 @@ import './index.less';
 
 @observer
 class AdvancedOptionForm extends Component {
+  state = {
+    loading: false
+  }
+
   checkGasLimit = (rule, value, callback) => {
     if (Number.isInteger(value)) {
       callback();
@@ -31,7 +36,7 @@ class AdvancedOptionForm extends Component {
   }
 
   checkInputData = (rule, value, callback) => {
-    if (value.slice(0, 2) === '0x') {
+    if (value.slice(0, 2) === '0x' && value.length % 2 === 0) {
       callback();
     } else {
       callback(intl.get('AdvancedOptionForm.inputDataIsIncorrect'));
@@ -43,17 +48,30 @@ class AdvancedOptionForm extends Component {
   }
 
   handleSave = () => {
+    this.setState({ loading: true });
     let from = this.props.from;
     let form = this.props.form;
 
     form.validateFields(err => {
       if (err) return;
-      let gasLimit = this.props.form.getFieldValue('gasLimit');
       let gasPrice = this.props.form.getFieldValue('gasPrice');
       let nonce = this.props.form.getFieldValue('nonce');
       let data = this.props.form.getFieldValue('inputData');
-      this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
-      this.props.onSave();
+      estimateGas('WAN', {
+        from,
+        to: this.props.transParams[from].to,
+        data: data
+      }).then(res => {
+        form.setFieldsValue({
+          gasLimit: res
+        });
+        this.props.updateTransParams(from, { gasLimit: res, gasPrice, nonce, data });
+        this.setState({ loading: false });
+        this.props.onSave();
+      }).catch(() => {
+        this.setState({ loading: false });
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'))
+      })
     })
   }
 
@@ -71,7 +89,7 @@ class AdvancedOptionForm extends Component {
         onOk={this.handleSave}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('AdvancedOptionForm.cancel')}</Button>,
-          <Button key="submit" type="primary" className="confirm-button" onClick={this.handleSave}>{intl.get('AdvancedOptionForm.save')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" loading={this.state.loading} onClick={this.handleSave}>{intl.get('AdvancedOptionForm.save')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">

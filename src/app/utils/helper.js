@@ -240,6 +240,9 @@ export const checkAmountUnit = function (decimals, amount) {
   if (!Number.isInteger(decimals)) {
     throw new Error('Decimals must be a integer');
   }
+  if (amount === '0') {
+    return true;
+  }
   let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
   return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
 }
