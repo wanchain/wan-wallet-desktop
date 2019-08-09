@@ -1,10 +1,17 @@
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
+import { WANPATH } from 'utils/settings';
 import { fromWei, isNumber } from 'utils/support';
 
-const WAN = "m/44'/5718350'/0'/0/";
+const wanUtil = require('wanchain-util');
 let emitterHandlers = {};
+
+export const deserializeWanTx = data => {
+  let tx = new wanUtil.wanchainTx(data) // eslint-disable-line
+  let from = tx.getSenderAddress();
+  return { ...tx.toJSON(true), from: `0x${from.toString('hex')}` };
+}
 
 export const checkMaxFeeRate = function (rule, value, callback) {
   try {
@@ -62,7 +69,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
     if (addrInfo['normal'][value]) {
       switch (type) {
         case 'path':
-          return `${WAN}${addrInfo['normal'][value][type]}`
+          return `${WANPATH}${addrInfo['normal'][value][type]}`
         default:
           return addrInfo['normal'][value][type]
       }

@@ -1,5 +1,6 @@
 const th_TH = {
     days: ' วัน',
+    'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'เข้าสู่กระเป๋า',
     'Login.wrongPassword': 'รหัสผ่านผิด',
     'Login.inputPassword': 'กรุณากรอกรหัสผ่าน',
@@ -209,6 +210,7 @@ const th_TH = {
     'menuConfig.hardwareWallet': 'กระเป๋าแบบฮาร์ดแวร์',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': 'Offline Wallet',
     'menuConfig.galaxyPos': 'Galaxy PoS',
     'menuConfig.delegation': 'Delegation',
     'menuConfig.validator': 'Validator',
@@ -333,6 +335,18 @@ const th_TH = {
     'ValidatorRegister.invalidType': 'พารามิเตอร์ไม่ถูกต้อง',
     'ValidatorRegister.selectType': 'กรุณาเลือกพารามิเตอร์',
     'ValidatorRegister.modifyFeeRateWarning': 'สามารถแก้ไขได้มากที่สุด 1 ครั้งต่อวัน',
+
+    'Offline.stepOne': 'Step 1: Generate Information',
+    'Offline.inputAddr': 'Input Address',
+    'Offline.getInfo': 'Generate Information',
+    'Offline.stepTwo': 'Step 2: Generate the Raw transaction information with the offline wallet',
+    'Offline.stepThree': 'Step 3: Send / Publish Transaction',
+    'Offline.threeInfo': 'Paste the signed transaction from Step 2 here and press the "SEND TRANSACTION" button.',
+    'Offline.threeTitle': 'Signed Transaction',
+    'Offline.sendTrans': 'Send Transaction',
+    'Offline.getInfoFailed': 'Get Info Failed, Please try again later!',
+    'Offline.sendRawTx': 'Send Raw Transaction Failed, Please try again later!',
+    'Offline.inputRawTxText': 'Please input Raw Transaction',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',

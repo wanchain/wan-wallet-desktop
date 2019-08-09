@@ -181,6 +181,12 @@ class LanguageIntl {
         ]
       },
       {
+        title: intl.get('menuConfig.offline'),
+        step: '1',
+        key: '/offline',
+        icon: 'bank'
+      },
+      {
         title: intl.get('menuConfig.galaxyPos'),
         step: '1',
         key: '/staking',

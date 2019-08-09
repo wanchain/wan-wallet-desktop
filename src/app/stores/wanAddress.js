@@ -268,6 +268,27 @@ class WanAddress {
             value: formatNum(fromWei(self.transHistory[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]['sendTime'],
+            offline: !!item.offline
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    }
+
+    @computed get offlineHistoryList () {
+      let historyList = [];
+
+      Object.keys(self.transHistory).forEach(item => {
+        if (self.transHistory[item].offline) {
+          let status = self.transHistory[item].status;
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item]['sendTime']),
+            from: self.transHistory[item].from,
+            to: self.transHistory[item].to,
+            value: formatNum(fromWei(self.transHistory[item].value)),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item]['sendTime'],
           });
         }
       });

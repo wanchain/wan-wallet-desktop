@@ -6,7 +6,11 @@ function resolve (dir) {
   return path.join(__dirname, '../../', dir)
 }
 
+const isEnvDevelopment = process.env.NODE_ENV === 'development';
+const isEnvProduction = process.env.NODE_ENV === 'production';
+
 export default {
+  bail: isEnvProduction,
   entry: [
       resolve('src/app/App.js')
   ],
@@ -35,7 +39,7 @@ export default {
                   ]
                 }
               }
-            ].concat(process.env.NODE_ENV === 'production' ? [] : [{
+            ].concat(isEnvProduction ? [] : [{
                 loader: 'eslint-loader',
                 options: {
                   formatter: require('eslint-friendly-formatter')

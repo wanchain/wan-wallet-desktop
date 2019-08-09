@@ -1,5 +1,6 @@
 const ko_KR = {
     days: ' days',
+    'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': '로그인',
     'Login.wrongPassword': '암호가 틀렸습니다.',
     'Login.inputPassword': '비밀번호를 입력하세요',
@@ -209,6 +210,7 @@ const ko_KR = {
     'menuConfig.hardwareWallet': '하드웨어 지갑',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': 'Offline Wallet',
     'menuConfig.galaxyPos': 'Galaxy Consensus',
     'menuConfig.delegation': '위임인',
     'menuConfig.validator': '검증인',
@@ -330,6 +332,18 @@ const ko_KR = {
     'ValidatorRegister.modifyTypeTitle': '수정된 파라미터',
     'ValidatorRegister.invalidType': '유효하지 않은 파라미터',
     'ValidatorRegister.selectType': '파라미터를 선택하세요',
+
+    'Offline.stepOne': 'Step 1: Generate Information',
+    'Offline.inputAddr': 'Input Address',
+    'Offline.getInfo': 'Generate Information',
+    'Offline.stepTwo': 'Step 2: Generate the Raw transaction information with the offline wallet',
+    'Offline.stepThree': 'Step 3: Send / Publish Transaction',
+    'Offline.threeInfo': 'Paste the signed transaction from Step 2 here and press the "SEND TRANSACTION" button.',
+    'Offline.threeTitle': 'Signed Transaction',
+    'Offline.sendTrans': 'Send Transaction',
+    'Offline.getInfoFailed': 'Get Info Failed, Please try again later!',
+    'Offline.sendRawTx': 'Send Raw Transaction Failed, Please try again later!',
+    'Offline.inputRawTxText': 'Please input Raw Transaction',
 
     'popup.ok': '확인',
     'popup.cancel': '취소',

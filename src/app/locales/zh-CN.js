@@ -1,5 +1,6 @@
 const zh_CN = {
     days: ' 天',
+    'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
@@ -209,6 +210,7 @@ const zh_CN = {
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': '离线钱包',
     'menuConfig.galaxyPos': '星系共识',
     'menuConfig.delegation': '委托',
     'menuConfig.validator': '验证人',
@@ -335,6 +337,18 @@ const zh_CN = {
     'ValidatorRegister.invalidType': '参数不合法',
     'ValidatorRegister.selectType': '选择参数',
     'ValidatorRegister.modifyFeeRateWarning': '同一天只允许修改一次委托费率',
+
+    'Offline.stepOne': '第一步：获取信息',
+    'Offline.inputAddr': '输入地址',
+    'Offline.getInfo': '获取信息',
+    'Offline.stepTwo': '第二步：请打开离线钱包生成原始交易信息',
+    'Offline.stepThree': '第三步：发送交易',
+    'Offline.threeInfo': 'Paste the signed transaction from Step 2 here and press the "SEND TRANSACTION" button.',
+    'Offline.threeTitle': '签名过的交易数据',
+    'Offline.sendTrans': '发送交易',
+    'Offline.getInfoFailed': '获取信息失败，请稍后再试！',
+    'Offline.sendRawTx': '发送交易失败，请稍后再试！',
+    'Offline.inputRawTxText': '请正确输入签名后的交易数据',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',
