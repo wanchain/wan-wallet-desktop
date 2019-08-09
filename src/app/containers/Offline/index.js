@@ -37,22 +37,19 @@ class Offline extends Component {
         let ret = await checkWanAddr(this.state.addr)
         if (!ret) {
           message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
+          return;
         }
-      } catch (e) {
+        [gasPrice, nonce] = await Promise.all([getGasPrice('WAN'), getNonce(this.state.addr, 'WAN')]);
+        this.setState({
+          gasPrice,
+          nonce
+        });
+      } catch (err) {
+        console.log('handleGetInfo: ', err)
         message.warn(intl.get('Offline.getInfoFailed'))
       }
     } else {
       message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
-    }
-    try {
-      [gasPrice, nonce] = await Promise.all([getGasPrice('WAN'), getNonce(this.state.addr, 'WAN')]);
-      this.setState({
-        gasPrice,
-        nonce
-      });
-    } catch (err) {
-      console.log('handleGetInfo: ', err)
-      message.warn(intl.get('Offline.getInfoFailed'))
     }
   }
 
