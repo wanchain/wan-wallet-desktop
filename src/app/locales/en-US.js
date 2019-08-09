@@ -38,7 +38,7 @@ const en_US = {
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'Please follow the below instructions to connect your Ledger wallet',
     'Ledger.connectLedgerWalletToComputer': 'Connect your Ledger wallet directly to your computer',
-    'Ledger.enterPinCode': 'Enter pin code to unlock your Ledger wallet',
+    'Ledger.enterPinCode': 'Enter PIN code to unlock your Ledger wallet',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
     'Ledger.signTransactionInLedger': 'Please confirm in Ledger',
     'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
@@ -332,7 +332,7 @@ const en_US = {
     'ValidatorRegister.selectType': 'Select a parameter',
     'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
 
-    'popup.ok': 'Ok',
+    'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
     'title.imported': 'Imported Address',
     'title.copy': 'Copy',

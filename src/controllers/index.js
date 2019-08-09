@@ -670,7 +670,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'delegateIn':
             try {
-                logger.info('delegateIn:' + payload);
+                logger.info('delegateIn:' + JSON.stringify(payload));
                 let tx = payload;
 
                 let validatorInfo = await ccUtil.getValidatorInfo('wan', tx.validatorAddr);
