@@ -79,6 +79,7 @@ class Offline extends Component {
         if (err) {
           console.log('OfflineSendTx: ', err)
           message.warn(intl.get('Offline.sendRawTx'));
+          this.setState({ raw: '' });
           return;
         }
         let txObj = deserializeWanTx(this.state.raw);
@@ -91,12 +92,14 @@ class Offline extends Component {
         }
         message.success(intl.get('Send.transSuccess'))
         wand.request('transaction_insertTransToDB', { rawTx, satellite: { offline: true } }, (err, res) => {
-          if (err) return;
-          if (res) {
-            this.props.updateTransHistory();
-          }
+          if (err) {
+            this.setState({ raw: '' })
+            return;
+          };
+          this.props.updateTransHistory();
         })
       })
+      this.setState({ raw: '' })
     } else {
       message.warn(intl.get('Offline.inputRawTxText'))
     }
@@ -133,7 +136,7 @@ class Offline extends Component {
           <p className="stepInfo">{intl.get('Offline.threeInfo')}</p>
           <p className="stepTitle">{intl.get('Offline.threeTitle')}</p>
           <p>
-            <Input.TextArea autosize={{ minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange}></Input.TextArea>
+            <Input.TextArea autosize={{ minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
           </p>
           <p className="threeBtn">
             <Button type="primary" onClick={this.sendTx}>{intl.get('Offline.sendTrans')}</Button>
