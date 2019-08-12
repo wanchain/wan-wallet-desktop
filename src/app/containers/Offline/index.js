@@ -7,7 +7,7 @@ import './index.less';
 import TransHistory from 'components/TransHistory';
 import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx } from 'utils/helper';
 
-const statStyle = { color: '#ddd' };
+const statStyle = { color: '#ddd', background: '#03147 !important' };
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -111,32 +111,33 @@ class Offline extends Component {
     return (
       <React.Fragment>
         <div className="offlineStep">
-          <h3 className="stepOne">{intl.get('Offline.stepOne')}</h3>
+          <Button type="primary" className="stepOne">{intl.get('Offline.stepOne')}</Button>
+          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepOneText')}</h3>
+          <br />
           <Input placeholder={intl.get('Offline.inputAddr')} className="colorInputAddr" onChange={this.handleAddrChange} />
-          <Button type="primary" onClick={this.handleGetInfo}>{intl.get('Offline.getInfo')}</Button>
-          {
-            gasPrice !== null && nonce !== null &&
-            <Row align="middle">
-              <Col span={12}>
-                <Statistic valueStyle={statStyle} title="Gas Price" value={gasPrice} />
-              </Col>
-              <Col span={12}>
-                <Statistic valueStyle={statStyle} title="Nonce" value={nonce} />
-              </Col>
-            </Row>
-          }
+          <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
+          <Row align="middle" style={{ marginTop: '10px' }}>
+            <Col span={6}>
+              <Statistic valueStyle={statStyle} title="Gas Price" value={gasPrice === null ? '--' : gasPrice + ' Gwei'} />
+            </Col>
+            <Col span={6}>
+              <Statistic valueStyle={statStyle} title="Nonce" value={nonce === null ? '--' : nonce} />
+            </Col>
+          </Row>
         </div>
-        <Divider />
+        <Divider className="borderSty" />
         <div className="offlineStep">
-          <h3 className="stepOne">{intl.get('Offline.stepTwo')}</h3>
+          <Button type="primary" className="stepOne">{intl.get('Offline.stepTwo')}</Button>
+          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepTwoText')}</h3>
         </div>
-        <Divider />
+        <Divider className="borderSty" />
         <div className="offlineStep">
-          <h3 className="stepOne">{intl.get('Offline.stepThree')}</h3>
+          <Button type="primary" className="stepOne">{intl.get('Offline.stepThree')}</Button>
+          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepThreeText')}</h3>
+          <br />
           <p className="stepInfo">{intl.get('Offline.threeInfo')}</p>
-          <p className="stepTitle">{intl.get('Offline.threeTitle')}</p>
           <p>
-            <Input.TextArea autosize={{ minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
+            <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
           </p>
           <p className="threeBtn">
             <Button type="primary" onClick={this.sendTx}>{intl.get('Offline.sendTrans')}</Button>
