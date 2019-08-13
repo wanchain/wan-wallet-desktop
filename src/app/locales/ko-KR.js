@@ -347,6 +347,7 @@ const ko_KR = {
     'Offline.getInfoFailed': 'Get information failed. Please try again',
     'Offline.sendRawTx': 'Send transaction failed. Please try again',
     'Offline.inputRawTxText': 'Please input signed transaction',
+    'Offline.linkToWebsite': 'Click skip to the official website to download the offline wallet',
 
     'popup.ok': '확인',
     'popup.cancel': '취소',

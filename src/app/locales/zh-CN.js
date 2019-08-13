@@ -352,6 +352,7 @@ const zh_CN = {
     'Offline.getInfoFailed': '获取信息失败，请稍后再试',
     'Offline.sendRawTx': '发送交易失败，请稍后再试',
     'Offline.inputRawTxText': '请正确输入签名后的交易数据',
+    'Offline.linkToWebsite': '点击跳转到官网下载离线钱包',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

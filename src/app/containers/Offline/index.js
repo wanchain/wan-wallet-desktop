@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, message, Col, Row, Statistic, Divider } from 'antd';
+import { Button, Input, message, Col, Row, Statistic, Divider, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -105,6 +105,10 @@ class Offline extends Component {
     }
   }
 
+  handleJumpToWebsite = () => {
+    wand.shell.openExternal('https://www.wanchain.org/products');
+  }
+
   render () {
     const { gasPrice, nonce } = this.state;
 
@@ -118,10 +122,10 @@ class Offline extends Component {
           <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
           <Row align="middle" style={{ marginTop: '10px' }}>
             <Col span={6}>
-              <Statistic valueStyle={statStyle} title="Gas Price" value={gasPrice === null ? '--' : gasPrice + ' Gwei'} />
+              <span className="textFont">Gas Price: </span><Statistic valueStyle={statStyle} value={gasPrice === null ? '--' : gasPrice + ' Gwin'} />
             </Col>
             <Col span={6}>
-              <Statistic valueStyle={statStyle} title="Nonce" value={nonce === null ? '--' : nonce} />
+              <span className="textFont">Nonce: </span><Statistic valueStyle={statStyle} value={nonce === null ? '--' : nonce} />
             </Col>
           </Row>
         </div>
@@ -129,6 +133,7 @@ class Offline extends Component {
         <div className="offlineStep">
           <Button type="primary" className="stepOne">{intl.get('Offline.stepTwo')}</Button>
           <h3 className="stepOne inlineBlock">{intl.get('Offline.stepTwoText')}</h3>
+          <Tooltip placement="bottom" title={intl.get('Offline.linkToWebsite')}><Icon type="link" onClick={this.handleJumpToWebsite} /></Tooltip>
         </div>
         <Divider className="borderSty" />
         <div className="offlineStep">
@@ -137,7 +142,7 @@ class Offline extends Component {
           <br />
           <p className="stepInfo">{intl.get('Offline.threeInfo')}</p>
           <p>
-            <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
+            <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
           </p>
           <p className="threeBtn">
             <Button type="primary" onClick={this.sendTx}>{intl.get('Offline.sendTrans')}</Button>
