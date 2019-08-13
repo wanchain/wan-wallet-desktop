@@ -343,7 +343,7 @@ const ko_KR = {
     'Offline.stepThreeText': 'Send Signed Transaction',
     'Offline.threeInfo': 'Paste the signed transaction from step 2 here and press the "SEND" button',
     'Offline.threeTitle': 'Input Signed Transaction',
-    'Offline.sendTrans': 'Send',
+    'Offline.sendTrans': 'Send Transaction',
     'Offline.getInfoFailed': 'Get information failed. Please try again',
     'Offline.sendRawTx': 'Send transaction failed. Please try again',
     'Offline.inputRawTxText': 'Please input signed transaction',

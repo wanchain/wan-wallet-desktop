@@ -120,7 +120,7 @@ class Offline extends Component {
           <br />
           <Input placeholder={intl.get('Offline.inputAddr')} className="colorInputAddr" onChange={this.handleAddrChange} />
           <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
-          <Row align="middle" style={{ marginTop: '10px', marginLeft: '20px' }}>
+          <Row align="middle" style={{ marginTop: '10px' }}>
             <Col span={6}>
               <span className="textFont">Gas Price: </span><Statistic valueStyle={statStyle} value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
             </Col>

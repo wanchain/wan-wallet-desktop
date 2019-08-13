@@ -348,7 +348,7 @@ const zh_CN = {
     'Offline.stepThreeText': '发送签名的交易数据',
     'Offline.threeInfo': '请粘贴第二步生成的交易数据，然后点击“发送”按钮',
     'Offline.threeTitle': '输入签名的交易数据',
-    'Offline.sendTrans': '发送',
+    'Offline.sendTrans': '发送交易数据',
     'Offline.getInfoFailed': '获取信息失败，请稍后再试',
     'Offline.sendRawTx': '发送交易失败，请稍后再试',
     'Offline.inputRawTxText': '请正确输入签名后的交易数据',
