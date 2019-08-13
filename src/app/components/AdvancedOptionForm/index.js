@@ -78,7 +78,7 @@ class AdvancedOptionForm extends Component {
   render () {
     const { visible, form, minGasPrice, from, transParams } = this.props;
     const { getFieldDecorator } = form;
-    const { gasLimit, gasPrice, nonce } = transParams[from];
+    const { gasLimit, gasPrice, nonce, data } = transParams[from];
     return (
       <Modal
         destroyOnClose={true}
@@ -109,7 +109,7 @@ class AdvancedOptionForm extends Component {
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
             {getFieldDecorator(
-              'inputData', { initialValue: '0x', rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
+              'inputData', { initialValue: data, rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
               (<Input />)}
           </Form.Item>
         </Form>

@@ -508,7 +508,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'insertTransToDB':
             try {
-                ccUtil.insertNormalTx(payload.rawTx);
+                ccUtil.insertNormalTx(payload.rawTx, undefined, undefined, payload.satellite);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

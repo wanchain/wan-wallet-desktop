@@ -38,6 +38,7 @@ class StakeInForm extends Component {
       addrList: [],
       confirmVisible: false,
       confirmLoading: false,
+      loading: false,
       record: {
         validator: {},
         accountAddress: '',
@@ -235,6 +236,9 @@ class StakeInForm extends Component {
   }
 
   showConfirmForm = () => {
+    this.setState({
+      loading: true
+    })
     let { form, settings } = this.props;
     form.validateFields(async (err) => {
       if (err) return;
@@ -280,6 +284,7 @@ class StakeInForm extends Component {
       }
 
       this.setState({
+        loading: false,
         confirmVisible: true,
         record: {
           accountAddress: from,
@@ -446,7 +451,7 @@ class StakeInForm extends Component {
         <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className="stakein-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
           <div className="stakein-bg">
