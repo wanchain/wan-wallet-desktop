@@ -341,7 +341,7 @@ const th_TH = {
     'Offline.inputAddr': 'Input Sender Address',
     'Offline.getInfo': 'Generate',
     'Offline.stepTwo': 'Step 2',
-    'Offline.stepTwoText': 'Generate the signed transaction by another offline wallet',
+    'Offline.stepTwoText': 'Generate the signed transaction by another offline wallet on an offline computer',
     'Offline.stepThree': 'Step 3',
     'Offline.stepThreeText': 'Send Signed Transaction',
     'Offline.threeInfo': 'Paste the signed transaction from step 2 here and press the "SEND" button',
@@ -350,7 +350,7 @@ const th_TH = {
     'Offline.getInfoFailed': 'Get information failed. Please try again',
     'Offline.sendRawTx': 'Send transaction failed. Please try again',
     'Offline.inputRawTxText': 'Please input signed transaction',
-    'Offline.linkToWebsite': 'Click skip to the official website to download the offline wallet',
+    'Offline.linkToWebsite': 'Download the offline wallet',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',

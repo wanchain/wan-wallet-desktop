@@ -106,7 +106,7 @@ class Offline extends Component {
   }
 
   handleJumpToWebsite = () => {
-    wand.shell.openExternal('https://www.wanchain.org/products');
+    wand.shell.openExternal('https://www.wanchain.org/getstarted');
   }
 
   render () {
