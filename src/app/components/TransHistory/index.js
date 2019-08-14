@@ -8,7 +8,7 @@ import history from 'static/image/history.png';
 
 const Option = Select.Option;
 const main = 'https://www.wanscan.org/tx/'
-const testnet = 'http://testnet.wanscan.org/tx/';
+const testnet = 'https://testnet.wanscan.org/tx/';
 
 @inject(stores => ({
   chainId: stores.session.chainId,
