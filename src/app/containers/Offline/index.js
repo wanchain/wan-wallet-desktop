@@ -122,10 +122,10 @@ class Offline extends Component {
           <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
           <Row align="middle" style={{ marginTop: '10px' }}>
             <Col span={6}>
-              <span className="textFont">Gas Price: </span><Statistic valueStyle={statStyle} value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
+              <span className="textFont">{intl.get('AdvancedOptionForm.gasPrice')}: </span><Statistic valueStyle={statStyle} value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
             </Col>
             <Col span={6}>
-              <span className="textFont">Nonce: </span><Statistic valueStyle={statStyle} value={nonce === null ? '--' : nonce} />
+              <span className="textFont">{intl.get('AdvancedOptionForm.nonce')}: </span><Statistic valueStyle={statStyle} value={nonce === null ? '--' : nonce} />
             </Col>
           </Row>
         </div>
