@@ -82,6 +82,7 @@ class Offline extends Component {
           this.setState({ raw: '' });
           return;
         }
+        message.success(intl.get('Send.transSuccess'))
         let txObj = deserializeWanTx(this.state.raw);
         let rawTx = {
           txHash,
@@ -90,7 +91,6 @@ class Offline extends Component {
           tokenSymbol: 'WAN',
           ...txObj
         }
-        message.success(intl.get('Send.transSuccess'))
         wand.request('transaction_insertTransToDB', { rawTx, satellite: { offline: true } }, (err, res) => {
           if (err) {
             this.setState({ raw: '' })
@@ -98,8 +98,8 @@ class Offline extends Component {
           };
           this.props.updateTransHistory();
         })
+        this.setState({ raw: '' })
       })
-      this.setState({ raw: '' })
     } else {
       message.warn(intl.get('Offline.inputRawTxText'))
     }
