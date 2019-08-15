@@ -53,7 +53,7 @@ class Staking {
           rewardRateNow = reward * 100 / val.base.stakePool
         }
         this.stakeInfo.currentRewardRate = rewardRateNow.toFixed(2) + '%'
-        this.stakeInfo.epochEndTime = timeFormat(val.base.epochIDRaw * (global.slotCount * global.slotTime));
+        this.stakeInfo.epochEndTime = isNaN(val.base.epochIDRaw * (global.slotCount * global.slotTime)) ? 'N/A' : timeFormat(val.base.epochIDRaw * (global.slotCount * global.slotTime));
         this.stakeInfo.currentTime = timeFormat(Date.now() / 1000);
 
         if (val.base.epochID !== this.epochID) {
