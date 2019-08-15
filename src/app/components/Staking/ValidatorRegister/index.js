@@ -135,7 +135,7 @@ class ValidatorRegister extends Component {
       walletID: walletID,
       secPk: form.getFieldValue('publicKey1'),
       bn256Pk: form.getFieldValue('publicKey2'),
-      lockEpoch: (form.getFieldValue('lockTime') * 24 * 3600) / (global.slotCount * global.slotTime),
+      lockEpoch: isNaN(global.slotCount * global.slotTime) ? form.getFieldValue('lockTime') : (form.getFieldValue('lockTime') * 24 * 3600) / (global.slotCount * global.slotTime),
       maxFeeRate: Math.round(maxFeeRate * 100),
       feeRate: Math.round(feeRate * 100),
     }
