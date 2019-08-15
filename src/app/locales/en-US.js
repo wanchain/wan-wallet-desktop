@@ -350,7 +350,7 @@ const en_US = {
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
 
-    'popup.ok': 'Ok',
+    'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
     'title.imported': 'Imported Address',
     'title.copy': 'Copy',
