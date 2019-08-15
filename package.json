@@ -21,7 +21,6 @@
     "build:mac": "electron-builder --mac -p never",
     "build:win": "electron-builder --win -p never",
     "build:linux": "electron-builder --linux -p never",
-    "build:all": "electron-builder -mwl -p never",
     "test": "echo \"Error: no test specified\" && exit 1",
     "copy": "./build.sh",
     "copy:mac": "./build-mac.sh",
