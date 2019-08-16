@@ -241,7 +241,10 @@ class StakeInForm extends Component {
     })
     let { form, settings } = this.props;
     form.validateFields(async (err) => {
-      if (err) return;
+      if (err) {
+        this.setState({ loading: false });
+        return;
+      };
 
       let from = form.getFieldValue('from');
       let to = form.getFieldValue('to');
@@ -250,17 +253,20 @@ class StakeInForm extends Component {
 
       if (!amount || (!this.props.topUp && amount < 100)) {
         message.error(intl.get('NormalTransForm.amountIsIncorrect'));
+        this.setState({ loading: false });
         return;
       }
 
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
+        this.setState({ loading: false });
         return;
       }
 
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
+          this.setState({ loading: false });
           return;
         }
 
@@ -268,6 +274,7 @@ class StakeInForm extends Component {
           await pu.promisefy(wand.request, ['phrase_reveal', { pwd: pwd }], this);
         } catch (error) {
           message.warn(intl.get('Backup.invalidPassword'));
+          this.setState({ loading: false });
           return;
         }
       }

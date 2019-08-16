@@ -53,7 +53,11 @@ class AdvancedOptionForm extends Component {
     let form = this.props.form;
 
     form.validateFields(err => {
-      if (err) return;
+      if (err) {
+        console.log(err)
+        this.setState({ loading: false });
+        return;
+      };
       let gasPrice = this.props.form.getFieldValue('gasPrice');
       let nonce = this.props.form.getFieldValue('nonce');
       let data = this.props.form.getFieldValue('inputData');
