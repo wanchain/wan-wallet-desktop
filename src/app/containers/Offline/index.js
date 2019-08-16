@@ -38,6 +38,14 @@ class Offline extends Component {
     this.props.changeTitle('menuConfig.offline');
   }
 
+  componentDidMount () {
+    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.timer);
+  }
+
   handleGetInfo = async () => {
     let gasPrice, nonce;
     if (this.state.addr) {
@@ -126,7 +134,7 @@ class Offline extends Component {
           amount: fromWei(parseRaw.value) || 'N/A',
           gasLimit: parseRaw.gasLimit || 'N/A',
           gasPrice: fromWei(parseRaw.gasPrice, 'Gwei') || 'N/A',
-          nonce: parseInt(parseRaw.nonce),
+          nonce: parseRaw.nonce === '0x' ? 0 : parseInt(parseRaw.nonce),
           data: parseRaw.data
         })
         this.setState({ from: parseRaw.from, confirmVisible: true });
