@@ -3,8 +3,8 @@ import { BigNumber } from 'bignumber.js';
 
 const web3 = new Web3();
 
-export function fromWei (data) {
-  return web3.utils.fromWei(data.toString());
+export function fromWei (data, unit = 'ether') {
+  return web3.utils.fromWei(data.toString(), unit);
 }
 
 export function keep2Decimals (value) {

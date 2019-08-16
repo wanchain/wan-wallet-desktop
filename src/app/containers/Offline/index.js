@@ -1,19 +1,24 @@
-import React, { Component } from 'react';
-import { Button, Input, message, Col, Row, Statistic, Divider, Icon, Tooltip } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Button, Input, message, Col, Row, Statistic, Divider, Icon, Tooltip, Form } from 'antd';
 
 import './index.less';
 import TransHistory from 'components/TransHistory';
+import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
+import { fromWei } from 'utils/support';
 import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx } from 'utils/helper';
 
+const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const statStyle = { color: '#ddd', background: '#03147 !important' };
 
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
-  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle)
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
+  updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
@@ -23,6 +28,9 @@ class Offline extends Component {
     addr: '',
     gasPrice: null,
     nonce: null,
+    confirmVisible: false,
+    loading: false,
+    from: ''
   }
 
   constructor (props) {
@@ -73,13 +81,16 @@ class Offline extends Component {
     })
   }
 
-  sendTx = () => {
+  sendTrans = () => {
+    this.setState({
+      loading: true
+    })
     if (this.state.raw) {
       wand.request('transaction_raw', { raw: this.state.raw, chainType: 'WAN' }, (err, txHash) => {
         if (err) {
           console.log('OfflineSendTx: ', err)
           message.warn(intl.get('Offline.sendRawTx'));
-          this.setState({ raw: '' });
+          this.setState({ loading: false });
           return;
         }
         message.success(intl.get('Send.transSuccess'))
@@ -93,13 +104,36 @@ class Offline extends Component {
         }
         wand.request('transaction_insertTransToDB', { rawTx, satellite: { offline: true } }, (err, res) => {
           if (err) {
-            this.setState({ raw: '' })
-            return;
+            console.log('Offline_transaction_insertTransToDB: ', err)
+          } else {
+            this.props.updateTransHistory();
           };
-          this.props.updateTransHistory();
         })
-        this.setState({ raw: '' })
+        this.setState({ raw: '', loading: false, confirmVisible: false })
       })
+    } else {
+      message.warn(intl.get('Offline.inputRawTxText'))
+    }
+  }
+
+  handleNext = () => {
+    if (this.state.raw) {
+      try {
+        let parseRaw = deserializeWanTx(this.state.raw);
+        this.props.addTransTemplate(parseRaw.from)
+        this.props.updateTransParams(parseRaw.from, {
+          to: parseRaw.to || 'N/A',
+          amount: fromWei(parseRaw.value) || 'N/A',
+          gasLimit: parseRaw.gasLimit || 'N/A',
+          gasPrice: fromWei(parseRaw.gasPrice, 'Gwei') || 'N/A',
+          nonce: parseInt(parseRaw.nonce),
+          data: parseRaw.data
+        })
+        this.setState({ from: parseRaw.from, confirmVisible: true });
+      } catch (error) {
+        console.log('OfflineHandleNext: ', error)
+        message.warn(intl.get('Offline.inputRawTxText'))
+      }
     } else {
       message.warn(intl.get('Offline.inputRawTxText'))
     }
@@ -107,6 +141,12 @@ class Offline extends Component {
 
   handleJumpToWebsite = () => {
     wand.shell.openExternal('https://www.wanchain.org/getstarted');
+  }
+
+  handleConfirmCancel = () => {
+    this.setState({
+      confirmVisible: false,
+    });
   }
 
   render () {
@@ -145,10 +185,14 @@ class Offline extends Component {
             <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
           </p>
           <p className="threeBtn">
-            <Button type="primary" onClick={this.sendTx}>{intl.get('Offline.sendTrans')}</Button>
+            <Button type="primary" onClick={this.handleNext}>{intl.get('Offline.sendTrans')}</Button>
           </p>
         </div>
         <TransHistory offline={true} />
+        {
+          this.state.confirmVisible &&
+          <Confirm visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={this.state.from} loading={this.state.loading}/>
+        }
       </React.Fragment>
     );
   }

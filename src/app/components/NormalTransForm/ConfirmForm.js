@@ -26,7 +26,6 @@ class ConfirmForm extends Component {
     const { visible, form, from, loading, sendTrans } = this.props;
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce, data } = this.props.transParams[from];
-
     let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
 
     return (

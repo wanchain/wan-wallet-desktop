@@ -15,7 +15,7 @@ class SendTransParams {
 
     @observable currentGasPrice = 200;
 
-    @action addTransTemplate (addr, params) {
+    @action addTransTemplate (addr, params = {}) {
       let objKey = { writable: true, enumerable: true };
       self.currentFrom = addr;
       self.transParams[addr] = Object.defineProperties({}, {
