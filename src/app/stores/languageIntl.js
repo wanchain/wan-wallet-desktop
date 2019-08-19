@@ -3,21 +3,22 @@ import intl from 'react-intl-universal';
 
 class LanguageIntl {
   @observable language = 'en_US';
+
   @observable title = 'Portfolio.portfolio';
 
-  @action setLanguage(language) {
+  @action setLanguage (language) {
     self.language = language;
   }
 
-  @action changeTitle(newTitle) {
+  @action changeTitle (newTitle) {
     self.title = newTitle;
   }
 
-  @computed get pageTitle() {
+  @computed get pageTitle () {
     return self.language && intl.get(self.title);
   }
 
-  @computed get transColumns() {
+  @computed get transColumns () {
     return self.language && [
       {
         title: intl.get('TransHistory.time'),
@@ -43,7 +44,7 @@ class LanguageIntl {
     ]
   };
 
-  @computed get stakingColumns() {
+  @computed get stakingColumns () {
     return self.language && [
       {
         title: intl.get('TransHistory.time'),
@@ -73,7 +74,7 @@ class LanguageIntl {
     ]
   };
 
-  @computed get validatorColumns() {
+  @computed get validatorColumns () {
     return self.language && [
       {
         title: intl.get('staking.table.myAccount'),
@@ -93,7 +94,7 @@ class LanguageIntl {
     ]
   }
 
-  @computed get myValidatorColumns() {
+  @computed get myValidatorColumns () {
     return self.language && [
       {
         key: 'myAccount',
@@ -139,7 +140,7 @@ class LanguageIntl {
     ]
   }
 
-  @computed get sidebarColumns() {
+  @computed get sidebarColumns () {
     return self.language && [
       {
         title: intl.get('menuConfig.portfolio'),
@@ -180,6 +181,12 @@ class LanguageIntl {
         ]
       },
       {
+        title: intl.get('menuConfig.offline'),
+        step: '1',
+        key: '/offline',
+        icon: 'bank'
+      },
+      {
         title: intl.get('menuConfig.galaxyPos'),
         step: '1',
         key: '/staking',
@@ -201,7 +208,7 @@ class LanguageIntl {
     ];
   }
 
-  @computed get portfolioColumns() {
+  @computed get portfolioColumns () {
     return self.language && [
       {
         title: intl.get('Portfolio.name'),
@@ -227,14 +234,14 @@ class LanguageIntl {
     ];
   }
 
-  @computed get selectAddrColumns() {
+  @computed get selectAddrColumns () {
     return self.language && [
       { title: intl.get('HwWallet.Connect.address'), dataIndex: 'address' },
       { title: intl.get('HwWallet.Connect.balance'), dataIndex: 'balance' }
     ];
   }
 
-  @computed get settingsColumns() {
+  @computed get settingsColumns () {
     return self.language && [
       {
         title: intl.get('Settings.config'),

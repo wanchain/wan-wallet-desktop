@@ -1,5 +1,6 @@
 const en_US = {
-    'days': ' days',
+    days: ' days',
+    'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
     'Login.inputPassword': 'Input Password',
@@ -38,11 +39,11 @@ const en_US = {
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'Please follow the below instructions to connect your Ledger wallet',
     'Ledger.connectLedgerWalletToComputer': 'Connect your Ledger wallet directly to your computer',
-    'Ledger.enterPinCode': 'Enter pin code to unlock your Ledger wallet',
+    'Ledger.enterPinCode': 'Enter PIN code to unlock your Ledger wallet',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
     'Ledger.signTransactionInLedger': 'Please confirm in Ledger',
     'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
-    
+
     'Portfolio.portfolio': 'Portfolio',
     'Portfolio.name': 'NAME',
     'Portfolio.price': 'PRICE',
@@ -55,7 +56,7 @@ const en_US = {
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',
     'Restore.continue': 'Continue',
     'Restore.allLocalDataWillBeLost': 'All local data will be lost, including current seed phrase, transaction history, imported addresses and so on. Are you sure to continue?',
-    
+
     'Settings.settings': 'Settings',
     'Settings.config': 'Config',
     'Settings.backup': 'Backup',
@@ -104,7 +105,9 @@ const en_US = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas limit is incorrect',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce is incorrect',
-    
+    'AdvancedOptionForm.inputData': 'Input Data',
+    'AdvancedOptionForm.inputDataIsIncorrect': 'Input data is incorrect',
+
     'CopyAndQrcode.copySuccessfully': 'Copy successfully',
 
     'HwWallet.Accounts.name': 'NAME',
@@ -157,6 +160,7 @@ const en_US = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas Limit',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'Fee',
+    'NormalTransForm.ConfirmForm.inputData': 'Input Data',
 
     'NormalTransForm.estimateGasFailed': 'Estimate gas failed. Please try again',
     'NormalTransForm.invalidAddress': 'Invalid address',
@@ -189,10 +193,9 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
-
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
-    
+
     'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
 
@@ -213,12 +216,12 @@ const en_US = {
     'menuConfig.hardwareWallet': 'Hardware Wallet',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': 'Offline Wallet',
     'menuConfig.galaxyPos': 'Galaxy PoS',
     'menuConfig.delegation': 'Delegation',
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
-
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
@@ -333,15 +336,32 @@ const en_US = {
     'TransHistory.StakeAppend': 'Stake Append',
     'TransHistory.StakeUpdateFeeRate': 'Fee Rate Update',
     'ValidatorRegister.modifyTypeTitle': 'Modified Parameter',
-    'ValidatorRegister.invalidType':  'Invalid parameter',
+    'ValidatorRegister.invalidType': 'Invalid parameter',
     'ValidatorRegister.selectType': 'Select a parameter',
     'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
 
-    'popup.ok': 'Ok',
+    'Offline.stepOne': 'Step 1',
+    'Offline.stepOneText': 'Generate Information',
+    'Offline.inputAddr': 'Input Sender Address',
+    'Offline.getInfo': 'Generate',
+    'Offline.stepTwo': 'Step 2',
+    'Offline.stepTwoText': 'Generate the signed transaction by another offline wallet on an offline computer',
+    'Offline.stepThree': 'Step 3',
+    'Offline.stepThreeText': 'Send Signed Transaction',
+    'Offline.threeInfo': 'Paste the signed transaction from step 2 here and press the "SEND" button',
+    'Offline.threeTitle': 'Input Signed Transaction',
+    'Offline.sendTrans': 'Send Transaction',
+    'Offline.getInfoFailed': 'Get information failed. Please try again',
+    'Offline.sendRawTx': 'Send transaction failed. Please try again',
+    'Offline.inputRawTxText': 'Please input signed transaction',
+    'Offline.linkToWebsite': 'Download the offline wallet',
+
+    'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
     'title.imported': 'Imported Address',
     'title.copy': 'Copy',
     'title.QRCode': 'QR Code',
 
 }
+
 export default en_US;

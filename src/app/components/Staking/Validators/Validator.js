@@ -4,7 +4,7 @@ import { Row, Col, Avatar } from 'antd';
 import './index.less';
 
 class Validator extends Component {
-  render() {
+  render () {
     return (
       <div className="validator">
         <Row>
@@ -17,4 +17,4 @@ class Validator extends Component {
   }
 }
 
-export default Validator
+export default Validator;

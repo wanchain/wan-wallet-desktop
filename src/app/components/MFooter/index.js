@@ -9,7 +9,7 @@ import './index.less';
 
 @observer
 class MFooter extends Component {
-    render() {
+    render () {
         return (
             <div className="footer">
               <div className="f-content">

@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import './index.less';
 import wanLogo from 'static/image/wan.png';
 
-function TokenImg(text) {
+function TokenImg (text) {
   return (
     <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>
   );
@@ -20,22 +20,22 @@ function TokenImg(text) {
 
 @observer
 class Portfolio extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.changeTitle('Portfolio.portfolio');
   }
 
-  componentDidMount() {
-    this.timer = setInterval(() =>{
+  componentDidMount () {
+    this.timer = setInterval(() => {
       this.props.updateCoinPrice();
     }, 5000)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
-  render() {
+  render () {
     const { portfolioColumns, portfolioList } = this.props;
     const columns = [...portfolioColumns];
     columns[0]['render'] = TokenImg;

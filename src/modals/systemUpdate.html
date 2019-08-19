@@ -58,6 +58,7 @@
             <span id="downloadingProgress">
                 <!-- Downloading... -->
             </span>
+            <span id="perc"></span>
             <span id="downloadingComplete" style="display: none;">
                 <!-- Download Complete. Will Quit and Install Updates Now! -->
             </span>
@@ -68,7 +69,7 @@
             <div id="loading-outer">
                 <div id="loading-bar"></div>
             </div>
-            <span id="percentage">0%</span>
+            &nbsp;&nbsp;<span id="percentage">0%</span>
             <p id='downloading'>Downloading...</p>
         </div>
     </div>
@@ -103,8 +104,9 @@
         const quitButton = document.getElementById('no')
         const downloadingProgress = document.getElementById('downloadingProgress')
         const downloadingComplete = document.getElementById('downloadingComplete')
+        const percentage = document.getElementById('perc')
 
-        let currentVersion, releaseVersion, releaseDate, releaseNotes, releasePlatform
+        let currentVersion, releaseVersion, releaseDate, releaseNotes, releasePlatform, width, walker
         
         wand.emitter.on('update', function(key, val) {
             new Promise((resolve, reject) => {
@@ -141,6 +143,8 @@
                         case 'upgradeProgress':
                             if (val === 'done') {
                                 downloadingProgress.style.display = 'none'
+                                width = 100
+                                percentage.style.display = 'none'
                                 downloadingComplete.style.display = 'inline'
                             }
 
@@ -181,6 +185,17 @@
                 document.getElementById('downloading-mask').style.display = 'block'
             } else {
                 document.getElementById('mask').style.display = 'block'
+                width = 3 
+                percentage.innerHTML = width + '%'
+                walker = setInterval(function() {
+                    if (width == 100) {
+                        clearInterval(walker)
+                    } else {
+                        width = width >= 99 ? 99 : width + Math.floor(Math.random() * (15 - 3)) + 3;
+                        width = width >= 99 ? 99 : width
+                        percentage.innerHTML = width + '%'
+                    }
+                }, 500)
             }
         })
 

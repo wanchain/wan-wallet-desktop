@@ -2,7 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal';
 import { Form, Select, Row, Col } from 'antd';
 
-function AddrSelectForm(props) {
+function AddrSelectForm (props) {
   const { form, addrSelectedList, handleChange, getValueByAddrInfoArgs } = props;
   const { getFieldDecorator } = form;
 
@@ -22,7 +22,7 @@ function AddrSelectForm(props) {
                     className="colorInput"
                     optionLabelProp="value"
                     optionFilterProp="children"
-                    dropdownStyle={{ width: "470px" }}
+                    dropdownStyle={{ width: '470px' }}
                     dropdownMatchSelectWidth={false}
                     placeholder={intl.get('StakeInForm.selectAddress')}
                     onChange={handleChange}

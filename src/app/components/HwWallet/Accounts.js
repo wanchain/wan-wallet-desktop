@@ -3,6 +3,7 @@ import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
+import { formatNum } from 'utils/support';
 import { hasSameName } from 'utils/helper';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -21,20 +22,21 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
 @observer
 class Accounts extends Component {
   columns = [
-    { 
-      dataIndex: "name", 
-      editable: true 
+    {
+      dataIndex: 'name',
+      editable: true
     },
-    { 
-      dataIndex: "address", 
+    {
+      dataIndex: 'address',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
-    { 
-      dataIndex: "balance" 
+    {
+      dataIndex: 'balance',
+      render: balance => <span>{formatNum(balance)}</span>
     },
-    { 
-      dataIndex: "action", 
-      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div> 
+    {
+      dataIndex: 'action',
+      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div>
     }
   ];
 
@@ -57,7 +59,7 @@ class Accounts extends Component {
   handleSave = row => {
     console.log(row)
     let type = this.props.name[0];
-    if(hasSameName(type, row, this.props.addrInfo)) {
+    if (hasSameName(type, row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
       this.props.updateName(row, type);
@@ -67,13 +69,13 @@ class Accounts extends Component {
   handleSend = from => {
     const { rawTx } = this.props;
     let params = this.props.transParams[from];
-    return new Promise((resolve, reject)=> {
-      this.props.signTransaction(params.path, rawTx, (err, raw) => {
+    return new Promise((resolve, reject) => {
+      this.props.signTransaction(params.path, rawTx, (_err, raw) => {
         wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
           if (err) {
             message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
             console.log(err);
-            reject();
+            reject(err);
           } else {
             let params = {
               txHash,
@@ -83,18 +85,18 @@ class Accounts extends Component {
               tokenSymbol: 'WAN',
               ...rawTx
             }
-            wand.request('transaction_insertTransToDB', {rawTx: params}, () => {
+            wand.request('transaction_insertTransToDB', { rawTx: params }, () => {
               this.props.updateTransHistory();
             })
             resolve();
-            console.log("TxHash:", txHash);
+            console.log('TxHash:', txHash);
           }
         });
       });
     })
   }
 
-  render() {
+  render () {
     const { name, addresses } = this.props;
     const components = {
       body: {

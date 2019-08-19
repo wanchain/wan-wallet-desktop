@@ -15,7 +15,7 @@ const { TabPane } = Tabs;
 
 @observer
 class Settings extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.changeTitle('Settings.settings');
   }
@@ -28,10 +28,10 @@ class Settings extends Component {
 
   renderTab = data => data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);
 
-  render() {
+  render () {
     const { settingsColumns } = this.props;
     const tabs = [...settingsColumns]
-    tabs.forEach(item => item.content = this.tabsMap[item.key] );
+    tabs.forEach(item => { item.content = this.tabsMap[item.key] });
 
     return (
       <Tabs>
@@ -42,5 +42,3 @@ class Settings extends Component {
 }
 
 export default Settings;
-
-

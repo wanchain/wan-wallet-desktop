@@ -1,6 +1,6 @@
 const zh_CN = {
-    'days': ' 天',
-    
+    days: ' 天',
+    'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
     'Login.inputPassword': '请输入密码',
@@ -105,6 +105,8 @@ const zh_CN = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas上限输入不正确',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce输入不正确',
+    'AdvancedOptionForm.inputData': '附加数据',
+    'AdvancedOptionForm.inputDataIsIncorrect': '附加数据输入不正确',
 
     'CopyAndQrcode.copySuccessfully': '复制成功',
 
@@ -158,6 +160,7 @@ const zh_CN = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas上限',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': '费用',
+    'NormalTransForm.ConfirmForm.inputData': '附加数据',
 
     'NormalTransForm.estimateGasFailed': '估算gas失败，请重试',
     'NormalTransForm.invalidAddress': '非法地址',
@@ -213,6 +216,7 @@ const zh_CN = {
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': '离线钱包',
     'menuConfig.galaxyPos': '星系共识',
     'menuConfig.delegation': '委托',
     'menuConfig.validator': '验证人',
@@ -248,7 +252,7 @@ const zh_CN = {
     'staking.delegateList': '委托列表',
 
     'validator.title': '验证人',
-    
+
     'StakeInForm.title': '开始委托',
     'StakeInForm.validatorAccount': '验证人账户:',
     'StakeInForm.myAccount': '我的账户:',
@@ -336,9 +340,25 @@ const zh_CN = {
     'TransHistory.StakeAppend': '追加资金',
     'TransHistory.StakeUpdateFeeRate': '更新费率',
     'ValidatorRegister.modifyTypeTitle': '修改参数',
-    'ValidatorRegister.invalidType':  '参数不合法',
+    'ValidatorRegister.invalidType': '参数不合法',
     'ValidatorRegister.selectType': '选择参数',
     'ValidatorRegister.modifyFeeRateWarning': '同一天只允许修改一次委托费率',
+
+    'Offline.stepOne': '第一步',
+    'Offline.stepOneText': '获取信息',
+    'Offline.inputAddr': '输入发送者地址',
+    'Offline.getInfo': '获取信息',
+    'Offline.stepTwo': '第二步',
+    'Offline.stepTwoText': '请下载另外一个离线钱包，并且在离线计算机上面生成签名的交易数据',
+    'Offline.stepThree': '第三步',
+    'Offline.stepThreeText': '发送签名的交易数据',
+    'Offline.threeInfo': '请粘贴第二步生成的交易数据，然后点击“发送”按钮',
+    'Offline.threeTitle': '输入签名的交易数据',
+    'Offline.sendTrans': '发送交易数据',
+    'Offline.getInfoFailed': '获取信息失败，请稍后再试',
+    'Offline.sendRawTx': '发送交易失败，请稍后再试',
+    'Offline.inputRawTxText': '请正确输入签名后的交易数据',
+    'Offline.linkToWebsite': '下载离线钱包',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

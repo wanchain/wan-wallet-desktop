@@ -10,14 +10,14 @@ const EditableRow = ({ form, index, ...props }) => (
     <tr {...props} />
   </EditableContext.Provider>
 );
-export const EditableFormRow = Form.create()(EditableRow);
+const EditableFormRow = Form.create()(EditableRow);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
 }))
 
 @observer
-export class EditableCell extends Component {
+class EditableCell extends Component {
   state = {
     editing: false,
   }
@@ -42,13 +42,12 @@ export class EditableCell extends Component {
     });
   }
 
-  render() {
+  render () {
     const { editing } = this.state;
     const { editable, dataIndex, title, record, index, handleSave, ...restProps } = this.props;
     return (
       <td {...restProps}>
-        {editable ? 
-          <EditableContext.Consumer>
+        {editable ? <EditableContext.Consumer>
           {form => {
             this.form = form;
             return (
@@ -90,3 +89,5 @@ export class EditableCell extends Component {
     );
   }
 }
+
+export { EditableCell, EditableFormRow };

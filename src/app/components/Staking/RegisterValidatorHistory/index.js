@@ -27,7 +27,7 @@ class RegisterValidatorHistory extends Component {
     return this.props.stakingColumns;
   }
 
-  render() {
+  render () {
     const { historyList } = this.props;
     return (
       <div>

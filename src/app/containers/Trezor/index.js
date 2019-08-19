@@ -4,18 +4,18 @@ import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Icon, message } from 'antd';
 
-const wanTx = require('wanchainjs-tx');
-
 import './index.less';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
+
+const WanTx = require('wanchainjs-tx');
 
 const WALLET_ID = 0x03;
 const TREZOR = 'trezor';
 const CHAIN_TYPE = 'WAN';
 const WAN_PATH = "m/44'/5718350'/0'/0";
 
-// Initialize TrezorConnect 
+// Initialize TrezorConnect
 TrezorConnect.init({
   // connectSrc: 'file://' + __dirname + '/trezor-connect/', // for trezor-connect hosted locally set endpoint to application files (ignore this field for connect hosted online, connect.trezor.io will be used by default)
   connectSrc: 'https://sisyfos.trezor.io/connect-electron/',
@@ -28,10 +28,10 @@ TrezorConnect.init({
     email: 'techsupport@wanchain.com',
     appUrl: 'wan-wallet-desktop'
   },
-  env: "electron"
+  env: 'electron'
 })
 .then(() => {
-  console.log("TrezorConnect is ready")
+  console.log('TrezorConnect is ready')
 })
 .catch(error => {
     console.error('TrezorConnect init error', error)
@@ -48,18 +48,18 @@ TrezorConnect.init({
 
 @observer
 class Trezor extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.changeTitle('Trezor.trezor')
   }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     if (this.props.trezorAddrList.length !== 0 && !this.timer) {
       this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
@@ -76,12 +76,12 @@ class Trezor extends Component {
     )
   }
 
-  getPublicKey = (callback) => {
+  getPublicKey = callback => {
     TrezorConnect.getPublicKey({
       path: WAN_PATH
-    }).then((result) => {
+    }).then(result => {
       if (result.success) {
-        callback(false, result.payload);
+        callback(null, result.payload);
       }
     }).catch(error => {
       callback(error, {})
@@ -99,8 +99,8 @@ class Trezor extends Component {
         nonce: tx.nonce,
         gasLimit: tx.gasLimit,
         gasPrice: tx.gasPrice,
-        txType: tx.Txtype,
-      },
+        txType: tx.Txtype
+      }
     }).then((result) => {
       if (!result.success) {
         message.warn(intl.get('Trezor.signTransactionFailed'));
@@ -111,7 +111,7 @@ class Trezor extends Component {
       tx.v = result.payload.v;
       tx.r = result.payload.r;
       tx.s = result.payload.s;
-      let eTx = new wanTx(tx);
+      let eTx = new WanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
       console.log('Signed tx: ', signedTx);
       callback(null, signedTx);
@@ -120,16 +120,16 @@ class Trezor extends Component {
 
   setAddresses = newAddr => {
     wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
-      if(err) return;
-      let hdInfoFromDb = [];
+      if (err) return;
+      const hdInfoFromDb = [];
       Object.values(ret.accounts).forEach(item => {
-        if(item[WALLET_ID]) {
+        if (item[WALLET_ID]) {
           hdInfoFromDb.push(item[WALLET_ID]);
         }
       })
       newAddr.forEach(item => {
-        let matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
-        if(matchValue) {
+        const matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
+        if (matchValue) {
           item.name = matchValue.name;
         }
       });
@@ -137,7 +137,7 @@ class Trezor extends Component {
     })
   }
 
-  render() {
+  render () {
     const { trezorAddrList } = this.props;
     return (
       <div>
@@ -152,7 +152,3 @@ class Trezor extends Component {
 }
 
 export default Trezor;
-
-
-
-

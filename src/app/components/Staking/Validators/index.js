@@ -1,15 +1,13 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import { Row, Col, Button, Table, Form } from 'antd';
+import { observer, inject } from 'mobx-react';
+import { Table } from 'antd';
 
 import './index.less';
 import Cell from './Cell';
-import { observer, inject } from 'mobx-react';
-
-import intl from 'react-intl-universal';
-
-import Validator from "./Validator";
-import DelegateIn from "./DelegateIn";
-import DelegateOut from "./DelegateOut";
+import Validator from './Validator';
+import DelegateActionGroup from './DelegateActionGroup';
+import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -36,7 +34,7 @@ class Validators extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  getColumns() {
+  getColumns () {
     let columns = [
       {
         title: this.props.validatorColumns[0].title,
@@ -47,7 +45,7 @@ class Validators extends Component {
         dataIndex: 'myStake',
         key: 'myStake',
         render: stake => (
-          <Cell title={stake.title} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
+          <Cell title={formatNum(stake.title)} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
         ),
       }, {
         title: this.props.validatorColumns[2].title,
@@ -75,7 +73,7 @@ class Validators extends Component {
         dataIndex: 'distributeRewards',
         key: 'distributeRewards',
         render: stake => (
-          <Cell title={stake.title} />
+          <Cell title={formatNum(stake.title)} />
         ),
       }, {
         title: this.props.validatorColumns[6].title,
@@ -84,16 +82,7 @@ class Validators extends Component {
         align: 'center',
         render: (text, record) => {
           return (
-            <div>
-              <Row>
-                <Col span={12} align="center"><DelegateIn record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
-                <Col span={12} align="center"><DelegateOut record={record} isPending={record.quitEpoch === 0 ? false : true } /></Col>
-              </Row>
-              <Row>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.topup')}</Col>
-                <Col span={12} className="modifyBtnText" align="center">{intl.get('staking.table.exit')}</Col>
-              </Row>
-            </div>
+            <DelegateActionGroup record={record}/>
           )
         }
       }
@@ -102,7 +91,7 @@ class Validators extends Component {
     return columns
   }
 
-  render() {
+  render () {
     return (
       <div className="validators">
         <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
@@ -111,4 +100,4 @@ class Validators extends Component {
   }
 }
 
-export default Validators
+export default Validators;

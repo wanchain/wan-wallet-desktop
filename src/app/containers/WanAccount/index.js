@@ -1,4 +1,4 @@
-import wanUtil from "wanchain-util";
+import wanUtil from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -6,6 +6,7 @@ import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/wan.png';
+import { WANPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -13,11 +14,7 @@ import { checkAddrType, hasSameName } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
-const WALLETID = 1;
-const KEYSTOREID = 5;
-const SYMBOL = 'WAN';
 const CHAINTYPE = 'WAN';
-const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -33,7 +30,7 @@ const WAN = "m/44'/5718350'/0'/0/";
 
 @observer
 class WanAccount extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       bool: true,
@@ -87,37 +84,38 @@ class WanAccount extends Component {
     };
   });
 
-  componentDidMount() {
+  componentDidMount () {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID : KEYSTOREID;
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
-      symbol: SYMBOL,
+      symbol: CHAINTYPE,
       path: params.path,
       to: params.to,
       amount: params.amount,
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
-      nonce: params.nonce
+      nonce: params.nonce,
+      data: params.data
     };
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, function (err, txHash) {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
-          reject(false)
+          reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
           this.props.updateTransHistory();
-          console.log("Tx hash: ", txHash);
+          console.log('Tx hash: ', txHash);
           resolve(txHash)
         }
       }.bind(this));
@@ -132,10 +130,10 @@ class WanAccount extends Component {
     });
 
     if (this.state.bool) {
-      let path = `${WAN}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
+      let path = `${WANPATH}${addrLen}`;
+      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,

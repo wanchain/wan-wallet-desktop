@@ -42,13 +42,13 @@ class CopyAndQrcode extends Component {
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
 
-  render() {
+  render () {
     const { addr, addrInfo } = this.props;
     return (
       <div className="handleIco">
         <Tooltip placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
         <Tooltip placement="bottom" title={intl.get('title.QRCode')}><Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} /></Tooltip>
-        { Object.keys(addrInfo['import']).includes(addr) 
+        { Object.keys(addrInfo['import']).includes(addr)
             ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
             : ''
         }

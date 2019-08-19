@@ -79,7 +79,7 @@ class Settings {
 
     /**
      * Return application directory
-     * @return {string} applicatin data path, platform dependent
+     * @return {string} application data path, platform dependent
      */
     get userDataPath() {
         return app.getPath('userData')

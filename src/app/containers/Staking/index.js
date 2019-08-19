@@ -11,7 +11,6 @@ import total from 'static/image/total.png';
 
 const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 
-
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
@@ -27,13 +26,13 @@ class Staking extends Component {
     delegateInFormVisible: false
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.changeTitle('staking.title');
     this.props.updateTransHistory();
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateStakeInfo();
@@ -41,7 +40,7 @@ class Staking extends Component {
     }, 20000)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
@@ -49,7 +48,7 @@ class Staking extends Component {
     this.setState(state => ({ delegateInFormVisible: !state.delegateInFormVisible }));
   }
 
-  render() {
+  render () {
     return (
       <div className="staking">
         <Row>

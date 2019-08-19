@@ -26,7 +26,7 @@ class InputPwd extends Component {
     this.props.setMethod(e.target.value);
   }
 
-  render() {
+  render () {
     return (
       <div className="textc">
         <h1 className="mneCom-h1">{intl.get('Mnemonic.InputPwd.createAWANWallet')}</h1>

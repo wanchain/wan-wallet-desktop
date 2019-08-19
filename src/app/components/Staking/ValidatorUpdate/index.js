@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, InputNumber, message, Row, Col, Avatar, Slider } from 'antd';
+import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar, Slider } from 'antd';
 import './index.less';
-import { checkWanValidatorAddr } from 'utils/helper';
 import StakeConfirmForm from '../StakeConfirmForm';
-const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 import intl from 'react-intl-universal';
-const wanTx = require('wanchainjs-tx');
 import TrezorConnect from 'trezor-connect';
-const pu = require('promisefy-util')
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractData } from 'utils/helper';
 import { toWei } from 'utils/support.js';
 import Notice from './Notice';
 
-
+const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
+const WanTx = require('wanchainjs-tx');
+const pu = require('promisefy-util');
 const Option = Select.Option;
 
 @inject(stores => ({
@@ -29,10 +27,10 @@ const Option = Select.Option;
 
 @observer
 class ValidatorUpdate extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
-      balance: "0",
+      balance: '0',
       addrList: [],
       confirmVisible: false,
       locktime: 0,
@@ -45,7 +43,7 @@ class ValidatorUpdate extends Component {
     }
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
     getNormalAddrList.forEach(addr => {
@@ -72,14 +70,14 @@ class ValidatorUpdate extends Component {
   getBalance = (value) => {
     const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     if (!value) {
-      return
+      return;
     }
 
     if (value.includes('Ledger')) {
       for (let i = 0; i < ledgerAddrList.length; i++) {
         const element = ledgerAddrList[i];
         value = value.replace('Ledger: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -90,7 +88,7 @@ class ValidatorUpdate extends Component {
       for (let i = 0; i < trezorAddrList.length; i++) {
         const element = trezorAddrList[i];
         value = value.replace('Trezor: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -99,7 +97,7 @@ class ValidatorUpdate extends Component {
 
     for (let i = 0; i < getNormalAddrList.length; i++) {
       const element = getNormalAddrList[i];
-      if (element.address == value) {
+      if (element.address === value) {
         return element.balance;
       }
     }
@@ -163,7 +161,7 @@ class ValidatorUpdate extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      if (addr.address == fromAddr) {
+      if (addr.address === fromAddr) {
         return addr.path;
       }
     }
@@ -212,7 +210,6 @@ class ValidatorUpdate extends Component {
   }
 
   onSend = async () => {
-
     let { form } = this.props;
     let from = form.getFieldValue('from');
     let to = form.getFieldValue('to');
@@ -221,16 +218,16 @@ class ValidatorUpdate extends Component {
 
     let amount = form.getFieldValue('amount');
     if (!amount || amount < 100) {
-      message.error("Please input a valid amount.");
+      message.error('Please input a valid amount.');
       return;
     }
 
     if (this.state.balance <= amount) {
-      message.error("Balance is not enough.")
+      message.error('Balance is not enough.');
       return;
     }
 
-    const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
+    const WALLET_ID_NATIVE = 0x01; // Native WAN HD wallet
     const WALLET_ID_LEDGER = 0x02;
     const WALLET_ID_TREZOR = 0x03;
 
@@ -247,13 +244,13 @@ class ValidatorUpdate extends Component {
     }
 
     let tx = {
-      "from": from,
-      "validatorAddr": to,
-      "amount": (form.getFieldValue('amount') || 0).toString(),
-      "gasPrice": 0,
-      "gasLimit": 0,
-      "BIP44Path": path,
-      "walletID": walletID
+      from: from,
+      validatorAddr: to,
+      amount: (form.getFieldValue('amount') || 0).toString(),
+      gasPrice: 0,
+      gasLimit: 0,
+      BIP44Path: path,
+      walletID: walletID
     }
 
     // if (walletID == WALLET_ID_TREZOR) {
@@ -273,7 +270,6 @@ class ValidatorUpdate extends Component {
 
     this.props.onSend(walletID);
   }
-
 
   trezorDelegateIn = async (path, from, validator, value) => {
     console.log('trezorDelegateIn:', path, from, validator, value);
@@ -305,7 +301,7 @@ class ValidatorUpdate extends Component {
       tx.v = result.payload.v;
       tx.r = result.payload.r;
       tx.s = result.payload.s;
-      let eTx = new wanTx(tx);
+      let eTx = new WanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
       console.log('signed', signedTx);
       console.log('tx:', tx);
@@ -318,20 +314,20 @@ class ValidatorUpdate extends Component {
   }
 
   checkLockTime = (rule, value, callback) => {
-    if (value != 0 && value < 14) {
-      callback('Invalid Value. Must > 14 or == 0')
+    if (value !== 0 && value < 14) {
+      callback('Invalid Value. Must > 14 or == 0') // eslint-disable-line standard/no-callback-literal
     }
     callback();
   }
 
-  render() {
+  render () {
     let { onlineValidatorList, form, settings } = this.props;
 
     let validatorListSelect = []
     for (let i = 0; i < onlineValidatorList.length; i++) {
       const v = onlineValidatorList[i];
       validatorListSelect.push(
-        (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" />{" "}{v.name}</div>)
+        (<div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" />{' '}{v.name}</div>)
       )
     }
 
@@ -464,13 +460,13 @@ class ValidatorUpdate extends Component {
         } */}
 
         {
-          this.state.confirmVisible ?
-            (<Confirm visible={this.state.confirmVisible}
+          this.state.confirmVisible &&
+            <Confirm visible={this.state.confirmVisible}
               onCancel={this.onConfirmCancel} onSend={this.onSend}
               record={this.state.record}
               title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
               note={''}
-            />) : ''
+            />
         }
 
       </div>

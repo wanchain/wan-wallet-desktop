@@ -1,9 +1,10 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Row, Col, Avatar } from 'antd';
 
 import './index.less';
-import intl from 'react-intl-universal';
+import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -11,7 +12,7 @@ import intl from 'react-intl-universal';
 
 @observer
 class StakeConfirmForm extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       title: props.title,
@@ -23,7 +24,7 @@ class StakeConfirmForm extends Component {
     this.props.onSend()
   }
 
-  render() {
+  render () {
     return (
       <div className="withdraw">
         <Modal
@@ -73,7 +74,7 @@ class StakeConfirmForm extends Component {
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.myStake.title} WAN</span></Col>
+                <Col span={18}><span className="withdraw-addr">{formatNum(this.props.record.myStake.title)} WAN</span></Col>
               </Row>
             </div>
             {/* <div className="withdraw-line">

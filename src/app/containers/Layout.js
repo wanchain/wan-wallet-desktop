@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady } from 'utils/helper';
 
 import './Layout.less';
 import SideBar from './Sidebar';
-import Register from './Register';
-import Login from 'containers/Login';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
+import { getBalance, isSdkReady } from 'utils/helper';
 
-
-import { getBalance } from 'utils/helper';
+const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
+const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
 
 @inject(stores => ({
   auth: stores.session.auth,
@@ -23,30 +21,30 @@ import { getBalance } from 'utils/helper';
 }))
 
 @observer
-export default class Layout extends Component {
+class Layout extends Component {
   state = {
     loading: true,
     collapsed: false
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.wanTimer = setInterval(() => {
       this.updateWANBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate (prevProps) {
     if (this.props.location !== prevProps.location) {
       document.getElementById('main-content').scrollTo(0, 0);
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.wanTimer);
   }
 
-  waitUntilSdkReady() {
+  waitUntilSdkReady () {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
@@ -83,22 +81,22 @@ export default class Layout extends Component {
     });
   }
 
-  render() {
+  render () {
     const { hasMnemonicOrNot, auth, location } = this.props;
     if (this.state.loading) {
       return <Loading />
     } else {
       if (!hasMnemonicOrNot) {
-        return <Register />;
+        return <Suspense fallback={<div>Loading...</div>}><Register /></Suspense>;
       } else if (!auth) {
-        return <Login />
+        return <Suspense fallback={<div>Loading......</div>}><Login /></Suspense>
       } else {
         return (
           <Row className="container">
-            <Col className={"nav-left " + (this.state.collapsed ? "nav-collapsed" : "")}>
+            <Col className={'nav-left ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               <SideBar handleNav={this.toggleNav} path={location.pathname}/>
             </Col>
-            <Col id="main-content" className={"main " + (this.state.collapsed ? "nav-collapsed" : "")}>
+            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               <MHeader />
               <Row className="content">
                 {this.props.children}
@@ -111,3 +109,5 @@ export default class Layout extends Component {
     }
   }
 }
+
+export default Layout;

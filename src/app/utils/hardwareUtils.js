@@ -1,9 +1,10 @@
+/* eslint-disable */
 const ethUtil = require('ethereumjs-util');
 
-export const wanTx = require('wanchainjs-tx');
+export const WanTx = require('wanchainjs-tx');
 
 export class WanRawTx {
-  constructor(data) {
+  constructor (data) {
     const fields = [{
       name: 'Txtype',
       length: 32,
@@ -61,4 +62,4 @@ export class WanRawTx {
 
     ethUtil.defineProperties(this, fields, data)
   }
-}
+};

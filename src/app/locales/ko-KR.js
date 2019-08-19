@@ -1,5 +1,6 @@
 const ko_KR = {
-    'days': ' days',
+    days: ' days',
+    'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
     'Login.wrongPassword': '암호가 틀렸습니다.',
     'Login.inputPassword': '비밀번호를 입력하세요',
@@ -103,6 +104,8 @@ const ko_KR = {
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Gas 상한 가격이 잘못 입력 되었습니다.',
     'AdvancedOptionForm.nonce': 'Nonce',
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce 입력이 잘못 되었습니다.',
+    'AdvancedOptionForm.inputData': '데이터를 입력하세요',
+    'AdvancedOptionForm.inputDataIsIncorrect': '데이터 입력이 잘못 되었습니다.',
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
 
@@ -156,11 +159,12 @@ const ko_KR = {
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas 상한선',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': '비용',
+    'NormalTransForm.ConfirmForm.inputData': '데이터를 입력하세요',
 
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
     'NormalTransForm.invalidAmount': '유효하지 않은 값',
-    'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
+    'NormalTransForm.invalidFeeRate': '유효하지 않은 값',
     'NormalTransForm.transaction': '전송',
     'NormalTransForm.cancel': '취소',
     'NormalTransForm.next': '다음',
@@ -183,9 +187,8 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
-
     'Rename.name': '잘못된 이름',
-    'Rename.edit': 'Edit',
+    'Rename.edit': '수정',
 
     'SendNormalTrans.send': '전송',
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
@@ -207,12 +210,12 @@ const ko_KR = {
     'menuConfig.hardwareWallet': '하드웨어 지갑',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
+    'menuConfig.offline': 'Offline Wallet',
     'menuConfig.galaxyPos': 'Galaxy Consensus',
     'menuConfig.delegation': '위임인',
     'menuConfig.validator': '검증인',
     'menuConfig.staking': '스테이킹',
     'menuConfig.settings': '설정',
-
 
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',
@@ -236,13 +239,13 @@ const ko_KR = {
     'staking.table.modifyStake': '실행',
     'staking.table.topup': '재충전',
     'staking.table.exit': '종료',
-    'staking.table.modify': 'Modify',
+    'staking.table.modify': '수정',
     'staking.table.type': '종류',
     'staking.delegateHistory': '위임 내역',
     'staking.delegateList': '위임인 리스트',
 
     'validator.title': '노드 확인',
-    
+
     'StakeInForm.title': '타이틀',
     'StakeInForm.validatorAccount': '검증인 계정:',
     'StakeInForm.myAccount': '나의 계정:',
@@ -327,14 +330,31 @@ const ko_KR = {
     'TransHistory.StakeAppend': '스테이킹 추가',
     'TransHistory.StakeUpdateFeeRate': '수수료 업데이트',
     'ValidatorRegister.modifyTypeTitle': '수정된 파라미터',
-    'ValidatorRegister.invalidType':  '유효하지 않은 파라미터',
+    'ValidatorRegister.invalidType': '유효하지 않은 파라미터',
     'ValidatorRegister.selectType': '파라미터를 선택하세요',
+
+    'Offline.stepOne': '1단계',
+    'Offline.stepOneText': '정보를 생성하세요',
+    'Offline.inputAddr': '보내는 사람의 주소를 입력하세요',
+    'Offline.getInfo': '생성',
+    'Offline.stepTwo': '2단계',
+    'Offline.stepTwoText': '오프라인 PC의 다른 오프라인 지갑을 합의된 트랜잭션으로 생성하세요',
+    'Offline.stepThree': '3단계',
+    'Offline.stepThreeText': '합의된 트랜잭션 전송',
+    'Offline.threeInfo': '2단계에서 합의된 트랜잭션을 복사한 후에 SEND버튼을 눌러주세요',
+    'Offline.threeTitle': '합의된 트랜잭션을 입력하세요',
+    'Offline.sendTrans': '트랜잭션 전송',
+    'Offline.getInfoFailed': '잘못된 정보를 입력하였습니다. 재시도 바랍니다',
+    'Offline.sendRawTx': '트랜잭션 전송이 실패하였습니다. 재시도 바랍니다',
+    'Offline.inputRawTxText': '합의된 트랜잭션을 입력 바랍니다',
+    'Offline.linkToWebsite': '오프라인 지갑 다운로드',
 
     'popup.ok': '확인',
     'popup.cancel': '취소',
     'title.imported': '가져온 주소',
-    'title.copy': 'Copy',
-    'title.QRCode': 'QR Code',
+    'title.copy': '복사',
+    'title.QRCode': 'QR코드',
 
 }
+
 export default ko_KR;

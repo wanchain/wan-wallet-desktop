@@ -1,9 +1,26 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell, dialog } from 'electron'
-import { walletBackend, updater, Windows } from '~/src/modules'
+import { app, shell } from 'electron'
+import { walletBackend, Windows } from '~/src/modules'
+import i18n from '~/config/i18n'
 import menuFactoryService from '~/src/services/menuFactory'
+
+let sdkInitialized = false
+
+walletBackend.on('initiationDone', () => {
+    if (!sdkInitialized) {
+        sdkInitialized = true
+        menuFactoryService.buildMenu(i18n)
+    }
+})
+
+walletBackend.on('initiationBegin', () => {
+    if (sdkInitialized) {
+        sdkInitialized = false
+        menuFactoryService.buildMenu(i18n)
+    }
+})
 
 export default (i18n) => {
     const menu = []
@@ -55,6 +72,7 @@ export default (i18n) => {
                         label: i18n.t('main.applicationMenu.setting.network.main'),
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
+                        enabled: sdkInitialized,
                         type: 'radio',
                         click: async (m) => {
                             if (!setting.network.includes('main')) {
@@ -73,6 +91,7 @@ export default (i18n) => {
                         label: i18n.t('main.applicationMenu.setting.network.test'),
                         accelerator: 'Shift+CommandOrControl+P',
                         checked: setting.network === 'testnet',
+                        enabled: sdkInitialized,
                         type: 'radio',
                         click: async (m) => {
                             if (setting.network.includes('main')) {
@@ -177,6 +196,7 @@ export default (i18n) => {
                         submenu: [
                             {
                                 label: i18n.t('main.applicationMenu.app.developer.assets.wan.import'),
+                                enabled: sdkInitialized,
                                 click: () => {
 
                                     Windows.createModal('importKeyFile', {

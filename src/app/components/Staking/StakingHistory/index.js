@@ -28,11 +28,12 @@ class StakingHistory extends Component {
   }
 
   stakingColumnsTree = () => {
+    this.props.stakingColumns[2].render = (from, info) => <span title={info.validator.address}>{from}</span>;
     this.props.stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.stakingColumns;
   }
 
-  render() {
+  render () {
     const { historyList } = this.props;
     return (
       <div>
@@ -47,4 +48,4 @@ class StakingHistory extends Component {
   }
 }
 
-export default StakingHistory
+export default StakingHistory;

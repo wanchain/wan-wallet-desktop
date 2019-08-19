@@ -12,8 +12,11 @@ import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, ge
 
 const Option = Select.Option;
 const pu = require('promisefy-util');
-const wanTx = require('wanchainjs-tx');
+const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
+
+const LEFT = 6;
+const RIGHT = 18;
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -28,13 +31,14 @@ const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 @observer
 class StakeInForm extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
-      balance: "0",
+      balance: '0',
       addrList: [],
       confirmVisible: false,
       confirmLoading: false,
+      loading: false,
       record: {
         validator: {},
         accountAddress: '',
@@ -43,7 +47,7 @@ class StakeInForm extends Component {
     }
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
     let addrList = []
     getNormalAddrList.forEach(addr => {
@@ -67,7 +71,7 @@ class StakeInForm extends Component {
     this.setState({ addrList: addrList })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { form, record, ledgerAddrList, trezorAddrList } = this.props;
 
     if (record) {
@@ -85,14 +89,14 @@ class StakeInForm extends Component {
 
       for (let i = 0; i < ledgerAddrList.length; i++) {
         const hdAddr = ledgerAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        if (hdAddr.toLowerCase() === from.toLowerCase()) {
           from = 'Ledger: ' + from;
           break;
         }
       }
       for (let i = 0; i < trezorAddrList.length; i++) {
         const hdAddr = trezorAddrList[i].address;
-        if (hdAddr.toLowerCase() == from.toLowerCase()) {
+        if (hdAddr.toLowerCase() === from.toLowerCase()) {
           from = 'Trezor: ' + from;
           break;
         }
@@ -126,7 +130,7 @@ class StakeInForm extends Component {
       for (let i = 0; i < ledgerAddrList.length; i++) {
         const element = ledgerAddrList[i];
         value = value.replace('Ledger: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -137,7 +141,7 @@ class StakeInForm extends Component {
       for (let i = 0; i < trezorAddrList.length; i++) {
         const element = trezorAddrList[i];
         value = value.replace('Trezor: ', '')
-        if (element.address == value) {
+        if (element.address === value) {
           return element.balance;
         }
       }
@@ -146,7 +150,7 @@ class StakeInForm extends Component {
 
     for (let i = 0; i < getNormalAddrList.length; i++) {
       const element = getNormalAddrList[i];
-      if (element.address == value) {
+      if (element.address === value) {
         return element.balance;
       }
     }
@@ -160,7 +164,6 @@ class StakeInForm extends Component {
       balance: this.getBalance(value),
     })
   }
-
 
   checkToWanAddr = (rule, value, callback) => {
     checkWanValidatorAddr(value).then(ret => {
@@ -184,7 +187,7 @@ class StakeInForm extends Component {
     }
 
     let valueStringPre = value.toString().slice(0, 4)
-    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) {
+    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) { // eslint-disable-line no-mixed-operators
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -219,23 +222,29 @@ class StakeInForm extends Component {
 
     for (let i = 0; i < addrs.length; i++) {
       const addr = addrs[i];
-      if (addr.address == fromAddr) {
+      if (addr.address === fromAddr) {
         return addr.path;
       }
     }
   }
 
   getDataFromValidatorList = (addr, type) => {
-    if(!addr) return ' ';
+    if (!addr) return ' ';
     let { onlineValidatorList } = this.props;
     let value = type === 'address' ? onlineValidatorList.find(item => addr.toLowerCase() === item.name.toLowerCase()) : onlineValidatorList.find(item => addr.toLowerCase() === item.address.toLowerCase());
     return value ? value[type] : ' '
   }
 
   showConfirmForm = () => {
+    this.setState({
+      loading: true
+    })
     let { form, settings } = this.props;
     form.validateFields(async (err) => {
-      if (err) return;
+      if (err) {
+        this.setState({ loading: false });
+        return;
+      };
 
       let from = form.getFieldValue('from');
       let to = form.getFieldValue('to');
@@ -244,17 +253,20 @@ class StakeInForm extends Component {
 
       if (!amount || (!this.props.topUp && amount < 100)) {
         message.error(intl.get('NormalTransForm.amountIsIncorrect'));
+        this.setState({ loading: false });
         return;
       }
 
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
+        this.setState({ loading: false });
         return;
       }
 
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
+          this.setState({ loading: false });
           return;
         }
 
@@ -262,6 +274,7 @@ class StakeInForm extends Component {
           await pu.promisefy(wand.request, ['phrase_reveal', { pwd: pwd }], this);
         } catch (error) {
           message.warn(intl.get('Backup.invalidPassword'));
+          this.setState({ loading: false });
           return;
         }
       }
@@ -271,13 +284,14 @@ class StakeInForm extends Component {
 
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
-        if (to == v.address) {
+        if (to === v.address) {
           validator = v;
           break;
         }
       }
 
       this.setState({
+        loading: false,
         confirmVisible: true,
         record: {
           accountAddress: from,
@@ -304,7 +318,7 @@ class StakeInForm extends Component {
 
     let amount = form.getFieldValue('amount');
     if (!amount || (!this.props.topUp && amount < 100)) {
-      message.error("Please input a valid amount.");
+      message.error('Please input a valid amount.');
       return;
     }
     let walletID = WALLETID.NATIVE;
@@ -320,19 +334,19 @@ class StakeInForm extends Component {
     }
 
     let tx = {
-      "from": from,
-      "validatorAddr": to,
-      "amount": (form.getFieldValue('amount') || 0).toString(),
-      "gasPrice": 0,
-      "gasLimit": 0,
-      "BIP44Path": path,
-      "walletID": walletID,
-      "stakeAmount": (form.getFieldValue('amount') || 0).toString(),
+      from: from,
+      validatorAddr: to,
+      amount: (form.getFieldValue('amount') || 0).toString(),
+      gasPrice: 0,
+      gasLimit: 0,
+      BIP44Path: path,
+      walletID: walletID,
+      stakeAmount: (form.getFieldValue('amount') || 0).toString(),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
-    if (walletID == WALLETID.TREZOR) {
+    if (walletID === WALLETID.TREZOR) {
       await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
       this.props.onSend(walletID);
     } else {
@@ -371,7 +385,7 @@ class StakeInForm extends Component {
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, "gwei");
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
@@ -384,13 +398,13 @@ class StakeInForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        //hashX: txHash,
+        // hashX: txHash,
         txHash,
         from: from.toLowerCase(),
         validator: validator,
         annotate: 'DelegateIn',
         status: 'Sent',
-        source: "external",
+        source: 'external',
         stakeAmount: value,
         ...rawTx
       }
@@ -426,7 +440,7 @@ class StakeInForm extends Component {
       tx.v = result.payload.v;
       tx.r = result.payload.r;
       tx.s = result.payload.s;
-      let eTx = new wanTx(tx);
+      let eTx = new WanTx(tx);
       let signedTx = '0x' + eTx.serialize().toString('hex');
       console.log('Signed tx', signedTx);
       console.log('Tx:', tx);
@@ -434,7 +448,7 @@ class StakeInForm extends Component {
     });
   }
 
-  render() {
+  render () {
     const { onlineValidatorList, form, settings, disabled, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let validatorListSelect = onlineValidatorList.map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
@@ -444,7 +458,7 @@ class StakeInForm extends Component {
         <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className="stakein-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
           <div className="stakein-bg">
@@ -452,8 +466,7 @@ class StakeInForm extends Component {
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="middle">
                 <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
-                <Col span={15}>
-
+                <Col span={14}>
                   <Form layout="inline" id="posNameSelect">
                     <Form.Item>
                       {getFieldDecorator('validatorName', {
@@ -477,19 +490,19 @@ class StakeInForm extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={4}>
+                <Col span={3} align="right" className="col-stakein-info">
                   <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
-                        (<Input disabled={disabled} placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        (<Input disabled={true} placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
                 </Col>
@@ -497,8 +510,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('quota')
@@ -510,8 +523,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('maxFeeRate')
@@ -523,8 +536,8 @@ class StakeInForm extends Component {
             </div>
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('commission')
@@ -540,8 +553,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
                       {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
@@ -552,7 +565,7 @@ class StakeInForm extends Component {
                             allowClear
                             optionLabelProp="value"
                             dropdownMatchSelectWidth={false}
-                            dropdownStyle={{width: "420px"}}
+                            dropdownStyle={{ width: '420px' }}
                             placeholder={intl.get('StakeInForm.selectAddress')}
                             optionFilterProp="children"
                             onSelect={this.onChange}
@@ -577,8 +590,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around" align="top">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
                       {getFieldDecorator('balance', { initialValue: this.state.balance })
@@ -591,8 +604,8 @@ class StakeInForm extends Component {
 
             <div className="stakein-line">
               <Row type="flex" justify="space-around">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={19}>
+                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
+                <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('amount', { initialValue: (this.props.topUp ? 0 : 100), rules: [{ required: true, validator: this.checkAmount }] })
@@ -606,8 +619,8 @@ class StakeInForm extends Component {
             {settings.reinput_pwd &&
               <div className="stakein-line">
                 <Row type="flex" justify="space-around" align="top">
-                  <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
-                  <Col span={19}>
+                  <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+                  <Col span={RIGHT}>
                     <Form layout="inline">
                       <Form.Item>
                         {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })

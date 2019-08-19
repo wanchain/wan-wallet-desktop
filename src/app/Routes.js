@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Staking, Validator } from './containers';
+import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -15,10 +15,11 @@ export default () => {
             {/* TODO */}
             {/* <Route path="/trezor" component={Trezor} /> */}
             <Route path="/ledger" component={Ledger} />
+            <Route path="/offline" component={Offline} />
             <Route path="/staking" component={Staking} />
             <Route path="/validator" component={Validator} />
           </Switch>
-        </Main>      
+        </Main>
       </HashRouter>
   );
 };

@@ -14,7 +14,6 @@ import total from 'static/image/total.png';
 const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(ValidatorRegister);
 
 @inject(stores => ({
-  settings: stores.session.settings,
   language: stores.languageIntl.language,
   stakingList: stores.staking.stakingList,
   updateStakeInfo: () => stores.staking.updateStakeInfo(),
@@ -28,13 +27,13 @@ class Validator extends Component {
     validatorRegister: false,
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('validator.title');
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
@@ -42,7 +41,7 @@ class Validator extends Component {
     }, 20000);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.timer);
   }
 
@@ -50,7 +49,7 @@ class Validator extends Component {
     this.setState(state => ({ validatorRegister: !state.validatorRegister }));
   }
 
-  render() {
+  render () {
     return (
       <div className="staking">
         <Row>

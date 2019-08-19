@@ -3,10 +3,8 @@ import { Button, Modal } from 'antd';
 import './index.less';
 import intl from 'react-intl-universal';
 
-
-
 class Notice extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       title: intl.get('Mnemonic.ShowPhrase.tips'),
@@ -14,7 +12,7 @@ class Notice extends Component {
     }
   }
 
-  render() {
+  render () {
     return (
       <div className="withdraw">
         <Modal

@@ -4,10 +4,10 @@ import th_TH from './th-TH';
 import ko_KR from './ko-KR';
 
 const locales = {
-    'en_US': en_US,
-    'zh_CN': zh_CN,
-    'th_TH': th_TH,
-    'ko_KR': ko_KR
+  en_US,
+  zh_CN,
+  th_TH,
+  ko_KR,
 }
 
 export default locales;

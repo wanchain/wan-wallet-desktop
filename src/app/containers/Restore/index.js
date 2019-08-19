@@ -29,7 +29,7 @@ class Restore extends Component {
     wand.request('phrase_reset', null, () => {});
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Card title={intl.get('Restore.restoreFromSeedPhrase')}>
@@ -56,7 +56,3 @@ class Restore extends Component {
 }
 
 export default Restore;
-
-
-
-
