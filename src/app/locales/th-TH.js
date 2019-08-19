@@ -210,7 +210,7 @@ const th_TH = {
     'menuConfig.hardwareWallet': 'กระเป๋าแบบฮาร์ดแวร์',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
-    'menuConfig.offline': 'Offline Wallet',
+    'menuConfig.offline': 'กระเป๋าแบบออฟไลน์',
     'menuConfig.galaxyPos': 'Galaxy PoS',
     'menuConfig.delegation': 'Delegation',
     'menuConfig.validator': 'Validator',
