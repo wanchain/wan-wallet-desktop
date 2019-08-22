@@ -10,6 +10,7 @@ import Web3 from 'web3';
 import { dateFormat } from '../app/utils/support';
 import Identicon from 'identicon.js';
 import keccak from 'keccak';
+import BigNumber from 'bignumber.js';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -240,7 +241,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
     let err, address, nonce
     const [action, id] = actionUni.split('#')
-
+    
     switch (action) {
         case 'get':
             try {
@@ -280,22 +281,97 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'balance':
             let balance
             const { addr } = payload
-
             try {
                 if (_.isArray(addr) && addr.length > 1) {
                     const addresses = addr.map(item => `0x${item}`)
                     balance = await ccUtil.getMultiWanBalances(addresses)
-
                 } else {
                     balance = await ccUtil.getWanBalance(`0x${addr}`)
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
+                console.log('err');
                 logger.error(e.message || e.stack)
                 err = e
             }
-
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
+            break
+
+        case 'balances':
+            {
+                let balance, privateBalance;
+                const { addr, path } = payload;
+                try {
+                    //private balance
+                    let [...result] = await Promise.all(path.map( v => {
+                        return new Promise((resolve, reject) => {
+                            let OTABalances = ccUtil.getOtaFunds(v[0], v[1]);
+                            let amount = 0;
+                            OTABalances.forEach(v => {
+                                amount = new BigNumber(amount).plus(new BigNumber(v.value));
+                            });
+                            resolve({
+                                [v[2]]: amount.toString(10)
+                            });
+                        });
+                    }));
+                    privateBalance = Object.assign({}, ...result);
+
+                    //normal balance
+                    if(addr) {
+                        if (_.isArray(addr) && addr.length > 1) {
+                            const addresses = addr.map(item => `0x${item}`)
+                            balance = await ccUtil.getMultiWanBalances(addresses)
+                        } else {
+                            balance = await ccUtil.getWanBalance(`0x${addr}`)
+                            balance = { [`0x${addr}`]: balance }
+                        }
+                    } else {
+                        balance = {};
+                    }
+                    
+                } catch (e) {
+                    console.log('err');
+                    console.log(e);
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: {balance, privateBalance } })
+            }
+            break
+
+        case 'getPrivateTxInfo':
+            {
+                const { wid, path } = payload;
+                let res;
+                try {
+                    res = await new Promise((resolve, reject) => {
+                        let OTABalances = ccUtil.getOtaFunds(wid, path);
+                        resolve(OTABalances);
+                    });
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: res })
+            }
+            break;
+
+        case 'scanMultiOTA':
+            {
+                try {
+                    if(payload.length > 0) {
+                        payload.forEach((v) => {
+                            ccUtil.scanOTA(v[0], v[1]);
+                        });
+                    }
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: {status: 'Opened'} })
+            }
             break
 
         case 'isWanAddress':
@@ -364,7 +440,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
     let err, ret
     const [action, id] = actionUni.split('#')
-
+    console.log('actionUni:', actionUni);
     switch (action) {
         case 'create':
             try {
@@ -424,14 +500,12 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
 ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     let ret, err
     const [action, id] = actionUni.split('#')
-
     switch (action) {
         case 'normal':
             try {
                 console.log('payload', payload)
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
-
                 let input = {
                     "symbol": symbol,
                     "from": '0x' + from.address,
@@ -454,9 +528,59 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
+            console.log('normal tx result: ');
+            console.log(ret);
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'private':
+            try {
+                let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload
+                let from = await hdUtil.getAddress(walletID, chainType, path);
+                console.log(from);
+                let input = {
+                    "from": '0x' + from.address,
+                    "to": to,
+                    "amount": amount,
+                    "gasPrice": gasPrice,
+                    "gasLimit": gasLimit,
+                    "BIP44Path": path,
+                    "walletID": walletID
+                }
+
+                logger.info('Private transaction: ' + JSON.stringify(input));
+                console.log('input:', input);
+                let action = 'SEND';
+                ret = await global.crossInvoker.invokePrivateTrans(action, input);
+                console.log('ret:', ret);
+                logger.info('Transaction hash: ' + ret);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
+            break;
+
+        case 'refund':
+                try {
+                    let { input } = payload;
+                    let action = 'REFUND';
+                    console.log('=========================================');
+                    console.log(input);
+                    input.forEach(async function(v) {
+                        // console.log(v);
+                        ret = await global.crossInvoker.invokePrivateTrans(action, v);
+                        console.log('hahaha:', ret);
+                    });
+                    // console.log('ret:', ret);
+                    logger.info('Refund result: ' + ret);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+                break;
 
         case 'raw':
             try {
@@ -464,6 +588,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
+                console.log('error:');
+                console.log(e);
                 logger.error(e.message || e.stack)
                 err = e
             }

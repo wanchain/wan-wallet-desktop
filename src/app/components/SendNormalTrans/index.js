@@ -12,6 +12,7 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 @inject(stores => ({
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
+  getPrivateAddr: stores.wanAddress.getPrivateAddr,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
@@ -28,7 +29,9 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, fromPrivate, addrInfo, getPrivateAddr, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+
+    // 余额不足
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;

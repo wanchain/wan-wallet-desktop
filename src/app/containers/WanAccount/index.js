@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 import wanUtil from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
@@ -10,6 +11,8 @@ import { WANPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
+import RedeemFromOTAS from 'components/RedeemFromOTAS';
+
 import { checkAddrType, hasSameName } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
@@ -34,7 +37,7 @@ class WanAccount extends Component {
     super(props);
     this.state = {
       bool: true,
-      isUnlock: false,
+      isUnlock: false
     }
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
@@ -58,7 +61,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} fromPrivate={record.waddress} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '10%'
     },
     {
@@ -107,37 +110,57 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data
     };
-    return new Promise((resolve, reject) => {
-      wand.request('transaction_normal', trans, function (err, txHash) {
-        if (err) {
-          message.warn(intl.get('WanAccount.sendTransactionFailed'));
-          console.log(err);
-          reject(false); // eslint-disable-line prefer-promise-reject-errors
-        } else {
-          this.props.updateTransHistory();
-          console.log('Tx hash: ', txHash);
-          resolve(txHash)
-        }
-      }.bind(this));
-    })
+    console.log('params:', params);
+    // Private tx
+    if (wanUtil.toChecksumOTAddress(trans.to)) {
+      console.log('Private tx');
+      console.log(trans);
+      return new Promise((resolve, reject) => {
+        wand.request('transaction_private', trans, function (err, txHash) {
+          if (err) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            console.log(err);
+            reject(false)
+          } else {
+            this.props.updateTransHistory();
+            console.log('Tx hash: ', txHash);
+            resolve(txHash)
+          }
+        }.bind(this));
+      });
+    } else { // normal tx
+      return new Promise((resolve, reject) => {
+        wand.request('transaction_normal', trans, function (err, txHash) {
+          if (err) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            console.log(err);
+            reject(false)
+          } else {
+            this.props.updateTransHistory();
+            console.log('Tx hash: ', txHash);
+            resolve(txHash)
+          }
+        }.bind(this));
+      });
+    }
   }
 
-  creatAccount = () => {
+  createAccount = () => {
     const { addrInfo, addAddress } = this.props;
     const addrLen = Object.keys(addrInfo['normal']).length;
     this.setState({
       bool: false
     });
-
     if (this.state.bool) {
       let path = `${WANPATH}${addrLen}`;
       wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`, waddr: `0x${val_address_get.waddress}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,
-                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`)
+                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
+                waddress: wanUtil.toChecksumOTAddress(`0x${val_address_get.waddress}`),
               }
               addAddress(addressInfo);
               this.setState({
@@ -176,7 +199,10 @@ class WanAccount extends Component {
   }
 
   expandContent = record => {
-    const privateAddress = "0x022b49af7f2a4fd132acee36ce22a81e89f5abc9c824e2cee5e193f8c3b43c314d02aefe897a20968f424dbef269e4aad165a631097548e9fb20c4932beb152e9d32";
+    const privateAddress = record.waddress;
+    const privateBalance = record.wbalance;
+    // console.log('record:');
+    // console.log(record);
     return (
       <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
         <tbody>
@@ -185,15 +211,15 @@ class WanAccount extends Component {
             <td style={{ width: '50%', padding: '0px 16px' }}>
               <div className="addrText">
                 <p className="privateAddress">
-                  <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{width: 400}} >{privateAddress}</Tooltip>
+                  <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>
                   {privateAddress}
                 </p>
-                <CopyAndQrcode addr={privateAddress} />
-                <Tooltip placement="bottom" title={'Question'}><Icon type="question-circle" style={{marginLeft: '5px'}} /></Tooltip>
+                { privateAddress && <CopyAndQrcode addr={privateAddress} /> }
+                { privateAddress && <Tooltip placement="bottom" title={'Question'}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
               </div>
             </td>
-            <td style={{ width: '20%', padding: '0px 16px' }}>100.00</td>
-            <td style={{ width: '10%', padding: '0px 16px' }}><Button className="redeemButton" type="primary">{intl.get('WanAccount.redeem')}</Button></td>
+            <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
+            <td style={{ width: '10%', padding: '0px 16px' }}><RedeemFromOTAS from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
             <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>
@@ -219,7 +245,7 @@ class WanAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('WanAccount.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

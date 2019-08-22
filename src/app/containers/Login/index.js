@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import { Button, Input, message, Modal } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import { openScanOTA } from 'utils/helper';
 
 import './index.less';
+
+const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
   auth: stores.session.auth,
   language: stores.languageIntl.language,
+  addrInfo: stores.wanAddress.addrInfo,
   setAuth: val => stores.session.setAuth(val),
 }))
 
@@ -31,6 +35,11 @@ class Login extends Component {
           return;
         }
         this.props.setAuth(true);
+
+        // Open scanner to scan the smart contract to get private tx balance.
+        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WAN}${item.path}`]);
+        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WAN}${item.path}`]);
+        openScanOTA(normalObj.concat(importObj));
       })
     })
   }

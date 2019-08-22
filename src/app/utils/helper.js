@@ -59,6 +59,30 @@ export const getBalance = function (arr) {
   })
 };
 
+export const getBalanceWithPrivateBalance = function (arr, path) {
+  const addrArr = arr.map(item => item.substr(2));
+  return new Promise((resolve, reject) => {
+    let thisVal = {};
+    wand.request('address_balances', { addr: addrArr, path: path }, (err, val) => {
+      thisVal.balance = Object.assign({}, val.balance);
+      thisVal.privateBalance = Object.assign({}, val.privateBalance);
+      if (err) {
+        return reject(err)
+      } else {
+        // console.log('privateBalance:', val.privateBalance);
+        Object.keys(thisVal.balance).forEach(item => {
+          thisVal.balance[item] = fromWei(thisVal.balance[item]);
+        });
+
+        Object.keys(thisVal.privateBalance).forEach(item => {
+          thisVal.privateBalance[item] = fromWei(thisVal.privateBalance[item]);
+        });
+        return resolve(thisVal);
+      }
+    });
+  });
+};
+
 export const getValueByAddrInfo = function (value, type, addrInfo) {
   if (value.indexOf(':') !== -1) {
     let addrArr = value.split(':');
@@ -243,6 +267,11 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   return balance;
 }
 
+export const getPrivateBalanceByAddr = function (addr, addrInfo) {
+  let addrArr = { ...addrInfo.normal, ...addrInfo.import };
+  return addrArr[addr] ? addrArr[addr].wbalance : '0';
+}
+
 export const checkAmountUnit = function (decimals, amount) {
   if (!Number.isInteger(decimals)) {
     throw new Error('Decimals must be a integer');
@@ -319,3 +348,19 @@ export const getContractData = function (func, validatorAddr) {
     });
   })
 };
+
+export const openScanOTA = function(path) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_scanMultiOTA', path, function (err, res) {
+      if (err) {
+        console.log('err:=======');
+        console.log(err);
+        console.log('openScanOTA failed');
+        return reject(err);
+      } else {
+        // console.log(res);
+        return resolve();
+      }
+    });
+  })
+}
