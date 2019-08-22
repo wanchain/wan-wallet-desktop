@@ -58,12 +58,24 @@ class ValidatorRegister extends Component {
     })
   }
 
-  checkPublicKey = (rule, value, callback) => {
+  checkPublicKey1 = (rule, value, callback) => {
     if (value === undefined) {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
     }
-    if (value.startsWith('0x') && [130, 132].includes(value.length)) {
+    if (value.startsWith('0x') && value.length === 132) {
+      callback();
+    } else {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+    }
+  }
+
+  checkPublicKey2 = (rule, value, callback) => {
+    if (value === undefined) {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+      return;
+    }
+    if (value.startsWith('0x') && value.length === 130) {
       callback();
     } else {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
@@ -226,13 +238,13 @@ class ValidatorRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             <CommonFormItem form={form} formName='publicKey1'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey1 }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('ValidatorRegister.publicKey1')}
               placeholder={intl.get('ValidatorRegister.enterSecPk')}
             />
             <CommonFormItem form={form} formName='publicKey2'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey2 }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('ValidatorRegister.publicKey2')}
               placeholder={intl.get('ValidatorRegister.enterG1Pk')}
