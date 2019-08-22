@@ -44,6 +44,7 @@ const zh_CN = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': '在Ledger上面点击进入Wanchain APP',
     'Ledger.signTransactionInLedger': '请在Ledger上确认',
     'Ledger.signTransactionFailed': '签名失败，请重试',
+    'Ledger.setContractDataOn': '确保合约数据在Wanchain App设置中为打开状态',
 
     'Portfolio.portfolio': '我的资产',
     'Portfolio.name': '名称',

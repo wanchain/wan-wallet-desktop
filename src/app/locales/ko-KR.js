@@ -43,6 +43,7 @@ const ko_KR = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': ' Wanchain 어플리케이션에 접속하기 위하여 Ledger에서 클릭 하세요 ',
     'Ledger.signTransactionInLedger': ' Leger에서 확인 버튼을 눌러주세요 ',
     'Ledger.signTransactionFailed': ' 실패 하였습니다. 재시도 바랍니다. ',
+    'Ledger.setContractDataOn': 'Make sure Contract Data is on in Wanchain APP setting',
 
     'Portfolio.portfolio': '나의 자산',
     'Portfolio.name': '자산명',

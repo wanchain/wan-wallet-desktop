@@ -43,6 +43,7 @@ const en_US = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
     'Ledger.signTransactionInLedger': 'Please confirm in Ledger',
     'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
+    'Ledger.setContractDataOn': 'Make sure Contract Data is on in Wanchain APP setting',
 
     'Portfolio.portfolio': 'Portfolio',
     'Portfolio.name': 'NAME',

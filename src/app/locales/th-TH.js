@@ -43,6 +43,7 @@ const th_TH = {
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'เลือกแอป Wanchain และกดเข้าสู่แอป',
     'Ledger.signTransactionInLedger': 'กรุณายืนยันใน Ledger',
     'Ledger.signTransactionFailed': 'การทำธุรกรรมผิดพลาด กรุณาลองใหม่อีกครั้ง',
+    'Ledger.setContractDataOn': 'Make sure Contract Data is on in Wanchain APP setting',
 
     'Portfolio.portfolio': 'พอร์ตฟอลิโอ',
     'Portfolio.name': 'ชื่อทรัพย์สิน',
