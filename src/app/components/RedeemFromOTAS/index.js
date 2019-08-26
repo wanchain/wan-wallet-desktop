@@ -28,18 +28,16 @@ class RedeemFromOTAS extends Component {
   showModal = async () => {
     const { from, addrInfo, wid, path, chainType, updateGasPrice } = this.props;
 
-    // 余额不足
+    // No sufficient funds
     if (getPrivateBalanceByAddr(from, addrInfo) === '0') {
-      message.warn('隐私交易余额不足');
+      message.warn('No sufficient funds.');
       return;
     }
 
     this.setState({ visible: true });
 
     try {
-      // let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       let gasPrice = await getGasPrice(chainType);
-      console.log('gasPrice:', gasPrice);
       updateGasPrice(gasPrice);
       // get the data of private transaction list.
       wand.request('address_getPrivateTxInfo', { wid, path }, (err, res) => {
@@ -47,11 +45,9 @@ class RedeemFromOTAS extends Component {
           console.log('not ok');
           message.warn('Get private transaction info failed.');
         } else {
-          console.log('ok');
-          console.log(res);
           let data = res.map(v => {
             return {
-              from: v.from,
+              from: from,
               value: fromWei(v.value),
               toOTA: v.toOTA,
               txhash: v.txhash,
@@ -67,17 +63,6 @@ class RedeemFromOTAS extends Component {
       console.log(`err: ${err}`)
       message.warn(err);
     }
-
-    /* addTransTemplate(from, { chainType, chainId });
-    try {
-      let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
-      updateTransParams(from, { path, nonce, gasPrice });
-      updateGasPrice(gasPrice);
-      setTimeout(() => {this.setState({ spin: false })}, 0)
-    } catch (err) {
-      console.log(`err: ${err}`)
-      message.warn(err);
-    } */
   }
 
   handleCancel = () => {
@@ -88,14 +73,7 @@ class RedeemFromOTAS extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {
-    /*
-    this.props.handleSend(from).then(ret => {
-      this.setState({ visible: false, spin: true });
-    }).catch(err => {
-      this.setState({ visible: false, spin: true });
-    }); */
-  }
+  handleSend = from => {}
 
   render() {
     const { visible, spin } = this.state;

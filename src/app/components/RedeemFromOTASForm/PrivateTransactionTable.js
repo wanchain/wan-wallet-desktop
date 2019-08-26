@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
-import intl from 'react-intl-universal';
 
 @observer
 class PrivateTransactionTable extends Component {
@@ -9,7 +8,7 @@ class PrivateTransactionTable extends Component {
         {
             title: 'Value',
             dataIndex: 'value',
-            width: 100
+            width: 140
         },
         {
             title: 'OTA',
@@ -19,7 +18,6 @@ class PrivateTransactionTable extends Component {
 
     rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            // console.log(selectedRows);
             this.props.handleCheck(selectedRows);
         }
     };
@@ -27,7 +25,7 @@ class PrivateTransactionTable extends Component {
     render() {
         return (
             <div className="selectPrivateTransactionTable" style={{ marginBottom: '24px' }}>
-                <Table rowSelection={this.rowSelection} columns={this.columns} dataSource={this.props.balanceData} rowKey={record => record.toOTA} pagination={false} scroll={{ y: 300 }} /* size="small" */ />
+                <Table rowSelection={this.rowSelection} columns={this.columns} dataSource={this.props.balanceData} rowKey={record => record.toOTA} pagination={false} style={{ minWidth: 1350 }} />
             </div>
         );
     }

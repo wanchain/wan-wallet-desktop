@@ -3,10 +3,11 @@ import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spi
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
+import RefundOTAConfirmForm from './RefundOTAConfirmForm.js';
 import './index.less';
-import { getNonce, getGasPrice, getBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
 
 const privateTxGasLimit = 800000;
+const Confirm = Form.create({ name: 'RefundOTAForm' })(RefundOTAConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
@@ -18,9 +19,9 @@ const privateTxGasLimit = 800000;
 @observer
 class RedeemFromOTASForm extends Component {
   state = {
-    gasFee: 0,
+    gasPrice: 0,
     confirmVisible: false,
-    disabledAmount: false,
+    sendData: []
   }
 
   handleNext = () => {
@@ -39,17 +40,18 @@ class RedeemFromOTASForm extends Component {
             console.log('not ok');
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            this.handleSend(form);
+            this.setSendData();
           }
-        })
-      } else {}
+        });
+      } else {
+        this.setSendData();
+      }
     });
   }
 
-  handleSend = form => {
-    // console.log('handleSend');
+  setSendData = () => {
+    let form = this.props.form;
     let refundList = form.getFieldValue('privateRefundList');
-    let gasPrice = form.getFieldValue('fixFee');
     let refunds = [];
     for (let i = 0; i < refundList.length; i++) {
       let ota = refundList[i];
@@ -58,21 +60,28 @@ class RedeemFromOTASForm extends Component {
         amount: ota.value,
         otaTxHash: ota.txhash,
         OTA: ota.toOTA,
-        gasPrice: gasPrice,
+        gasPrice: this.state.gasPrice,
         gasLimit: privateTxGasLimit,
         BIP44Path: this.props.path,
         walletID: this.props.wid
       }
       refunds.push(input);
     }
-    console.log('refunds:', refunds);
-    wand.request('transaction_refund', { input: refunds }, (err, res) => {
+    this.setState({
+      sendData: refunds,
+      confirmVisible: true,
+    });
+  }
+
+  handleSend = form => {
+    wand.request('transaction_refund', { input: this.state.sendData }, (err, res) => {
+      console.log(err, res);
       if (err) {
         console.log('not ok');
-        message.warn('Refund private transaction balances failed.');
+        message.warn(err.desc);
       } else {
         console.log('ok');
-        console.log(res);
+        // console.log(res);
         this.onCancel();
       }
     });
@@ -82,13 +91,22 @@ class RedeemFromOTASForm extends Component {
     this.props.onCancel();
   }
 
+  handleConfirmCancel = () => {
+    this.setState({
+      confirmVisible: false,
+    });
+  }
+
   // Refund tx check
   handleCheck = (arr) => {
-    console.log('check:', arr);
     let { form } = this.props;
     form.setFieldsValue({
       privateRefundList: arr
     });
+  }
+
+  handleClick = (e, gasPrice) => {
+    this.setState({ gasPrice });
   }
 
   render() {
@@ -137,9 +155,9 @@ class RedeemFromOTASForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>
@@ -148,6 +166,8 @@ class RedeemFromOTASForm extends Component {
           </Spin>
 
         </Modal>
+
+        <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.handleSend} data={this.state.sendData} />
 
       </div>
     );

@@ -31,7 +31,7 @@ class SendNormalTrans extends Component {
   showModal = async () => {
     const { from, fromPrivate, addrInfo, getPrivateAddr, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
 
-    // 余额不足
+    // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;

@@ -103,7 +103,6 @@ class NormalTransForm extends Component {
       let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
-      console.log('mode:', form.getFieldValue('mode'));
       let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
       let to = form.getFieldValue('mode') === 'private' ? 'toPrivate' : 'to';
 
@@ -138,7 +137,6 @@ class NormalTransForm extends Component {
   }
 
   handleClick = (e, gasPrice, gasLimit, nonce) => {
-    console.log(gasPrice, gasLimit, nonce);
     let { form, addrInfo } = this.props;
     let from = form.getFieldValue('from');
     this.props.updateTransParams(this.props.from, { gasLimit, gasPrice, nonce });
@@ -156,7 +154,6 @@ class NormalTransForm extends Component {
     let val;
     let { form } = this.props;
     let mode = form.getFieldValue('mode');
-    console.log('mode:', mode);
     let from = form.getFieldValue('from');
     try {
       val = toWei((form.getFieldValue('amount') || 0).toString(10))
@@ -169,15 +166,13 @@ class NormalTransForm extends Component {
       data: this.props.transParams[from].data,
       gas: DEFAULT_GAS
     };
-    if (form.getFieldValue('mode') === 'private') {
+    if (mode === 'private') {
       tx.to = form.getFieldValue('toPrivate');
     } else {
       tx.to = form.getFieldValue('to');
     }
     let { chainType } = this.props.transParams[from];
-    console.log(tx);
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
-      console.log(err, gasLimit);
       if (err) {
         message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
@@ -270,7 +265,6 @@ class NormalTransForm extends Component {
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr
     const { getFieldDecorator } = form;
-    console.log(minFee, averageFee, maxFee);
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
 
     return (
@@ -332,7 +326,6 @@ class NormalTransForm extends Component {
                       <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
                     </Form.Item>
               }
-
               {settings.reinput_pwd
                 ? <Form.Item label={intl.get('NormalTransForm.password')}>
                     {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })

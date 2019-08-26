@@ -110,11 +110,8 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data
     };
-    console.log('params:', params);
     // Private tx
     if (wanUtil.toChecksumOTAddress(trans.to)) {
-      console.log('Private tx');
-      console.log(trans);
       return new Promise((resolve, reject) => {
         wand.request('transaction_private', trans, function (err, txHash) {
           if (err) {
@@ -155,7 +152,7 @@ class WanAccount extends Component {
       let path = `${WANPATH}${addrLen}`;
       wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`, waddr: `0x${val_address_get.waddress}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`, waddr: `0x${val_address_get.waddress}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,
@@ -201,8 +198,6 @@ class WanAccount extends Component {
   expandContent = record => {
     const privateAddress = record.waddress;
     const privateBalance = record.wbalance;
-    // console.log('record:');
-    // console.log(record);
     return (
       <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
         <tbody>
