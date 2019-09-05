@@ -210,7 +210,7 @@ class WanAccount extends Component {
                   {privateAddress}
                 </p>
                 { privateAddress && <CopyAndQrcode addr={privateAddress} /> }
-                { privateAddress && <Tooltip placement="bottom" title={'Question'}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
+                { privateAddress && <Tooltip placement="bottom" title={'Private transaction receiver address'}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
               </div>
             </td>
             <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>

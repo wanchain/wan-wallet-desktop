@@ -21,7 +21,7 @@ const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 }))
 
 @observer
-class Staking extends Component {
+class Delegation extends Component {
   state = {
     delegateInFormVisible: false
   }
@@ -84,4 +84,4 @@ class Staking extends Component {
   }
 }
 
-export default Staking;
+export default Delegation;
