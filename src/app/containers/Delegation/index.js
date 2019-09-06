@@ -4,12 +4,12 @@ import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
 import './index.less';
 import Cards from 'components/Staking/Cards';
-import Validators from 'components/Staking/Validators';
-import StakingHistory from 'components/Staking/StakingHistory';
-import StakeInForm from 'components/Staking/StakeInForm';
+import DelegateList from 'components/Staking/DelegateList';
+import DelegationHistory from 'components/Staking/DelegationHistory';
+import DelegateInForm from 'components/Staking/DelegateInForm';
 import total from 'static/image/total.png';
 
-const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
+const InForm = Form.create({ name: 'DelegateInForm' })(DelegateInForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -21,7 +21,7 @@ const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
 }))
 
 @observer
-class Staking extends Component {
+class Delegation extends Component {
   state = {
     delegateInFormVisible: false
   }
@@ -64,19 +64,19 @@ class Staking extends Component {
             <Col span={12} className="col-right">
               <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
               {this.state.delegateInFormVisible &&
-                <DelegateInForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />
+                <InForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />
               }
             </Col>
           </div>
         </Row>
         <Row>
           <Col>
-            <Validators />
+            <DelegateList />
           </Col>
         </Row>
         <Row>
           <Col>
-            <StakingHistory name="normal" />
+            <DelegationHistory name="normal" />
           </Col>
         </Row>
       </div>
@@ -84,4 +84,4 @@ class Staking extends Component {
   }
 }
 
-export default Staking;
+export default Delegation;

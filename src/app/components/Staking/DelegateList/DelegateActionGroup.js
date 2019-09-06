@@ -5,8 +5,8 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import './index.less';
 
-import DelegateIn from './DelegateIn';
-import DelegateOut from './DelegateOut';
+import DelegateIn from 'components/Staking/DelegateIn';
+import DelegateOut from 'components/Staking/DelegateOut';
 
 @inject(stores => ({
   language: stores.languageIntl.language,

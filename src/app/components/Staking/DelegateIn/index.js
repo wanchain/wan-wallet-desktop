@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Button, Form } from 'antd';
 
 import './index.less';
-import StakeInForm from '../StakeInForm';
+import DelegateInForm from '../DelegateInForm';
 
-const DelegateInForm = Form.create({ name: 'StakeInForm' })(StakeInForm);
+const InForm = Form.create({ name: 'DelegateInForm' })(DelegateInForm);
 
 class DelegateIn extends Component {
   state = {
@@ -29,7 +29,7 @@ class DelegateIn extends Component {
         <Button className="modifyTopUpBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
         {
           this.state.visible &&
-          <DelegateInForm disabled={true} visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} topUp={true} />
+          <InForm disabled={true} visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} topUp={true} />
         }
       </div>
     );

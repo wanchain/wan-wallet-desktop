@@ -173,11 +173,11 @@ class LanguageIntl {
             icon: 'block'
           },
           /** TODO */
-          // {
-          //   title: intl.get('menuConfig.trezor'),
-          //   key: '/trezor',
-          //   icon: 'block'
-          // }
+          {
+            title: intl.get('menuConfig.trezor'),
+            key: '/trezor',
+            icon: 'block'
+          }
         ]
       },
       {
@@ -194,7 +194,7 @@ class LanguageIntl {
         children: [
           {
             title: intl.get('menuConfig.delegation'),
-            key: '/staking',
+            key: '/delegation',
             icon: 'block'
           }
         ]

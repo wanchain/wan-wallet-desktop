@@ -13,16 +13,19 @@ This is a desktop wallet
 
 ## Development
 
-### Initialization
+### prerequisite 
 
 Before install WAN wallet's dependencies, you need to pre-install following tools:
 
-Windows :
+#### Windows :
 * Node.js
 * Python (v2.7 is recommended, v3 is not supported)
-* Git
+* Git Windows Client
+* Microsoft Visual Studio C++
+* Microsoft 
+* Yarn (recommended) or npm
 
-Linux (Ubuntu) :
+#### Linux (Ubuntu) :
 * Node.js
 
         wget https://nodejs.org/dist/v10.9.0/node-v10.9.0-linux-x64.tar.xz
@@ -40,7 +43,7 @@ Linux (Ubuntu) :
 
         sudo apt install git
 
-MAC OS :
+#### MAC OS :
 * Node.js
 
         brew install node
@@ -74,12 +77,12 @@ Then, create a file named ".env" in the root directory of the project and add yo
 
         npm install
 
-1. Linux (Ubuntu) :
+2. Linux (Ubuntu) :
 
         sudo apt install build-essential libxss-dev pkg-config libusb-1.0-0 libusb-1.0-0-dev libudev-dev
         npm install
 
-1. MAC OS :
+3. MAC OS :
 
         yarn install or npm install
 

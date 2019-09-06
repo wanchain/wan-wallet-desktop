@@ -17,7 +17,7 @@ import { MAIN, TESTNET } from 'utils/settings'
 }))
 
 @observer
-class StakingHistory extends Component {
+class DelegationHistory extends Component {
   onChange = value => {
     this.props.setSelectedAddr(value);
   }
@@ -48,4 +48,4 @@ class StakingHistory extends Component {
   }
 }
 
-export default StakingHistory;
+export default DelegationHistory;

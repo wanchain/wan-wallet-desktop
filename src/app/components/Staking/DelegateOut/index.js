@@ -198,7 +198,7 @@ class DelegateOut extends Component {
   render () {
     return (
       <div>
-        <Button className="modifyExititBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
+        <Button className="modifyExitBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
         {this.state.visible &&
            <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
             confirmLoading={this.state.confirmLoading}

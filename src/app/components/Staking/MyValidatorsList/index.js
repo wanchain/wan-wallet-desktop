@@ -6,8 +6,8 @@ import { observer, inject } from 'mobx-react';
 import './index.less';
 import ValidatorIn from './ValidatorIn';
 import ValidatorModify from './ValidatorModify';
-import Cell from 'components/Staking/Validators/Cell';
-import Validator from 'components/Staking/Validators/Validator';
+import Cell from 'components/Staking/Common/Cell';
+import Validator from 'components/Staking/Common/Validator';
 import { formatNum } from 'utils/support';
 
 @inject(stores => ({

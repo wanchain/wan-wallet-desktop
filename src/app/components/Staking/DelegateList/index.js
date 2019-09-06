@@ -4,8 +4,8 @@ import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
 import './index.less';
-import Cell from './Cell';
-import Validator from './Validator';
+import Cell from 'components/Staking/Common/Cell';
+import Validator from 'components/Staking/Common/Validator';
 import DelegateActionGroup from './DelegateActionGroup';
 import { formatNum } from 'utils/support';
 
