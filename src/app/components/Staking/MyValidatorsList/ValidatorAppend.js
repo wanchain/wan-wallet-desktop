@@ -163,7 +163,7 @@ class InForm extends Component {
 }
 
 const ValidatorInForm = Form.create({ name: 'InForm' })(InForm);
-class ValidatorIn extends Component {
+class ValidatorAppend extends Component {
   state = {
     visible: false
   }
@@ -186,4 +186,4 @@ class ValidatorIn extends Component {
   }
 }
 
-export default ValidatorIn;
+export default ValidatorAppend;

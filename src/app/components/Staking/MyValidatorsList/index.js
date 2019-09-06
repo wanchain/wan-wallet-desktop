@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import './index.less';
-import ValidatorIn from './ValidatorIn';
+import ValidatorAppend from './ValidatorAppend';
 import ValidatorModify from './ValidatorModify';
 import Cell from 'components/Staking/Common/Cell';
 import Validator from 'components/Staking/Common/Validator';
@@ -81,7 +81,7 @@ class MyValidatorsList extends Component {
         render: (text, record) =>
           <div>
             <Row>
-              <Col span={8} align="center"><ValidatorIn record={record} /></Col>
+              <Col span={8} align="center"><ValidatorAppend record={record} /></Col>
               <Col span={8} align="center"><ValidatorModify record={record} modifyType={record.modifyStake[1]}/></Col>
               <Col span={8} align="center"><ValidatorModify record={record} modifyType={record.modifyStake[2]}/></Col>
             </Row>
