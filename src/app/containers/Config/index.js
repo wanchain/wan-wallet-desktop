@@ -4,11 +4,16 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
+import { defaultTimeout } from 'utils/settings';
+
 const { Option } = Select;
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
+  wrc20TokensInfo: stores.tokens.wrc20TokensInfo,
+  network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
+  updateTokensInfo: (addr, key, val) => stores.tokens.updateTokensInfo(addr, key, val),
 }))
 
 @observer
@@ -25,9 +30,14 @@ class Config extends Component {
     this.props.updateSettings({ logout_timeout: e })
   }
 
+  handleTokensSelected = val => {
+    this.props.updateTokensInfo(val.wanAddr, 'select', !val.select);
+  }
+
   render () {
+    const { wrc20TokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
-    const defaultTimeout = '5';
+
     const options = [{
       value: '0',
       text: intl.get('Config.disableTimeout'),
@@ -50,6 +60,7 @@ class Config extends Component {
       value: '120',
       text: intl.get('Config.twoHours'),
     }];
+
     return (
       <div>
         <Card title={intl.get('Config.option')}>
@@ -58,19 +69,19 @@ class Config extends Component {
           <div className="timeout">
             <p className="set_title">{intl.get('Config.loginTimeout')}</p>
             <Select className="timeoutSelect" value={logout_timeout === undefined ? defaultTimeout : logout_timeout} placeholder={intl.get('Config.selectLoginTimeout')} onChange={this.handleTimeoutChange}>
-              {
-                options.map(item => {
-                  return (
-                    <Option key={item.value} value={item.value}>{item.text}</Option>
-                  )
-                })
-              }
+              { options.map(item => <Option key={item.value} value={item.value}>{item.text}</Option>) }
             </Select>
           </div>
         </Card>
         <Card title={intl.get('Config.staking')}>
-        <p className="set_title">{intl.get('Config.enableValidator')}</p>
+          <p className="set_title">{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
+        </Card>
+        <Card title='TOKENS'>
+          <p className="set_title">WRC20</p>
+          {
+            wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+          }
         </Card>
       </div>
     );

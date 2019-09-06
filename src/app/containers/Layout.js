@@ -17,6 +17,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   addrInfo: stores.wanAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
+  getTokensInfo: () => stores.tokens.getTokensInfo(),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
 }))
 
@@ -49,6 +50,7 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
+          await this.props.getTokensInfo();
           await this.props.getMnemonic();
           this.setState({
             loading: false
@@ -59,7 +61,7 @@ class Layout extends Component {
           console.log('Get mnemonic failed');
         }
       }
-    }, 1000);
+    }, 3000);
   }
 
   updateWANBalanceForInter = () => {

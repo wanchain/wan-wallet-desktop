@@ -171,6 +171,7 @@ const en_US = {
     'NormalTransForm.from': 'From',
     'NormalTransForm.senderAddress': 'Sender Address',
     'NormalTransForm.to': 'To',
+    'NormalTransForm.transferTo': 'Token Transfer To',
     'NormalTransForm.addressIsIncorrect': 'Address is incorrect',
     'NormalTransForm.recipientAddress': 'Recipient Address',
     'NormalTransForm.amount': 'Amount',

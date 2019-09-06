@@ -54,7 +54,6 @@ class Session {
         return;
       };
       self.settings = ret[0];
-      console.log('Setting:', toJS(self.settings));
     })
   }
 

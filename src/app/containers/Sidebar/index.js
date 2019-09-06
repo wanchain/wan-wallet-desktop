@@ -12,9 +12,10 @@ import collapse from 'static/image/navbar-collapse.png';
 const { SubMenu, Item } = Menu;
 
 @inject(stores => ({
-  sidebarColumns: stores.languageIntl.sidebarColumns,
   chainId: stores.session.chainId,
   settings: stores.session.settings,
+  tokensOnSideBar: stores.tokens.tokensOnSideBar,
+  sidebarColumns: stores.languageIntl.sidebarColumns,
 }))
 
 @observer
@@ -51,9 +52,11 @@ class Sidebar extends Component {
   }
 
   render () {
-    const { sidebarColumns, settings } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let stakeChildren = sidebarColumns[stakeIndex].children;
+    let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
+    let walletChildren = sidebarColumns[walletIndex].children;
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
     if (index === -1 && settings.staking_advance) {
@@ -64,6 +67,15 @@ class Sidebar extends Component {
       })
     } else if (index !== -1 && !settings.staking_advance) {
       stakeChildren.splice(index, 1);
+    }
+    if (tokensOnSideBar.length) {
+      walletChildren.splice(1, walletChildren.length - 1, ...tokensOnSideBar.map(item => ({
+        title: item.symbol,
+        key: `/tokens/${item.tokenAddr}/${item.symbol}`,
+        icon: 'block'
+      })));
+    } else {
+      walletChildren.splice(1, walletChildren.length - 1);
     }
 
     /** TODO */

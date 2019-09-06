@@ -171,6 +171,7 @@ const zh_CN = {
     'NormalTransForm.from': '转出方',
     'NormalTransForm.senderAddress': '发送者地址',
     'NormalTransForm.to': '转入方',
+    'NormalTransForm.transferTo': '代币发送到',
     'NormalTransForm.addressIsIncorrect': '地址不正确',
     'NormalTransForm.recipientAddress': '接收者地址',
     'NormalTransForm.amount': '金额',

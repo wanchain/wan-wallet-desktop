@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { toWei } from 'utils/support';
-import { DEFAULT_GAS } from 'utils/settings'
+import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
@@ -226,13 +226,15 @@ class NormalTransForm extends Component {
   }
 
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr
     const { getFieldDecorator } = form;
 
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
+    let inputDisabled = transType === TRANSTYPE.tokenTransfer;
+    let defaultTo = inputDisabled ? tokenAddr : '';
 
     return (
       <div>
@@ -254,9 +256,15 @@ class NormalTransForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                {getFieldDecorator('to', { initialValue: defaultTo, rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                  (<Input disabled={inputDisabled} placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
+              {inputDisabled &&
+                <Form.Item label={intl.get('NormalTransForm.transferTo')}>
+                {getFieldDecorator('transferTo', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                </Form.Item>
+              }
               <Form.Item label={intl.get('NormalTransForm.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}

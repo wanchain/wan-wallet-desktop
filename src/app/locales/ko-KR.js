@@ -171,6 +171,7 @@ const ko_KR = {
     'NormalTransForm.from': '발신자',
     'NormalTransForm.senderAddress': '발신자 주소',
     'NormalTransForm.to': '수신자',
+    'NormalTransForm.transferTo': 'Token Transfer To',
     'NormalTransForm.addressIsIncorrect': '잘못된 주소',
     'NormalTransForm.recipientAddress': '수신자 주소',
     'NormalTransForm.amount': '금액',

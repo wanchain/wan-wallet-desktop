@@ -5,6 +5,11 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 
+message.config({
+  duration: 2,
+  maxCount: 1
+});
+
 @inject(stores => ({
   auth: stores.session.auth,
   language: stores.languageIntl.language,

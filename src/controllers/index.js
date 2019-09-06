@@ -26,6 +26,7 @@ const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
+const ROUTE_CROSSCHAIN = 'crosschain'
 const ROUTE_SETTING = 'setting'
 
 // db collection consts
@@ -428,7 +429,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     switch (action) {
         case 'normal':
             try {
-                console.log('payload', payload)
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
 
@@ -847,6 +847,69 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
     }
+})
+
+ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
+  let err, ret
+  const [action, id] = actionUni.split('#')
+
+  switch (action) {
+      case 'getTokensInfo':
+          let info, tokens_advance;
+          try {
+              let network = setting.get('network');
+              tokens_advance = setting.get('settings').tokens_advance[network];
+              ret = await ccUtil.getRegErc20Tokens()
+              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr))
+              ret.forEach(item => {
+                if(info[item.tokenOrigAddr]) {
+                  Object.assign(item, info[item.tokenOrigAddr])
+                } else {
+                  Object.assign(item, {
+                    symbol: 'N/A',
+                    decimals: 0
+                  })
+                }
+                if(!tokens_advance[item.tokenWanAddr]) {
+                  tokens_advance[item.tokenWanAddr] = {
+                    tokenOrigAddr: item.tokenOrigAddr,
+                    select: false,
+                    symbol:item.symbol,
+                    decimals: item.decimals
+                  }
+                  setting.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
+                }
+              })
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: tokens_advance })
+          break
+
+      case 'updateTokensInfo':
+          let { addr, key, value } = payload;
+          try {
+            let network = setting.get('network');
+            setting.set(`settings.tokens_advance.${network}.${addr}.${key}`, value);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+          break
+
+      case 'updateTokensBalance':
+          let { address, tokenScAddr } = payload;
+          try {
+            ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, 'WAN');
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+  }
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {

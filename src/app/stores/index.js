@@ -6,6 +6,7 @@ import wanAddress from './wanAddress';
 import languageIntl from './languageIntl';
 import sendTransParams from './sendTransParams';
 import staking from './staking';
+import tokens from './tokens';
 
 const stores = {
   session,
@@ -15,6 +16,7 @@ const stores = {
   sendTransParams,
   staking,
   languageIntl,
+  tokens,
 };
 
 export default stores;

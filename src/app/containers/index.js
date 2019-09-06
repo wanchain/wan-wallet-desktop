@@ -8,5 +8,6 @@ import Ledger from './Ledger';
 import Offline from './Offline';
 import Staking from './Staking';
 import Validator from './Validator';
+import TokenTrans from './TokenTrans';
 
-export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline };
+export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline, TokenTrans };

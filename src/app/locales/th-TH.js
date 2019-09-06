@@ -171,6 +171,7 @@ const th_TH = {
     'NormalTransForm.from': 'ผู้ส่ง',
     'NormalTransForm.senderAddress': 'แอดเดรสของผู้ส่ง',
     'NormalTransForm.to': 'ผู้รับ',
+    'NormalTransForm.transferTo': 'Token Transfer To',
     'NormalTransForm.addressIsIncorrect': 'แอดเดรสไม่ถูกต้อง',
     'NormalTransForm.recipientAddress': 'แอดเดรสของผู้รับ',
     'NormalTransForm.amount': 'จำนวน',

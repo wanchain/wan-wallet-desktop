@@ -6,8 +6,14 @@ export const WALLETID = {
   KEYSTOREID: 0x05,
 }
 
+export const TRANSTYPE = {
+  tokenTransfer: 'tokenTransfer'
+};
+
 export const MINDAYS = 7;
 export const MAXDAYS = 90;
+
+export const defaultTimeout = '5';
 
 export const DEFAULT_GAS = 4700000;
 

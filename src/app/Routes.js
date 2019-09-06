@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline } from './containers';
+import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline, TokenTrans } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -18,6 +18,7 @@ export default () => {
             <Route path="/offline" component={Offline} />
             <Route path="/staking" component={Staking} />
             <Route path="/validator" component={Validator} />
+            <Route path="/tokens/:tokenAddr/:symbol" component={TokenTrans} />
           </Switch>
         </Main>
       </HashRouter>

@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
+import { TRANSTYPE } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm'
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
@@ -13,6 +14,7 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  tokensBalance: stores.tokens.tokensBalance,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
@@ -28,10 +30,17 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, tokenAddr, tokensBalance } = this.props;
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
+    }
+
+    if (transType === TRANSTYPE.tokenTransfer) {
+      if (tokensBalance[tokenAddr][from] === '0') {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        return;
+      }
     }
     this.setState({ visible: true });
     addTransTemplate(from, { chainType, chainId });
@@ -70,7 +79,7 @@ class SendNormalTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible
-          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          ? <CollectionCreateForm tokenAddr={this.props.tokenAddr} transType={this.props.transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
           : ''
         }
       </div>

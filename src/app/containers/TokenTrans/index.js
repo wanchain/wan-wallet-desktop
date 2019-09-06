@@ -1,0 +1,135 @@
+import Identicon from 'identicon.js';
+import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Table, Row, Col, message, Avatar } from 'antd';
+
+import './index.less';
+import { WALLETID, TRANSTYPE } from 'utils/settings';
+import TransHistory from 'components/TransHistory';
+import CopyAndQrcode from 'components/CopyAndQrcode';
+import SendNormalTrans from 'components/SendNormalTrans';
+import { checkAddrType, hasSameName } from 'utils/helper';
+
+const CHAINTYPE = 'WAN';
+
+message.config({
+  duration: 2,
+  maxCount: 1
+});
+
+@inject(stores => ({
+  language: stores.languageIntl.language,
+  getAmount: stores.tokens.getTokenAmount,
+  transParams: stores.sendTransParams.transParams,
+  getTokensListInfo: stores.tokens.getTokensListInfo,
+  setCurrToken: addr => stores.tokens.setCurrToken(addr),
+  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
+}))
+
+@observer
+class TokenTrans extends Component {
+  columns = [
+    {
+      dataIndex: 'name',
+      editable: true
+    },
+    {
+      dataIndex: 'address',
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+    },
+    {
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    },
+    {
+      dataIndex: 'action',
+      render: (text, record) => <div><SendNormalTrans tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer}/></div>
+    }
+  ];
+
+  constructor (props) {
+    super(props);
+    this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString()
+    this.props.setCurrToken(this.props.tokenAddr)
+  }
+
+  componentDidMount () {
+    this.timer = setInterval(() => {
+      this.props.updateTokensBalance(this.props.tokenAddr);
+    }, 5000);
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.timer);
+  }
+
+  handleSend = from => {
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: CHAINTYPE,
+      symbol: CHAINTYPE,
+      path: params.path,
+      to: params.to,
+      amount: params.amount,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      nonce: params.nonce,
+      data: params.data
+    };
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_normal', trans, (err, txHash) => {
+        if (err) {
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
+          console.log(err);
+          reject(false); // eslint-disable-line prefer-promise-reject-errors
+        } else {
+          this.props.updateTransHistory();
+          console.log('Tx hash: ', txHash);
+          resolve(txHash)
+        }
+      });
+    })
+  }
+
+  handleSave = row => {
+    if (hasSameName('normal', row, this.props.addrInfo)) {
+      message.warn(intl.get('WanAccount.notSameName'));
+    } else {
+      this.props.updateName(row, 'normal');
+    }
+  }
+
+  render () {
+    const { getAmount, getTokensListInfo, symbol, tokenAddr } = this.props;
+
+    this.props.language && this.columns.forEach(col => {
+      col.title = intl.get(`WanAccount.${col.dataIndex}`)
+    });
+
+    return (
+      <div className="account">
+        <Row className="title">
+          <Col span={12} className="col-left"><Avatar className="avatarSty" src={this.img} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
+          <Col span={12} className="col-right">
+            <span className="wanTotal">Token Address: {tokenAddr}</span>
+          </Col>
+        </Row>
+        <Row className="mainBody">
+          <Col>
+            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo} />
+          </Col>
+        </Row>
+        <Row className="mainBody">
+          <Col>
+            <TransHistory name={['normal', 'import']} />
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+}
+
+export default props => <TokenTrans {...props} symbol={props.match.params.symbol} key={props.match.params.tokenAddr} tokenAddr={props.match.params.tokenAddr} />;

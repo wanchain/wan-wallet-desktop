@@ -21,7 +21,11 @@ const defaultConfig = {
     settings: {
       reinput_pwd: false,
       staking_advance: false,
-      logout_timeout: '5'
+      logout_timeout: '5',
+      tokens_advance: {
+        main: {},
+        testnet: {}
+      }
     }
 }
 
@@ -59,6 +63,16 @@ class Settings {
         let path = app.getPath('userData');
         this._logger.info('User data path: ' + path);
         this._db = low(new FileSync(path + '/config.json'))
+        this.updateSettingsByConfig()
+    }
+
+    updateSettingsByConfig() {
+      let settings = this.get('settings');
+      Object.keys(defaultConfig.settings).forEach(item => {
+        if(settings[item] === undefined) {
+          this.set(`settings.${item}`, defaultConfig.settings[item])
+        }
+      })
     }
 
     get appName() {

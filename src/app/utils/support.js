@@ -7,6 +7,10 @@ export function fromWei (data, unit = 'ether') {
   return web3.utils.fromWei(data.toString(), unit);
 }
 
+export function formatNumByDeciamls (value, decimals) {
+  return value / (10 ** decimals);
+}
+
 export function keep2Decimals (value) {
   return Math.round(value * 100) / 100;
 }
@@ -64,6 +68,9 @@ export function isNumber (val) {
 
 export function formatNum (num) {
   if (num && num !== 'N/A') {
+    if (num < 1) {
+      return num;
+    }
     let tempNum = new BigNumber(num).toString();
     let [left, right] = tempNum.split('.');
     let tempLeft = left.split('').reverse().join('').match(/(\d{1,3})/g);
