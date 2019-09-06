@@ -64,6 +64,9 @@ export function isNumber (val) {
 
 export function formatNum (num) {
   if (num && num !== 'N/A') {
+    if (num < 1) {
+      return num;
+    }
     let tempNum = new BigNumber(num).toString();
     let [left, right] = tempNum.split('.');
     let tempLeft = left.split('').reverse().join('').match(/(\d{1,3})/g);
