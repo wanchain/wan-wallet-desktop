@@ -731,7 +731,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let accounts = payload;
                 let delegateInfo = [];
                 let incentive = [];
-                logger.info('Get PoS info...')
 
                 if (!global.slotCount) {
                     [global.slotCount, global.slotTime] = await Promise.all([ccUtil.getSlotCount('wan'), ccUtil.getSlotTime('wan')]);
@@ -755,8 +754,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
-
-                logger.info('Get PoS info: epochId ' + epochID);
 
                 if (stakeInfo.length > 0) {
                     let prms = []
@@ -784,7 +781,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 logger.error(actionUni + (e.message || e.stack))
                 err = e
             }
-            logger.info('Get PoS info finished')
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 

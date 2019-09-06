@@ -30,7 +30,7 @@ const RIGHT = 18;
 }))
 
 @observer
-class StakeInForm extends Component {
+class DelegateInForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -491,7 +491,7 @@ class StakeInForm extends Component {
                   </Form>
                 </Col>
                 <Col span={3} align="right" className="col-stakein-info">
-                  <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
+                  <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
@@ -648,4 +648,4 @@ class StakeInForm extends Component {
   }
 }
 
-export default StakeInForm;
+export default DelegateInForm;
