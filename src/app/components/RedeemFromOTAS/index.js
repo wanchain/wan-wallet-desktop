@@ -11,6 +11,7 @@ import { fromWei } from 'utils/support';
 const RedeemForm = Form.create({ name: 'RedeemFromOTASForm' })(RedeemFromOTASForm);
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   transParams: stores.sendTransParams.transParams,
@@ -30,7 +31,7 @@ class RedeemFromOTAS extends Component {
 
     // No sufficient funds
     if (getPrivateBalanceByAddr(from, addrInfo) === '0') {
-      message.warn('No sufficient funds.');
+      message.warn(intl.get('RedeemFromOTAS.noSufficientFunds'));
       return;
     }
 
@@ -43,7 +44,7 @@ class RedeemFromOTAS extends Component {
       wand.request('address_getPrivateTxInfo', { wid, path }, (err, res) => {
         if (err) {
           console.log('not ok');
-          message.warn('Get private transaction info failed.');
+          message.warn(intl.get('RedeemFromOTAS.getPrivateTxInfoFailed'));
         } else {
           let data = res.map(v => {
             return {
@@ -73,7 +74,9 @@ class RedeemFromOTAS extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {}
+  handleSpin = v => {
+    this.setState({ spin: v });
+  }
 
   render() {
     const { visible, spin } = this.state;
@@ -81,7 +84,7 @@ class RedeemFromOTAS extends Component {
       <div>
         <Button type="primary" className="redeemButton" onClick={this.showModal}>{intl.get('WanAccount.redeem')}</Button>
         { visible
-          ? <RedeemForm wrappedComponentRef={this.redeemFormRef} balanceData={this.state.balanceData} wid={this.props.wid} path={this.props.path} onCancel={this.handleCancel} from={this.props.from} onSend={this.handleSend} spin={spin}/>
+          ? <RedeemForm wrappedComponentRef={this.redeemFormRef} balanceData={this.state.balanceData} wid={this.props.wid} path={this.props.path} onCancel={this.handleCancel} from={this.props.from} spin={spin} handleSpin={this.handleSpin}/>
           : ''
         }
       </div>

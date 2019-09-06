@@ -23,16 +23,16 @@ class ConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, from, loading, sendTrans } = this.props;
+    const { form, from, loading, sendTrans } = this.props;
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce, data } = this.props.transParams[from];
-    let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
+    let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9)).toString(10);
 
     return (
       <Modal
         destroyOnClose={true}
         closable={false}
-        visible={visible}
+        visible={ true }
         title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
         onCancel={this.handleCancel}
         footer={[
@@ -70,7 +70,7 @@ class ConfirmForm extends Component {
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.fee')}>
-            {getFieldDecorator('fee', { initialValue: fee.toString(10) })(
+            {getFieldDecorator('fee', { initialValue: fee })(
               <Input disabled={true} />
             )}
           </Form.Item>

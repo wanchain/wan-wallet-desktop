@@ -94,7 +94,7 @@ const zh_CN = {
     'WanAccount.wan': 'WAN',
     'WanAccount.create': '创建',
     'WanAccount.notSameName': '帐户名称不能重复。请再试一次',
-    'WanAccount.redeem': '提取',
+    'WanAccount.redeem': '提币',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',
@@ -167,10 +167,13 @@ const zh_CN = {
     'NormalTransForm.invalidAddress': '非法地址',
     'NormalTransForm.invalidAmount': '非法金额',
     'NormalTransForm.invalidFeeRate': '非法费率',
+    'NormalTransForm.invalidPrivateAddress': '非法隐私地址',
     'NormalTransForm.transaction': '转账',
     'NormalTransForm.cancel': '取消',
     'NormalTransForm.next': '下一步',
+    'NormalTransForm.send': '发送',
     'NormalTransForm.from': '转出方',
+    'NormalTransForm.mode': '交易类型',
     'NormalTransForm.normalTransaction': '普通交易',
     'NormalTransForm.privateTransaction': '隐私交易',
     'NormalTransForm.senderAddress': '发送者地址',
@@ -193,6 +196,13 @@ const zh_CN = {
     'NormalTransForm.sendAll': '发送全部',
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
+
+    'RedeemFromOTAS.noSufficientFunds': '账户余额不足',
+    'RedeemFromOTAS.getPrivateTxInfoFailed': '获取隐私交易信息失败',
+
+    'RedeemFromOTASForm.redeem': '提币',
+    'RedeemFromOTASForm.OTAList': '隐私地址列表',
+    'RedeemFromOTASForm.OTARequired': '请选择至少一条隐私地址',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
@@ -290,7 +300,7 @@ const zh_CN = {
     'staking.validatorRegister': '注册',
     'staking.validatorUpdate': '修改',
     'ValidatorUpdate.note': '注意：在选取本地账户时，必须选择与验证节点注册时相同的账户',
-
+    'ValidatorUpdate.invalidValue': '参数有误，应当等于零或大于14.',
     'ValidatorNode.nodeList': '验证人列表',
     'ValidatorNode.registerValidatorNode': '注册',
 

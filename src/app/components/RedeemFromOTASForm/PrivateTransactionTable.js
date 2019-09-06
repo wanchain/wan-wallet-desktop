@@ -6,13 +6,14 @@ import { observer, inject } from 'mobx-react';
 class PrivateTransactionTable extends Component {
     columns = [
         {
+            title: 'OTA',
+            dataIndex: 'toOTA',
+            className: 'OTAColumn',
+        },
+        {
             title: 'Value',
             dataIndex: 'value',
             width: 140
-        },
-        {
-            title: 'OTA',
-            dataIndex: 'toOTA',
         },
     ];
 
@@ -25,7 +26,7 @@ class PrivateTransactionTable extends Component {
     render() {
         return (
             <div className="selectPrivateTransactionTable" style={{ marginBottom: '24px' }}>
-                <Table rowSelection={this.rowSelection} columns={this.columns} dataSource={this.props.balanceData} rowKey={record => record.toOTA} pagination={false} style={{ minWidth: 1350 }} />
+                <Table rowSelection={this.rowSelection} columns={this.columns} dataSource={this.props.balanceData} rowKey={record => record.toOTA} pagination={false} />
             </div>
         );
     }

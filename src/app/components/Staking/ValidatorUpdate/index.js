@@ -175,6 +175,7 @@ class ValidatorUpdate extends Component {
       let from = form.getFieldValue('from');
       let to = form.getFieldValue('to');
       let pwd = form.getFieldValue('pwd');
+      let amount = form.getFieldValue('amount');
 
       if (Number(this.state.balance) <= amount) {
         message.error(intl.get('NormalTransForm.overBalance'))
@@ -315,7 +316,7 @@ class ValidatorUpdate extends Component {
 
   checkLockTime = (rule, value, callback) => {
     if (value !== 0 && value < 14) {
-      callback('Invalid Value. Must > 14 or == 0') // eslint-disable-line standard/no-callback-literal
+      callback(intl.get('ValidatorUpdate.invalidValue'))
     }
     callback();
   }

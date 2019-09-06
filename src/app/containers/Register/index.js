@@ -103,13 +103,22 @@ class Register extends Component {
             let path = "m/44'/5718350'/0'/0/0";
             wand.request('address_getOne', { walletID: 1, chainType: 'WAN', path: path }, (err, val_address_get) => {
               if (!err) {
-                wand.request('account_create', { walletID: 1, path: path, meta: { name: 'Account1', addr: `0x${val_address_get.address}`, waddr: `0x${val_address_get.waddress}` } }, (err, val_account_create) => {
+                wand.request('account_create', { walletID: 1, path: path, meta: { name: 'Account1', addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
                   if (!err && val_account_create) {
                     let addressInfo = {
                       start: 0,
                       address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
                       waddress: (`0x${val_address_get.waddress}`)
                     }
+                    // Scan new account
+                    wand.request('address_scanMultiOTA', [[1, path]], function (err, res) {
+                      if (err) {
+                        console.log('openScanOTA failed');
+                        console.log(err);
+                      } else {
+                        console.log(res);
+                      }
+                    });
                     addAddress(addressInfo);
                     this.props.setMnemonicStatus(true);
                     this.props.setAuth(true);

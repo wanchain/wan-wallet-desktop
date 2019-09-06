@@ -61,7 +61,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} fromPrivate={record.waddress} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '10%'
     },
     {
@@ -110,8 +110,9 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data
     };
+    console.log(trans);
     // Private tx
-    if (wanUtil.toChecksumOTAddress(trans.to)) {
+    if (wanUtil.isValidChecksumOTAddress(trans.to)) {
       return new Promise((resolve, reject) => {
         wand.request('transaction_private', trans, function (err, txHash) {
           if (err) {
@@ -144,6 +145,8 @@ class WanAccount extends Component {
 
   createAccount = () => {
     const { addrInfo, addAddress } = this.props;
+    console.log(addrInfo);
+
     const addrLen = Object.keys(addrInfo['normal']).length;
     this.setState({
       bool: false
@@ -151,8 +154,9 @@ class WanAccount extends Component {
     if (this.state.bool) {
       let path = `${WANPATH}${addrLen}`;
       wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
+        console.log(WALLETID.NATIVE, path);
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`, waddr: `0x${val_address_get.waddress}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,
@@ -162,6 +166,15 @@ class WanAccount extends Component {
               addAddress(addressInfo);
               this.setState({
                 bool: true
+              });
+              // Scan new account
+              wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
+                if (err) {
+                  console.log('openScanOTA failed');
+                  console.log(err);
+                } else {
+                  console.log(res);
+                }
               });
             }
           });
@@ -207,10 +220,9 @@ class WanAccount extends Component {
               <div className="addrText">
                 <p className="privateAddress">
                   <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>
-                  {privateAddress}
                 </p>
                 { privateAddress && <CopyAndQrcode addr={privateAddress} /> }
-                { privateAddress && <Tooltip placement="bottom" title={'Question'}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
+                { privateAddress && <Tooltip placement="bottom" title={'Private transaction receiver address'}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
               </div>
             </td>
             <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
@@ -220,7 +232,7 @@ class WanAccount extends Component {
         </tbody>
       </table>
     )
-  };
+  }
 
   render() {
     const { getAmount, getAddrList } = this.props;
@@ -230,6 +242,7 @@ class WanAccount extends Component {
         row: EditableFormRow,
       },
     };
+    console.log(getAddrList);
 
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)

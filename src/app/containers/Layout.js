@@ -8,11 +8,11 @@ import SideBar from './Sidebar';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
+import { WANPATH } from 'utils/settings';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
 const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
 
-const WAN = "m/44'/5718350'/0'/0/";
 @inject(stores => ({
   auth: stores.session.auth,
   addrInfo: stores.wanAddress.addrInfo,
@@ -65,13 +65,11 @@ class Layout extends Component {
 
   updateWANBalanceForInter = () => {
     const { addrInfo } = this.props;
-    // console.log(addrInfo);
     const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
-    const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${WAN}${item.path}`, `${item.address}`]);
-    const importObj = Object.values(addrInfo['import']).map(item => [5, `${WAN}${item.path}`, `${item.address}`]);
+    const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`, `${item.address}`]);
+    const importObj = Object.values(addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`, `${item.address}`]);
     let allPrivatePath = normalObj.concat(importObj);
     allPrivatePath = allPrivatePath.length > 0 ? allPrivatePath : undefined;
-
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalanceWithPrivateBalance(allAddr, allPrivatePath).then(res => {
       if (res && (Object.keys(res.balance).length || Object.keys(res.privateBalance).length)) {

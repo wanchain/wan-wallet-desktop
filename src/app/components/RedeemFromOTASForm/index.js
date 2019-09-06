@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, Icon, Radio, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
-import RefundOTAConfirmForm from './RefundOTAConfirmForm.js';
 import './index.less';
 
 const privateTxGasLimit = 800000;
-const Confirm = Form.create({ name: 'RefundOTAForm' })(RefundOTAConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
@@ -19,12 +17,10 @@ const Confirm = Form.create({ name: 'RefundOTAForm' })(RefundOTAConfirmForm);
 @observer
 class RedeemFromOTASForm extends Component {
   state = {
-    gasPrice: 0,
-    confirmVisible: false,
-    sendData: []
+    gasPrice: 0
   }
 
-  handleNext = () => {
+  handleSend = () => {
     const { settings } = this.props;
     let form = this.props.form;
     form.validateFields(err => {
@@ -50,6 +46,8 @@ class RedeemFromOTASForm extends Component {
   }
 
   setSendData = () => {
+    const { handleSpin } = this.props;
+    handleSpin(true);
     let form = this.props.form;
     let refundList = form.getFieldValue('privateRefundList');
     let refunds = [];
@@ -67,15 +65,10 @@ class RedeemFromOTASForm extends Component {
       }
       refunds.push(input);
     }
-    this.setState({
-      sendData: refunds,
-      confirmVisible: true,
-    });
-  }
-
-  handleSend = form => {
-    wand.request('transaction_refund', { input: this.state.sendData }, (err, res) => {
+    // console.log(refunds);
+    wand.request('transaction_refund', { input: refunds }, (err, res) => {
       console.log(err, res);
+      handleSpin(false);
       if (err) {
         console.log('not ok');
         message.warn(err.desc);
@@ -89,12 +82,6 @@ class RedeemFromOTASForm extends Component {
 
   onCancel = () => {
     this.props.onCancel();
-  }
-
-  handleConfirmCancel = () => {
-    this.setState({
-      confirmVisible: false,
-    });
   }
 
   // Refund tx check
@@ -121,11 +108,11 @@ class RedeemFromOTASForm extends Component {
           visible
           destroyOnClose={true}
           closable={false}
-          title={intl.get('NormalTransForm.transaction')}
+          title={intl.get('RedeemFromOTASForm.redeem')}
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="submit" type="primary" onClick={this.handleSend}>{intl.get('NormalTransForm.send')}</Button>,
           ]}
         >
 
@@ -137,8 +124,8 @@ class RedeemFromOTASForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
 
-              <Form.Item label={'Private Refund'}>
-                {getFieldDecorator('privateRefundList', { rules: [{ type: 'array', required: true, message: 'Please select private transaction!' }] })
+              <Form.Item label={intl.get('RedeemFromOTASForm.OTAList')}>
+                {getFieldDecorator('privateRefundList', { rules: [{ type: 'array', required: true, message: intl.get('RedeemFromOTASForm.OTARequired') }] })
                   (<Input hidden={true} disabled={true} />)}
               </Form.Item>
 
@@ -166,8 +153,6 @@ class RedeemFromOTASForm extends Component {
           </Spin>
 
         </Modal>
-
-        <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.handleSend} data={this.state.sendData} />
 
       </div>
     );

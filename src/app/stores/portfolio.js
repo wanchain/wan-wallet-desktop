@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import wanAddress from './wanAddress';
 import { formatNum } from 'utils/support';
+import { BigNumber } from 'bignumber.js';
 
 class Portfolio {
   @observable coinPriceArr;
@@ -54,15 +55,15 @@ class Portfolio {
                 break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
-            val.value = '$' + (val.price.substr(1) * wanAddress.getAllAmount).toFixed(2);
-            amountValue += parseFloat(val.value.substr(1));
+            val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(wanAddress.getAllAmount))).toFixed(2).toString(10);
+            amountValue = new BigNumber(amountValue).plus(new BigNumber(val.value.substr(1))).toString(10);
           }
         });
       });
       Object.keys(self.coinPriceArr).forEach((item) => {
         list.forEach(val => {
-          if (val.name === item && amountValue !== 0) {
-            val.portfolio = `${(val.value.substr(1) / amountValue * 100).toFixed(2)}%`;
+          if (val.name === item && !new BigNumber(amountValue).isEqualTo(0)) {
+            val.portfolio = `${(new BigNumber(val.value.substr(1)).div(new BigNumber(amountValue)).times(100)).toFixed(2).toString(10)}%`;
           }
         });
       });

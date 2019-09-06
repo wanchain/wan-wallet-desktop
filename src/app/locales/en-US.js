@@ -167,10 +167,13 @@ const en_US = {
     'NormalTransForm.invalidAddress': 'Invalid address',
     'NormalTransForm.invalidAmount': 'Invalid amount',
     'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
+    'NormalTransForm.invalidPrivateAddress': 'Invalid private address',
     'NormalTransForm.transaction': 'Transaction',
     'NormalTransForm.cancel': 'Cancel',
     'NormalTransForm.next': 'Next',
+    'NormalTransForm.send': 'Send',
     'NormalTransForm.from': 'From',
+    'NormalTransForm.mode': 'Transaction Mode',
     'NormalTransForm.normalTransaction': 'Normal Transaction',
     'NormalTransForm.privateTransaction': 'Private Transaction',
     'NormalTransForm.senderAddress': 'Sender Address',
@@ -193,6 +196,13 @@ const en_US = {
     'NormalTransForm.sendAll': 'Send Everything',
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
+
+    'RedeemFromOTAS.noSufficientFunds': 'No sufficient funds.',
+    'RedeemFromOTAS.getPrivateTxInfoFailed': 'Get private transaction info failed.',
+
+    'RedeemFromOTASForm.redeem': 'Redeem',
+    'RedeemFromOTASForm.OTAList': 'Private Address List',
+    'RedeemFromOTASForm.OTARequired': 'Please select at least one private address',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
@@ -290,6 +300,7 @@ const en_US = {
     'staking.validatorUpdate': 'Validator Update',
 
     'ValidatorUpdate.note': 'Note: You should select the account that the validator registration transaction was sent from.',
+    'ValidatorUpdate.invalidValue': 'Invalid Value. Must > 14 or == 0',
     'ValidatorNode.nodeList': 'Validator List',
     'ValidatorNode.registerValidatorNode': 'Register',
     'ValidatorNode.table.myAccount': 'ACCOUNT',

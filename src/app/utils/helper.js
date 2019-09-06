@@ -64,11 +64,12 @@ export const getBalanceWithPrivateBalance = function (arr, path) {
   return new Promise((resolve, reject) => {
     let thisVal = {};
     wand.request('address_balances', { addr: addrArr, path: path }, (err, val) => {
-      thisVal.balance = Object.assign({}, val.balance);
-      thisVal.privateBalance = Object.assign({}, val.privateBalance);
+      // console.log(val);
       if (err) {
         return reject(err)
       } else {
+        thisVal.balance = Object.assign({}, val.balance);
+        thisVal.privateBalance = Object.assign({}, val.privateBalance);
         // console.log('privateBalance:', val.privateBalance);
         Object.keys(thisVal.balance).forEach(item => {
           thisVal.balance[item] = fromWei(thisVal.balance[item]);
@@ -257,13 +258,13 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   let tmp = {};
   Object.keys(addrInfo).forEach(item => {
     tmp = Object.assign(tmp, addrInfo[item])
-  })
-  Object.values(tmp).forEach(item => {
+  });
+  for (let item of Object.values(tmp)) {
     if (item.address === addr) {
       balance = item.balance;
-      return; // eslint-disable-line no-useless-return
+      break;
     }
-  })
+  }
   return balance;
 }
 
@@ -317,7 +318,7 @@ export const regEmitterHandler = function (key, callback) {
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
     console.log('Emitter: ', key, val)
-    if (emitterHandlers.hasOwnProperty(key)) { // eslint-disable-line no-prototype-builtins
+    if (Object.prototype.hasOwnProperty.call(emitterHandlers, key)) {
       emitterHandlers[key](val);
     }
   })

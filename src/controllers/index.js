@@ -11,6 +11,7 @@ import { dateFormat } from '../app/utils/support';
 import Identicon from 'identicon.js';
 import keccak from 'keccak';
 import BigNumber from 'bignumber.js';
+import wanUtil from 'wanchain-util';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -406,11 +407,15 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
             const keyFileContent = fs.readFileSync(keyFilePath).toString();
             const keyStoreObj = JSON.parse(keyFileContent)
+            const checkDuplicate = true;
             try {
-                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
+                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd, checkDuplicate);
+                let addr = `0x${keyStoreObj.address}`.toLowerCase();
+                let waddr = `0x${keyStoreObj.waddress}`.toLowerCase();
 
-                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}`.toLowerCase() });
-                Windows.broadcast('notification', 'keyfilepath', { path, addr: keyStoreObj.address.toLowerCase() });
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr, waddr });
+                Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
+                ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
@@ -438,9 +443,8 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
-    let err, ret
-    const [action, id] = actionUni.split('#')
-    console.log('actionUni:', actionUni);
+    let err, ret;
+    const [action, id] = actionUni.split('#');
     switch (action) {
         case 'create':
             try {
@@ -503,7 +507,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     switch (action) {
         case 'normal':
             try {
-                console.log('payload', payload)
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
                 let input = {
@@ -528,8 +531,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            console.log('normal tx result: ');
-            console.log(ret);
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
@@ -537,7 +538,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path);
-                console.log(from);
                 let input = {
                     "from": '0x' + from.address,
                     "to": to,
@@ -549,10 +549,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 }
 
                 logger.info('Private transaction: ' + JSON.stringify(input));
-                console.log('input:', input);
                 let action = 'SEND';
                 ret = await global.crossInvoker.invokePrivateTrans(action, input);
-                console.log('ret:', ret);
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -579,7 +577,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                             break;
                         }
                     }
-                    console.log(err, ret);
                     logger.info('Refund result: ' + ret);
                 } catch (e) {
                     logger.error(e.message || e.stack)

@@ -12,7 +12,6 @@ const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTran
 @inject(stores => ({
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
-  getPrivateAddr: stores.wanAddress.getPrivateAddr,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
@@ -29,7 +28,7 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, fromPrivate, addrInfo, getPrivateAddr, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
 
     // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
@@ -42,7 +41,7 @@ class SendNormalTrans extends Component {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
       updateGasPrice(gasPrice);
-      setTimeout(() => { this.setState({ spin: false }) }, 0)
+      this.setState({ spin: false });
     } catch (err) {
       console.log(`err: ${err}`)
       message.warn(err);
@@ -72,10 +71,7 @@ class SendNormalTrans extends Component {
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
-        { visible
-          ? <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
-          : ''
-        }
+        { visible && <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/> }
       </div>
     );
   }

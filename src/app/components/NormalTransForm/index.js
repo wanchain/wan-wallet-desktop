@@ -1,4 +1,4 @@
-/* eslint-disable standard/no-callback-literal */
+
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
@@ -201,7 +201,7 @@ class NormalTransForm extends Component {
     if (isValidChecksumOTAddress(value)) {
       callback();
     } else {
-      callback('Invalid Private Address');
+      callback(intl.get('NormalTransForm.invalidPrivateAddress'));
     }
   }
 
@@ -287,7 +287,7 @@ class NormalTransForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
 
-              <Form.Item label={'Transaction mode'}>
+              <Form.Item label={intl.get('NormalTransForm.mode')}>
                 {getFieldDecorator('mode', { initialValue: this.state.isPrivate ? 'private' : 'normal' })
                   (<Select onChange={this.modeChange}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
               </Form.Item>
@@ -326,12 +326,12 @@ class NormalTransForm extends Component {
                       <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
                     </Form.Item>
               }
-              {settings.reinput_pwd
-                ? <Form.Item label={intl.get('NormalTransForm.password')}>
+              {
+                settings.reinput_pwd && <Form.Item label={intl.get('NormalTransForm.password')}>
                     {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
                     (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
                   </Form.Item>
-                : ''}
+              }
               {
               advanced
               ? <Form.Item label={intl.get('NormalTransForm.fee')}>
@@ -356,7 +356,7 @@ class NormalTransForm extends Component {
         </Modal>
 
         <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
-        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        { confirmVisible && <Confirm onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/> }
       </div>
     );
   }

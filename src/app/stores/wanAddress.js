@@ -9,6 +9,7 @@ import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { BigNumber } from 'bignumber.js';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -70,15 +71,17 @@ class WanAddress {
     }
     wand.request('transaction_showRecords', (err, val) => {
       if (!err && val.length !== 0) {
+        let obj = {};
         val.forEach(item => {
           item.from = wanUtil.toChecksumAddress(item.from);
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
-            self.transHistory[item.txHash] = item;
+            obj[item.txHash] = item;
           }
           if (item.txHash === '' && item.status === 'Failed') {
-            self.transHistory[item.hashX] = item;
+            obj[item.hashX] = item;
           }
-        })
+        });
+        self.transHistory = Object.assign({}, self.transHistory, obj);
       }
     })
   }
@@ -92,7 +95,6 @@ class WanAddress {
   }
 
   @action updateWANBalance({ balance: arr, privateBalance: parr }) {
-    // console.log(arr, parr);
     let keys = Object.keys(arr);
     let pKeys = Object.keys(parr);
     let normal = Object.keys(self.addrInfo['normal']);
@@ -127,6 +129,7 @@ class WanAddress {
 
   @action updateName(arr, chainType) {
     let walletID, type, index;
+    console.log(arr);
     switch (chainType) {
       case 'normal':
         if (Object.keys(self.addrInfo['normal']).includes(arr.address)) {
@@ -150,7 +153,7 @@ class WanAddress {
         type = 'trezor';
         break;
     }
-    wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress } }, (err, val) => {
+    wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress.toLowerCase() } }, (err, val) => {
       if (!err && val) {
         self.addrInfo[type][arr['address']]['name'] = arr.name;
       }
@@ -158,38 +161,98 @@ class WanAddress {
   }
 
   @action getUserAccountFromDB() {
-    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+    wand.request('account_getAll', { chainID: 5718350 }, async (err, ret) => {
+      // console.log('getUserAccountFromDB:', ret);
       if (err) console.log('Get user from DB failed ', err)
       if (ret.accounts && Object.keys(ret.accounts).length) {
         let info = ret.accounts;
         let typeFunc = id => id === '1' ? 'normal' : 'import';
+        let noWaddressArr = [];
+        let accountObj = {};
+        let checkExist = v => {
+          if (accountObj[v]) {
+            return true;
+          } else {
+            accountObj[v] = true;
+            return false;
+          }
+        }
+        let setAddrInfoFunc = obj => {
+          // console.log('obj:', obj);
+          self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address.toLowerCase())] = {
+            name: obj.name,
+            balance: 0,
+            wbalance: 0,
+            path: obj.path.substr(obj.path.lastIndexOf('\/') + 1),
+            address: wanUtil.toChecksumAddress(obj.address),
+            waddress: wanUtil.toChecksumOTAddress(obj.waddress)
+          }
+        };
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
-            if (['1', '5'].includes(id)) {
+            if ([WALLETID.NATIVE, WALLETID.KEYSTOREID].includes(Number(id))) {
               let address = info[path][id]['addr'];
               let waddress = info[path][id]['waddr'];
-              self.addrInfo[typeFunc(id)][wanUtil.toChecksumAddress(address.toLowerCase())] = {
-                name: info[path][id]['name'],
-                balance: 0,
-                wbalance: 0,
-                path: path.substr(path.lastIndexOf('\/') + 1),
-                address: wanUtil.toChecksumAddress(address.toLowerCase()),
-                waddress: waddress
+              let name = info[path][id]['name'];
+              if (checkExist(address.toLowerCase())) {
+                // Delete the duplicate account info in DB file.
+                wand.request('account_delete', { walletID: id === '1' ? WALLETID.NATIVE : WALLETID.KEYSTOREID, path }, async (err, ret) => {
+                  console.log(err, ret);
+                  if (err) console.log('Delete user from DB failed ', err);
+                });
+              } else {
+                // If can not get the waddress, call a request to 'address_getOne' to get the waddress
+                if (typeof waddress === 'undefined') {
+                  let walletID = id === '1' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+                  noWaddressArr.push({ id, name, chainType: 'WAN', path, walletID });
+                } else {
+                  setAddrInfoFunc({ id, name, path, address, waddress });
+                }
               }
             }
           })
-        })
+        });
+
+        // Insert none waddress account's waddress info into DB file.
+        if (noWaddressArr.length === 0) return 0;
+        await Promise.all(noWaddressArr.map(item => {
+          return new Promise((resolve, reject) => {
+            wand.request('address_getOne', { walletID: item.walletID, chainType: item.chainType, path: item.path }, (err, val) => {
+              console.log(err, val);
+              if (!err) {
+                // Update the account waddress after obtaining waddress.
+                wand.request('account_update', { walletID: item.walletID, path: item.path, meta: { name: item.name, addr: val.address.toLowerCase(), waddr: `0x${val.waddress}` } }, (err, res) => {
+                  if (!err && res) {
+                    setAddrInfoFunc({
+                      id: item.id,
+                      name: item.name,
+                      path: item.path,
+                      address: wanUtil.toChecksumAddress(val.address.toLowerCase()),
+                      waddress: wanUtil.toChecksumOTAddress(`0x${val.waddress}`)
+                    });
+                    resolve();
+                  } else {
+                    reject(new Error(err.desc));
+                  }
+                })
+              } else {
+                reject(new Error(err.desc));
+              }
+            });
+          });
+        }));
       }
     })
   }
 
-  @action addKeyStoreAddr({ path, addr }) {
-    self.addrInfo['import'][wanUtil.toChecksumAddress(`0x${addr}`)] = {
+  @action addKeyStoreAddr({ path, addr, waddr }) {
+    self.addrInfo['import'][addr] = {
       name: `Imported${path + 1}`,
       balance: '0',
       wbalance: '0',
       path: path,
-      address: wanUtil.toChecksumAddress(`0x${addr}`)
+      address: addr,
+      waddress: waddr
     };
   }
 
@@ -215,7 +278,7 @@ class WanAddress {
       const walletID = obj === normalArr ? 1 : 5;
       Object.keys(obj).forEach((item) => {
         addrList.push({
-          key: item,
+          key: `${WAN}${obj[item].path}-${item}`,
           name: obj[item].name,
           address: wanUtil.toChecksumAddress(item),
           waddress: obj[item].waddress,
@@ -381,15 +444,18 @@ class WanAddress {
   }
 
   @computed get getNormalAmount() {
-    let sum = 0;
-    Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-    return formatNum(sum);
+    let sum = new BigNumber(0);
+    Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(new BigNumber(curr.wbalance)), 0)) });
+    return formatNum(sum.toString(10));
   }
 
   @computed get getAllAmount() {
-    let sum = 0;
-    Object.values(self.addrInfo).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-    return sum;
+    let sum = new BigNumber(0);
+    Object.values(self.addrInfo).forEach(value => {
+      // sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0);
+      sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(isNaN(curr.wbalance) ? new BigNumber(0) : new BigNumber(curr.wbalance)), 0));
+    });
+    return sum.toString(10);
   }
 }
 

@@ -187,7 +187,7 @@ class StakeInForm extends Component {
     }
 
     let valueStringPre = value.toString().slice(0, 4)
-    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) { // eslint-disable-line no-mixed-operators
+    if (Number(value) < 0.0001 || (!this.props.topUp && Math.floor(valueStringPre) < 100)) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
