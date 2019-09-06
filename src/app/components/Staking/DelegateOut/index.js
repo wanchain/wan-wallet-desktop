@@ -1,16 +1,15 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect from 'trezor-connect';
 import { Button, Form, message } from 'antd';
 import { observer, inject } from 'mobx-react';
+import { signTransaction } from 'componentUtils/trezor'
 
 import './index.less';
 import DelegateOutConfirmForm from '../DelegateOutConfirmForm';
 import { toWei } from 'utils/support.js';
-import { getNonce, getGasPrice, getContractAddr, getContractData } from 'utils/helper';
+import { getNonce, getGasPrice, getContractAddr, getContractData, getChainId } from 'utils/helper';
 
 const pu = require('promisefy-util');
-const WanTx = require('wanchainjs-tx');
 const DelegateOutForm = Form.create({ name: 'DelegateOutConfirmForm' })(DelegateOutConfirmForm);
 
 @inject(stores => ({
@@ -99,26 +98,11 @@ class DelegateOut extends Component {
   }
 
   trezorDelegateOut = async (path, from, validator, value, stakeAmount) => {
-    console.log('trezorDelegateOut:', path, from, validator, value);
-    let chainId = this.props.chainId;
     let func = 'delegateOut';
     try {
-      console.log('ready to get nonce, gasPrice, data');
-      console.log('getNonce');
-      let nonce = await getNonce(from, 'wan');
-      console.log('getNonce', nonce);
-      console.log('getGasPrice');
-      let gasPrice = await getGasPrice('wan');
-      console.log('getGasPrice', gasPrice);
-      console.log('getContractData');
-      let data = await getContractData(func, validator);
-      console.log('getContractData', data);
-      // let [nonce, gasPrice, data] = await Promise.all([getNonce(from, 'wan'), getGasPrice('wan'), getContractData(func, validator)]);
-      console.log('nonce, gasPrice, data', nonce, toWei(gasPrice, 'gwei'), data);
+      let [chainId, nonce, gasPrice, data] = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getContractData(func, validator)]);
       let amountWei = toWei(value);
-      console.log('amountWei', amountWei);
       const cscContractAddr = await getContractAddr();
-      console.log('cscContractAddr', cscContractAddr)
       let rawTx = {};
       rawTx.from = from;
       rawTx.to = cscContractAddr;
@@ -130,30 +114,26 @@ class DelegateOut extends Component {
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
-      console.log('rawTx:', rawTx);
-      let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
-      console.log('signTransaction finish, ready to send.')
-      console.log('raw:', raw);
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
 
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('transaction_raw finish, txHash:', txHash);
+      console.log('Transaction hash:', txHash);
       let params = {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        hashX: txHash,
+        // hashX: txHash,
         txHash,
         from: from.toLowerCase(),
         validator: validator,
-        annotate: 'DelegateIn',
+        annotate: 'DelegateOut',
         status: 'Sent',
         source: 'external',
-        stakeAmount: 'stakeAmount',
+        stakeAmount: stakeAmount,
         ...rawTx
       }
 
       await pu.promisefy(wand.request, ['staking_insertTransToDB', { rawTx: params }], this);
-      console.log('staking_insertTransToDB finish')
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
@@ -161,46 +141,12 @@ class DelegateOut extends Component {
     }
   }
 
-  signTrezorTransaction = (path, tx, callback) => {
-    console.log('signTrezorTransaction:', path, tx);
-    TrezorConnect.ethereumSignTransaction({
-      path: path,
-      transaction: {
-        to: tx.to,
-        value: tx.value,
-        data: tx.data,
-        chainId: tx.chainId,
-        nonce: tx.nonce,
-        gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
-        txType: tx.Txtype, // Txtype case is required by wanTx
-      },
-    }).then((result) => {
-      console.log('signTrezorTransaction result:', result);
-
-      if (!result.success) {
-        message.warn(intl.get('Trezor.signTransactionFailed'));
-        callback(intl.get('Trezor.signFailed'), null);
-        return;
-      }
-
-      tx.v = result.payload.v;
-      tx.r = result.payload.r;
-      tx.s = result.payload.s;
-      let eTx = new WanTx(tx);
-      let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('signed', signedTx);
-      console.log('tx:', tx);
-      callback(null, signedTx);
-    });
-  }
-
-  render () {
+  render() {
     return (
       <div>
-        <Button className="modifyExitBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
+        <Button className="modifyExitBtn" disabled={!this.props.enableButton} onClick={this.showDialog} />
         {this.state.visible &&
-           <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
+          <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
             confirmLoading={this.state.confirmLoading}
             record={this.props.record}
             title={intl.get('WithdrawForm.title')}

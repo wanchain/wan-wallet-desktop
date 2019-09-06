@@ -1,6 +1,5 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
 
@@ -9,10 +8,10 @@ import { MAIN, TESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
+import { signTransaction } from 'componentUtils/trezor'
 
 const Option = Select.Option;
 const pu = require('promisefy-util');
-const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 const LEFT = 6;
@@ -389,11 +388,10 @@ class DelegateInForm extends Component {
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
-      let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
-      console.log('Raw tx:', raw);
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
 
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('Sending transaction finished, txHash:', txHash);
+      console.log('Transaction hash:', txHash);
       let params = {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
@@ -415,37 +413,6 @@ class DelegateInForm extends Component {
     } catch (error) {
       message.error(error)
     }
-  }
-
-  signTrezorTransaction = (path, tx, callback) => {
-    TrezorConnect.ethereumSignTransaction({
-      path: path,
-      transaction: {
-        to: tx.to,
-        value: tx.value,
-        data: tx.data,
-        chainId: tx.chainId,
-        nonce: tx.nonce,
-        gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
-        txType: tx.Txtype, // Txtype case is required by wanTx
-      },
-    }).then((result) => {
-      if (!result.success) {
-        message.warn(intl.get('Trezor.signTransactionFailed'));
-        callback(intl.get('Trezor.signFailed'), null);
-        return;
-      }
-
-      tx.v = result.payload.v;
-      tx.r = result.payload.r;
-      tx.s = result.payload.s;
-      let eTx = new WanTx(tx);
-      let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('Signed tx', signedTx);
-      console.log('Tx:', tx);
-      callback(null, signedTx);
-    });
   }
 
   render () {
