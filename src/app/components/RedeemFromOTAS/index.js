@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
-import RedeemFromOTASForm from 'components/RedeemFromOTASForm'
+import RedeemFromOTASForm from 'components/RedeemFromOTASForm';
 import { getNonce, getGasPrice, getPrivateBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
 import { fromWei } from 'utils/support';
 
