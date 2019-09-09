@@ -175,6 +175,7 @@ const ko_KR = {
     'NormalTransForm.addressIsIncorrect': '잘못된 주소',
     'NormalTransForm.recipientAddress': '수신자 주소',
     'NormalTransForm.amount': '금액',
+    'NormalTransForm.token': 'Token Amount',
     'NormalTransForm.amountIsIncorrect': '금액이 잘못 되었습니다.',
     'NormalTransForm.fee': '비용',
     'NormalTransForm.pleaseSelectTransactionFee': '거래 수수료를 선택하세요.',

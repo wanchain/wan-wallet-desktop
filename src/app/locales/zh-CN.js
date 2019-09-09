@@ -175,6 +175,7 @@ const zh_CN = {
     'NormalTransForm.addressIsIncorrect': '地址不正确',
     'NormalTransForm.recipientAddress': '接收者地址',
     'NormalTransForm.amount': '金额',
+    'NormalTransForm.token': '代币数量',
     'NormalTransForm.amountIsIncorrect': '金额不正确',
     'NormalTransForm.fee': '费用',
     'NormalTransForm.pleaseSelectTransactionFee': '请选择交易费',

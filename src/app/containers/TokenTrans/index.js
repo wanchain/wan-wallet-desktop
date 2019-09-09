@@ -9,7 +9,7 @@ import { WALLETID, TRANSTYPE } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
-import { checkAddrType, hasSameName } from 'utils/helper';
+import { checkAddrType } from 'utils/helper';
 
 const CHAINTYPE = 'WAN';
 
@@ -92,14 +92,6 @@ class TokenTrans extends Component {
         }
       });
     })
-  }
-
-  handleSave = row => {
-    if (hasSameName('normal', row, this.props.addrInfo)) {
-      message.warn(intl.get('WanAccount.notSameName'));
-    } else {
-      this.props.updateName(row, 'normal');
-    }
   }
 
   render () {

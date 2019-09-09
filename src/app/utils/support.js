@@ -8,6 +8,9 @@ export function fromWei (data, unit = 'ether') {
 }
 
 export function formatNumByDeciamls (value, decimals) {
+  if (value === undefined || decimals === undefined) {
+    return 0;
+  }
   return value / (10 ** decimals);
 }
 

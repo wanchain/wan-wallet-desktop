@@ -175,6 +175,7 @@ const en_US = {
     'NormalTransForm.addressIsIncorrect': 'Address is incorrect',
     'NormalTransForm.recipientAddress': 'Recipient Address',
     'NormalTransForm.amount': 'Amount',
+    'NormalTransForm.token': 'Token Amount',
     'NormalTransForm.amountIsIncorrect': 'Amount is incorrect',
     'NormalTransForm.fee': 'Fee',
     'NormalTransForm.pleaseSelectTransactionFee': 'Please select transaction fee',

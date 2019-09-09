@@ -175,6 +175,7 @@ const th_TH = {
     'NormalTransForm.addressIsIncorrect': 'แอดเดรสไม่ถูกต้อง',
     'NormalTransForm.recipientAddress': 'แอดเดรสของผู้รับ',
     'NormalTransForm.amount': 'จำนวน',
+    'NormalTransForm.token': 'Token Amount',
     'NormalTransForm.amountIsIncorrect': 'จำนวนไม่ถูกต้อง',
     'NormalTransForm.fee': 'ค่าธรรมเนียม',
     'NormalTransForm.pleaseSelectTransactionFee': 'กรุณาเลือกค่าทำเนียมการทำธุรกรรม',

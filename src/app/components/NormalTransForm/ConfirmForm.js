@@ -6,6 +6,7 @@ import { BigNumber } from 'bignumber.js';
 
 import './index.less';
 import { formatNum } from 'utils/support';
+import { TRANSTYPE } from 'utils/settings';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -23,9 +24,9 @@ class ConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, from, loading, sendTrans } = this.props;
+    const { visible, form, from, loading, sendTrans, transType } = this.props;
     const { getFieldDecorator } = form;
-    const { to, amount, gasLimit, gasPrice, nonce, data } = this.props.transParams[from];
+    const { to, amount, gasLimit, gasPrice, nonce, data, transferTo, token } = this.props.transParams[from];
     let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
 
     return (
@@ -49,10 +50,24 @@ class ConfirmForm extends Component {
             {getFieldDecorator('to', { initialValue: to })
               (<Input disabled={true} />)}
           </Form.Item>
+          {
+            transType === TRANSTYPE.tokenTransfer &&
+            <Form.Item label={intl.get('NormalTransForm.transferTo')}>
+              {getFieldDecorator('transferTo', { initialValue: transferTo })
+                (<Input disabled={true} />)}
+            </Form.Item>
+          }
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.amount')}>
             {getFieldDecorator('amount', { initialValue: formatNum(amount) })
               (<Input disabled={true} />)}
           </Form.Item>
+          {
+            transType === TRANSTYPE.tokenTransfer &&
+            <Form.Item label={intl.get('NormalTransForm.token')}>
+              {getFieldDecorator('token', { initialValue: token })
+                (<Input disabled={true} />)}
+            </Form.Item>
+          }
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {
             getFieldDecorator(
               'gasPrice', { initialValue: gasPrice })

@@ -2,12 +2,14 @@ import { observable, action, computed, toJS } from 'mobx';
 import BigNumber from 'bignumber.js';
 import { roundFun } from 'utils/support'
 
+const GASLIMIT = 21000;
+
 class SendTransParams {
     @observable currentFrom = '';
 
     @observable transParams = {};
 
-    @observable gasLimit = 21000;
+    @observable gasLimit = GASLIMIT;
 
     @observable defaultGasPrice = 200;
 
@@ -21,20 +23,26 @@ class SendTransParams {
       self.transParams[addr] = Object.defineProperties({}, {
         chainType: { value: params.chainType, ...objKey },
         gasPrice: { value: self.minGasPrice, ...objKey },
-        gasLimit: { value: self.gasLimit, ...objKey },
+        gasLimit: { value: GASLIMIT, ...objKey },
         nonce: { value: '', ...objKey },
         data: { value: '0x', ...objKey },
         chainId: { value: params.chainId, ...objKey },
         txType: { value: 1, ...objKey },
         path: { value: '', ...objKey },
         to: { value: '', ...objKey },
-        amount: { value: 0, ...objKey }
+        amount: { value: 0, ...objKey },
+        transferTo: { value: '', ...objKey },
+        token: { value: 0, ...objKey }
       });
     }
 
     @action updateGasPrice (gasPrice) {
         self.currentGasPrice = gasPrice;
     }
+
+    @action updateGasLimit (gasLimit) {
+      self.gasLimit = gasLimit;
+  }
 
     @action updateTransParams (addr, paramsObj) {
       Object.keys(paramsObj).forEach(item => {

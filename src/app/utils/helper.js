@@ -1,3 +1,4 @@
+import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
@@ -319,3 +320,9 @@ export const getContractData = function (func, validatorAddr) {
     });
   })
 };
+
+export const encodeTransferInput = function (addr, value = 0, decimal) {
+  const TRANSFER = '0xa9059cbb';
+  value = new BigNumber(value).plus(decimal).toString(10);
+  return TRANSFER + Web3.eth.abi.encodeParameters(['address', 'uint256'], [addr, value]);
+}
