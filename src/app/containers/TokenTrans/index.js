@@ -19,11 +19,13 @@ message.config({
 });
 
 @inject(stores => ({
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
   transParams: stores.sendTransParams.transParams,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
 }))
 
@@ -56,6 +58,7 @@ class TokenTrans extends Component {
 
   componentDidMount () {
     this.timer = setInterval(() => {
+      this.props.updateTransHistory();
       this.props.updateTokensBalance(this.props.tokenAddr);
     }, 5000);
   }
@@ -77,13 +80,17 @@ class TokenTrans extends Component {
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
-      data: params.data
+      data: params.data,
+      satellite: {
+        transferTo: params.transferTo.toLowerCase(),
+        token: params.token
+      }
     };
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
-          console.log(err);
+          console.log('transaction_normal:', err);
           reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
           this.props.updateTransHistory();
@@ -116,7 +123,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import']} />
+            <TransHistory name={['normal', 'import']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>

@@ -4,7 +4,8 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
-import { MAIN, TESTNET } from 'utils/settings';
+import { MAIN, TESTNET, TRANSTYPE } from 'utils/settings';
+
 import history from 'static/image/history.png';
 
 const Option = Select.Option;
@@ -38,10 +39,20 @@ class TransHistory extends Component {
   }
 
   render () {
-    const { addrInfo, historyList, name, offline, offlineHistoryList } = this.props;
+    const { addrInfo, historyList, name, offline, offlineHistoryList, transType } = this.props;
     let addrList = [];
+    let dataSource;
     if (name) {
       name.forEach(val => { addrList = addrList.concat(Object.entries(addrInfo[val]).map(v => ({ address: v[0], name: v[1].name }))) });
+    }
+    if (offline) {
+      dataSource = offlineHistoryList;
+    } else {
+      if (transType === TRANSTYPE.tokenTransfer) {
+        dataSource = historyList;
+      } else {
+        dataSource = historyList;
+      }
     }
     return (
       <div>

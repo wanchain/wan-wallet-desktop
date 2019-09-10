@@ -98,12 +98,14 @@ class NormalTransForm extends Component {
     let form = this.props.form;
     let from = this.props.from;
     form.validateFields(err => {
-      if (err) return;
+      if (err) {
+        console.log('handleNext', err);
+        return;
+      };
       let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
       let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
-
       if (new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
@@ -131,6 +133,7 @@ class NormalTransForm extends Component {
         } else {
           updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) });
         }
+
         this.setState({ advanced: false, confirmVisible: true });
       }
     });
@@ -167,7 +170,7 @@ class NormalTransForm extends Component {
       if (form.getFieldValue('transferTo')) {
         let tokenAmount = form.getFieldValue('token');
         let decimals = tokensList[form.getFieldValue('to')].decimals;
-        this.props.updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('transferTo'), tokenAmount, decimals) });
+        this.props.updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('transferTo'), decimals, tokenAmount) });
       }
     }
     let tx = {
@@ -216,7 +219,9 @@ class NormalTransForm extends Component {
   }
 
   checkTokenAmount = (rule, value, callback) => {
+    // let { form, tokensList } = this.props;
     if (value >= 0) {
+    // if (value >= 0 && checkAmountUnit(tokensList[form.getFieldValue('to')].decimals, value)) {
       if (!this.state.advanced) {
         this.updateGasLimit();
       }
@@ -279,7 +284,7 @@ class NormalTransForm extends Component {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
-    const { minFee, averageFee, maxFee } = gasFeeArr
+    const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
 
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';

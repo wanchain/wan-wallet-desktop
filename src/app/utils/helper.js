@@ -5,6 +5,7 @@ import { BigNumber } from 'bignumber.js';
 import { WANPATH } from 'utils/settings';
 import { fromWei, isNumber } from 'utils/support';
 
+const web3 = new Web3();
 const wanUtil = require('wanchain-util');
 let emitterHandlers = {};
 
@@ -321,8 +322,8 @@ export const getContractData = function (func, validatorAddr) {
   })
 };
 
-export const encodeTransferInput = function (addr, value = 0, decimal) {
+export const encodeTransferInput = function (addr, decimal, value = 0) {
   const TRANSFER = '0xa9059cbb';
-  value = new BigNumber(value).plus(decimal).toString(10);
-  return TRANSFER + Web3.eth.abi.encodeParameters(['address', 'uint256'], [addr, value]);
+  value = new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString(10);
+  return TRANSFER + web3.eth.abi.encodeParameters(['address', 'uint256'], [addr.slice(2).toLowerCase(), value]).slice(2);
 }

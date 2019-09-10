@@ -429,20 +429,21 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     switch (action) {
         case 'normal':
             try {
-                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data } = payload
+                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
 
                 let input = {
-                    "symbol": symbol,
-                    "from": '0x' + from.address,
-                    "to": to,
-                    "amount": amount,
-                    "gasPrice": gasPrice,
-                    "gasLimit": gasLimit,
-                    "BIP44Path": path,
-                    "walletID": walletID,
-                    "nonce": nonce,
-                    "data": data
+                    symbol: symbol,
+                    from: '0x' + from.address,
+                    to: to,
+                    amount: amount,
+                    gasPrice: gasPrice,
+                    gasLimit: gasLimit,
+                    BIP44Path: path,
+                    walletID: walletID,
+                    nonce: nonce,
+                    data: data,
+                    satellite: satellite
                 }
 
                 logger.info('Normal transaction: ' + JSON.stringify(input));
