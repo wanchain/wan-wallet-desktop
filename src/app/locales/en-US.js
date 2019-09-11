@@ -89,6 +89,7 @@ const en_US = {
     'WanAccount.address': 'ADDRESS',
     'WanAccount.balance': 'BALANCE',
     'WanAccount.action': 'ACTION',
+    'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': 'Send transaction failed. Please try again',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
@@ -197,12 +198,11 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
-    'RedeemFromOTAS.noSufficientFunds': 'No sufficient funds.',
-    'RedeemFromOTAS.getPrivateTxInfoFailed': 'Get private transaction info failed.',
-
-    'RedeemFromOTASForm.redeem': 'Redeem',
-    'RedeemFromOTASForm.OTAList': 'Private Address List',
-    'RedeemFromOTASForm.OTARequired': 'Please select at least one private address',
+    'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
+    'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
+    'RedeemFromPrivateForm.redeem': 'Redeem',
+    'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',

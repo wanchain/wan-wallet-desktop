@@ -11,7 +11,7 @@ import { WANPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
-import RedeemFromOTAS from 'components/RedeemFromOTAS';
+import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
 import { checkAddrType, hasSameName } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
@@ -65,7 +65,7 @@ class WanAccount extends Component {
       width: '10%'
     },
     {
-      dataIndex: '',
+      dataIndex: 'blank',
       key: 'expand',
       width: '5%'
     }
@@ -226,7 +226,7 @@ class WanAccount extends Component {
               </div>
             </td>
             <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
-            <td style={{ width: '10%', padding: '0px 16px' }}><RedeemFromOTAS from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
+            <td style={{ width: '10%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
             <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>
@@ -242,7 +242,6 @@ class WanAccount extends Component {
         row: EditableFormRow,
       },
     };
-    console.log(getAddrList);
 
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)

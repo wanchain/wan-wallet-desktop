@@ -89,6 +89,7 @@ const th_TH = {
     'WanAccount.address': 'แอดเดรส',
     'WanAccount.balance': 'ยอดคงเหลือ',
     'WanAccount.action': 'คำสั่ง',
+    'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': 'การส่งธุรกรรมผิดพลาดกรุณาลองใหม่อีกครั้ง',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
@@ -187,6 +188,12 @@ const th_TH = {
     'NormalTransForm.sendAll': 'ส่งยอดที่มีอยู่ทั้งหมด',
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
+
+    'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
+    'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
+    'RedeemFromPrivateForm.redeem': 'Redeem',
+    'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',

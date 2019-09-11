@@ -89,6 +89,7 @@ const ko_KR = {
     'WanAccount.address': '자산 주소',
     'WanAccount.balance': '자산 합계',
     'WanAccount.action': '실행',
+    'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': ' 전송이 실패 하였습니다. 재시도 바랍니다. ',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
@@ -187,6 +188,12 @@ const ko_KR = {
     'NormalTransForm.sendAll': '모두 전송',
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
+
+    'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
+    'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
+    'RedeemFromPrivateForm.redeem': 'Redeem',
+    'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',

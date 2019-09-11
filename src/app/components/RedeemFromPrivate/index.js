@@ -4,9 +4,9 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
-import RedeemFromPrivateForm from './node_modules/components/RedeemFromPrivateForm'
-import { getNonce, getGasPrice, getPrivateBalanceByAddr, estimateGas, getChainId } from './node_modules/utils/helper';
-import { fromWei } from './node_modules/utils/support';
+import RedeemFromPrivateForm from 'components/RedeemFromPrivateForm'
+import { getNonce, getGasPrice, getPrivateBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
+import { fromWei } from 'utils/support';
 
 const RedeemForm = Form.create({ name: 'RedeemFromPrivateForm' })(RedeemFromPrivateForm);
 

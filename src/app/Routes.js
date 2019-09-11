@@ -10,9 +10,8 @@ export default () => {
         <Main>
           <Switch>
             <Route exact path="/" component={Portfolio} />
-            <Route path="/wanaccount" component={WanAccount} />
+            <Route path="/wanAccount" component={WanAccount} />
             <Route path="/settings" component={Settings} />
-            {/* TODO */}
             <Route path="/trezor" component={Trezor} />
             <Route path="/ledger" component={Ledger} />
             <Route path="/offline" component={Offline} />

@@ -172,7 +172,6 @@ class LanguageIntl {
             key: '/ledger',
             icon: 'block'
           },
-          /** TODO */
           {
             title: intl.get('menuConfig.trezor'),
             key: '/trezor',

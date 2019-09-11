@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Modal, Form, Input, Icon, Radio, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import PrivateTransactionTable from './PrivateTransactionTable.js.js';
+import PrivateTransactionTable from './PrivateTransactionTable.js';
 import './index.less';
 
 const privateTxGasLimit = 800000;

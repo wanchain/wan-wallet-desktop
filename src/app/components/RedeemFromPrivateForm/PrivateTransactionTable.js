@@ -6,7 +6,7 @@ import { observer, inject } from 'mobx-react';
 class PrivateTransactionTable extends Component {
     columns = [
         {
-            title: 'OTA',
+            title: 'Private Address',
             dataIndex: 'toOTA',
             className: 'OTAColumn',
         },

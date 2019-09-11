@@ -89,6 +89,7 @@ const zh_CN = {
     'WanAccount.address': '地址',
     'WanAccount.balance': '余额',
     'WanAccount.action': '操作',
+    'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': '发送交易失败，请重试',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
@@ -197,12 +198,11 @@ const zh_CN = {
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
-    'RedeemFromOTAS.noSufficientFunds': '账户余额不足',
-    'RedeemFromOTAS.getPrivateTxInfoFailed': '获取隐私交易信息失败',
-
-    'RedeemFromOTASForm.redeem': '提币',
-    'RedeemFromOTASForm.OTAList': '隐私地址列表',
-    'RedeemFromOTASForm.OTARequired': '请选择至少一条隐私地址',
+    'RedeemFromPrivate.noSufficientFunds': '账户余额不足',
+    'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',
+    'RedeemFromPrivateForm.redeem': '提币',
+    'RedeemFromPrivateForm.PrivateAddresses': '隐私地址列表',
+    'RedeemFromPrivateForm.Required': '请选择至少一条隐私地址',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
