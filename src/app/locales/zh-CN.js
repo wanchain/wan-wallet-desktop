@@ -1,5 +1,8 @@
 const zh_CN = {
-    days: ' 天',
+    'Common.days': ' 天',
+    'Common.amount': '金额',
+    'Common.send': '发送',
+
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',
@@ -153,10 +156,8 @@ const zh_CN = {
 
     'NormalTransForm.ConfirmForm.transactionConfirm': '交易确认',
     'NormalTransForm.ConfirmForm.cancel': '取消',
-    'NormalTransForm.ConfirmForm.send': '发送',
     'NormalTransForm.ConfirmForm.from': '转出方',
     'NormalTransForm.ConfirmForm.to': '转入方',
-    'NormalTransForm.ConfirmForm.amount': '金额',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas价格',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas上限',
@@ -172,7 +173,6 @@ const zh_CN = {
     'NormalTransForm.transaction': '转账',
     'NormalTransForm.cancel': '取消',
     'NormalTransForm.next': '下一步',
-    'NormalTransForm.send': '发送',
     'NormalTransForm.from': '转出方',
     'NormalTransForm.mode': '交易类型',
     'NormalTransForm.normalTransaction': '普通交易',
@@ -184,7 +184,6 @@ const zh_CN = {
     'NormalTransForm.recipientAddress': '接收者地址',
     'NormalTransForm.recipientPrivateAddress': '接收者隐私交易地址',
     'NormalTransForm.chooseValue': '选择金额',
-    'NormalTransForm.amount': '金额',
     'NormalTransForm.amountIsIncorrect': '金额不正确',
     'NormalTransForm.fee': '费用',
     'NormalTransForm.pleaseSelectTransactionFee': '请选择交易费',
@@ -202,12 +201,12 @@ const zh_CN = {
     'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',
     'RedeemFromPrivateForm.redeem': '提币',
     'RedeemFromPrivateForm.PrivateAddresses': '隐私地址列表',
+    'RedeemFromPrivateForm.PrivateAddress': '隐私地址',
     'RedeemFromPrivateForm.Required': '请选择至少一条隐私地址',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
 
-    'SendNormalTrans.send': '发送',
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
     'TransHistory.time': '时间',
@@ -342,7 +341,6 @@ const zh_CN = {
     'ValidatorRegister.myAccount': '我的账户',
     'ValidatorRegister.address': '地址',
     'ValidatorRegister.balance': '余额',
-    'ValidatorRegister.entrustedAmount': '金额',
     'ValidatorRegister.stakeTooLow': '最低金额是10000WAN',
     'ValidatorRegister.historyTitle': '历史记录',
     'TransHistory.StakeIn': '质押',

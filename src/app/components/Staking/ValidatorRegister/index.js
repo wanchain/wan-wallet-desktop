@@ -260,7 +260,7 @@ class ValidatorRegister extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('days')}</span></Col>
+                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('Common.days')}</span></Col>
               </Row>
             </div>
             <div className="validator-line">
@@ -307,7 +307,7 @@ class ValidatorRegister extends Component {
             <CommonFormItem form={form} formName='amount'
               options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.entrustedAmount')}
+              title={intl.get('Common.amount')}
             />
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>

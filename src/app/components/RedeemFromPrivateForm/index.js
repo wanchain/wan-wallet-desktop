@@ -33,7 +33,6 @@ class RedeemFromPrivateForm extends Component {
         }
         wand.request('phrase_reveal', { pwd: pwd }, (err) => {
           if (err) {
-            console.log('not ok');
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
             this.setSendData();
@@ -56,8 +55,8 @@ class RedeemFromPrivateForm extends Component {
       let input = {
         from: ota.from,
         amount: ota.value,
-        otaTxHash: ota.txhash,
-        OTA: ota.toOTA,
+        otaTxHash: ota.txHash,
+        OTA: ota.toPrivateAddr,
         gasPrice: this.state.gasPrice,
         gasLimit: privateTxGasLimit,
         BIP44Path: this.props.path,
@@ -65,16 +64,11 @@ class RedeemFromPrivateForm extends Component {
       }
       refunds.push(input);
     }
-    // console.log(refunds);
     wand.request('transaction_refund', { input: refunds }, (err, res) => {
-      console.log(err, res);
       handleSpin(false);
       if (err) {
-        console.log('not ok');
         message.warn(err.desc);
       } else {
-        console.log('ok');
-        // console.log(res);
         this.onCancel();
       }
     });
@@ -112,7 +106,7 @@ class RedeemFromPrivateForm extends Component {
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.handleSend}>{intl.get('NormalTransForm.send')}</Button>,
+            <Button key="submit" type="primary" onClick={this.handleSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
 

@@ -242,7 +242,7 @@ class ModifyForm extends Component {
                         </Form.Item>
                       </Form>
                     </Col>
-                    <Col span={3}><span className="locktime-span">{getFieldValue('lockTime')} {intl.get('days')}</span></Col>
+                    <Col span={3}><span className="locktime-span">{getFieldValue('lockTime')} {intl.get('Common.days')}</span></Col>
                   </Row>
                 </div>
               </React.Fragment>

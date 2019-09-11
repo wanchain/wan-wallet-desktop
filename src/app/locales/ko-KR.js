@@ -1,5 +1,8 @@
 const ko_KR = {
-    days: ' days',
+    'Common.days': ' days',
+    'Common.amount': '금액',
+    'Common.send': '전송',
+
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
     'Login.wrongPassword': '암호가 틀렸습니다.',
@@ -95,6 +98,7 @@ const ko_KR = {
     'WanAccount.wan': 'WAN',
     'WanAccount.create': '생성',
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
+    'WanAccount.redeem': 'Redeem',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.cancel': '취소',
@@ -152,10 +156,8 @@ const ko_KR = {
 
     'NormalTransForm.ConfirmForm.transactionConfirm': '거래 확인',
     'NormalTransForm.ConfirmForm.cancel': '취소',
-    'NormalTransForm.ConfirmForm.send': '전송',
     'NormalTransForm.ConfirmForm.from': '발신자',
     'NormalTransForm.ConfirmForm.to': '수신자',
-    'NormalTransForm.ConfirmForm.amount': '금액',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas 비용',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas 상한선',
@@ -171,11 +173,16 @@ const ko_KR = {
     'NormalTransForm.cancel': '취소',
     'NormalTransForm.next': '다음',
     'NormalTransForm.from': '발신자',
+    'NormalTransForm.mode': 'Transaction Mode',
+    'NormalTransForm.normalTransaction': 'Normal Transaction',
+    'NormalTransForm.privateTransaction': 'Private Transaction',
     'NormalTransForm.senderAddress': '발신자 주소',
     'NormalTransForm.to': '수신자',
     'NormalTransForm.addressIsIncorrect': '잘못된 주소',
+    'NormalTransForm.privateAddressIsIncorrect': 'Private address is incorrect',
     'NormalTransForm.recipientAddress': '수신자 주소',
-    'NormalTransForm.amount': '금액',
+    'NormalTransForm.recipientPrivateAddress': 'Recipient Private Address',
+    'NormalTransForm.chooseValue': 'Choose Value',
     'NormalTransForm.amountIsIncorrect': '금액이 잘못 되었습니다.',
     'NormalTransForm.fee': '비용',
     'NormalTransForm.pleaseSelectTransactionFee': '거래 수수료를 선택하세요.',
@@ -193,12 +200,12 @@ const ko_KR = {
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
     'RedeemFromPrivateForm.redeem': 'Redeem',
     'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.PrivateAddress': 'Private Address',
     'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',
 
-    'SendNormalTrans.send': '전송',
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
 
     'TransHistory.time': '트랜잭션 시간',
@@ -329,7 +336,6 @@ const ko_KR = {
     'ValidatorRegister.myAccount': '나의 계정',
     'ValidatorRegister.address': '계정 주소',
     'ValidatorRegister.balance': '계정 자산 합계',
-    'ValidatorRegister.entrustedAmount': '합계',
     'ValidatorRegister.stakeTooLow': '최소 합계는 10,000 WAN이어야 합니다.',
     'ValidatorRegister.historyTitle': '검증자 내역',
     'TransHistory.StakeIn': '스케이킹 인',

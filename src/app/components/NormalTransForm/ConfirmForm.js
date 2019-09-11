@@ -37,7 +37,7 @@ class ConfirmForm extends Component {
         onCancel={this.handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
-          <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('NormalTransForm.ConfirmForm.send')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('Common.send')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
@@ -49,7 +49,7 @@ class ConfirmForm extends Component {
             {getFieldDecorator('to', { initialValue: to })
               (<Input disabled={true} />)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.amount')}>
+          <Form.Item label={intl.get('Common.amount')}>
             {getFieldDecorator('amount', { initialValue: formatNum(amount) })
               (<Input disabled={true} />)}
           </Form.Item>

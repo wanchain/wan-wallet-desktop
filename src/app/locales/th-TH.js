@@ -1,5 +1,8 @@
 const th_TH = {
-    days: ' วัน',
+    'Common.days': ' วัน',
+    'Common.amount': 'จำนวน',
+    'Common.send': 'ส่ง',
+
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
     'Login.wrongPassword': 'รหัสผ่านผิด',
@@ -95,6 +98,7 @@ const th_TH = {
     'WanAccount.wan': 'WAN',
     'WanAccount.create': 'สร้างแอดเดรส',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
+    'WanAccount.redeem': 'Redeem',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',
@@ -152,10 +156,8 @@ const th_TH = {
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรม',
     'NormalTransForm.ConfirmForm.cancel': 'ยกเลิก',
-    'NormalTransForm.ConfirmForm.send': 'ส่ง',
     'NormalTransForm.ConfirmForm.from': 'ผู้ส่ง',
     'NormalTransForm.ConfirmForm.to': 'ผู้รับ',
-    'NormalTransForm.ConfirmForm.amount': 'จำนวน',
     'NormalTransForm.ConfirmForm.gasPrice': 'ค่าแก๊ส',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
     'NormalTransForm.ConfirmForm.gasLimit': 'ค่าแก๊สสูงสุด',
@@ -171,11 +173,16 @@ const th_TH = {
     'NormalTransForm.cancel': 'ยกเลิก',
     'NormalTransForm.next': 'ถัดไป',
     'NormalTransForm.from': 'ผู้ส่ง',
+    'NormalTransForm.mode': 'Transaction Mode',
+    'NormalTransForm.normalTransaction': 'Normal Transaction',
+    'NormalTransForm.privateTransaction': 'Private Transaction',
     'NormalTransForm.senderAddress': 'แอดเดรสของผู้ส่ง',
     'NormalTransForm.to': 'ผู้รับ',
     'NormalTransForm.addressIsIncorrect': 'แอดเดรสไม่ถูกต้อง',
+    'NormalTransForm.privateAddressIsIncorrect': 'Private address is incorrect',
     'NormalTransForm.recipientAddress': 'แอดเดรสของผู้รับ',
-    'NormalTransForm.amount': 'จำนวน',
+    'NormalTransForm.recipientPrivateAddress': 'Recipient Private Address',
+    'NormalTransForm.chooseValue': 'Choose Value',
     'NormalTransForm.amountIsIncorrect': 'จำนวนไม่ถูกต้อง',
     'NormalTransForm.fee': 'ค่าธรรมเนียม',
     'NormalTransForm.pleaseSelectTransactionFee': 'กรุณาเลือกค่าทำเนียมการทำธุรกรรม',
@@ -193,12 +200,12 @@ const th_TH = {
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
     'RedeemFromPrivateForm.redeem': 'Redeem',
     'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.PrivateAddress': 'Private Address',
     'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',
 
-    'SendNormalTrans.send': 'ส่ง',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
 
     'TransHistory.time': 'เวลา',
@@ -331,7 +338,6 @@ const th_TH = {
     'ValidatorRegister.myAccount': 'บัญชีของฉัน',
     'ValidatorRegister.address': 'แอดเดรส',
     'ValidatorRegister.balance': 'ยอดคงเหลือ',
-    'ValidatorRegister.entrustedAmount': 'จำนวน',
     'ValidatorRegister.stakeTooLow': 'จำนวนจะต้องไม่ต่ำกว่า 10,000 WAN',
     'ValidatorRegister.historyTitle': 'ประวัติของ Validator',
     'TransHistory.StakeIn': 'ทำการ Stake',

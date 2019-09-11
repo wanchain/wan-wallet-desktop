@@ -151,7 +151,7 @@ class InForm extends Component {
             <CommonFormItem form={form} formName='amount'
               options={{ initialValue: 100, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.entrustedAmount')}
+              title={intl.get('Common.amount')}
             />
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>

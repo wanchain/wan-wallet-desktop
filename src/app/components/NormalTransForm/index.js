@@ -117,7 +117,6 @@ class NormalTransForm extends Component {
         }
         wand.request('phrase_reveal', { pwd: pwd }, (err) => {
           if (err) {
-            console.log('not ok');
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
             console.log('ok');
@@ -306,7 +305,7 @@ class NormalTransForm extends Component {
 
               {
                 this.state.isPrivate
-                  ? <Form.Item label={intl.get('NormalTransForm.amount')}>
+                  ? <Form.Item label={intl.get('Common.amount')}>
                     {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkPrivateAmount }] })
                       (<Select placeholder={intl.get('NormalTransForm.chooseValue')} >
                         <Option value="10">10</Option>
@@ -320,7 +319,7 @@ class NormalTransForm extends Component {
                         <Option value="50000">50000</Option>
                       </Select>)}
                   </Form.Item>
-                  : <Form.Item label={intl.get('NormalTransForm.amount')}>
+                  : <Form.Item label={intl.get('Common.amount')}>
                       {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                         (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                       <Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>

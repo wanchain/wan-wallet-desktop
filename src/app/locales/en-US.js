@@ -1,5 +1,8 @@
 const en_US = {
-    days: ' days',
+    'Common.days': ' days',
+    'Common.amount': 'Amount',
+    'Common.send': 'Send',
+
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
@@ -153,10 +156,8 @@ const en_US = {
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'Transaction Confirm',
     'NormalTransForm.ConfirmForm.cancel': 'Cancel',
-    'NormalTransForm.ConfirmForm.send': 'Send',
     'NormalTransForm.ConfirmForm.from': 'From',
     'NormalTransForm.ConfirmForm.to': 'To',
-    'NormalTransForm.ConfirmForm.amount': 'Amount',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas Price',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas Limit',
@@ -172,7 +173,6 @@ const en_US = {
     'NormalTransForm.transaction': 'Transaction',
     'NormalTransForm.cancel': 'Cancel',
     'NormalTransForm.next': 'Next',
-    'NormalTransForm.send': 'Send',
     'NormalTransForm.from': 'From',
     'NormalTransForm.mode': 'Transaction Mode',
     'NormalTransForm.normalTransaction': 'Normal Transaction',
@@ -184,7 +184,6 @@ const en_US = {
     'NormalTransForm.recipientAddress': 'Recipient Address',
     'NormalTransForm.recipientPrivateAddress': 'Recipient Private Address',
     'NormalTransForm.chooseValue': 'Choose Value',
-    'NormalTransForm.amount': 'Amount',
     'NormalTransForm.amountIsIncorrect': 'Amount is incorrect',
     'NormalTransForm.fee': 'Fee',
     'NormalTransForm.pleaseSelectTransactionFee': 'Please select transaction fee',
@@ -202,12 +201,12 @@ const en_US = {
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
     'RedeemFromPrivateForm.redeem': 'Redeem',
     'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
+    'RedeemFromPrivateForm.PrivateAddress': 'Private Address',
     'RedeemFromPrivateForm.Required': 'Please select at least one private address',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
 
-    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
 
     'TransHistory.time': 'TIME',
@@ -339,7 +338,6 @@ const en_US = {
     'ValidatorRegister.myAccount': 'My Account',
     'ValidatorRegister.address': 'Address',
     'ValidatorRegister.balance': 'Balance',
-    'ValidatorRegister.entrustedAmount': 'Amount',
     'ValidatorRegister.stakeTooLow': 'Minimum amount should be 10000 WAN',
     'ValidatorRegister.historyTitle': 'Validator History',
     'TransHistory.StakeIn': 'Stake In',

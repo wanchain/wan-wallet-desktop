@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
-import RedeemFromPrivateForm from 'components/RedeemFromPrivateForm'
+import RedeemFromPrivateForm from 'components/RedeemFromPrivateForm';
 import { getNonce, getGasPrice, getPrivateBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
 import { fromWei } from 'utils/support';
 
@@ -43,15 +43,14 @@ class RedeemFromPrivate extends Component {
       // get the data of private transaction list.
       wand.request('address_getPrivateTxInfo', { wid, path }, (err, res) => {
         if (err) {
-          console.log('not ok');
           message.warn(intl.get('RedeemFromPrivate.getPrivateTxInfoFailed'));
         } else {
           let data = res.map(v => {
             return {
               from: from,
               value: fromWei(v.value),
-              toOTA: v.toOTA,
-              txhash: v.txhash,
+              toPrivateAddr: v.toOTA,
+              txHash: v.txhash,
             }
           });
           this.setState({
