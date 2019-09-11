@@ -5,11 +5,11 @@ import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Avatar } from 'antd';
 
 import './index.less';
-import { WALLETID, TRANSTYPE } from 'utils/settings';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import { checkAddrType } from 'utils/helper';
+import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
 
 const CHAINTYPE = 'WAN';
 
@@ -19,6 +19,7 @@ message.config({
 });
 
 @inject(stores => ({
+  chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
@@ -26,6 +27,7 @@ message.config({
   getTokensListInfo: stores.tokens.getTokensListInfo,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
 }))
 
@@ -53,7 +55,8 @@ class TokenTrans extends Component {
   constructor (props) {
     super(props);
     this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString()
-    this.props.setCurrToken(this.props.tokenAddr)
+    this.props.setCurrToken(this.props.tokenAddr);
+    this.props.changeTitle('WanAccount.wallet');
   }
 
   componentDidMount () {
@@ -101,6 +104,12 @@ class TokenTrans extends Component {
     })
   }
 
+  onClickRow = () => {
+    let { chainId, tokenAddr } = this.props;
+    let href = chainId === 1 ? `${MAIN}/address/${tokenAddr}` : `${TESTNET}/address/${tokenAddr}`
+    wand.shell.openExternal(href);
+  }
+
   render () {
     const { getAmount, getTokensListInfo, symbol, tokenAddr } = this.props;
 
@@ -113,7 +122,7 @@ class TokenTrans extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><Avatar className="avatarSty" src={this.img} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
           <Col span={12} className="col-right">
-            <span className="wanTotal">Token Address: {tokenAddr}</span>
+            <span className="wanTotal">Token Address: <span onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>
         </Row>
         <Row className="mainBody">

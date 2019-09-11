@@ -35,9 +35,8 @@ class SendNormalTrans extends Component {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
-
     if (transType === TRANSTYPE.tokenTransfer) {
-      if (tokensBalance[tokenAddr][from] === '0') {
+      if (!tokensBalance[tokenAddr] || tokensBalance[tokenAddr][from] === '0') {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }

@@ -264,7 +264,7 @@ class WanAddress {
             key: item,
             time: timeFormat(self.transHistory[item]['sendTime']),
             from: self.addrInfo[type][self.transHistory[item]['from']].name,
-            to: self.transHistory[item].to,
+            to: wanUtil.toChecksumAddress(self.transHistory[item].to.toLowerCase()),
             value: formatNum(fromWei(self.transHistory[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]['sendTime'],
@@ -285,8 +285,30 @@ class WanAddress {
             key: item,
             time: timeFormat(self.transHistory[item]['sendTime']),
             from: self.transHistory[item].from,
-            to: self.transHistory[item].to,
+            to: wanUtil.toChecksumAddress(self.transHistory[item].to.toLowerCase()),
             value: formatNum(fromWei(self.transHistory[item].value)),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item]['sendTime'],
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    }
+
+    @computed get tokenTransferHistoryList () {
+      let historyList = [];
+
+      Object.keys(self.transHistory).forEach(item => {
+        if (self.transHistory[item].transferTo) {
+          let status = self.transHistory[item].status;
+          let type = checkAddrType(self.transHistory[item].from, self.addrInfo);
+
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item]['sendTime']),
+            from: self.addrInfo[type][self.transHistory[item].from].name,
+            to: wanUtil.toChecksumAddress(self.transHistory[item].transferTo.toLowerCase()),
+            value: formatNum(self.transHistory[item].token || 0),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]['sendTime'],
           });

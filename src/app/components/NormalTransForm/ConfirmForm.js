@@ -28,6 +28,8 @@ class ConfirmForm extends Component {
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce, data, transferTo, token } = this.props.transParams[from];
     let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
+    let initialTo = transType === TRANSTYPE.tokenTransfer ? transferTo : to;
+    let initialAmount = transType === TRANSTYPE.tokenTransfer ? token : amount;
 
     return (
       <Modal
@@ -47,27 +49,13 @@ class ConfirmForm extends Component {
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.to')}>
-            {getFieldDecorator('to', { initialValue: to })
+            {getFieldDecorator('to', { initialValue: initialTo })
               (<Input disabled={true} />)}
           </Form.Item>
-          {
-            transType === TRANSTYPE.tokenTransfer &&
-            <Form.Item label={intl.get('NormalTransForm.transferTo')}>
-              {getFieldDecorator('transferTo', { initialValue: transferTo })
-                (<Input disabled={true} />)}
-            </Form.Item>
-          }
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.amount')}>
-            {getFieldDecorator('amount', { initialValue: formatNum(amount) })
+            {getFieldDecorator('amount', { initialValue: formatNum(initialAmount) })
               (<Input disabled={true} />)}
           </Form.Item>
-          {
-            transType === TRANSTYPE.tokenTransfer &&
-            <Form.Item label={intl.get('NormalTransForm.token')}>
-              {getFieldDecorator('token', { initialValue: token })
-                (<Input disabled={true} />)}
-            </Form.Item>
-          }
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {
             getFieldDecorator(
               'gasPrice', { initialValue: gasPrice })

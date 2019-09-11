@@ -246,7 +246,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
 }
 
 export const checkAmountUnit = function (decimals, amount) {
-  if (!Number.isInteger(decimals)) {
+  if (!Number.isInteger(Number(decimals))) {
     throw new Error('Decimals must be a integer');
   }
   if (amount === '0') {

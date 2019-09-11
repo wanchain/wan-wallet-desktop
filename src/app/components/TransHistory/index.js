@@ -18,6 +18,7 @@ const Option = Select.Option;
   selectedAddr: stores.wanAddress.selectedAddr,
   transColumns: stores.languageIntl.transColumns,
   offlineHistoryList: stores.wanAddress.offlineHistoryList,
+  tokenTransferHistoryList: stores.wanAddress.tokenTransferHistoryList,
   setCurrPage: page => stores.wanAddress.setCurrPage(page),
   setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr)
 }))
@@ -39,7 +40,7 @@ class TransHistory extends Component {
   }
 
   render () {
-    const { addrInfo, historyList, name, offline, offlineHistoryList, transType } = this.props;
+    const { addrInfo, historyList, name, offline, offlineHistoryList, transType, tokenTransferHistoryList } = this.props;
     let addrList = [];
     let dataSource;
     if (name) {
@@ -49,7 +50,7 @@ class TransHistory extends Component {
       dataSource = offlineHistoryList;
     } else {
       if (transType === TRANSTYPE.tokenTransfer) {
-        dataSource = historyList;
+        dataSource = tokenTransferHistoryList;
       } else {
         dataSource = historyList;
       }
@@ -75,7 +76,7 @@ class TransHistory extends Component {
           }
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={offline ? offlineHistoryList : historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={dataSource} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

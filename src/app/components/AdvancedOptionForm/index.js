@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
 
 import './index.less';
 import { estimateGas } from 'utils/helper';
+import { TRANSTYPE } from 'utils/settings';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -80,7 +81,7 @@ class AdvancedOptionForm extends Component {
   }
 
   render () {
-    const { visible, form, minGasPrice, from, transParams } = this.props;
+    const { visible, form, minGasPrice, from, transParams, transType } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
     return (
@@ -114,7 +115,7 @@ class AdvancedOptionForm extends Component {
           <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
             {getFieldDecorator(
               'inputData', { initialValue: data, rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
-              (<Input />)}
+              (<Input.TextArea disabled={transType === TRANSTYPE.tokenTransfer} />)}
           </Form.Item>
         </Form>
       </Modal>
