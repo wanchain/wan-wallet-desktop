@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { Button, Form } from 'antd';
 
+import { observer, inject } from 'mobx-react';
 import './index.less';
 import DelegateInForm from '../DelegateInForm';
 
 const InForm = Form.create({ name: 'DelegateInForm' })(DelegateInForm);
+@inject(stores => ({
+  stakingList: stores.staking.stakingList,
+}))
 
+@observer
 class DelegateIn extends Component {
   state = {
     visible: false,
