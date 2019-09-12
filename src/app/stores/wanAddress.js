@@ -4,6 +4,7 @@ import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
+import tokens from './tokens';
 import staking from './staking';
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
@@ -299,7 +300,7 @@ class WanAddress {
       let historyList = [];
 
       Object.keys(self.transHistory).forEach(item => {
-        if (self.transHistory[item].transferTo) {
+        if (self.transHistory[item].transferTo && (tokens.currTokenAddr.toLowerCase() === self.transHistory[item].to.toLowerCase())) {
           let status = self.transHistory[item].status;
           let type = checkAddrType(self.transHistory[item].from, self.addrInfo);
 

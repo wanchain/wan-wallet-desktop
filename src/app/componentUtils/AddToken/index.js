@@ -7,6 +7,8 @@ import './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
+  tokensList: stores.tokens.tokensList,
+  addCustomToken: tokenInfo => stores.tokens.addCustomToken(tokenInfo)
 }))
 
 @observer
@@ -14,7 +16,8 @@ class AddToken extends Component {
   state = {
     showConfirm: false,
     tokenAddr: '',
-    tokenInfo: null
+    tokenInfo: null,
+    btnLoading: false
   }
 
   handleSearch = () => {
@@ -38,7 +41,36 @@ class AddToken extends Component {
   }
 
   handleAddToken = () => {
-    console.log(this.state.tokenInfo, 'kkkkkkkkkkkkkkkkkkkkkkkk')
+    const { tokensList, addCustomToken } = this.props;
+    const { tokenAddr, tokenInfo } = this.state;
+    let token = { tokenAddr, select: false, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals };
+    if (tokensList[tokenAddr.toLowerCase()]) {
+      message.warn(intl.get('Config.existedTokenAddr'));
+      this.setState({
+        showConfirm: false
+      })
+      return;
+    } else {
+      this.setState({
+        btnLoading: true
+      })
+    }
+    wand.request('crosschain_addCustomToken', token, err => {
+      if (err) {
+        console.log('stores_addCustomToken', err);
+        message.warn(intl.get('Config.addTokenAddrErr'));
+      } else {
+        addCustomToken(token)
+        message.success(intl.get('TransHistory.success'))
+      }
+      this.props.onCancel();
+    })
+  }
+
+  onCancel = () => {
+    this.setState({
+      showConfirm: false,
+    })
   }
 
   render () {
@@ -59,8 +91,8 @@ class AddToken extends Component {
           <div>
             <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false} className="showTokenModal"
             footer={[
-                <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('popup.cancel')}</Button>,
-                <Button key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('popup.ok')}</Button>,
+                <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('popup.cancel')}</Button>,
+                <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('popup.ok')}</Button>,
               ]}
             >
               <Descriptions title="Token Contract Information">

@@ -76,6 +76,8 @@ const en_US = {
     'Config.twoHours': '2 hours',
     'Config.addToken': 'Add Token',
     'Config.checkTokenAddr': 'Token Address is invalidate',
+    'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
+    'Config.existedTokenAddr': 'Existing token address',
 
     'Sidebar.wanchain': 'Wanchain',
 

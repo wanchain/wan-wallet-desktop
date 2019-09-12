@@ -911,6 +911,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
           break
 
+      case 'addCustomToken':
+        let { tokenAddr, symbol, decimals, select } = payload;
+        try {
+          let network = setting.get('network');
+          setting.set(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`, { select, symbol, decimals });
+        } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+        break
+
       case 'updateTokensBalance':
           let { address, tokenScAddr } = payload;
           try {

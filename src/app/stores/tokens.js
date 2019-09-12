@@ -31,12 +31,21 @@ class Tokens {
     })
   }
 
+  @action addCustomToken (tokenInfo) {
+    let { tokenAddr } = tokenInfo;
+    self.tokensList[tokenAddr.toLowerCase()] = {
+      select: false,
+      symbol: tokenInfo.symbol,
+      decimals: tokenInfo.decimals
+    }
+  }
+
   @action updateTokensBalance (tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
     wand.request('crosschain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr }, (err, data) => {
       if (err) {
-        console.log('crosschain_getTokensBalance:', err);
+        console.log('stores_getTokensBalance:', err);
         return;
       }
       self.tokensBalance[tokenScAddr] = data;
@@ -64,10 +73,11 @@ class Tokens {
   @computed get wrc20TokensInfo () {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
+      let val = self.tokensList[item];
       list.push({
         wanAddr: item,
-        symbol: `W${self.tokensList[item].symbol}`,
-        select: self.tokensList[item].select
+        symbol: val.tokenOrigAddr ? `W${val.symbol}` : val.symbol,
+        select: val.select
       })
     })
 
