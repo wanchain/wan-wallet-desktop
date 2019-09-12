@@ -855,6 +855,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
   const [action, id] = actionUni.split('#')
 
   switch (action) {
+      case 'getTokenInfo':
+          let { scAddr } = payload;
+          try {
+            ret = await ccUtil.getErc20Info(scAddr, 'WAN');
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
       case 'getTokensInfo':
           let info, tokens_advance;
           try {

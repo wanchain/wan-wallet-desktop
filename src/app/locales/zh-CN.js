@@ -75,6 +75,8 @@ const zh_CN = {
     'Config.thirtyMinutes': '30分钟',
     'Config.oneHour': '1小时',
     'Config.twoHours': '2小时',
+    'Config.addToken': '添加代币信息',
+    'Config.checkTokenAddr': '代币合约地址不可用',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -358,6 +360,7 @@ const zh_CN = {
 
     'popup.ok': '确定',
     'popup.cancel': '取消',
+    'popup.search': '搜索',
     'title.imported': '已导入的地址',
     'title.copy': '复制',
     'title.QRCode': '二维码',

@@ -5,6 +5,7 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { defaultTimeout } from 'utils/settings';
+import AddToken from 'componentUtils/AddToken';
 
 const { Option } = Select;
 @inject(stores => ({
@@ -18,6 +19,10 @@ const { Option } = Select;
 
 @observer
 class Config extends Component {
+  state = {
+    showAddToken: false
+  }
+
   handleChange = e => {
     this.props.updateSettings({ reinput_pwd: e.target.checked })
   }
@@ -32,6 +37,18 @@ class Config extends Component {
 
   handleTokensSelected = val => {
     this.props.updateTokensInfo(val.wanAddr, 'select', !val.select);
+  }
+
+  handleAddToken = () => {
+    this.setState({
+      showAddToken: true
+    })
+  }
+
+  onCancel =() => {
+    this.setState({
+      showAddToken: false
+    })
   }
 
   render () {
@@ -82,7 +99,13 @@ class Config extends Component {
           {
             wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
           }
+          <div className="add_token" onClick={this.handleAddToken}>
+            <div className="account_pattern"> + </div>
+          </div>
         </Card>
+        {
+          this.state.showAddToken && <AddToken onCancel={this.onCancel}/>
+        }
       </div>
     );
   }

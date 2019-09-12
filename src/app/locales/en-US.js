@@ -74,6 +74,8 @@ const en_US = {
     'Config.thirtyMinutes': '30 minutes',
     'Config.oneHour': '1 hour',
     'Config.twoHours': '2 hours',
+    'Config.addToken': 'Add Token',
+    'Config.checkTokenAddr': 'Token Address is invalidate',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -354,6 +356,7 @@ const en_US = {
 
     'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
+    'popup.search': 'Search',
     'title.imported': 'Imported Address',
     'title.copy': 'Copy',
     'title.QRCode': 'QR Code',

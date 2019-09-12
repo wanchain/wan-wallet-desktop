@@ -74,6 +74,8 @@ const th_TH = {
     'Config.thirtyMinutes': '30 นาที',
     'Config.oneHour': '1 ชั่วโมง',
     'Config.twoHours': '2 ชั่วโมง',
+    'Config.addToken': 'Add Token',
+    'Config.checkTokenAddr': 'Token Address is invalidate',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -356,6 +358,7 @@ const th_TH = {
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
+    'popup.search': 'Search',
     'title.imported': 'นำเข้าแอดเดรส',
     'title.copy': 'คัดลอก',
     'title.QRCode': 'QR Code',

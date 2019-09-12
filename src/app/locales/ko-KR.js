@@ -74,6 +74,8 @@ const ko_KR = {
     'Config.thirtyMinutes': '30분',
     'Config.oneHour': '1시간',
     'Config.twoHours': '2시간',
+    'Config.addToken': 'Add Token',
+    'Config.checkTokenAddr': 'Token Address is invalidate',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -353,6 +355,7 @@ const ko_KR = {
 
     'popup.ok': '확인',
     'popup.cancel': '취소',
+    'popup.search': 'Search',
     'title.imported': '가져온 주소',
     'title.copy': '복사',
     'title.QRCode': 'QR코드',
