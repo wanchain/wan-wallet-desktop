@@ -75,7 +75,7 @@ const th_TH = {
     'Config.oneHour': '1 ชั่วโมง',
     'Config.twoHours': '2 ชั่วโมง',
     'Config.addToken': 'Add Token',
-    'Config.checkTokenAddr': 'Token Address is invalidate',
+    'Config.checkTokenAddr': 'Token Address is invalid',
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.existedTokenAddr': 'Existing token address',
 

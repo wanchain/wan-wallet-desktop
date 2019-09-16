@@ -3,6 +3,8 @@
 @sidebar-width: 230px;
 .sidebar {
   width: @sidebar-width;
+  height: calc(100vh);
+  overflow-y: scroll;
   .logo {
     height: 100px;
     padding: 28px 0 0 30px;
@@ -63,11 +65,10 @@
   margin-left: 20px;
 }
 .collapseItem {
-  display: inline-block;
   width: 20px;
-  height: 100%;
+  height: calc(100vh);
   position: absolute;
-  right: -19px;
+  right: 10px;
   top: 0px;
   z-index: 1;
 
