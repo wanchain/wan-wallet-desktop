@@ -78,6 +78,11 @@ const ko_KR = {
     'Config.thirtyMinutes': '30분',
     'Config.oneHour': '1시간',
     'Config.twoHours': '2시간',
+    'Config.invalidPassword': 'Invalid password. Try again',
+
+    'PasswordConfirmForm.password': 'Password',
+    'PasswordConfirmForm.inputPwd': 'Input password',
+    'PasswordConfirmForm.pwdMessage': 'Please input your Password!',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -218,6 +223,14 @@ const ko_KR = {
     'TransHistory.pending': '트랜잭션 진행중',
     'TransHistory.transactionHistory': '트랜잭션 히스토리',
     'TransHistory.selectAFromAddress': '주소를 선택 바랍니다.',
+    'TransHistory.all': 'All',
+    'TransHistory.private': 'Private',
+    'TransHistory.send': 'Send',
+    'TransHistory.refund': 'Refund',
+    'TransHistory.allTooltip': 'Show all transactions, including normal and private transactions',
+    'TransHistory.privateTooltip': 'Show private transactions',
+
+    'PrivateTransHistory.type': 'TYPE',
 
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',

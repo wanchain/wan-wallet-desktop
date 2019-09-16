@@ -79,6 +79,11 @@ const zh_CN = {
     'Config.thirtyMinutes': '30分钟',
     'Config.oneHour': '1小时',
     'Config.twoHours': '2小时',
+    'Config.invalidPassword': '密码错误，请重试',
+
+    'PasswordConfirmForm.password': '密码',
+    'PasswordConfirmForm.inputPwd': '输入密码',
+    'PasswordConfirmForm.pwdMessage': '请输入密码!',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -219,6 +224,14 @@ const zh_CN = {
     'TransHistory.pending': '进行中',
     'TransHistory.transactionHistory': '转账历史',
     'TransHistory.selectAFromAddress': '请选择账户',
+    'TransHistory.all': '全部',
+    'TransHistory.private': '隐私交易',
+    'TransHistory.send': '发送',
+    'TransHistory.refund': '提币',
+    'TransHistory.allTooltip': '展示所有的交易信息，包括普通交易和隐私交易',
+    'TransHistory.privateTooltip': '展示隐私交易信息',
+
+    'PrivateTransHistory.type': '类型',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

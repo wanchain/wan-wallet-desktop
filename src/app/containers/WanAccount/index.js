@@ -8,7 +8,7 @@ import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 import './index.less';
 import totalImg from 'static/image/wan.png';
 import { WANPATH, WALLETID } from 'utils/settings';
-import TransHistory from 'components/TransHistory';
+import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
@@ -263,7 +263,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import']} />
+            <WANTransHistory name={['normal', 'import']} />
           </Col>
         </Row>
       </div>

@@ -307,7 +307,7 @@ export const getAddrByTypes = function (addrInfo, types) {
       addrs.push(Object.keys(addrInfo[type]));
     })
   }
-  // return [['normal], ['Ledger], ... , ['Trzeor]]
+  // return [['normal], ['Ledger], ... , ['Trezor]]
   return addrs;
 }
 

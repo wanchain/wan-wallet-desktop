@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Checkbox, Card, Select } from 'antd';
+import { Checkbox, Card, Select, Form, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
+import PasswordConfirmForm from 'components/PasswordConfirmForm';
 const { Option } = Select;
+const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
@@ -13,8 +15,18 @@ const { Option } = Select;
 
 @observer
 class Config extends Component {
+  state = {
+    showConfirm: false
+  }
+
   handleChange = e => {
-    this.props.updateSettings({ reinput_pwd: e.target.checked })
+    if (e.target.checked === true) {
+      this.props.updateSettings({ reinput_pwd: e.target.checked });
+    } else { // Confirm pwd when turn off the pwd confirmation.
+      this.setState({
+        showConfirm: true
+      });
+    }
   }
 
   handleStaking = e => {
@@ -23,6 +35,29 @@ class Config extends Component {
 
   handleTimeoutChange = e => {
     this.props.updateSettings({ logout_timeout: e })
+  }
+
+  handleOk = pwd => {
+    if (!pwd) {
+      message.warn(intl.get('Config.invalidPassword'));
+      return;
+    }
+    wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+      if (err) {
+        message.warn(intl.get('Config.invalidPassword'));
+      } else {
+        this.props.updateSettings({ reinput_pwd: false });
+        this.setState({
+          showConfirm: false
+        });
+      }
+    })
+  }
+
+  handleCancel = () => {
+    this.setState({
+      showConfirm: false
+    });
   }
 
   render () {
@@ -55,6 +90,7 @@ class Config extends Component {
         <Card title={intl.get('Config.option')}>
           <p className="set_title">{intl.get('Config.pwdConfirm')}</p>
           <Checkbox checked={reinput_pwd} onChange={this.handleChange}>{intl.get('Config.inputPwd')}</Checkbox>
+          <PwdConfirmForm showConfirm={this.state.showConfirm} handleOk={this.handleOk} handleCancel={this.handleCancel}></PwdConfirmForm>
           <div className="timeout">
             <p className="set_title">{intl.get('Config.loginTimeout')}</p>
             <Select className="timeoutSelect" value={logout_timeout === undefined ? defaultTimeout : logout_timeout} placeholder={intl.get('Config.selectLoginTimeout')} onChange={this.handleTimeoutChange}>
@@ -72,7 +108,7 @@ class Config extends Component {
         <p className="set_title">{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
         </Card>
-      </div>
+        </div>
     );
   }
 }

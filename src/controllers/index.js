@@ -564,21 +564,20 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 try {
                     let { input } = payload;
                     const action = 'REFUND';
-                    // async invoke
-                    let invokeEvents = input.map(v => {
-                        return global.crossInvoker.invokePrivateTrans(action, v);
-                    });
-                    for (let i of invokeEvents) {
-                        let ret = await i;
-                        if(ret.code === false) {
+                    for(let i of input) {
+                        // console.log('refund');
+                        let res = await global.crossInvoker.invokePrivateTrans(action, i);
+                        // console.log(res);
+                        if(res.code === false) {
                             err = {
-                                message: ret.result
-                            }
-                            break;
+                                message: res.result
+                            };
                         }
+                        // console.log('refund end');
                     }
-                    logger.info('Refund result: ' + ret);
                 } catch (e) {
+                    console.log('---------refund error---------');
+                    console.log(e);
                     logger.error(e.message || e.stack)
                     err = e
                 }

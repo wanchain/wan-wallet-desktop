@@ -375,6 +375,41 @@ class WanAddress {
     return historyList.sort((a, b) => b.sendTime - a.sendTime);
   }
 
+  @computed get privateHistoryList() {
+    let historyList = [];
+    let page = self.currentPage;
+    let addrList = [];
+    if (self.selectedAddr) {
+      addrList = self.selectedAddr
+    } else {
+      page.forEach(name => {
+        addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+      })
+    }
+    Object.keys(self.transHistory).forEach(item => {
+      if (addrList.includes(self.transHistory[item]['from']) && 'annotate' in self.transHistory[item]) {
+        let status = self.transHistory[item].status;
+        let type = checkAddrType(self.transHistory[item]['from'], self.addrInfo);
+        let operation = self.transHistory[item]['annotate'];
+        let txHash = self.transHistory[item].txHash;
+        let to = self.transHistory[item].to;
+
+        historyList.push({
+          key: item,
+          txHash: txHash,
+          time: timeFormat(self.transHistory[item]['sendTime']),
+          from: self.addrInfo[type][self.transHistory[item]['from']].name,
+          to: /refund/i.exec(operation) ? self.transHistory[item]['from'] : (/send/i.exec(operation) ? self.transHistory[item]['privateTo'] : to),
+          type: /send/i.exec(operation) ? intl.get('TransHistory.send') : /refund/i.exec(operation) ? intl.get('TransHistory.refund') : '',
+          value: formatNum(fromWei(self.transHistory[item].value)),
+          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+          sendTime: self.transHistory[item]['sendTime']
+        });
+      }
+    });
+    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+  }
+
   @computed get offlineHistoryList() {
     let historyList = [];
 

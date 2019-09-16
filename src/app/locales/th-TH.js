@@ -78,6 +78,11 @@ const th_TH = {
     'Config.thirtyMinutes': '30 นาที',
     'Config.oneHour': '1 ชั่วโมง',
     'Config.twoHours': '2 ชั่วโมง',
+    'Config.invalidPassword': 'Invalid password. Try again',
+
+    'PasswordConfirmForm.password': 'Password',
+    'PasswordConfirmForm.inputPwd': 'Input password',
+    'PasswordConfirmForm.pwdMessage': 'Please input your Password!',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -218,6 +223,14 @@ const th_TH = {
     'TransHistory.pending': 'กำลังดำเนินการ',
     'TransHistory.transactionHistory': 'ประวัติการทำธุรกรรม',
     'TransHistory.selectAFromAddress': 'กรุณาเลือกแอดเดรสของคุณ',
+    'TransHistory.all': 'All',
+    'TransHistory.private': 'Private',
+    'TransHistory.send': 'Send',
+    'TransHistory.refund': 'Refund',
+    'TransHistory.allTooltip': 'Show all transactions, including normal and private transactions',
+    'TransHistory.privateTooltip': 'Show private transactions',
+
+    'PrivateTransHistory.type': 'TYPE',
 
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',

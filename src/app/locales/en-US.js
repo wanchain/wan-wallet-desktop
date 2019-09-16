@@ -78,6 +78,11 @@ const en_US = {
     'Config.thirtyMinutes': '30 minutes',
     'Config.oneHour': '1 hour',
     'Config.twoHours': '2 hours',
+    'Config.invalidPassword': 'Invalid password. Try again',
+
+    'PasswordConfirmForm.password': 'Password',
+    'PasswordConfirmForm.inputPwd': 'Input password',
+    'PasswordConfirmForm.pwdMessage': 'Please input your Password!',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -219,6 +224,14 @@ const en_US = {
     'TransHistory.pending': 'Pending',
     'TransHistory.transactionHistory': 'Transaction History',
     'TransHistory.selectAFromAddress': 'Select an account name',
+    'TransHistory.all': 'All',
+    'TransHistory.private': 'Private',
+    'TransHistory.send': 'Send',
+    'TransHistory.refund': 'Refund',
+    'TransHistory.allTooltip': 'Show all transactions, including normal and private transactions',
+    'TransHistory.privateTooltip': 'Show private transactions',
+
+    'PrivateTransHistory.type': 'TYPE',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',
