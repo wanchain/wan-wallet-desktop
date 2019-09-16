@@ -27,10 +27,14 @@ class AddToken extends Component {
         message.warn(intl.get('Config.checkTokenAddr'))
         return;
       }
-      this.setState({
-        showConfirm: true,
-        tokenInfo: ret
-      });
+      if (ret.decimals !== '0') {
+        this.setState({
+          showConfirm: true,
+          tokenInfo: ret
+        });
+      } else {
+        message.warn(intl.get('Config.checkTokenAddr'))
+      }
     })
   }
 

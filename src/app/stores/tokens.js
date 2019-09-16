@@ -103,7 +103,7 @@ class Tokens {
       if (self.tokensList[item].select) {
         list.push({
           tokenAddr: item,
-          symbol: `W${self.tokensList[item].symbol}`
+          symbol: self.tokensList[item].tokenOrigAddr ? `W${self.tokensList[item].symbol}` : self.tokensList[item].symbol
         })
       }
     });
