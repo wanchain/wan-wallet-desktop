@@ -213,6 +213,7 @@ const ko_KR = {
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',
     'menuConfig.wan': 'WAN',
+    'menuConfig.eth': 'ETH',
     'menuConfig.hardwareWallet': '하드웨어 지갑',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

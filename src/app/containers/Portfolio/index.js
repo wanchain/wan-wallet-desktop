@@ -4,10 +4,24 @@ import { observer, inject } from 'mobx-react';
 
 import './index.less';
 import wanLogo from 'static/image/wan.png';
+import ethLogo from 'static/image/eth.png';
+import btcLogo from 'static/image/btc.png';
 
 function TokenImg (text) {
+  let img;
+  switch (text) {
+    case 'WAN':
+      img = wanLogo;
+      break;
+    case 'ETH':
+      img = ethLogo;
+      break;
+    case 'BTC':
+      img = btcLogo;
+      break;
+  }
   return (
-    <div><img className="nameIco" src={wanLogo} /><span>{text}</span></div>
+    <div><img className="nameIco" src={img} /><span>{text}</span></div>
   );
 }
 

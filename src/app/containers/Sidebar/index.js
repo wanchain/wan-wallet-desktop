@@ -69,13 +69,13 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
     if (tokensOnSideBar.length) {
-      walletChildren.splice(1, walletChildren.length - 1, ...tokensOnSideBar.map(item => ({
+      walletChildren.splice(2, walletChildren.length - 2, ...tokensOnSideBar.map(item => ({
         title: item.symbol,
         key: `/tokens/${item.tokenAddr}/${item.symbol}`,
         icon: 'block'
       })));
     } else {
-      walletChildren.splice(1, walletChildren.length - 1);
+      walletChildren.splice(2, walletChildren.length - 2);
     }
 
     /** TODO */

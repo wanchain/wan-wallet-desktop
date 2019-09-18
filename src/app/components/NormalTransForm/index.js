@@ -143,16 +143,16 @@ class NormalTransForm extends Component {
     this.props.onSend(this.props.from);
   }
 
-  handleClick = (e, gasPrice, gasLimit, nonce) => {
+  handleClick = (e, gasPrice, gasLimit, nonce, fee) => {
     let { form, addrInfo, transType } = this.props;
     let from = form.getFieldValue('from');
     this.props.updateTransParams(this.props.from, { gasLimit, gasPrice, nonce });
     this.setState({
-      gasFee: e.target.value
+      gasFee: fee
     })
     if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
       form.setFieldsValue({
-        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(e.target.value))
+        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
       });
     }
   }
@@ -359,9 +359,9 @@ class NormalTransForm extends Component {
               : <Form.Item label={intl.get('NormalTransForm.fee')}>
                   {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                     <Radio.Group>
-                      <Radio.Button onClick={e => this.handleClick(e, minGasPrice, gasLimit, nonce)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                      <Radio.Button onClick={e => this.handleClick(e, averageGasPrice, gasLimit, nonce)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                      <Radio.Button onClick={e => this.handleClick(e, maxGasPrice, gasLimit, nonce)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                      <Radio.Button onClick={e => this.handleClick(e, minGasPrice, gasLimit, nonce, minFee)} value="minFee"><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                      <Radio.Button onClick={e => this.handleClick(e, averageGasPrice, gasLimit, nonce, averageFee)} value="averageFee"><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                      <Radio.Button onClick={e => this.handleClick(e, maxGasPrice, gasLimit, nonce, maxFee)} value="maxFee"><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
                     </Radio.Group>
                   )}
                 </Form.Item>

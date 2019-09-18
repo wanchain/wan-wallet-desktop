@@ -67,6 +67,7 @@ class WanAddress {
       }
       wand.request('transaction_showRecords', (err, val) => {
         if (!err && val.length !== 0) {
+          val = val.filter(item => item.chainType === 'WAN');
           val.forEach(item => {
             item.from = wanUtil.toChecksumAddress(item.from);
             if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {

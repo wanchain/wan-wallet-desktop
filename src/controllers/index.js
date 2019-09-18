@@ -299,6 +299,26 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
 
+        case 'ethBalance':
+          let ethbalance
+          const { ethAddr } = payload
+
+          try {
+              if (_.isArray(ethAddr) && ethAddr.length > 1) {
+                  const addresses = ethAddr.map(item => `0x${item}`)
+                  ethbalance = await ccUtil.getMultiEthBalances(addresses)
+              } else {
+                ethbalance = await ccUtil.getEthBalance(`0x${ethAddr}`)
+                ethbalance = { [`0x${ethAddr}`]: ethbalance }
+              }
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ethbalance })
+          break
+
         case 'isWanAddress':
             let ret;
             try {

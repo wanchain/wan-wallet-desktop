@@ -158,6 +158,11 @@ class LanguageIntl {
             title: intl.get('menuConfig.wan'),
             key: '/wanAccount',
             icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.eth'),
+            key: '/ethAccount',
+            icon: 'block'
           }
         ]
       },

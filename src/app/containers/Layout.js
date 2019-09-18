@@ -7,7 +7,7 @@ import SideBar from './Sidebar';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
-import { getBalance, isSdkReady } from 'utils/helper';
+import { getBalance, isSdkReady, getEthBalance } from 'utils/helper';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
 const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
@@ -15,10 +15,12 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
 @inject(stores => ({
   auth: stores.session.auth,
   addrInfo: stores.wanAddress.addrInfo,
+  ethAddrInfo: stores.ethAddress.addrInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
+  updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
 }))
 
 @observer
@@ -31,6 +33,7 @@ class Layout extends Component {
   componentDidMount () {
     this.wanTimer = setInterval(() => {
       this.updateWANBalanceForInter();
+      this.updateETHBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
   }
@@ -71,6 +74,19 @@ class Layout extends Component {
     getBalance(allAddr).then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateWANBalance(res);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  updateETHBalanceForInter = () => {
+    const { ethAddrInfo } = this.props;
+    const allAddr = (Object.values(ethAddrInfo).map(item => Object.keys(item))).flat();
+    if (Array.isArray(allAddr) && allAddr.length === 0) return;
+    getEthBalance(allAddr).then(res => {
+      if (res && Object.keys(res).length) {
+        this.props.updateETHBalance(res);
       }
     }).catch(err => {
       console.log(err);

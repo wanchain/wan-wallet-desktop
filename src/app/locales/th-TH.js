@@ -213,6 +213,7 @@ const th_TH = {
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',
     'menuConfig.wan': 'WAN',
+    'menuConfig.eth': 'ETH',
     'menuConfig.hardwareWallet': 'กระเป๋าแบบฮาร์ดแวร์',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

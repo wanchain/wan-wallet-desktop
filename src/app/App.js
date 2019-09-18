@@ -23,6 +23,7 @@ class App extends Component {
         stores.session.initSettings();
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
+        stores.ethAddress.getUserAccountFromDB();
         clearInterval(id);
       }
     }, 1000);

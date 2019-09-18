@@ -61,6 +61,26 @@ export const getBalance = function (arr) {
   })
 };
 
+export const getEthBalance = function (arr) {
+  const addrArr = arr.map(item => item.substr(2));
+
+  return new Promise((resolve, reject) => {
+    let thisVal
+    wand.request('address_ethBalance', { ethAddr: addrArr }, (err, val) => {
+      thisVal = Object.assign({}, val);
+      if (err) {
+        console.log('Get balance failed ', err)
+        return reject(err)
+      } else {
+        Object.keys(thisVal).forEach(item => {
+          thisVal[item] = fromWei(thisVal[item]);
+        });
+        return resolve(thisVal);
+      }
+    })
+  })
+};
+
 export const getValueByAddrInfo = function (value, type, addrInfo) {
   if (value.indexOf(':') !== -1) {
     let addrArr = value.split(':');
