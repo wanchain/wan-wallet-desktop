@@ -227,7 +227,7 @@ const en_US = {
     'TransHistory.all': 'All',
     'TransHistory.private': 'Private',
     'TransHistory.send': 'Send',
-    'TransHistory.refund': 'Refund',
+    'TransHistory.refund': 'Redeem',
     'TransHistory.allTooltip': 'Show all transactions, including normal and private transactions',
     'TransHistory.privateTooltip': 'Show private transactions',
 

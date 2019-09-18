@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Select, Radio, message, Icon } from 'antd';
+import { Table, Select, Radio, message, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -82,8 +82,16 @@ class WANTransHistory extends Component {
               {addrList.map((item, index) => <Option value={item.address} key={index}>{item.name}</Option>)}
             </Select>
             <Radio.Group className="typeRadio" onChange={this.onTypeChange} defaultValue={this.state.type}>
-              <Radio value={'all'}>{intl.get('TransHistory.all')}<Icon type="question-circle" title={intl.get('TransHistory.allTooltip')} /></Radio>
-              <Radio value={'private'}>{intl.get('TransHistory.private')}<Icon type="question-circle" title={intl.get('TransHistory.privateTooltip')} /></Radio>
+              <Radio className="allRadio" value={'all'}>{intl.get('TransHistory.all')}
+                <Tooltip placement="bottom" title={intl.get('TransHistory.allTooltip')} >
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </Radio>
+              <Radio value={'private'}>{intl.get('TransHistory.private')}
+                <Tooltip placement="bottom" title={intl.get('TransHistory.privateTooltip')} >
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </Radio>
             </Radio.Group>
         </div>
         <div className="historyRow">
