@@ -27,6 +27,7 @@ export default merge(common, {
       stats: {
         children: false,
         modules: false,
+        warnings: false
       },
       clientLogLevel: "none",
       port: WDS_PORT,
