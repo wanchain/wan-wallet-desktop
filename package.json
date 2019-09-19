@@ -72,7 +72,7 @@
     "trezor-connect": "^8.0.1",
     "uuid": "^3.3.2",
     "wanchain-js-sdk": "github:wanchain/wanchain-js-sdk#wns-dev",
-    "wanchain-util": "^1.2.0",
+    "wanchain-util": "git+https://github.com/wanchain/wanchain-util.git#v1.2.1",
     "wanchainjs-tx": "^1.5.0",
     "wanchainjs-util": "^5.2.1",
     "web3": "^1.0.0-beta.55",
