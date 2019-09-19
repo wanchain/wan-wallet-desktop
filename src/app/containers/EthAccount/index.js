@@ -8,7 +8,7 @@ import totalImg from 'static/image/eth.png';
 import { ETHPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/EthTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import SendNormalTrans from 'components/SendNormalTrans';
+import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType, hasSameName } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 

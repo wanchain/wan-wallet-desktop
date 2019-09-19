@@ -157,9 +157,22 @@ export const estimateGas = function (chainType, tx) {
 
 export const checkWanAddr = function (address) {
   return new Promise((resolve, reject) => {
-    wand.request('address_isWanAddress', { address: address }, (err, val) => {
+    wand.request('address_isWanAddress', { address }, (err, val) => {
       if (err) {
         console.log('Check WAN address failed ', err);
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};
+
+export const checkETHAddr = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isEthAddress', { address }, (err, val) => {
+      if (err) {
+        console.log('Check ETH address failed ', err);
         return reject(err);
       } else {
         return resolve(val);
