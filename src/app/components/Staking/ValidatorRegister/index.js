@@ -165,7 +165,7 @@ class ValidatorRegister extends Component {
     } else {
       wand.request('staking_registerValidator', { tx }, (err, ret) => {
         if (err) {
-          message.warn(err.message);
+          message.warn(intl.get('ValidatorRegister.registerFailed'));
         }
         this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
@@ -221,10 +221,8 @@ class ValidatorRegister extends Component {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      console.log('----------error occurred-------');
       console.log(error);
-      // message.error(JSON.stringify(error));
-      message.error('An error has occurred');
+      message.error(intl.get('ValidatorRegister.registerFailed'));
     }
   }
 

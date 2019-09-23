@@ -64,13 +64,11 @@ export const getBalanceWithPrivateBalance = function (arr, path) {
   return new Promise((resolve, reject) => {
     let thisVal = {};
     wand.request('address_balances', { addr: addrArr, path: path }, (err, val) => {
-      // console.log(val);
       if (err) {
         return reject(err)
       } else {
         thisVal.balance = Object.assign({}, val.balance);
         thisVal.privateBalance = Object.assign({}, val.privateBalance);
-        // console.log('privateBalance:', val.privateBalance);
         Object.keys(thisVal.balance).forEach(item => {
           thisVal.balance[item] = fromWei(thisVal.balance[item]);
         });
@@ -354,11 +352,9 @@ export const openScanOTA = function(path) {
   return new Promise((resolve, reject) => {
     wand.request('address_scanMultiOTA', path, function (err, res) {
       if (err) {
-        console.log('openScanOTA failed');
-        console.log(err);
+        console.log('Open OTA scanner failed:', err);
         return reject(err);
       } else {
-        // console.log(res);
         return resolve();
       }
     });

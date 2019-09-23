@@ -103,7 +103,7 @@ class ModifyForm extends Component {
       } else {
         wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
           if (err) {
-            message.warn(err.message);
+            message.warn(intl.get('ValidatorRegister.updateFailed'));
           } else {
             console.log('validatorModify ret:', ret);
           }
@@ -125,7 +125,7 @@ class ModifyForm extends Component {
       } else {
         wand.request('staking_getCurrentEpochInfo', null, (err, ret) => {
           if (err) {
-            message.warn(err.message);
+            message.warn(intl.get('ValidatorRegister.updateFailed'));
           } else {
             if (ret.epochId === record.feeRateChangedEpoch) {
               message.warn(intl.get('ValidatorRegister.modifyFeeRateWarning'))
@@ -133,7 +133,8 @@ class ModifyForm extends Component {
             }
             wand.request('staking_PosStakeUpdateFeeRate', { tx }, (err, ret) => {
               if (err) {
-                message.warn(err.message);
+                // message.warn(err.message);
+                message.warn(intl.get('ValidatorRegister.updateFailed'));
               } else {
                 console.log('PosStakeUpdateFeeRate ret:', ret);
               }
@@ -196,10 +197,8 @@ class ModifyForm extends Component {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      console.log('----------error occurred-------');
       console.log(error);
-      message.error(JSON.stringify(error));
-      // message.error('An error has occurred');
+      message.error(intl.get('ValidatorRegister.updateFailed'));
     }
   }
 

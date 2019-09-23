@@ -359,6 +359,10 @@ const ko_KR = {
     'ValidatorRegister.modifyTypeTitle': '수정된 파라미터',
     'ValidatorRegister.invalidType': '유효하지 않은 파라미터',
     'ValidatorRegister.selectType': '파라미터를 선택하세요',
+    'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
+    'ValidatorRegister.registerFailed': 'Register failed',
+    'ValidatorRegister.topUpFailed': 'Top up failed',
+    'ValidatorRegister.updateFailed': 'Update failed',
 
     'Offline.stepOne': '1단계',
     'Offline.stepOneText': '정보를 생성하세요',

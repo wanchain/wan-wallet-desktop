@@ -362,6 +362,9 @@ const th_TH = {
     'ValidatorRegister.invalidType': 'พารามิเตอร์ไม่ถูกต้อง',
     'ValidatorRegister.selectType': 'กรุณาเลือกพารามิเตอร์',
     'ValidatorRegister.modifyFeeRateWarning': 'สามารถแก้ไขได้มากที่สุด 1 ครั้งต่อวัน',
+    'ValidatorRegister.registerFailed': 'Register failed',
+    'ValidatorRegister.topUpFailed': 'Top up failed',
+    'ValidatorRegister.updateFailed': 'Update failed',
 
     'Offline.stepOne': 'ขั้นตอนที่ 1',
     'Offline.stepOneText': 'รายละเอียดการสร้าง',

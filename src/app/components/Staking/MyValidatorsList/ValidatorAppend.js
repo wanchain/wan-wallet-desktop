@@ -109,7 +109,7 @@ class InForm extends Component {
       }
       wand.request('staking_validatorAppend', { tx }, (err, ret) => {
         if (err) {
-          message.warn(err.message);
+          message.warn(intl.get('ValidatorRegister.topUpFailed'));
         } else {
           console.log('validatorIn ret:', ret);
         }
@@ -167,10 +167,8 @@ class InForm extends Component {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      console.log('----------error occurred-------');
       console.log(error);
-      message.error(JSON.stringify(error));
-      // message.error('An error has occurred');
+      message.error(intl.get('ValidatorRegister.topUpFailed'));
     }
   }
 

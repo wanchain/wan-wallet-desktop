@@ -362,6 +362,9 @@ const en_US = {
     'ValidatorRegister.invalidType': 'Invalid parameter',
     'ValidatorRegister.selectType': 'Select a parameter',
     'ValidatorRegister.modifyFeeRateWarning': 'Only one modification is allowed per day',
+    'ValidatorRegister.registerFailed': 'Register failed',
+    'ValidatorRegister.topUpFailed': 'Top up failed',
+    'ValidatorRegister.updateFailed': 'Update failed',
 
     'Offline.stepOne': 'Step 1',
     'Offline.stepOneText': 'Generate Information',

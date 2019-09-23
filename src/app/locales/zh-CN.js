@@ -365,6 +365,9 @@ const zh_CN = {
     'ValidatorRegister.invalidType': '参数不合法',
     'ValidatorRegister.selectType': '选择参数',
     'ValidatorRegister.modifyFeeRateWarning': '同一天只允许修改一次委托费率',
+    'ValidatorRegister.registerFailed': '注册失败',
+    'ValidatorRegister.topUpFailed': '追加资金失败',
+    'ValidatorRegister.updateFailed': '更新失败',
 
     'Offline.stepOne': '第一步',
     'Offline.stepOneText': '获取信息',
