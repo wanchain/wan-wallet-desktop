@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Table, Select } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Table, Select } from 'antd';
 
 import './index.less';
-import { ETHMAIN, ETHTESTNET, TRANSTYPE } from 'utils/settings';
+import { ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 import history from 'static/image/history.png';
 

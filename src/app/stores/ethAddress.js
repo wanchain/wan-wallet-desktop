@@ -60,7 +60,6 @@ class EthAddress {
         if (!err && val.length !== 0) {
           val = val.filter(item => item.chainType === 'ETH');
           val.forEach(item => {
-            item.from = wanUtil.toChecksumAddress(item.from);
             if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
               self.transHistory[item.txHash] = item;
             }

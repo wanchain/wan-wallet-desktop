@@ -57,7 +57,7 @@ class EthAccount extends Component {
     }
   ];
 
-  columnsTree = this.columns.map((col) => {
+  columnsTree = this.columns.map(col => {
     if (!col.editable) {
       return col;
     }
