@@ -16,7 +16,7 @@ import { formatNum } from 'utils/support';
 }))
 
 @observer
-class Validators extends Component {
+class DelegateList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
@@ -93,11 +93,11 @@ class Validators extends Component {
 
   render () {
     return (
-      <div className="validators">
+      <div>
         <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }
 }
 
-export default Validators;
+export default DelegateList;

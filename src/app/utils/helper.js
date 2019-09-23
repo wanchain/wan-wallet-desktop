@@ -337,9 +337,9 @@ export const getContractAddr = function () {
   })
 };
 
-export const getContractData = function (func, validatorAddr) {
+export const getContractData = function (func, ...params) {
   return new Promise((resolve, reject) => {
-    wand.request('staking_getContractData', { func, validatorAddr }, (err, val) => {
+    wand.request('staking_getContractData', { func, params }, (err, val) => {
       if (err) {
         err = 'staking_getContractData failed: ' + err;
         return reject(err);

@@ -389,7 +389,7 @@ class DelegateInForm extends Component {
       rawTx.chainId = chainId;
 
       let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
-
+      
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
       console.log('Transaction hash:', txHash);
       let params = {
@@ -531,6 +531,7 @@ class DelegateInForm extends Component {
                             showSearch
                             allowClear
                             optionLabelProp="value"
+                            disabled={this.props.topUp}
                             dropdownMatchSelectWidth={false}
                             dropdownStyle={{ width: '420px' }}
                             placeholder={intl.get('StakeInForm.selectAddress')}
