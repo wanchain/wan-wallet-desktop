@@ -354,9 +354,8 @@ export const openScanOTA = function(path) {
   return new Promise((resolve, reject) => {
     wand.request('address_scanMultiOTA', path, function (err, res) {
       if (err) {
-        console.log('err:=======');
-        console.log(err);
         console.log('openScanOTA failed');
+        console.log(err);
         return reject(err);
       } else {
         // console.log(res);

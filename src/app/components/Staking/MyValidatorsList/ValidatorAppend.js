@@ -119,13 +119,13 @@ class InForm extends Component {
     }
   }
 
-  trezorValidatorAppend = async(path, from, value, lockTime, publicKey1) => {
-    let address = this.props.record.validator.address;
+  trezorValidatorAppend = async (path, from, value, lockTime, publicKey1) => {
     let chainId = await getChainId();
     let func = 'stakeAppend';// abi function
     try {
       let nonce = await getNonce(from, 'wan');
       let gasPrice = await getGasPrice('wan');
+      let address = this.props.record.validator.address;
       let data = await getContractData(func, address);
       let amountWei = toWei(value);
       const cscContractAddr = await getContractAddr();
