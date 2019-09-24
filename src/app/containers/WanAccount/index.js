@@ -37,7 +37,9 @@ class WanAccount extends Component {
     super(props);
     this.state = {
       bool: true,
-      isUnlock: false
+      isUnlock: false,
+      expanded: false,
+      expandedRows: []
     }
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
@@ -110,14 +112,13 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data
     };
-    console.log(trans);
     // Private tx
     if (wanUtil.isValidChecksumOTAddress(trans.to)) {
       return new Promise((resolve, reject) => {
         wand.request('transaction_private', trans, function (err, txHash) {
           if (err) {
             message.warn(intl.get('WanAccount.sendTransactionFailed'));
-            console.log(err);
+            console.log('Send transaction failed:', err);
             reject(false)
           } else {
             this.props.updateTransHistory();
@@ -131,7 +132,7 @@ class WanAccount extends Component {
         wand.request('transaction_normal', trans, function (err, txHash) {
           if (err) {
             message.warn(intl.get('WanAccount.sendTransactionFailed'));
-            console.log(err);
+            console.log('Send transaction failed:', err);
             reject(false)
           } else {
             this.props.updateTransHistory();
@@ -145,8 +146,6 @@ class WanAccount extends Component {
 
   createAccount = () => {
     const { addrInfo, addAddress } = this.props;
-    console.log(addrInfo);
-
     const addrLen = Object.keys(addrInfo['normal']).length;
     this.setState({
       bool: false
@@ -154,7 +153,6 @@ class WanAccount extends Component {
     if (this.state.bool) {
       let path = `${WANPATH}${addrLen}`;
       wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
-        console.log(WALLETID.NATIVE, path);
         if (!err) {
           wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
             if (!err && val_account_create) {
@@ -170,10 +168,9 @@ class WanAccount extends Component {
               // Scan new account
               wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
                 if (err) {
-                  console.log('openScanOTA failed');
-                  console.log(err);
+                  console.log('Open OTA scanner failed:', err);
                 } else {
-                  console.log(res);
+                  // console.log(res);
                 }
               });
             }
@@ -234,6 +231,40 @@ class WanAccount extends Component {
     )
   }
 
+  toggleExpand = () => {
+    if (this.state.expanded) {
+      this.setState({
+        expandedRows: []
+      });
+    } else {
+      this.setState({
+        expandedRows: this.props.getAddrList.map(r => r.key)
+      });
+    }
+    this.setState({ expanded: !this.state.expanded });
+  }
+
+  onExpand = (expanded, record) => {
+    try {
+      if (expanded) {
+        this.setState({
+          expandedRows: [...this.state.expandedRows, record.key]
+        });
+      } else {
+        let list = [...this.state.expandedRows];
+        list.splice(list.findIndex(n => n === record.key), 1);
+        this.setState({
+          expandedRows: list
+        });
+        if (list.length === 0) {
+          this.setState({ expanded: false });
+        }
+      }
+    } catch (err) {
+      console.log('expand error:', err);
+    }
+  }
+
   render() {
     const { getAmount, getAddrList } = this.props;
     const components = {
@@ -244,8 +275,17 @@ class WanAccount extends Component {
     };
 
     this.props.language && this.columnsTree.forEach(col => {
-      col.title = intl.get(`WanAccount.${col.dataIndex}`)
-    })
+      if (col.dataIndex !== 'blank') {
+        col.title = intl.get(`WanAccount.${col.dataIndex}`);
+      } else {
+        col.title = <img
+          src={arrow}
+          onClick={this.toggleExpand}
+          className={this.state.expanded ? 'arrow-down' : 'arrow-right'}
+          style={{ width: '12px', height: '10px', cursor: 'pointer' }}
+        />;
+      }
+    });
 
     return (
       <div className="account">
@@ -257,8 +297,8 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList}
-              expandedRowRender={this.expandContent} expandIconAsCell={false} expandIconColumnIndex={4} expandIcon={this.customExpandIcon} />
+            <Table components={components} expandedRowKeys={this.state.expandedRows} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList}
+              expandedRowRender={this.expandContent} onExpand={this.onExpand} expandIconAsCell={false} expandIconColumnIndex={4} expandIcon={this.customExpandIcon} />
           </Col>
         </Row>
         <Row className="mainBody">
