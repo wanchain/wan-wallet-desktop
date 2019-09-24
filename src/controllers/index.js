@@ -551,7 +551,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.info('Private transaction: ' + JSON.stringify(input));
                 let action = 'SEND';
                 ret = await global.crossInvoker.invokePrivateTrans(action, input);
-                logger.info('Transaction hash: ' + ret);
+                logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

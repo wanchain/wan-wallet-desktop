@@ -28,11 +28,8 @@ class ConfigFactoryService {
         // this.config.loglevel = 'debug'
 
         this.config.iWAN = {
-            /** TODO */
-            // "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
-            // "port": 8443,
-            "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "192.168.1.179",
-            "port": 34443,
+            "url" :  this.config.network.includes('main') ? 'api.wanchain.org' : "apitest.wanchain.org",
+            "port": 8443,
             "wallet": {
                 "apikey": process.env.API_KEY,
                 "secret": process.env.SECRET_KEY
