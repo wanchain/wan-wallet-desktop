@@ -13,7 +13,10 @@ class Tokens {
 
   @observable tokensBalance = {};
 
-  @action setCurrToken (addr) {
+  @action setCurrToken (addr, symbol) {
+    if (symbol) {
+      addr = Object.keys(self.tokensList).filter(item => self.tokensList[item].symbol === symbol)
+    }
     self.currTokenAddr = addr;
   }
 

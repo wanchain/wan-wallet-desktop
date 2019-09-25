@@ -6,6 +6,7 @@ import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import languageIntl from './languageIntl';
 import sendTransParams from './sendTransParams';
+import sendCrossChainParams from './sendCrossChainParams';
 import staking from './staking';
 import tokens from './tokens';
 
@@ -16,6 +17,7 @@ const stores = {
   wanAddress,
   ethAddress,
   sendTransParams,
+  sendCrossChainParams,
   staking,
   languageIntl,
   tokens,

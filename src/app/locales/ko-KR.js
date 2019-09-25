@@ -193,6 +193,8 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
+    'CrossChainTransForm.lockedAccount': 'Locked Account',
+
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',
 
@@ -223,6 +225,7 @@ const ko_KR = {
     'menuConfig.validator': '검증인',
     'menuConfig.staking': '스테이킹',
     'menuConfig.settings': '설정',
+    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',
@@ -356,6 +359,8 @@ const ko_KR = {
     'Offline.inputRawTxText': '합의된 트랜잭션을 입력 바랍니다',
     'Offline.linkToWebsite': '오프라인 지갑 다운로드',
 
+    'CrossChain.CrossChain': 'Cross Chain',
+
     'popup.ok': '확인',
     'popup.cancel': '취소',
     'popup.search': 'Search',
@@ -363,6 +368,7 @@ const ko_KR = {
     'title.copy': '복사',
     'title.QRCode': 'QR코드',
 
+    'network.down': 'The network request failed, Please try again later!'
 }
 
 export default ko_KR;

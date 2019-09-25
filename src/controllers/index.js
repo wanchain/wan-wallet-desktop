@@ -903,12 +903,33 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           try {
               let network = setting.get('network');
               tokens_advance = setting.get('settings').tokens_advance[network];
-              ret = await ccUtil.getRegErc20Tokens()
-              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr))
+              ret = await ccUtil.getRegErc20Tokens();
+              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
+              if (network === 'main') {
+                ret = [{
+                  tokenWanAddr: '0x28362cd634646620ef2290058744f9244bb90ed9',
+                  symbol: 'WETH',
+                  decimals: 18
+                }, {
+                  tokenWanAddr: '0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
+                  symbol: 'WBTC',
+                  decimals: 8
+                }].concat(ret);
+              } else {
+                ret = [{
+                  tokenWanAddr: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
+                  symbol: 'WETH',
+                  decimals: 18
+                }, {
+                  tokenWanAddr: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
+                  symbol: 'WBTC',
+                  decimals: 8
+                }].concat(ret);
+              }
               ret.forEach(item => {
                 if(info[item.tokenOrigAddr]) {
                   Object.assign(item, info[item.tokenOrigAddr])
-                } else {
+                } else if (!['WBTC', 'WETH'].includes(item.symbol)) {
                   Object.assign(item, {
                     symbol: 'N/A',
                     decimals: 0
@@ -965,6 +986,16 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           }
           sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
+
+      case 'getSmgList':
+        try {
+          ret = await ccUtil.getSmgList(payload.crossChain);
+        } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break
   }
 })
 

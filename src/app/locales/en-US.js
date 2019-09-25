@@ -193,6 +193,8 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
+    'CrossChainTransForm.lockedAccount': 'Locked Account',
+
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
 
@@ -223,6 +225,7 @@ const en_US = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
+    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
@@ -357,12 +360,16 @@ const en_US = {
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
 
+    'CrossChain.CrossChain': 'Cross Chain',
+
     'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
     'popup.search': 'Search',
     'title.imported': 'Imported Address',
     'title.copy': 'Copy',
     'title.QRCode': 'QR Code',
+
+    'network.down': 'The network request failed, Please try again later!'
 
 }
 

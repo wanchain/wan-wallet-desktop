@@ -193,6 +193,8 @@ const zh_CN = {
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
+    'CrossChainTransForm.lockedAccount': '锁定账户',
+
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
 
@@ -221,9 +223,9 @@ const zh_CN = {
     'menuConfig.galaxyPos': '星系共识',
     'menuConfig.delegation': '委托',
     'menuConfig.validator': '验证人',
-
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
+    'menuConfig.crossChain': '跨链',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
     'utils.helper.getNonceFailed': '获取nonce失败',
@@ -361,6 +363,8 @@ const zh_CN = {
     'Offline.inputRawTxText': '请正确输入签名后的交易数据',
     'Offline.linkToWebsite': '下载离线钱包',
 
+    'CrossChain.CrossChain': '跨链',
+
     'popup.ok': '确定',
     'popup.cancel': '取消',
     'popup.search': '搜索',
@@ -368,5 +372,6 @@ const zh_CN = {
     'title.copy': '复制',
     'title.QRCode': '二维码',
 
+    'network.down': '网络请求失败，请稍后再试!'
 }
 export default zh_CN;

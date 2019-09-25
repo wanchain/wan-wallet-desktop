@@ -167,6 +167,19 @@ class LanguageIntl {
         ]
       },
       {
+        title: intl.get('menuConfig.crossChain'),
+        step: '1',
+        key: '/crossChain',
+        icon: 'wallet',
+        children: [
+          {
+            title: intl.get('menuConfig.eth'),
+            key: '/crossETH',
+            icon: 'block'
+          }
+        ]
+      },
+      {
         title: intl.get('menuConfig.hardwareWallet'),
         step: '1',
         key: '/hardwareWallet',

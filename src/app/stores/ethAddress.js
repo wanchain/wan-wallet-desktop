@@ -21,7 +21,7 @@ class EthAddress {
 
     @action addAddress (newAddr) {
       self.addrInfo['normal'][newAddr.address] = {
-        name: `Account${newAddr.start + 1}`,
+        name: `ETH-Account${newAddr.start + 1}`,
         address: newAddr.address,
         balance: '0',
         path: newAddr.start
@@ -40,7 +40,7 @@ class EthAddress {
       addrArr.forEach(addr => {
         if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
           if (addr.name === undefined) {
-            addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+            addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
           }
           self.addrInfo[type][addr.address] = {
             name: addr.name,

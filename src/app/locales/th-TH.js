@@ -193,6 +193,8 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
+    'CrossChainTransForm.lockedAccount': 'Locked Account',
+
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',
 
@@ -223,6 +225,7 @@ const th_TH = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'การตั้งค่า',
+    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': 'ไม่สามารถดึงยอดคงเหลือได้',
     'utils.helper.getNonceFailed': 'ไม่สามารถดึง nonce ได้',
@@ -359,6 +362,8 @@ const th_TH = {
     'Offline.inputRawTxText': 'กรุณากรอกข้อมูลธุรกรรม',
     'Offline.linkToWebsite': 'ดาวน์โหลดกระเป๋าแบบออฟไลน์',
 
+    'CrossChain.CrossChain': 'Cross Chain',
+
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',
     'popup.search': 'Search',
@@ -366,5 +371,6 @@ const th_TH = {
     'title.copy': 'คัดลอก',
     'title.QRCode': 'QR Code',
 
+    'network.down': 'The network request failed, Please try again later!'
 }
 export default th_TH;

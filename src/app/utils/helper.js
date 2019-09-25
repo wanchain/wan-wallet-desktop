@@ -142,6 +142,19 @@ export const getGasPrice = function (chainType) {
   })
 };
 
+export const getSmgList = function (crossChain) {
+  return new Promise((resolve, reject) => {
+    wand.request('crosschain_getSmgList', { crossChain }, (err, val) => {
+      if (err) {
+        console.log('Get Smg list failed', err)
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+}
+
 export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
     wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
