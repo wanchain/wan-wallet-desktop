@@ -21,8 +21,8 @@ class ConfigFactoryService {
         this.config.logPathPrex = WalletHelper.getLogPath()
         this.config.databasePathPrex = path.join(dataPathPrex, `${this.config.network}DB`)
         this.config.walletPathPrex = path.join(dataPathPrex, 'walletDB')
-        // this.config.logtofile = true   /** TODO */
-        // this.config.logfile = 'wan-sdk-log'
+        this.config.logtofile = true
+        this.config.logfile = 'wanWalletSDK'
         this.config.MAX_CONFIRM_BLKS = 100000000
         this.config.MIN_CONFIRM_BLKS = 0
         // this.config.loglevel = 'debug'
