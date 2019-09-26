@@ -83,6 +83,7 @@ async function createMain () {
 
   mainWindow.on('ready', () => {
     logger.info('ready to show main window')
+
     mainWindow.show()
     Windows.broadcast('notification', 'language', setting.language)
     if (global.chainManager) {
@@ -116,6 +117,10 @@ async function onReady() {
   walletBackend.on('initiationDone', async () => {
     sendReadyNotifications()
   })
+
+  if (process.env.NODE_ENV !== 'production') {
+    Windows.addDevToolsExtension()
+  }
 
   // 3. create main window for frontend renderering, hide this window in the first place
   await createMain()

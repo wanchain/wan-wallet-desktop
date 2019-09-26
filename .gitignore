@@ -40,3 +40,6 @@ yarn.lock
 
 # Backup file
 *.bak
+
+# Extensions File for Electon
+static/extensions

@@ -1,4 +1,6 @@
+import fs from 'fs'
 import _ from 'lodash'
+import path from 'path'
 import { app, BrowserWindow, ipcMain as ipc } from 'electron'
 import Logger from '~/src/utils/Logger'
 import EventEmitter from 'events'
@@ -290,7 +292,7 @@ class Windows {
         }
 
         wnd.on('ready', () => {
-            wnd.show()
+          wnd.show()
         })
 
         return wnd
@@ -314,6 +316,19 @@ class Windows {
         _.each(this._windows, (wnd) => {
             wnd.send(...data)
         })
+    }
+
+    addDevToolsExtension() {
+      const { addDevToolsExtension, getDevToolsExtensions } = BrowserWindow
+      let currExt = Object.keys(getDevToolsExtensions())
+      let extBasePath = path.join(__dirname, '../../../', '/static/extensions/')
+      let extPathArr = fs.readdirSync(extBasePath)
+      extPathArr.forEach(val => {
+        let ext = `${extBasePath}/${val}/${(fs.readdirSync(extBasePath+val))[0]}`
+        if (!currExt.includes(val)) {
+          addDevToolsExtension(ext)
+        }
+      })
     }
 
     _onWindowClosed(wnd) {
