@@ -3,10 +3,10 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import ETHTransForm from 'components/CrossChain/CrossChainTransForm/ETHTransForm'
-import { getNonce, getGasPrice, getBalanceByAddr, getSmgList } from 'utils/helper';
+import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm'
+import { getGasPrice, getBalanceByAddr, getSmgList } from 'utils/helper';
 
-const CollectionCreateForm = Form.create({ name: 'ETHTransForm' })(ETHTransForm);
+const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm);
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -28,14 +28,13 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, addrInfo, path, chainType, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
+    const { from, addrInfo, path, chainType, addCrossTransTemplate, updateTransParams, updateGasPrice, updateLockAccounts } = this.props;
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
-
     this.setState({ visible: true });
-    addTransTemplate(from, { chainType, path });
+    addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getSmgList(chainType)]);
       this.setState({ smgList });

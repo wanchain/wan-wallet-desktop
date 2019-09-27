@@ -17,6 +17,12 @@ class SendCrossChainParams {
 
     @observable currentGasPrice = 200;
 
+    @observable lockAccounts = '';
+
+    @action updateLockAccounts (data) {
+      self.lockAccounts = data;
+    }
+
     @action addCrossTransTemplate (addr, params = {}) {
       let gasPrice = params.chainType === 'ETH' ? 1 : self.minGasPrice;
       self.currentFrom = addr;
@@ -68,25 +74,6 @@ class SendCrossChainParams {
         minFee: roundFun(Number(minFee.toString(10)), 8),
         averageFee: roundFun(Number(averageFee.toString(10)), 8),
         maxFee: roundFun(Number(averageFee.times(2).toString(10)), 8)
-      }
-    }
-
-    @computed get rawTx () {
-      if (Object.keys(self.transParams).length !== 0) {
-        let from = self.currentFrom;
-        let { to, amount, data, chainId, nonce, gasLimit, gasPrice, txType } = self.transParams[from];
-        return {
-          to: to,
-          value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
-          data: data,
-          chainId: chainId,
-          nonce: '0x' + nonce.toString(16),
-          gasLimit: '0x' + gasLimit.toString(16),
-          gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
-          Txtype: txType
-        };
-      } else {
-        return {}
       }
     }
 }

@@ -193,7 +193,11 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
+    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
+    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.capacity': 'Capacity',
+    'CrossChainTransForm.inboundQuota': 'Balance',
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',

@@ -1,67 +1,50 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
-import intl from 'react-intl-universal';
+import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin, Select } from 'antd';
 
 import './index.less';
-import { toWei } from 'utils/support';
+import { toWei, fromWei } from 'utils/support';
 import { DEFAULT_GAS } from 'utils/settings';
-import AdvancedOptionForm from 'components/AdvancedOptionForm';
-import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
-import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import AddrSelectForm from 'componentUtils/AddrSelectForm';
+import CommonFormItem from 'componentUtils/CommonFormItem';
+import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';
+import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo } from 'utils/helper';
 
+const Option = Select.Option;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
-const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
-  tokensList: stores.tokens.tokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
+  wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
-  tokensBalance: stores.tokens.tokensBalance,
   gasFeeArr: stores.sendCrossChainParams.gasFeeArr,
   transParams: stores.sendCrossChainParams.transParams,
   minGasPrice: stores.sendCrossChainParams.minGasPrice,
   maxGasPrice: stores.sendCrossChainParams.maxGasPrice,
   averageGasPrice: stores.sendCrossChainParams.averageGasPrice,
   updateGasLimit: gasLimit => stores.sendCrossChainParams.updateGasLimit(gasLimit),
+  updateLockAccounts: lockAccount => stores.sendCrossChainParams.updateLockAccounts(lockAccount),
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
-class ETHTransForm extends Component {
+class CrossETHForm extends Component {
   state = {
+    balance: 0,
     gasFee: 0,
     advanced: false,
     confirmVisible: false,
     disabledAmount: false,
-    advancedVisible: false,
   }
 
   componentWillUnmount () {
     this.setState = (state, callback) => {
       return false;
     };
-  }
-
-  onAdvanced = () => {
-    let { form, updateTransParams } = this.props;
-    let from = form.getFieldValue('from');
-    form.validateFields(['from', 'to'], err => {
-      if (err) return;
-      updateTransParams(from, { to: form.getFieldValue('to') });
-      this.setState({
-        advancedVisible: true,
-      });
-    });
-  }
-
-  handleAdvancedCancel = () => {
-    this.setState({
-      advancedVisible: false,
-    });
   }
 
   handleConfirmCancel = () => {
@@ -81,7 +64,6 @@ class ETHTransForm extends Component {
     let { form, addrInfo } = this.props;
     let from = form.getFieldValue('from');
     this.setState({
-      advancedVisible: false,
       advanced: true,
     }, () => {
       if (this.state.disabledAmount) {
@@ -231,37 +213,85 @@ class ETHTransForm extends Component {
     }
   }
 
+  onLockAccountChange = val => {
+    this.props.updateLockAccounts(val);
+  }
+
+  onToAddrChange = val => {
+    let from = this.props.form.getFieldValue('from');
+    this.props.updateTransParams(from, { to: val })
+  }
+
+  getValueByAddrInfoArgs = (...args) => {
+    return getValueByAddrInfo(...args, this.props.wanAddrInfo);
+  }
+
+  onChangeETHAddrSelect = value => {
+    this.setState(() => {
+      let balance = value ? this.getValueByAddrInfoArgs(value, 'balance') : 0;
+      return { balance }
+    })
+  }
+
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
-    const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
+    const { confirmVisible, advanced, disabledAmount } = this.state;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, smgList, wanAddrInfo } = this.props;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
+
+    let defaultSelectVal, capacity, inboundQuota;
+    if (smgList.length === 0) {
+      defaultSelectVal = '';
+      inboundQuota = capacity = '0';
+    } else {
+      defaultSelectVal = smgList[0].ethAddress;
+      capacity = fromWei(smgList[0].quota);
+      inboundQuota = fromWei(smgList[0].inboundQuota);
+    }
 
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
 
     return (
       <div>
-        <Modal visible destroyOnClose={true} closable={false} title={intl.get('NormalTransForm.transaction')} onCancel={this.onCancel}
+        <Modal visible destroyOnClose={true} closable={false} title={intl.get('CrossChainTransForm.transaction')} onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm" id="Select">
               <Form.Item label={intl.get('NormalTransForm.from')}>
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-              <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              <Form.Item label={intl.get('CrossChainTransForm.lockedAccount')} className="lockAccountSelect">
+                {getFieldDecorator('lockedAccount', { rules: [{ required: false }], initialValue: defaultSelectVal })(
+                  <Select
+                    showSearch
+                    placeholder={intl.get('CrossChainTransForm.selectLockAccount')}
+                    optionFilterProp="children"
+                    onChange={this.onLockAccountChange}
+                    getPopupContainer={() => document.getElementById('Select')}
+                  >
+                    {smgList.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+                  </Select>
+                )}
               </Form.Item>
-              <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              <Form.Item label={intl.get('CrossChainTransForm.capacity')}>
+                {getFieldDecorator('capacity', { initialValue: capacity })
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
+              <Form.Item label={intl.get('CrossChainTransForm.inboundQuota')}>
+              {getFieldDecorator('inboundQuota', { initialValue: inboundQuota })
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
+              <div className="validator-bg">
+                <div className="validator-line">
+                  <AddrSelectForm form={form} addrSelectedList={Object.keys(wanAddrInfo.normal)} handleChange={this.onChangeETHAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+                </div>
+              </div>
               <Form.Item label={intl.get('NormalTransForm.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
@@ -291,15 +321,13 @@ class ETHTransForm extends Component {
                   )}
                 </Form.Item>
               }
-              <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
             </Form>
           </Spin>
         </Modal>
-        <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
         <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }
 }
 
-export default ETHTransForm;
+export default CrossETHForm;

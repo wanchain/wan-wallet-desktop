@@ -193,7 +193,11 @@ const zh_CN = {
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
+    'CrossChainTransForm.transaction': '跨连交易',
     'CrossChainTransForm.lockedAccount': '锁定账户',
+    'CrossChainTransForm.selectLockAccount': '选择一个锁定账户',
+    'CrossChainTransForm.capacity': '容量',
+    'CrossChainTransForm.inboundQuota': '余额',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',

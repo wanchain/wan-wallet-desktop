@@ -193,7 +193,11 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
+    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
+    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.capacity': 'Capacity',
+    'CrossChainTransForm.inboundQuota': 'Balance',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',

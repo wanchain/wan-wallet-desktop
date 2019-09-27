@@ -193,7 +193,11 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
+    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
+    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.capacity': 'Capacity',
+    'CrossChainTransForm.inboundQuota': 'Balance',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',

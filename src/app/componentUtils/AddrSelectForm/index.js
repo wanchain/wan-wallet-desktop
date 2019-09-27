@@ -18,7 +18,6 @@ function AddrSelectForm (props) {
                   <Select
                     autoFocus
                     showSearch
-                    allowClear
                     className="colorInput"
                     optionLabelProp="value"
                     optionFilterProp="children"
