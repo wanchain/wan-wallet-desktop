@@ -3,12 +3,14 @@ import intl from 'react-intl-universal';
 import { Form, Input, Icon, Row, Col } from 'antd';
 
 function PwdForm (props) {
-  const { getFieldDecorator } = props.form;
+  const { getFieldDecorator, colSpan } = props.form;
+  let width = colSpan || 8;
+
   return (
     <div className="validator-line">
       <Row type="flex" justify="space-around" align="top">
-        <Col span={8}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
-        <Col span={16}>
+        <Col span={width}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+        <Col span={24 - width}>
           <Form layout="inline">
             <Form.Item>
               {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
