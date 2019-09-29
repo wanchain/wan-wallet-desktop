@@ -7,6 +7,7 @@ import { Button, Modal, Form, Icon, Checkbox, message, Spin } from 'antd';
 import './index.less';
 import { toWei, fromWei } from 'utils/support';
 import { DEFAULT_GAS } from 'utils/settings';
+import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';

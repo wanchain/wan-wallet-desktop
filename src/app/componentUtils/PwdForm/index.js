@@ -3,8 +3,8 @@ import intl from 'react-intl-universal';
 import { Form, Input, Icon, Row, Col } from 'antd';
 
 function PwdForm (props) {
-  const { getFieldDecorator, colSpan } = props.form;
-  let width = colSpan || 8;
+  const { getFieldDecorator } = props.form;
+  let width = props.colSpan || 8;
 
   return (
     <div className="validator-line">
