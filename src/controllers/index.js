@@ -132,7 +132,16 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
                 hdUtil.newKeyStoreWallet(payload.pwd)
-                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                // if the user db is not the newest version, update user db
+                const dbVersion = hdUtil.getUserTableVersion();
+                const latestVersion = walletBackend.config.dbExtConf.userTblVersion;
+                let data = true;
+                if(dbVersion !== latestVersion) {
+                    data = {
+                        version: dbVersion
+                    }
+                }
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -236,6 +245,20 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
                 break
             }
+
+        case 'setUserTblVersion':
+            try {
+                const latestVersion = walletBackend.config.dbExtConf.userTblVersion;// get version from config.js file
+                logger.info('Set user DB version:' + latestVersion);
+                hdUtil.setUserTableVersion(latestVersion);
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: false })
+            }
+
+            break
     }
 })
 
@@ -291,7 +314,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
-                console.log('err');
+                logger.error('Get balance failed');
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -332,8 +355,8 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     }
                     
                 } catch (e) {
-                    console.log('err');
-                    console.log(e);
+                    logger.error('Get balances failed');
+                    logger.error(e);
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -565,19 +588,16 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     let { input } = payload;
                     const action = 'REFUND';
                     for(let i of input) {
-                        // console.log('refund');
                         let res = await global.crossInvoker.invokePrivateTrans(action, i);
-                        // console.log(res);
                         if(res.code === false) {
                             err = {
                                 message: res.result
                             };
                         }
-                        // console.log('refund end');
                     }
                 } catch (e) {
-                    console.log('---------refund error---------');
-                    console.log(e);
+                    logger.error('Refund failed');
+                    logger.error(e);
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -590,8 +610,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
-                console.log('error:');
-                console.log(e);
+                logger.error('Send raw transaction failed');
+                logger.error(e);
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -906,9 +926,8 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 ret = data;
             } catch (e) {
+                logger.error('Get contract data failed');
                 logger.error(e.message || e.stack)
-                // console.log('---------getContractData----------');
-                // console.log(e);
                 err = e
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })

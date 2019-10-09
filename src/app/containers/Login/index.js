@@ -12,6 +12,7 @@ const WAN = "m/44'/5718350'/0'/0/";
   auth: stores.session.auth,
   language: stores.languageIntl.language,
   addrInfo: stores.wanAddress.addrInfo,
+  updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB(),
   setAuth: val => stores.session.setAuth(val),
 }))
 
@@ -29,13 +30,16 @@ class Login extends Component {
   login = () => {
     const pwd = this.state.pwd;
     wand.request('wallet_lock', () => {
-      wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
+      wand.request('wallet_unlock', { pwd: pwd }, async (err, val) => {
         if (err) {
           message.error(intl.get('Login.wrongPassword'))
           return;
         }
         this.props.setAuth(true);
-
+        // If the user DB is not the latest version, update user account DB
+        if (typeof val === 'object' && Object.prototype.hasOwnProperty.call(val, 'version')) {
+          await this.props.updateUserAccountDB(val.version);
+        }
         // Open scanner to scan the smart contract to get private tx balance.
         const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WAN}${item.path}`]);
         const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WAN}${item.path}`]);

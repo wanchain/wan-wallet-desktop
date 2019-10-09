@@ -132,7 +132,6 @@ class WanAddress {
 
   @action updateName(arr, chainType) {
     let walletID, type, index;
-    console.log(arr);
     switch (chainType) {
       case 'normal':
         if (Object.keys(self.addrInfo['normal']).includes(arr.address)) {
@@ -163,89 +162,124 @@ class WanAddress {
     })
   }
 
-  @action getUserAccountFromDB() {
-    wand.request('account_getAll', { chainID: 5718350 }, async (err, ret) => {
-      // console.log('getUserAccountFromDB:', ret);
-      if (err) console.log('Get user from DB failed ', err)
-      if (ret.accounts && Object.keys(ret.accounts).length) {
-        let info = ret.accounts;
-        let typeFunc = id => id === '1' ? 'normal' : 'import';
-        let noWaddressArr = [];
-        let accountObj = {};
-        let checkExist = v => {
-          if (accountObj[v]) {
-            return true;
-          } else {
-            accountObj[v] = true;
-            return false;
-          }
+  @action getUserAccountFromDB () {
+    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+      if (err) {
+        console.log('Get user from DB failed ', err);
+        return false;
+      }
+      let info = ret.accounts;
+      let accountObj = {};
+      let checkExist = v => {
+        if (accountObj[v]) {
+          return true;
+        } else {
+          accountObj[v] = true;
+          return false;
         }
-        let setAddrInfoFunc = obj => {
-          // console.log('obj:', obj);
-          self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address.toLowerCase())] = {
-            name: obj.name,
-            balance: 0,
-            wbalance: 0,
-            path: obj.path.substr(obj.path.lastIndexOf('\/') + 1),
-            address: wanUtil.toChecksumAddress(obj.address),
-            waddress: wanUtil.toChecksumOTAddress(obj.waddress)
-          }
-        };
+      }
+      if (info && Object.keys(info).length) {
+        let typeFunc = id => id === '1' ? 'normal' : 'import';
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
-            if ([WALLETID.NATIVE, WALLETID.KEYSTOREID].includes(Number(id))) {
-              let address = info[path][id]['addr'];
-              let waddress = info[path][id]['waddr'];
-              let name = info[path][id]['name'];
-              if (checkExist(address.toLowerCase())) {
-                // Delete the duplicate account info in DB file.
-                wand.request('account_delete', { walletID: id === '1' ? WALLETID.NATIVE : WALLETID.KEYSTOREID, path }, async (err, ret) => {
-                  console.log(err, ret);
+            if (['1', '5'].includes(id)) {
+              let address = wanUtil.toChecksumAddress(info[path][id]['addr']);
+              if (checkExist(address)) {
+                // Delete the duplicate account info from DB file.
+                wand.request('account_delete', { walletID: parseInt(id), path }, async (err, ret) => {
                   if (err) console.log('Delete user from DB failed ', err);
                 });
+                return false;
               } else {
-                // If can not get the waddress, call a request to 'address_getOne' to get the waddress
-                if (typeof waddress === 'undefined') {
-                  let walletID = id === '1' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
-                  noWaddressArr.push({ id, name, chainType: 'WAN', path, walletID });
-                } else {
-                  setAddrInfoFunc({ id, name, path, address, waddress });
+                let waddress = info[path][id]['waddr'];
+                let obj = {
+                  name: info[path][id]['name'],
+                  balance: 0,
+                  wbalance: 0,
+                  path: path.substr(path.lastIndexOf('\/') + 1),
+                  address: address
+                };
+                if (waddress) {
+                  obj.waddress = wanUtil.toChecksumOTAddress(waddress);
                 }
+                self.addrInfo[typeFunc(id)][address] = obj;
               }
             }
           })
-        });
-
-        // Insert none waddress account's waddress info into DB file.
-        if (noWaddressArr.length === 0) return 0;
-        await Promise.all(noWaddressArr.map(item => {
-          return new Promise((resolve, reject) => {
-            wand.request('address_getOne', { walletID: item.walletID, chainType: item.chainType, path: item.path }, (err, val) => {
-              console.log(err, val);
-              if (!err) {
-                // Update the account waddress after obtaining waddress.
-                wand.request('account_update', { walletID: item.walletID, path: item.path, meta: { name: item.name, addr: val.address.toLowerCase(), waddr: `0x${val.waddress}` } }, (err, res) => {
-                  if (!err && res) {
-                    setAddrInfoFunc({
-                      id: item.id,
-                      name: item.name,
-                      path: item.path,
-                      address: wanUtil.toChecksumAddress(val.address.toLowerCase()),
-                      waddress: wanUtil.toChecksumOTAddress(`0x${val.waddress}`)
-                    });
-                    resolve();
-                  } else {
-                    reject(new Error(err.desc));
-                  }
-                })
-              } else {
-                reject(new Error(err.desc));
-              }
-            });
-          });
-        }));
+        })
       }
     })
+  }
+
+  @action async updateUserAccountDB(ver) {
+    let normalInfo = self.addrInfo.normal;
+    let importInfo = self.addrInfo.import;
+    let typeFunc = id => id === 1 ? 'normal' : 'import';
+    if (ver === undefined || ver === '') {
+      ver = 'original';
+    }
+    console.log('User table version:' + ver);
+    switch (ver) {
+      case 'original':
+        try {
+          let noWaddressArr = [];
+          let setWaddress = obj => {
+            self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress);
+          };
+          let filterData = function (data, type) {
+            Object.keys(data).forEach(item => {
+              let waddress = data[item]['waddress'];
+              let name = data[item]['name'];
+              let id = type === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+              let path = WAN + data[item]['path'];
+              // If can not get the waddress, call a request to 'address_getOne' to get the waddress
+              if (typeof waddress === 'undefined') {
+                noWaddressArr.push({ id, name, chainType: 'WAN', path });
+              }
+            });
+          }
+          filterData(normalInfo, 'normal');
+          filterData(importInfo, 'import');
+          // Insert none waddress account's waddress info into DB file.
+          if (noWaddressArr.length === 0) return 0;
+          await Promise.all(noWaddressArr.map(item => {
+            return new Promise((resolve, reject) => {
+              wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
+                if (!err) {
+                  // Update the account waddress after obtaining waddress.
+                  wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
+                    if (!err && res) {
+                      setWaddress({
+                        id: item.id,
+                        address: val.address,
+                        waddress: `0x${val.waddress}`
+                      });
+                      resolve();
+                    } else {
+                      console.log('Update address information failed');
+                      reject(new Error(err.desc));
+                    }
+                  })
+                } else {
+                  console.log('Get one address failed', err);
+                  reject(new Error(err.desc));
+                }
+              });
+            });
+          }));
+          // Set DB's userTblVersion
+          wand.request('wallet_setUserTblVersion', (err, val) => {
+            if (err) {
+              console.log('Set user DB version failed');
+            }
+          });
+        } catch (e) {
+          console.log('Update original user DB failed:', e);
+        }
+        break;
+      default:
+        console.log('Unknown version');
+    }
   }
 
   @action addKeyStoreAddr({ path, addr, waddr }) {
@@ -386,7 +420,6 @@ class WanAddress {
         addrList = addrList.concat(Object.keys(self.addrInfo[name]))
       })
     }
-    // console.log(Object.values(self.transHistory).sort((a, b) => b.sendTime - a.sendTime));
     Object.keys(self.transHistory).forEach(item => {
       if (addrList.includes(self.transHistory[item]['from']) && 'annotate' in self.transHistory[item]) {
         let status = self.transHistory[item].status;

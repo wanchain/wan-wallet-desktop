@@ -113,7 +113,7 @@ class Register extends Component {
                     // Scan new account
                     wand.request('address_scanMultiOTA', [[1, path]], function (err, res) {
                       if (err) {
-                        console.log('openScanOTA failed');
+                        console.log('Open scan OTAs failed');
                         console.log(err);
                       } else {
                         console.log(res);
