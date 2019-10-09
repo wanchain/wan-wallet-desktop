@@ -43,7 +43,7 @@ class SendNormalTrans extends Component {
       updateGasPrice(gasPrice);
       this.setState({ spin: false });
     } catch (err) {
-      console.log(`err: ${err}`)
+      console.log(`Get nonce or gas price failed: ${err}`)
       message.warn(err);
     }
   }

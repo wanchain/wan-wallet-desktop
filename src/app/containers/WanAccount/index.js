@@ -122,7 +122,7 @@ class WanAccount extends Component {
             reject(false)
           } else {
             this.props.updateTransHistory();
-            console.log('Tx hash: ', txHash);
+            console.log('Tx hash:', txHash);
             resolve(txHash)
           }
         }.bind(this));
@@ -169,8 +169,6 @@ class WanAccount extends Component {
               wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
                 if (err) {
                   console.log('Open OTA scanner failed:', err);
-                } else {
-                  // console.log(res);
                 }
               });
             }

@@ -48,19 +48,17 @@ class WANTransHistory extends Component {
       href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
     } else {
       if (record.txHash === '') {
-        message.warn('No txHash========================================');
+        message.warn('No txHash');
         return false;
       }
       href = this.props.chainId === 1 ? `${MAIN}/tx/${record.txHash}` : `${TESTNET}/tx/${record.txHash}`;
     }
-    console.log(href);
     wand.shell.openExternal(href);
   }
 
   render () {
     const { addrInfo, historyList, privateHistoryList, name } = this.props;
     let addrList = [];
-    // console.log(privateHistoryList);
     if (name) {
       name.forEach(val => { addrList = addrList.concat(Object.entries(addrInfo[val]).map(v => ({ address: v[0], name: v[1].name }))) });
     }

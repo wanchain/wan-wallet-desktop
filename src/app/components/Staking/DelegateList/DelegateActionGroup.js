@@ -25,8 +25,6 @@ class DelegateActionGroup extends Component {
   }
 
   render () {
-    // quitEpoch === 0 ? Pending finished: is Pending;
-    // console.log('quitEpoch:', this.props.record.quitEpoch);
     return (
       <div>
         <Row>

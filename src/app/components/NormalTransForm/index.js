@@ -119,7 +119,6 @@ class NormalTransForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            console.log('ok');
             updateTransParams(from, { to: form.getFieldValue(to), amount: formatAmount(sendAmount) })
             this.setState({ advanced: false, confirmVisible: true });
           }

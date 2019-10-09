@@ -167,6 +167,7 @@ class InForm extends Component {
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
+      console.log('Trezor validator append failed');
       console.log(error);
       message.error(intl.get('ValidatorRegister.topUpFailed'));
     }

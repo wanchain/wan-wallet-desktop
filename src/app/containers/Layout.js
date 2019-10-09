@@ -54,7 +54,6 @@ class Layout extends Component {
           this.setState({
             loading: false
           });
-          console.log('SDK is ready');
           clearInterval(id);
         } catch (err) {
           console.log('Get mnemonic failed');
@@ -76,6 +75,7 @@ class Layout extends Component {
         this.props.updateWANBalance(res);
       }
     }).catch(err => {
+      console.log('Update WAN balance failed');
       console.log(err);
     });
   }

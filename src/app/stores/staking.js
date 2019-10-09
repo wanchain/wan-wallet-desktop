@@ -77,6 +77,7 @@ class Staking {
     let address = self.myValidators.map(item => item.address);
     wand.request('staking_getValidatorsInfo', { address }, (err, ret) => {
       if (err) {
+        console.log('Get validators information failed');
         console.log(err)
         return;
       }
