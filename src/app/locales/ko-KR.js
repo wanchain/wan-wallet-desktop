@@ -193,11 +193,13 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
-    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
+    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
+    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
     'CrossChainTransForm.capacity': 'Capacity',
     'CrossChainTransForm.inboundQuota': 'Balance',
+    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',

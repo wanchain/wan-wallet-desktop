@@ -3,7 +3,7 @@ import intl from 'react-intl-universal';
 import { Form, Select, Row, Col } from 'antd';
 
 function SelectForm (props) {
-  const { form, selectedList, handleChange, formMessage, placeholder, formName, initialValue, getValByInfoList, colSpan } = props;
+  const { form, selectedList, handleChange, formMessage, placeholder, formName, initialValue, getValByInfoList, colSpan, showBalance, dropdownStyle } = props;
   const { getFieldDecorator } = form;
   let width = colSpan || 8;
 
@@ -22,7 +22,7 @@ function SelectForm (props) {
                     className="colorInput"
                     optionLabelProp="value"
                     optionFilterProp="children"
-                    dropdownStyle={{ width: '470px' }}
+                    dropdownStyle={dropdownStyle}
                     dropdownMatchSelectWidth={false}
                     placeholder={intl.get(placeholder)}
                     onChange={handleChange}
@@ -33,7 +33,7 @@ function SelectForm (props) {
                         <Select.Option value={item} key={index}>
                           <Row className="ant-row-flex">
                             <Col>{item}</Col>&nbsp;
-                            <Col className="stakein-selection-balance">- {Number(getValByInfoList(item)).toFixed(1)}</Col>
+                            { showBalance && <Col className="stakein-selection-balance">- {Number(getValByInfoList(item)).toFixed(1)}</Col> }
                           </Row>
                         </Select.Option>)
                     }

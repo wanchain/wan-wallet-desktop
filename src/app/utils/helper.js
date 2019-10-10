@@ -2,7 +2,8 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH } from 'utils/settings';
+import { WANPATH, INBOUND, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL } from 'utils/settings';
+
 import { fromWei, isNumber } from 'utils/support';
 
 const web3 = new Web3();
@@ -372,4 +373,96 @@ export const encodeTransferInput = function (addr, decimal, value = 0) {
   const TRANSFER = '0xa9059cbb';
   value = new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString(10);
   return TRANSFER + web3.eth.abi.encodeParameters(['address', 'uint256'], [addr.slice(2).toLowerCase(), value]).slice(2);
+}
+
+export const encodeEth2wethLockInput = function () {
+  const LOCK = '0x158e00a3';
+  return LOCK + web3.eth.abi.encodeParameters(['bytes32', 'address', 'address'], [HASHX, FAKESTOREMAN, FAKEADDR]).slice(2);
+}
+
+export const encodeEth2wethRefundInput = function () {
+  const REFUND = '0x2000fe50';
+  return REFUND + web3.eth.abi.encodeParameters(['bytes32'], [X]).slice(2);
+}
+
+export const encodeWeth2ethLockInput = function () {
+  const REFUND = '0x004b4329';
+  return REFUND + web3.eth.abi.encodeParameters(['bytes32', 'address', 'address', 'uint'], [HASHX, FAKESTOREMAN, FAKEADDR, FAKEVAL]).slice(2);
+}
+
+export const encodeWeth2ethRefundInput = function () {
+  const REFUND = '0x514d0b01';
+  return REFUND + web3.eth.abi.encodeParameters(['bytes32'], [X]).slice(2);
+}
+
+export const estimateCrossETHInboundGas = function (from) {
+  return new Promise((resolve, reject) => {
+    wand.request('crosschain_getHtmlAddr', null, async (err, ret) => {
+      if (err) {
+        console.log('estimateCrossChainGas:', err)
+        return reject(err);
+      } else {
+        let ethTrans = {
+          from: from,
+          to: ret.eth,
+          value: new BigNumber('1').multipliedBy(Math.pow(10, 18)).toString(10),
+          data: encodeEth2wethLockInput(),
+          gas: DEFAULT_GAS
+        };
+        let wanTrans = {
+          from: FAKEADDR,
+          to: ret.weth,
+          value: '0',
+          data: encodeEth2wethRefundInput(),
+          gas: DEFAULT_GAS
+        };
+        try {
+          let [ethGas, wanGas] = await Promise.all([estimateGas('ETH', ethTrans), estimateGas('WAN', wanTrans)])
+          resolve({
+            ETH: ethGas,
+            WAN: wanGas
+          })
+        } catch (err) {
+          console.log('estimateCrossETHGas.estimateGas', err)
+          reject(err)
+        }
+      }
+    })
+  })
+}
+
+export const estimateCrossETHOutboundGas = function (from) {
+  return new Promise((resolve, reject) => {
+    wand.request('crosschain_getHtmlAddr', null, async (err, ret) => {
+      if (err) {
+        console.log('estimateCrossChainGas:', err)
+        return reject(err);
+      } else {
+        let wanTrans = {
+          from: from,
+          to: ret.weth,
+          value: new BigNumber('1').multipliedBy(Math.pow(10, 18)).toString(10),
+          data: encodeWeth2ethLockInput(),
+          gas: DEFAULT_GAS
+        };
+        let ethTrans = {
+          from: FAKEADDR,
+          to: ret.eth,
+          value: '0',
+          data: encodeWeth2ethRefundInput(),
+          gas: DEFAULT_GAS
+        };
+        try {
+          let [ethGas, wanGas] = await Promise.all([estimateGas('ETH', ethTrans), estimateGas('WAN', wanTrans)])
+          resolve({
+            WAN: wanGas,
+            ETH: ethGas
+          })
+        } catch (err) {
+          console.log('estimateCrossETHGas.estimateGas', err)
+          reject(err)
+        }
+      }
+    })
+  })
 }

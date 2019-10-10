@@ -10,6 +10,9 @@ export const TRANSTYPE = {
   tokenTransfer: 'tokenTransfer'
 };
 
+export const INBOUND = 'inbound';
+export const OUTBOUND = 'outbound';
+
 export const MINDAYS = 7;
 export const MAXDAYS = 90;
 
@@ -27,3 +30,9 @@ export const ETHPATH = "m/44'/60'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
 
 export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
+
+export const X = '0x0000000000000000000000000000000000000000000000000000000000000001';
+export const HASHX = '0x0000000000000000000000000000000000000000000000000000000000000002';
+export const FAKEVAL = '1';
+export const FAKEADDR = '0x0000000000000000000000000000000000000003';
+export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';

@@ -193,11 +193,13 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
-    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
+    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
+    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
     'CrossChainTransForm.capacity': 'Capacity',
     'CrossChainTransForm.inboundQuota': 'Balance',
+    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',

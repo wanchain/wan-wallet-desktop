@@ -1,12 +1,12 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import { WANPATH, WALLETID } from 'utils/settings';
+import { INBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 
 const CHAINTYPE = 'ETH';
@@ -44,7 +44,7 @@ class CrossETH extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 

@@ -193,11 +193,13 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
-    'CrossChainTransForm.transaction': 'Cross Chain Transaction',
+    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
+    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
     'CrossChainTransForm.capacity': 'Capacity',
     'CrossChainTransForm.inboundQuota': 'Balance',
+    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',

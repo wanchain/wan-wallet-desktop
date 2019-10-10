@@ -31,6 +31,17 @@ const defaultConfig = {
 
 const cscContractAddr = "0x00000000000000000000000000000000000000da";
 
+const htlcAddresses = {
+  testnet: {
+    weth: '0xfbaffb655906424d501144eefe35e28753dea037',
+    eth: '0x358b18d9dfa4cce042f2926d014643d4b3742b31',
+  },
+  main: {
+    weth: '0x7a333ba427fce2e0c6dd6a2d727e5be6beb13ac2',
+    eth: '0x78eb00ec1c005fec86a074060cc1bc7513b1ee88',
+  }
+};
+
 const argv = yargs
                 .options({
                     'network': {
@@ -81,6 +92,10 @@ class Settings {
 
     get cscContractAddr() {
         return cscContractAddr;
+    }
+
+    get htlcAddresses() {
+      return htlcAddresses[this.get('network')];
     }
 
     get isDev() {
