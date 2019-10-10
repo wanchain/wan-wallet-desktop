@@ -162,9 +162,9 @@ class CrossETHForm extends Component {
 
   render () {
     const { confirmVisible, disabledAmount } = this.state;
-    const { loading, form, from, settings, smgList, wanAddrInfo, updateLockAccounts, estimateFee } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, updateLockAccounts, estimateFee, chainType } = this.props;
 
-    let defaultSelectVal, capacity, inboundQuota;
+    let defaultSelectVal, capacity, inboundQuota, totalFeeTitle;
     if (smgList.length === 0) {
       defaultSelectVal = '';
       inboundQuota = capacity = '0';
@@ -172,6 +172,12 @@ class CrossETHForm extends Component {
       defaultSelectVal = smgList[0].ethAddress;
       capacity = fromWei(smgList[0].quota);
       inboundQuota = fromWei(smgList[0].inboundQuota);
+    }
+
+    if (chainType === 'ETH') {
+      totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
+    } else {
+      totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
     }
 
     return (
@@ -238,7 +244,7 @@ class CrossETHForm extends Component {
                 colSpan={6}
                 formName='totalFee'
                 disabled={true}
-                options={{ initialValue: `` }}
+                options={{ initialValue: totalFeeTitle }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
               />

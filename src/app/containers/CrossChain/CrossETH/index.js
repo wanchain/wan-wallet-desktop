@@ -6,7 +6,7 @@ import { Table, Row, Col, message } from 'antd';
 import './index.less';
 import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import { INBOUND } from 'utils/settings';
+import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 
 const CHAINTYPE = 'ETH';
@@ -30,7 +30,7 @@ class CrossETH extends Component {
     this.props.changeTitle('CrossChain.CrossChain');
   }
 
-  columns = [
+  inboundColumns = [
     {
       dataIndex: 'name',
     },
@@ -48,10 +48,32 @@ class CrossETH extends Component {
     }
   ];
 
+  outboundColumns = [
+    {
+      dataIndex: 'name',
+    },
+    {
+      dataIndex: 'address',
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+    },
+    {
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    },
+    {
+      dataIndex: 'action',
+      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} type={OUTBOUND}/></div>
+    }
+  ];
+
   render () {
     const { getAddrList, getTokensListInfo } = this.props;
 
-    this.props.language && this.columns.forEach(col => {
+    this.props.language && this.inboundColumns.forEach(col => {
+      col.title = intl.get(`WanAccount.${col.dataIndex}`)
+    })
+
+    this.props.language && this.outboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
 
@@ -62,7 +84,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getAddrList} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getAddrList} />
           </Col>
         </Row>
         <Row className="title">
@@ -70,7 +92,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
           </Col>
         </Row>
       </div>

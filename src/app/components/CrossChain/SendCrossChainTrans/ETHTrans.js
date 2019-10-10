@@ -13,8 +13,9 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
 @inject(stores => ({
   chainId: stores.session.chainId,
   addrInfo: stores.ethAddress.addrInfo,
-  wanAddrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  wanAddrInfo: stores.wanAddress.addrInfo,
+  getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (gasPrice, chainType) => stores.sendCrossChainParams.updateGasPrice(gasPrice, chainType),
@@ -35,21 +36,24 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, chainType, addCrossTransTemplate, updateTransParams, updateGasPrice, type } = this.props;
-    let desChain, addrInfo, estimateCrossETHGas;
+    const { from, path, addrInfo, getTokensListInfo, chainType, addCrossTransTemplate, updateTransParams, updateGasPrice, type } = this.props;
+    let desChain, estimateCrossETHGas;
     if (type === INBOUND) {
       desChain = 'WAN';
       estimateCrossETHGas = estimateCrossETHInboundGas;
-      addrInfo = this.props.addrInfo;
+      if (getBalanceByAddr(from, addrInfo) === '0') {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        return;
+      }
     } else {
       desChain = 'ETH';
-      addrInfo = this.props.wanAddrInfo;
       estimateCrossETHGas = estimateCrossETHOutboundGas;
+      if ((getTokensListInfo.filter(item => item.address === from)[0]).amount === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        return;
+      }
     }
-    if (getBalanceByAddr(from, addrInfo) === '0') {
-      message.warn(intl.get('SendNormalTrans.hasBalance'));
-      return;
-    }
+
     addCrossTransTemplate(from, { chainType, path });
     this.setState({ visible: true });
     try {
@@ -93,7 +97,7 @@ class ETHTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible &&
-          <CollectionCreateForm estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );
