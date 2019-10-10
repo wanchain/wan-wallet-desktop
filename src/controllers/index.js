@@ -271,7 +271,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.start, payload.end)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get address failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -282,7 +282,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.path)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get one address failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -473,7 +473,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Create account failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -484,7 +484,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.getUserAccount(payload.walletID, payload.path)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get account failed: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -494,7 +494,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.getUserAccountForChain(payload.chainID)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get all accounts failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -551,7 +551,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Send transaction failed: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -576,7 +576,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await global.crossInvoker.invokePrivateTrans(action, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
 
