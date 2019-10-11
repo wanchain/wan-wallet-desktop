@@ -1,6 +1,6 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect from 'trezor-connect';
+import TrezorConnect, { DEVICE_EVENT, DEVICE } from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Icon } from 'antd';
 import { signTransaction, getPublicKey, WAN_PATH } from 'componentUtils/trezor'
@@ -39,6 +39,7 @@ TrezorConnect.init({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
+  updateAddress: type => stores.wanAddress.updateAddress(type),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
@@ -48,7 +49,17 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor (props) {
     super(props);
-    this.props.changeTitle('Trezor.trezor')
+    this.props.changeTitle('Trezor.trezor');
+    // Declare trezor event
+    TrezorConnect.on(DEVICE_EVENT, (event) => {
+      if (event.type === DEVICE.CONNECT) {
+        console.log('Trezor onnected');
+      } else if (event.type === DEVICE.DISCONNECT) {
+        console.log('Trezor disconnected');
+        // clear trezor list
+        this.props.updateAddress('trezor');
+      }
+    });
   }
 
   componentDidUpdate () {
