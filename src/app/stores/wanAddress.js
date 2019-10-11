@@ -414,6 +414,7 @@ class WanAddress {
     let historyList = [];
     let page = self.currentPage;
     let addrList = [];
+    const PrivateAddr = '0x0000000000000000000000000000000000000064';
     if (self.selectedAddr) {
       addrList = self.selectedAddr
     } else {
@@ -422,7 +423,7 @@ class WanAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item]['from']) && 'annotate' in self.transHistory[item]) {
+      if (addrList.includes(self.transHistory[item]['from']) && self.transHistory[item].to === PrivateAddr) {
         let status = self.transHistory[item].status;
         let type = checkAddrType(self.transHistory[item]['from'], self.addrInfo);
         let operation = self.transHistory[item]['annotate'];
