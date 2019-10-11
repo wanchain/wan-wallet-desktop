@@ -479,6 +479,7 @@ class WanAddress {
           key: item,
           time: timeFormat(histories[item].sendTime),
           from: self.addrInfo[type][histories[item].from].name,
+          fromAddress: histories[item].from,
           to: histories[item].to,
           value: formatNum(fromWei(histories[item].value)),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),

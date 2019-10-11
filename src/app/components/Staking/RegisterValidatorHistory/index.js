@@ -23,6 +23,7 @@ class RegisterValidatorHistory extends Component {
   }
 
   stakingColumnsTree = () => {
+    this.props.stakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
     this.props.stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.stakingColumns;
   }
