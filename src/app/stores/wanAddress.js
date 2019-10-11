@@ -241,32 +241,33 @@ class WanAddress {
           filterData(normalInfo, 'normal');
           filterData(importInfo, 'import');
           // Insert none waddress account's waddress info into DB file.
-          if (noWaddressArr.length === 0) return 0;
-          await Promise.all(noWaddressArr.map(item => {
-            return new Promise((resolve, reject) => {
-              wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
-                if (!err) {
-                  // Update the account waddress after obtaining waddress.
-                  wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
-                    if (!err && res) {
-                      setWaddress({
-                        id: item.id,
-                        address: val.address,
-                        waddress: `0x${val.waddress}`
-                      });
-                      resolve();
-                    } else {
-                      console.log('Update address information failed');
-                      reject(new Error(err.desc));
-                    }
-                  })
-                } else {
-                  console.log('Get one address failed', err);
-                  reject(new Error(err.desc));
-                }
+          if (noWaddressArr.length !== 0) {
+            await Promise.all(noWaddressArr.map(item => {
+              return new Promise((resolve, reject) => {
+                wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
+                  if (!err) {
+                    // Update the account waddress after obtaining waddress.
+                    wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
+                      if (!err && res) {
+                        setWaddress({
+                          id: item.id,
+                          address: val.address,
+                          waddress: `0x${val.waddress}`
+                        });
+                        resolve();
+                      } else {
+                        console.log('Update address information failed');
+                        reject(new Error(err.desc));
+                      }
+                    })
+                  } else {
+                    console.log('Get one address failed', err);
+                    reject(new Error(err.desc));
+                  }
+                });
               });
-            });
-          }));
+            }));
+          }
           // Set DB's userTblVersion
           wand.request('wallet_setUserTblVersion', (err, val) => {
             if (err) {
