@@ -155,7 +155,7 @@ class WanAddress {
         type = 'trezor';
         break;
     }
-    wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress.toLowerCase() } }, (err, val) => {
+    wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' } }, (err, val) => {
       if (!err && val) {
         self.addrInfo[type][arr['address']]['name'] = arr.name;
       }
