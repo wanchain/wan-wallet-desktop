@@ -102,6 +102,10 @@ export function normalNum (num, type = 'string') {
   }
 }
 
+export function isExceedBalance(balance, fee, sendAmount) {
+  return new BigNumber(balance).minus(new BigNumber(fee)).lt(new BigNumber(sendAmount));
+}
+
 export function promiseTimeout (ms, p, desc) {
   // Create a promise that rejects in <ms> milliseconds
   let id;

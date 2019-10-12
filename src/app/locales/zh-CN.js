@@ -195,11 +195,13 @@ const zh_CN = {
 
     'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
     'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
+    'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.lockedAccount': '锁定账户',
     'CrossChainTransForm.selectLockAccount': '选择一个锁定账户',
     'CrossChainTransForm.capacity': '容量',
-    'CrossChainTransForm.inboundQuota': '余额',
+    'CrossChainTransForm.quota': '余额',
     'CrossChainTransForm.estimateFee': '估算消耗的GAS',
+    'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目的链余额充足',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',

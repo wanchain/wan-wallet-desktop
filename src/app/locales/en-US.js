@@ -195,11 +195,13 @@ const en_US = {
 
     'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
     'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
+    'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.inboundQuota': 'Balance',
+    'CrossChainTransForm.quota': 'Balance',
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',

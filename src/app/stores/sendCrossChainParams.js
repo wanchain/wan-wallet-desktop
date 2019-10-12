@@ -17,64 +17,37 @@ class SendCrossChainParams {
 
     @observable currentGasPrice = 200;
 
-    @observable lockAccounts = '';
-
-    @action updateLockAccounts (data) {
-      self.lockAccounts = data;
-    }
-
     @action addCrossTransTemplate (addr, params = {}) {
-      let gasPrice = params.chainType === 'ETH' ? 1 : self.minGasPrice;
+      let gasPrice = params.chainType === 'ETH' ? 1 : 200;
       self.currentFrom = addr;
       self.transParams[addr] = {
         gasPrice,
+        source: params.chainType,
+        destination: params.chainType === 'ETH' ? 'ETH' : 'WAN',
         from: {
           walletID: 1,
           path: params.path
         },
         to: {
           walletID: 1,
-          path: params.path
+          path: ''
         },
+        toAddr: '',
         amount: 0,
-        smgList: [],
         storeman: '',
-        txFeeRatio: '',
+        txFeeRatio: 0,
         gasLimit: GASLIMIT,
       };
     }
 
-    @action updateGasPrice (gasPrice, chainType = 'ETH') {
-        self.currentGasPrice = gasPrice;
-        self.minGasPrice = chainType === 'ETH' ? 1 : 180;
-    }
-
-    @action updateGasLimit (gasLimit) {
-      self.gasLimit = gasLimit;
-    }
-
     @action updateTransParams (addr, paramsObj) {
       Object.keys(paramsObj).forEach(item => {
-        self.transParams[addr][item] = paramsObj[item];
+        if (item === 'gasPrice') {
+          self.transParams[addr].gasPrice = Math.max(paramsObj.gasPrice, self.transParams[addr].gasPrice)
+        } else {
+          self.transParams[addr][item] = paramsObj[item];
+        }
       });
-    }
-
-    @computed get maxGasPrice () {
-      return self.currentGasPrice * 2;
-    }
-
-    @computed get averageGasPrice () {
-      return Math.max(self.minGasPrice, self.currentGasPrice);
-    }
-
-    @computed get gasFeeArr () {
-      let minFee = new BigNumber(self.minGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
-      let averageFee = new BigNumber(self.averageGasPrice).times(self.gasLimit).div(BigNumber(10).pow(9));
-      return {
-        minFee: roundFun(Number(minFee.toString(10)), 8),
-        averageFee: roundFun(Number(averageFee.toString(10)), 8),
-        maxFee: roundFun(Number(averageFee.times(2).toString(10)), 8)
-      }
     }
 }
 

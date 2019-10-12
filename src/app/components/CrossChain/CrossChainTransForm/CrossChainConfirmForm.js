@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { Button, Modal, Form, Input } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import { BigNumber } from 'bignumber.js';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Button, Modal, Form, Input } from 'antd';
 
 import './index.less';
-import { formatNum } from 'utils/support';
-import { TRANSTYPE } from 'utils/settings';
+import { CHAINNAME } from 'utils/settings';
+
+const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -24,19 +24,23 @@ class CrossChainConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, from, loading, sendTrans, transType } = this.props;
-    const { getFieldDecorator } = form;
-    const { to, amount, gasLimit, gasPrice, nonce, data, transferTo, token } = this.props.transParams[from];
-    let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9));
-    let initialTo = transType === TRANSTYPE.tokenTransfer ? transferTo : to;
-    let initialAmount = transType === TRANSTYPE.tokenTransfer ? token : amount;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee } = this.props;
+    const { amount, toAddr, storeman } = this.props.transParams[from];
+    let desChain, totalFeeTitle;
+    if (chainType === 'ETH') {
+      desChain = 'WAN';
+      totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
+    } else {
+      desChain = 'ETH';
+      totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
+    }
 
     return (
       <Modal
         destroyOnClose={true}
         closable={false}
         visible={visible}
-        title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
+        title={intl.get('CrossChainTransForm.ConfirmForm.transactionConfirm')}
         onCancel={this.handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
@@ -44,47 +48,21 @@ class CrossChainConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from')}>
-            {getFieldDecorator('from', { initialValue: from })
-              (<Input disabled={true} />)}
+          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
+            {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.to')}>
-            {getFieldDecorator('to', { initialValue: initialTo })
-              (<Input disabled={true} />)}
+          <Form.Item label={intl.get('CrossChainTransForm.lockedAccount')}>
+            {getFieldDecorator('lockedAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.amount')}>
-            {getFieldDecorator('amount', { initialValue: formatNum(initialAmount) })
-              (<Input disabled={true} />)}
+          <Form.Item label={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}>
+            {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {
-            getFieldDecorator(
-              'gasPrice', { initialValue: gasPrice })
-              (<Input disabled={true} />)
-          }
+          <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
+            {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasLimit')}>
-            {getFieldDecorator(
-              'gasLimit', { initialValue: formatNum(gasLimit) })
-              (<Input disabled={true} />)}
+          <Form.Item label={intl.get('NormalTransForm.amount') + ` (${chainType.toLowerCase()})`}>
+            {getFieldDecorator('fee', { initialValue: amount })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.nonce')}>
-            {getFieldDecorator(
-              'nonce', { initialValue: nonce })
-              (<Input disabled={true} />)}
-          </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.fee')}>
-            {getFieldDecorator('fee', { initialValue: fee.toString(10) })(
-              <Input disabled={true} />
-            )}
-          </Form.Item>
-          {
-            data !== '0x' &&
-            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.inputData')}>
-              {getFieldDecorator('inputData', { initialValue: data })(
-                <Input.TextArea disabled={true} />
-              )}
-            </Form.Item>
-          }
         </Form>
       </Modal>
     );

@@ -58,14 +58,14 @@ class ETHTrans extends Component {
     this.setState({ visible: true });
     try {
       let [gasPrice, desGasPrice, smgList, gasResult] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(chainType), estimateCrossETHGas(from)]);
+
       this.setState({
         smgList,
         estimateFee: {
           original: new BigNumber(gasPrice).times(gasResult[chainType]).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(gasResult[desChain]).div(BigNumber(10).pow(9)).toString(10)
       } });
-      updateTransParams(from, { gasPrice });
-      updateGasPrice(gasPrice, chainType === 'ETH' ? undefined : 'WAN');
+      updateTransParams(from, { gasPrice, gasLimit: gasResult[chainType], storeman: smgList[0][chainType === 'ETH' ? 'ethAddress' : 'wanAddress'], txFeeRatio: smgList[0].txFeeRatio });
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       message.warn(intl.get('network.down'));
