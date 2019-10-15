@@ -17,7 +17,8 @@ const privateTxGasLimit = 800000;
 @observer
 class RedeemFromPrivateForm extends Component {
   state = {
-    gasPrice: 0
+    gasPrice: 0,
+    redeemCount: 1
   }
 
   handleSend = () => {
@@ -80,6 +81,9 @@ class RedeemFromPrivateForm extends Component {
 
   // Refund tx check
   handleCheck = (arr) => {
+    this.setState({
+      redeemCount: arr.length === 0 ? 1 : arr.length
+    });
     let { form } = this.props;
     form.setFieldsValue({
       privateRefundList: arr
@@ -136,9 +140,9 @@ class RedeemFromPrivateForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>

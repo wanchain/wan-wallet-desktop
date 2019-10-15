@@ -16,7 +16,7 @@ import { isValidChecksumOTAddress } from 'wanchain-util';
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 const { Option } = Select;
-const privateTxGasLimit = 800000;
+const PrivateTxGasLimit = 800000;
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
@@ -28,6 +28,7 @@ const privateTxGasLimit = 800000;
   maxGasPrice: stores.sendTransParams.maxGasPrice,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
+  updateGasLimit: (gasLimit) => stores.sendTransParams.updateGasLimit(gasLimit),
 }))
 
 @observer
@@ -176,6 +177,7 @@ class NormalTransForm extends Component {
       } else {
         console.log('Update gas limit:', gasLimit);
         this.props.updateTransParams(from, { gasLimit });
+        this.props.updateGasLimit(gasLimit);
       }
     });
   }
@@ -215,10 +217,12 @@ class NormalTransForm extends Component {
   }
 
   checkPrivateAmount = (rule, value, callback) => {
-    // Private transaction
-    let { form } = this.props;
-    let from = form.getFieldValue('from');
-    this.props.updateTransParams(from, { gasLimit: privateTxGasLimit });
+    if (!this.state.advanced) {
+      let { form } = this.props;
+      let from = form.getFieldValue('from');
+      this.props.updateTransParams(from, { gasLimit: PrivateTxGasLimit });
+      this.props.updateGasLimit(PrivateTxGasLimit);
+    }
     callback();
   }
 

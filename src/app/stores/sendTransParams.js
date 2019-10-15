@@ -42,6 +42,10 @@ class SendTransParams {
       });
     }
 
+    @action updateGasLimit (gasLimit) {
+      self.gasLimit = gasLimit;
+    }
+
     @computed get maxGasPrice () {
       return self.currentGasPrice * 2;
     }
