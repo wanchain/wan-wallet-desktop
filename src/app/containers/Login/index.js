@@ -74,7 +74,7 @@ class Login extends Component {
     return (
       <div className="loginW">
         <div className="loginCon">
-          <Input.Password placeholder={intl.get('Login.inputPassword')} onPressEnter={this.login} onChange={this.handleChange}/>
+          <Input.Password placeholder={intl.get('Login.inputPassword')} onPressEnter={this.login} onChange={this.handleChange} autoFocus/>
           <Button type="primary" onClick={this.login}>{intl.get('Login.login')}</Button>
           <p className="restoreBtn" onClick={this.handleClick}>{intl.get('Login.restore')}</p>
         </div>

@@ -59,11 +59,10 @@ class Session {
   }
 
   @action updateSettings (newValue) {
-    let obj = self.settings;
     wand.request('setting_set', { settings: newValue }, (err, ret) => {
       if (err) return;
       if (ret) {
-        self.settings = Object.assign(obj, newValue);
+        Object.assign(self.settings, newValue);
       }
     })
   }
