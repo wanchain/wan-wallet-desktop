@@ -19,6 +19,8 @@ export const MAXDAYS = 90;
 export const defaultTimeout = '5';
 
 export const DEFAULT_GAS = 4700000;
+export const LOCKETH_GAS = '200000';
+export const REDEEMWETH_GAS = '100000';
 
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'https://testnet.wanscan.org';

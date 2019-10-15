@@ -15,16 +15,8 @@ const inputCom = <Input disabled={true} />
 
 @observer
 class CrossChainConfirmForm extends Component {
-  handleCancel = () => {
-    this.props.onCancel();
-  }
-
-  handleSave = () => {
-    this.props.sendTrans();
-  }
-
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
     let desChain, totalFeeTitle;
     if (chainType === 'ETH') {
@@ -41,9 +33,9 @@ class CrossChainConfirmForm extends Component {
         closable={false}
         visible={visible}
         title={intl.get('CrossChainTransForm.ConfirmForm.transactionConfirm')}
-        onCancel={this.handleCancel}
+        onCancel={handleCancel}
         footer={[
-          <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
+          <Button key="back" className="cancel-button" onClick={handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
           <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('NormalTransForm.ConfirmForm.send')}</Button>,
         ]}
       >

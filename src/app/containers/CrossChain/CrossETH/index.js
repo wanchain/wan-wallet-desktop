@@ -16,8 +16,8 @@ const CHAINTYPE = 'ETH';
   language: stores.languageIntl.language,
   getAddrList: stores.ethAddress.getAddrList,
   getAmount: stores.ethAddress.getNormalAmount,
-  transParams: stores.sendTransParams.transParams,
   getTokensListInfo: stores.tokens.getTokensListInfo,
+  transParams: stores.sendCrossChainParams.transParams,
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
@@ -28,6 +28,30 @@ class CrossETH extends Component {
     super(props);
     this.props.setCurrToken(null, 'WETH');
     this.props.changeTitle('CrossChain.CrossChain');
+  }
+
+  inboundHandleSend = from => {
+    let transParams = this.props.transParams[from];
+    let input = {
+      from: transParams.from,
+      to: transParams.to,
+      amount: transParams.amount,
+      gasPrice: transParams.gasPrice,
+      gasLimit: transParams.gasLimit,
+      storeman: transParams.storeman,
+      txFeeRatio: transParams.txFeeRatio
+    };
+    return new Promise((resolve, reject) => {
+      wand.request('crosschain_lockETHInbound', { input, source: 'ETH', destination: 'WAN' }, (err, ret) => {
+        if (err) {
+          console.log('crosschain_lockETHInbound:', err);
+          return reject(err);
+        } else {
+          console.log(JSON.stringify(ret, null, 4));
+          return resolve(ret)
+        }
+      })
+    })
   }
 
   inboundColumns = [
@@ -44,7 +68,7 @@ class CrossETH extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -62,7 +86,7 @@ class CrossETH extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} type={OUTBOUND}/></div>
     }
   ];
 

@@ -5,11 +5,11 @@ import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Icon, Checkbox, message, Spin } from 'antd';
 
 import './index.less';
-import { CHAINNAME } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { fromWei, isExceedBalance } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+import { CHAINNAME, ETHPATH, WANPATH } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';
 import { getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 
@@ -66,10 +66,11 @@ class CrossETHForm extends Component {
         console.log('handleNext:', err);
         return;
       };
-      let path;
+
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       let origAddrAmount = getBalanceByAddr(from, chainType === 'ETH' ? addrInfo : wanAddrInfo);
       let destAddrAmount = getBalanceByAddr(to, chainType === 'ETH' ? wanAddrInfo : addrInfo);
+      let path = chainType === 'ETH' ? WANPATH + wanAddrInfo.normal[to].path : ETHPATH + addrInfo.normal[to].path;
 
       if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination, 0)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
@@ -79,11 +80,6 @@ class CrossETHForm extends Component {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
-        }
-        if (chainType === 'ETH') {
-          path = wanAddrInfo.normal[to].path
-        } else {
-          path = addrInfo.normal[to].path
         }
         wand.request('phrase_reveal', { pwd: pwd }, (err) => {
           if (err) {
@@ -262,7 +258,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

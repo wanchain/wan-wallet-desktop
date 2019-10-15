@@ -4,9 +4,9 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 
-import { INBOUND } from 'utils/settings';
+import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS } from 'utils/settings';
 import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm'
-import { getGasPrice, getBalanceByAddr, getSmgList, estimateCrossETHInboundGas, estimateCrossETHOutboundGas } from 'utils/helper';
+import { getGasPrice, getBalanceByAddr, getSmgList } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm);
 
@@ -37,17 +37,15 @@ class ETHTrans extends Component {
 
   showModal = async () => {
     const { from, path, addrInfo, getTokensListInfo, chainType, addCrossTransTemplate, updateTransParams, updateGasPrice, type } = this.props;
-    let desChain, estimateCrossETHGas;
+    let desChain;
     if (type === INBOUND) {
       desChain = 'WAN';
-      estimateCrossETHGas = estimateCrossETHInboundGas;
       if (getBalanceByAddr(from, addrInfo) === '0') {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
     } else {
       desChain = 'ETH';
-      estimateCrossETHGas = estimateCrossETHOutboundGas;
       if ((getTokensListInfo.filter(item => item.address === from)[0]).amount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
@@ -57,17 +55,17 @@ class ETHTrans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, desGasPrice, smgList, gasResult] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(chainType), estimateCrossETHGas(from)]);
-
+      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(chainType)]);
       this.setState({
         smgList,
         estimateFee: {
-          original: new BigNumber(gasPrice).times(gasResult[chainType]).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(gasResult[desChain]).div(BigNumber(10).pow(9)).toString(10)
+          original: new BigNumber(gasPrice).times(LOCKETH_GAS).div(BigNumber(10).pow(9)).toString(10),
+          destination: new BigNumber(desGasPrice).times(REDEEMWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
       } });
-      updateTransParams(from, { gasPrice, gasLimit: gasResult[chainType], storeman: smgList[0][chainType === 'ETH' ? 'ethAddress' : 'wanAddress'], txFeeRatio: smgList[0].txFeeRatio });
+      updateTransParams(from, { gasPrice, gasLimit: LOCKETH_GAS, storeman: smgList[0][chainType === 'ETH' ? 'ethAddress' : 'wanAddress'], txFeeRatio: smgList[0].txFeeRatio });
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
+      console.log('showModal:', err)
       message.warn(intl.get('network.down'));
     }
   }
@@ -84,8 +82,7 @@ class ETHTrans extends Component {
     this.setState({ loading: true });
     this.props.handleSend(from).then(() => {
       this.setState({ visible: false, loading: false, spin: true });
-    }).catch(err => {
-      console.log(err);
+    }).catch(() => {
       this.setState({ visible: false, loading: false, spin: true });
     });
   }

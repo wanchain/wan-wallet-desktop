@@ -1010,6 +1010,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         }
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
+
+      case 'lockETHInbound':
+        try {
+          let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+          let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+          ret = await global.crossInvoker.invoke(srcChain, dstChain, 'LOCK', payload.input);
+        } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break
   }
 })
 
