@@ -136,7 +136,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 const dbVersion = hdUtil.getUserTableVersion();
                 const latestVersion = walletBackend.config.dbExtConf.userTblVersion;
                 let data = true;
-                if(dbVersion !== latestVersion) {
+                if (dbVersion !== latestVersion) {
                     data = {
                         version: dbVersion
                     }
@@ -259,13 +259,22 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             }
 
             break
+
+        case 'reboot':
+            try {
+                app.relaunch()
+                app.exit(0)
+            } catch (e) {
+                logger.error('Reboot failed: ' + e.message || e.stack)
+            }
+            break
     }
 })
 
 ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
     let err, address, nonce
     const [action, id] = actionUni.split('#')
-    
+
     switch (action) {
         case 'get':
             try {
@@ -327,7 +336,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 const { addr, path } = payload;
                 try {
                     //private balance
-                    let [...result] = await Promise.all(path.map( v => {
+                    let [...result] = await Promise.all(path.map(v => {
                         return new Promise((resolve, reject) => {
                             let OTABalances = ccUtil.getOtaFunds(v[0], v[1]);
                             let amount = 0;
@@ -342,7 +351,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     privateBalance = Object.assign({}, ...result);
 
                     //normal balance
-                    if(addr) {
+                    if (addr) {
                         if (_.isArray(addr) && addr.length > 1) {
                             const addresses = addr.map(item => `0x${item}`)
                             balance = await ccUtil.getMultiWanBalances(addresses)
@@ -353,7 +362,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     } else {
                         balance = {};
                     }
-                    
+
                 } catch (e) {
                     logger.error('Get balances failed');
                     logger.error(e);
@@ -361,7 +370,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     err = e
                 }
 
-                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: {balance, privateBalance } })
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { balance, privateBalance } })
             }
             break
 
@@ -385,7 +394,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'scanMultiOTA':
             {
                 try {
-                    if(payload.length > 0) {
+                    if (payload.length > 0) {
                         payload.forEach((v) => {
                             ccUtil.scanOTA(v[0], v[1]);
                         });
@@ -394,7 +403,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     logger.error(e.message || e.stack)
                     err = e
                 }
-                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: {status: 'Opened'} })
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { status: 'Opened' } })
             }
             break
 
@@ -584,25 +593,25 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             break;
 
         case 'refund':
-                try {
-                    let { input } = payload;
-                    const action = 'REFUND';
-                    for(let i of input) {
-                        let res = await global.crossInvoker.invokePrivateTrans(action, i);
-                        if(res.code === false) {
-                            err = {
-                                message: res.result
-                            };
-                        }
+            try {
+                let { input } = payload;
+                const action = 'REFUND';
+                for (let i of input) {
+                    let res = await global.crossInvoker.invokePrivateTrans(action, i);
+                    if (res.code === false) {
+                        err = {
+                            message: res.result
+                        };
                     }
-                } catch (e) {
-                    logger.error('Refund failed');
-                    logger.error(e);
-                    logger.error(e.message || e.stack)
-                    err = e
                 }
-                sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-                break;
+            } catch (e) {
+                logger.error('Refund failed');
+                logger.error(e);
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'raw':
             try {
@@ -918,7 +927,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             try {
                 let func = payload.func;
                 let params = payload.params;
-                var cscDefinition = [{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"stakeAppend","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"},{"name":"lockEpochs","type":"uint256"}],"name":"stakeUpdate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"secPk","type":"bytes"},{"name":"bn256Pk","type":"bytes"},{"name":"lockEpochs","type":"uint256"},{"name":"feeRate","type":"uint256"}],"name":"stakeIn","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"secPk","type":"bytes"},{"name":"bn256Pk","type":"bytes"},{"name":"lockEpochs","type":"uint256"},{"name":"feeRate","type":"uint256"},{"name":"maxFeeRate","type":"uint256"}],"name":"stakeRegister","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"},{"name":"renewal","type":"bool"}],"name":"partnerIn","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"delegateAddress","type":"address"}],"name":"delegateIn","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"delegateAddress","type":"address"}],"name":"delegateOut","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"},{"name":"feeRate","type":"uint256"}],"name":"stakeUpdateFeeRate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"v","type":"uint256"},{"indexed":false,"name":"feeRate","type":"uint256"},{"indexed":false,"name":"lockEpoch","type":"uint256"},{"indexed":false,"name":"maxFeeRate","type":"uint256"}],"name":"stakeRegister","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"v","type":"uint256"},{"indexed":false,"name":"feeRate","type":"uint256"},{"indexed":false,"name":"lockEpoch","type":"uint256"}],"name":"stakeIn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"v","type":"uint256"}],"name":"stakeAppend","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"lockEpoch","type":"uint256"}],"name":"stakeUpdate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"v","type":"uint256"},{"indexed":false,"name":"renewal","type":"bool"}],"name":"partnerIn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"v","type":"uint256"}],"name":"delegateIn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"}],"name":"delegateOut","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":true,"name":"posAddress","type":"address"},{"indexed":true,"name":"feeRate","type":"uint256"}],"name":"stakeUpdateFeeRate","type":"event"}];
+                var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }, { "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "renewal", "type": "bool" }], "name": "partnerIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }, { "indexed": false, "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }], "name": "stakeIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "stakeAppend", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "lockEpoch", "type": "uint256" }], "name": "stakeUpdate", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "renewal", "type": "bool" }], "name": "partnerIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "delegateIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }], "name": "delegateOut", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "type": "event" }];
                 let data = ccUtil.getDataByFuncInterface(cscDefinition,
                     setting.cscContractAddr,
                     func,
@@ -949,7 +958,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
-                
+
         case 'insertRegisterValidatorToDB': // Save the register validator record in local DB file.
             try {
                 logger.info('insertRegisterValidatorToDB:' + payload);
@@ -1022,14 +1031,9 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             if (choice === 1) {
                 try {
-
                     setting.switchNetwork()
-
-                    Windows.broadcast('notification', 'sdk', 'init')
-
-                    await walletBackend.init()
-
-                    Windows.broadcast('notification', 'network', setting.network)
+                    app.relaunch()
+                    app.exit(0)
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
