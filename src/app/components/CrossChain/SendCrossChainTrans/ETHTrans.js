@@ -4,9 +4,9 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 
-import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS } from 'utils/settings';
-import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm'
 import { getGasPrice, getBalanceByAddr, getSmgList } from 'utils/helper';
+import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm';
+import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
 
 const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm);
 
@@ -18,7 +18,6 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
-  updateGasPrice: (gasPrice, chainType) => stores.sendCrossChainParams.updateGasPrice(gasPrice, chainType),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
 }))
 
@@ -31,21 +30,25 @@ class ETHTrans extends Component {
     smgList: [],
     estimateFee: {
       original: 0,
-      destination: 0
+      destination: 0,
     }
   }
 
   showModal = async () => {
-    const { from, path, addrInfo, getTokensListInfo, chainType, addCrossTransTemplate, updateTransParams, updateGasPrice, type } = this.props;
-    let desChain;
+    const { from, path, addrInfo, getTokensListInfo, chainType, addCrossTransTemplate, updateTransParams, type } = this.props;
+    let desChain, origGas, destGas;
     if (type === INBOUND) {
       desChain = 'WAN';
+      origGas = LOCKETH_GAS;
+      destGas = REDEEMWETH_GAS;
       if (getBalanceByAddr(from, addrInfo) === '0') {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
     } else {
       desChain = 'ETH';
+      origGas = LOCKWETH_GAS;
+      destGas = REDEEMETH_GAS;
       if ((getTokensListInfo.filter(item => item.address === from)[0]).amount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
@@ -55,14 +58,14 @@ class ETHTrans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(chainType)]);
+      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList('ETH')]);
       this.setState({
         smgList,
         estimateFee: {
-          original: new BigNumber(gasPrice).times(LOCKETH_GAS).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(REDEEMWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
+          original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
+          destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
       } });
-      updateTransParams(from, { gasPrice, gasLimit: LOCKETH_GAS, storeman: smgList[0][chainType === 'ETH' ? 'ethAddress' : 'wanAddress'], txFeeRatio: smgList[0].txFeeRatio });
+      updateTransParams(from, { gasPrice, gasLimit: origGas, storeman: smgList[0][chainType === 'ETH' ? 'ethAddress' : 'wanAddress'], txFeeRatio: smgList[0].txFeeRatio });
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log('showModal:', err)

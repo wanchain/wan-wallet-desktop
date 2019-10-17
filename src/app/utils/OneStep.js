@@ -1,7 +1,8 @@
 import { getGasPrice, increaseFailedRetryCount } from 'utils/helper';
-import { DEFAULT_GASPRICE, REDEEMWETH_GAS, REVOKEETH_GAS, REDEEMETH_GAS, REVOKEWETH_GAS } from 'utils/settings'
+import { REDEEMWETH_GAS, REVOKEETH_GAS, REDEEMETH_GAS, REVOKEWETH_GAS } from 'utils/settings'
 
 const MAXTRY = 4;
+const DEFAULT_GASPRICE = 180;
 
 const OneStep = {
   pending: {
@@ -12,7 +13,7 @@ const OneStep = {
 
   retryTransArr: new Map(),
 
-  initUndoTrans: trans => {
+  initUndoTrans: function(trans) {
     trans.canRedeem.forEach(item => {
       if (!this.retryTransArr.get(item.hashX)) {
         this.retryTransArr.set(item.hashX, item.redeemTryCount);
@@ -33,8 +34,9 @@ const OneStep = {
     return this;
   },
 
-  handleRedeem: () => {
-    this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach((trans_data) => {
+  handleRedeem: function() {
+    this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
+      console.log('trans_data:', trans_data)
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'ETH') {
         let input = {
@@ -48,7 +50,7 @@ const OneStep = {
               }
               input.gasLimit = REDEEMWETH_GAS;
               input.gasPrice = gasPrice;
-              wand.request('crosschain_redeemETHWETH', { input, source: 'ETH', destination: 'WAN' }, (err, ret) => {
+              wand.request('crosschain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM' }, (err, ret) => {
                 if (err) {
                   this.sending.delete(trans_data.hashX);
                   this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
@@ -64,7 +66,7 @@ const OneStep = {
           getGasPrice('ETH').then(gasPrice => {
             input.gasLimit = REDEEMETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crosschain_redeemETHWETH', { input, source: 'WAN', destination: 'ETH' }, (err, ret) => {
+            wand.request('crosschain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM' }, (err, ret) => {
               if (err) {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
@@ -79,11 +81,57 @@ const OneStep = {
         }
       }
     });
+
     return this;
   },
 
-  handleRevoke: () => {
+  handleRevoke: function() {
+    this.pending.revoke.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
+      this.sending.add(trans_data.hashX);
+      if (trans_data.tokenStand === 'ETH') {
+        let input = {
+            hashX: trans_data.hashX
+        };
+        if (trans_data.srcChainType === 'WAN') {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+                gasPrice = DEFAULT_GASPRICE
+            }
+            input.gasLimit = REVOKEWETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crosschain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REVOKE' }, (err, ret) => {
+              if (err) {
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+              } else {
+                console.log('send_revoke_WETH:', ret);
+              }
+            });
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX)
+          });
+        } else {
+          getGasPrice('ETH').then(gasPrice => {
+            input.gasLimit = REVOKEETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crosschain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE' }, (err, ret) => {
+              if (err) {
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+              } else {
+                console.log('send_revoke_ETH:', ret);
+              }
+            });
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX)
+          });
+        }
+      }
+    })
 
+    return this;
   }
 };
 

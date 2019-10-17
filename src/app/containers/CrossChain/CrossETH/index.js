@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message } from 'antd';
+import { Table, Row, Col } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/eth.png';
@@ -10,16 +10,19 @@ import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 
 const CHAINTYPE = 'ETH';
+const WANCHAIN = 'WAN';
 
 @inject(stores => ({
+  tokensList: stores.tokens.tokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.ethAddress.getAddrList,
   getAmount: stores.ethAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
-  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
 }))
 
 @observer
@@ -28,6 +31,17 @@ class CrossETH extends Component {
     super(props);
     this.props.setCurrToken(null, 'WETH');
     this.props.changeTitle('CrossChain.CrossChain');
+  }
+
+  componentDidMount() {
+    let tokenAddr = (Object.keys(this.props.tokensList).filter(item => this.props.tokensList[item].symbol === 'WETH'))[0];
+    this.timer = setInterval(() => {
+      this.props.updateTokensBalance(tokenAddr);
+    }, 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   inboundHandleSend = from => {
@@ -42,9 +56,33 @@ class CrossETH extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crosschain_lockETHWETH', { input, source: 'ETH', destination: 'WAN' }, (err, ret) => {
+      wand.request('crosschain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crosschain_lockETHInbound:', err);
+          return reject(err);
+        } else {
+          console.log(JSON.stringify(ret, null, 4));
+          return resolve(ret)
+        }
+      })
+    })
+  }
+
+  outboundHandleSend = from => {
+    let transParams = this.props.transParams[from];
+    let input = {
+      from: transParams.from,
+      to: transParams.to,
+      amount: transParams.amount,
+      gasPrice: transParams.gasPrice,
+      gasLimit: transParams.gasLimit,
+      storeman: transParams.storeman,
+      txFeeRatio: transParams.txFeeRatio
+    };
+    return new Promise((resolve, reject) => {
+      wand.request('crosschain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+        if (err) {
+          console.log('crosschain_lockWETHInbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -86,7 +124,7 @@ class CrossETH extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 

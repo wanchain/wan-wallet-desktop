@@ -35,7 +35,7 @@ class Sidebar extends Component {
           message.warn(intl.get('network.down'));
         }
       })
-    }, 5000)
+    }, 10000)
   }
 
   componentWillUnmount() {
