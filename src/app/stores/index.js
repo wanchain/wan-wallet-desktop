@@ -9,6 +9,7 @@ import sendTransParams from './sendTransParams';
 import sendCrossChainParams from './sendCrossChainParams';
 import staking from './staking';
 import tokens from './tokens';
+import crossChain from './crossChain';
 
 const stores = {
   session,
@@ -21,6 +22,7 @@ const stores = {
   staking,
   languageIntl,
   tokens,
+  crossChain
 };
 
 export default stores;

@@ -42,7 +42,7 @@ class CrossETH extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crosschain_lockETHInbound', { input, source: 'ETH', destination: 'WAN' }, (err, ret) => {
+      wand.request('crosschain_lockETHWETH', { input, source: 'ETH', destination: 'WAN' }, (err, ret) => {
         if (err) {
           console.log('crosschain_lockETHInbound:', err);
           return reject(err);

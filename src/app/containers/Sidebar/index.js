@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import './index.less';
+import OneStep from 'utils/OneStep';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
+import { getAllUndoneCrossTrans } from 'utils/helper';
 
 const { SubMenu, Item } = Menu;
 
@@ -22,6 +24,22 @@ const { SubMenu, Item } = Menu;
 class Sidebar extends Component {
   state = {
     collapsed: false
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      getAllUndoneCrossTrans((err, ret) => {
+        if (!err) {
+          OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
+        } else {
+          message.warn(intl.get('network.down'));
+        }
+      })
+    }, 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   toggleMenu = () => {

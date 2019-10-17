@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH, INBOUND, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
 
@@ -464,5 +464,23 @@ export const estimateCrossETHOutboundGas = function (from) {
         }
       }
     })
+  })
+}
+
+export const getAllUndoneCrossTrans = function (callback) {
+  wand.request('crosschain_getAllUndoneCrossTrans', null, (err, ret) => {
+    if (err) {
+      return callback(err);
+    } else {
+      return callback(null, ret);
+    }
+  })
+}
+
+export const increaseFailedRetryCount = function (params) {
+  wand.request('crosschain_increaseFailedRetryCount', params, err => {
+    if (err) {
+      console.log('Increase redeem retry count failed');
+    }
   })
 }
