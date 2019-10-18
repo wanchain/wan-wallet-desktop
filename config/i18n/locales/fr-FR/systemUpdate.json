@@ -1,0 +1,12 @@
+{
+    "title": "Software Update",
+    "head": "Software Update",
+    "newVersion": "A new version of WAN Wallet is available!",
+    "version": "WAN wallet version $1 is now available, your current version is $2. <br>Would you like to upgrade now?",
+    "release": "Release notes:",
+    "info": "$1",
+    "no": "No",
+    "upgrade": "Update Now",
+    "downloadingProgress": "Downloading...",
+    "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!"
+}

@@ -390,4 +390,4 @@ const fr_FR = {
 
 }
 
-export default fr_Fr;
+export default fr_FR;
