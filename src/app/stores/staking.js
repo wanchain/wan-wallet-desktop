@@ -116,6 +116,9 @@ class Staking {
         key: index,
       })
     });
+    validators.sort((m, n) => {
+      return new BigNumber(m.myStake.title).lt(new BigNumber(n.myStake.title)) ? 1 : -1;
+    });
     return validators;
   }
 

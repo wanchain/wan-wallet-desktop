@@ -10,7 +10,6 @@ import { fromWei } from 'utils/support';
 import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
-const statStyle = { color: '#ddd', background: '#03147 !important' };
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -170,10 +169,10 @@ class Offline extends Component {
           <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
           <Row align="middle" style={{ marginTop: '10px' }}>
             <Col span={6}>
-              <span className="textFont">{intl.get('AdvancedOptionForm.gasPrice')}: </span><Input className="colorShowInfo" valueStyle={statStyle} value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
+              <span className="textFont">{intl.get('AdvancedOptionForm.gasPrice')}: </span><Input className="colorShowInfo" value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
             </Col>
             <Col span={6}>
-              <span className="textFont">{intl.get('AdvancedOptionForm.nonce')}: </span><Input className="colorShowInfo" valueStyle={statStyle} value={nonce === null ? '--' : nonce} />
+              <span className="textFont">{intl.get('AdvancedOptionForm.nonce')}: </span><Input className="colorShowInfo" value={nonce === null ? '--' : nonce} />
             </Col>
           </Row>
         </div>
