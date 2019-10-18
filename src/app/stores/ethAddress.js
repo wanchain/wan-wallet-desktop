@@ -1,5 +1,4 @@
 
-import wanUtil from 'wanchain-util';
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 

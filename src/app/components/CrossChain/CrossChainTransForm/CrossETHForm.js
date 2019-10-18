@@ -141,7 +141,19 @@ class CrossETHForm extends Component {
   }
 
   updateLockAccounts = (storeman, option) => {
-    let { from, updateTransParams, smgList } = this.props;
+    let { from, form, updateTransParams, smgList, chainType } = this.props;
+
+    if (chainType === 'ETH') {
+      form.setFieldsValue({
+        capacity: fromWei(smgList[option.key].quota),
+        quota: fromWei(smgList[option.key].inboundQuota),
+      });
+    } else {
+      form.setFieldsValue({
+        quota: fromWei(smgList[option.key].outboundQuota),
+      });
+    }
+
     updateTransParams(from, { storeman, txFeeRatio: smgList[option.key].txFeeRatio });
   }
 

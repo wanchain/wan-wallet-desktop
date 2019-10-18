@@ -8,6 +8,7 @@ import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
+import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 
 const CHAINTYPE = 'ETH';
 const WANCHAIN = 'WAN';
@@ -155,6 +156,11 @@ class CrossETH extends Component {
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+          </Col>
+        </Row>
+        <Row className="mainBody">
+          <Col>
+            <CrossChainTransHistory name={['normal']} />
           </Col>
         </Row>
       </div>
