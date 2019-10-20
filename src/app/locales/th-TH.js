@@ -103,7 +103,7 @@ const th_TH = {
     'WanAccount.wan': 'WAN',
     'WanAccount.create': 'สร้างแอดเดรส',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
-    'WanAccount.redeem': 'Redeem',
+    'WanAccount.redeem': 'ถอนออก',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',
@@ -203,7 +203,7 @@ const th_TH = {
 
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',
-    'RedeemFromPrivateForm.redeem': 'Redeem',
+    'RedeemFromPrivateForm.redeem': 'ถอนออก',
     'RedeemFromPrivateForm.PrivateAddresses': 'ที่อยู่แบบส่วนตัว',
     'RedeemFromPrivateForm.PrivateAddress': 'ที่อยู่แบบส่วนตัว',
     'RedeemFromPrivateForm.Required': 'กรุณาเลือกที่อยู่แบบส่วนตัวอย่างน้อย 1 ที่อยู่',
