@@ -292,6 +292,8 @@ const en_US = {
     'StakeInForm.selectName': 'Select a validator',
     'StakeInForm.enterAddress': 'Please enter address',
     'StakeInForm.selectAddress': 'Select a FROM address',
+    'StakeInForm.delegateInFailed': 'Delegate in failed',
+    'StakeInForm.networkDisconnected': 'Network disconnected',
     'WithdrawForm.title': 'Register to Withdraw',
     'WithdrawForm.note': 'Note: After registering for withdrawal, staking balance will go to zero and staked WAN will be returned to your account within 3 epochs.',
     'staking.fromDaysAgo1': ' ',

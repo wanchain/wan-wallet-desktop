@@ -293,6 +293,8 @@ const zh_CN = {
     'StakeInForm.selectName': '请选择验证人节点',
     'StakeInForm.enterAddress': '请输入地址',
     'StakeInForm.selectAddress': '选择一个地址',
+    'StakeInForm.delegateInFailed': '委托失败',
+    'StakeInForm.networkDisconnected': '网络无法连接',
     'WithdrawForm.title': '退出委托',
     'WithdrawForm.note': '注意：在退出委托后，委托金额将在3个epoch内返回原账户，委托金额将被清零',
     'staking.fromDaysAgo1': '已委托 ',

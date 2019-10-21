@@ -172,7 +172,7 @@ class DelegateInForm extends Component {
         callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }).catch((err) => {
-      callback(err);
+        callback(err);
     })
   }
 
@@ -280,7 +280,6 @@ class DelegateInForm extends Component {
 
       let validator = {}
       let { onlineValidatorList } = this.props;
-
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
         if (to === v.address) {
@@ -288,7 +287,6 @@ class DelegateInForm extends Component {
           break;
         }
       }
-
       this.setState({
         loading: false,
         confirmVisible: true,
@@ -351,9 +349,7 @@ class DelegateInForm extends Component {
     } else {
       wand.request('staking_delegateIn', tx, (err, ret) => {
         if (err) {
-          message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
+          message.warn(intl.get('StakeInForm.delegateInFailed'));
         }
         this.setState({ confirmVisible: false });
         this.props.onSend();
@@ -468,7 +464,7 @@ class DelegateInForm extends Component {
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
+                      {getFieldDecorator('to')
                         (<Input disabled={true} placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>

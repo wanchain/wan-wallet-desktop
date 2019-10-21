@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate, getNonce, getGasPrice, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
+import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { isNumber } from 'utils/support';
 import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'antd';
 import { signTransaction } from 'componentUtils/trezor';
