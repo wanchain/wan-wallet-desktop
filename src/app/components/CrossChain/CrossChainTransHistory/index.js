@@ -4,58 +4,69 @@ import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
 import 'components/TransHistory/index.less';
-import { MAIN, TESTNET, TRANSTYPE } from 'utils/settings';
+import TransInfo from 'componentUtils/TransInfo';
 
 import history from 'static/image/history.png';
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.wanAddress.addrInfo,
+  addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
-  historyList: stores.wanAddress.historyList,
-  selectedAddr: stores.wanAddress.selectedAddr,
+  crossETHTrans: stores.crossChain.crossETHTrans,
   transColumns: stores.languageIntl.transColumns,
-  offlineHistoryList: stores.wanAddress.offlineHistoryList,
-  tokenTransferHistoryList: stores.wanAddress.tokenTransferHistoryList,
   setCurrPage: page => stores.wanAddress.setCurrPage(page),
+  updateCrossTrans: () => stores.crossChain.updateCrossTrans(),
 }))
 
 @observer
 class CrossChainTransHistory extends Component {
+  state = {
+    visible: false,
+    record: {},
+  }
+
   constructor (props) {
     super(props);
     this.props.setCurrPage(this.props.name || []);
   }
 
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.props.updateCrossTrans();
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`
-    wand.shell.openExternal(href);
+    // let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`
+    // wand.shell.openExternal(href);
+    this.setState({ visible: true, record })
+  }
+
+  handleCancel = () => {
+    this.setState({
+      visible: false
+    })
   }
 
   render () {
-    const { addrInfo, historyList, name, offline, offlineHistoryList, transType, tokenTransferHistoryList } = this.props;
-    let addrList = [];
-    let dataSource;
-    if (name) {
-      name.forEach(val => { addrList = addrList.concat(Object.entries(addrInfo[val]).map(v => ({ address: v[0], name: v[1].name }))) });
-    }
-    if (offline) {
-      dataSource = offlineHistoryList;
-    } else {
-      if (transType === TRANSTYPE.tokenTransfer) {
-        dataSource = tokenTransferHistoryList;
-      } else {
-        dataSource = historyList;
-      }
-    }
+    const { crossETHTrans, transColumns } = this.props;
+
+    transColumns[1].render = (text, record) => <div className="textHeight" title={record.fromAddr}>{text} <br /> <span className="chainText">{record.srcChainAddr}</span></div>;
+    transColumns[2].render = (text, record) => <div className="textHeight" title={record.toAddr}>{text} <br /> <span className="chainText">{record.dstChainAddr}</span></div>;
+
     return (
       <div>
         <div className="historyCon" id="wanAddrSelect">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={dataSource} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={transColumns} dataSource={crossETHTrans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
+        { this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record}/> }
       </div>
     );
   }

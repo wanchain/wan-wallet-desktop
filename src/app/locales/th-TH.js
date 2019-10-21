@@ -202,6 +202,7 @@ const th_TH = {
     'CrossChainTransForm.quota': 'Balance',
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
+    'CrossChainTransForm.transInfo': 'Crosschain Transaction Information',
 
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',

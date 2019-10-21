@@ -202,6 +202,7 @@ const ko_KR = {
     'CrossChainTransForm.quota': 'Balance',
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
+    'CrossChainTransForm.transInfo': 'Crosschain Transaction Information',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',

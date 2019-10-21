@@ -202,6 +202,7 @@ const zh_CN = {
     'CrossChainTransForm.quota': '余额',
     'CrossChainTransForm.estimateFee': '估算消耗的GAS',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目的链余额充足',
+    'CrossChainTransForm.transInfo': '跨链交易信息',
 
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',

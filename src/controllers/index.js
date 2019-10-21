@@ -1050,6 +1050,16 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
 
+      case 'getAllCrossTrans':
+        try {
+          ret = global.wanDb.getItemAll('crossTrans', {});
+        } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break
+
       case 'increaseFailedRetryCount':
         try {
           let { hashX, toCount, isRedeem } = payload;

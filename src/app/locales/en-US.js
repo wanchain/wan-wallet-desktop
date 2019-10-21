@@ -202,6 +202,7 @@ const en_US = {
     'CrossChainTransForm.quota': 'Balance',
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
+    'CrossChainTransForm.transInfo': 'Crosschain Transaction Information',
 
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
