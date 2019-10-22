@@ -291,7 +291,7 @@ class NormalTransForm extends Component {
 
               <Form.Item label={intl.get('NormalTransForm.mode')}>
                 {getFieldDecorator('mode', { initialValue: this.state.isPrivate ? 'private' : 'normal' })
-                  (<Select onChange={this.modeChange}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
+                  (<Select onChange={this.modeChange} disabled={this.props.disablePrivateTx}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
               </Form.Item>
 
               {
