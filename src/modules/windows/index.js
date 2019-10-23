@@ -322,7 +322,7 @@ class Windows {
       const { addDevToolsExtension, getDevToolsExtensions } = BrowserWindow
       let currExt = Object.keys(getDevToolsExtensions())
       let extBasePath = path.join(__dirname, '../../../', '/static/extensions/')
-      let extPathArr = fs.readdirSync(extBasePath)
+      let extPathArr = fs.readdirSync(extBasePath).filter(item => fs.lstatSync(`${extBasePath}${item}`).isDirectory() === true)
       extPathArr.forEach(val => {
         let ext = `${extBasePath}/${val}/${(fs.readdirSync(extBasePath+val))[0]}`
         if (!currExt.includes(val)) {
