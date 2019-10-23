@@ -9,7 +9,7 @@ This is a desktop wallet
 * WAN coin transaction support
 * Ledger support
 * Galaxy PoS delegation/validator support
-* English/Chinese/Thailand/Korean support
+* English/Chinese/Thai/Korean support
 
 ## Development
 
