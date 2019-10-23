@@ -1,12 +1,12 @@
 {
-    "title": "Software Update",
-    "head": "Software Update",
-    "newVersion": "A new version of WAN Wallet is available!",
-    "version": "WAN wallet version $1 is now available, your current version is $2. <br>Would you like to upgrade now?",
-    "release": "Release notes:",
+    "title": "Mise à jour logicielle",
+    "head": "Mise à jour logicielle",
+    "newVersion": "Une nouvelle version de WAN Wallet est disponible !",
+    "version": "Version $1 de WAN wallet est maintenant disponible, version installée actuellement est $2. <br>Voulez-vous le mettre à jour maintenant ?",
+    "release": "Notes de version :",
     "info": "$1",
-    "no": "No",
-    "upgrade": "Update Now",
-    "downloadingProgress": "Downloading...",
-    "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!"
+    "no": "Non",
+    "upgrade": "Mettre à jour maintenant",
+    "downloadingProgress": "Téléchargement en cours...",
+    "downloadingComplete": "Téléchargement réussi. Wan Wallet se fermera et se mettra à jour maintenant!"
 }
