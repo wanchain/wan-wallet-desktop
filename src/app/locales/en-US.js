@@ -104,6 +104,7 @@ const en_US = {
     'WanAccount.create': 'Create',
     'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
     'WanAccount.redeem': 'Redeem',
+    'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',

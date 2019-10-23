@@ -104,6 +104,7 @@ const ko_KR = {
     'WanAccount.create': '생성',
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
     'WanAccount.redeem': '적용',
+    'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.cancel': '취소',

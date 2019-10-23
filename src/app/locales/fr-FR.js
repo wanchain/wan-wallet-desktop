@@ -104,6 +104,7 @@ const fr_FR = {
     'WanAccount.create': 'Créer',
     'WanAccount.notSameName': 'Le nom du compte ne peut pas être répété. Veuillez réessayer',
     'WanAccount.redeem': 'Rembourser',
+    'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.cancel': 'Annuler',

@@ -104,6 +104,7 @@ const th_TH = {
     'WanAccount.create': 'สร้างแอดเดรส',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
     'WanAccount.redeem': 'ถอนออก',
+    'WanAccount.privateTxReceiverAddress': 'ที่อยู่ของผู้รับโอนประเภทธุรกรรมส่วนตัว',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',

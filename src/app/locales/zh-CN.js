@@ -104,6 +104,7 @@ const zh_CN = {
     'WanAccount.create': '创建',
     'WanAccount.notSameName': '帐户名称不能重复。请再试一次',
     'WanAccount.redeem': '提币',
+    'WanAccount.privateTxReceiverAddress': '隐私地址',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',
