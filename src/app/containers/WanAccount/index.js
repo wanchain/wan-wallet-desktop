@@ -23,7 +23,7 @@ const CHAINTYPE = 'WAN';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
-  getAmount: stores.wanAddress.getNormalAmount,
+  getAmount: stores.wanAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),

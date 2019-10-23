@@ -520,14 +520,13 @@ class WanAddress {
 
   @computed get getNormalAmount() {
     let sum = new BigNumber(0);
-    Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(new BigNumber(curr.wbalance)), 0)) });
+    Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)), 0)) });
     return formatNum(sum.toString(10));
   }
 
   @computed get getAllAmount() {
     let sum = new BigNumber(0);
     Object.values(self.addrInfo).forEach(value => {
-      // sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0);
       sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(isNaN(curr.wbalance) ? new BigNumber(0) : new BigNumber(curr.wbalance)), 0));
     });
     return sum.toString(10);
