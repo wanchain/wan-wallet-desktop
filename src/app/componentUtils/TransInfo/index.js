@@ -4,8 +4,8 @@ import { Modal, Button, Col, Row } from 'antd';
 
 import './index.less';
 
-const COLLEFT = 4;
-const COLRIGHT = 20;
+const COLLEFT = 5;
+const COLRIGHT = 19;
 
 function TransInfo (props) {
   const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time } = props.record

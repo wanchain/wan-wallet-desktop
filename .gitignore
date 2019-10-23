@@ -42,4 +42,4 @@ yarn.lock
 *.bak
 
 # Extensions File for Electon
-static/extensions
+static/extensions/*/

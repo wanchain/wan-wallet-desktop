@@ -28,6 +28,7 @@ class Sidebar extends Component {
 
   componentDidMount() {
     this.timer = setInterval(() => {
+      // Handle one step cross chain and undo cross chain trans
       getAllUndoneCrossTrans((err, ret) => {
         if (!err) {
           OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
@@ -35,7 +36,7 @@ class Sidebar extends Component {
           message.warn(intl.get('network.down'));
         }
       })
-    }, 10000)
+    }, 10000);
   }
 
   componentWillUnmount() {
