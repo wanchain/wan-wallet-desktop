@@ -3,76 +3,76 @@
         "applicationMenu": {
             "app": {
                 "label": "{{app}}",
-                "about": "About {{app}}",
+                "about": "A propos de {{app}}",
                 "version": "Wan Wallet Version {{version}}",
                 "developer": {
-                    "label": "Developer",
+                    "label": "Développeur",
                     "assets": {
-                        "label": "Assets",
+                        "label": "Les actifs",
                         "wan": {
                             "label": "Wanchain",
-                            "import": "Import Keystore File"
+                            "import": "Importer fichier Keystore"
                         }
                     },
                     "data": {
-                        "label": "Data Folder",
-                        "db": "Open Data Folder",
-                        "log": "Open Log Folder"
+                        "label": "Dossier de données",
+                        "db": "Ouvrir dossier de données",
+                        "log": "Ouvrir dossier de journal"
                     }
                 },
                 "services": "Services",
-                "checkForUpdate": "Check for Updates...",
-                "hide": "Hide {{ app }}",
-                "hideOthers": "Hide others",
-                "showAll": "Show all",
-                "quit": "Quit {{ app }}"
+                "checkForUpdate": "Rechercher les mises à jour...",
+                "hide": "Cacher {{ app }}",
+                "hideOthers": "Cacher les autres",
+                "showAll": "Tout montrer",
+                "quit": "Quitter {{ app }}"
             },
             "edit": {
-                "label": "Edit",
-                "undo": "Undo",
-                "redo": "Redo",
-                "cut": "Cut",
-                "copy": "Copy",
-                "paste": "Paste",
-                "selectAll": "Select all"
+                "label": "Editer",
+                "undo": "Défaire",
+                "redo": "Refaire",
+                "cut": "Couper",
+                "copy": "Copier",
+                "paste": "Coller",
+                "selectAll": "Sélectionner tous"
             },
             "setting": {
-                "label": "Settings",
+                "label": "Paramètres",
                 "network": {
-                    "label": "Network",
-                    "main": "Main Network",
-                    "test": "Test Network"
+                    "label": "Réseau",
+                    "main": "Mainnet",
+                    "test": "Testnet"
                 },
                 "mode": {
                     "label": "Mode",
-                    "full": "Full Node Wallet",
+                    "full": "Full Node",
                     "light": "Light Wallet"
                 },
                 "lang": {
-                    "label": "Language",
+                    "label": "Langue",
                     "code": {
                         "en": "English",
                         "zh": "中文(简体)",
                         "th-TH": "ไทย",
                         "ko-KR": "한국어",
-                        "fr-FR": "French"
+                        "fr-FR": "Français"
                     }
                 }
             },
             "window": {
-                "label": "Window",
-                "fullscreen": "Full Screen",
-                "minimize": "Minimize",
-                "close": "Close",
-                "front": "Bring All to Front"
+                "label": "Fenêtre",
+                "fullscreen": "Plein écran",
+                "minimize": "Minimiser",
+                "close": "Fermer",
+                "front": "Tout mettre en avant-plan"
             },
             "help": {
-                "label": "Help",
-                "web": "Wanchain Official Website",
+                "label": "Aide",
+                "web": "Site offcielle de Wanchain",
                 "explorer": "Wanchain Explorer",
                 "webURL": "https://wanchain.org",
                 "explorerURL": "https://www.wanscan.org",
-                "toggle": "Toggle Developer Tools"
+                "toggle": "Basculer les outils de développement"
             }
         }
     }
