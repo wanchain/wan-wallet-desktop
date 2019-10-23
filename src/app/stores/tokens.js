@@ -3,7 +3,8 @@ import BigNumber from 'bignumber.js';
 import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
-import { WANPATH } from 'utils/settings';
+import ethAddress from './ethAddress';
+import { WANPATH, ETHPATH } from 'utils/settings';
 import { formatNum, formatNumByDeciamls } from 'utils/support';
 
 class Tokens {
@@ -12,6 +13,8 @@ class Tokens {
   @observable tokensList = {};
 
   @observable tokensBalance = {};
+
+  @observable E20TokensBalance = {};
 
   @action setCurrToken (addr, symbol) {
     if (symbol) {
@@ -46,12 +49,23 @@ class Tokens {
   @action updateTokensBalance (tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
-    wand.request('crosschain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr }, (err, data) => {
+    wand.request('crosschain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
       }
       self.tokensBalance[tokenScAddr] = data;
+    })
+  }
+
+  @action updateE20TokensBalance (tokenScAddr) {
+    let normalArr = Object.keys(ethAddress.addrInfo['normal']);
+    wand.request('crosschain_updateTokensBalance', { address: normalArr, tokenScAddr, chain: 'ETH' }, (err, data) => {
+      if (err) {
+        console.log('stores_getTokensBalance:', err);
+        return;
+      }
+      self.E20TokensBalance[tokenScAddr] = data;
     })
   }
 
@@ -106,11 +120,11 @@ class Tokens {
       if (self.tokensList[item].select) {
         list.push({
           tokenAddr: item,
+          tokenOrigAddr: self.tokensList[item].tokenOrigAddr || '',
           symbol: self.tokensList[item].tokenOrigAddr ? `W${self.tokensList[item].symbol}` : self.tokensList[item].symbol
         })
       }
     });
-
     return list.sort((a, b) => b.wanAddr - a.wanAddr);
   }
 
@@ -136,6 +150,35 @@ class Tokens {
         address: wanUtil.toChecksumAddress(item),
         balance: formatNum(balance),
         path: `${WANPATH}${wanAddress.addrInfo[type][item].path}`,
+        action: 'send',
+        amount: balance
+      });
+    });
+    return addrList;
+  }
+
+  @computed get getE20TokensListInfo () {
+    let addrList = [];
+    let normalArr = Object.keys(ethAddress.addrInfo.normal);
+    normalArr.forEach(item => {
+      let balance;
+      if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+        let tokenOrigAddr = self.tokensList[self.currTokenAddr].tokenOrigAddr;
+
+        if (self.E20TokensBalance && self.E20TokensBalance[tokenOrigAddr]) {
+          balance = formatNumByDeciamls(self.E20TokensBalance[tokenOrigAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+      addrList.push({
+        key: item,
+        name: ethAddress.addrInfo.normal[item].name,
+        address: item,
+        balance: formatNum(balance),
+        path: `${ETHPATH}${ethAddress.addrInfo.normal[item].path}`,
         action: 'send',
         amount: balance
       });

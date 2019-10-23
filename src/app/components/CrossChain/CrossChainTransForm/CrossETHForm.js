@@ -256,6 +256,7 @@ class CrossETHForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
               />
+              {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
               <CommonFormItem
                 form={form}
                 colSpan={6}
@@ -266,7 +267,6 @@ class CrossETHForm extends Component {
                 title={intl.get('NormalTransForm.amount') + ` (${chainType.toLowerCase()})`}
                 sbiling={<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
               />
-              {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
           </Spin>
         </Modal>

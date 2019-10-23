@@ -11,5 +11,6 @@ import Validator from './Validator';
 import TokenTrans from './TokenTrans';
 import EthAccount from './EthAccount';
 import CrossETH from './CrossChain/CrossETH';
+import CrossE20 from './CrossChain/CrossE20';
 
-export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline, TokenTrans, EthAccount, CrossETH };
+export { Layout, Portfolio, Sidebar, WanAccount, Settings, Trezor, Ledger, Staking, Validator, Offline, TokenTrans, EthAccount, CrossETH, CrossE20 };

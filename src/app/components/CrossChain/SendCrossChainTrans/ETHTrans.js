@@ -17,6 +17,7 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
   wanAddrInfo: stores.wanAddress.addrInfo,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
+  getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
 }))
@@ -35,24 +36,30 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, addrInfo, getTokensListInfo, chainType, addCrossTransTemplate, updateTransParams, type } = this.props;
+    const { from, path, addrInfo, getTokensListInfo, getE20TokensListInfo, chainType, addCrossTransTemplate, updateTransParams, type } = this.props;
     let desChain, origGas, destGas;
     if (type === INBOUND) {
-      desChain = 'WAN';
-      origGas = LOCKETH_GAS;
-      destGas = REDEEMWETH_GAS;
       if (getBalanceByAddr(from, addrInfo) === '0') {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
-    } else {
-      desChain = 'ETH';
-      origGas = LOCKWETH_GAS;
-      destGas = REDEEMETH_GAS;
-      if ((getTokensListInfo.filter(item => item.address === from)[0]).amount === 0) {
+      if (this.props.tokenAddr && (getE20TokensListInfo.find(item => item.address === from)).amount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
+
+      desChain = 'WAN';
+      origGas = LOCKETH_GAS;
+      destGas = REDEEMWETH_GAS;
+    } else {
+      if ((getTokensListInfo.find(item => item.address === from)).amount === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        return;
+      }
+
+      desChain = 'ETH';
+      origGas = LOCKWETH_GAS;
+      destGas = REDEEMETH_GAS;
     }
 
     addCrossTransTemplate(from, { chainType, path });
@@ -97,7 +104,7 @@ class ETHTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible &&
-          <CollectionCreateForm chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm tokenAddr={this.props.tokenAddr} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

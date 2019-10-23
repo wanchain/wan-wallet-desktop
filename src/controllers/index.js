@@ -977,9 +977,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         break
 
       case 'updateTokensBalance':
-          let { address, tokenScAddr } = payload;
+          let { address, tokenScAddr, chain } = payload;
           try {
-            ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, 'WAN');
+            ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
@@ -1025,6 +1025,27 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         }
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
+
+        case 'crossE20':
+          try {
+            let srcChain, dstChain;
+            if(payload.source !== 'WAN') {
+              srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
+              dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+            } else {
+              srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+              dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
+            }
+            if (payload.type === 'REDEEM') {
+              payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+            }
+            ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
 
       case 'getAllUndoneCrossTrans':
         try {

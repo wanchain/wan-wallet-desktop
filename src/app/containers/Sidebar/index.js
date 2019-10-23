@@ -76,6 +76,8 @@ class Sidebar extends Component {
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
     let walletChildren = sidebarColumns[walletIndex].children;
+    let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
+    let crossChainChildren = sidebarColumns[crossChainIndex].children;
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
     if (index === -1 && settings.staking_advance) {
@@ -93,8 +95,14 @@ class Sidebar extends Component {
         key: `/tokens/${item.tokenAddr}/${item.symbol}`,
         icon: 'block'
       })));
+      crossChainChildren.splice(1, crossChainChildren.length - 1, ...tokensOnSideBar.map(item => ({
+        title: item.symbol,
+        key: `/crossChain/${item.tokenAddr}/${item.symbol}`,
+        icon: 'block'
+      })));
     } else {
       walletChildren.splice(2, walletChildren.length - 2);
+      crossChainChildren.splice(1, crossChainChildren.length - 1);
     }
 
     /** TODO */
