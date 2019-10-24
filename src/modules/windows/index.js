@@ -78,6 +78,11 @@ class Window extends EventEmitter {
                     }
 
                     this._logger.info('main window losing focus, start an away-from-main-window timer')
+                    if(this._timer !== null) {
+                        this._logger.info('Remain a timer should be cleared:' + this._timer)
+                        clearTimeout(this._timer)
+                        this._timer = null
+                    }
                     this._timer = setTimeout(() => {
                         this._logger.info('time out, lock the wallet')
                         this._mgr.broadcast('notification', 'uiAction', 'lockWallet')
@@ -111,6 +116,11 @@ class Window extends EventEmitter {
 
                 if (global.chainManager) {
                     this._logger.info('start an interval checker for idle time')
+                    if(this._idleChecker !== null) {
+                        this._logger.info('Remain a idle timer should be cleared:' + this._idleChecker)
+                        clearInterval(this._idleChecker)
+                        this._idleChecker = null
+                    }
                     this._idleChecker = setInterval(() => {
                         let idleTime = desktopIdle.getIdleTime()
                         this._logger.info(`user idle time in seconds is: ${idleTime}`)

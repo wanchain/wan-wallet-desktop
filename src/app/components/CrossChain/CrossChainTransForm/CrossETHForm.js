@@ -264,7 +264,7 @@ class CrossETHForm extends Component {
                 disabled={this.state.disabledAmount}
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('NormalTransForm.amount') + ` (${chainType.toLowerCase()})`}
+                title={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}
                 sbiling={<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
               />
             </div>

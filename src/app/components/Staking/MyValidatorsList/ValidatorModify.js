@@ -2,6 +2,9 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Row, Col, Slider } from 'antd';
+import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId } from 'utils/helper';
+import { signTransaction } from 'componentUtils/trezor';
+import { toWei } from 'utils/support.js';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -11,6 +14,7 @@ import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 import { isNumber } from 'utils/support';
 import { MINDAYS, MAXDAYS, WANPATH, WALLETID } from 'utils/settings'
 
+const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 const modifyTypes = {
   lockTime: 'ValidatorRegister.lockTime',
@@ -21,6 +25,8 @@ const modifyTypes = {
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -64,18 +70,19 @@ class ModifyForm extends Component {
     })
   }
 
-  onSend = () => {
+  onSend = async () => {
     this.setState({
       confirmLoading: true
-    })
+    });
     let { form, record, addrInfo, modifyType } = this.props;
-    let from = record.myAddress.addr
+    let from = record.myAddress.addr;
     let type = record.myAddress.type;
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
+    let path = type !== 'normal' ? addrInfo[type][from].path : WANPATH + addrInfo[type][from].path;
     let tx = {
       from: from,
       amount: 0,
-      BIP44Path: type !== 'normal' ? addrInfo[type][from].path : WANPATH + addrInfo[type][from].path,
+      BIP44Path: path,
       walletID: walletID,
       minerAddr: record.validator.address
     };
@@ -85,18 +92,18 @@ class ModifyForm extends Component {
     }
 
     if (modifyType === 'exit' || this.handleShowSelectType('lockTime')) {
-      Object.assign(tx, {
-        lockTime: modifyType === 'exit' ? 0 : form.getFieldValue('lockTime'),
-      })
+      let lockTime = modifyType === 'exit' ? 0 : form.getFieldValue('lockTime');
+      let type = 'stakeUpdate';
+      Object.assign(tx, { lockTime });
 
       if (WALLETID.TREZOR === walletID) {
-        // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-        // this.setState({ confirmVisible: false });
-        // this.props.onSend(walletID);
+        await this.trezorValidatorUpdate(path, from, type, lockTime);
+        this.setState({ confirmVisible: false });
+        this.props.onSend(walletID);
       } else {
         wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
           if (err) {
-            message.warn(err.message);
+            message.warn(intl.get('ValidatorRegister.updateFailed'));
           } else {
             console.log('validatorModify ret:', ret);
           }
@@ -111,13 +118,14 @@ class ModifyForm extends Component {
       })
 
       if (WALLETID.TREZOR === walletID) {
-        // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-        // this.setState({ confirmVisible: false });
-        // this.props.onSend(walletID);
+        let type = 'stakeUpdateFeeRate';
+        await this.trezorValidatorUpdate(path, from, type, tx.feeRate);
+        this.setState({ confirmVisible: false });
+        this.props.onSend(walletID);
       } else {
         wand.request('staking_getCurrentEpochInfo', null, (err, ret) => {
           if (err) {
-            message.warn(err.message);
+            message.warn(intl.get('ValidatorRegister.updateFailed'));
           } else {
             if (ret.epochId === record.feeRateChangedEpoch) {
               message.warn(intl.get('ValidatorRegister.modifyFeeRateWarning'))
@@ -125,7 +133,8 @@ class ModifyForm extends Component {
             }
             wand.request('staking_PosStakeUpdateFeeRate', { tx }, (err, ret) => {
               if (err) {
-                message.warn(err.message);
+                // message.warn(err.message);
+                message.warn(intl.get('ValidatorRegister.updateFailed'));
               } else {
                 console.log('PosStakeUpdateFeeRate ret:', ret);
               }
@@ -135,6 +144,61 @@ class ModifyForm extends Component {
           }
         })
       }
+    }
+  }
+
+  trezorValidatorUpdate = async (path, from, func, value) => {
+    let { record } = this.props;
+    let chainId = await getChainId();
+    try {
+      let nonce = await getNonce(from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let address = record.validator.address;
+      let data = await getContractData(func, address, value);
+      let amountWei = toWei('0');
+      const cscContractAddr = await getContractAddr();
+      let rawTx = {};
+      rawTx.from = from;
+      rawTx.to = cscContractAddr;
+      rawTx.value = amountWei;
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = '0x' + Number(200000).toString(16);
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+
+      // Send modify validator info
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+
+      let params = {
+        txHash,
+        from: from.toLowerCase(),
+        to: rawTx.to,
+        value: rawTx.value,
+        gasPrice: rawTx.gasPrice,
+        gasLimit: rawTx.gasLimit,
+        nonce: rawTx.nonce,
+        srcSCAddrKey: 'WAN',
+        srcChainType: 'WAN',
+        tokenSymbol: 'WAN',
+        status: 'Sent',
+      };
+      let satellite = {
+        secPk: record.publicKey1,
+        lockTime: record.lockTime,
+        annotate: func === 'stakeUpdate' ? 'StakeUpdate' : 'StakeUpdateFeeRate'
+      }
+
+      // save register validator history into DB
+      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
+      // Update stake info & history
+      this.props.updateStakeInfo();
+      this.props.updateTransHistory();
+    } catch (error) {
+      console.log(error);
+      message.error(intl.get('ValidatorRegister.updateFailed'));
     }
   }
 
@@ -242,7 +306,7 @@ class ModifyForm extends Component {
                         </Form.Item>
                       </Form>
                     </Col>
-                    <Col span={3}><span className="locktime-span">{getFieldValue('lockTime')} {intl.get('days')}</span></Col>
+                    <Col span={3}><span className="locktime-span">{getFieldValue('lockTime')} {intl.get('Common.days')}</span></Col>
                   </Row>
                 </div>
               </React.Fragment>

@@ -80,6 +80,29 @@ export const getEthBalance = function (arr) {
       }
     })
   })
+}
+
+export const getBalanceWithPrivateBalance = function (arr, path) {
+  const addrArr = arr.map(item => item.substr(2));
+  return new Promise((resolve, reject) => {
+    let thisVal = {};
+    wand.request('address_balances', { addr: addrArr, path: path }, (err, val) => {
+      if (err) {
+        return reject(err)
+      } else {
+        thisVal.balance = Object.assign({}, val.balance);
+        thisVal.privateBalance = Object.assign({}, val.privateBalance);
+        Object.keys(thisVal.balance).forEach(item => {
+          thisVal.balance[item] = fromWei(thisVal.balance[item]);
+        });
+
+        Object.keys(thisVal.privateBalance).forEach(item => {
+          thisVal.privateBalance[item] = fromWei(thisVal.privateBalance[item]);
+        });
+        return resolve(thisVal);
+      }
+    });
+  });
 };
 
 export const getValueByAddrInfo = function (value, type, addrInfo) {
@@ -282,14 +305,19 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   let tmp = {};
   Object.keys(addrInfo).forEach(item => {
     tmp = Object.assign(tmp, addrInfo[item])
-  })
-  Object.values(tmp).forEach(item => {
+  });
+  for (let item of Object.values(tmp)) {
     if (item.address === addr) {
       balance = item.balance;
-      return; // eslint-disable-line no-useless-return
+      break;
     }
-  })
+  }
   return balance;
+}
+
+export const getPrivateBalanceByAddr = function (addr, addrInfo) {
+  let addrArr = { ...addrInfo.normal, ...addrInfo.import };
+  return addrArr[addr] ? addrArr[addr].wbalance : '0';
 }
 
 export const checkAmountUnit = function (decimals, amount) {
@@ -326,7 +354,7 @@ export const getAddrByTypes = function (addrInfo, types) {
       addrs.push(Object.keys(addrInfo[type]));
     })
   }
-  // return [['normal], ['Ledger], ... , ['Trzeor]]
+  // return [['normal], ['Ledger], ... , ['Trezor]]
   return addrs;
 }
 
@@ -337,7 +365,7 @@ export const regEmitterHandler = function (key, callback) {
 export const initEmitterHandler = function () {
   wand.emitter.on('notification', function (key, val) {
     console.log('Emitter: ', key, val)
-    if (emitterHandlers.hasOwnProperty(key)) { // eslint-disable-line no-prototype-builtins
+    if (Object.prototype.hasOwnProperty.call(emitterHandlers, key)) {
       emitterHandlers[key](val);
     }
   })
@@ -356,9 +384,9 @@ export const getContractAddr = function () {
   })
 };
 
-export const getContractData = function (func, validatorAddr) {
+export const getContractData = function (func, ...params) {
   return new Promise((resolve, reject) => {
-    wand.request('staking_getContractData', { func, validatorAddr }, (err, val) => {
+    wand.request('staking_getContractData', { func, params }, (err, val) => {
       if (err) {
         err = 'staking_getContractData failed: ' + err;
         return reject(err);
@@ -482,5 +510,18 @@ export const increaseFailedRetryCount = function (params) {
     if (err) {
       console.log('Increase redeem retry count failed');
     }
+  })
+}
+
+export const openScanOTA = function (path) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_scanMultiOTA', path, function (err, res) {
+      if (err) {
+        console.log('Open OTA scanner failed:', err);
+        return reject(err);
+      } else {
+        return resolve();
+      }
+    });
   })
 }

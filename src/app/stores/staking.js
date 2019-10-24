@@ -77,6 +77,7 @@ class Staking {
     let address = self.myValidators.map(item => item.address);
     wand.request('staking_getValidatorsInfo', { address }, (err, ret) => {
       if (err) {
+        console.log('Get validators information failed');
         console.log(err)
         return;
       }
@@ -114,6 +115,9 @@ class Staking {
         quitEpoch: item.quitEpoch,
         key: index,
       })
+    });
+    validators.sort((m, n) => {
+      return new BigNumber(m.myStake.title).lt(new BigNumber(n.myStake.title)) ? 1 : -1;
     });
     return validators;
   }
@@ -264,6 +268,7 @@ class Staking {
           sendTime: histories[item].sendTime,
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
+          fromAddress: histories[item].from,
           stakeAmount: formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && STAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),

@@ -3,19 +3,24 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
-import { checkAmountUnit } from 'utils/helper';
+import { checkAmountUnit, getContractData, getContractAddr, getNonce, getGasPrice, getChainId } from 'utils/helper';
+import { signTransaction } from 'componentUtils/trezor';
+import { toWei } from 'utils/support.js';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
-import { WANPATH, WALLETID } from 'utils/settings'
+import { WANPATH, WALLETID } from 'utils/settings';
 
+const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -73,13 +78,15 @@ class InForm extends Component {
     })
   }
 
-  onSend = () => {
+  onSend = async () => {
     this.setState({
       confirmLoading: true
     });
     let { form, record, addrInfo } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
+    let lockTime = record.lockTime;
+    let publicKey1 = record.publicKey1;
     let amount = form.getFieldValue('amount');
     let path = type === 'normal' ? WANPATH + addrInfo[type][from].path : addrInfo[type][from].path;
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
@@ -93,22 +100,76 @@ class InForm extends Component {
     }
 
     if (WALLETID.TREZOR === walletID) {
-      // await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
-      // this.setState({ confirmVisible: false });
-      // this.props.onSend(walletID);
+      await this.trezorValidatorAppend(path, from.toLowerCase(), (amount || 0).toString(), lockTime, publicKey1);
+      this.setState({ confirmVisible: false });
+      this.props.onSend(walletID);
     } else {
       if (walletID === WALLETID.LEDGER) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
       }
       wand.request('staking_validatorAppend', { tx }, (err, ret) => {
         if (err) {
-          message.warn(err.message);
+          message.warn(intl.get('ValidatorRegister.topUpFailed'));
         } else {
           console.log('validatorIn ret:', ret);
         }
         this.setState({ confirmVisible: false });
         this.props.onSend();
       });
+    }
+  }
+
+  trezorValidatorAppend = async (path, from, value, lockTime, publicKey1) => {
+    let chainId = await getChainId();
+    let func = 'stakeAppend';// abi function
+    try {
+      let nonce = await getNonce(from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let address = this.props.record.validator.address;
+      let data = await getContractData(func, address);
+      let amountWei = toWei(value);
+      const cscContractAddr = await getContractAddr();
+      let rawTx = {};
+      rawTx.from = from;
+      rawTx.to = cscContractAddr;
+      rawTx.value = amountWei;
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = '0x' + Number(200000).toString(16);
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+
+      // Send register validator
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      let params = {
+        txHash,
+        from: from.toLowerCase(),
+        to: rawTx.to,
+        value: rawTx.value,
+        gasPrice: rawTx.gasPrice,
+        gasLimit: rawTx.gasLimit,
+        nonce: rawTx.nonce,
+        srcSCAddrKey: 'WAN',
+        srcChainType: 'WAN',
+        tokenSymbol: 'WAN',
+        status: 'Sent',
+      };
+      let satellite = {
+        secPk: publicKey1,
+        lockTime,
+        annotate: 'StakeAppend'
+      }
+
+      // save register validator history into DB
+      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
+      this.props.updateStakeInfo();
+      this.props.updateTransHistory();
+    } catch (error) {
+      console.log('Trezor validator append failed');
+      console.log(error);
+      message.error(intl.get('ValidatorRegister.topUpFailed'));
     }
   }
 
@@ -151,7 +212,7 @@ class InForm extends Component {
             <CommonFormItem form={form} formName='amount'
               options={{ initialValue: 100, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.entrustedAmount')}
+              title={intl.get('Common.amount')}
             />
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
@@ -163,7 +224,7 @@ class InForm extends Component {
 }
 
 const ValidatorInForm = Form.create({ name: 'InForm' })(InForm);
-class ValidatorIn extends Component {
+class ValidatorAppend extends Component {
   state = {
     visible: false
   }
@@ -186,4 +247,4 @@ class ValidatorIn extends Component {
   }
 }
 
-export default ValidatorIn;
+export default ValidatorAppend;

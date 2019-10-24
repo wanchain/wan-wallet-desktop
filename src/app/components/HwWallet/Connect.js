@@ -98,7 +98,7 @@ class Connect extends Component {
         })
       }
     }).catch(err => {
-      console.log('err', err);
+      console.log('Derive addresses failed:', err);
     })
   }
 

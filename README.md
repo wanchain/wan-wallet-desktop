@@ -7,9 +7,10 @@ This is a desktop wallet
 
 * BIP39/BIP44 support
 * WAN coin transaction support
-* Ledger support
+* WAN coin private transaction support
+* Ledger/Trezor support
 * Galaxy PoS delegation/validator support
-* English/Chinese/Thailand/Korean support
+* English/Chinese/Thai/Korean/French support
 
 ## Development
 

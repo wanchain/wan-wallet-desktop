@@ -52,7 +52,7 @@ class CrossChainConfirmForm extends Component {
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.amount') + ` (${chainType.toLowerCase()})`}>
+          <Form.Item label={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}>
             {getFieldDecorator('fee', { initialValue: amount })(inputCom)}
           </Form.Item>
         </Form>

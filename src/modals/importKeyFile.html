@@ -102,6 +102,7 @@
         let ERR_WRONG_PWD_KEYFILE = 'invalid password for key file';
         let ERR_WRONG_PWD_WALLET = 'invalid password for wan wallet';
         let ERR_INVALID_KEYFILE = 'invalid key file format';
+        let ERR_DUPLICATE_KEYFILE = 'Don not import the same key file again.';
         let TEXT_SUCCESS = 'key file import complete, close this window and go to main page for more detail';
 
         const setLanguage = () => {
@@ -177,6 +178,7 @@
                     ERR_WRONG_PWD_KEYFILE = $.i18n('ERR_WRONG_PWD_KEYFILE');
                     ERR_WRONG_PWD_WALLET = $.i18n('ERR_WRONG_PWD_WALLET');
                     ERR_INVALID_KEYFILE = $.i18n('ERR_INVALID_KEYFILE');
+                    ERR_DUPLICATE_KEYFILE = $.i18n('ERR_DUPLICATE_KEYFILE');
                     TEXT_SUCCESS = $.i18n('TEXT_SUCCESS');
                     kFBtn.setAttribute('data-content', $.i18n('browse'));
                 }).catch((err) => {
@@ -235,6 +237,8 @@
                                 errText.innerHTML = ERR_WRONG_PWD_KEYFILE;
                             } else if (desc.includes('Invalid password')) {
                                 errText.innerHTML = ERR_WRONG_PWD_WALLET;
+                            } else if (desc.includes('Duplicate record found')) {
+                                errText.innerHTML = ERR_DUPLICATE_KEYFILE;
                             } else {
                                 errText.innerHTML = ERR_INVALID_KEYFILE;
                             }

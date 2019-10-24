@@ -31,6 +31,8 @@ class SendNormalTrans extends Component {
 
   showModal = async () => {
     const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, tokenAddr, tokensBalance } = this.props;
+
+    // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
@@ -47,9 +49,9 @@ class SendNormalTrans extends Component {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
       updateGasPrice(gasPrice);
-      setTimeout(() => { this.setState({ spin: false }) }, 0)
+      this.setState({ spin: false });
     } catch (err) {
-      console.log(`err: ${err}`)
+      console.log(`Get nonce or gas price failed: ${err}`)
       message.warn(err);
     }
   }
@@ -78,11 +80,8 @@ class SendNormalTrans extends Component {
 
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
-        { visible
-          ? <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
-          : ''
-        }
+        <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
+        { visible && <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
       </div>
     );
   }

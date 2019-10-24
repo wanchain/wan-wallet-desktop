@@ -44,6 +44,37 @@ class LanguageIntl {
     ]
   };
 
+  @computed get privateTransColumns () {
+    return self.language && [
+      {
+        title: intl.get('TransHistory.time'),
+        dataIndex: 'time',
+        key: 'time'
+      }, {
+        title: intl.get('TransHistory.from'),
+        dataIndex: 'from',
+        key: 'from'
+      }, {
+        title: intl.get('TransHistory.to'),
+        dataIndex: 'to',
+        className: 'privateTxTo',
+        key: 'to'
+      }, {
+        title: intl.get('PrivateTransHistory.type'),
+        dataIndex: 'type',
+        key: 'type'
+      }, {
+        title: intl.get('TransHistory.value'),
+        dataIndex: 'value',
+        key: 'value'
+      }, {
+        title: intl.get('TransHistory.status'),
+        dataIndex: 'status',
+        key: 'status'
+      }
+    ]
+  };
+
   @computed get stakingColumns () {
     return self.language && [
       {
@@ -190,12 +221,11 @@ class LanguageIntl {
             key: '/ledger',
             icon: 'block'
           },
-          /** TODO */
-          // {
-          //   title: intl.get('menuConfig.trezor'),
-          //   key: '/trezor',
-          //   icon: 'block'
-          // }
+          {
+            title: intl.get('menuConfig.trezor'),
+            key: '/trezor',
+            icon: 'block'
+          }
         ]
       },
       {
@@ -212,7 +242,7 @@ class LanguageIntl {
         children: [
           {
             title: intl.get('menuConfig.delegation'),
-            key: '/staking',
+            key: '/delegation',
             icon: 'block'
           }
         ]

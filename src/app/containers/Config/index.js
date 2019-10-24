@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Checkbox, Card, Select } from 'antd';
+import { Checkbox, Card, Select, Form, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -7,7 +7,9 @@ import './index.less';
 import { defaultTimeout } from 'utils/settings';
 import AddToken from 'componentUtils/AddToken';
 
+import PasswordConfirmForm from 'components/PasswordConfirmForm';
 const { Option } = Select;
+const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
@@ -20,11 +22,18 @@ const { Option } = Select;
 @observer
 class Config extends Component {
   state = {
-    showAddToken: false
+    showAddToken: false,
+    showConfirm: false
   }
 
   handleChange = e => {
-    this.props.updateSettings({ reinput_pwd: e.target.checked })
+    if (e.target.checked === true) {
+      this.props.updateSettings({ reinput_pwd: e.target.checked });
+    } else { // Confirm pwd when turn off the pwd confirmation.
+      this.setState({
+        showConfirm: true
+      });
+    }
   }
 
   handleStaking = e => {
@@ -45,13 +54,35 @@ class Config extends Component {
     })
   }
 
-  onCancel =() => {
+  onCancel = () => {
     this.setState({
       showAddToken: false
     })
   }
+  handleOk = pwd => {
+    if (!pwd) {
+      message.warn(intl.get('Config.invalidPassword'));
+      return;
+    }
+    wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+      if (err) {
+        message.warn(intl.get('Config.invalidPassword'));
+      } else {
+        this.props.updateSettings({ reinput_pwd: false });
+        this.setState({
+          showConfirm: false
+        });
+      }
+    })
+  }
 
-  render () {
+  handleCancel = () => {
+    this.setState({
+      showConfirm: false
+    });
+  }
+
+  render() {
     const { wrc20TokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
 
@@ -83,10 +114,11 @@ class Config extends Component {
         <Card title={intl.get('Config.option')}>
           <p className="set_title">{intl.get('Config.pwdConfirm')}</p>
           <Checkbox checked={reinput_pwd} onChange={this.handleChange}>{intl.get('Config.inputPwd')}</Checkbox>
+          <PwdConfirmForm showConfirm={this.state.showConfirm} handleOk={this.handleOk} handleCancel={this.handleCancel}></PwdConfirmForm>
           <div className="timeout">
             <p className="set_title">{intl.get('Config.loginTimeout')}</p>
             <Select className="timeoutSelect" value={logout_timeout === undefined ? defaultTimeout : logout_timeout} placeholder={intl.get('Config.selectLoginTimeout')} onChange={this.handleTimeoutChange}>
-              { options.map(item => <Option key={item.value} value={item.value}>{item.text}</Option>) }
+              {options.map(item => <Option key={item.value} value={item.value}>{item.text}</Option>)}
             </Select>
           </div>
         </Card>
@@ -104,7 +136,7 @@ class Config extends Component {
           </div>
         </Card>
         {
-          this.state.showAddToken && <AddToken onCancel={this.onCancel}/>
+          this.state.showAddToken && <AddToken onCancel={this.onCancel} />
         }
       </div>
     );

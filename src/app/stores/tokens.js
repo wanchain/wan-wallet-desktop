@@ -5,7 +5,7 @@ import { observable, action, computed, toJS } from 'mobx';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import { WANPATH, ETHPATH } from 'utils/settings';
-import { formatNum, formatNumByDeciamls } from 'utils/support';
+import { formatNum, formatNumByDecimals } from 'utils/support';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -137,7 +137,7 @@ class Tokens {
       let type = normalArr.length - 1 < index ? 'import' : 'normal';
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
         if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-          balance = formatNumByDeciamls(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }
@@ -166,7 +166,7 @@ class Tokens {
         let tokenOrigAddr = self.tokensList[self.currTokenAddr].tokenOrigAddr;
 
         if (self.E20TokensBalance && self.E20TokensBalance[tokenOrigAddr]) {
-          balance = formatNumByDeciamls(self.E20TokensBalance[tokenOrigAddr][item], self.tokensList[self.currTokenAddr].decimals)
+          balance = formatNumByDecimals(self.E20TokensBalance[tokenOrigAddr][item], self.tokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }

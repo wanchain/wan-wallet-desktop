@@ -7,6 +7,7 @@ import './index.less';
 import { estimateGas } from 'utils/helper';
 import { TRANSTYPE } from 'utils/settings';
 
+const MinGasLimit = 21000;
 @inject(stores => ({
   language: stores.languageIntl.language,
   minGasPrice: stores.sendTransParams.minGasPrice,
@@ -21,7 +22,7 @@ class AdvancedOptionForm extends Component {
   }
 
   checkGasLimit = (rule, value, callback) => {
-    if (Number.isInteger(value)) {
+    if (Number.isInteger(value) && value >= MinGasLimit) {
       callback();
     } else {
       callback(intl.get('AdvancedOptionForm.gasLimitIsIncorrect'));
@@ -53,30 +54,23 @@ class AdvancedOptionForm extends Component {
     let from = this.props.from;
     let form = this.props.form;
 
-    form.validateFields(err => {
+    form.validateFields((err, values) => {
       if (err) {
-        console.log(err)
         this.setState({ loading: false });
         return;
       };
       let gasPrice = this.props.form.getFieldValue('gasPrice');
+      let gasLimit = this.props.form.getFieldValue('gasLimit');
       let nonce = this.props.form.getFieldValue('nonce');
       let data = this.props.form.getFieldValue('inputData');
-      estimateGas('WAN', {
-        from,
-        to: this.props.transParams[from].to,
-        data: data
-      }).then(res => {
-        form.setFieldsValue({
-          gasLimit: res
-        });
-        this.props.updateTransParams(from, { gasLimit: res, gasPrice, nonce, data });
+      try {
+        this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
         this.setState({ loading: false });
         this.props.onSave();
-      }).catch(() => {
+      } catch (e) {
         this.setState({ loading: false });
         message.warn(intl.get('NormalTransForm.estimateGasFailed'))
-      })
+      }
     })
   }
 
@@ -105,11 +99,10 @@ class AdvancedOptionForm extends Component {
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.gasLimit')}>
             {getFieldDecorator('gasLimit', { initialValue: gasLimit, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasLimitIsIncorrect'), validator: this.checkGasLimit }] })
-              (<InputNumber min={21000} />)}
+              (<InputNumber/>)}
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.nonce')}>
-            {getFieldDecorator(
-              'nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
+            {getFieldDecorator('nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
               (<InputNumber min={0} />)}
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>

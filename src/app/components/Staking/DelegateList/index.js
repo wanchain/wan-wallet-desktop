@@ -4,8 +4,8 @@ import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
 import './index.less';
-import Cell from './Cell';
-import Validator from './Validator';
+import Cell from 'components/Staking/Common/Cell';
+import Validator from 'components/Staking/Common/Validator';
 import DelegateActionGroup from './DelegateActionGroup';
 import { formatNum } from 'utils/support';
 
@@ -16,7 +16,7 @@ import { formatNum } from 'utils/support';
 }))
 
 @observer
-class Validators extends Component {
+class DelegateList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
@@ -93,11 +93,11 @@ class Validators extends Component {
 
   render () {
     return (
-      <div className="validators">
+      <div>
         <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }
 }
 
-export default Validators;
+export default DelegateList;

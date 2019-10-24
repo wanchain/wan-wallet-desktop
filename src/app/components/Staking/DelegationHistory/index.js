@@ -17,7 +17,7 @@ import { MAIN, TESTNET } from 'utils/settings'
 }))
 
 @observer
-class StakingHistory extends Component {
+class DelegationHistory extends Component {
   onChange = value => {
     this.props.setSelectedAddr(value);
   }
@@ -28,7 +28,7 @@ class StakingHistory extends Component {
   }
 
   stakingColumnsTree = () => {
-    this.props.stakingColumns[2].render = (from, info) => <span title={info.validator.address}>{from}</span>;
+    this.props.stakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
     this.props.stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.stakingColumns;
   }
@@ -48,4 +48,4 @@ class StakingHistory extends Component {
   }
 }
 
-export default StakingHistory;
+export default DelegationHistory;

@@ -36,7 +36,7 @@ class Accounts extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} /></div>
+      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
     }
   ];
 
@@ -57,7 +57,6 @@ class Accounts extends Component {
   });
 
   handleSave = row => {
-    console.log(row)
     let type = this.props.name[0];
     if (hasSameName(type, row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));

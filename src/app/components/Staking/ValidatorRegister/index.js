@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate } from 'utils/helper';
+import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { isNumber } from 'utils/support';
 import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'antd';
+import { signTransaction } from 'componentUtils/trezor';
+import { toWei } from 'utils/support.js';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -14,6 +16,7 @@ import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
 import { MINDAYS, MAXDAYS, WALLETID } from 'utils/settings'
 
+const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
 
@@ -21,6 +24,8 @@ const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmFo
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   addrSelectedList: stores.wanAddress.addrSelectedList,
+  updateStakeInfo: () => stores.staking.updateStakeInfo(),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -34,7 +39,7 @@ class ValidatorRegister extends Component {
     confirmLoading: false,
   };
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
@@ -58,12 +63,24 @@ class ValidatorRegister extends Component {
     })
   }
 
-  checkPublicKey = (rule, value, callback) => {
+  checkPublicKey1 = (rule, value, callback) => {
     if (value === undefined) {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
     }
-    if (value.startsWith('0x') && [130, 132].includes(value.length)) {
+    if (value.startsWith('0x') && value.length === 132) {
+      callback();
+    } else {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+    }
+  }
+
+  checkPublicKey2 = (rule, value, callback) => {
+    if (value === undefined) {
+      callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
+      return;
+    }
+    if (value.startsWith('0x') && value.length === 130) {
       callback();
     } else {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
@@ -118,18 +135,17 @@ class ValidatorRegister extends Component {
   onSend = async () => {
     this.setState({
       confirmLoading: true
-    })
+    });
     let { form } = this.props;
-    let to = form.getFieldValue('to');
-    let from = form.getFieldValue('myAddr');
+    let from = form.getFieldValue('myAddr');// In AddrSelectForm
     let amount = form.getFieldValue('amount');
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
     let maxFeeRate = form.getFieldValue('maxFeeRate') === undefined ? 100 : form.getFieldValue('maxFeeRate');
     let feeRate = form.getFieldValue('feeRate') === undefined ? 100 : form.getFieldValue('feeRate');
-
+    from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
     let tx = {
-      from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
+      from: from,
       amount: amount.toString(),
       BIP44Path: path,
       walletID: walletID,
@@ -143,17 +159,70 @@ class ValidatorRegister extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+      await this.trezorRegisterValidator(path, from, (form.getFieldValue('amount') || 0).toString(), tx.secPk, tx.bn256Pk, tx.lockEpoch, tx.feeRate, tx.maxFeeRate);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
       wand.request('staking_registerValidator', { tx }, (err, ret) => {
         if (err) {
-          message.warn(err.message);
+          message.warn(intl.get('ValidatorRegister.registerFailed'));
         }
         this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
+    }
+  }
+
+  trezorRegisterValidator = async (path, from, value, secPk, bn256Pk, lockEpochs, feeRate, maxFeeRate) => {
+    let chainId = await getChainId();
+    let func = 'stakeRegister';// abi function
+    try {
+      let nonce = await getNonce(from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let data = await getContractData(func, secPk, bn256Pk, lockEpochs, feeRate, maxFeeRate);
+
+      let amountWei = toWei(value);
+      const cscContractAddr = await getContractAddr();
+      let rawTx = {};
+      rawTx.from = from;
+      rawTx.to = cscContractAddr;
+      rawTx.value = amountWei;
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = '0x' + Number(200000).toString(16);
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+
+      // Send register validator
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      let params = {
+        txHash,
+        from: from.toLowerCase(),
+        to: rawTx.to,
+        value: rawTx.value,
+        gasPrice: rawTx.gasPrice,
+        gasLimit: rawTx.gasLimit,
+        nonce: rawTx.nonce,
+        srcSCAddrKey: 'WAN',
+        srcChainType: 'WAN',
+        tokenSymbol: 'WAN',
+        status: 'Sent',
+      };
+      let satellite = {
+        secPk,
+        bn256Pk,
+        lockTime: lockEpochs,
+        annotate: 'StakeRegister'
+      }
+      // save register validator history into DB
+      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
+      this.props.updateStakeInfo();
+      this.props.updateTransHistory();
+    } catch (error) {
+      console.log(error);
+      message.error(intl.get('ValidatorRegister.registerFailed'));
     }
   }
 
@@ -170,46 +239,11 @@ class ValidatorRegister extends Component {
     }
   }
 
-  trezorDelegateIn = async (path, from, validator, value) => {
-    console.log('trezorDelegateIn:', path, from, validator, value);
-  }
-
-  signTrezorTransaction = (path, tx, callback) => {
-    TrezorConnect.ethereumSignTransaction({
-      path: path,
-      transaction: {
-        to: tx.to,
-        value: tx.value,
-        data: tx.data,
-        chainId: tx.chainId,
-        nonce: tx.nonce,
-        gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
-        txType: tx.Txtype, // Txtype case is required by wanTx
-      },
-    }).then((result) => {
-      if (!result.success) {
-        message.warn(intl.get('Trezor.signTransactionFailed'));
-        callback(intl.get('Trezor.signFailed'), null);
-        return;
-      }
-
-      tx.v = result.payload.v;
-      tx.r = result.payload.r;
-      tx.s = result.payload.s;
-      let eTx = new WanTx(tx);
-      let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('signed', signedTx);
-      console.log('tx:', tx);
-      callback(null, signedTx);
-    });
-  }
-
   onSliderChange = value => {
     this.setState({ lockTime: value })
   }
 
-  render () {
+  render() {
     const { form, settings, addrSelectedList, onCancel } = this.props;
     const { getFieldDecorator } = form;
     let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'maxFeeRate', 'feeRate', 'myAddr', 'amount']);
@@ -226,13 +260,13 @@ class ValidatorRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             <CommonFormItem form={form} formName='publicKey1'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey1 }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('ValidatorRegister.publicKey1')}
               placeholder={intl.get('ValidatorRegister.enterSecPk')}
             />
             <CommonFormItem form={form} formName='publicKey2'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey2 }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('ValidatorRegister.publicKey2')}
               placeholder={intl.get('ValidatorRegister.enterG1Pk')}
@@ -248,7 +282,7 @@ class ValidatorRegister extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('days')}</span></Col>
+                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('Common.days')}</span></Col>
               </Row>
             </div>
             <div className="validator-line">
@@ -295,7 +329,7 @@ class ValidatorRegister extends Component {
             <CommonFormItem form={form} formName='amount'
               options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.entrustedAmount')}
+              title={intl.get('Common.amount')}
             />
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>

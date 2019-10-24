@@ -7,7 +7,7 @@ export function fromWei (data, unit = 'ether') {
   return web3.utils.fromWei(data.toString(), unit);
 }
 
-export function formatNumByDeciamls (value, decimals) {
+export function formatNumByDecimals (value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
   }

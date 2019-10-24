@@ -1,0 +1,9 @@
+{
+  "main": {
+    "applicationMenu": {
+      "window": {
+        "toggle": "main.applicationMenu.window.toggle"
+      }
+    }
+  }
+}

@@ -48,7 +48,7 @@ class DelegateOutConfirmForm extends Component {
           onCancel={onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.onSend} loading={!!confirmLoading}>{intl.get('SendNormalTrans.send')}</Button>,
+            <Button key="submit" type="primary" onClick={this.onSend} loading={!!confirmLoading}>{intl.get('Common.send')}</Button>,
           ]}
           className="withdraw-modal"
         >

@@ -10,6 +10,8 @@ import Web3 from 'web3';
 import { dateFormat } from '../app/utils/support';
 import Identicon from 'identicon.js';
 import keccak from 'keccak';
+import BigNumber from 'bignumber.js';
+import wanUtil from 'wanchain-util';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -26,7 +28,7 @@ const ROUTE_ACCOUNT = 'account'
 const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
-const ROUTE_CROSSCHAIN = 'crosschain'
+const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_SETTING = 'setting'
 
 // db collection consts
@@ -131,7 +133,16 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
                 hdUtil.newKeyStoreWallet(payload.pwd)
-                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+                // if the user db is not the newest version, update user db
+                const dbVersion = hdUtil.getUserTableVersion();
+                const latestVersion = walletBackend.config.dbExtConf.userTblVersion;
+                let data = true;
+                if (dbVersion !== latestVersion) {
+                    data = {
+                        version: dbVersion
+                    }
+                }
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -235,6 +246,29 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
                 break
             }
+
+        case 'setUserTblVersion':
+            try {
+                const latestVersion = walletBackend.config.dbExtConf.userTblVersion;// get version from config.js file
+                logger.info('Set user DB version:' + latestVersion);
+                hdUtil.setUserTableVersion(latestVersion);
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: false })
+            }
+
+            break
+
+        case 'reboot':
+            try {
+                app.relaunch()
+                app.exit(0)
+            } catch (e) {
+                logger.error('Reboot failed: ' + e.message || e.stack)
+            }
+            break
     }
 })
 
@@ -247,7 +281,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.start, payload.end)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get address failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -258,7 +292,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 address = await hdUtil.getAddress(payload.walletID, payload.chainType, payload.path)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get one address failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -281,21 +315,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'balance':
             let balance
             const { addr } = payload
-
             try {
                 if (_.isArray(addr) && addr.length > 1) {
                     const addresses = addr.map(item => `0x${item}`)
                     balance = await ccUtil.getMultiWanBalances(addresses)
-
                 } else {
                     balance = await ccUtil.getWanBalance(`0x${addr}`)
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
+                logger.error('Get balance failed');
                 logger.error(e.message || e.stack)
                 err = e
             }
-
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
 
@@ -318,6 +350,82 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
           sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ethbalance })
           break
+        case 'balances':
+            {
+                let balance, privateBalance;
+                const { addr, path } = payload;
+                try {
+                    //private balance
+                    let [...result] = await Promise.all(path.map(v => {
+                        return new Promise((resolve, reject) => {
+                            let OTABalances = ccUtil.getOtaFunds(v[0], v[1]);
+                            let amount = 0;
+                            OTABalances.forEach(v => {
+                                amount = new BigNumber(amount).plus(new BigNumber(v.value));
+                            });
+                            resolve({
+                                [v[2]]: amount.toString(10)
+                            });
+                        });
+                    }));
+                    privateBalance = Object.assign({}, ...result);
+
+                    //normal balance
+                    if (addr) {
+                        if (_.isArray(addr) && addr.length > 1) {
+                            const addresses = addr.map(item => `0x${item}`)
+                            balance = await ccUtil.getMultiWanBalances(addresses)
+                        } else {
+                            balance = await ccUtil.getWanBalance(`0x${addr}`)
+                            balance = { [`0x${addr}`]: balance }
+                        }
+                    } else {
+                        balance = {};
+                    }
+
+                } catch (e) {
+                    logger.error('Get balances failed');
+                    logger.error(e);
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { balance, privateBalance } })
+            }
+            break
+
+        case 'getPrivateTxInfo':
+            {
+                const { wid, path } = payload;
+                let res;
+                try {
+                    res = await new Promise((resolve, reject) => {
+                        let OTABalances = ccUtil.getOtaFunds(wid, path);
+                        resolve(OTABalances);
+                    });
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: res })
+            }
+            break;
+
+        case 'scanMultiOTA':
+            {
+                try {
+                    if (payload.length > 0) {
+                        payload.forEach((v) => {
+                            ccUtil.scanOTA(v[0], v[1]);
+                        });
+                    }
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { status: 'Opened' } })
+            }
+            break
 
         case 'isWanAddress':
             let ret;
@@ -363,11 +471,15 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
             const keyFileContent = fs.readFileSync(keyFilePath).toString();
             const keyStoreObj = JSON.parse(keyFileContent)
+            const checkDuplicate = true;
             try {
-                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd);
+                let path = hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd, checkDuplicate);
+                let addr = `0x${keyStoreObj.address}`.toLowerCase();
+                let waddr = `0x${keyStoreObj.waddress}`.toLowerCase();
 
-                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr: `0x${keyStoreObj.address}`.toLowerCase() });
-                Windows.broadcast('notification', 'keyfilepath', { path, addr: keyStoreObj.address.toLowerCase() });
+                hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr, waddr });
+                Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
+                ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
 
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
@@ -395,15 +507,14 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
-    let err, ret
-    const [action, id] = actionUni.split('#')
-
+    let err, ret;
+    const [action, id] = actionUni.split('#');
     switch (action) {
         case 'create':
             try {
                 ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Create account failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -414,7 +525,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.getUserAccount(payload.walletID, payload.path)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get account failed: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -424,7 +535,7 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.getUserAccountForChain(payload.chainID)
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Get all accounts failed: ' + e.message || e.stack)
                 err = e
             }
 
@@ -457,13 +568,11 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
 ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     let ret, err
     const [action, id] = actionUni.split('#')
-
     switch (action) {
         case 'normal':
             try {
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
-
                 let input = {
                     symbol: symbol,
                     from: '0x' + from.address,
@@ -484,12 +593,58 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('Send transaction failed: ' + e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'private':
+            try {
+                let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload
+                let from = await hdUtil.getAddress(walletID, chainType, path);
+                let input = {
+                    "from": '0x' + from.address,
+                    "to": to,
+                    "amount": amount,
+                    "gasPrice": gasPrice,
+                    "gasLimit": gasLimit,
+                    "BIP44Path": path,
+                    "walletID": walletID
+                }
+
+                logger.info('Private transaction: ' + JSON.stringify(input));
+                let action = 'SEND';
+                ret = await global.crossInvoker.invokePrivateTrans(action, input);
+                logger.info('Transaction hash: ' + JSON.stringify(ret));
+            } catch (e) {
+                logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
+            break;
+
+        case 'refund':
+            try {
+                let { input } = payload;
+                const action = 'REFUND';
+                for (let i of input) {
+                    let res = await global.crossInvoker.invokePrivateTrans(action, i);
+                    if (res.code === false) {
+                        err = {
+                            message: res.result
+                        };
+                    }
+                }
+            } catch (e) {
+                logger.error('Refund failed');
+                logger.error(e);
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'raw':
             try {
@@ -497,6 +652,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await ccUtil.sendTrans(payload.raw, payload.chainType)
                 logger.info('Transaction hash: ' + ret);
             } catch (e) {
+                logger.error('Send raw transaction failed');
+                logger.error(e);
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -632,7 +789,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let accounts = payload;
                 let delegateInfo = [];
                 let incentive = [];
-                logger.info('Get PoS info...')
 
                 if (!global.slotCount) {
                     [global.slotCount, global.slotTime] = await Promise.all([ccUtil.getSlotCount('wan'), ccUtil.getSlotTime('wan')]);
@@ -656,8 +812,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
-
-                logger.info('Get PoS info: epochId ' + epochID);
 
                 if (stakeInfo.length > 0) {
                     let prms = []
@@ -685,7 +839,6 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 logger.error(actionUni + (e.message || e.stack))
                 err = e
             }
-            logger.info('Get PoS info finished')
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
@@ -772,6 +925,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
         case 'validatorAppend':
             try {
                 logger.info('validatorAppend: ' + payload);
@@ -804,18 +958,17 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
         case 'getContractData':
             try {
-                let validatorAddr = payload.validatorAddr;
                 let func = payload.func;
-
-                var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-
+                let params = payload.params;
+                var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }, { "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "renewal", "type": "bool" }], "name": "partnerIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }, { "indexed": false, "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }], "name": "stakeIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "stakeAppend", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "lockEpoch", "type": "uint256" }], "name": "stakeUpdate", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "renewal", "type": "bool" }], "name": "partnerIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "delegateIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }], "name": "delegateOut", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "type": "event" }];
                 let data = ccUtil.getDataByFuncInterface(cscDefinition,
                     setting.cscContractAddr,
                     func,
-                    validatorAddr);
+                    ...params);
 
                 ret = data;
             } catch (e) {
+                logger.error('Get contract data failed');
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -831,6 +984,22 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     stakeAmount: payload.rawTx.stakeAmount,
                 }
                 await ccUtil.insertNormalTx(payload.rawTx, 'Sent', "external", satellite);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+
+        case 'insertRegisterValidatorToDB': // Save the register validator record in local DB file.
+            try {
+                logger.info('insertRegisterValidatorToDB:' + payload);
+                let { tx, satellite } = payload;
+                let key = Buffer.from(satellite.secPk.toLowerCase().replace('0x', '').substring(2), 'hex');
+                let validator = '0x' + keccak('keccak256').update(key).digest().slice(-20).toString('hex');
+                satellite.validator = validator;
+                await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1118,14 +1287,9 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             if (choice === 1) {
                 try {
-
                     setting.switchNetwork()
-
-                    Windows.broadcast('notification', 'sdk', 'init')
-
-                    await walletBackend.init()
-
-                    Windows.broadcast('notification', 'network', setting.network)
+                    app.relaunch()
+                    app.exit(0)
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e

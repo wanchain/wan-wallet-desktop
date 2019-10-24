@@ -1,6 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
+import { getBalance, isSdkReady, getBalanceWithPrivateBalance } from 'utils/helper';
 
 import './Layout.less';
 import SideBar from './Sidebar';
@@ -8,6 +9,7 @@ import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
 import { getBalance, isSdkReady, getEthBalance } from 'utils/helper';
+import { WANPATH } from 'utils/settings';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
 const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
@@ -58,7 +60,6 @@ class Layout extends Component {
           this.setState({
             loading: false
           });
-          console.log('SDK is ready');
           clearInterval(id);
         } catch (err) {
           console.log('Get mnemonic failed');
@@ -70,12 +71,17 @@ class Layout extends Component {
   updateWANBalanceForInter = () => {
     const { addrInfo } = this.props;
     const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
+    const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`, `${item.address}`]);
+    const importObj = Object.values(addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`, `${item.address}`]);
+    let allPrivatePath = normalObj.concat(importObj);
+    allPrivatePath = allPrivatePath.length > 0 ? allPrivatePath : undefined;
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
-    getBalance(allAddr).then(res => {
-      if (res && Object.keys(res).length) {
+    getBalanceWithPrivateBalance(allAddr, allPrivatePath).then(res => {
+      if (res && (Object.keys(res.balance).length || Object.keys(res.privateBalance).length)) {
         this.props.updateWANBalance(res);
       }
     }).catch(err => {
+      console.log('Update WAN balance failed');
       console.log(err);
     });
   }

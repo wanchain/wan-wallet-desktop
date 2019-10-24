@@ -1,24 +1,22 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect from 'trezor-connect';
+import TrezorConnect, { DEVICE_EVENT, DEVICE } from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
-import { Icon, message } from 'antd';
-
+import { Icon } from 'antd';
+import { signTransaction, getPublicKey, WAN_PATH } from 'componentUtils/trezor'
 import './index.less';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
-const WanTx = require('wanchainjs-tx');
-
 const WALLET_ID = 0x03;
 const TREZOR = 'trezor';
 const CHAIN_TYPE = 'WAN';
-const WAN_PATH = "m/44'/5718350'/0'/0";
 
 // Initialize TrezorConnect
 TrezorConnect.init({
   // connectSrc: 'file://' + __dirname + '/trezor-connect/', // for trezor-connect hosted locally set endpoint to application files (ignore this field for connect hosted online, connect.trezor.io will be used by default)
-  connectSrc: 'https://sisyfos.trezor.io/connect-electron/',
+  // connectSrc: 'https://sisyfos.trezor.io/connect-electron/',
+  connectSrc: 'https://connect.trezor.io/8/',
   popup: true, // use trezor-connect UI, set it to "false" to get "trusted" mode and get more UI_EVENTs to render your own UI
   webusb: false, // webusb is not supported in electron
   debug: false, // see whats going on inside iframe
@@ -30,10 +28,10 @@ TrezorConnect.init({
   },
   env: 'electron'
 })
-.then(() => {
-  console.log('TrezorConnect is ready')
-})
-.catch(error => {
+  .then(() => {
+    console.log('TrezorConnect is ready')
+  })
+  .catch(error => {
     console.error('TrezorConnect init error', error)
   });
 
@@ -41,6 +39,7 @@ TrezorConnect.init({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
+  updateAddress: type => stores.wanAddress.updateAddress(type),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
@@ -50,7 +49,17 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor (props) {
     super(props);
-    this.props.changeTitle('Trezor.trezor')
+    this.props.changeTitle('Trezor.trezor');
+    // Declare trezor event
+    TrezorConnect.on(DEVICE_EVENT, (event) => {
+      if (event.type === DEVICE.CONNECT) {
+        console.log('Trezor onnected');
+      } else if (event.type === DEVICE.DISCONNECT) {
+        console.log('Trezor disconnected');
+        // clear trezor list
+        this.props.updateAddress('trezor');
+      }
+    });
   }
 
   componentDidUpdate () {
@@ -74,48 +83,6 @@ class Trezor extends Component {
         <p className="com-gray">2. {intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
-  }
-
-  getPublicKey = callback => {
-    TrezorConnect.getPublicKey({
-      path: WAN_PATH
-    }).then(result => {
-      if (result.success) {
-        callback(null, result.payload);
-      }
-    }).catch(error => {
-      callback(error, {})
-    });
-  }
-
-  signTransaction = (path, tx, callback) => {
-    TrezorConnect.ethereumSignTransaction({
-      path: path,
-      transaction: {
-        to: tx.to,
-        value: tx.value,
-        data: tx.data,
-        chainId: tx.chainId,
-        nonce: tx.nonce,
-        gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
-        txType: tx.Txtype
-      }
-    }).then((result) => {
-      if (!result.success) {
-        message.warn(intl.get('Trezor.signTransactionFailed'));
-        callback(intl.get('Trezor.signFailed'), null);
-        return;
-      }
-
-      tx.v = result.payload.v;
-      tx.r = result.payload.r;
-      tx.s = result.payload.s;
-      let eTx = new WanTx(tx);
-      let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('Signed tx: ', signedTx);
-      callback(null, signedTx);
-    });
   }
 
   setAddresses = newAddr => {
@@ -143,8 +110,8 @@ class Trezor extends Component {
       <div>
         {
           trezorAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.getPublicKey} dPath={WAN_PATH} />
-            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={getPublicKey} dPath={WAN_PATH} />
+            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>
     );

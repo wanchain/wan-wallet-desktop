@@ -26,7 +26,7 @@ class ValidatorConfirmForm extends Component {
         <Modal visible destroyOnClose={true} closable={false} title={title} onCancel={onCancel} className="withdraw-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('SendNormalTrans.send')}</Button>,
+            <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
           {/* Show warning when validator accepts delegations, but stake-in amount is less than 50,000 WAN */
@@ -72,7 +72,7 @@ class ValidatorConfirmForm extends Component {
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.lockTime')}</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.lockTime}{intl.get('days')}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.lockTime}{intl.get('Common.days')}</span></Col>
                 </Row>
               </div>
             }
@@ -118,7 +118,7 @@ class ValidatorConfirmForm extends Component {
               amount &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.entrustedAmount')}</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('Common.amount')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{formatNum(record.amount)} WAN</span></Col>
                 </Row>
               </div>

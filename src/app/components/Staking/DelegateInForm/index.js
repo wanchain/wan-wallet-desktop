@@ -1,6 +1,5 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
 
@@ -9,10 +8,10 @@ import { MAIN, TESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
+import { signTransaction } from 'componentUtils/trezor'
 
 const Option = Select.Option;
 const pu = require('promisefy-util');
-const WanTx = require('wanchainjs-tx');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
 
 const LEFT = 6;
@@ -30,7 +29,7 @@ const RIGHT = 18;
 }))
 
 @observer
-class StakeInForm extends Component {
+class DelegateInForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -173,7 +172,7 @@ class StakeInForm extends Component {
         callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }).catch((err) => {
-      callback(err);
+        callback(err);
     })
   }
 
@@ -187,7 +186,7 @@ class StakeInForm extends Component {
     }
 
     let valueStringPre = value.toString().slice(0, 4)
-    if (Number(value) < 0.0001 || !this.props.topUp && Math.floor(valueStringPre) < 100) { // eslint-disable-line no-mixed-operators
+    if (Number(value) < 0.0001 || (!this.props.topUp && Math.floor(valueStringPre) < 100)) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -281,7 +280,6 @@ class StakeInForm extends Component {
 
       let validator = {}
       let { onlineValidatorList } = this.props;
-
       for (let i = 0; i < onlineValidatorList.length; i++) {
         const v = onlineValidatorList[i];
         if (to === v.address) {
@@ -289,7 +287,6 @@ class StakeInForm extends Component {
           break;
         }
       }
-
       this.setState({
         loading: false,
         confirmVisible: true,
@@ -352,9 +349,7 @@ class StakeInForm extends Component {
     } else {
       wand.request('staking_delegateIn', tx, (err, ret) => {
         if (err) {
-          message.warn(err.message);
-        } else {
-          console.log('delegateIn ret:', ret);
+          message.warn(intl.get('StakeInForm.delegateInFailed'));
         }
         this.setState({ confirmVisible: false });
         this.props.onSend();
@@ -389,11 +384,10 @@ class StakeInForm extends Component {
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
 
-      let raw = await pu.promisefy(this.signTrezorTransaction, [path, rawTx], this);
-      console.log('Raw tx:', raw);
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
 
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('Sending transaction finished, txHash:', txHash);
+      console.log('Transaction hash:', txHash);
       let params = {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
@@ -415,37 +409,6 @@ class StakeInForm extends Component {
     } catch (error) {
       message.error(error)
     }
-  }
-
-  signTrezorTransaction = (path, tx, callback) => {
-    TrezorConnect.ethereumSignTransaction({
-      path: path,
-      transaction: {
-        to: tx.to,
-        value: tx.value,
-        data: tx.data,
-        chainId: tx.chainId,
-        nonce: tx.nonce,
-        gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
-        txType: tx.Txtype, // Txtype case is required by wanTx
-      },
-    }).then((result) => {
-      if (!result.success) {
-        message.warn(intl.get('Trezor.signTransactionFailed'));
-        callback(intl.get('Trezor.signFailed'), null);
-        return;
-      }
-
-      tx.v = result.payload.v;
-      tx.r = result.payload.r;
-      tx.s = result.payload.s;
-      let eTx = new WanTx(tx);
-      let signedTx = '0x' + eTx.serialize().toString('hex');
-      console.log('Signed tx', signedTx);
-      console.log('Tx:', tx);
-      callback(null, signedTx);
-    });
   }
 
   render () {
@@ -491,7 +454,7 @@ class StakeInForm extends Component {
                   </Form>
                 </Col>
                 <Col span={3} align="right" className="col-stakein-info">
-                  <a href="javascript:void(0)" onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
+                  <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
@@ -501,7 +464,7 @@ class StakeInForm extends Component {
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
-                      {getFieldDecorator('to', { rules: [{ required: true, message: 'Address is incorrect', validator: this.checkToWanAddr }] })
+                      {getFieldDecorator('to')
                         (<Input disabled={true} placeholder={intl.get('StakeInForm.enterAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
                     </Form.Item>
                   </Form>
@@ -564,6 +527,7 @@ class StakeInForm extends Component {
                             showSearch
                             allowClear
                             optionLabelProp="value"
+                            disabled={this.props.topUp}
                             dropdownMatchSelectWidth={false}
                             dropdownStyle={{ width: '420px' }}
                             placeholder={intl.get('StakeInForm.selectAddress')}
@@ -648,4 +612,4 @@ class StakeInForm extends Component {
   }
 }
 
-export default StakeInForm;
+export default DelegateInForm;

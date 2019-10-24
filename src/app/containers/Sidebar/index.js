@@ -105,41 +105,6 @@ class Sidebar extends Component {
       crossChainChildren.splice(1, crossChainChildren.length - 1);
     }
 
-    /** TODO */
-    // if (this.props.chainId === 1) {
-    //   if (stakeIndex !== -1) {
-    //     sidebarColumns.splice(stakeIndex, 1);
-    //   }
-    // } else {
-    //   if (stakeIndex === -1) {
-    //     sidebarColumns.splice(sidebarColumns.findIndex(item => item.key === '/settings'), 0,
-    //       {
-    //         title: intl.get('menuConfig.galaxyPos'),
-    //         step: '1',
-    //         key: '/staking',
-    //         icon: 'pie-chart',
-    //         children: [
-    //           {
-    //             title: intl.get('menuConfig.delegation'),
-    //             key: '/staking',
-    //             icon: 'block'
-    //           }
-    //         ]
-    //       })
-    //   }
-    //   let stakeChildren = sidebarColumns[stakeIndex].children;
-    //   let index = stakeChildren.findIndex(item => item.key === '/validator');
-    //   if (index === -1 && settings.staking_advance) {
-    //     stakeChildren.push({
-    //       title: intl.get('menuConfig.validator'),
-    //       key: '/validator',
-    //       icon: 'block'
-    //     })
-    //   } else if (index !== -1 && !settings.staking_advance) {
-    //     stakeChildren.splice(index, 1);
-    //   }
-    // }
-
     return (
       <div>
         <div className="sidebar">

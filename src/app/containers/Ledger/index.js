@@ -45,6 +45,7 @@ class Ledger extends Component {
         <p className="com-gray">1. {intl.get('Ledger.connectLedgerWalletToComputer')} </p>
         <p className="com-gray">2. {intl.get('Ledger.enterPinCode')}</p>
         <p className="com-gray">3. {intl.get('Ledger.navigateToWanchainAPPAndEnterIntoIt')}</p>
+        <p className="com-gray">4. {intl.get('Ledger.setContractDataOn')}</p>
       </div>
     )
   }
