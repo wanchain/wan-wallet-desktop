@@ -122,7 +122,7 @@ class EthAccount extends Component {
       let path = `${ETHPATH}${addrLen}`;
       wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `ETH-Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,

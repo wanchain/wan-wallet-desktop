@@ -119,27 +119,6 @@ class CrossETHForm extends Component {
     }
   }
 
-  sendAllAmount = e => {
-    let { form, addrInfo, estimateFee } = this.props;
-    let from = form.getFieldValue('from');
-    if (e.target.checked) {
-      form.setFieldsValue({
-        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(estimateFee.original)).toString(10)
-      });
-
-      this.setState({
-        disabledAmount: true,
-      })
-    } else {
-      form.setFieldsValue({
-        amount: 0
-      });
-      this.setState({
-        disabledAmount: false,
-      })
-    }
-  }
-
   updateLockAccounts = (storeman, option) => {
     let { from, form, updateTransParams, smgList, chainType } = this.props;
 
@@ -256,7 +235,6 @@ class CrossETHForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
               />
-              {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
               <CommonFormItem
                 form={form}
                 colSpan={6}
@@ -265,8 +243,8 @@ class CrossETHForm extends Component {
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('NormalTransForm.amount') + ` (${chainType.toLowerCase()})`}
-                sbiling={<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
               />
+              {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
           </Spin>
         </Modal>

@@ -109,7 +109,7 @@ class CrossE20 extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 

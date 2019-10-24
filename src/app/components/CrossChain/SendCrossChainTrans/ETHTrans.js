@@ -104,7 +104,7 @@ class ETHTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
         { visible &&
-          <CollectionCreateForm tokenAddr={this.props.tokenAddr} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );
