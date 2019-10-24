@@ -25,7 +25,7 @@ class Tokens {
 
   @action getTokensInfo () {
     return new Promise((resolve, reject) => {
-      wand.request('crosschain_getTokensInfo', null, (err, data) => {
+      wand.request('crossChain_getTokensInfo', null, (err, data) => {
         if (err) {
           console.log('getWrcTokensInfo: ', err);
           reject(err)
@@ -49,7 +49,7 @@ class Tokens {
   @action updateTokensBalance (tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
-    wand.request('crosschain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
+    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -60,7 +60,7 @@ class Tokens {
 
   @action updateE20TokensBalance (tokenScAddr) {
     let normalArr = Object.keys(ethAddress.addrInfo['normal']);
-    wand.request('crosschain_updateTokensBalance', { address: normalArr, tokenScAddr, chain: 'ETH' }, (err, data) => {
+    wand.request('crossChain_updateTokensBalance', { address: normalArr, tokenScAddr, chain: 'ETH' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -70,9 +70,9 @@ class Tokens {
   }
 
   @action updateTokensInfo (addr, key, value) {
-    wand.request('crosschain_updateTokensInfo', { addr, key, value }, (err) => {
+    wand.request('crossChain_updateTokensInfo', { addr, key, value }, (err) => {
       if (err) {
-        console.log('crosschain_updateTokensInfo: ', err)
+        console.log('crossChain_updateTokensInfo: ', err)
         return;
       }
       self.tokensList[addr][key] = value;

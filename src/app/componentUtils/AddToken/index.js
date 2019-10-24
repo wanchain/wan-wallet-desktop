@@ -21,9 +21,9 @@ class AddToken extends Component {
   }
 
   handleSearch = () => {
-    wand.request('crosschain_getTokenInfo', { scAddr: this.state.tokenAddr }, (err, ret) => {
+    wand.request('crossChain_getTokenInfo', { scAddr: this.state.tokenAddr }, (err, ret) => {
       if (err) {
-        console.log('crosschain_getTokenInfo:', err);
+        console.log('crossChain_getTokenInfo:', err);
         message.warn(intl.get('Config.checkTokenAddr'))
         return;
       }
@@ -59,7 +59,7 @@ class AddToken extends Component {
         btnLoading: true
       })
     }
-    wand.request('crosschain_addCustomToken', token, err => {
+    wand.request('crossChain_addCustomToken', token, err => {
       if (err) {
         console.log('stores_addCustomToken', err);
         message.warn(intl.get('Config.addTokenAddrErr'));

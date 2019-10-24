@@ -59,6 +59,7 @@ class Config extends Component {
       showAddToken: false
     })
   }
+
   handleOk = pwd => {
     if (!pwd) {
       message.warn(intl.get('Config.invalidPassword'));

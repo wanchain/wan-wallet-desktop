@@ -59,9 +59,9 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crosschain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crosschain_lockE20Inbound:', err);
+          console.log('crossChain_lockE20Inbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -83,9 +83,9 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crosschain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crosschain_lockWTokenInbound:', err);
+          console.log('crossChain_lockWTokenInbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));

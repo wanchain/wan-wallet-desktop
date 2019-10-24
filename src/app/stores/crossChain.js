@@ -9,9 +9,9 @@ class CrossChain {
   @observable crossTrans = [];
 
   @action updateCrossTrans() {
-    wand.request('crosschain_getAllCrossTrans', null, (err, ret) => {
+    wand.request('crossChain_getAllCrossTrans', null, (err, ret) => {
       if (err) {
-        console.log('crosschain_getAllCrossTrans:', err);
+        console.log('crossChain_getAllCrossTrans:', err);
       } else {
         self.crossTrans = ret;
       }

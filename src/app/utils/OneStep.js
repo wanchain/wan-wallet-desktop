@@ -50,7 +50,7 @@ const OneStep = {
               }
               input.gasLimit = REDEEMWETH_GAS;
               input.gasPrice = gasPrice;
-              wand.request('crosschain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM' }, (err, ret) => {
+              wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM' }, (err, ret) => {
                 if (err) {
                   this.sending.delete(trans_data.hashX);
                   this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
@@ -66,7 +66,7 @@ const OneStep = {
           getGasPrice('ETH').then(gasPrice => {
             input.gasLimit = REDEEMETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crosschain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM' }, (err, ret) => {
+            wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM' }, (err, ret) => {
               if (err) {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
@@ -99,7 +99,7 @@ const OneStep = {
             }
             input.gasLimit = REVOKEWETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crosschain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REVOKE' }, (err, ret) => {
+            wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'REVOKE' }, (err, ret) => {
               if (err) {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
@@ -115,7 +115,7 @@ const OneStep = {
           getGasPrice('ETH').then(gasPrice => {
             input.gasLimit = REVOKEETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crosschain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE' }, (err, ret) => {
+            wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE' }, (err, ret) => {
               if (err) {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);

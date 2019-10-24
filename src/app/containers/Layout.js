@@ -1,14 +1,13 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { getBalance, isSdkReady, getBalanceWithPrivateBalance } from 'utils/helper';
+import { getBalance, isSdkReady, getBalanceWithPrivateBalance, getEthBalance } from 'utils/helper';
 
 import './Layout.less';
 import SideBar from './Sidebar';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
-import { getBalance, isSdkReady, getEthBalance } from 'utils/helper';
 import { WANPATH } from 'utils/settings';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
@@ -55,8 +54,11 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
+          console.log('before')
           await this.props.getTokensInfo();
+          console.log('middle')
           await this.props.getMnemonic();
+          console.log('after')
           this.setState({
             loading: false
           });

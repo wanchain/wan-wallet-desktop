@@ -168,7 +168,7 @@ export const getGasPrice = function (chainType) {
 
 export const getSmgList = function (crossChain) {
   return new Promise((resolve, reject) => {
-    wand.request('crosschain_getSmgList', { crossChain }, (err, val) => {
+    wand.request('crossChain_getSmgList', { crossChain }, (err, val) => {
       if (err) {
         console.log('Get Smg list failed', err)
         return reject(err);
@@ -425,7 +425,7 @@ export const encodeWeth2ethRefundInput = function () {
 
 export const estimateCrossETHInboundGas = function (from) {
   return new Promise((resolve, reject) => {
-    wand.request('crosschain_getHtmlAddr', null, async (err, ret) => {
+    wand.request('crossChain_getHtmlAddr', null, async (err, ret) => {
       if (err) {
         console.log('estimateCrossChainGas:', err)
         return reject(err);
@@ -461,7 +461,7 @@ export const estimateCrossETHInboundGas = function (from) {
 
 export const estimateCrossETHOutboundGas = function (from) {
   return new Promise((resolve, reject) => {
-    wand.request('crosschain_getHtmlAddr', null, async (err, ret) => {
+    wand.request('crossChain_getHtmlAddr', null, async (err, ret) => {
       if (err) {
         console.log('estimateCrossChainGas:', err)
         return reject(err);
@@ -496,7 +496,7 @@ export const estimateCrossETHOutboundGas = function (from) {
 }
 
 export const getAllUndoneCrossTrans = function (callback) {
-  wand.request('crosschain_getAllUndoneCrossTrans', null, (err, ret) => {
+  wand.request('crossChain_getAllUndoneCrossTrans', null, (err, ret) => {
     if (err) {
       return callback(err);
     } else {
@@ -506,7 +506,7 @@ export const getAllUndoneCrossTrans = function (callback) {
 }
 
 export const increaseFailedRetryCount = function (params) {
-  wand.request('crosschain_increaseFailedRetryCount', params, err => {
+  wand.request('crossChain_increaseFailedRetryCount', params, err => {
     if (err) {
       console.log('Increase redeem retry count failed');
     }
