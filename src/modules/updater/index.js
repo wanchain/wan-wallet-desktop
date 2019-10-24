@@ -85,7 +85,7 @@ class WalletUpdater {
             let logMsg = 'Download speed: ' + Math.ceil(progressObj.bytesPerSecond / 1024) + ' kbps'
             logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
             logMsg = logMsg + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-            this._logger.info(`download progess: ${logMsg}`)
+            this._logger.info(`download progress: ${logMsg}`)
         
             updateModal.webContents.send('updateInfo', 'downloadPercentage', JSON.stringify(progressObj))
           })
