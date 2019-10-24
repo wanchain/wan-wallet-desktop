@@ -54,11 +54,8 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
-          console.log('before')
           await this.props.getTokensInfo();
-          console.log('middle')
           await this.props.getMnemonic();
-          console.log('after')
           this.setState({
             loading: false
           });

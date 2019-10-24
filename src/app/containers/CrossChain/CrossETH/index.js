@@ -35,7 +35,7 @@ class CrossETH extends Component {
   }
 
   componentDidMount() {
-    let tokenAddr = (Object.keys(this.props.tokensList).filter(item => this.props.tokensList[item].symbol === 'WETH'))[0];
+    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'WETH');
     this.timer = setInterval(() => {
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)
