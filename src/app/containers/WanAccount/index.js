@@ -54,7 +54,7 @@ class WanAccount extends Component {
     {
       dataIndex: 'address',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>,
-      width: '50%'
+      width: '47%'
     },
     {
       dataIndex: 'balance',
@@ -64,7 +64,7 @@ class WanAccount extends Component {
     {
       dataIndex: 'action',
       render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
-      width: '10%'
+      width: '13%'
     },
     {
       dataIndex: 'blank',
@@ -211,7 +211,7 @@ class WanAccount extends Component {
         <tbody>
           <tr>
             <td style={{ width: '15%', padding: '0px 16px' }}></td>
-            <td style={{ width: '50%', padding: '0px 16px' }}>
+            <td style={{ width: '47%', padding: '0px 16px' }}>
               <div className="addrText">
                 <p className="privateAddress">
                   <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>
@@ -221,7 +221,7 @@ class WanAccount extends Component {
               </div>
             </td>
             <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
-            <td style={{ width: '10%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
+            <td style={{ width: '13%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
             <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>
