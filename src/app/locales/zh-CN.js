@@ -229,6 +229,7 @@ const zh_CN = {
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
 
+    'SendNormalTrans.send': '发送',
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
     'TransHistory.time': '时间',

@@ -74,7 +74,7 @@ class ConfirmPhrase extends Component {
           </TweenOneGroup>
         </div>
         <div className="phraseCon">
-          {randomSort(mnemonicArr).map((item, index) => <div className="ant-tag word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></div>)}
+          {randomSort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
         </div>
       </div>
     );

@@ -228,6 +228,7 @@ const th_TH = {
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',
 
+    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
 
     'TransHistory.time': 'เวลา',

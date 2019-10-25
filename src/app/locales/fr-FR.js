@@ -213,6 +213,7 @@ const fr_FR = {
     'Rename.name': 'Le nom est incorrect',
     'Rename.edit': 'Modifier',
 
+    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Assurez-vous d\'avoir un solde suffisant',
 
     'TransHistory.time': 'Temps',

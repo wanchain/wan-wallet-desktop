@@ -228,6 +228,7 @@ const ko_KR = {
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',
 
+    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
 
     'TransHistory.time': '트랜잭션 시간',

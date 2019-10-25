@@ -33,9 +33,9 @@ class ConfirmForm extends Component {
 
     return (
       <Modal
-        destroyOnClose={true}
+        destroyOnClose
         closable={false}
-        visible={ true }
+        visible={visible}
         title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
         onCancel={this.handleCancel}
         footer={[
