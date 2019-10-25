@@ -305,13 +305,13 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   let tmp = {};
   Object.keys(addrInfo).forEach(item => {
     tmp = Object.assign(tmp, addrInfo[item])
-  });
-  for (let item of Object.values(tmp)) {
+  })
+  Object.values(tmp).forEach(item => {
     if (item.address === addr) {
       balance = item.balance;
-      break;
+      return; // eslint-disable-line no-useless-return
     }
-  }
+  })
   return balance;
 }
 

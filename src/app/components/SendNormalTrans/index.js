@@ -5,10 +5,13 @@ import intl from 'react-intl-universal';
 
 import './index.less';
 import { TRANSTYPE } from 'utils/settings';
-import NormalTransForm from 'components/NormalTransForm'
+import NormalTransForm from 'components/NormalTransForm';
+import WRC20NormalTransForm from 'components/NormalTransForm/WRC20NormalTransForm';
+
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
+const WRC20CollectionCreateForm = Form.create({ name: 'WRC20NormalTransForm' })(WRC20NormalTransForm);
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -49,7 +52,7 @@ class SendNormalTrans extends Component {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
       updateGasPrice(gasPrice);
-      this.setState({ spin: false });
+      setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log(`Get nonce or gas price failed: ${err}`)
       message.warn(err);
@@ -81,7 +84,8 @@ class SendNormalTrans extends Component {
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
-        { visible && <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
+        { visible && !tokenAddr && <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
+        { visible && tokenAddr && <WRC20CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
       </div>
     );
   }
