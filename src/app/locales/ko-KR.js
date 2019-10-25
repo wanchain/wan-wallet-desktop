@@ -109,6 +109,9 @@ const ko_KR = {
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
     'WanAccount.redeem': '적용',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
+    'WanAccount.publicKey': 'Public Key',
+
+    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.cancel': '취소',
@@ -228,7 +231,6 @@ const ko_KR = {
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',
 
-    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
 
     'TransHistory.time': '트랜잭션 시간',
@@ -243,7 +245,6 @@ const ko_KR = {
     'TransHistory.selectAFromAddress': '주소를 선택 바랍니다.',
     'TransHistory.all': '전부',
     'TransHistory.private': '프라이빗',
-    'TransHistory.send': '전송',
     'TransHistory.refund': '환불',
     'TransHistory.allTooltip': '모든 트랜잭션 보기 (일반적인 트랜잭션, 프라이빗 트랜잭션 포함)',
     'TransHistory.privateTooltip': '프라이빗 트랜잭션 보기',

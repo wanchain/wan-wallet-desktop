@@ -105,6 +105,9 @@ const fr_FR = {
     'WanAccount.notSameName': 'Le nom du compte ne peut pas être répété. Veuillez réessayer',
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
+    'WanAccount.publicKey': 'Public Key',
+
+    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.cancel': 'Annuler',
@@ -213,7 +216,6 @@ const fr_FR = {
     'Rename.name': 'Le nom est incorrect',
     'Rename.edit': 'Modifier',
 
-    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Assurez-vous d\'avoir un solde suffisant',
 
     'TransHistory.time': 'Temps',
@@ -228,7 +230,6 @@ const fr_FR = {
     'TransHistory.selectAFromAddress': 'Sélectionnez un nom de compte',
     'TransHistory.all': 'Toutes',
     'TransHistory.private': 'Privées',
-    'TransHistory.send': 'Envoyées',
     'TransHistory.refund': 'Remboursements',
     'TransHistory.allTooltip': 'Afficher toutes les transactions, y compris les transactions normales et privées',
     'TransHistory.privateTooltip': 'Afficher les transactions privées',

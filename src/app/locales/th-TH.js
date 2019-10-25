@@ -109,6 +109,9 @@ const th_TH = {
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',
+    'WanAccount.publicKey': 'Public Key',
+
+    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',
@@ -228,7 +231,6 @@ const th_TH = {
     'Rename.name': 'ชื่อไม่ถูกต้อง',
     'Rename.edit': 'แก้ไข',
 
-    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
 
     'TransHistory.time': 'เวลา',
@@ -243,7 +245,6 @@ const th_TH = {
     'TransHistory.selectAFromAddress': 'กรุณาเลือกแอดเดรสของคุณ',
     'TransHistory.all': 'ทั้งหมด',
     'TransHistory.private': 'แบบส่วนตัว',
-    'TransHistory.send': 'ส่ง',
     'TransHistory.refund': 'ส่งคืน',
     'TransHistory.allTooltip': 'แสดงทุกประเภทของธุรกรรม ทั้งธุรกรรมแบบปกติและแบบส่วนตัว',
     'TransHistory.privateTooltip': 'แสดงธุรกรรมแบบส่วนตัว',

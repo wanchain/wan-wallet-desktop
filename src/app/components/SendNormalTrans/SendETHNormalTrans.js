@@ -70,7 +70,7 @@ class SendETHNormalTrans extends Component {
 
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('SendNormalTrans.send')}</Button>
+        <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
           <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }

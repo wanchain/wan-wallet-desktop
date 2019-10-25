@@ -109,6 +109,9 @@ const en_US = {
     'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
     'WanAccount.redeem': 'Redeem',
     'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
+    'WanAccount.publicKey': 'Public Key',
+
+    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',
@@ -229,7 +232,6 @@ const en_US = {
     'Rename.name': 'Name is incorrect',
     'Rename.edit': 'Edit',
 
-    'SendNormalTrans.send': 'Send',
     'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
 
     'TransHistory.time': 'TIME',
@@ -244,7 +246,6 @@ const en_US = {
     'TransHistory.selectAFromAddress': 'Select an account name',
     'TransHistory.all': 'All',
     'TransHistory.private': 'Private',
-    'TransHistory.send': 'Send',
     'TransHistory.refund': 'Redeem',
     'TransHistory.allTooltip': 'Show all transactions, including normal and private transactions',
     'TransHistory.privateTooltip': 'Show private transactions',
@@ -255,6 +256,7 @@ const en_US = {
     'menuConfig.wallet': 'Wallet',
     'menuConfig.wan': 'WAN',
     'menuConfig.eth': 'ETH',
+    'menuConfig.eos': 'EOS',
     'menuConfig.hardwareWallet': 'Hardware Wallet',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

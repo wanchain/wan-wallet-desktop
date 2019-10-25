@@ -436,7 +436,7 @@ class WanAddress {
           time: timeFormat(self.transHistory[item]['sendTime']),
           from: self.addrInfo[type][self.transHistory[item]['from']].name,
           to: /refund/i.exec(operation) ? self.transHistory[item]['from'] : (/send/i.exec(operation) ? self.transHistory[item]['privateTo'] : to),
-          type: /send/i.exec(operation) ? intl.get('TransHistory.send') : /refund/i.exec(operation) ? intl.get('TransHistory.refund') : '',
+          type: /send/i.exec(operation) ? intl.get('Common.send') : /refund/i.exec(operation) ? intl.get('TransHistory.refund') : '',
           value: /refund/i.exec(operation) ? formatNum(self.transHistory[item]['redeemAmount'] || 0) : formatNum(fromWei(self.transHistory[item].value)),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           sendTime: self.transHistory[item]['sendTime']

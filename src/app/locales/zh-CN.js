@@ -109,6 +109,9 @@ const zh_CN = {
     'WanAccount.notSameName': '帐户名称不能重复。请再试一次',
     'WanAccount.redeem': '提币',
     'WanAccount.privateTxReceiverAddress': '隐私地址',
+    'WanAccount.publicKey': '公钥',
+
+    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',
@@ -229,7 +232,6 @@ const zh_CN = {
     'Rename.name': '名字不正确',
     'Rename.edit': '修改',
 
-    'SendNormalTrans.send': '发送',
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
 
     'TransHistory.time': '时间',
@@ -244,7 +246,6 @@ const zh_CN = {
     'TransHistory.selectAFromAddress': '请选择账户',
     'TransHistory.all': '全部',
     'TransHistory.private': '隐私交易',
-    'TransHistory.send': '发送',
     'TransHistory.refund': '提币',
     'TransHistory.allTooltip': '展示所有的交易信息，包括普通交易和隐私交易',
     'TransHistory.privateTooltip': '展示隐私交易信息',
@@ -255,6 +256,7 @@ const zh_CN = {
     'menuConfig.wallet': '钱包',
     'menuConfig.wan': 'WAN',
     'menuConfig.eth': 'ETH',
+    'menuConfig.eos': 'EOS',
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',
