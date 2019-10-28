@@ -75,16 +75,18 @@ class WanAddress {
     }
     wand.request('transaction_showRecords', (err, val) => {
       if (!err && val.length !== 0) {
+        let tmp = {};
         val = val.filter(item => item.chainType === 'WAN');
         val.forEach(item => {
           item.from = wanUtil.toChecksumAddress(item.from);
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
-            self.transHistory[item.txHash] = item;
+            tmp[item.txHash] = item;
           }
           if (item.txHash === '' && item.status === 'Failed') {
-            self.transHistory[item.hashX] = item;
+            tmp[item.hashX] = item;
           }
         })
+        self.transHistory = tmp;
       }
     })
   }
