@@ -31,7 +31,7 @@ class CrossETH extends Component {
   constructor (props) {
     super(props);
     this.props.setCurrToken(null, 'WETH');
-    this.props.changeTitle('CrossChain.CrossChain');
+    this.props.changeTitle('Common.crossChain');
   }
 
   componentDidMount() {

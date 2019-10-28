@@ -2,6 +2,10 @@ const zh_CN = {
     'Common.days': ' 天',
     'Common.amount': '金额',
     'Common.send': '发送',
+    'Common.tokens': '代币',
+    'Common.erc20': 'ERC-20',
+    'Common.wrc20': 'WRC-20',
+    'Common.crossChain': '跨链',
 
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
@@ -84,6 +88,9 @@ const zh_CN = {
     'Config.addTokenAddrErr': '添加代币失败，请重新尝试',
     'Config.existedTokenAddr': '已经存在的代币地址',
     'Config.invalidPassword': '密码错误，请重试',
+    'Config.crossChain': '跨链选项',
+    'Config.wrc20': 'WRC-20选项',
+    'Config.enableWrc20': '使能WRC-20代币',
 
     'PasswordConfirmForm.password': '密码',
     'PasswordConfirmForm.inputPwd': '输入密码',
@@ -266,7 +273,6 @@ const zh_CN = {
     'menuConfig.validator': '验证人',
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
-    'menuConfig.crossChain': '跨链',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
     'utils.helper.getNonceFailed': '获取nonce失败',
@@ -407,8 +413,6 @@ const zh_CN = {
     'Offline.sendRawTx': '发送交易失败，请稍后再试',
     'Offline.inputRawTxText': '请正确输入签名后的交易数据',
     'Offline.linkToWebsite': '下载离线钱包',
-
-    'CrossChain.CrossChain': '跨链',
 
     'popup.ok': '确定',
     'popup.cancel': '取消',

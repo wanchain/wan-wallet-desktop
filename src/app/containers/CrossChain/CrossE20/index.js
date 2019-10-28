@@ -31,7 +31,7 @@ const WANCHAIN = 'WAN';
 class CrossE20 extends Component {
   constructor (props) {
     super(props);
-    this.props.changeTitle('CrossChain.CrossChain');
+    this.props.changeTitle('Common.crossChain');
     this.props.setCurrToken(this.props.tokenAddr);
   }
 

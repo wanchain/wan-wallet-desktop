@@ -2,6 +2,10 @@ const th_TH = {
     'Common.days': ' วัน',
     'Common.amount': 'จำนวน',
     'Common.send': 'ส่ง',
+    'Common.tokens': 'Tokens',
+    'Common.erc20': 'ERC-20',
+    'Common.wrc20': 'WRC-20',
+    'Common.crossChain': 'Cross Chain',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -83,6 +87,9 @@ const th_TH = {
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': 'รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง',
+    'Config.crossChain': 'Cross Chain Options',
+    'Config.wrc20': 'WRC-20 Options',
+    'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'รหัสผ่าน',
     'PasswordConfirmForm.inputPwd': 'กรอกรหัสผ่าน',
@@ -264,7 +271,6 @@ const th_TH = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'การตั้งค่า',
-    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': 'ไม่สามารถดึงยอดคงเหลือได้',
     'utils.helper.getNonceFailed': 'ไม่สามารถดึง nonce ได้',
@@ -402,8 +408,6 @@ const th_TH = {
     'Offline.sendRawTx': 'ไม่สามารถส่งธุรกรรมได้ กรุณาลองอีกครั้ง',
     'Offline.inputRawTxText': 'กรุณากรอกข้อมูลธุรกรรม',
     'Offline.linkToWebsite': 'ดาวน์โหลดกระเป๋าแบบออฟไลน์',
-
-    'CrossChain.CrossChain': 'Cross Chain',
 
     'popup.ok': 'ตกลง',
     'popup.cancel': 'ยกเลิก',

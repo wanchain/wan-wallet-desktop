@@ -2,6 +2,10 @@ const ko_KR = {
     'Common.days': ' 일',
     'Common.amount': '금액',
     'Common.send': '전송',
+    'Common.tokens': 'Tokens',
+    'Common.erc20': 'ERC-20',
+    'Common.wrc20': 'WRC-20',
+    'Common.crossChain': 'Cross Chain',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -83,6 +87,9 @@ const ko_KR = {
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': '패스워드 오류, 재확인 바랍니다.',
+    'Config.crossChain': 'Cross Chain Options',
+    'Config.wrc20': 'WRC-20 Options',
+    'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': '패스워드',
     'PasswordConfirmForm.inputPwd': '패스워드를 입력하세요',
@@ -264,7 +271,6 @@ const ko_KR = {
     'menuConfig.validator': '검증인',
     'menuConfig.staking': '스테이킹',
     'menuConfig.settings': '설정',
-    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',
@@ -400,8 +406,6 @@ const ko_KR = {
     'Offline.sendRawTx': '트랜잭션 전송이 실패하였습니다. 재시도 바랍니다',
     'Offline.inputRawTxText': '합의된 트랜잭션을 입력 바랍니다',
     'Offline.linkToWebsite': '오프라인 지갑 다운로드',
-
-    'CrossChain.CrossChain': 'Cross Chain',
 
     'popup.ok': '확인',
     'popup.cancel': '취소',

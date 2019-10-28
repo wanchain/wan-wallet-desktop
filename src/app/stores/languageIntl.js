@@ -198,7 +198,7 @@ class LanguageIntl {
         ]
       },
       {
-        title: intl.get('menuConfig.crossChain'),
+        title: intl.get('Common.crossChain'),
         step: '1',
         key: '/crossChain',
         icon: 'wallet',

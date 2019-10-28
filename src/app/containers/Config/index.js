@@ -127,8 +127,17 @@ class Config extends Component {
           <p className="set_title">{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
         </Card>
-        <Card title='TOKENS'>
-          <p className="set_title">WRC20</p>
+        <Card title={intl.get('Config.crossChain')}>
+          <p className="set_title">{intl.get('Common.erc20')}</p>
+          {
+            wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+          }
+          <div className="add_token" onClick={this.handleAddToken}>
+            <div className="account_pattern"> + </div>
+          </div>
+        </Card>
+        <Card title={intl.get('Config.wrc20')}>
+          <p className="set_title">{intl.get('Config.enableWrc20')}</p>
           {
             wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
           }

@@ -2,6 +2,10 @@ const fr_FR = {
     'Common.days': ' jours',
     'Common.amount': 'Montant',
     'Common.send': 'Envoyer',
+    'Common.tokens': 'Tokens',
+    'Common.erc20': 'ERC-20',
+    'Common.wrc20': 'WRC-20',
+    'Common.crossChain': 'Cross Chain',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -79,6 +83,9 @@ const fr_FR = {
     'Config.oneHour': '1 heure',
     'Config.twoHours': '2 heures',
     'Config.invalidPassword': 'Mot de passe invalide, réessayer',
+    'Config.crossChain': 'Cross Chain Options',
+    'Config.wrc20': 'WRC-20 Options',
+    'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'Mot de passe',
     'PasswordConfirmForm.inputPwd': 'Saisir le mot de passe',

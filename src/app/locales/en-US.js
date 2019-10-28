@@ -2,6 +2,11 @@ const en_US = {
     'Common.days': ' days',
     'Common.amount': 'Amount',
     'Common.send': 'Send',
+    'Common.tokens': 'Tokens',
+    'Common.erc20': 'ERC-20',
+    'Common.wrc20': 'WRC-20',
+    'Common.crossChain': 'Cross Chain',
+    'Common.options': 'Options',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -83,6 +88,9 @@ const en_US = {
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': 'Invalid password. Try again',
+    'Config.crossChain': 'Cross Chain Options',
+    'Config.wrc20': 'WRC-20 Options',
+    'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'Password',
     'PasswordConfirmForm.inputPwd': 'Input password',
@@ -266,7 +274,6 @@ const en_US = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
-    'menuConfig.crossChain': 'Cross Chain',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
@@ -405,8 +412,6 @@ const en_US = {
     'Offline.sendRawTx': 'Send transaction failed. Please try again',
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
-
-    'CrossChain.CrossChain': 'Cross Chain',
 
     'popup.ok': 'OK',
     'popup.cancel': 'Cancel',
