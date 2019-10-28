@@ -229,7 +229,7 @@ class WRC20NormalTransForm extends Component {
     let { from, to } = form.getFieldsValue(['to', 'from']);
     let decimals = tokensList[to].decimals;
 
-    if (value >= 0 && checkAmountUnit(decimals, value) && new BigNumber(value).lt(formatNumByDecimals(tokensBalance[to][from], decimals))) {
+    if (new BigNumber(value).gt(0) && checkAmountUnit(decimals, value) && new BigNumber(value).lte(formatNumByDecimals(tokensBalance[to][from], decimals))) {
       if (!this.state.advanced) {
         this.updateGasLimit();
       }
@@ -272,7 +272,6 @@ class WRC20NormalTransForm extends Component {
     let { form, tokensBalance, tokenAddr, tokensList } = this.props;
     let from = form.getFieldValue('from');
     if (e.target.checked) {
-      console.log('kkkkkkkkkkkkkkkkkkkk')
       form.setFieldsValue({
         token: formatNumByDecimals(tokensBalance[tokenAddr][from], tokensList[tokenAddr].decimals)
       });
@@ -330,7 +329,7 @@ class WRC20NormalTransForm extends Component {
               </Form.Item>
               {
                 !inputDisabled &&
-                <Form.Item label={intl.get('NormalTransForm.amount')}>
+                <Form.Item label={intl.get('Common.amount')}>
                   {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                     (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                   {<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
@@ -338,18 +337,19 @@ class WRC20NormalTransForm extends Component {
               }
               {
                 inputDisabled &&
-                <Form.Item label={intl.get('NormalTransForm.amount')}>
+                <Form.Item label={intl.get('Common.amount')}>
                   {getFieldDecorator('token', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
                     (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                   <Checkbox onChange={this.sendAllTokenAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
                 </Form.Item>
               }
-              {settings.reinput_pwd
-                ? <Form.Item label={intl.get('NormalTransForm.password')}>
-                    {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
+              {
+                settings.reinput_pwd &&
+                <Form.Item label={intl.get('NormalTransForm.password')}>
+                  {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
                     (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
-                  </Form.Item>
-                : ''}
+                </Form.Item>
+              }
               {
               advanced
               ? <Form.Item label={intl.get('NormalTransForm.fee')}>
