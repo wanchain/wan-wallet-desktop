@@ -50,3 +50,5 @@ export const CHAINNAME = {
   WAN: ' (wanchain)',
   ETH: ' (ethereum)'
 };
+
+export const CROSSCHAINTYPE = ['BTC', 'ETH'];

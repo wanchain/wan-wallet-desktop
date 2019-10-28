@@ -1,8 +1,10 @@
 import { observable, action, computed, toJS } from 'mobx';
 
+import tokens from './tokens';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import { getInfoByAddress } from 'utils/helper';
+import { CROSSCHAINTYPE } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 
 class CrossChain {
@@ -16,6 +18,36 @@ class CrossChain {
         self.crossTrans = ret;
       }
     })
+  }
+
+  @computed get crossChainTokensInfo () {
+    let list = [];
+    Object.keys(tokens.tokensList).forEach(item => {
+      let val = tokens.tokensList[item];
+      if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr) {
+        list.push({
+          wanAddr: item,
+          symbol: val.symbol,
+          select: val.ccSelect
+        })
+      }
+    })
+
+    return list.sort((a, b) => b.wanAddr - a.wanAddr)
+  }
+
+  @computed get crossChainOnSideBar() {
+    let list = [];
+    Object.keys(tokens.tokensList).forEach(item => {
+      if (tokens.tokensList[item].ccSelect && !CROSSCHAINTYPE.includes(tokens.tokensList[item].symbol)) {
+        list.push({
+          tokenAddr: item,
+          tokenOrigAddr: tokens.tokensList[item].tokenOrigAddr || '',
+          symbol: tokens.tokensList[item].symbol
+        })
+      }
+    });
+    return list.sort((a, b) => b.wanAddr - a.wanAddr);
   }
 
   @computed get crossETHTrans () {

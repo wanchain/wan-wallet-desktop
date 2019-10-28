@@ -14,6 +14,7 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   wrc20TokensInfo: stores.tokens.wrc20TokensInfo,
+  crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
   updateTokensInfo: (addr, key, val) => stores.tokens.updateTokensInfo(addr, key, val),
@@ -46,6 +47,10 @@ class Config extends Component {
 
   handleTokensSelected = val => {
     this.props.updateTokensInfo(val.wanAddr, 'select', !val.select);
+  }
+
+  handleCrossChainSelected = val => {
+    this.props.updateTokensInfo(val.wanAddr, 'ccSelect', !val.select);
   }
 
   handleAddToken = () => {
@@ -84,7 +89,7 @@ class Config extends Component {
   }
 
   render() {
-    const { wrc20TokensInfo } = this.props;
+    const { wrc20TokensInfo, crossChainTokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
 
     const options = [{
@@ -130,11 +135,8 @@ class Config extends Component {
         <Card title={intl.get('Config.crossChain')}>
           <p className="set_title">{intl.get('Common.erc20')}</p>
           {
-            wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleCrossChainSelected(item)}>{item.symbol}</Checkbox>)
           }
-          <div className="add_token" onClick={this.handleAddToken}>
-            <div className="account_pattern"> + </div>
-          </div>
         </Card>
         <Card title={intl.get('Config.wrc20')}>
           <p className="set_title">{intl.get('Config.enableWrc20')}</p>

@@ -18,6 +18,7 @@ const { SubMenu, Item } = Menu;
   settings: stores.session.settings,
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
   sidebarColumns: stores.languageIntl.sidebarColumns,
+  crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
 }))
 
 @observer
@@ -71,7 +72,7 @@ class Sidebar extends Component {
   }
 
   render () {
-    const { sidebarColumns, settings, tokensOnSideBar } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
@@ -89,19 +90,24 @@ class Sidebar extends Component {
     } else if (index !== -1 && !settings.staking_advance) {
       stakeChildren.splice(index, 1);
     }
+
     if (tokensOnSideBar.length) {
       walletChildren.splice(2, walletChildren.length - 2, ...tokensOnSideBar.map(item => ({
         title: item.symbol,
         key: `/tokens/${item.tokenAddr}/${item.symbol}`,
         icon: 'block'
       })));
-      crossChainChildren.splice(1, crossChainChildren.length - 1, ...tokensOnSideBar.map(item => ({
+    } else {
+      walletChildren.splice(2, walletChildren.length - 2);
+    }
+
+    if (crossChainOnSideBar.length) {
+      crossChainChildren.splice(1, crossChainChildren.length - 1, ...crossChainOnSideBar.map(item => ({
         title: item.symbol,
         key: `/crossChain/${item.tokenAddr}/${item.symbol}`,
         icon: 'block'
       })));
     } else {
-      walletChildren.splice(2, walletChildren.length - 2);
       crossChainChildren.splice(1, crossChainChildren.length - 1);
     }
 

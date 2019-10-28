@@ -47,7 +47,7 @@ class AddToken extends Component {
   handleAddToken = () => {
     const { tokensList, addCustomToken } = this.props;
     const { tokenAddr, tokenInfo } = this.state;
-    let token = { tokenAddr, select: false, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals };
+    let token = { tokenAddr, select: false, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals, userAdd: true };
     if (tokensList[tokenAddr.toLowerCase()]) {
       message.warn(intl.get('Config.existedTokenAddr'));
       this.setState({

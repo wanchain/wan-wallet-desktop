@@ -1077,28 +1077,28 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
               if (network === 'main') {
                 ret = [{
                   tokenWanAddr: '0x28362cd634646620ef2290058744f9244bb90ed9',
-                  symbol: 'WETH',
+                  symbol: 'ETH',
                   decimals: 18
                 }, {
                   tokenWanAddr: '0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
-                  symbol: 'WBTC',
+                  symbol: 'BTC',
                   decimals: 8
                 }].concat(ret);
               } else {
                 ret = [{
                   tokenWanAddr: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
-                  symbol: 'WETH',
+                  symbol: 'ETH',
                   decimals: 18
                 }, {
                   tokenWanAddr: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
-                  symbol: 'WBTC',
+                  symbol: 'BTC',
                   decimals: 8
                 }].concat(ret);
               }
               ret.forEach(item => {
                 if(info[item.tokenOrigAddr]) {
                   Object.assign(item, info[item.tokenOrigAddr])
-                } else if (!['WBTC', 'WETH'].includes(item.symbol)) {
+                } else if (!['BTC', 'ETH'].includes(item.symbol)) {
                   Object.assign(item, {
                     symbol: 'N/A',
                     decimals: 0
@@ -1109,7 +1109,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     tokenOrigAddr: item.tokenOrigAddr,
                     select: false,
                     symbol:item.symbol,
-                    decimals: item.decimals
+                    decimals: item.decimals,
+                    ccSelect: false
                   }
                   setting.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
                 }

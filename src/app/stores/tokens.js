@@ -93,7 +93,7 @@ class Tokens {
       let val = self.tokensList[item];
       list.push({
         wanAddr: item,
-        symbol: val.tokenOrigAddr ? `W${val.symbol}` : val.symbol,
+        symbol: !val.userAdrr ? `W${val.symbol}` : val.symbol,
         select: val.select
       })
     })
@@ -121,7 +121,7 @@ class Tokens {
         list.push({
           tokenAddr: item,
           tokenOrigAddr: self.tokensList[item].tokenOrigAddr || '',
-          symbol: self.tokensList[item].tokenOrigAddr ? `W${self.tokensList[item].symbol}` : self.tokensList[item].symbol
+          symbol: `W${self.tokensList[item].symbol}`
         })
       }
     });
