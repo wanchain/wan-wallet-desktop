@@ -51,4 +51,4 @@ export const CHAINNAME = {
   ETH: ' (ethereum)'
 };
 
-export const CROSSCHAINTYPE = ['BTC', 'ETH'];
+export const CROSSCHAINTYPE = ['ETH'];
