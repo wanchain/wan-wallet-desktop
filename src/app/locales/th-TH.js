@@ -218,8 +218,6 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
-    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
-    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',

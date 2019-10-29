@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Modal, Form, Icon, Checkbox, message, Spin } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
 import './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -141,16 +141,18 @@ class CrossETHForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota;
+    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol } = this.props;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
 
     if (chainType === 'ETH') {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
+      title = symbol ? `${symbol} TO W${symbol}` : 'ETH TO WETH';
       totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
     } else {
       desChain = 'ETH';
       selectedList = Object.keys(addrInfo.normal);
+      title = symbol ? `W${symbol} TO ${symbol}` : 'WETH TO ETH';
       totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
     }
 
@@ -170,7 +172,7 @@ class CrossETHForm extends Component {
 
     return (
       <div>
-        <Modal visible destroyOnClose={true} closable={false} title={intl.get('CrossChainTransForm.transaction.ethtoweth')} onCancel={this.onCancel} className="cross-chain-modal"
+        <Modal visible destroyOnClose={true} closable={false} title={title} onCancel={this.onCancel} className="cross-chain-modal"
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,

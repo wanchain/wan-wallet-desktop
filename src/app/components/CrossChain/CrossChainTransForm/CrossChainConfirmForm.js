@@ -36,7 +36,7 @@ class CrossChainConfirmForm extends Component {
         onCancel={handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
-          <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('NormalTransForm.ConfirmForm.send')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('Common.send')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">

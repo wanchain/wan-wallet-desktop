@@ -59,7 +59,7 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockE20Inbound:', err);
           return reject(err);
@@ -83,13 +83,13 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokenAddr, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockWTokenInbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
-          return resolve(ret)
+          return resolve(ret);
         }
       })
     })
@@ -109,7 +109,7 @@ class CrossE20 extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -127,7 +127,7 @@ class CrossE20 extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 
@@ -144,7 +144,7 @@ class CrossE20 extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{symbol.slice(1)} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{symbol} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -152,7 +152,7 @@ class CrossE20 extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{symbol} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{`W${symbol}`} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>

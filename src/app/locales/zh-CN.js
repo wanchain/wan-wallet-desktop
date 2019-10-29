@@ -219,8 +219,6 @@ const zh_CN = {
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
-    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
-    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.lockedAccount': '锁定账户',
     'CrossChainTransForm.selectLockAccount': '选择一个锁定账户',

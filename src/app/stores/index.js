@@ -11,7 +11,7 @@ import staking from './staking';
 import tokens from './tokens';
 import crossChain from './crossChain';
 
-const stores = {
+export default {
   session,
   mnemonic,
   portfolio,
@@ -24,5 +24,3 @@ const stores = {
   tokens,
   crossChain
 };
-
-export default stores;

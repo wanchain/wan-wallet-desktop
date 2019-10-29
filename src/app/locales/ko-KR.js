@@ -218,8 +218,6 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
-    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
-    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',

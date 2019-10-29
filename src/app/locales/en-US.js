@@ -220,8 +220,6 @@ const en_US = {
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
-    'CrossChainTransForm.transaction.ethtoweth': 'ETH TO WETH',
-    'CrossChainTransForm.transaction.wethtoeth': 'WETH TO ETH',
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
