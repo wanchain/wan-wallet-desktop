@@ -113,7 +113,6 @@ class Register extends Component {
               console.log('createFirstAddr:', err);
               message.warn(intl.get());
             }
-
           }
         })
       });

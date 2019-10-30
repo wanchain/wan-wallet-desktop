@@ -545,14 +545,7 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
               }
 
               // Scan new account
-              wand.request('address_scanMultiOTA', [[1, path]], function (err, res) {
-                if (err) {
-                  console.log('Open scan OTAs failed');
-                  console.log(err);
-                } else {
-                  console.log(res);
-                }
-              });
+              openScanOTA([[1, path]]);
             } else {
               addressInfo = {
                 start: 0,
