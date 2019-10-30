@@ -30,6 +30,7 @@ const fr_FR = {
     'Register.next': 'Suivant',
     'Register.previous': 'Précédent',
     'Register.done': 'Terminé',
+    'Register.createFirstAddr': 'An error occurred, please try again!',
 
     'Backup.invalidPassword': 'Mot de passe invalide, réessayer',
     'Backup.copySuccessfully': 'Copier avec succès',

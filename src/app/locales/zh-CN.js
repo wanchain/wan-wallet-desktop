@@ -30,6 +30,7 @@ const zh_CN = {
     'Register.next': '下一步',
     'Register.previous': '上一步',
     'Register.done': '完成',
+    'Register.createFirstAddr': '初始化程序失败，请重启再次尝试',
 
     'Backup.invalidPassword': '密码错误，请重试',
     'Backup.copySuccessfully': '复制成功',

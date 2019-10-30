@@ -9,6 +9,8 @@ import InputPwd from 'components/Mnemonic/InputPwd';
 import ShowPhrase from 'components/Mnemonic/ShowPhrase';
 import ConfirmPhrase from 'components/Mnemonic/ConfirmPhrase';
 
+import { createFirstAddr } from 'utils/helper';
+import { WANPATH, ETHPATH, WALLETID } from 'utils/settings';
 import { checkCryptographic, checkPhrase } from 'utils/support';
 
 const Step = Steps.Step;
@@ -25,7 +27,8 @@ const Step = Steps.Step;
   setAuth: val => stores.session.setAuth(val),
   setIndex: index => stores.mnemonic.setIndex(index),
   setMnemonic: val => stores.mnemonic.setMnemonic(val),
-  addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
+  addWANAddress: newAddr => stores.wanAddress.addAddress(newAddr),
+  addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
 }))
 
@@ -89,43 +92,28 @@ class Register extends Component {
   }
 
   done = () => {
-    const { mnemonic, newPhrase, pwd, addAddress } = this.props;
+    const { mnemonic, newPhrase, pwd, addWANAddress, addETHAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
         if (err) {
           message.error(intl.get('Register.writeSeedPhraseToDatabaseFailed'));
           return;
         }
-        wand.request('wallet_unlock', { pwd: pwd }, (err, val) => {
+        wand.request('wallet_unlock', { pwd: pwd }, async (err, val) => {
           if (err) {
             console.log(intl.get('Register.unlockWalletFailed'), err)
           } else {
-            let path = "m/44'/5718350'/0'/0/0";
-            wand.request('address_getOne', { walletID: 1, chainType: 'WAN', path: path }, (err, val_address_get) => {
-              if (!err) {
-                wand.request('account_create', { walletID: 1, path: path, meta: { name: 'Account1', addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
-                  if (!err && val_account_create) {
-                    let addressInfo = {
-                      start: 0,
-                      address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
-                      waddress: (`0x${val_address_get.waddress}`)
-                    }
-                    // Scan new account
-                    wand.request('address_scanMultiOTA', [[1, path]], function (err, res) {
-                      if (err) {
-                        console.log('Open scan OTAs failed');
-                        console.log(err);
-                      } else {
-                        console.log(res);
-                      }
-                    });
-                    addAddress(addressInfo);
-                    this.props.setMnemonicStatus(true);
-                    this.props.setAuth(true);
-                  }
-                });
-              }
-            });
+            try {
+              let [wanAddrInfo, ethAddrInfo] = await Promise.all([createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'Account1'), createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1')]);
+              addWANAddress(wanAddrInfo);
+              addETHAddress(ethAddrInfo);
+              this.props.setMnemonicStatus(true);
+              this.props.setAuth(true);
+            } catch (err) {
+              console.log('createFirstAddr:', err);
+              message.warn(intl.get());
+            }
+
           }
         })
       });

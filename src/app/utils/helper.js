@@ -525,3 +525,46 @@ export const openScanOTA = function (path) {
     });
   })
 }
+
+export const createFirstAddr = function (walletID, chainType, path, name) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
+      if (!err) {
+        let meta = { name, addr: `0x${val_address_get.address}` };
+        if (chainType === 'WAN') {
+          meta.waddr = `0x${val_address_get.waddress}`.toLowerCase();
+        }
+        wand.request('account_create', { walletID, path, meta }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo;
+            if (chainType === 'WAN') {
+              addressInfo = {
+                start: 0,
+                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
+                waddress: (`0x${val_address_get.waddress}`)
+              }
+
+              // Scan new account
+              wand.request('address_scanMultiOTA', [[1, path]], function (err, res) {
+                if (err) {
+                  console.log('Open scan OTAs failed');
+                  console.log(err);
+                } else {
+                  console.log(res);
+                }
+              });
+            } else {
+              addressInfo = {
+                start: 0,
+                address: `0x${val_address_get.address}`
+              }
+            }
+            resolve(addressInfo);
+          } else {
+            reject(err);
+          }
+        });
+      }
+    });
+  })
+}

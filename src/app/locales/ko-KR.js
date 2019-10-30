@@ -30,6 +30,7 @@ const ko_KR = {
     'Register.next': '다음 단계',
     'Register.previous': '이전 단계',
     'Register.done': '완료',
+    'Register.createFirstAddr': 'An error occurred, please try again!',
 
     'Backup.invalidPassword': '비밀번호가 잘못되었습니다. 다시 시도하십시오.',
     'Backup.copySuccessfully': '성공 하였습니다.',

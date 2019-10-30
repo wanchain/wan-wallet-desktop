@@ -30,6 +30,7 @@ const th_TH = {
     'Register.next': 'ถัดไป',
     'Register.previous': 'ก่อนหน้า',
     'Register.done': 'เสร็จสิ้น',
+    'Register.createFirstAddr': 'An error occurred, please try again!',
 
     'Backup.invalidPassword': 'รหัสผ่านผิดพลาด กรุณาลองอีกครั้ง',
     'Backup.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',

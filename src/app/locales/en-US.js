@@ -31,6 +31,7 @@ const en_US = {
     'Register.next': 'Next',
     'Register.previous': 'Previous',
     'Register.done': 'Done',
+    'Register.createFirstAddr': 'An error occurred, please try again!',
 
     'Backup.invalidPassword': 'Invalid password. Try again',
     'Backup.copySuccessfully': 'Copy successfully',
