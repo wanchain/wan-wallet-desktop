@@ -97,8 +97,7 @@ class Tokens {
         select: val.select
       })
     })
-
-    return list.sort((a, b) => b.wanAddr - a.wanAddr)
+    return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
   }
 
   @computed get erc20TokensInfo () {
@@ -121,11 +120,11 @@ class Tokens {
         list.push({
           tokenAddr: item,
           tokenOrigAddr: self.tokensList[item].tokenOrigAddr || '',
-          symbol: `W${self.tokensList[item].symbol}`
+          symbol: !self.tokensList[item].userAddr ? `W${self.tokensList[item].symbol}` : self.tokensList[item].symbol
         })
       }
     });
-    return list.sort((a, b) => b.wanAddr - a.wanAddr);
+    return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
   }
 
   @computed get getTokensListInfo () {

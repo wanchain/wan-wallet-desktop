@@ -33,7 +33,7 @@ class CrossChain {
       }
     })
 
-    return list.sort((a, b) => b.wanAddr - a.wanAddr)
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
   }
 
   @computed get crossChainOnSideBar() {
@@ -47,7 +47,7 @@ class CrossChain {
         })
       }
     });
-    return list.sort((a, b) => b.wanAddr - a.wanAddr);
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt());
   }
 
   @computed get crossETHTrans () {

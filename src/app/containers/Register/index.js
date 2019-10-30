@@ -1,4 +1,3 @@
-import wanUtil from 'wanchain-util';
 import React, { Component } from 'react';
 import { Button, message, Steps } from 'antd';
 import { observer, inject } from 'mobx-react';
@@ -111,7 +110,7 @@ class Register extends Component {
               this.props.setAuth(true);
             } catch (err) {
               console.log('createFirstAddr:', err);
-              message.warn(intl.get());
+              message.warn(intl.get('Register.createFirstAddr'));
             }
           }
         })
