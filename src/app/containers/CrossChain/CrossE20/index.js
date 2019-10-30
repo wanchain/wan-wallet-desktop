@@ -21,6 +21,7 @@ const WANCHAIN = 'WAN';
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
+  setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr),
@@ -32,6 +33,7 @@ class CrossE20 extends Component {
   constructor (props) {
     super(props);
     this.props.changeTitle('Common.crossChain');
+    this.props.setCurrSymbol(this.props.symbol);
     this.props.setCurrToken(this.props.tokenAddr);
   }
 
@@ -161,7 +163,7 @@ class CrossE20 extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} />
+            <CrossChainTransHistory name={['normal']} symbol={symbol}/>
           </Col>
         </Row>
       </div>

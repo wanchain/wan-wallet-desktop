@@ -21,6 +21,7 @@ const WANCHAIN = 'WAN';
   getAmount: stores.ethAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
+  setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
@@ -30,6 +31,7 @@ const WANCHAIN = 'WAN';
 class CrossETH extends Component {
   constructor (props) {
     super(props);
+    this.props.setCurrSymbol('ETH');
     this.props.setCurrToken(null, 'WETH');
     this.props.changeTitle('Common.crossChain');
   }
@@ -160,7 +162,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} />
+            <CrossChainTransHistory name={['normal']} symbol='ETH' />
           </Col>
         </Row>
       </div>
