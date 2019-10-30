@@ -83,7 +83,7 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokenAddr, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockWTokenInbound:', err);
           return reject(err);

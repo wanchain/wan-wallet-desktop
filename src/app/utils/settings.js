@@ -21,7 +21,7 @@ export const defaultTimeout = '5';
 export const DEFAULT_GASPRICE = 180000000000;
 export const DEFAULT_GAS = 4700000;
 
-export const LOCKETH_GAS = '200000';
+export const LOCKETH_GAS = '300000';
 export const REDEEMWETH_GAS = '100000';
 export const REVOKEETH_GAS = '100000';
 

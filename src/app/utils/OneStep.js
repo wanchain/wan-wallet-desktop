@@ -38,6 +38,52 @@ const OneStep = {
     this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
       console.log('trans_data:', trans_data)
       this.sending.add(trans_data.hashX);
+      if (trans_data.tokenStand === 'E20') {
+        let input = {
+          x: trans_data.x,
+          hashX: trans_data.hashX,
+        };
+        if (trans_data.srcChainType !== 'WAN') {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+              gasPrice = DEFAULT_GASPRICE
+            }
+            input.gasLimit = REDEEMWETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
+              if (err) {
+                console.log('crossChain_crossE20:', err);
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+              } else {
+                console.log('send_redeem_WETH:', ret);
+              }
+            });
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        } else {
+          getGasPrice('ETH').then(gasPrice => {
+            input.gasLimit = REDEEMETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM', tokenScAddr: trans_data.dstChainAddr }, (err, ret) => {
+              if (err) {
+                console.log('crossChain_crossE20:', err);
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+              } else {
+                console.log('send_redeem_ETH:', ret);
+              }
+            })
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        }
+      }
+
+      // Handle Undo ETH Cross Chain Trans
       if (trans_data.tokenStand === 'ETH') {
         let input = {
             x: trans_data.x,
