@@ -10,7 +10,7 @@ import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
 import { getAllUndoneCrossTrans } from 'utils/helper';
-import { CROSSCHAINTYPE } from 'utils/settings';
+import { CROSSCHAINTYPE, WALLET_CHAIN } from 'utils/settings';
 
 const { SubMenu, Item } = Menu;
 
@@ -81,6 +81,7 @@ class Sidebar extends Component {
     let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
     let crossChainChildren = sidebarColumns[crossChainIndex].children;
     let crossChainLen = CROSSCHAINTYPE.length;
+    let walletChainLen = WALLET_CHAIN.length;
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
     if (index === -1 && settings.staking_advance) {
@@ -94,13 +95,13 @@ class Sidebar extends Component {
     }
 
     if (tokensOnSideBar.length) {
-      walletChildren.splice(2, walletChildren.length - 2, ...tokensOnSideBar.map(item => ({
+      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen, ...tokensOnSideBar.map(item => ({
         title: item.symbol,
         key: `/tokens/${item.tokenAddr}/${item.symbol}`,
         icon: 'block'
       })));
     } else {
-      walletChildren.splice(2, walletChildren.length - 2);
+      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }
 
     if (crossChainOnSideBar.length) {

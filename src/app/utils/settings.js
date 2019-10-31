@@ -35,6 +35,7 @@ export const TESTNET = 'https://testnet.wanscan.org';
 export const ETHMAIN = 'https://etherscan.io/';
 export const ETHTESTNET = 'https://rinkeby.etherscan.io/';
 
+export const BTCPATH = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
 
@@ -51,4 +52,5 @@ export const CHAINNAME = {
   ETH: ' (ethereum)'
 };
 
-export const CROSSCHAINTYPE = ['ETH'];
+export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH'];
+export const CROSSCHAINTYPE = ['BTC', 'ETH'];

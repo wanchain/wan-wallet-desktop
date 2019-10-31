@@ -4,6 +4,7 @@ import mnemonic from './mnemonic';
 import portfolio from './portfolio';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
+import btcAddress from './btcAddress';
 import languageIntl from './languageIntl';
 import sendTransParams from './sendTransParams';
 import sendCrossChainParams from './sendCrossChainParams';
@@ -17,6 +18,7 @@ export default {
   portfolio,
   wanAddress,
   ethAddress,
+  btcAddress,
   sendTransParams,
   sendCrossChainParams,
   staking,

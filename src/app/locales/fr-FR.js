@@ -247,6 +247,8 @@ const fr_FR = {
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Portefeuille',
     'menuConfig.wan': 'WAN',
+    'menuConfig.eth': 'ETH',
+    'menuConfig.btc': 'BTC',
     'menuConfig.hardwareWallet': 'Portefeuille matériel (hardware wallet)',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

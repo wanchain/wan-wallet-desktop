@@ -24,6 +24,7 @@ class App extends Component {
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
+        stores.btcAddress.getUserAccountFromDB();
         clearInterval(id);
       }
     }, 1000);

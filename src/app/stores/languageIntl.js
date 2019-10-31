@@ -191,6 +191,11 @@ class LanguageIntl {
             icon: 'block'
           },
           {
+            title: intl.get('menuConfig.btc'),
+            key: '/btcAccount',
+            icon: 'block'
+          },
+          {
             title: intl.get('menuConfig.eth'),
             key: '/ethAccount',
             icon: 'block'

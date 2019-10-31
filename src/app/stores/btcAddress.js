@@ -4,10 +4,10 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
-import { ETHPATH, WALLETID } from 'utils/settings';
+import { BTCPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 
-class EthAddress {
+class BtcAddress {
     @observable addrInfo = {
       normal: {},
     };
@@ -18,9 +18,13 @@ class EthAddress {
 
     @observable transHistory = {};
 
+    @action setCurrPage (page) {
+      self.currentPage = page;
+    }
+
     @action addAddress (newAddr) {
-      self.addrInfo['normal'][newAddr.address] = {
-        name: `ETH-Account${newAddr.start + 1}`,
+      self.addrInfo.normal[newAddr.address] = {
+        name: `BTC-Account${newAddr.start + 1}`,
         address: newAddr.address,
         balance: '0',
         path: newAddr.start
@@ -39,7 +43,7 @@ class EthAddress {
       addrArr.forEach(addr => {
         if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
           if (addr.name === undefined) {
-            addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+            addr.name = `BTC-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
           }
           self.addrInfo[type][addr.address] = {
             name: addr.name,
@@ -58,7 +62,7 @@ class EthAddress {
       wand.request('transaction_showRecords', (err, val) => {
         if (!err && val.length !== 0) {
           let tmpTransHistory = {};
-          val = val.filter(item => item.chainType === 'ETH');
+          val = val.filter(item => item.chainType === 'BTC');
           val.forEach(item => {
             if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
               tmpTransHistory[item.txHash] = item;
@@ -80,7 +84,7 @@ class EthAddress {
       }
     }
 
-    @action updateETHBalance (arr) {
+    @action updateBTCBalance (arr) {
       let keys = Object.keys(arr);
       let normal = Object.keys(self.addrInfo.normal);
       keys.forEach(item => {
@@ -111,8 +115,8 @@ class EthAddress {
     }
 
     @action getUserAccountFromDB () {
-      wand.request('account_getAll', { chainID: 60 }, (err, ret) => {
-        if (err) console.log('Get user from DB failed ', err)
+      wand.request('account_getAll', { chainID: 1 }, (err, ret) => {
+        if (err) console.log('Get user from DB failed ', err);
         if (ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
           let typeFunc = id => id === '1' ? 'normal' : 'import';
@@ -133,10 +137,6 @@ class EthAddress {
       })
     }
 
-    @action setCurrPage (page) {
-      self.currentPage = page;
-    }
-
     @computed get getAddrList () {
       let addrList = [];
       let normalArr = Object.keys(self.addrInfo.normal);
@@ -146,7 +146,7 @@ class EthAddress {
           name: self.addrInfo.normal[item].name,
           address: item,
           balance: formatNum(self.addrInfo.normal[item].balance),
-          path: `${ETHPATH}${self.addrInfo.normal[item].path}`,
+          path: `${BTCPATH}${self.addrInfo.normal[item].path}`,
           action: 'send'
         });
       });
@@ -163,7 +163,7 @@ class EthAddress {
           name: self.addrInfo[type][item].name,
           address: item,
           balance: self.addrInfo[type][item].balance,
-          path: `${ETHPATH}${self.addrInfo[type][item].path}`,
+          path: `${BTCPATH}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
       });
@@ -201,7 +201,7 @@ class EthAddress {
 
     @computed get addrSelectedList () {
       let addrList = []
-      Object.keys(self.addrInfo['normal']).forEach(addr => {
+      Object.keys(self.addrInfo.normal).forEach(addr => {
         addrList.push(addr);
       });
       return addrList;
@@ -220,5 +220,5 @@ class EthAddress {
     }
 }
 
-const self = new EthAddress();
+const self = new BtcAddress();
 export default self;
