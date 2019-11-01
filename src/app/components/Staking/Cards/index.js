@@ -3,7 +3,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
-import './index.less';
+import style from './index.less';
 import Card from './Card';
 import { formatNum } from 'utils/support';
 
@@ -22,19 +22,19 @@ class Cards extends Component {
     }
 
     return (
-      <div className="cards">
+      <div className={style.cards}>
         <Row gutter={16}>
           <Col span={6}>
-            <Card className="card1" title={intl.get('staking.myStake')} value={formatNum(stakeInfo.myStake)} tail="WAN" bottom={stakeBottom} />
+            <Card className={style.card1} title={intl.get('staking.myStake')} value={formatNum(stakeInfo.myStake)} tail="WAN" bottom={stakeBottom} />
           </Col>
           <Col span={6}>
-            <Card className="card2" title={intl.get('staking.totalReward')} value={formatNum(stakeInfo.totalDistributedRewards)} tail="WAN" bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')} />
+            <Card className={style.card2} title={intl.get('staking.totalReward')} value={formatNum(stakeInfo.totalDistributedRewards)} tail="WAN" bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')} />
           </Col>
           <Col span={6}>
-            <Card className="card3" title={intl.get('staking.rewardRate')} value={stakeInfo.currentRewardRate} bottom={stakeInfo.epochEndTime} />
+            <Card className={style.card3} title={intl.get('staking.rewardRate')} value={stakeInfo.currentRewardRate} bottom={stakeInfo.epochEndTime} />
           </Col>
           <Col span={6}>
-            <Card className="card4" title={intl.get('staking.pending')} value={formatNum(stakeInfo.pendingWithdrawal)} tail="WAN" bottom={stakeInfo.currentTime} />
+            <Card className={style.card4} title={intl.get('staking.pending')} value={formatNum(stakeInfo.pendingWithdrawal)} tail="WAN" bottom={stakeInfo.currentTime} />
           </Col>
         </Row>
       </div>

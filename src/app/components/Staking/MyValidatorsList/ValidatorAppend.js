@@ -7,7 +7,7 @@ import { checkAmountUnit, getContractData, getContractAddr, getNonce, getGasPric
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
 
-import './index.less';
+import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
@@ -183,7 +183,7 @@ class InForm extends Component {
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, amount: form.getFieldValue('amount') };
 
     return (
-      <div className="stakein">
+      <div>
         <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.topup')} className="validator-register-modal"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
@@ -240,7 +240,7 @@ class ValidatorAppend extends Component {
   render () {
     return (
       <div>
-        <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
+        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
         {this.state.visible && <ValidatorInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
       </div>
     );

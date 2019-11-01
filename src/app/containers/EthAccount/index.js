@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import totalImg from 'static/image/eth.png';
 import { ETHPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/EthTransHistory';

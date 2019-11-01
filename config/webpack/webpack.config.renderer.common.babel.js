@@ -48,6 +48,10 @@ export default {
           },
           {
             test: /\.(le|c)ss$/,
+            exclude: [
+              /node_modules/,
+              /global.less$/
+            ],
             use: [
               {
                 loader: MiniCssExtractPlugin.loader,
@@ -59,13 +63,69 @@ export default {
                 },
               },
               // 'style-loader',
-              {loader: 'css-loader', options: { importLoaders: 1 }},
-              {loader: 'postcss-loader', options: {
-                ident: 'postcss',
-                plugins: () => [
-                  require('postcss-flexbugs-fixes')
-                ],
-              }},
+              // {loader: 'css-loader', options: { importLoaders: 1 }},
+              {
+                loader: 'css-loader',
+                  options: {
+                  importLoaders: 1,
+                  modules: true,
+                  localIdentName: '[path][name]__[local]--[hash:base64:5]'
+                }
+              },
+              {
+                loader: 'postcss-loader', 
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes')
+                  ],
+                }
+              },
+              {
+                loader:'less-loader',
+                options: {
+                  modifyVars: {
+                      "@text-color": "#fff",
+                      "@nav-left-bg": "#151625",
+                      "@content-right-bg": "#1A1B2C",
+                      "@table-header-color": "#fff",
+                      "@table-row-hover-bg": "#1F2034"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            test: /\.(le|c)ss$/,
+            include: [
+              /node_modules/,
+              /global.less$/
+            ],
+            use: [
+              {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  // only enable hot in development
+                  hmr: process.env.NODE_ENV === 'development',
+                  // if hmr does not work, this is a forceful method.
+                  reloadAll: true,
+                },
+              },
+              {
+                loader: 'css-loader',
+                  options: {
+                  importLoaders: 1,
+                }
+              },
+              {
+                loader: 'postcss-loader', 
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes')
+                  ],
+                }
+              },
               {
                 loader:'less-loader',
                 options: {

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Input, Icon, Row, Col, Avatar, Form, message } from 'antd';
 
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -86,7 +86,7 @@ class DelegateOutConfirmForm extends Component {
             {settings.reinput_pwd
               ? <div className="withdraw-line" style={{ height: '65px' }}>
                   <Row type="flex" justify="space-around" align="top">
-                    <Col span={6} className="col-stakein-name"><span className="withdraw-name">{intl.get('StakeInForm.password')}</span></Col>
+                    <Col span={6} className={style['col-stakein-name']}><span className="withdraw-name">{intl.get('StakeInForm.password')}</span></Col>
                     <Col span={18}>
                       <Form layout="inline">
                         <Form.Item>

@@ -3,7 +3,7 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import ETHNormalTransForm from 'components/NormalTransForm/ETHNormalTransForm'
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 

@@ -3,7 +3,7 @@ import { Button, message, Steps } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import InputPwd from 'components/Mnemonic/InputPwd';
 import ShowPhrase from 'components/Mnemonic/ShowPhrase';
 import ConfirmPhrase from 'components/Mnemonic/ConfirmPhrase';
@@ -125,10 +125,10 @@ class Register extends Component {
     const { current } = this.props;
 
     return (
-      <div className="zContent">
-        <div className="registerContent">
-          <div className="steps-content">{steps[current].content}</div>
-          <div className="steps-action">
+      <div className={style.zContent}>
+        <div className={style.registerContent}>
+          <div className={style['steps-content']}>{steps[current].content}</div>
+          <div className={style['steps-action']}>
             {
               current < steps.length - 1 && <Button type="primary" onClick={this.next}>{intl.get('Register.next')}</Button>
             }

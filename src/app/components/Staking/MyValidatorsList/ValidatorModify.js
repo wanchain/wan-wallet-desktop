@@ -6,7 +6,7 @@ import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId } f
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
 
-import './index.less';
+import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import ValidatorModifySelect from 'componentUtils/ValidatorModifySelect';
@@ -258,7 +258,7 @@ class ModifyForm extends Component {
     let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
 
     return (
-      <div className="stakein">
+      <div>
         <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,

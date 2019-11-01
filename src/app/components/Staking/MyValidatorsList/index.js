@@ -3,7 +3,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
-import './index.less';
+import style from './index.less';
 import ValidatorAppend from './ValidatorAppend';
 import ValidatorModify from './ValidatorModify';
 import Cell from 'components/Staking/Common/Cell';
@@ -62,7 +62,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[3],
-        render: img => <img className="table-arrow" src={img} />,
+        render: img => <img className={style['table-arrow']} src={img} />,
       },
       {
         ...myValidatorColumns[4],
@@ -70,7 +70,7 @@ class MyValidatorsList extends Component {
       },
       {
         ...myValidatorColumns[5],
-        render: img => <img className="table-arrow" src={img} />,
+        render: img => <img className={style['table-arrow']} src={img} />,
       },
       {
         ...myValidatorColumns[6],
@@ -86,9 +86,9 @@ class MyValidatorsList extends Component {
               <Col span={8} align="center"><ValidatorModify record={record} modifyType={record.modifyStake[2]}/></Col>
             </Row>
             <Row>
-              <Col span={8} className="modifyBtnText" align="center">{intl.get(`staking.table.${text[0]}`)}</Col>
-              <Col span={8} className="modifyBtnText" align="center">{intl.get(`staking.table.${text[1]}`)}</Col>
-              <Col span={8} className="modifyBtnText" align="center">{intl.get(`staking.table.${text[2]}`)}</Col>
+              <Col span={8} className={style.modifyBtnText} align="center">{intl.get(`staking.table.${text[0]}`)}</Col>
+              <Col span={8} className={style.modifyBtnText} align="center">{intl.get(`staking.table.${text[1]}`)}</Col>
+              <Col span={8} className={style.modifyBtnText} align="center">{intl.get(`staking.table.${text[2]}`)}</Col>
             </Row>
           </div>
       }

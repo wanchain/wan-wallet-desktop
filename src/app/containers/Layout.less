@@ -1,34 +1,61 @@
-@nav-left-bg: #151625!important;
-@content-right-bg: #1A1B2C!important;
+@nav-left-bg: #151625 !important;
+@content-right-bg: #1A1B2C !important;
 @nav-width: 230px;
-.ant-menu-dark, .ant-menu-dark .ant-menu-sub{
-  color: rgba(255,255,255,0.6);
-  background-color: @nav-left-bg!important;
+
+:global(.ant-menu-dark) {
+  color: rgba(255, 255, 255, 0.6);
+  background-color: @nav-left-bg !important;
 }
+
+:global(.ant-menu-dark .ant-menu-sub) {
+  color: rgba(255, 255, 255, 0.6);
+  background-color: @nav-left-bg !important;
+}
+
 .nav-left {
   color: #fff;
   height: calc(100vh);
-  float:left;
-  background-color: @nav-left-bg!important;
+  float: left;
+  background-color: @nav-left-bg !important;
 }
-.container {
-  .main {
+
+:global(.nav-collapsed) {
+  :global(.sidebar) {
+    display: none;
+  }
+  :global(.collapseItem) {
+    left: 0px;
+    background-color: #1A1B2C;
+    img {
+      left: -1px;
+    }
+  }
+}
+
+:global(.container) {
+  :global(.main) {
     background-color: @content-right-bg;
     margin-left: @nav-width;
     height: calc(100vh);
     overflow: auto;
   }
-  .content {
+
+  :global(.main.nav-collapsed) {
+    margin-left: 20px;
+  }
+
+  :global(.content) {
     position: relative;
     padding: 10px;
   }
 
-  .content-wrap{
+  :global(.content-wrap) {
     font-size: 20px;
     margin-top: -3px;
-    .ant-table-content{
-      .ant-table-body {
-        background-color:#1F2034;
+
+    :global(.ant-table-content) {
+      :global(.ant-table-body) {
+        background-color: #1F2034;
       }
     }
   }

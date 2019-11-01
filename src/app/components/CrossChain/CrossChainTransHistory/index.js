@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
-import 'components/TransHistory/index.less';
+import style from 'components/TransHistory/index.less';
 import TransInfo from 'componentUtils/TransInfo';
 
 import history from 'static/image/history.png';
@@ -59,12 +59,12 @@ class CrossChainTransHistory extends Component {
 
     if (symbol === 'ETH') {
       trans = crossETHTrans;
-      transColumns[1].render = (text, record) => <div className="textHeight" title={record.fromAddr}>{text} <br /> <span className="chainText">{record.srcChainAddr}</span></div>;
-      transColumns[2].render = (text, record) => <div className="textHeight" title={record.toAddr}>{text} <br /> <span className="chainText">{record.dstChainAddr}</span></div>;
+      transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{record.srcChainAddr}</span></div>;
+      transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{record.dstChainAddr}</span></div>;
     } else {
       trans = crossE20Trans;
-      transColumns[1].render = (text, record) => <div className="textHeight" title={record.fromAddr}>{text} <br /> <span className="chainText">{record.srcChainType}</span></div>;
-      transColumns[2].render = (text, record) => <div className="textHeight" title={record.toAddr}>{text} <br /> <span className="chainText">{record.dstChainType}</span></div>;
+      transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{record.srcChainType}</span></div>;
+      transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{record.dstChainType}</span></div>;
     }
 
     return (
@@ -73,7 +73,7 @@ class CrossChainTransHistory extends Component {
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={transColumns} dataSource={trans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={trans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
         { this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record}/> }
       </div>

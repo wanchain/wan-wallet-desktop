@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Tag } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 
-import './index.less';
+import style from './index.less';
 import { randomSort } from 'utils/support';
 
 @inject(stores => ({
@@ -74,7 +74,7 @@ class ConfirmPhrase extends Component {
           </TweenOneGroup>
         </div>
         <div className="phraseCon">
-          {randomSort(mnemonicArr).map((item, index) => <Tag className="word" onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
+          {randomSort(mnemonicArr).map((item, index) => <Tag className={style.word} onClick={() => this.addWord(item, index)} key={index}><span>{item}</span></Tag>)}
         </div>
       </div>
     );

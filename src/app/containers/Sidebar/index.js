@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import OneStep from 'utils/OneStep';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
@@ -64,7 +64,7 @@ class Sidebar extends Component {
       return (
         <Item key={item.key}>
           <Link to={item.key}>
-            {item.step === '1' ? <Icon type={item.icon} /> : <em className="com-circle"></em>}
+            {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
             <span>{item.title}</span>
           </Link>
         </Item>
@@ -116,17 +116,17 @@ class Sidebar extends Component {
 
     return (
       <div>
-        <div className="sidebar">
-          <div className="logo">
-            <img className="expandedLogo" src={logo} alt={intl.get('Sidebar.wanchain')} />
+        <div className={style.sidebar + ' sidebar'}>
+          <div className={style.logo}>
+            <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
-          <Menu theme="dark" mode="inline" /* inlineCollapsed={this.state.collapsed} */ defaultSelectedKeys={[this.props.path]} className="menuTreeNode">
+          <Menu theme="dark" mode="inline" /* inlineCollapsed={this.state.collapsed} */ defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
 
         </div>
-        <div className="collapseItem">
-          <img src={this.state.collapsed ? open : collapse} className="collapseButton" onClick={this.toggleMenu} />
+        <div className={style.collapseItem + ' collapseItem'}>
+          <img src={this.state.collapsed ? open : collapse} className={style.collapseButton} onClick={this.toggleMenu} />
         </div>
       </div>
     );

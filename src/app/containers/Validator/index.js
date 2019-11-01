@@ -8,7 +8,7 @@ import ValidatorCards from 'components/Staking/Cards/validatorCards';
 import ValidatorRegister from 'components/Staking/ValidatorRegister';
 import RegisterValidatorHistory from 'components/Staking/RegisterValidatorHistory';
 
-import './index.less';
+import style from './index.less';
 import total from 'static/image/total.png';
 
 const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(ValidatorRegister);
@@ -27,13 +27,13 @@ class Validator extends Component {
     validatorRegister: false,
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('validator.title');
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
@@ -41,7 +41,7 @@ class Validator extends Component {
     }, 20000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -49,7 +49,7 @@ class Validator extends Component {
     this.setState(state => ({ validatorRegister: !state.validatorRegister }));
   }
 
-  render () {
+  render() {
     return (
       <div className="staking">
         <Row>
@@ -61,8 +61,8 @@ class Validator extends Component {
               <img src={total} /><span>{intl.get('ValidatorNode.nodeList')}</span>
             </Col>
             <Col span={12} className="col-right">
-              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('ValidatorNode.registerValidatorNode')}</Button>
-              { this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} /> }
+              <Button className={style.newValidatorBtn} type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('ValidatorNode.registerValidatorNode')}</Button>
+              {this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
             </Col>
           </div>
         </Row>

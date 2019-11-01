@@ -1,10 +1,8 @@
 import { Progress } from 'antd';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-
 import intl from 'react-intl-universal';
-
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -36,9 +34,9 @@ class Loading extends Component {
 
   render () {
     return (
-      <div className="loadingBg">
-        <div className="loadingCont">
-          <Progress className="progressSty" strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
+      <div className={style.loadingBg}>
+        <div className={style.loadingCont}>
+          <Progress className={style.progressSty} strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
           <p>{intl.get('Loading.tips')}</p>
         </div>
       </div>

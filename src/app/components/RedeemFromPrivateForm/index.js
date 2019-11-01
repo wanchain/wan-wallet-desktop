@@ -3,7 +3,7 @@ import { Button, Modal, Form, Input, Icon, Radio, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
-import './index.less';
+import style from './index.less';
 
 const privateTxGasLimit = 800000;
 @inject(stores => ({
@@ -104,6 +104,7 @@ class RedeemFromPrivateForm extends Component {
 
         <Modal
           visible
+          wrapClassName={style.redeemFromPrivateFormModal}
           destroyOnClose={true}
           closable={false}
           title={intl.get('RedeemFromPrivateForm.redeem')}
@@ -115,7 +116,7 @@ class RedeemFromPrivateForm extends Component {
         >
 
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
 
               <Form.Item label={intl.get('NormalTransForm.from')}>
                 {getFieldDecorator('from', { initialValue: from })

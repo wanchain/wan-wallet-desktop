@@ -3,6 +3,7 @@ import { Modal, Icon, message, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
+import style from './index.less';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,

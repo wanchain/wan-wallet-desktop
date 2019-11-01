@@ -3,9 +3,9 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import RedeemFromPrivateForm from 'components/RedeemFromPrivateForm';
-import { getNonce, getGasPrice, getPrivateBalanceByAddr, estimateGas, getChainId } from 'utils/helper';
+import { getGasPrice, getPrivateBalanceByAddr } from 'utils/helper';
 import { fromWei } from 'utils/support';
 
 const RedeemForm = Form.create({ name: 'RedeemFromPrivateForm' })(RedeemFromPrivateForm);
@@ -81,7 +81,7 @@ class RedeemFromPrivate extends Component {
     const { visible, spin } = this.state;
     return (
       <div>
-        <Button type="primary" className="redeemButton" onClick={this.showModal}>{intl.get('WanAccount.redeem')}</Button>
+        <Button type="primary" className={style.redeemButton} onClick={this.showModal}>{intl.get('WanAccount.redeem')}</Button>
         { visible
           ? <RedeemForm wrappedComponentRef={this.redeemFormRef} balanceData={this.state.balanceData} wid={this.props.wid} path={this.props.path} onCancel={this.handleCancel} from={this.props.from} spin={spin} handleSpin={this.handleSpin}/>
           : ''

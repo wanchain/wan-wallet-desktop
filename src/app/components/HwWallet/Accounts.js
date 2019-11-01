@@ -9,6 +9,7 @@ import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import { EditableFormRow, EditableCell } from 'components/Rename';
+import style from './index.less';
 
 @inject(stores => ({
   rawTx: stores.sendTransParams.rawTx,

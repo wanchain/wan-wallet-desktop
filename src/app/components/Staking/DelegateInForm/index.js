@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
@@ -13,7 +13,6 @@ import { signTransaction } from 'componentUtils/trezor'
 const Option = Select.Option;
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
-
 const LEFT = 6;
 const RIGHT = 18;
 
@@ -417,18 +416,18 @@ class DelegateInForm extends Component {
     let validatorListSelect = onlineValidatorList.map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
 
     return (
-      <div className="stakein">
-        <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className="stakein-modal"
+      <div>
+        <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal']}
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
-          <div className="stakein-bg">
+          <div className={style['stakein-bg']}>
             <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={5} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
+                <Col span={5} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.name')}</span></Col>
                 <Col span={14}>
                   <Form layout="inline" id="posNameSelect">
                     <Form.Item>
@@ -453,14 +452,14 @@ class DelegateInForm extends Component {
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={3} align="right" className="col-stakein-info">
+                <Col span={3} align="right" className={style['col-stakein-info']}>
                   <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                 </Col>
               </Row>
             </div>
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
@@ -471,9 +470,9 @@ class DelegateInForm extends Component {
                 </Col>
               </Row>
             </div>
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
@@ -484,9 +483,9 @@ class DelegateInForm extends Component {
                 </Col>
               </Row>
             </div>
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
@@ -497,9 +496,9 @@ class DelegateInForm extends Component {
                 </Col>
               </Row>
             </div>
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
@@ -511,12 +510,12 @@ class DelegateInForm extends Component {
               </Row>
             </div>
           </div>
-          <div className="stakein-bg">
+          <div className={style['stakein-bg']}>
             <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
 
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline" id="posAddrSelect">
                     <Form.Item>
@@ -552,9 +551,9 @@ class DelegateInForm extends Component {
               </Row>
             </div>
 
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >
@@ -566,9 +565,9 @@ class DelegateInForm extends Component {
               </Row>
             </div>
 
-            <div className="stakein-line">
+            <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around">
-                <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item>
@@ -581,9 +580,9 @@ class DelegateInForm extends Component {
             </div>
 
             {settings.reinput_pwd &&
-              <div className="stakein-line">
+              <div className={style['stakein-line']}>
                 <Row type="flex" justify="space-around" align="top">
-                  <Col span={LEFT} className="col-stakein-name"><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
+                  <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
                   <Col span={RIGHT}>
                     <Form layout="inline">
                       <Form.Item>

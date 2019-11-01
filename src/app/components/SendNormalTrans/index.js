@@ -3,7 +3,7 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { TRANSTYPE } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm';
 import WRC20NormalTransForm from 'components/NormalTransForm/WRC20NormalTransForm';

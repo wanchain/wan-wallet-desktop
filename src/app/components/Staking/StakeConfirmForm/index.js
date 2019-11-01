@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Row, Col, Avatar } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import { formatNum } from 'utils/support';
 
 @inject(stores => ({

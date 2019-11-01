@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Form } from 'antd';
-
 import { observer, inject } from 'mobx-react';
-import './index.less';
+import style from './index.less';
 import DelegateInForm from '../DelegateInForm';
 
 const InForm = Form.create({ name: 'DelegateInForm' })(DelegateInForm);
@@ -31,7 +30,7 @@ class DelegateIn extends Component {
   render () {
     return (
       <div>
-        <Button className="modifyTopUpBtn" disabled={ !this.props.enableButton } onClick={this.showDialog} />
+        <Button className={style.modifyTopUpBtn} disabled={ !this.props.enableButton } onClick={this.showDialog} />
         {
           this.state.visible &&
           <InForm disabled={true} visible={this.state.visible} onCancel={this.handleCancel} onSend={this.handleSend} record={this.props.record} topUp={true} />

@@ -3,8 +3,7 @@ import { Button, Card, Modal, Table, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import wanUtil from 'wanchain-util';
-import './index.less';
-
+import style from './index.less';
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
 
@@ -134,15 +133,15 @@ class Connect extends Component {
         <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>
           <this.props.Instruction />
           <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
-          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} okText={intl.get('popup.ok')} cancelText={intl.get('popup.cancel')} className="popTable">
+          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} okText={intl.get('popup.ok')} cancelText={intl.get('popup.cancel')} className={style.popTable}>
             <div>
               <Table rowSelection={this.rowSelection} pagination={false} columns={this.props.selectAddrColumns} dataSource={addresses}></Table>
-              <div className="rollPage">
+              <div className={style.rollPage}>
                 {this.page !== 0
-                  ? <p onClick={this.showPreviousPageAddrs} className="previousPage">{intl.get('HwWallet.Connect.previousAddresses')}</p>
+                  ? <p onClick={this.showPreviousPageAddrs} className={style.previousPage}>{intl.get('HwWallet.Connect.previousAddresses')}</p>
                   : ''
                 }
-                <p onClick={this.showNextPageAddrs} className="nextPage">{intl.get('HwWallet.Connect.nextAddresses')}</p>
+                <p onClick={this.showNextPageAddrs} className={style.nextPage}>{intl.get('HwWallet.Connect.nextAddresses')}</p>
               </div>
             </div>
           </Modal>

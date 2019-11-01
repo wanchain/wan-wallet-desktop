@@ -3,7 +3,7 @@ import { Button, Card, Modal, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -63,7 +63,7 @@ class Backup extends Component {
 
   render () {
     return (
-      <div>
+      <div className={style['settings_backup']}>
         <Card title={intl.get('Backup.revealSeedPhrase')}>
           <p className="com-gray">
             {intl.get('Backup.saveSeedPhraseNotice')}
@@ -79,15 +79,15 @@ class Backup extends Component {
             okText={intl.get('popup.ok')}
             cancelText={intl.get('popup.cancel')}
           >
-            <p className="textP">{intl.get('Backup.warning')}: {intl.get('Backup.doNotShare')}</p>
+            <p className={style.textP}>{intl.get('Backup.warning')}: {intl.get('Backup.doNotShare')}</p>
             {
               this.state.showMnemonic ? (
                 <div>
-                  <p className="textP2"> {intl.get('Backup.yourSeedPhrase')}:</p>
+                  <p className={style.textP2}> {intl.get('Backup.yourSeedPhrase')}:</p>
                   {/* <Card > */}
-                  <p className="textP3">{this.state.mnemonic}</p>
+                  <p className={style.textP3}>{this.state.mnemonic}</p>
                   {/* </Card> */}
-                  <p className="copyBtn" onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                  <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.mnemonic)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
                 </div>
               ) : (
                   <div>

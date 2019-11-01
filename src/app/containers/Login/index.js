@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { openScanOTA } from 'utils/helper';
 
-import './index.less';
+import style from './index.less';
 
 message.config({
   duration: 2,
@@ -76,11 +76,11 @@ class Login extends Component {
 
   render () {
     return (
-      <div className="loginW">
-        <div className="loginCon">
+      <div className={style.loginW}>
+        <div className={style.loginCon}>
           <Input.Password placeholder={intl.get('Login.inputPassword')} onPressEnter={this.login} onChange={this.handleChange} autoFocus/>
           <Button type="primary" onClick={this.login}>{intl.get('Login.login')}</Button>
-          <p className="restoreBtn" onClick={this.handleClick}>{intl.get('Login.restore')}</p>
+          <p className={style.restoreBtn} onClick={this.handleClick}>{intl.get('Login.restore')}</p>
         </div>
         <Modal
           destroyOnClose={true}

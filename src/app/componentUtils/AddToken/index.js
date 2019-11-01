@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Modal, Input, Button, message, Descriptions } from 'antd';
 
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -93,7 +93,7 @@ class AddToken extends Component {
         {
           this.state.showConfirm &&
           <div>
-            <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false} className="showTokenModal"
+            <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false} className={style.showTokenModal}
             footer={[
                 <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('popup.cancel')}</Button>,
                 <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('popup.ok')}</Button>,

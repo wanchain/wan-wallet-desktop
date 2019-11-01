@@ -9,7 +9,7 @@ import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'ant
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
 
-import './index.less';
+import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
@@ -250,7 +250,7 @@ class ValidatorRegister extends Component {
     let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount: true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
 
     return (
-      <div className="stakein">
+      <div>
         <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
@@ -278,11 +278,11 @@ class ValidatorRegister extends Component {
                   <Form layout="inline">
                     <Form.Item>
                       {getFieldDecorator('lockTime', { initialValue: MINDAYS, rules: [{ required: true }] })
-                        (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
+                        (<Slider className={style['locktime-slider']} min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
                     </Form.Item>
                   </Form>
                 </Col>
-                <Col span={3}><span className="locktime-span">{this.state.lockTime} {intl.get('Common.days')}</span></Col>
+                <Col span={3}><span className={style['locktime-span']}>{this.state.lockTime} {intl.get('Common.days')}</span></Col>
               </Row>
             </div>
             <div className="validator-line">

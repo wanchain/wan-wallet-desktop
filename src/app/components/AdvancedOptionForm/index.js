@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import { estimateGas } from 'utils/helper';
 import { TRANSTYPE } from 'utils/settings';
 
@@ -91,7 +91,7 @@ class AdvancedOptionForm extends Component {
           <Button key="submit" type="primary" className="confirm-button" loading={this.state.loading} onClick={this.handleSave}>{intl.get('AdvancedOptionForm.save')}</Button>,
         ]}
       >
-        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
           <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + intl.get('AdvancedOptionForm.gwin') + ')'}> {
             getFieldDecorator('gasPrice', { initialValue: gasPrice, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasPriceIsIncorrect') }] })
               (<InputNumber min={minGasPrice} />)

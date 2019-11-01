@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
 
-import './index.less';
+import style from './index.less';
 import wanLogo from 'static/image/wan.png';
 import ethLogo from 'static/image/eth.png';
 import btcLogo from 'static/image/btc.png';
@@ -21,7 +21,7 @@ function TokenImg (text) {
       break;
   }
   return (
-    <div><img className="nameIco" src={img} /><span>{text}</span></div>
+    <div><img className={style.nameIco} src={img} /><span>{text}</span></div>
   );
 }
 
@@ -56,7 +56,7 @@ class Portfolio extends Component {
 
     return (
         <div>
-          <Table className="portfolioMain" columns={columns} dataSource={portfolioList} pagination={false}/>
+          <Table columns={columns} dataSource={portfolioList} pagination={false}/>
         </div>
     );
   }

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import totalImg from 'static/image/wan.png';
 import { WANPATH, WALLETID } from 'utils/settings';
 import WANTransHistory from 'components/WANTransHistory';
@@ -63,7 +63,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans buttonClassName='actionButton' from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '13%'
     },
     {
@@ -213,7 +213,7 @@ class WanAccount extends Component {
             <td style={{ width: '15%', padding: '0px 16px' }}></td>
             <td style={{ width: '47%', padding: '0px 16px' }}>
               <div className="addrText">
-                <p className="privateAddress">
+                <p className={style.privateAddress}>
                   <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>
                 </p>
                 { privateAddress && <CopyAndQrcode addr={privateAddress} /> }
@@ -279,7 +279,7 @@ class WanAccount extends Component {
         col.title = <img
           src={arrow}
           onClick={this.toggleExpand}
-          className={this.state.expanded ? 'arrow-down' : 'arrow-right'}
+          className={this.state.expanded ? style['arrow-down'] : style['arrow-right']}
           style={{ width: '12px', height: '10px', cursor: 'pointer' }}
         />;
       }
@@ -287,7 +287,7 @@ class WanAccount extends Component {
 
     return (
       <div className="account">
-        <Row className="title">
+        <Row className={style.title + ' title'}>
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('WanAccount.create')}</Button>

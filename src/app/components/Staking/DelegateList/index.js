@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import Cell from 'components/Staking/Common/Cell';
 import Validator from 'components/Staking/Common/Validator';
 import DelegateActionGroup from './DelegateActionGroup';
@@ -52,7 +52,7 @@ class DelegateList extends Component {
         dataIndex: 'arrow1',
         key: 'arrow1',
         render: img => (
-          <img className="table-arrow" src={img} />
+          <img className={style['table-arrow']} src={img} />
         ),
       }, {
         title: this.props.validatorColumns[3].title,
@@ -66,7 +66,7 @@ class DelegateList extends Component {
         dataIndex: 'arrow2',
         key: 'arrow2',
         render: img => (
-          <img className="table-arrow" src={img} />
+          <img className={style['table-arrow']} src={img} />
         ),
       }, {
         title: this.props.validatorColumns[5].title,

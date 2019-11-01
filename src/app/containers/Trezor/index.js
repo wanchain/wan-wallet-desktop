@@ -4,7 +4,7 @@ import TrezorConnect, { DEVICE_EVENT, DEVICE } from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Icon } from 'antd';
 import { signTransaction, getPublicKey, WAN_PATH } from 'componentUtils/trezor'
-import './index.less';
+import style from './index.less';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 

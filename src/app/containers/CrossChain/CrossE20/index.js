@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col } from 'antd';
 
-import 'containers/CrossChain/CrossETH/index.less';
+import style from 'containers/CrossChain/CrossETH/index.less';
 import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';

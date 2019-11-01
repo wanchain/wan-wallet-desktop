@@ -4,7 +4,7 @@ import { Button, Form, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import { signTransaction } from 'componentUtils/trezor'
 
-import './index.less';
+import style from './index.less';
 import DelegateOutConfirmForm from '../DelegateOutConfirmForm';
 import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getContractAddr, getContractData, getChainId } from 'utils/helper';
@@ -144,7 +144,7 @@ class DelegateOut extends Component {
   render() {
     return (
       <div>
-        <Button className="modifyExitBtn" disabled={!this.props.enableButton} onClick={this.showDialog} />
+        <Button className={style.modifyExitBtn} disabled={!this.props.enableButton} onClick={this.showDialog} />
         {this.state.visible &&
           <DelegateOutForm onCancel={this.handleCancel} onSend={this.handleSend}
             confirmLoading={this.state.confirmLoading}

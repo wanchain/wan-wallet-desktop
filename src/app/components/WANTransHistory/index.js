@@ -3,7 +3,7 @@ import { Table, Select, Radio, message, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { MAIN, TESTNET } from 'utils/settings';
 import history from 'static/image/history.png';
 
@@ -79,8 +79,8 @@ class WANTransHistory extends Component {
             >
               {addrList.map((item, index) => <Option value={item.address} key={index}>{item.name}</Option>)}
             </Select>
-            <Radio.Group className="typeRadio" onChange={this.onTypeChange} defaultValue={this.state.type}>
-              <Radio className="allRadio" value={'all'}>{intl.get('TransHistory.all')}
+            <Radio.Group className={style.typeRadio} onChange={this.onTypeChange} defaultValue={this.state.type}>
+              <Radio className={style.allRadio} value={'all'}>{intl.get('TransHistory.all')}
                 <Tooltip placement="bottom" title={intl.get('TransHistory.allTooltip')} >
                   <Icon type="question-circle" />
                 </Tooltip>
@@ -93,7 +93,7 @@ class WANTransHistory extends Component {
             </Radio.Group>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.state.type === 'all' ? this.props.transColumns : this.props.privateTransColumns} dataSource={this.state.type === 'all' ? historyList : privateHistoryList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.state.type === 'all' ? this.props.transColumns : this.props.privateTransColumns} dataSource={this.state.type === 'all' ? historyList : privateHistoryList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Input, message, Col, Row, Statistic, Divider, Icon, Tooltip, Form } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { fromWei } from 'utils/support';
@@ -161,37 +161,37 @@ class Offline extends Component {
 
     return (
       <React.Fragment>
-        <div className="offlineStep">
-          <Button type="primary" className="stepOne">{intl.get('Offline.stepOne')}</Button>
-          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepOneText')}</h3>
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>{intl.get('Offline.stepOne')}</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>{intl.get('Offline.stepOneText')}</h3>
           <br />
-          <Input placeholder={intl.get('Offline.inputAddr')} className="colorInputAddr" onChange={this.handleAddrChange} />
-          <Button type="primary" onClick={this.handleGetInfo} className="getInfoBtn">{intl.get('Offline.getInfo')}</Button>
+          <Input placeholder={intl.get('Offline.inputAddr')} className={style.colorInputAddr} onChange={this.handleAddrChange} />
+          <Button type="primary" onClick={this.handleGetInfo} className={style.getInfoBtn}>{intl.get('Offline.getInfo')}</Button>
           <Row align="middle" style={{ marginTop: '10px' }}>
             <Col span={6}>
-              <span className="textFont">{intl.get('AdvancedOptionForm.gasPrice')}: </span><Input className="colorShowInfo" value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
+              <span className={style.textFont}>{intl.get('AdvancedOptionForm.gasPrice')}: </span><Input className={style.colorShowInfo} value={gasPrice === null ? '--' : parseInt(gasPrice) + ' Gwin'} />
             </Col>
             <Col span={6}>
-              <span className="textFont">{intl.get('AdvancedOptionForm.nonce')}: </span><Input className="colorShowInfo" value={nonce === null ? '--' : nonce} />
+              <span className={style.textFont}>{intl.get('AdvancedOptionForm.nonce')}: </span><Input className={style.colorShowInfo} value={nonce === null ? '--' : nonce} />
             </Col>
           </Row>
         </div>
-        <Divider className="borderSty" />
-        <div className="offlineStep">
-          <Button type="primary" className="stepOne">{intl.get('Offline.stepTwo')}</Button>
-          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepTwoText')}</h3>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>{intl.get('Offline.stepTwo')}</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>{intl.get('Offline.stepTwoText')}</h3>
           <Tooltip placement="bottom" title={intl.get('Offline.linkToWebsite')}><Icon type="link" onClick={this.handleJumpToWebsite} /></Tooltip>
         </div>
-        <Divider className="borderSty" />
-        <div className="offlineStep">
-          <Button type="primary" className="stepOne">{intl.get('Offline.stepThree')}</Button>
-          <h3 className="stepOne inlineBlock">{intl.get('Offline.stepThreeText')}</h3>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>{intl.get('Offline.stepThree')}</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>{intl.get('Offline.stepThreeText')}</h3>
           <br />
-          <p className="stepInfo">{intl.get('Offline.threeInfo')}</p>
+          <p className={style.stepInfo}>{intl.get('Offline.threeInfo')}</p>
           <p>
-            <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className="stepText" onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
+            <Input.TextArea placeholder={intl.get('Offline.threeTitle')} autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className={style.stepText} onChange={this.handleRawChange} value={this.state.raw}></Input.TextArea>
           </p>
-          <p className="threeBtn">
+          <p className={style.threeBtn}>
             <Button type="primary" onClick={this.handleNext}>{intl.get('Offline.sendTrans')}</Button>
           </p>
         </div>

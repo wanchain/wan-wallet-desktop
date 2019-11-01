@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Select } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import { ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 import history from 'static/image/history.png';
@@ -64,7 +64,7 @@ class EthTransHistory extends Component {
           </Select>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

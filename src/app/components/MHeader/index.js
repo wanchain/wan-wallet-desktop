@@ -3,7 +3,7 @@ import { Icon, Row, Col, Button } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   auth: stores.session.auth,
@@ -39,19 +39,19 @@ class MHeader extends Component {
     const { pageTitle, ledgerAddrList, trezorAddrList } = this.props;
 
     return (
-      <div className="header">
-        <Row className="header-top">
+      <div className={style.header}>
+        <Row className={style['header-top']}>
             <Col span={12} className="title">
-              <em className = "comLine"></em><span>{ pageTitle }</span>
+              <em className = {style.comLine}></em><span>{ pageTitle }</span>
               { (pageTitle === 'Ledger' && ledgerAddrList.length !== 0) || (pageTitle === 'Trezor' && trezorAddrList.length !== 0)
-                  ? <Button className="creatBtnHead" type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
+                  ? <Button className={style.createBtnHead} type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
                   : ''
               }
             </Col>
-            <Col span={12} className="user">
+            <Col span={12} className={style.user}>
               <div className="log">
-                <Icon className="logOutIco" type="poweroff" />
-                <span onClick={this.logOut} className="logOut">{intl.get('MHeader.logout')}</span>
+                <Icon className={style.logOutIco} type="poweroff" />
+                <span onClick={this.logOut} className={style.logOut}>{intl.get('MHeader.logout')}</span>
               </div>
             </Col>
         </Row>

@@ -3,7 +3,7 @@ import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { WALLETID } from 'utils/settings';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import Accounts from 'components/HwWallet/Accounts';

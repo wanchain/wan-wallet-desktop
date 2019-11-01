@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Row, Col, message, Form, Icon } from 'antd';
 import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
-import './index.less';
+import style from './index.less';
 import Cards from 'components/Staking/Cards';
 import DelegateList from 'components/Staking/DelegateList';
 import DelegationHistory from 'components/Staking/DelegationHistory';
@@ -50,7 +50,7 @@ class Delegation extends Component {
 
   render () {
     return (
-      <div className="staking">
+      <div className={style.staking}>
         <Row>
           <Col>
             <Cards />
@@ -62,7 +62,7 @@ class Delegation extends Component {
               <img src={total} /><span>{intl.get('staking.delegateList')}</span>
             </Col>
             <Col span={12} className="col-right">
-              <Button className="newValidatorBtn" type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
+              <Button className={style.newValidatorBtn} type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
               {this.state.delegateInFormVisible &&
                 <InForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />
               }

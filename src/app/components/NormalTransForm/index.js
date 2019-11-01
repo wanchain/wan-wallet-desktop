@@ -5,7 +5,7 @@ import { BigNumber } from 'bignumber.js';
 import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { toWei, formatNumByDecimals } from 'utils/support';
 import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
@@ -342,6 +342,7 @@ class NormalTransForm extends Component {
       <div>
         <Modal
           visible
+          wrapClassName={style.normalTransFormModal}
           destroyOnClose={true}
           closable={false}
           title={intl.get('NormalTransForm.transaction')}
@@ -352,7 +353,7 @@ class NormalTransForm extends Component {
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('NormalTransForm.from')}>
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}

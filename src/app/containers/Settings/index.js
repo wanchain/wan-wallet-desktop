@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react';
 import Backup from 'containers/Backup';
 import Restore from 'containers/Restore';
 import Config from 'containers/Config';
+import style from './index.less';
 
 const { TabPane } = Tabs;
 
@@ -34,7 +35,7 @@ class Settings extends Component {
     tabs.forEach(item => { item.content = this.tabsMap[item.key] });
 
     return (
-      <Tabs>
+      <Tabs className={style.settings}>
         { this.renderTab(tabs) }
       </Tabs>
     );

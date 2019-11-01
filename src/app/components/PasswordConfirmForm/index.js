@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Icon } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language

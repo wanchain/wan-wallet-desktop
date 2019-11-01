@@ -3,7 +3,7 @@ import { Button, Card, Modal, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -31,9 +31,9 @@ class Restore extends Component {
 
   render () {
     return (
-      <div>
+      <div className={style['settings_restore']}>
         <Card title={intl.get('Restore.restoreFromSeedPhrase')}>
-          <p className="textP">
+          <p className={style.textP}>
             {intl.get('Restore.warning')}: {intl.get('Restore.restoreNewWalletWillDeleteAllLocalData')}
           </p>
           <Button type="primary" onClick={this.showModal}>{intl.get('Restore.continue')}</Button>
@@ -47,7 +47,7 @@ class Restore extends Component {
             okText={intl.get('popup.ok')}
             cancelText={intl.get('popup.cancel')}
           >
-            <p className="textP">{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
+            <p className={style.textP}>{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
           </Modal>
         </Card>
       </div>

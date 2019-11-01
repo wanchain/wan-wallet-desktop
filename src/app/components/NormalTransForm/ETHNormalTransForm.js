@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { toWei } from 'utils/support';
 import { DEFAULT_GAS } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
@@ -242,14 +242,20 @@ class ETHNormalTransForm extends Component {
 
     return (
       <div>
-        <Modal visible destroyOnClose={true} closable={false} title={intl.get('NormalTransForm.transaction')} onCancel={this.onCancel}
+        <Modal
+          visible
+          wrapClassName={style.ETHNormalTransFormModal}
+          destroyOnClose={true}
+          closable={false}
+          title={intl.get('NormalTransForm.transaction')}
+          onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+            <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('NormalTransForm.from')}>
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}

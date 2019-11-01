@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 
-import './index.less';
+import style from './index.less';
 import { formatNum } from 'utils/support';
 import { TRANSTYPE } from 'utils/settings';
 
@@ -43,7 +43,7 @@ class ConfirmForm extends Component {
           <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('Common.send')}</Button>,
         ]}
       >
-        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
+        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
           <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from')}>
             {getFieldDecorator('from', { initialValue: from })
               (<Input disabled={true} />)}

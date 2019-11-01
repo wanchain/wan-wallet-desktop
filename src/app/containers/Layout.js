@@ -1,9 +1,9 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { getBalance, isSdkReady, getBalanceWithPrivateBalance, getEthBalance } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getEthBalance } from 'utils/helper';
 
-import './Layout.less';
+import style from './Layout.less';
 import SideBar from './Sidebar';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
@@ -116,7 +116,7 @@ class Layout extends Component {
       } else {
         return (
           <Row className="container">
-            <Col className={'nav-left ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
+            <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               <SideBar handleNav={this.toggleNav} path={location.pathname}/>
             </Col>
             <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>

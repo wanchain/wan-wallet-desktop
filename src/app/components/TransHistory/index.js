@@ -3,7 +3,7 @@ import { Table, Select } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
-import './index.less';
+import style from './index.less';
 import { MAIN, TESTNET, TRANSTYPE } from 'utils/settings';
 
 import history from 'static/image/history.png';
@@ -76,7 +76,7 @@ class TransHistory extends Component {
           }
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.props.transColumns} dataSource={dataSource} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.props.transColumns} dataSource={dataSource} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

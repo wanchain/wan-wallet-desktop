@@ -3,7 +3,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
-import './index.less';
+import style from './index.less';
 import history from 'static/image/history.png';
 import { MAIN, TESTNET } from 'utils/settings'
 
@@ -36,7 +36,7 @@ class RegisterValidatorHistory extends Component {
           <img src={history} /><span>{intl.get('ValidatorRegister.historyTitle')}</span>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} className="portfolioMain" columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

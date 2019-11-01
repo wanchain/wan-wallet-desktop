@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { fromWei, isExceedBalance } from 'utils/support';
@@ -172,7 +172,13 @@ class CrossETHForm extends Component {
 
     return (
       <div>
-        <Modal visible destroyOnClose={true} closable={false} title={title} onCancel={this.onCancel} className="cross-chain-modal"
+        <Modal
+          visible
+          destroyOnClose={true}
+          closable={false}
+          title={title}
+          onCancel={this.onCancel}
+          className={style['cross-chain-modal']}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
