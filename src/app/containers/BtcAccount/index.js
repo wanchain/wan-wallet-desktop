@@ -15,6 +15,7 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
 const CHAINTYPE = 'BTC';
 
 @inject(stores => ({
+  btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.btcAddress.getAddrList,
@@ -113,21 +114,21 @@ class BtcAccount extends Component {
   }
 
   creatAccount = () => {
-    const { addrInfo, addAddress } = this.props;
+    const { addrInfo, addAddress, btcPath } = this.props;
     const addrLen = Object.keys(addrInfo.normal).length;
     this.setState({
       bool: false
     });
 
     if (this.state.bool) {
-      let path = `${BTCPATH}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
+      let path = `${btcPath}${addrLen}`;
+      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path }, (err, val_address_get) => {
         if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `BTC-Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `BTC-Account${addrLen + 1}`, addr: val_address_get.address } }, (err, val_account_create) => {
             if (!err && val_account_create) {
               let addressInfo = {
                 start: addrLen,
-                address: `0x${val_address_get.address}`
+                address: val_address_get.address
               }
               addAddress(addressInfo);
               this.setState({

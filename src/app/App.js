@@ -19,12 +19,11 @@ class App extends Component {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
-        stores.session.initChainId();
+        stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
         stores.session.initSettings();
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
-        stores.btcAddress.getUserAccountFromDB();
         clearInterval(id);
       }
     }, 1000);

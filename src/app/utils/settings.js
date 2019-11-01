@@ -1,3 +1,12 @@
+export const CHAINID = {
+  MAIN: 1,
+  TEST: 3,
+}
+
+export const BTCCHAINID = {
+  MAIN: 0,
+  TEST: 1,
+}
 
 export const WALLETID = {
   NATIVE: 0x01,
@@ -35,7 +44,8 @@ export const TESTNET = 'https://testnet.wanscan.org';
 export const ETHMAIN = 'https://etherscan.io/';
 export const ETHTESTNET = 'https://rinkeby.etherscan.io/';
 
-export const BTCPATH = "m/44'/1'/0'/0/";
+export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
+export const BTCPATH_TEST = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
 

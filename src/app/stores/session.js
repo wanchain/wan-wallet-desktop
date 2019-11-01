@@ -33,9 +33,10 @@ class Session {
   }
 
   @action initChainId () {
-    getChainId().then((chainId) => {
+    return getChainId().then((chainId) => {
       self.chainId = chainId;
       console.log('Chain ID:', chainId);
+      return chainId;
     });
   }
 

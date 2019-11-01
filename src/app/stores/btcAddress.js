@@ -4,8 +4,10 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
-import { BTCPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
+
+import session from './session';
 
 class BtcAddress {
     @observable addrInfo = {
@@ -17,6 +19,10 @@ class BtcAddress {
     @observable selectedAddr = '';
 
     @observable transHistory = {};
+
+    @computed get btcPath() {
+      return session.chainId === CHAINID.MAIN ? BTCPATH_MAIN : BTCPATH_TEST;
+    }
 
     @action setCurrPage (page) {
       self.currentPage = page;
@@ -107,15 +113,16 @@ class BtcAddress {
           };
           break;
       }
-      wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase() } }, (err, val) => {
+      wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
         if (!err && val) {
           self.addrInfo[type][arr.address].name = arr.name;
         }
       })
     }
 
-    @action getUserAccountFromDB () {
-      wand.request('account_getAll', { chainID: 1 }, (err, ret) => {
+    @action getUserAccountFromDB (chainId) {
+      let chainID = chainId === CHAINID.MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
+      wand.request('account_getAll', { chainID }, (err, ret) => {
         if (err) console.log('Get user from DB failed ', err);
         if (ret.accounts && Object.keys(ret.accounts).length) {
           let info = ret.accounts;
@@ -124,11 +131,11 @@ class BtcAddress {
             Object.keys(info[path]).forEach(id => {
               if (['1', '5'].includes(id)) {
                 let address = info[path][id].addr;
-                self.addrInfo[typeFunc(id)][address.toLowerCase()] = {
+                self.addrInfo[typeFunc(id)][address] = {
                   name: info[path][id].name,
                   balance: 0,
                   path: path.substr(path.lastIndexOf('\/') + 1),
-                  address: address.toLowerCase()
+                  address: address
                 }
               }
             })
@@ -146,7 +153,7 @@ class BtcAddress {
           name: self.addrInfo.normal[item].name,
           address: item,
           balance: formatNum(self.addrInfo.normal[item].balance),
-          path: `${BTCPATH}${self.addrInfo.normal[item].path}`,
+          path: `${self.btcPath}${self.addrInfo.normal[item].path}`,
           action: 'send'
         });
       });
@@ -163,7 +170,7 @@ class BtcAddress {
           name: self.addrInfo[type][item].name,
           address: item,
           balance: self.addrInfo[type][item].balance,
-          path: `${BTCPATH}${self.addrInfo[type][item].path}`,
+          path: `${self.btcPath}${self.addrInfo[type][item].path}`,
           action: 'send'
         });
       });
