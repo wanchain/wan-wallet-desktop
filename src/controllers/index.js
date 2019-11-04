@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app } from 'electron'
-import { hdUtil, ccUtil } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -350,6 +350,38 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
           sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ethbalance })
           break
+
+        case 'btcImportAddress':
+          try {
+            ret = await ccUtil.btcImportAddress(payload.address);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break  
+        
+        case 'getBtcMultiBalances':
+          let btcMultiBalances = new Map();
+          try {
+            ret = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
+            ret.forEach(item => {
+              if (btcMultiBalances.has(item.address)) {
+                let balance = btcMultiBalances.get(item.address);
+                btcMultiBalances.set(item.address, new BigNumber(balance).plus(item.value).toString())
+              } else {
+                btcMultiBalances[item.address] = item.value
+              }
+            })
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: btcMultiBalances })
+          break
+        
         case 'balances':
             {
                 let balance, privateBalance;

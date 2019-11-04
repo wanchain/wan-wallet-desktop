@@ -5,11 +5,11 @@ import { Button, Table, Row, Col, message } from 'antd';
 
 import './index.less';
 import totalImg from 'static/image/btc.png';
-import { BTCPATH, WALLETID } from 'utils/settings';
+import { WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/EthTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType, hasSameName } from 'utils/helper';
+import { checkAddrType, hasSameName, getBtcMultiBalances, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 const CHAINTYPE = 'BTC';
@@ -38,6 +38,7 @@ class BtcAccount extends Component {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
+    getBtcMultiBalances(['mrxBWeth6QEUfs8NFYnNtjBd4B4FS9ToJm', 'mtWf5MBrnCyLJS1SZd54xfJp7j49dwkqAY'])
   }
 
   columns = [
@@ -121,23 +122,14 @@ class BtcAccount extends Component {
     });
 
     if (this.state.bool) {
-      let path = `${btcPath}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path }, (err, val_address_get) => {
-        if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `BTC-Account${addrLen + 1}`, addr: val_address_get.address } }, (err, val_account_create) => {
-            if (!err && val_account_create) {
-              let addressInfo = {
-                start: addrLen,
-                address: val_address_get.address
-              }
-              addAddress(addressInfo);
-              this.setState({
-                bool: true
-              });
-            }
-          });
-        }
-      });
+      createBTCAddr(btcPath, addrLen).then(addressInfo => {
+        addAddress(addressInfo);
+        this.setState({
+          bool: true
+        });
+      }).catch(err => {
+        console.log(err);
+      })
     }
   }
 

@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
 
@@ -77,6 +77,19 @@ export const getEthBalance = function (arr) {
           thisVal[item] = fromWei(thisVal[item]);
         });
         return resolve(thisVal);
+      }
+    })
+  })
+}
+
+export const getBtcMultiBalances = function (addresses) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getBtcMultiBalances', { minconf: MIN_CONFIRM_BLKS, maxconf: MAX_CONFIRM_BLKS, addresses }, (err, data) => {
+      if (err) {
+        console.log('Get BTC UTXO Failed: ', err);
+        return reject(err);
+      } else {
+        resolve(data);
       }
     })
   })
@@ -557,6 +570,34 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
             reject(err);
           }
         });
+      }
+    });
+  })
+}
+
+export const createBTCAddr = function (btcPath, addrLen) {
+  let path = `${btcPath}${addrLen}`;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'BTC', path }, (err_getOne, val_address_get) => {
+      if (!err_getOne) {
+        wand.request('address_btcImportAddress', { address: val_address_get.address }, (err_btcImportAddress, data) => {
+          if (!err_btcImportAddress) {
+            wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `BTC-Account${addrLen + 1}`, addr: val_address_get.address } }, (err, val_account_create) => {
+              if (!err && val_account_create) {
+                return resolve({
+                  start: addrLen,
+                  address: val_address_get.address
+                });
+              } else {
+                return reject(err);
+              }
+            });
+          } else {
+            return reject(err_btcImportAddress);
+          }
+        });
+      } else {
+        return reject(err_getOne);
       }
     });
   })

@@ -36,7 +36,7 @@ export const REVOKEETH_GAS = '100000';
 
 export const LOCKWETH_GAS = '300000';
 export const REDEEMETH_GAS = '100000';
-export const REVOKEWETH_GAS = '1000000';
+export const REVOKEWETH_GAS = '100000';
 
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'https://testnet.wanscan.org';
@@ -64,3 +64,6 @@ export const CHAINNAME = {
 
 export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH'];
 export const CROSSCHAINTYPE = ['BTC', 'ETH'];
+
+export const MAX_CONFIRM_BLKS = 100000000;
+export const MIN_CONFIRM_BLKS = 0;
