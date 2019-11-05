@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
+import btcAddress from './btcAddress';
+
 import { formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
@@ -58,8 +60,8 @@ class Portfolio {
                 val.balance = ethAddress.getAllAmount;
                 break;
               case 'BTC':
-                  val.balance = 0;
-                  break;
+                val.balance = btcAddress.getAllAmount;
+                break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
             val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);

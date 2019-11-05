@@ -9,7 +9,7 @@ import { WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/EthTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType, hasSameName, getBtcMultiBalances, createBTCAddr } from 'utils/helper';
+import { checkAddrType, hasSameName, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 const CHAINTYPE = 'BTC';
@@ -38,7 +38,6 @@ class BtcAccount extends Component {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
-    getBtcMultiBalances(['mrxBWeth6QEUfs8NFYnNtjBd4B4FS9ToJm', 'mtWf5MBrnCyLJS1SZd54xfJp7j49dwkqAY'])
   }
 
   columns = [

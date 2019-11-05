@@ -363,13 +363,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
           break  
         
         case 'getBtcMultiBalances':
-          let btcMultiBalances = new Map();
+          let btcMultiBalances = {};
           try {
             ret = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
             ret.forEach(item => {
-              if (btcMultiBalances.has(item.address)) {
-                let balance = btcMultiBalances.get(item.address);
-                btcMultiBalances.set(item.address, new BigNumber(balance).plus(item.value).toString())
+              if (btcMultiBalances[item.address]) {
+                let balance = btcMultiBalances[item.address];
+                btcMultiBalances[item.address] = new BigNumber(balance).plus(item.value).toString();
               } else {
                 btcMultiBalances[item.address] = item.value
               }

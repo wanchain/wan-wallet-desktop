@@ -4,7 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
-import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { timeFormat, fromWei, formatNum, formatNumByDecimals } from 'utils/support';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 
 import session from './session';
@@ -95,7 +95,7 @@ class BtcAddress {
       let normal = Object.keys(self.addrInfo.normal);
       keys.forEach(item => {
         if (normal.includes(item) && self.addrInfo.normal[item].balance !== arr[item]) {
-          self.addrInfo.normal[item].balance = arr[item];
+          self.addrInfo.normal[item].balance = formatNumByDecimals(arr[item], 8);
         }
       })
     }
@@ -152,7 +152,7 @@ class BtcAddress {
           key: item,
           name: self.addrInfo.normal[item].name,
           address: item,
-          balance: formatNum(self.addrInfo.normal[item].balance),
+          balance: formatNum(self.addrInfo.normal[item].balance, 8),
           path: `${self.btcPath}${self.addrInfo.normal[item].path}`,
           action: 'send'
         });

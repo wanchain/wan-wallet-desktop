@@ -82,14 +82,14 @@ export const getEthBalance = function (arr) {
   })
 }
 
-export const getBtcMultiBalances = function (addresses) {
+export const getBTCMultiBalances = function (addresses) {
   return new Promise((resolve, reject) => {
     wand.request('address_getBtcMultiBalances', { minconf: MIN_CONFIRM_BLKS, maxconf: MAX_CONFIRM_BLKS, addresses }, (err, data) => {
       if (err) {
         console.log('Get BTC UTXO Failed: ', err);
         return reject(err);
       } else {
-        resolve(data);
+        return resolve(data);
       }
     })
   })
