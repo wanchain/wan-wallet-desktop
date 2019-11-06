@@ -1,0 +1,79 @@
+{
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{app}}",
+                "about": "About {{app}}",
+                "version": "Wan Wallet Version {{version}}",
+                "developer": {
+                    "label": "Developer",
+                    "assets": {
+                        "label": "Assets",
+                        "wan": {
+                            "label": "Wanchain",
+                            "import": "Import Keystore File"
+                        }
+                    },
+                    "data": {
+                        "label": "Data Folder",
+                        "db": "Open Data Folder",
+                        "log": "Open Log Folder"
+                    }
+                },
+                "services": "Services",
+                "checkForUpdate": "Check for Updates...",
+                "hide": "Hide {{ app }}",
+                "hideOthers": "Hide others",
+                "showAll": "Show all",
+                "quit": "Quit {{ app }}"
+            },
+            "edit": {
+                "label": "Edit",
+                "undo": "Undo",
+                "redo": "Redo",
+                "cut": "Cut",
+                "copy": "Copy",
+                "paste": "Paste",
+                "selectAll": "Select all"
+            },
+            "setting": {
+                "label": "Settings",
+                "network": {
+                    "label": "Network",
+                    "main": "Main Network",
+                    "test": "Test Network"
+                },
+                "mode": {
+                    "label": "Mode",
+                    "full": "Full Node Wallet",
+                    "light": "Light Wallet"
+                },
+                "lang": {
+                    "label": "Language",
+                    "code": {
+                        "en": "English",
+                        "zh": "中文(简体)",
+                        "th-TH": "ไทย",
+                        "ko-KR": "한국어",
+                        "fr-FR": "Français"
+                    }
+                }
+            },
+            "window": {
+                "label": "Window",
+                "fullscreen": "Full Screen",
+                "minimize": "Minimize",
+                "close": "Close",
+                "front": "Bring All to Front"
+            },
+            "help": {
+                "label": "Help",
+                "web": "Wanchain Official Website",
+                "explorer": "Wanchain Explorer",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "Toggle Developer Tools"
+            }
+        }
+    }
+}
