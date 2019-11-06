@@ -8,7 +8,7 @@ import totalImg from 'static/image/btc.png';
 import { WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/EthTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
+import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
 import { checkAddrType, hasSameName, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
@@ -20,7 +20,7 @@ const CHAINTYPE = 'BTC';
   language: stores.languageIntl.language,
   getAddrList: stores.btcAddress.getAddrList,
   getAmount: stores.btcAddress.getNormalAmount,
-  transParams: stores.sendTransParams.transParams,
+  transParams: stores.sendTransParams.BTCTransParams,
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -55,7 +55,7 @@ class BtcAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} /></div>
     }
   ];
 
@@ -85,31 +85,18 @@ class BtcAccount extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
-    let trans = {
-      walletID: walletID,
-      chainType: CHAINTYPE,
-      symbol: CHAINTYPE,
-      path: params.path,
-      to: params.to,
-      amount: params.amount,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
-      gasPrice: params.gasPrice,
-      nonce: params.nonce,
-      data: params.data
-    };
     return new Promise((resolve, reject) => {
-      wand.request('transaction_normal', trans, function (err, txHash) {
+      wand.request('transaction_BTCNormal', params, (err, txHash) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
           console.log(err);
           reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
-          this.props.updateTransHistory();
+          // this.props.updateTransHistory();
           console.log('Tx hash: ', txHash);
           resolve(txHash)
         }
-      }.bind(this));
+      });
     })
   }
 

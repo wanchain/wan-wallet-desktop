@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
-import style from './index.less';
+import style from '../index.less';
 import { toWei } from 'utils/support';
 import { DEFAULT_GAS } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';

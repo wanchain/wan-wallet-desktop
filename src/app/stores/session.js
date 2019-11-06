@@ -4,6 +4,7 @@ import { getChainId } from 'utils/helper';
 class Session {
   @observable hasMnemonicOrNot = false;
 
+  // 1 for main net, 3 for test net
   @observable chainId = 1;
 
   @observable auth = false;

@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app } from 'electron'
-import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -630,6 +630,22 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'BTCNormal':
+          try {
+            logger.info('Normal transaction: ' + JSON.stringify(payload));
+
+            let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('BTC', 'BTC');
+            payload.feeRate = 300;
+
+            let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+            console.log(JSON.stringify(ret, null, 4));
+          } catch (e) {
+            logger.error('Send transaction failed: ' + e.message || e.stack)
+            err = e
+          }
+          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
 
         case 'private':
             try {
