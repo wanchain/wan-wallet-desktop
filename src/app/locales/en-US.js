@@ -121,6 +121,9 @@ const en_US = {
     'WanAccount.publicKey': 'Public Key',
 
     'EosAccount.eos': 'EOS',
+    'EosAccount.name': 'NAME',
+    'EosAccount.publicKey': 'PUBLIC KEY',
+    'EosAccount.action': 'ACTION',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',

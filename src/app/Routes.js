@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, EthAccount, BtcAccount, CrossETH, CrossE20 } from './containers';
+import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, EthAccount, BtcAccount, EosAccount, CrossETH, CrossE20 } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -13,6 +13,7 @@ export default () => {
             <Route path="/wanAccount" component={WanAccount} />
             <Route path="/ethaccount" component={EthAccount} />
             <Route path="/btcaccount" component={BtcAccount} />
+            <Route path="/eosaccount" component={EosAccount} />
             <Route path="/crossETH" component={CrossETH} />
             <Route path="/settings" component={Settings} />
             <Route path="/trezor" component={Trezor} />

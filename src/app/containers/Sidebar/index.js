@@ -123,7 +123,6 @@ class Sidebar extends Component {
           <Menu theme="dark" mode="inline" /* inlineCollapsed={this.state.collapsed} */ defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
-
         </div>
         <div className={style.collapseItem + ' collapseItem'}>
           <img src={this.state.collapsed ? open : collapse} className={style.collapseButton} onClick={this.toggleMenu} />

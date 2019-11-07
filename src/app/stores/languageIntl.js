@@ -199,6 +199,11 @@ class LanguageIntl {
             title: intl.get('menuConfig.eth'),
             key: '/ethAccount',
             icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.eos'),
+            key: '/eosAccount',
+            icon: 'block'
           }
         ]
       },
