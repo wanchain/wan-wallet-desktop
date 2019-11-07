@@ -21,6 +21,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
+  updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
   updateBTCBalance: newBalanceArr => stores.btcAddress.updateBTCBalance(newBalanceArr),
@@ -106,8 +107,9 @@ class Layout extends Component {
     const allAddr = (Object.values(btcAddrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBTCMultiBalances(allAddr).then(res => {
-      if (res && Object.keys(res).length) {
-        this.props.updateBTCBalance(res);
+      if (res.btcMultiBalances && Object.keys(res.btcMultiBalances).length) {
+        this.props.updateUtxos(res.utxos);
+        this.props.updateBTCBalance(res.btcMultiBalances);
       }
     }).catch(err => {
       console.log(err);

@@ -4,12 +4,12 @@ import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message } from 'antd';
 
 import './index.less';
+import { formatNum } from 'utils/support';
 import totalImg from 'static/image/btc.png';
-import { WALLETID } from 'utils/settings';
-import TransHistory from 'components/TransHistory/EthTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
+import TransHistory from 'components/TransHistory/EthTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
-import { checkAddrType, hasSameName, createBTCAddr } from 'utils/helper';
+import { hasSameName, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 const CHAINTYPE = 'BTC';
@@ -32,6 +32,7 @@ class BtcAccount extends Component {
   state = {
     bool: true,
     isUnlock: false,
+    normalTransVisiable: false
   }
 
   constructor (props) {
@@ -52,10 +53,6 @@ class BtcAccount extends Component {
     {
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
-    },
-    {
-      dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} /></div>
     }
   ];
 
@@ -83,8 +80,8 @@ class BtcAccount extends Component {
     clearInterval(this.timer);
   }
 
-  handleSend = from => {
-    let params = this.props.transParams[from];
+  handleSend = () => {
+    let params = this.props.transParams;
     return new Promise((resolve, reject) => {
       wand.request('transaction_BTCNormal', params, (err, txHash) => {
         if (err) {
@@ -143,9 +140,10 @@ class BtcAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('menuConfig.btc')}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">{intl.get('menuConfig.btc')}</span></Col>
           <Col span={12} className="col-right">
-          <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+            <SendNormalTrans from={getAddrList[0].address} handleSend={this.handleSend} />
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

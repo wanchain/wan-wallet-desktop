@@ -14,6 +14,8 @@ class BtcAddress {
       normal: {},
     };
 
+    @observable utxos = {};
+
     @observable currentPage = [];
 
     @observable selectedAddr = '';
@@ -22,6 +24,10 @@ class BtcAddress {
 
     @computed get btcPath() {
       return session.chainId === CHAINID.MAIN ? BTCPATH_MAIN : BTCPATH_TEST;
+    }
+
+    @action updateUtxos(newUtxos) {
+      self.utxos = newUtxos;
     }
 
     @action setCurrPage (page) {
@@ -217,7 +223,7 @@ class BtcAddress {
     @computed get getNormalAmount () {
       let sum = 0;
       Object.values({ normal: self.addrInfo.normal }).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-      return formatNum(sum);
+      return sum;
     }
 
     @computed get getAllAmount () {

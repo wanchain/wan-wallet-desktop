@@ -602,3 +602,28 @@ export const createBTCAddr = function (btcPath, addrLen) {
     });
   })
 }
+
+export const btcCoinSelect = function (utxos, value) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_btcCoinSelect', { utxos, value }, (err, data) => {
+      if (err) {
+        console.log('btcCoinSelect: ', err)
+        return reject(err);
+      } else {
+        return resolve(data);
+      }
+    });
+  });
+}
+
+export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
+  let fromArr = [];
+  let addresses = new Set(utxos.map(item => item.address));
+  addresses.forEach(item => {
+    fromArr.push({
+      walletID: 1,
+      path: `${btcPath}${addrInfo.normal[item].path}`
+    });
+  });
+  return fromArr;
+}

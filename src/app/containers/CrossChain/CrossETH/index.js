@@ -32,12 +32,12 @@ class CrossETH extends Component {
   constructor (props) {
     super(props);
     this.props.setCurrSymbol('ETH');
-    this.props.setCurrToken(null, 'WETH');
+    this.props.setCurrToken(null, 'ETH');
     this.props.changeTitle('Common.crossChain');
   }
 
   componentDidMount() {
-    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'WETH');
+    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'ETH');
     this.timer = setInterval(() => {
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)

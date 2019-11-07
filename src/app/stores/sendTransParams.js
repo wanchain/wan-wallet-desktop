@@ -9,7 +9,12 @@ class SendTransParams {
 
     @observable transParams = {};
 
-    @observable BTCTransParams = {};
+    @observable BTCTransParams = {
+      from: [],
+      changeAddress: '',
+      to: '',
+      value: 0,
+    };
 
     @observable gasLimit = GASLIMIT;
 
@@ -39,24 +44,9 @@ class SendTransParams {
       });
     }
 
-    @action addBTCTransTemplate (addr, params = {}) {
-      self.currentFrom = addr;
-      self.BTCTransParams[addr] = {
-        from: [
-          {
-            walletID: 1,
-            path: params.path
-          }
-        ],
-        changeAddress: addr,
-        to: '',
-        value: 0,
-      };
-    }
-
-    @action updateBTCTransParams (addr, paramsObj) {
+    @action updateBTCTransParams (paramsObj) {
       Object.keys(paramsObj).forEach(item => {
-        self.BTCTransParams[addr][item] = paramsObj[item];
+        self.BTCTransParams[item] = paramsObj[item];
       });
     }
 

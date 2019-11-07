@@ -39,6 +39,7 @@ const WANBIP44Path = "m/44'/5718350'/0'/0/"
 
 // chain ID consts
 const WAN_ID = 5718350;
+const network = setting.get('network');
 
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
@@ -363,23 +364,40 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
           break  
         
         case 'getBtcMultiBalances':
+          let utxos;
           let btcMultiBalances = {};
           try {
-            ret = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
-            ret.forEach(item => {
+            utxos = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
+            utxos.forEach(item => {
               if (btcMultiBalances[item.address]) {
                 let balance = btcMultiBalances[item.address];
                 btcMultiBalances[item.address] = new BigNumber(balance).plus(item.value).toString();
               } else {
                 btcMultiBalances[item.address] = item.value
               }
-            })
+            });
+            ret = {
+              utxos,
+              btcMultiBalances
+            };
             } catch (e) {
               logger.error(e.message || e.stack)
               err = e
           }
 
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: btcMultiBalances })
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
+        case 'btcCoinSelect':
+          try {
+            let feeRate = network === 'main' ? 30 : 300;
+            ret = await ccUtil.btcCoinSelect(payload.utxos, payload.value * Math.pow(10, 8), feeRate, payload.minConfParam);
+          } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+          }
+
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
         
         case 'balances':
@@ -634,10 +652,9 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
         case 'BTCNormal':
           try {
             logger.info('Normal transaction: ' + JSON.stringify(payload));
+            payload.feeRate = network === 'main' ? 30 : 300;
 
             let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('BTC', 'BTC');
-            payload.feeRate = 300;
-
             let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             console.log(JSON.stringify(ret, null, 4));
           } catch (e) {
@@ -1118,7 +1135,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'getTokensInfo':
           let info, tokens_advance;
           try {
-              let network = setting.get('network');
               tokens_advance = setting.get('settings').tokens_advance[network];
               ret = await ccUtil.getRegErc20Tokens();
               info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
@@ -1173,7 +1189,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'updateTokensInfo':
           let { addr, key, value } = payload;
           try {
-            let network = setting.get('network');
             setting.set(`settings.tokens_advance.${network}.${addr}.${key}`, value);
           } catch (e) {
               logger.error(e.message || e.stack)
@@ -1185,7 +1200,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'addCustomToken':
         let { tokenAddr, symbol, decimals, select } = payload;
         try {
-          let network = setting.get('network');
           setting.set(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`, { select, symbol, decimals });
         } catch (e) {
             logger.error(e.message || e.stack)
