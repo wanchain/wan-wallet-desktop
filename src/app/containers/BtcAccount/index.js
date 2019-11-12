@@ -7,7 +7,7 @@ import './index.less';
 import { formatNum } from 'utils/support';
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import TransHistory from 'components/TransHistory/ETHTransHistory';
+import TransHistory from 'components/TransHistory/BTCTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
 import { hasSameName, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';

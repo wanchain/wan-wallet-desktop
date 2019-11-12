@@ -3,8 +3,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
-import { checkAddrType } from 'utils/helper';
-import { timeFormat, fromWei, formatNum, formatNumByDecimals } from 'utils/support';
+import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 
 import session from './session';
@@ -71,18 +70,18 @@ class BtcAddress {
       if (initialize) {
         self.transHistory = {};
       }
-      wand.request('transaction_showRecords', (err, val) => {
+      wand.request('transaction_showBTCRecords', (err, val) => {
         if (!err && val.length !== 0) {
           let tmpTransHistory = {};
-          val = val.filter(item => item.chainType === 'BTC');
           val.forEach(item => {
-            if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
-              tmpTransHistory[item.txHash] = item;
+            if (item.txhash !== '' && (item.txhash !== item.hashX || item.status === 'Failed')) {
+              tmpTransHistory[item.txhash] = item;
             }
-            if (item.txHash === '' && item.status === 'Failed') {
+            if (item.txhash === '' && item.status === 'Failed') {
               tmpTransHistory[item.hashX] = item;
             }
           });
+
           self.transHistory = tmpTransHistory;
         }
       })
@@ -185,30 +184,19 @@ class BtcAddress {
 
     @computed get historyList () {
       let historyList = [];
-      let page = self.currentPage;
-      let addrList = [];
-      if (self.selectedAddr) {
-        addrList = self.selectedAddr
-      } else {
-        page.forEach(name => {
-          addrList = addrList.concat(Object.keys(self.addrInfo[name]))
-        })
-      }
+
       Object.keys(self.transHistory).forEach(item => {
-        if (addrList.includes(self.transHistory[item]['from'])) {
-          let status = self.transHistory[item].status;
-          let type = checkAddrType(self.transHistory[item]['from'], self.addrInfo)
-          historyList.push({
-            key: item,
-            time: timeFormat(self.transHistory[item]['sendTime']),
-            from: self.addrInfo[type][self.transHistory[item]['from']].name,
-            to: self.transHistory[item].to.toLowerCase(),
-            value: formatNum(fromWei(self.transHistory[item].value)),
-            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]['sendTime'],
-          });
-        }
+        let status = self.transHistory[item].status;
+        historyList.push({
+          key: item,
+          time: timeFormat(self.transHistory[item].time / 1000),
+          to: self.transHistory[item].to.toLowerCase(),
+          value: formatNum(self.transHistory[item].value),
+          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+          sendTime: self.transHistory[item].time,
+        });
       });
+
       return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 

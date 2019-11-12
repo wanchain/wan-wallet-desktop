@@ -41,8 +41,11 @@ export const REVOKEWETH_GAS = '100000';
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'https://testnet.wanscan.org';
 
-export const ETHMAIN = 'https://etherscan.io/';
-export const ETHTESTNET = 'https://rinkeby.etherscan.io/';
+export const BTCMAIN = 'https://www.blockchain.com/btc';
+export const BTCTESTNET = 'https://www.blockchain.com/btctest';
+
+export const ETHMAIN = 'https://etherscan.io';
+export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 
 export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
 export const BTCPATH_TEST = "m/44'/1'/0'/0/";

@@ -33,6 +33,7 @@ const ROUTE_SETTING = 'setting'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
+const DB_BTC_COLLECTION = 'crossTransBtc'
 
 // wallet path consts
 const WANBIP44Path = "m/44'/5718350'/0'/0/"
@@ -750,7 +751,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'showRecords':
             try {
-                ret = global.wanDb.queryComm(DB_NORMAL_COLLECTION, (items) => {
+                ret = global.wanDb.queryComm(DB_NORMAL_COLLECTION, items => {
                     return items
                 })
             } catch (e) {
@@ -760,6 +761,19 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+        
+        case 'showBTCRecords':
+          try {
+              ret = global.wanDb.queryComm(DB_BTC_COLLECTION, items => {
+                  return items
+              })
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
 
         case 'insertTransToDB':
             try {

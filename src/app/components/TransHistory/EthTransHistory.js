@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Select } from 'antd';
 
-import style from './index.less';
 import { ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 import history from 'static/image/history.png';
@@ -25,7 +24,7 @@ const Option = Select.Option;
 class ETHTransHistory extends Component {
   constructor (props) {
     super(props);
-    this.props.setCurrPage(this.props.name || []);
+    this.props.setCurrPage(this.props.name);
   }
 
   onChange = value => {

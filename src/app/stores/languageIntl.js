@@ -46,6 +46,28 @@ class LanguageIntl {
     ]
   };
 
+  @computed get transBTCColumns () {
+    return self.language && [
+      {
+        title: intl.get('TransHistory.time'),
+        dataIndex: 'time',
+        key: 'time',
+      }, {
+        title: intl.get('TransHistory.to'),
+        dataIndex: 'to',
+        key: 'to',
+      }, {
+        title: intl.get('TransHistory.value'),
+        dataIndex: 'value',
+        key: 'value'
+      }, {
+        title: intl.get('TransHistory.status'),
+        dataIndex: 'status',
+        key: 'status'
+      }
+    ]
+  };
+
   @computed get privateTransColumns () {
     return self.language && [
       {
