@@ -1,23 +1,25 @@
-import React, { Component } from 'react';
-import { Button, Input, message, Modal } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import { openScanOTA } from 'utils/helper';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Button, Input, message, Modal } from 'antd';
 
 import style from './index.less';
+import { BTCPATH_TEST, WANPATH } from 'utils/settings';
+import { openScanOTA, createBTCAddr } from 'utils/helper';
 
 message.config({
   duration: 2,
   maxCount: 1
 });
-const WAN = "m/44'/5718350'/0'/0/";
 
 @inject(stores => ({
   auth: stores.session.auth,
-  language: stores.languageIntl.language,
   addrInfo: stores.wanAddress.addrInfo,
-  updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB(),
+  language: stores.languageIntl.language,
+  btcAddrInfo: stores.btcAddress.addrInfo,
   setAuth: val => stores.session.setAuth(val),
+  addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
+  updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB()
 }))
 
 @observer
@@ -45,9 +47,17 @@ class Login extends Component {
           await this.props.updateUserAccountDB(val.version);
         }
         // Open scanner to scan the smart contract to get private tx balance.
-        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WAN}${item.path}`]);
-        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WAN}${item.path}`]);
+        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
+        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
         openScanOTA(normalObj.concat(importObj));
+
+        if (!Object.keys(this.props.btcAddrInfo.normal).length) {
+          createBTCAddr(BTCPATH_TEST, 0).then(addressInfo => {
+            this.props.addAddress(addressInfo);
+          }).catch(err => {
+            console.log(err);
+          })
+        }
       })
     })
   }

@@ -3,6 +3,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
+import { createBTCAddr } from 'utils/helper';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 
@@ -74,10 +75,10 @@ class BtcAddress {
         if (!err && val.length !== 0) {
           let tmpTransHistory = {};
           val.forEach(item => {
-            if (item.txhash !== '' && (item.txhash !== item.hashX || item.status === 'Failed')) {
-              tmpTransHistory[item.txhash] = item;
+            if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
+              tmpTransHistory[item.txHash] = item;
             }
-            if (item.txhash === '' && item.status === 'Failed') {
+            if (item.txHash === '' && item.status === 'Failed') {
               tmpTransHistory[item.hashX] = item;
             }
           });
@@ -129,21 +130,16 @@ class BtcAddress {
       let chainID = chainId === CHAINID.MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
       wand.request('account_getAll', { chainID }, (err, ret) => {
         if (err) console.log('Get user from DB failed ', err);
+        let info = ret.accounts;
         if (ret.accounts && Object.keys(ret.accounts).length) {
-          let info = ret.accounts;
-          let typeFunc = id => id === '1' ? 'normal' : 'import';
           Object.keys(info).forEach(path => {
-            Object.keys(info[path]).forEach(id => {
-              if (['1', '5'].includes(id)) {
-                let address = info[path][id].addr;
-                self.addrInfo[typeFunc(id)][address] = {
-                  name: info[path][id].name,
-                  balance: 0,
-                  path: path.substr(path.lastIndexOf('\/') + 1),
-                  address: address
-                }
-              }
-            })
+            let address = info[path]['1'].addr;
+            self.addrInfo.normal[address] = {
+              name: info[path]['1'].name,
+              balance: 0,
+              path: path.substr(path.lastIndexOf('\/') + 1),
+              address: address
+            }
           })
         }
       })
