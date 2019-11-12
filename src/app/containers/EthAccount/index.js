@@ -6,7 +6,7 @@ import { Button, Table, Row, Col, message } from 'antd';
 import style from './index.less';
 import totalImg from 'static/image/eth.png';
 import { ETHPATH, WALLETID } from 'utils/settings';
-import TransHistory from 'components/TransHistory/EthTransHistory';
+import TransHistory from 'components/TransHistory/ETHTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType, hasSameName } from 'utils/helper';

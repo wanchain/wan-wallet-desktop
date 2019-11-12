@@ -22,7 +22,7 @@ const Option = Select.Option;
 }))
 
 @observer
-class EthTransHistory extends Component {
+class ETHTransHistory extends Component {
   constructor (props) {
     super(props);
     this.props.setCurrPage(this.props.name || []);
@@ -71,4 +71,4 @@ class EthTransHistory extends Component {
   }
 }
 
-export default EthTransHistory;
+export default ETHTransHistory;
