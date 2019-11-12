@@ -1,6 +1,8 @@
 import { observable, action, computed } from 'mobx';
 import intl from 'react-intl-universal';
 
+import { WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
+
 class LanguageIntl {
   @observable language = 'en_US';
 
@@ -184,36 +186,22 @@ class LanguageIntl {
         step: '1',
         key: '/wallet',
         icon: 'wallet',
-        children: [
-          {
-            title: intl.get('menuConfig.wan'),
-            key: '/wanAccount',
-            icon: 'block'
-          },
-          {
-            title: intl.get('menuConfig.btc'),
-            key: '/btcAccount',
-            icon: 'block'
-          },
-          {
-            title: intl.get('menuConfig.eth'),
-            key: '/ethAccount',
-            icon: 'block'
-          }
-        ]
+        children: WALLET_CHAIN.map(item => ({
+          title: item,
+          key: `/${item.toLowerCase()}Account`,
+          icon: 'block'
+        }))
       },
       {
         title: intl.get('Common.crossChain'),
         step: '1',
         key: '/crossChain',
         icon: 'wallet',
-        children: [
-          {
-            title: intl.get('menuConfig.eth'),
-            key: '/crossETH',
-            icon: 'block'
-          }
-        ]
+        children: CROSSCHAINTYPE.map(item => ({
+          title: item,
+          key: `/cross${item}`,
+          icon: 'block'
+        }))
       },
       {
         title: intl.get('menuConfig.hardwareWallet'),

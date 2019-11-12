@@ -12,8 +12,6 @@ import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
 import { hasSameName, createBTCAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
-const CHAINTYPE = 'BTC';
-
 @inject(stores => ({
   btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.btcAddress.addrInfo,
@@ -140,7 +138,7 @@ class BtcAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">{intl.get('menuConfig.btc')}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">btc</span></Col>
           <Col span={12} className="col-right">
             <SendNormalTrans from={getAddrList[0].address} handleSend={this.handleSend} />
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>

@@ -261,10 +261,6 @@ const en_US = {
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',
-    'menuConfig.wan': 'WAN',
-    'menuConfig.eth': 'ETH',
-    'menuConfig.btc': 'BTC',
-    'menuConfig.eos': 'EOS',
     'menuConfig.hardwareWallet': 'Hardware Wallet',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

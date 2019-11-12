@@ -260,10 +260,6 @@ const zh_CN = {
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',
-    'menuConfig.wan': 'WAN',
-    'menuConfig.eth': 'ETH',
-    'menuConfig.btc': 'BTC',
-    'menuConfig.eos': 'EOS',
     'menuConfig.hardwareWallet': '硬件钱包',
     'menuConfig.ledger': 'Ledger',
     'menuConfig.trezor': 'Trezor',

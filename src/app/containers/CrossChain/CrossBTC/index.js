@@ -3,21 +3,21 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col } from 'antd';
 
-import totalImg from 'static/image/eth.png';
+import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 
-const CHAINTYPE = 'ETH';
+const CHAINTYPE = 'BTC';
 const WANCHAIN = 'WAN';
 
 @inject(stores => ({
   tokensList: stores.tokens.tokensList,
-  addrInfo: stores.ethAddress.addrInfo,
+  addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAddrList: stores.ethAddress.getAddrList,
-  getAmount: stores.ethAddress.getNormalAmount,
+  getAddrList: stores.btcAddress.getAddrList,
+  getAmount: stores.btcAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
@@ -27,16 +27,16 @@ const WANCHAIN = 'WAN';
 }))
 
 @observer
-class CrossETH extends Component {
+class CrossBTC extends Component {
   constructor (props) {
     super(props);
-    this.props.setCurrSymbol('ETH');
-    this.props.setCurrToken(null, 'ETH');
+    this.props.setCurrSymbol('BTC');
+    this.props.setCurrToken(null, 'BTC');
     this.props.changeTitle('Common.crossChain');
   }
 
   componentDidMount() {
-    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'ETH');
+    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'BTC');
     this.timer = setInterval(() => {
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)
@@ -58,9 +58,9 @@ class CrossETH extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockETHInbound:', err);
+          console.log('crossChain_lockBTCInbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -82,9 +82,9 @@ class CrossETH extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWETHInbound:', err);
+          console.log('crossChain_lockWBTCInbound:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -144,7 +144,7 @@ class CrossETH extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">ETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">BTC </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -152,7 +152,7 @@ class CrossETH extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WBTC </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -161,7 +161,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} symbol='ETH' />
+            <CrossChainTransHistory name={['normal']} symbol='BTC' />
           </Col>
         </Row>
       </div>
@@ -169,4 +169,4 @@ class CrossETH extends Component {
   }
 }
 
-export default CrossETH;
+export default CrossBTC;
