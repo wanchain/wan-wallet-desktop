@@ -6,12 +6,11 @@ import { Table, Row, Col } from 'antd';
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
-import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
+import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 
-const CHAINTYPE = 'BTC';
 const WANCHAIN = 'WAN';
-
+const CHAINTYPE = 'BTC';
 @inject(stores => ({
   tokensList: stores.tokens.tokensList,
   addrInfo: stores.btcAddress.addrInfo,
@@ -105,10 +104,6 @@ class CrossBTC extends Component {
     {
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
-    },
-    {
-      dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -126,12 +121,13 @@ class CrossBTC extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 
   render () {
     const { getAddrList, getTokensListInfo } = this.props;
+    let from = getAddrList.length ? getAddrList[0].address : '';
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -145,6 +141,9 @@ class CrossBTC extends Component {
       <div className="account">
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">BTC </span></Col>
+          <Col span={12} className="col-right">
+            <BTCTrans from={from} handleSend={this.inboundHandleSend} type={INBOUND} chainType={CHAINTYPE}/>
+          </Col>
         </Row>
         <Row className="mainBody">
           <Col>

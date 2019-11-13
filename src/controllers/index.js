@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app } from 'electron'
-import { hdUtil, ccUtil } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -1236,6 +1236,15 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'getSmgList':
         try {
           ret = await ccUtil.getSmgList(payload.crossChain);
+
+          if (payload.crossChain === 'BTC') {
+            let net = network === 'main' ? 'mainnet' : 'testnet';
+            ret.forEach(smg=>{
+              if (smg.btcAddress.startsWith('0x')) {
+                smg.btcAddress = btcUtil.hash160ToAddress(smg.btcAddress, 'pubkeyhash', net);
+              }
+            });
+          }
         } catch (e) {
             logger.error(e.message || e.stack)
             err = e

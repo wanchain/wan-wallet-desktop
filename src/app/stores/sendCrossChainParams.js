@@ -9,6 +9,21 @@ class SendCrossChainParams {
 
     @observable transParams = {};
 
+    @observable BTCCrossTransParams = {
+      from: [],
+      changeAddress: '',
+      to: '',
+      value: 0,
+      feeRate: 0,
+      smgBtcAddr: '',
+      storeman: '',
+      wanAddress: '',
+      gasPrice: '',
+      gas: '',
+      crossAddr: '',
+      amount: 0
+    };
+
     @observable gasLimit = GASLIMIT;
 
     @observable defaultGasPrice = 200;
@@ -38,6 +53,12 @@ class SendCrossChainParams {
         txFeeRatio: 0,
         gasLimit: GASLIMIT,
       };
+    }
+
+    @action updateBTCTransParams (paramsObj) {
+      Object.keys(paramsObj).forEach(item => {
+        self.BTCCrossTransParams[item] = paramsObj[item];
+      });
     }
 
     @action updateTransParams (addr, paramsObj) {

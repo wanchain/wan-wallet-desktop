@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
-import style from './index.less';
 import { CHAINNAME } from 'utils/settings';
 
 const inputCom = <Input disabled={true} />
