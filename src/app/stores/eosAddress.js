@@ -17,9 +17,10 @@ class EosAddress {
   @observable transHistory = {};
 
   @action addKey(newKey) {
-    self.keyInfo['normal'][newKey.address] = {
+    // console.log('addKey', newKey);
+    self.keyInfo['normal'][newKey.publicKey] = {
       name: `EOS-PublicKey${newKey.start + 1}`,
-      address: newKey.address,
+      publicKey: newKey.publicKey,
       path: newKey.path
     };
   }
@@ -32,10 +33,25 @@ class EosAddress {
       keyList.push({
         name: item.name,
         path: item.path,
-        publicKey: key,
-        accounts: [].concat(item.accounts),
+        key: key,
+        accounts: item.accounts ? [].concat(item.accounts) : [],
       });
     });
+    return keyList;
+  }
+
+  @computed get getAccountList() {
+    let keyList = [{
+      name: 'A',
+      value: '12',
+      cpu: '23',
+      balance: '12.21'
+    }, {
+      name: 'B',
+      value: '4',
+      cpu: '34',
+      balance: '42.32'
+    }];
     return keyList;
   }
 

@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observable, inject } from 'mobx-react';
 import { Modal, Button, Form, Input, Icon, Checkbox } from 'antd';
+import EOSAddAccountList from './EOSAddAccountList';
 import style from './index.less';
 
 class EOSAddAccountForm extends Component {
@@ -28,18 +29,15 @@ class EOSAddAccountForm extends Component {
                     onCancel={this.handleCancel}
                     footer={[
                         <Button key="back" className="cancel" onClick={this.handleCancel}>{'Cancel'}</Button>,
-                        <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleOk}>{'OK'}</Button>,
+                        <Button key="submit" type="primary" onClick={this.handleOk}>{'OK'}</Button>,
                     ]}
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={'Searched Public Key'}>
-                            {getFieldDecorator('from', { initialValue: 'EOS55hDyA8VrcyAQXDyk54YekWpKMyPufocfp1F5USjfjPD3rdCiM ' })
+                            {getFieldDecorator('from', { initialValue: this.props.selectedPublicKey })
                             (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
-                        {/* <Form.Item label={'Select Account'}>
-                            {getFieldDecorator('account', { initialValue: 'EOS55hDyA8VrcyAQXDyk54YekWpKMyPufocfp1F5USjfjPD3rdCiM ' })
-                            (<Checkbox.Group disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                        </Form.Item> */}
+                        <EOSAddAccountList/>
                     </Form>
                 </Modal>
             </div>

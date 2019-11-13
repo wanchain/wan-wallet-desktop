@@ -22,7 +22,8 @@ class EOSKeyPairList extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      showAddAccountForm: false
+      showAddAccountForm: false,
+      selectedPublicKey: ''
     }
   }
 
@@ -32,12 +33,12 @@ class EOSKeyPairList extends Component {
       editable: true
     },
     {
-      dataIndex: 'publicKey',
+      dataIndex: 'key',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><Button type="primary" onClick={this.showAddAccountForm}>Add Account</Button></div>
+      render: (text, record) => <div><Button type="primary" onClick={() => { this.showAddAccountForm(record); }}>Add Account</Button></div>
     }
   ];
 
@@ -57,9 +58,10 @@ class EOSKeyPairList extends Component {
     };
   });
 
-  showAddAccountForm = () => {
+  showAddAccountForm = (record) => {
     this.setState({
-      showAddAccountForm: true
+      showAddAccountForm: true,
+      selectedPublicKey: record.key
     });
   }
 
@@ -86,7 +88,7 @@ class EOSKeyPairList extends Component {
     return (
       <div>
           <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getKeyList} />
-          <AddAccountForm showModal={this.state.showAddAccountForm} handleCancel={this.handleCancel}/>
+          <AddAccountForm selectedPublicKey={this.state.selectedPublicKey} showModal={this.state.showAddAccountForm} handleCancel={this.handleCancel}/>
       </div>
     );
   }

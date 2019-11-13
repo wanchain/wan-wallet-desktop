@@ -1,23 +1,23 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Row, Col, message } from 'antd';
+import { Button, Row, Col, Form, message } from 'antd';
 
 import style from './index.less';
 import totalImg from 'static/image/eos.png';
 import { EOSPATH, WALLETID } from 'utils/settings';
+import EOSTransHistory from 'components/EOSTransHistory';
 import EOSKeyPairList from './EOSKeyPairList';
-import TransHistory from 'components/TransHistory/EthTransHistory';
-import CopyAndQrcode from 'components/CopyAndQrcode';
-import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType, hasSameName } from 'utils/helper';
+import EOSAccountList from './EOSAccountList';
+import EOSCreateAccountForm from './EOSCreateAccountForm';
 
 const CHAINTYPE = 'EOS';
+const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAccountForm);
 
 @inject(stores => ({
-  addrInfo: stores.ethAddress.addrInfo,
+  keyInfo: stores.eosAddress.keyInfo,
   language: stores.languageIntl.language,
-  transParams: stores.sendTransParams.transParams,
+  addKey: obj => stores.eosAddress.addKey(obj),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -28,7 +28,7 @@ class EosAccount extends Component {
     // this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
     this.state = {
-      showAddAccountForm: false
+      showCreateAccountForm: false,
     }
   }
 
@@ -44,31 +44,42 @@ class EosAccount extends Component {
   creatAccount = () => {
   }
 
-  generateKeyPair2 = () => {
-  }
-
   generateKeyPair = () => {
-    const addrLen = 0;
+    const { keyInfo, addKey } = this.props;
+    const addrLen = Object.keys(keyInfo['normal']).length;
     let path = `${EOSPATH}${addrLen}`;
-    // console.log({ walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path });
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, res) => {
       if (err) {
         console.log('error:', err);
       } else {
         console.log('res:', res);
+        addKey({
+          start: addrLen,
+          name: res.name,
+          publicKey: res.address,
+          path: res.path
+        });
       }
     });
   }
 
   createAccount = () => {
-    console.log('createAccount');
+    this.setState({
+      showCreateAccountForm: true
+    })
   }
 
   handleSave = row => {
   }
 
+  handleCancel = () => {
+    console.log('handleCancel');
+    this.setState({
+      showCreateAccountForm: false
+    })
+  }
+
   render () {
-    console.log('style:', style);
     const { getAmount } = this.props;
     return (
       <div className={style.account}>
@@ -95,26 +106,24 @@ class EosAccount extends Component {
         </Row>
         <Row className={style['sub-title']}>
           <Col span={12} className="col-left">
-            {/* <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
-            <span className="wanTex">{'EOS Key Pairs'}</span> */}
+            <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
+            <span className="wanTex">{'EOS Accounts'}</span>
           </Col>
           <Col span={12} className="col-right">
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{'Create Account'}</Button>
           </Col>
         </Row>
-        {/* <Row className="mainBody">
+        <Row className="mainBody">
           <Col>
-            <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList} />
+            <EOSAccountList/>
           </Col>
-        </Row> */}
-        {/* <Row className="mainBody">
+        </Row>
+        <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal']} />
+            <EOSTransHistory name={['normal', 'import']} />
           </Col>
-        </Row> */}
-        {
-          this.state.showAddAccountForm && <div>Add Account Form Modal</div>
-        }
+        </Row>
+        <CreateAccountForm showModal={this.state.showCreateAccountForm} handleCancel={this.handleCancel}/>
       </div>
     );
   }

@@ -1,0 +1,90 @@
+@borderColor: rgba(255, 255, 255, 0.06);
+
+.EOSAccountNET {
+    border-top: 1px solid @borderColor;
+    font-family: 'RobotoCondensed-Bold';
+
+    .progressContainer {
+        text-align: center;
+        padding: 24px 0px 10px;
+
+        &:first-child {
+            border: 0px solid @borderColor;
+            border-right-width: 1px;
+            border-bottom-width: 1px;
+        }
+
+        &:last-child {
+            border: 0px solid @borderColor;
+            border-right-width: 1px;
+        }
+
+        :global {
+            .ant-progress-text {
+                font-size: 14px;
+            }
+
+            ul {
+                padding: 0px;
+                color: #4453FF;
+                margin-top: 12px;
+                margin-bottom: 0px;
+                font-family: 'RobotoCondensed-Regular';
+
+                li {
+                    list-style: inside;
+
+                    span {
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    .NETPriceBar {
+        font-size: 18px;
+        font-family: 'RobotoCondensed-Regular';
+        padding: 20px;
+        border-bottom: 1px solid @borderColor;
+    }
+
+    .NETPrice {
+        color: #40DABF;
+        margin-left: 10px;
+    }
+
+    .NETForm {
+        padding: 24px;
+        font-family: 'RobotoCondensed-Regular';
+
+        :global {
+            .ant-input {
+                width: 100%;
+            }
+
+            .ant-form-item {
+                margin-bottom: 20px;
+            }
+        }
+
+        .type {
+            margin-bottom: 0px;
+        }
+
+        .delegateRadio {
+            margin-right: 40px !important;
+        }
+
+        .delegateInfo, .undelegateInfo {
+            height: 40px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 40px;
+            font-family: 'RobotoCondensed-Bold';
+            word-spacing: 2px;
+            letter-spacing: 1px;
+        }
+    }
+}

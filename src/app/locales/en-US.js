@@ -7,6 +7,9 @@ const en_US = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.options': 'Options',
+    'Common.cancel': 'Cancel',
+    'Common.ok': 'OK',
+    'Common.next': 'Next',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -124,6 +127,9 @@ const en_US = {
     'EosAccount.name': 'NAME',
     'EosAccount.publicKey': 'PUBLIC KEY',
     'EosAccount.action': 'ACTION',
+    'EosAccount.value': 'AVAILABLE VALUE',
+    'EosAccount.cpu': 'AVAILABLE CPU',
+    'EosAccount.balance': 'BALANCE',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',
