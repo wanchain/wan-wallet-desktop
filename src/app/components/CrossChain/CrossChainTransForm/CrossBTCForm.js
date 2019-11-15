@@ -10,10 +10,10 @@ import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { CHAINNAME, BTCPATH, WANPATH, INBOUND } from 'utils/settings';
-import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';
+import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
 import { getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos } from 'utils/helper';
 
-const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
+const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 
 @inject(stores => ({
   utxos: stores.btcAddress.utxos,
@@ -61,22 +61,33 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, from, direction, wanAddrInfo } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, from, direction, wanAddrInfo, getAmount } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
         return;
       };
-
+      let origAddrAmount, destAddrAmount, origAddrFee, destAddrFee;
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let origAddrAmount = getBalanceByAddr(from, direction === INBOUND ? addrInfo : wanAddrInfo);
-      let destAddrAmount = getBalanceByAddr(to, direction === INBOUND ? wanAddrInfo : addrInfo);
-      let path = direction === INBOUND ? WANPATH + wanAddrInfo.normal[to].path : BTCPATH + addrInfo.normal[to].path;
 
-      if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination, 0)) {
+      if (direction === INBOUND) {
+        origAddrAmount = getAmount;
+        destAddrAmount = getBalanceByAddr(to, wanAddrInfo);
+        origAddrFee = this.state.fee;
+        destAddrFee = estimateFee.destination;
+      } else {
+        origAddrAmount = getBalanceByAddr(from, wanAddrInfo);
+        destAddrAmount = getAmount;
+        origAddrFee = estimateFee.originalFee;
+        destAddrFee = this.state.fee;
+      }
+
+      if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee, 0)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
+
+      let path = direction === INBOUND ? WANPATH + wanAddrInfo.normal[to].path : BTCPATH + addrInfo.normal[to].path;
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -86,12 +97,12 @@ class CrossBTCForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, amount: formatAmount(sendAmount) });
+            updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, amount: formatAmount(sendAmount) });
+        updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -129,8 +140,8 @@ class CrossBTCForm extends Component {
         quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8) + ' BTC',
       });
     }
-
-    updateBTCTransParams({ storeman, feeRate: smgList[option.key].txFeeRatio });
+    let smg = smgList[option.key];
+    updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg.wanAddress, feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
   }
 
   filterStoremanData = item => {
@@ -253,10 +264,7 @@ class CrossBTCForm extends Component {
             </div>
           </Spin>
         </Modal>
-        {
-          false &&
-          <Confirm chainType="BTC" direction={direction} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading}/>
-        }
+        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFeeTitle} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading}/>
       </div>
     );
   }

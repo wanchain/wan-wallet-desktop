@@ -9,6 +9,7 @@ import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
 const CollectionCreateForm = Form.create({ name: 'CrossBTCForm' })(CrossBTCForm);
+const GASLIMIT = 300000;
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -65,7 +66,8 @@ class BTCTrans extends Component {
           destination: destinationFee
         }
       });
-      updateBTCTransParams({ changeAddress: from, storeman: smgList[0][direction === INBOUND ? 'btcAddress' : 'wanAddress'], feeRate: smgList[0].txFeeRatio });
+      let smg = smgList[0];
+      updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: from, storeman: smg.wanAddress, feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr, gasPrice: wanGasPrice, gas: GASLIMIT });
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log('showModal:', err)

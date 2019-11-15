@@ -1241,6 +1241,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             let net = network === 'main' ? 'mainnet' : 'testnet';
             ret.forEach(smg=>{
               if (smg.btcAddress.startsWith('0x')) {
+                smg.smgBtcAddr = smg.btcAddress;
                 smg.btcAddress = btcUtil.hash160ToAddress(smg.btcAddress, 'pubkeyhash', net);
               }
             });

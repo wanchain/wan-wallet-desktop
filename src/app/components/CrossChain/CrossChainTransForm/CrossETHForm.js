@@ -9,10 +9,10 @@ import SelectForm from 'componentUtils/SelectForm';
 import { fromWei, isExceedBalance } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { CHAINNAME, ETHPATH, WANPATH } from 'utils/settings';
-import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';
+import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 
-const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
+const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,

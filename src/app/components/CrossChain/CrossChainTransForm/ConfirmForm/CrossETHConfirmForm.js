@@ -13,9 +13,9 @@ const inputCom = <Input disabled={true} />
 }))
 
 @observer
-class CrossChainConfirmForm extends Component {
+class CrossETHConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, direction } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
     let desChain, totalFeeTitle;
 
@@ -40,12 +40,9 @@ class CrossChainConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          {
-            chainType !== 'BTC' &&
-            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
-              {getFieldDecorator('from', { initialValue: from })(inputCom)}
-            </Form.Item>
-          }
+          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
+            {getFieldDecorator('from', { initialValue: from })(inputCom)}
+          </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.lockedAccount')}>
             {getFieldDecorator('lockedAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
@@ -64,4 +61,4 @@ class CrossChainConfirmForm extends Component {
   }
 }
 
-export default CrossChainConfirmForm;
+export default CrossETHConfirmForm;

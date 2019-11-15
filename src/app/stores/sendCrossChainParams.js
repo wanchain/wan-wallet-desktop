@@ -16,12 +16,14 @@ class SendCrossChainParams {
       value: 0,
       feeRate: 0,
       smgBtcAddr: '',
+      btcAddress: '',
       storeman: '',
       wanAddress: '',
       gasPrice: '',
       gas: '',
       crossAddr: '',
-      amount: 0
+      amount: 0,
+      toAddr: ''
     };
 
     @observable gasLimit = GASLIMIT;
