@@ -1,6 +1,6 @@
 import { observable, action, computed, toJS } from 'mobx';
-import BigNumber from 'bignumber.js';
-import { roundFun } from 'utils/support'
+
+import session from './session';
 
 const GASLIMIT = 21000;
 
@@ -69,6 +69,10 @@ class SendCrossChainParams {
           self.transParams[addr][item] = paramsObj[item];
         }
       });
+    }
+
+    @computed get minCrossBTC() {
+      return session.chainId === 1 ? 0.0002 : 0.002;
     }
 }
 

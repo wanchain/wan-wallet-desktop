@@ -227,6 +227,8 @@ const ko_KR = {
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
     'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',
     'RedeemFromPrivateForm.redeem': '적용',

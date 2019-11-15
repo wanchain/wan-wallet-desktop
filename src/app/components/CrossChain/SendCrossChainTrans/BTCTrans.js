@@ -33,10 +33,9 @@ class BTCTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, getTokensListInfo, updateBTCTransParams, type, getAmount } = this.props;
-    let desChain, origGas, destGas;
+    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount } = this.props;
 
-    if (type === INBOUND) {
+    if (direction === INBOUND) {
       if (getAmount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
@@ -52,7 +51,7 @@ class BTCTrans extends Component {
     try {
       let [wanGasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList('BTC')]);
       let originalFee, destinationFee;
-      if (type === INBOUND) {
+      if (direction === INBOUND) {
         originalFee = 0;
         destinationFee = new BigNumber(wanGasPrice).times(REDEEMWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
       } else {
@@ -66,7 +65,7 @@ class BTCTrans extends Component {
           destination: destinationFee
         }
       });
-      updateBTCTransParams({ changeAddress: from, storeman: smgList[0][type === INBOUND ? 'btcAddress' : 'wanAddress'], feeRate: smgList[0].txFeeRatio });
+      updateBTCTransParams({ changeAddress: from, storeman: smgList[0][direction === INBOUND ? 'btcAddress' : 'wanAddress'], feeRate: smgList[0].txFeeRatio });
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log('showModal:', err)
@@ -93,12 +92,13 @@ class BTCTrans extends Component {
 
   render () {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
+    let btnStyle = this.props.direction === INBOUND ? { className: 'creatBtn', shape: 'round', size: 'large' } : {};
 
     return (
       <div>
-        <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.showModal}>{intl.get('Common.send')}</Button>
+        <Button type="primary" {...btnStyle} onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm symbol={this.props.symbol} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm direction={this.props.direction} symbol={this.props.symbol} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

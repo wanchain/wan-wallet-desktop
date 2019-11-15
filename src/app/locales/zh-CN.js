@@ -228,6 +228,8 @@ const zh_CN = {
     'CrossChainTransForm.estimateFee': '估算消耗的GAS',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目的链余额充足',
     'CrossChainTransForm.transInfo': '跨链交易信息',
+    'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
+
     'RedeemFromPrivate.noSufficientFunds': '账户余额不足',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',
     'RedeemFromPrivateForm.redeem': '提币',

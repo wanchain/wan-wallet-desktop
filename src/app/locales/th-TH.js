@@ -227,6 +227,8 @@ const th_TH = {
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
     'CrossChainTransForm.transInfo': 'Crosschain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',
     'RedeemFromPrivateForm.redeem': 'ถอนออก',

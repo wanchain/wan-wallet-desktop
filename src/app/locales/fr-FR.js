@@ -214,6 +214,16 @@ const fr_FR = {
     'NormalTransForm.password': 'Mot de passe',
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
 
+    'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
+    'CrossChainTransForm.lockedAccount': 'Locked Account',
+    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.capacity': 'Capacity',
+    'CrossChainTransForm.quota': 'Balance',
+    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
+    'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',
     'RedeemFromPrivateForm.redeem': 'Rembourser',

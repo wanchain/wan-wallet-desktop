@@ -229,6 +229,8 @@ const en_US = {
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
     'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+
     'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
     'RedeemFromPrivateForm.redeem': 'Redeem',

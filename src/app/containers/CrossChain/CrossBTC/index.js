@@ -9,7 +9,6 @@ import { INBOUND, OUTBOUND } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 
-const WANCHAIN = 'WAN';
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
   tokensList: stores.tokens.tokensList,
@@ -121,7 +120,7 @@ class CrossBTC extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} direction={OUTBOUND}/></div>
     }
   ];
 
@@ -142,7 +141,7 @@ class CrossBTC extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">BTC </span></Col>
           <Col span={12} className="col-right">
-            <BTCTrans from={from} handleSend={this.inboundHandleSend} type={INBOUND} chainType={CHAINTYPE}/>
+            <BTCTrans from={from} handleSend={this.inboundHandleSend} direction={INBOUND} chainType={CHAINTYPE}/>
           </Col>
         </Row>
         <Row className="mainBody">

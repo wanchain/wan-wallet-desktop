@@ -9,7 +9,7 @@ import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { CHAINNAME, BTCPATH, WANPATH } from 'utils/settings';
+import { CHAINNAME, BTCPATH, WANPATH, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/CrossChainConfirmForm';
 import { getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos } from 'utils/helper';
 
@@ -24,6 +24,7 @@ const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
   wanAddrInfo: stores.wanAddress.addrInfo,
   getAmount: stores.btcAddress.getNormalAmount,
   from: stores.sendCrossChainParams.currentFrom,
+  minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
 }))
@@ -48,10 +49,6 @@ class CrossBTCForm extends Component {
     });
   }
 
-  onCancel = () => {
-    this.props.onCancel();
-  }
-
   handleSave = () => {
     let { form, addrInfo } = this.props;
     let from = form.getFieldValue('from');
@@ -64,7 +61,7 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, from, direction, wanAddrInfo } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -72,9 +69,9 @@ class CrossBTCForm extends Component {
       };
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let origAddrAmount = getBalanceByAddr(from, chainType === 'BTC' ? addrInfo : wanAddrInfo);
-      let destAddrAmount = getBalanceByAddr(to, chainType === 'BTC' ? wanAddrInfo : addrInfo);
-      let path = chainType === 'BTC' ? WANPATH + wanAddrInfo.normal[to].path : BTCPATH + addrInfo.normal[to].path;
+      let origAddrAmount = getBalanceByAddr(from, direction === INBOUND ? addrInfo : wanAddrInfo);
+      let destAddrAmount = getBalanceByAddr(to, direction === INBOUND ? wanAddrInfo : addrInfo);
+      let path = direction === INBOUND ? WANPATH + wanAddrInfo.normal[to].path : BTCPATH + addrInfo.normal[to].path;
 
       if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination, 0)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
@@ -100,14 +97,10 @@ class CrossBTCForm extends Component {
     });
   }
 
-  sendTrans = () => {
-    this.props.onSend(this.props.from);
-  }
-
   checkAmount = (rule, value, callback) => {
-    if (new BigNumber(value).gte('0') && checkAmountUnit(8, value)) {
-      const { utxos, addrInfo, btcPath, updateBTCTransParams } = this.props;
+    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC } = this.props;
 
+    if (new BigNumber(value).gte(minCrossBTC) && checkAmountUnit(8, value)) {
       btcCoinSelect(utxos, value).then(data => {
         updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
         this.setState({
@@ -118,21 +111,22 @@ class CrossBTCForm extends Component {
         callback(intl.get('NormalTransForm.invalidAmount'));
       });
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      let message = intl.get('CrossChainTransForm.invalidAmount') + minCrossBTC;
+      callback(message);
     }
   }
 
   updateLockAccounts = (storeman, option) => {
-    let { form, updateBTCTransParams, smgList, chainType } = this.props;
+    let { form, updateBTCTransParams, smgList, direction } = this.props;
 
-    if (chainType === 'BTC') {
+    if (direction === INBOUND) {
       form.setFieldsValue({
-        capacity: formatNumByDecimals(smgList[option.key].quota, 8),
-        quota: formatNumByDecimals(smgList[option.key].inboundQuota, 8),
+        capacity: formatNumByDecimals(smgList[option.key].quota, 8) + ' BTC',
+        quota: formatNumByDecimals(smgList[option.key].inboundQuota, 8) + ' BTC',
       });
     } else {
       form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8),
+        quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8) + ' BTC',
       });
     }
 
@@ -140,14 +134,14 @@ class CrossBTCForm extends Component {
   }
 
   filterStoremanData = item => {
-    return item[this.props.chainType === 'BTC' ? 'btcAddress' : 'wanAddress'];
+    return item[this.props.direction === INBOUND ? 'btcAddress' : 'wanAddress'];
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol, getAmount } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, direction, addrInfo, symbol, getAmount } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
 
-    if (chainType === 'BTC') {
+    if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} TO W${symbol}` : 'BTC TO WBTC';
@@ -163,7 +157,7 @@ class CrossBTCForm extends Component {
       defaultSelectStoreman = '';
       capacity = quota = 0;
     } else {
-      if (chainType === 'BTC') {
+      if (direction === INBOUND) {
         defaultSelectStoreman = smgList[0].btcAddress;
         capacity = formatNumByDecimals(smgList[0].quota, 8)
         quota = formatNumByDecimals(smgList[0].inboundQuota, 8)
@@ -180,10 +174,10 @@ class CrossBTCForm extends Component {
           destroyOnClose={true}
           closable={false}
           title={title}
-          onCancel={this.onCancel}
+          onCancel={this.props.onCancel}
           className={style['cross-chain-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
           ]}
         >
@@ -209,7 +203,7 @@ class CrossBTCForm extends Component {
                 formMessage={intl.get('CrossChainTransForm.lockedAccount')}
               />
               {
-                chainType === 'BTC' &&
+                direction === INBOUND &&
                 <CommonFormItem
                   form={form}
                   colSpan={6}
@@ -253,7 +247,7 @@ class CrossBTCForm extends Component {
                 disabled={this.state.disabledAmount}
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}
+                title={intl.get('Common.amount') + direction === INBOUND ? ' BTC' : ' WBTC'}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
@@ -261,7 +255,7 @@ class CrossBTCForm extends Component {
         </Modal>
         {
           false &&
-          <Confirm chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+          <Confirm chainType="BTC" direction={direction} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading}/>
         }
       </div>
     );

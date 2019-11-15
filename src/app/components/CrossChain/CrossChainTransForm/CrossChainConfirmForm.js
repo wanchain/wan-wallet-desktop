@@ -18,6 +18,7 @@ class CrossChainConfirmForm extends Component {
     const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
     let desChain, totalFeeTitle;
+
     if (chainType === 'ETH') {
       desChain = 'WAN';
       totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
@@ -39,9 +40,12 @@ class CrossChainConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
-            {getFieldDecorator('from', { initialValue: from })(inputCom)}
-          </Form.Item>
+          {
+            chainType !== 'BTC' &&
+            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
+              {getFieldDecorator('from', { initialValue: from })(inputCom)}
+            </Form.Item>
+          }
           <Form.Item label={intl.get('CrossChainTransForm.lockedAccount')}>
             {getFieldDecorator('lockedAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
@@ -52,7 +56,7 @@ class CrossChainConfirmForm extends Component {
             {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}>
-            {getFieldDecorator('fee', { initialValue: amount })(inputCom)}
+            {getFieldDecorator('amount', { initialValue: amount })(inputCom)}
           </Form.Item>
         </Form>
       </Modal>
