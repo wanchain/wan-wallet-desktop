@@ -15,10 +15,13 @@ const OneStep = {
 
   initUndoTrans: function(trans) {
     trans.canRedeem.forEach(item => {
+      if (!item.redeemTryCount) {
+        item.redeemTryCount = 1;
+      }
       if (!this.retryTransArr.get(item.hashX)) {
         this.retryTransArr.set(item.hashX, item.redeemTryCount);
       }
-      if (this.retryTransArr.get(item.hashX) < MAXTRY) {
+      if (!this.pending.redeem.find(val => val.hashX === item.hashX) && this.retryTransArr.get(item.hashX) < MAXTRY) {
         this.pending.redeem.push(item);
       }
     });
@@ -26,7 +29,7 @@ const OneStep = {
       if (!this.retryTransArr.get(item.hashX)) {
         this.retryTransArr.set(item.hashX, item.revokeTryCount)
       }
-      if (this.retryTransArr.get(item.hashX) < MAXTRY) {
+      if (!this.pending.revoke.find(val => val.hashX === item.hashX) && this.retryTransArr.get(item.hashX) < MAXTRY) {
         this.pending.revoke.push(item);
       }
     });
@@ -124,6 +127,35 @@ const OneStep = {
           }).catch(() => {
             this.sending.delete(trans_data.hashX);
           });
+        }
+      }
+
+      if (['WAN', 'BTC'].includes(trans_data.chain)) {
+        let input = {
+          x: trans_data.x,
+          hashX: trans_data.hashX,
+        }
+        if (trans_data.chain === 'BTC') {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+                gasPrice = DEFAULT_GASPRICE
+            }
+            input.gas = REDEEMWETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'REDEEM' }, (err, ret) => {
+              if (err) {
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+              } else {
+                console.log('send_redeem_WBTC:', ret);
+              }
+            })
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        } else {
+
         }
       }
     });

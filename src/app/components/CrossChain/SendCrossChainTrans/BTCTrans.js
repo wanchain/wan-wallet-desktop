@@ -85,7 +85,7 @@ class BTCTrans extends Component {
 
   handleSend = from => {
     this.setState({ loading: true });
-    this.props.handleSend(from).then(() => {
+    this.props.handleSend().then(() => {
       this.setState({ visible: false, loading: false, spin: true });
     }).catch(() => {
       this.setState({ visible: false, loading: false, spin: true });

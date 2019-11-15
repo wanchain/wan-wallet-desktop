@@ -28,7 +28,6 @@ const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 class CrossETHForm extends Component {
   state = {
     confirmVisible: false,
-    disabledAmount: false,
   }
 
   componentWillUnmount () {
@@ -45,17 +44,6 @@ class CrossETHForm extends Component {
 
   onCancel = () => {
     this.props.onCancel();
-  }
-
-  handleSave = () => {
-    let { form, addrInfo } = this.props;
-    let from = form.getFieldValue('from');
-    if (this.state.disabledAmount) {
-      let fee = form.getFieldValue('fee');
-      form.setFieldsValue({
-        amount: getBalanceByAddr(from, addrInfo) - fee
-      });
-    }
   }
 
   handleNext = () => {
@@ -235,7 +223,6 @@ class CrossETHForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='amount'
-                disabled={this.state.disabledAmount}
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}

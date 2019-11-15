@@ -34,7 +34,6 @@ class CrossBTCForm extends Component {
   state = {
     fee: 0,
     confirmVisible: false,
-    disabledAmount: false,
   }
 
   componentWillUnmount () {
@@ -47,17 +46,6 @@ class CrossBTCForm extends Component {
     this.setState({
       confirmVisible: false,
     });
-  }
-
-  handleSave = () => {
-    let { form, addrInfo } = this.props;
-    let from = form.getFieldValue('from');
-    if (this.state.disabledAmount) {
-      let fee = form.getFieldValue('fee');
-      form.setFieldsValue({
-        amount: getBalanceByAddr(from, addrInfo) - fee
-      });
-    }
   }
 
   handleNext = () => {
@@ -97,12 +85,12 @@ class CrossBTCForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
+            updateBTCTransParams({ wanAddress: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateBTCTransParams({ to: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
+        updateBTCTransParams({ wanAddress: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -255,7 +243,6 @@ class CrossBTCForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='amount'
-                disabled={this.state.disabledAmount}
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + direction === INBOUND ? ' BTC' : ' WBTC'}

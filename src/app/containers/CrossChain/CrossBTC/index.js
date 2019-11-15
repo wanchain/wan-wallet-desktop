@@ -17,7 +17,7 @@ const CHAINTYPE = 'BTC';
   getAddrList: stores.btcAddress.getAddrList,
   getAmount: stores.btcAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
-  transParams: stores.sendCrossChainParams.transParams,
+  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -44,16 +44,18 @@ class CrossBTC extends Component {
     clearInterval(this.timer);
   }
 
-  inboundHandleSend = from => {
-    let transParams = this.props.transParams[from];
+  inboundHandleSend = () => {
+    let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
-      to: transParams.to,
-      amount: transParams.amount,
-      gasPrice: transParams.gasPrice,
-      gasLimit: transParams.gasLimit,
+      value: transParams.value,
+      feeRate: transParams.feeRate,
+      changeAddress: transParams.changeAddress,
+      smgBtcAddr: transParams.smgBtcAddr,
       storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
+      wanAddress: transParams.wanAddress,
+      gasPrice: transParams.gasPrice,
+      gas: transParams.gas,
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
@@ -68,8 +70,8 @@ class CrossBTC extends Component {
     })
   }
 
-  outboundHandleSend = from => {
-    let transParams = this.props.transParams[from];
+  outboundHandleSend = () => {
+    let transParams = this.props.transParams;
     let input = {
       from: transParams.from,
       to: transParams.to,

@@ -1267,6 +1267,22 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
 
+      case 'crossBTC':
+        try {
+          let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+          let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+          payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+          if(!ret.code) {
+            err = ret;
+          }
+        } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break
+
       case 'crossETH':
         try {
           let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
@@ -1276,8 +1292,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           }
           ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
         } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
+          logger.error(e.message || e.stack)
+          err = e
         }
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
@@ -1310,6 +1326,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             canRevoke: []
           };
           let crossCollection = global.wanDb.getItemAll('crossTrans', {});
+          let crossBTCCollection = global.wanDb.getItemAll('crossTransBtc', {});
+
           crossCollection.forEach(record =>{
             if(ccUtil.canRedeem(record).code) {
                 record.redeemTryCount = 1;
@@ -1320,6 +1338,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 ret.canRevoke.push(record);
             }
           });
+
+          crossBTCCollection.forEach(item => {
+            if(item.hashX) {
+              if(['sentRedeemFailed', 'waitingX'].includes(item.status)) {
+                ret.canRedeem.push(item);
+              }
+              if(['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
+                ret.canRedeem.push(item);
+              }
+            }
+          })
         } catch (e) {
             logger.error(e.message || e.stack)
             err = e
@@ -1339,15 +1368,15 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
       case 'increaseFailedRetryCount':
         try {
-          let { hashX, toCount, isRedeem } = payload;
-          let record = global.wanDb.getItem('crossTrans', { hashX });
+          let { hashX, toCount, isRedeem, transType } = payload;
+          let record = global.wanDb.getItem(transType, { hashX });
           if (record) {
             if (isRedeem) {
               record.redeemTryCount = toCount;
             } else {
               record.revokeTryCount = toCount;
             }
-            global.wanDb.updateItem('crossTrans', { hashX:record.hashX }, record);
+            global.wanDb.updateItem(transType, { hashX:record.hashX }, record);
             ret = true;
           } else {
             ret = false;

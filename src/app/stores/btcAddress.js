@@ -183,14 +183,16 @@ class BtcAddress {
 
       Object.keys(self.transHistory).forEach(item => {
         let status = self.transHistory[item].status;
-        historyList.push({
-          key: item,
-          time: timeFormat(self.transHistory[item].time / 1000),
-          to: self.transHistory[item].to.toLowerCase(),
-          value: formatNum(self.transHistory[item].value),
-          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item].time,
-        });
+        if (!item.crossAddress) {
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item].time / 1000),
+            to: self.transHistory[item].to.toLowerCase(),
+            value: formatNum(self.transHistory[item].value),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item].time,
+          });
+        }
       });
 
       return historyList.sort((a, b) => b.sendTime - a.sendTime);

@@ -519,6 +519,9 @@ export const getAllUndoneCrossTrans = function (callback) {
 }
 
 export const increaseFailedRetryCount = function (params) {
+  if (!params.transType) {
+    params.transType = 'crossTrans';
+  }
   wand.request('crossChain_increaseFailedRetryCount', params, err => {
     if (err) {
       console.log('Increase redeem retry count failed');
