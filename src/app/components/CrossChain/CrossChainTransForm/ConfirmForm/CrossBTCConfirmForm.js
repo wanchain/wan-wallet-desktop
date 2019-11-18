@@ -42,7 +42,7 @@ class CrossBTCConfirmForm extends Component {
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
           {
             direction !== INBOUND &&
-            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
+            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME['WAN']}>
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }

@@ -1269,9 +1269,23 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
       case 'crossBTC':
         try {
+          let feeHard = network === 'main' ? 10000 : 100000;
           let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
           let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          if (payload.type === 'LOCK' && payload.source === 'BTC') {
+            payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
+          }
+          if (payload.type === 'REDEEM') {
+            if (payload.source === 'WAN') {
+              payload.input.feeHard = feeHard
+            }
+            payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          }
+          if (payload.type === 'REVOKE') {
+            if(payload.source === 'BTC') {
+              payload.input.feeHard = feeHard
+            }
+          }
           ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
           if(!ret.code) {
             err = ret;

@@ -218,11 +218,12 @@ const fr_FR = {
     'CrossChainTransForm.lockedAccount': 'Locked Account',
     'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.quota': 'Balance',
+    'CrossChainTransForm.quota': 'Quota Balance',
     'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
     'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
     'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+    'CrossChainTransForm.overQuota': 'The amount entered exceeds the balance of the locked account',
 
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',

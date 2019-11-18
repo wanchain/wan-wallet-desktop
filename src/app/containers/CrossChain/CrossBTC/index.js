@@ -60,7 +60,7 @@ class CrossBTC extends Component {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockBTCInbound:', err);
+          console.log('crossChain_lockBTC:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -71,20 +71,19 @@ class CrossBTC extends Component {
   }
 
   outboundHandleSend = () => {
-    let transParams = this.props.transParams;
+    let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
-      to: transParams.to,
       amount: transParams.amount,
+      crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
-      gasLimit: transParams.gasLimit,
-      storeman: transParams.storeman,
+      gas: transParams.gas,
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWBTCInbound:', err);
+          console.log('crossChain_lockWBTC:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));

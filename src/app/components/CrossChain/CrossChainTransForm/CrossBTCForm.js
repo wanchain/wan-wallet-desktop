@@ -22,8 +22,7 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
-  getAmount: stores.btcAddress.getNormalAmount,
-  from: stores.sendCrossChainParams.currentFrom,
+  getTokensListInfo: stores.tokens.getTokensListInfo,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
@@ -49,7 +48,7 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, from, direction, wanAddrInfo, getAmount } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -59,23 +58,27 @@ class CrossBTCForm extends Component {
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
 
       if (direction === INBOUND) {
-        origAddrAmount = getAmount;
+        origAddrAmount = balance;
         destAddrAmount = getBalanceByAddr(to, wanAddrInfo);
         origAddrFee = this.state.fee;
         destAddrFee = estimateFee.destination;
+
+        if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
       } else {
-        origAddrAmount = getBalanceByAddr(from, wanAddrInfo);
-        destAddrAmount = getAmount;
+        origAddrAmount = getBalanceByAddr(from, addrInfo);
+        destAddrAmount = getBalanceByAddr(to, addrInfo);
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
+
+        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(destAddrAmount, destAddrFee)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
       }
 
-      if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee, 0)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
-        return;
-      }
-
-      let path = direction === INBOUND ? WANPATH + wanAddrInfo.normal[to].path : BTCPATH + addrInfo.normal[to].path;
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -85,26 +88,37 @@ class CrossBTCForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateBTCTransParams({ wanAddress: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
+            if (direction === INBOUND) {
+              updateBTCTransParams({ wanAddress: { walletID: 1, path: WANPATH + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+            } else {
+              updateBTCTransParams({ crossAddr: { walletID: 1, path: BTCPATH + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+            }
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateBTCTransParams({ wanAddress: { walletID: 1, path }, toAddr: to, value: formatAmount(sendAmount) });
+        if (direction === INBOUND) {
+          updateBTCTransParams({ wanAddress: { walletID: 1, path: WANPATH + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+        } else {
+          updateBTCTransParams({ crossAddr: { walletID: 1, path: BTCPATH + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+        }
         this.setState({ confirmVisible: true });
       }
     });
   }
 
   checkAmount = (rule, value, callback) => {
-    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC } = this.props;
-
+    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form } = this.props;
+    let { quota } = form.getFieldsValue(['quota']);
     if (new BigNumber(value).gte(minCrossBTC) && checkAmountUnit(8, value)) {
       btcCoinSelect(utxos, value).then(data => {
+        let fee = formatNumByDecimals(data.fee, 8);
+        this.setState({ fee })
+        if (isExceedBalance(quota.split(' ')[0], value, fee)) {
+          callback(intl.get('CrossChainTransForm.overQuota'));
+          return;
+        }
         updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
-        this.setState({
-          fee: formatNumByDecimals(data.fee, 8)
-        })
         callback();
       }).catch(() => {
         callback(intl.get('NormalTransForm.invalidAmount'));
@@ -137,7 +151,7 @@ class CrossBTCForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, direction, addrInfo, symbol, getAmount } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, direction, addrInfo, symbol, balance } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
 
     if (direction === INBOUND) {
@@ -182,12 +196,24 @@ class CrossBTCForm extends Component {
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
             <div className="validator-bg">
+              {
+                direction !== INBOUND &&
+                <CommonFormItem
+                  form={form}
+                  colSpan={6}
+                  formName='from'
+                  disabled={true}
+                  options={{ initialValue: from }}
+                  prefix={<Icon type="credit-card" className="colorInput" />}
+                  title={intl.get('NormalTransForm.from')}
+                />
+              }
               <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='balance'
                 disabled={true}
-                options={{ initialValue: getAmount + ' BTC' }}
+                options={{ initialValue: balance + (direction === INBOUND ? ' BTC' : ' WBTC') }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('StakeInForm.balance')}
               />
@@ -245,7 +271,7 @@ class CrossBTCForm extends Component {
                 formName='amount'
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + direction === INBOUND ? ' BTC' : ' WBTC'}
+                title={intl.get('Common.amount') + (direction === INBOUND ? ' (btc)' : ' (wbtc)')}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>

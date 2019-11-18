@@ -23,7 +23,8 @@ class SendCrossChainParams {
       gas: '',
       crossAddr: '',
       amount: 0,
-      toAddr: ''
+      toAddr: '',
+      txFeeRatio: ''
     };
 
     @observable gasLimit = GASLIMIT;
@@ -75,6 +76,10 @@ class SendCrossChainParams {
 
     @computed get minCrossBTC() {
       return session.chainId === 1 ? 0.0002 : 0.002;
+    }
+
+    @computed get feeRate() {
+      return session.chainId === 1 ? 30 : 300;
     }
 }
 
