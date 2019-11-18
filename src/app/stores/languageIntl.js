@@ -263,6 +263,12 @@ class LanguageIntl {
         ]
       },
       {
+        title: intl.get('menuConfig.dex'),
+        step: '1',
+        key: '/dex',
+        icon: 'stock',
+      },
+      {
         title: intl.get('menuConfig.settings'),
         step: '1',
         key: '/settings',
