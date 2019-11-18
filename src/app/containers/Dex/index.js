@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { Table } from 'antd';
+import { Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
-
 import style from './index.less';
-import wanLogo from 'static/image/wan.png';
-import ethLogo from 'static/image/eth.png';
-import btcLogo from 'static/image/btc.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
@@ -19,6 +15,7 @@ class Dex extends Component {
   constructor (props) {
     super(props);
     this.props.changeTitle('menuConfig.dex');
+    this.state = { loading: true };
   }
 
   componentDidMount () {
@@ -27,17 +24,26 @@ class Dex extends Component {
     }, 5000)
     window.molin = {};
     window.molin.name = 'MoLin';
+
+    this.setState({ loading: true });
   }
 
   componentWillUnmount () {
     clearInterval(this.timer);
   }
 
+  onLoad = () => {
+    this.setState({ loading: false });
+    var f = document.getElementById('dex-frame');
+    f.height = '100%';
+  }
+
   render () {
     const { portfolioColumns, portfolioList } = this.props;
     return (
       <div className={style.myIframe}>
-        <iframe src="http://localhost:3000/" width="100%" height="100%" frameBorder="0" marginHeight="0" marginWidth="0">
+        {this.state.loading ? <Spin tip="Loading..." size="large"/> : null}
+        <iframe src="http://localhost:3000/" id='dex-frame' onLoad={this.onLoad} width="100%" height="0%" allowTransparency="true" frameBorder="0" marginHeight="0" marginWidth="0">
           Your explorer doesn't support iframe, please upgrade.
         </iframe>
       </div>
