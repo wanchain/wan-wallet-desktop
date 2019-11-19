@@ -78,7 +78,8 @@ class CrossBTC extends Component {
       crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
       gas: transParams.gas,
-      txFeeRatio: transParams.txFeeRatio
+      txFeeRatio: transParams.txFeeRatio,
+      storeman: transParams.storeman
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {

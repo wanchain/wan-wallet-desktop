@@ -3,7 +3,6 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
-import { createBTCAddr } from 'utils/helper';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 

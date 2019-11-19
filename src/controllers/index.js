@@ -1272,7 +1272,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           let feeHard = network === 'main' ? 10000 : 100000;
           let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
           let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          if (payload.type === 'LOCK' && payload.source === 'BTC') {
+          if (payload.type === 'LOCK' && payload.source === 'WAN') {
             payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
           }
           if (payload.type === 'REDEEM') {

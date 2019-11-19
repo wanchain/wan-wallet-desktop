@@ -9,7 +9,7 @@ import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { CHAINNAME, BTCPATH, WANPATH, INBOUND } from 'utils/settings';
+import { CHAINNAME, WANPATH, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
 import { getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos } from 'utils/helper';
 
@@ -22,6 +22,7 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
+  btcFee: stores.sendCrossChainParams.btcFee,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
@@ -48,7 +49,7 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from, btcPath } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -91,7 +92,7 @@ class CrossBTCForm extends Component {
             if (direction === INBOUND) {
               updateBTCTransParams({ wanAddress: { walletID: 1, path: WANPATH + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
             } else {
-              updateBTCTransParams({ crossAddr: { walletID: 1, path: BTCPATH + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+              updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
             }
             this.setState({ confirmVisible: true });
           }
@@ -100,7 +101,7 @@ class CrossBTCForm extends Component {
         if (direction === INBOUND) {
           updateBTCTransParams({ wanAddress: { walletID: 1, path: WANPATH + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
         } else {
-          updateBTCTransParams({ crossAddr: { walletID: 1, path: BTCPATH + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+          updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
         }
         this.setState({ confirmVisible: true });
       }
@@ -108,21 +109,26 @@ class CrossBTCForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form } = this.props;
+    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee } = this.props;
     let { quota } = form.getFieldsValue(['quota']);
     if (new BigNumber(value).gte(minCrossBTC) && checkAmountUnit(8, value)) {
-      btcCoinSelect(utxos, value).then(data => {
-        let fee = formatNumByDecimals(data.fee, 8);
-        this.setState({ fee })
-        if (isExceedBalance(quota.split(' ')[0], value, fee)) {
-          callback(intl.get('CrossChainTransForm.overQuota'));
-          return;
-        }
-        updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+      if (direction === INBOUND) {
+        btcCoinSelect(utxos, value).then(data => {
+          let fee = formatNumByDecimals(data.fee, 8);
+          this.setState({ fee })
+          if (isExceedBalance(quota.split(' ')[0], value, fee)) {
+            callback(intl.get('CrossChainTransForm.overQuota'));
+            return;
+          }
+          updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+          callback();
+        }).catch(() => {
+          callback(intl.get('NormalTransForm.invalidAmount'));
+        });
+      } else {
+        this.setState({ fee: btcFee });
         callback();
-      }).catch(() => {
-        callback(intl.get('NormalTransForm.invalidAmount'));
-      });
+      }
     } else {
       let message = intl.get('CrossChainTransForm.invalidAmount') + minCrossBTC;
       callback(message);

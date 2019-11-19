@@ -16,14 +16,18 @@ const inputCom = <Input disabled={true} />
 class CrossBTCConfirmForm extends Component {
   render() {
     const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, totalFeeTitle, handleCancel, direction } = this.props;
-    const { value, toAddr, storeman, btcAddress } = this.props.BTCCrossTransParams;
-    let desChain, lockedAccount;
+    const { value, toAddr, storeman, btcAddress, amount } = this.props.BTCCrossTransParams;
+    let desChain, lockedAccount, sendValue, symbol;
 
     if (direction === INBOUND) {
+      symbol = 'btc'
       desChain = 'WAN';
+      sendValue = value;
       lockedAccount = btcAddress;
     } else {
+      symbol = 'wbtc'
       desChain = 'BTC';
+      sendValue = amount;
       lockedAccount = storeman;
     }
 
@@ -55,8 +59,8 @@ class CrossBTCConfirmForm extends Component {
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}>
-            {getFieldDecorator('amount', { initialValue: value })(inputCom)}
+          <Form.Item label={intl.get('Common.amount') + ` (${symbol})`}>
+            {getFieldDecorator('amount', { initialValue: sendValue })(inputCom)}
           </Form.Item>
         </Form>
       </Modal>

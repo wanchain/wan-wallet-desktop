@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 
 import { getSmgList, getGasPrice } from 'utils/helper';
-import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS, WANPATH } from 'utils/settings';
+import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
 const CollectionCreateForm = Form.create({ name: 'CrossBTCForm' })(CrossBTCForm);
@@ -73,7 +73,7 @@ class BTCTrans extends Component {
         updateBTCTransParams({
           from: {
             walletID: 1,
-            path: WANPATH + path
+            path
           },
           txFeeRatio: smg.txFeeRatio,
           storeman: smg.wanAddress,
