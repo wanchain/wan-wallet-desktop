@@ -69,12 +69,12 @@ class CrossBTCForm extends Component {
           return;
         }
       } else {
-        origAddrAmount = getBalanceByAddr(from, addrInfo);
+        origAddrAmount = getBalanceByAddr(from, wanAddrInfo);
         destAddrAmount = getBalanceByAddr(to, addrInfo);
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
 
-        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(destAddrAmount, destAddrFee)) {
+        if (isExceedBalance(origAddrAmount, origAddrFee)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
