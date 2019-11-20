@@ -104,7 +104,7 @@ const pt_PT = {
     'WanAccount.create': 'Criar',
     'WanAccount.notSameName': 'O nome da conta não pode ser repetido. Por favor, tente novamente',
     'WanAccount.redeem': 'Resgatar',
-    'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
+    'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.cancel': 'Cancelar',
