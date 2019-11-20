@@ -1,4 +1,4 @@
-const en_US = {
+const pt_PT = {
     'Common.days': ' dias',
     'Common.amount': 'Montante',
     'Common.send': 'Enviar',
@@ -8,6 +8,7 @@ const en_US = {
     'Login.wrongPassword': 'Senha Errada',
     'Login.inputPassword': 'Insira Senha',
     'Login.restore': 'Esqueceu Senha？ Restaure a Seed Phrase inicial (Palavras de recuperação de carteira) para redefini-la',
+
     'Loading.tips': 'Por favor, aguarde enquanto a carteira está carregando ...',
     'Loading.transData': 'Carregando...',
 
@@ -15,7 +16,7 @@ const en_US = {
     'Register.secretBackupPhrase': 'Salve a Seedphrase (Palavras de recuperação da carteira)',
     'Register.confirmSecretBackupPhrase': 'Confirmar Seed Phrase',
     'Register.createSeedPhraseFailed': 'Falha na criação da seed phrase',
-    'Register.passwordTip':'A senha deve ter no mínimo 6 caracteres; deve conter pelo menos uma letra maiúscula, uma letra minúscula e um dígito numérico',
+    'Register.passwordTip': 'A senha deve ter no mínimo 6 caracteres; deve conter pelo menos uma letra maiúscula, uma letra minúscula e um dígito numérico',
     'Register.passwordsMismatched': 'Senhas incompatíveis',
     'Register.passwordsEmpty': 'Por favor insira a senha',
     'Register.seedPhraseIsInvalid': 'Seed phrase inválida',
@@ -70,8 +71,8 @@ const en_US = {
     'Config.pwdConfirm': 'Confirmação de senha',
     'Config.loginTimeout': 'Temporizador de log-out  automático',
     'Config.selectLoginTimeout': 'Por favor, selecione o temporizador',
-    'Config.disableTimeout': 'Desativar', 
-    'Config.fiveMinutes':'5 minutos',
+    'Config.disableTimeout': 'Desativar',
+    'Config.fiveMinutes': '5 minutos',
     'Config.tenMinutes': '10 minutos',
     'Config.fifteenMinutes': '15 minutos',
     'Config.thirtyMinutes': '30 minutos',
@@ -79,10 +80,9 @@ const en_US = {
     'Config.twoHours': '2 horas',
     'Config.invalidPassword': 'Senha inválida. Tente novamente',
 
-
     'PasswordConfirmForm.password': 'Senha',
     'PasswordConfirmForm.inputPwd': 'Insira Senha',
-    'PasswordConfirmForm.pwdMessage':'Por favor, insira sua senha!',
+    'PasswordConfirmForm.pwdMessage': 'Por favor, insira sua senha!',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -104,6 +104,7 @@ const en_US = {
     'WanAccount.create': 'Criar',
     'WanAccount.notSameName': 'O nome da conta não pode ser repetido. Por favor, tente novamente',
     'WanAccount.redeem': 'Resgatar',
+    'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.cancel': 'Cancelar',
@@ -123,7 +124,7 @@ const en_US = {
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',
     'HwWallet.Accounts.balance': 'SALDO',
-    'HwWallet.Accounts.action':  'AÇÃO',
+    'HwWallet.Accounts.action': 'AÇÃO',
     'HwWallet.Accounts.sendTransactionFailed': 'Falha na transação de envio. Por favor, tente novamente',
 
     'HwWallet.Connect.address': 'ENDEREÇO',
@@ -388,8 +389,8 @@ const en_US = {
     'popup.cancel': 'Cancelar',
     'title.imported': 'Importar endereço',
     'title.copy': 'Copiar',
-    'title.QRCode':'Código QR',
+    'title.QRCode': 'Código QR',
 
 }
 
-export default en_US;    
+export default pt_PT;

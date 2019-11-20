@@ -1,4 +1,4 @@
-const en_US = {
+const es_ES = {
     'Common.days': ' days',
     'Common.amount': 'Amount',
     'Common.send': 'Send',
@@ -393,4 +393,4 @@ const en_US = {
 
 }
 
-export default en_US;
+export default es_ES;
