@@ -161,8 +161,8 @@ class EOSTransHistory extends Component {
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>
-            <Radio value={'resource'}>{'resource'}
-              <Tooltip placement="bottom" title={'resource'} >
+            <Radio value={'resource'}>{'Resource'}
+              <Tooltip placement="bottom" title={'Resource'} >
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>

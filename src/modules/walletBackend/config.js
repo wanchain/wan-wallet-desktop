@@ -15,6 +15,7 @@ class ConfigFactoryService {
 
         } else {
             this.config.wanchain_js_testnet = true
+            // this.config.socketUrl = 'wss://apitest.wanchain.info'
             this.config.socketUrl = 'wss://192.168.1.179:10443'
         }
 

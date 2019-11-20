@@ -15,15 +15,18 @@ const AddAccountForm = Form.create({ name: 'addAccountForm' })(EOSAddAccountForm
 @inject(stores => ({
   language: stores.languageIntl.language,
   getKeyList: stores.eosAddress.getKeyList,
+  updateKeyName: (arr, type) => stores.eosAddress.updateKeyName(arr, type),
 }))
 
 @observer
 class EOSKeyPairList extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       showAddAccountForm: false,
-      selectedPublicKey: ''
+      selectedRow: {},
+      accountList: [],
+      spin: true
     }
   }
 
@@ -33,12 +36,12 @@ class EOSKeyPairList extends Component {
       editable: true
     },
     {
-      dataIndex: 'key',
+      dataIndex: 'publicKey',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><Button type="primary" onClick={() => { this.showAddAccountForm(record); }}>Add Account</Button></div>
+      render: (text, record) => <div><Button type="primary" onClick={() => { this.importAccount(record); }}>Import</Button></div>
     }
   ];
 
@@ -58,11 +61,33 @@ class EOSKeyPairList extends Component {
     };
   });
 
+  importAccount = (record) => {
+    wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
+      if (!err && response instanceof Array && response.length) {
+        this.showAddAccountForm(record);
+        this.setState({
+          accountList: response.map((v) => ({
+            account: v
+          })),
+          spin: false
+        });
+      } else {
+        console.log('error:', err);
+        message.error('Get account failed');
+      }
+    });
+  }
+
   showAddAccountForm = (record) => {
     this.setState({
       showAddAccountForm: true,
-      selectedPublicKey: record.key
+      selectedRow: record,
     });
+  }
+
+  handleSave = row => {
+    row.path = `${EOSPATH}${row.path}`;
+    this.props.updateKeyName(row, 'normal');
   }
 
   handleCancel = () => {
@@ -71,9 +96,10 @@ class EOSKeyPairList extends Component {
     })
   }
 
-  render () {
+  render() {
     const { getKeyList } = this.props;
-    console.log('getKeyList:', getKeyList);
+    let { selectedRow, accountList } = this.state;
+    // console.log('getKeyList:', getKeyList);
     const components = {
       body: {
         cell: EditableCell,
@@ -87,8 +113,8 @@ class EOSKeyPairList extends Component {
 
     return (
       <div>
-          <Table components={components} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getKeyList} />
-          <AddAccountForm selectedPublicKey={this.state.selectedPublicKey} showModal={this.state.showAddAccountForm} handleCancel={this.handleCancel}/>
+        <Table components={components} rowClassName={() => 'editable-row'} rowKey="publicKey" className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getKeyList} />
+        <AddAccountForm selectedRow={selectedRow} accounts={accountList} showModal={this.state.showAddAccountForm} handleCancel={this.handleCancel} spin={this.state.spin} />
       </div>
     );
   }

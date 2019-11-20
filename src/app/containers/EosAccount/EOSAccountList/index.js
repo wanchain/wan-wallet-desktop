@@ -22,34 +22,32 @@ class EOSAccountList extends Component {
         super(props);
         this.state = {
             showManageResourceForm: false,
-            selectedAccount: ''
+            record: {}
         }
-    }
-
-    closeManageResourceForm = () => {
-        console.log('closeManageResourceForm');
-        this.setState({
-            showManageResourceForm: false,
-        });
     }
 
     columns = [
         {
-            dataIndex: 'name',
+            dataIndex: 'account',
             editable: true,
             width: '30%',
             render: (text, record) => <div className="addrText">
-                    <p className="address">{text}</p>
-                    <Tooltip className={style.copyIcon} placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={() => this.copy(text)} /></Tooltip>
-                </div>
+                <p className="address">{text}</p>
+                <Tooltip className={style.copyIcon} placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={() => this.copy(text)} /></Tooltip>
+            </div>
         },
         {
-            dataIndex: 'value',
-            width: '15%',
+            dataIndex: 'ramAvailable',
+            width: '10%',
+            render: balance => balance
         },
         {
-            dataIndex: 'cpu',
-            width: '15%',
+            dataIndex: 'cpuAvailable',
+            width: '10%',
+        },
+        {
+            dataIndex: 'netAvailable',
+            width: '10%',
         },
         {
             dataIndex: 'balance',
@@ -60,7 +58,7 @@ class EOSAccountList extends Component {
             width: '25%',
             render: (text, record) => (<div>
                 <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>Manage Resources</Button>
-                <SendEOSNormalTrans/>
+                <SendEOSNormalTrans />
             </div>)
         }
     ];
@@ -74,13 +72,14 @@ class EOSAccountList extends Component {
         console.log('showManageResourceForm', record);
         this.setState({
             showManageResourceForm: true,
+            record: record
         });
     }
 
-    handleCancel = () => {
+    onCancel = () => {
         this.setState({
-            showAddAccountForm: false
-        })
+            showManageResourceForm: false,
+        });
     }
 
     render() {
@@ -92,8 +91,8 @@ class EOSAccountList extends Component {
 
         return (
             <div>
-                <Table className="content-wrap" rowKey="name" pagination={false} columns={this.columns} dataSource={getAccountList} />
-                { this.state.showManageResourceForm && <EOSResourceManageForm onCancel={this.closeManageResourceForm}/> }
+                <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountList} />
+                {this.state.showManageResourceForm && <EOSResourceManageForm record={this.state.record} onCancel={this.onCancel} />}
             </div>
         );
     }

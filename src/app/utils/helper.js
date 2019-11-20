@@ -95,6 +95,19 @@ export const getBTCMultiBalances = function (addresses) {
   })
 }
 
+export const getEOSMultiBalances = function (accounts) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getEOSMultiBalances', { accounts }, (err, data) => {
+      if (err) {
+        console.log('Get EOS balance Failed: ', err);
+        return reject(err);
+      } else {
+        return resolve(data);
+      }
+    })
+  })
+}
+
 export const getBalanceWithPrivateBalance = function (arr, path) {
   const addrArr = arr.map(item => item.substr(2));
   return new Promise((resolve, reject) => {

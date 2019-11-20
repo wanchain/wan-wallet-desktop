@@ -1,29 +1,86 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import { observable, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Icon, Checkbox } from 'antd';
-import EOSAddAccountList from './EOSAddAccountList';
+import { observer, inject } from 'mobx-react';
+import { Modal, Button, Form, Input, Icon, Table, Spin } from 'antd';
+import { EOSPATH } from 'utils/settings';
 import style from './index.less';
 
+@inject(stores => ({
+    language: stores.languageIntl.language,
+    updateAccounts: (arr, type) => stores.eosAddress.updateAccounts(arr, type),
+}))
+
+@observer
 class EOSAddAccountForm extends Component {
-    handleOk () {
-        console.log('handleOk')
+    state = {
+        selections: []
+    };
+
+    handleOk = () => {
+        let { form, selectedRow } = this.props;
+        form.validateFields(err => {
+            if (err) {
+                console.log('handleNext', err);
+                return;
+            };
+            let from = form.getFieldValue('from');
+            let accounts = form.getFieldValue('accounts');
+            let obj = Object.assign({}, selectedRow);
+            obj.path = `${EOSPATH}${obj.path}`;
+            obj.accounts = accounts;
+            this.props.updateAccounts(obj, 'normal');
+            this.props.handleCancel();
+        });
     }
 
     handleCancel = () => {
-        console.log('handleCancel');
-        console.log(this);
         this.props.handleCancel();
     }
 
+    selectionChange = (arr) => {
+        let { form } = this.props;
+        form.setFieldsValue({
+            accounts: arr
+        });
+        this.setState({
+            selections: arr
+        });
+    }
+
+    columns = () => [
+        {
+            title: 'ACCOUNT',
+            dataIndex: 'account',
+        }
+    ];
+
     render() {
-        const { form } = this.props;
+        const { form, accounts, selectedRow, spin, showModal } = this.props;
+        const { selections } = this.state;
         const { getFieldDecorator } = form;
+        const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+                this.selectionChange(selectedRowKeys);
+            },
+            selectedRowKeys: selections,
+            /* getCheckboxProps: record => {
+                console.log('record:', record);
+                console.log('selections:', this.props.selections);
+                let obj = {
+                    account: record.account,
+                };
+                if (this.props.selectedRow.accounts.includes(record.account)) {
+                    obj.disabled = true;
+                }
+                return obj;
+            }, */
+        };
         return (
             <div>
                 <Modal
-                    title="Add Account"
-                    visible ={this.props.showModal}
+                    title="Import Account"
+                    visible={showModal}
+                    wrapClassName={style.EOSAddAccountForm}
                     destroyOnClose={true}
                     closable={false}
                     onCancel={this.handleCancel}
@@ -32,13 +89,21 @@ class EOSAddAccountForm extends Component {
                         <Button key="submit" type="primary" onClick={this.handleOk}>{'OK'}</Button>,
                     ]}
                 >
-                    <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-                        <Form.Item label={'Searched Public Key'}>
-                            {getFieldDecorator('from', { initialValue: this.props.selectedPublicKey })
-                            (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                        </Form.Item>
-                        <EOSAddAccountList/>
-                    </Form>
+                    <Spin spinning={spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+                        <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
+                            <Form.Item label={'Searched Public Key'}>
+                                {getFieldDecorator('from', { initialValue: selectedRow.publicKey })
+                                    (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                            </Form.Item>
+                            <div style={{ marginBottom: '24px' }}>
+                                <Table rowSelection={rowSelection} columns={this.columns()} rowKey="account" dataSource={this.props.accounts} rowKey={record => record.account} pagination={false} />
+                            </div>
+                            <Form.Item>
+                                {getFieldDecorator('accounts', { rules: [{ type: 'array', required: true, message: 'Please select at least one account' }] })
+                                    (<Input hidden={true} disabled={true} />)}
+                            </Form.Item>
+                        </Form>
+                    </Spin>
                 </Modal>
             </div>
         );

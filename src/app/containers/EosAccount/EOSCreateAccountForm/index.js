@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observable, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Select, Row, Col } from 'antd';
+import { Modal, Button, Form, Input, Select, Row, Col, Icon } from 'antd';
 import style from './index.less';
 
 const { Option } = Select;
@@ -35,8 +35,12 @@ class EOSCreateAccountForm extends Component {
                     ]}
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-                        <Form.Item label={'Account Name'}>
+                        <Form.Item label={'New Account Name'}>
                             {getFieldDecorator('name', { initialValue: '' })
+                                (<Input prefix={<Icon type="wallet" className="colorInput" />} />)}
+                        </Form.Item>
+                        <Form.Item label={'Creator'}>
+                            {getFieldDecorator('creator', { initialValue: '' })
                                 (
                                     <Select
                                         showSearch
@@ -56,8 +60,8 @@ class EOSCreateAccountForm extends Component {
                                     </Select>
                                 )}
                         </Form.Item>
-                        <Form.Item label={'Owner Key'}>
-                            {getFieldDecorator('key', { initialValue: '' })
+                        <Form.Item label={'Owner Public Key'}>
+                            {getFieldDecorator('owner', { initialValue: '' })
                                 (
                                     <Select
                                         showSearch
@@ -77,11 +81,32 @@ class EOSCreateAccountForm extends Component {
                                     </Select>
                                 )}
                         </Form.Item>
+                        <Form.Item label={'Active Public Key'}>
+                            {getFieldDecorator('active', { initialValue: '' })
+                                (
+                                    <Select
+                                        showSearch
+                                        placeholder={'Active Key'}
+                                        optionFilterProp="children"
+                                        // onChange={onChange}
+                                        // onFocus={onFocus}
+                                        // onBlur={onBlur}
+                                        // onSearch={onSearch}
+                                        filterOption={(input, option) =>
+                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                    >
+                                        <Option value="1">ASDF1</Option>
+                                        <Option value="2">ASDF2</Option>
+                                        <Option value="3">ASDF3</Option>
+                                    </Select>
+                                )}
+                        </Form.Item>
                         <Row type="flex" justify="space-around">
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'RAM'}>
                                     {getFieldDecorator('RAM', { initialValue: '0' })
-                                        (<Input addonAfter="EOS" />)}
+                                        (<Input addonAfter="Bytes" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>

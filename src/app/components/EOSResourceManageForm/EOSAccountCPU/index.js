@@ -34,7 +34,7 @@ class EOSAccountCPU extends Component {
         let { availableValue, availableTotal, networkValue, networkTotal } = this.state;
         const { form } = this.props;
         const { getFieldDecorator } = form;
-        console.log(availableValue, availableTotal, networkValue, networkTotal);
+        // console.log(availableValue, availableTotal, networkValue, networkTotal);
         return (
             <div className={style.EOSAccountCPU}>
                 <Row>

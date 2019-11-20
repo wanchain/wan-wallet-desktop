@@ -15,8 +15,9 @@ const CHAINTYPE = 'EOS';
 const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAccountForm);
 
 @inject(stores => ({
-  keyInfo: stores.eosAddress.keyInfo,
   language: stores.languageIntl.language,
+  keyInfo: stores.eosAddress.keyInfo,
+  getAmount: stores.eosAddress.getAllAmount,
   addKey: obj => stores.eosAddress.addKey(obj),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
@@ -32,33 +33,31 @@ class EosAccount extends Component {
     }
   }
 
-  componentDidMount () {
-  }
-
-  componentWillUnmount () {
-  }
-
-  handleSend = from => {
-  }
-
-  creatAccount = () => {
-  }
-
   generateKeyPair = () => {
     const { keyInfo, addKey } = this.props;
     const addrLen = Object.keys(keyInfo['normal']).length;
     let path = `${EOSPATH}${addrLen}`;
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, res) => {
-      if (err) {
-        console.log('error:', err);
-      } else {
-        console.log('res:', res);
-        addKey({
-          start: addrLen,
-          name: res.name,
+      if (!err) {
+        let DBObject = {
+          name: `EOS-PublicKey${addrLen + 1}`,
           publicKey: res.address,
-          path: res.path
+          accounts: []
+        };
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: DBObject }, (err, response) => {
+          console.log('response:', response);
+          if (!err && response) {
+            addKey({
+              start: addrLen,
+              publicKey: res.address,
+              path: res.path
+            });
+          } else {
+            console.log('error:', err);
+          }
         });
+      } else {
+        console.log('error:', err);
       }
     });
   }
@@ -79,18 +78,19 @@ class EosAccount extends Component {
     })
   }
 
-  render () {
+  render() {
     const { getAmount } = this.props;
     return (
-      <div className={style.account}>
-        <Row className={style.title + ' ' + style['narrow-bottom-title']}>
+      <div className={style.EOSAccount + ' account'}>
+        {/* <Row className={style.title + ' ' + style['narrow-bottom-title']}> */}
+        <Row className={'title ' + style['narrow-bottom-title']}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
             <span className="wanTotal">{getAmount}</span>
             <span className="wanTex">{intl.get('EosAccount.eos')}</span>
           </Col>
         </Row>
-        <Row className={style['sub-title']}>
+        <Row className={'title ' + style['narrow-bottom-title']}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
             <span className="wanTex">{'EOS Key Pairs'}</span>
@@ -101,10 +101,10 @@ class EosAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <EOSKeyPairList/>
+            <EOSKeyPairList />
           </Col>
         </Row>
-        <Row className={style['sub-title']}>
+        <Row className={'title ' + style['narrow-bottom-title'] + ' ' + style.topBorder}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
             <span className="wanTex">{'EOS Accounts'}</span>
@@ -115,7 +115,7 @@ class EosAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <EOSAccountList/>
+            <EOSAccountList />
           </Col>
         </Row>
         <Row className="mainBody">
@@ -123,7 +123,7 @@ class EosAccount extends Component {
             <EOSTransHistory name={['normal', 'import']} />
           </Col>
         </Row>
-        <CreateAccountForm showModal={this.state.showCreateAccountForm} handleCancel={this.handleCancel}/>
+        <CreateAccountForm showModal={this.state.showCreateAccountForm} handleCancel={this.handleCancel} />
       </div>
     );
   }

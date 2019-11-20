@@ -19,55 +19,61 @@ const { TabPane } = Tabs;
 @observer
 class EOSResourceManageForm extends Component {
     state = {
+        activeKey: 0,
+        prices: {}
     }
 
-    componentWillUnmount() {
-        this.setState = (state, callback) => {
-            return false;
-        };
+    componentDidMount() {
+        // console.log('------------aaaaaacomponentDidMount---------------');
+        // console.log(this.props.record);
+        wand.request('address_getEOSResourcePrice', { account: this.props.record.account }, (err, res) => {
+            // console.log('prices:', res);
+            if (!err) {
+                this.setState({
+                    prices: res
+                });
+            } else {
+                console.log('Get resource price failed:', err);
+                message.error('Get resource price failed');
+            }
+        });
     }
 
-    onChange = () => {
-        console.log('onChange');
+    onChange = (activeKey) => {
+        this.setState({
+            activeKey
+        })
     }
 
     onCancel = () => {
         this.props.onCancel();
     }
 
-    handleSave = () => {
-    }
-
     render() {
         return (
-            <div className={style.EOSResourceManageForm}>
-                <Modal
-                    visible
-                    wrapClassName={style.EOSResourceManageFormModal}
-                    destroyOnClose={true}
-                    closable={false}
-                    title={'EOS Resource Management'}
-                    onCancel={this.onCancel}
-                    footer={[
-                        <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
-                        <Button key="submit" type="primary" onClick={this.handleSave}>{intl.get('Common.ok')}</Button>,
-                    ]}
-                >
-                    <Spin spinning={false} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-                        <Tabs className={style.tabs} defaultActiveKey={'1'} onChange={this.onChange} tabBarStyle={{ textAlign: 'center' }} tabBarGutter={120}>
-                            <TabPane tab="RAM" key="1">
-                                <RAM/>
-                            </TabPane>
-                            <TabPane tab="CPU" key="2">
-                                <CPU/>
-                            </TabPane>
-                            <TabPane tab="NET" key="3">
-                                <NET/>
-                            </TabPane>
-                        </Tabs>
-                    </Spin>
-                </Modal>
-            </div>
+            <Modal
+                visible
+                wrapClassName={style.EOSResourceManageFormModal}
+                destroyOnClose={true}
+                closable={false}
+                title={'EOS Resource Management'}
+                onCancel={this.onCancel}
+                footer={null}
+            >
+                <Spin spinning={false} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+                    <Tabs className={style.tabs} defaultActiveKey={'0'} onChange={this.onChange} tabBarStyle={{ textAlign: 'center' }} tabBarGutter={120}>
+                        <TabPane tab="RAM" key="0">
+                            <RAM record={this.props.record} price={this.state.prices.ram ? this.state.prices.ram : 0 } onCancel={this.onCancel} />
+                        </TabPane>
+                        <TabPane tab="CPU" key="1">
+                            <CPU record={this.props.record} price={this.state.prices.cpu ? this.state.prices.cpu : 0 } onCancel={this.onCancel} />
+                        </TabPane>
+                        <TabPane tab="NET" key="2">
+                            <NET record={this.props.record} price={this.state.prices.net ? this.state.prices.net : 0 } onCancel={this.onCancel} />
+                        </TabPane>
+                    </Tabs>
+                </Spin>
+            </Modal>
         );
     }
 }
