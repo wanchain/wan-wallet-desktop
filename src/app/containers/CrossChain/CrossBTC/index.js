@@ -7,7 +7,7 @@ import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
-import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
@@ -18,6 +18,7 @@ const CHAINTYPE = 'BTC';
   getAmount: stores.btcAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -36,6 +37,7 @@ class CrossBTC extends Component {
   componentDidMount() {
     let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'BTC');
     this.timer = setInterval(() => {
+      this.props.updateTransHistory();
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)
   }
@@ -161,7 +163,7 @@ class CrossBTC extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} symbol='BTC' />
+            <CrossBTCHistory name={['normal']} />
           </Col>
         </Row>
       </div>

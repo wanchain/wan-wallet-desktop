@@ -151,6 +151,18 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
   return value;
 }
 
+export const getInfoByPath = function (pathInfo, addrInfo) {
+  let value = {};
+  Object.keys(addrInfo).forEach(type => {
+    let index = Object.keys(addrInfo[type]).findIndex(val => addrInfo[type][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
+    if (index !== -1) {
+      let addr = Object.keys(addrInfo[type])[index];
+      value = addrInfo[type][addr];
+    }
+  });
+  return value;
+}
+
 export const getNonce = function (addrArr, chainType) {
   return new Promise((resolve, reject) => {
     wand.request('address_getNonce', { addr: addrArr, chainType: chainType }, (err, val) => {
