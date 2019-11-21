@@ -78,7 +78,7 @@ class Settings {
     }
 
     updateSettingsByConfig() {
-      let settings = this.get('settings');
+      let settings = this.get('settings') || {};
       Object.keys(defaultConfig.settings).forEach(item => {
         if(settings[item] === undefined) {
           this.set(`settings.${item}`, defaultConfig.settings[item])
