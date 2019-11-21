@@ -1151,7 +1151,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           try {
               tokens_advance = setting.get('settings').tokens_advance[network];
               ret = await ccUtil.getRegErc20Tokens();
-              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenWanAddr), 'WAN');
+              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
               if (network === 'main') {
                 ret = [{
                   tokenWanAddr: '0x28362cd634646620ef2290058744f9244bb90ed9',

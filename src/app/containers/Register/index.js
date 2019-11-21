@@ -35,6 +35,7 @@ const Step = Steps.Step;
 @observer
 class Register extends Component {
   state = {
+    loading: false,
     steps: [{
       title: intl.get('Register.createPassword'),
       content: <InputPwd />,
@@ -45,6 +46,12 @@ class Register extends Component {
       title: intl.get('Register.confirmSecretBackupPhrase'),
       content: <ConfirmPhrase />,
     }]
+  }
+
+  componentWillUnmount () {
+    this.setState = (state, callback) => {
+      return false;
+    };
   }
 
   next = () => {
@@ -94,14 +101,17 @@ class Register extends Component {
   done = () => {
     const { mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
+      this.setState({ loading: true });
       wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
         if (err) {
           message.error(intl.get('Register.writeSeedPhraseToDatabaseFailed'));
+          this.setState({ loading: false });
           return;
         }
         wand.request('wallet_unlock', { pwd: pwd }, async (err, val) => {
           if (err) {
-            console.log(intl.get('Register.unlockWalletFailed'), err)
+            console.log(intl.get('Register.unlockWalletFailed'), err);
+            this.setState({ loading: false });
           } else {
             try {
               let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
@@ -114,8 +124,10 @@ class Register extends Component {
               addBTCAddress(btcMainAddInfo);
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
+              this.setState({ loading: false });
             } catch (err) {
               console.log('createFirstAddr:', err);
+              this.setState({ loading: false });
               message.warn(intl.get('Register.createFirstAddr'));
             }
           }
@@ -142,7 +154,7 @@ class Register extends Component {
               current > 1 && (<Button onClick={this.prev} className="cancel">{intl.get('Register.previous')}</Button>)
             }
             {
-              current === steps.length - 1 && <Button style={{ marginLeft: 8 }} type="primary" onClick={this.done}>{intl.get('Register.done')}</Button>
+              current === steps.length - 1 && <Button loading={this.state.loading} style={{ marginLeft: 8 }} type="primary" onClick={this.done}>{intl.get('Register.done')}</Button>
             }
           </div>
         </div>
