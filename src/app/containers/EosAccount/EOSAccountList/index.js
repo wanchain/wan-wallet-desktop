@@ -3,13 +3,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Tooltip, Icon, Form, message } from 'antd';
 import style from './index.less';
-import { EOSPATH, WALLETID } from 'utils/settings';
-import CopyAndQrcode from 'components/CopyAndQrcode';
-import { EditableFormRow, EditableCell } from 'components/Rename';
 import SendEOSNormalTrans from 'components/SendNormalTrans/SendEOSNormalTrans';
 import EOSResourceManageForm from 'components/EOSResourceManageForm';
-
-const CHAINTYPE = 'EOS';
 
 @inject(stores => ({
     language: stores.languageIntl.language,

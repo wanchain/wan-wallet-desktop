@@ -689,6 +689,23 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
           sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break;
 
+        case 'EOSNormal':
+            try {
+              logger.info('Normal transaction: ' + JSON.stringify(payload));
+  
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('EOS', 'EOS');
+              let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+              console.log(JSON.stringify(ret, null, 4));
+              console.log('----------ret----------------:', ret);
+            } catch (e) {
+              logger.error('Send transaction failed: ' + e.message || e.stack)
+              console.log('-------------error--------------');
+              console.log(e);
+              err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
         case 'private':
             try {
                 let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload

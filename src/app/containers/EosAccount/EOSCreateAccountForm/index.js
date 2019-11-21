@@ -1,14 +1,35 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import { observable, inject } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { Modal, Button, Form, Input, Select, Row, Col, Icon } from 'antd';
 import style from './index.less';
+import { BigNumber } from 'bignumber.js';
 
 const { Option } = Select;
+@inject(stores => ({
+    language: stores.languageIntl.language,
+    getAccount: stores.eosAddress.getAccount,
+    getKeyList: stores.eosAddress.getKeyList,
+    getAccountList: stores.eosAddress.getAccountList,
+}))
 
+@observer
 class EOSCreateAccountForm extends Component {
-    handleOk() {
-        console.log('handleOk')
+    handleOk = () => {
+        console.log('handleOk');
+        const { form, getAccountList } = this.props;
+        console.log('getAccountList:', getAccountList);
+        form.validateFields(async (err) => {
+            if (err) {
+                return;
+            };
+            let values = form.getFieldsValue();
+            console.log('values: ', values); // {type: "buy", size: 12, account: "cuiqiangtes1"}
+            console.log('account:', values.creator);
+            if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
+                console.log(this.getBalanceByAccount(values.creator));
+            }
+        })
     }
 
     handleCancel = () => {
@@ -16,15 +37,23 @@ class EOSCreateAccountForm extends Component {
         this.props.handleCancel();
     }
 
+    getBalanceByAccount = (name) => {
+        console.log(name);
+        const { getAccountList } = this.props;
+        let index = getAccountList.findIndex((item) => item.account === name);
+        console.log('index:', index, getAccountList[index]);
+        return 123;
+    }
+
     render() {
-        const { form } = this.props;
+        const { form, getAccount, getKeyList } = this.props;
         const { getFieldDecorator } = form;
         const span = 8;
         return (
             <div>
                 <Modal
                     title={'Create Account'}
-                    visible={this.props.showModal}
+                    visible
                     wrapClassName={style.EOSCreateAccountForm}
                     destroyOnClose={true}
                     closable={false}
@@ -36,88 +65,70 @@ class EOSCreateAccountForm extends Component {
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={'New Account Name'}>
-                            {getFieldDecorator('name', { initialValue: '' })
+                            {getFieldDecorator('name', { rules: [{ required: true }] })
                                 (<Input prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
                         <Form.Item label={'Creator'}>
-                            {getFieldDecorator('creator', { initialValue: '' })
+                            {getFieldDecorator('creator', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
                                         placeholder={'Account Used To Fund The New Account'}
                                         optionFilterProp="children"
-                                        // onChange={onChange}
-                                        // onFocus={onFocus}
-                                        // onBlur={onBlur}
-                                        // onSearch={onSearch}
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="jack">Jack</Option>
-                                        <Option value="lucy">Lucy</Option>
-                                        <Option value="tom">Tom</Option>
+                                        {getAccount.map(v => <Option value={v} key={v}>{v}</Option>)}
                                     </Select>
                                 )}
                         </Form.Item>
                         <Form.Item label={'Owner Public Key'}>
-                            {getFieldDecorator('owner', { initialValue: '' })
+                            {getFieldDecorator('owner', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
                                         placeholder={'Owner Key'}
                                         optionFilterProp="children"
-                                        // onChange={onChange}
-                                        // onFocus={onFocus}
-                                        // onBlur={onBlur}
-                                        // onSearch={onSearch}
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="1">ASDF1</Option>
-                                        <Option value="2">ASDF2</Option>
-                                        <Option value="3">ASDF3</Option>
+                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}>{v.name} - {v.publicKey}</Option>)}
                                     </Select>
                                 )}
                         </Form.Item>
                         <Form.Item label={'Active Public Key'}>
-                            {getFieldDecorator('active', { initialValue: '' })
+                            {getFieldDecorator('active', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
                                         placeholder={'Active Key'}
                                         optionFilterProp="children"
-                                        // onChange={onChange}
-                                        // onFocus={onFocus}
-                                        // onBlur={onBlur}
-                                        // onSearch={onSearch}
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="1">ASDF1</Option>
-                                        <Option value="2">ASDF2</Option>
-                                        <Option value="3">ASDF3</Option>
+                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}>{v.name} - {v.publicKey}</Option>)}
                                     </Select>
                                 )}
                         </Form.Item>
                         <Row type="flex" justify="space-around">
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'RAM'}>
-                                    {getFieldDecorator('RAM', { initialValue: '0' })
-                                        (<Input addonAfter="Bytes" />)}
+                                    {getFieldDecorator('RAM', { initialValue: 0 })
+                                        (<Input addonAfter="KB" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
-                                <Form.Item label={'CPU&NET'}>
-                                    {getFieldDecorator('CPUNET', { initialValue: '0' })
+                                <Form.Item label={'CPU'}>
+                                    {getFieldDecorator('CPU', { initialValue: 0 })
                                         (<Input addonAfter="EOS" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
-                                <Form.Item label={'TOTAL'}>
-                                    {getFieldDecorator('TOTAL', { initialValue: '0' })
+                                <Form.Item label={'NET'}>
+                                    {getFieldDecorator('NET', { initialValue: 0 })
                                         (<Input addonAfter="EOS" />)}
                                 </Form.Item>
                             </Col>

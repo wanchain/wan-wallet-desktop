@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Tabs, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Modal, Tabs, Form, Icon, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 import EOSAccountRAM from './EOSAccountRAM';
 import EOSAccountCPU from './EOSAccountCPU';
@@ -24,7 +24,6 @@ class EOSResourceManageForm extends Component {
     }
 
     componentDidMount() {
-        // console.log('------------aaaaaacomponentDidMount---------------');
         // console.log(this.props.record);
         wand.request('address_getEOSResourcePrice', { account: this.props.record.account }, (err, res) => {
             // console.log('prices:', res);

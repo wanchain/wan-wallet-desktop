@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Input, Icon, Select, Radio, Checkbox, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Input, Icon, Select, Radio, message, Row, Col, Progress, InputNumber } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
-import { values } from 'mobx';
 import ConfirmForm from '../EOSResourceManageConfirmForm';
 
 const { Option } = Select;
-
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 @inject(stores => ({
     language: stores.languageIntl.language,
@@ -44,7 +42,7 @@ class EOSAccountRAM extends Component {
     };
 
     checkBuySize = (rule, value, callback) => {
-        if (typeof value === 'number') {
+        if (typeof value === 'number' && value !== 0) {
             callback();
         } else {
             callback(intl.get('Invalid size value'));
@@ -52,7 +50,7 @@ class EOSAccountRAM extends Component {
     }
 
     checkSellSize = (rule, value, callback) => {
-        if (typeof value === 'number') {
+        if (typeof value === 'number' && value !== 0) {
             callback();
         } else {
             callback(intl.get('Invalid size value'));
@@ -60,17 +58,55 @@ class EOSAccountRAM extends Component {
     }
 
     handleOk = () => {
-        console.log('handleOk');
-        const { form } = this.props;
+        const { form, record } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
             };
-            console.log('values: ', form.getFieldsValue()); // {type: true, size: 12, account: "cuiqiangtes2"}
-            this.setState({
-                formData: form.getFieldsValue(),
-                confirmVisible: true
-            });
+            let values = form.getFieldsValue();
+            console.log('values: ', values); // {type: "buy", size: 12, account: "cuiqiangtes1"}
+            console.log('record:', record);
+            if (values.type === 'buy') {
+                if (!record.balance) {
+                    message.warn('No sufficient balance');
+                    return;
+                }
+                const cost = new BigNumber(values.buySize).times(this.props.price);
+                if (new BigNumber(values.buySize).gt(this.state.maxBuyRAM)) {
+                    message.warn('Over the maximum size of RAM');
+                } else if (cost.gt(this.state.maxBuyEOS)) {
+                    message.warn('Over the maximum size of EOS');
+                } else if (cost.gt(record.balance)) {
+                    message.warn('No sufficient balance');
+                } else {
+                    console.log('can buy');
+                    this.setState({
+                        formData: {
+                            account: values.account,
+                            amount: values.buySize,
+                            type: values.type,
+                        },
+                        confirmVisible: true
+                    });
+                }
+            } else if (values.type === 'sell') {
+                if (new BigNumber(values.sellSize).gt(this.state.maxSellRAM)) {
+                    message.warn('Over the maximum size of RAM');
+                } else if (new BigNumber(values.sellSize).times(this.props.price).gt(this.state.maxSellEOS)) {
+                    message.warn('Over the maximum size of EOS');
+                } else if (new BigNumber(values.sellSize).gt(record.ramAvailable)) {
+                    message.warn('No sufficient RAM to sell');
+                } else {
+                    console.log('can sell');
+                    this.setState({
+                        formData: {
+                            amount: values.sellSize,
+                            type: values.type,
+                        },
+                        confirmVisible: true
+                    });
+                }
+            }
         })
     }
 
@@ -84,11 +120,40 @@ class EOSAccountRAM extends Component {
         });
     }
 
+    sendTrans = (obj) => {
+        console.log('sendTrans');
+        console.log(this.props.record);
+        if (obj.type === 'sell') return;
+        let params = {
+            action: 'buyrambytes',
+            from: this.props.record.account,
+            to: obj.account,
+            ramBytes: obj.amount
+
+        };
+        console.log('params:', params);
+        wand.request('transaction_EOSNormal', params, (err, res) => {
+            console.log(err, res);
+            if (!err) {
+                if (res.code) {
+                    this.setState({
+                        confirmVisible: false
+                    });
+                } else {
+                    message.error('Buy RAM fialed');
+                }
+            } else {
+                console.log('Buy RAM fialed:', err);
+                message.error('Buy RAM fialed');
+            }
+        });
+    }
+
     render() {
         let { availableValue, availableTotal, networkValue, networkTotal } = this.state;
         let { balance, publicKey, ramAvailable, ramTotal } = this.props.record;
         // console.log(Object.keys(this.props.record));
-        console.log(this.props.getAccount);
+        // console.log(this.props.getAccount);
         const { form } = this.props;
         const { getFieldDecorator } = form;
         return (
@@ -99,8 +164,7 @@ class EOSAccountRAM extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                // format={() => ramAvailable + 'KB/' + ramTotal + 'KB'}
-                                format={() => '80 KB/100 KB'} // Fake data
+                                format={() => ramAvailable + 'KB/' + ramTotal + 'KB'}
                                 percent={Number(new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -130,8 +194,8 @@ class EOSAccountRAM extends Component {
                                     <div>
                                         <div className={style.buyInfo}>Buy RAM ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
                                         <Form.Item>
-                                            {getFieldDecorator('size', { rules: [{ required: true, message: 'Invalid size', validator: this.checkBuySize }] })
-                                                (<InputNumber placeholder={'Enter RAM Size You Want To Buy'} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                            {getFieldDecorator('buySize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkBuySize }] })
+                                                (<InputNumber placeholder={'Enter RAM Size You Want To Buy ( KB )'} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -150,10 +214,10 @@ class EOSAccountRAM extends Component {
                                     </div>
                                 ) : (
                                         <div>
-                                            <div className={style.sellInfo}>Sell RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} MAX)</div>
+                                            <div className={style.sellInfo}>Sell RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
                                             <Form.Item>
-                                                {getFieldDecorator('size', { rules: [{ required: true, message: 'Invalid size', validator: this.checkSellSize }] })
-                                                    (<InputNumber placeholder={'Enter RAM Size You Want To Sell'} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                {getFieldDecorator('sellSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkSellSize }] })
+                                                    (<InputNumber placeholder={'Enter RAM Size You Want To Sell ( KB )'} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                             </Form.Item>
                                         </div>
                                     )}
@@ -165,7 +229,7 @@ class EOSAccountRAM extends Component {
                     <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
-                <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} formData={this.state.formData} />
+                <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
             </div>
         );
     }

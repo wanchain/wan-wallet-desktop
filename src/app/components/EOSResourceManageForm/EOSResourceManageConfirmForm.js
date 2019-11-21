@@ -3,8 +3,6 @@ import { Button, Modal, Form, Input } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-
-// import style from './index.less';
 import { formatNum } from 'utils/support';
 
 @inject(stores => ({
@@ -19,13 +17,14 @@ class EOSResourceManageConfirmForm extends Component {
   }
 
   handleSave = () => {
-    // this.props.sendTrans();
+    const { form } = this.props;
+    this.props.sendTrans(form.getFieldsValue());
   }
 
   render() {
     const { visible, form, formData } = this.props;
     const { getFieldDecorator } = form;
-    const { account, type, size } = formData;
+    const { account, type, amount } = formData;
 
     return (
       <Modal
@@ -36,16 +35,16 @@ class EOSResourceManageConfirmForm extends Component {
         onCancel={this.handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
-          <Button key="submit" type="primary" className="confirm-button" /* loading={loading} */ onClick={this.handleSave}>{intl.get('Common.send')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" onClick={this.handleSave}>{intl.get('Common.send')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-          <Form.Item label={'Account'}>
+          { this.props.formData.type === 'buy' && <Form.Item label={'Account'}>
             {getFieldDecorator('account', { initialValue: account })
               (<Input disabled={true} />)}
-          </Form.Item>
+          </Form.Item>}
           <Form.Item label={'Amount'}>
-            {getFieldDecorator('amount', { initialValue: size })
+            {getFieldDecorator('amount', { initialValue: amount })
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={'Type'}>

@@ -66,8 +66,6 @@ class EosAddress {
   }
 
   @computed get getAccountList() {
-    // console.log(self.accountInfo);
-    // console.log(Object.values(self.accountInfo));
     return Object.values(self.accountInfo);
   }
 

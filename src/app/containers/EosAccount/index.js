@@ -115,7 +115,7 @@ class EosAccount extends Component {
             <EOSTransHistory name={['normal', 'import']} />
           </Col>
         </Row>
-        <CreateAccountForm showModal={this.state.showCreateAccountForm} handleCancel={this.handleCancel} />
+        { this.state.showCreateAccountForm && <CreateAccountForm handleCancel={this.handleCancel} /> }
       </div>
     );
   }
