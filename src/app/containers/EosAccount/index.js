@@ -82,14 +82,6 @@ class EosAccount extends Component {
     const { getAmount } = this.props;
     return (
       <div className={style.EOSAccount + ' account'}>
-        {/* <Row className={style.title + ' ' + style['narrow-bottom-title']}> */}
-        <Row className={'title ' + style['narrow-bottom-title']}>
-          <Col span={12} className="col-left">
-            <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
-            <span className="wanTotal">{getAmount}</span>
-            <span className="wanTex">{intl.get('EosAccount.eos')}</span>
-          </Col>
-        </Row>
         <Row className={'title ' + style['narrow-bottom-title']}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
@@ -107,7 +99,7 @@ class EosAccount extends Component {
         <Row className={'title ' + style['narrow-bottom-title'] + ' ' + style.topBorder}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
-            <span className="wanTex">{'EOS Accounts'}</span>
+            <span className="wanTex">{`EOS Accounts ( ${getAmount} EOS )`}</span>
           </Col>
           <Col span={12} className="col-right">
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{'Create Account'}</Button>
