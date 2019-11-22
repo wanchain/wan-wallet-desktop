@@ -124,12 +124,12 @@ class CrossETHForm extends Component {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} TO W${symbol}` : 'ETH TO WETH';
-      totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
+      totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
       selectedList = Object.keys(addrInfo.normal);
       title = symbol ? `W${symbol} TO ${symbol}` : 'WETH TO ETH';
-      totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
+      totalFeeTitle = `${estimateFee.original} WAN + ${estimateFee.destination} ETH`;
     }
 
     if (smgList.length === 0) {

@@ -20,12 +20,12 @@ class CrossBTCConfirmForm extends Component {
     let desChain, lockedAccount, sendValue, symbol;
 
     if (direction === INBOUND) {
-      symbol = 'btc'
+      symbol = 'BTC'
       desChain = 'WAN';
       sendValue = value;
       lockedAccount = btcAddress;
     } else {
-      symbol = 'wbtc'
+      symbol = 'WBTC'
       desChain = 'BTC';
       sendValue = amount;
       lockedAccount = storeman;

@@ -21,10 +21,10 @@ class CrossETHConfirmForm extends Component {
 
     if (chainType === 'ETH') {
       desChain = 'WAN';
-      totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
+      totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
-      totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
+      totalFeeTitle = `${estimateFee.original} WAN + ${estimateFee.destination} ETH`;
     }
 
     return (

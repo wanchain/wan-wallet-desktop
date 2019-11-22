@@ -164,12 +164,12 @@ class CrossBTCForm extends Component {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} TO W${symbol}` : 'BTC TO WBTC';
-      totalFeeTitle = `${this.state.fee} btc + ${estimateFee.destination} wan`;
+      totalFeeTitle = `${this.state.fee} BTC + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'BTC';
       selectedList = Object.keys(addrInfo.normal);
       title = symbol ? `W${symbol} TO ${symbol}` : 'WBTC TO BTC';
-      totalFeeTitle = `${estimateFee.original} wan + ${this.state.fee} btc`;
+      totalFeeTitle = `${estimateFee.original} WAN + ${this.state.fee} BTC`;
     }
 
     if (smgList.length === 0) {
@@ -277,7 +277,7 @@ class CrossBTCForm extends Component {
                 formName='amount'
                 options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + (direction === INBOUND ? ' (btc)' : ' (wbtc)')}
+                title={intl.get('Common.amount') + (direction === INBOUND ? ' (BTC)' : ' (WBTC)')}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
