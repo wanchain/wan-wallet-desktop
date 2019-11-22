@@ -181,7 +181,7 @@ class DelegateInForm extends Component {
     let balance = form.getFieldValue('balance');
 
     if (!checkAmountUnit(18, value)) {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
 
     let valueStringPre = value.toString().slice(0, 4)

@@ -91,7 +91,7 @@ class CrossETHForm extends Component {
     if (value >= 0 && checkAmountUnit(18, value)) {
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 
@@ -123,12 +123,12 @@ class CrossETHForm extends Component {
     if (chainType === 'ETH') {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
-      title = symbol ? `${symbol} TO W${symbol}` : 'ETH TO WETH';
+      title = symbol ? `${symbol} -> W${symbol}` : 'ETH -> WETH';
       totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
       selectedList = Object.keys(addrInfo.normal);
-      title = symbol ? `W${symbol} TO ${symbol}` : 'WETH TO ETH';
+      title = symbol ? `W${symbol} -> ${symbol}` : 'WETH -> ETH';
       totalFeeTitle = `${estimateFee.original} WAN + ${estimateFee.destination} ETH`;
     }
 
@@ -174,12 +174,12 @@ class CrossETHForm extends Component {
               <SelectForm
                 form={form}
                 colSpan={6}
-                formName='lockedAccount'
+                formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
                 selectedList={smgList}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('CrossChainTransForm.lockedAccount')}
+                formMessage={intl.get('CrossChainTransForm.storemanAccount')}
               />
               {
                 chainType === 'ETH' &&

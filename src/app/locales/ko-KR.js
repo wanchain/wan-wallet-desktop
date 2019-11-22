@@ -6,6 +6,7 @@ const ko_KR = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.invalidAmount': '유효하지 않은 값',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -30,7 +31,7 @@ const ko_KR = {
     'Register.next': '다음 단계',
     'Register.previous': '이전 단계',
     'Register.done': '완료',
-    'Register.createFirstAddr': 'An error occurred, please try again!',
+    'Register.createFirstAddr': 'An error occurred, please try again',
 
     'Backup.invalidPassword': '비밀번호가 잘못되었습니다. 다시 시도하십시오.',
     'Backup.copySuccessfully': '성공 하였습니다.',
@@ -188,7 +189,6 @@ const ko_KR = {
 
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
-    'NormalTransForm.invalidAmount': '유효하지 않은 값',
     'NormalTransForm.invalidFeeRate': '유효하지 않은 값',
     'NormalTransForm.transaction': '전송',
     'NormalTransForm.cancel': '취소',
@@ -220,15 +220,14 @@ const ko_KR = {
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
-    'CrossChainTransForm.lockedAccount': 'Locked Account',
-    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.quota': 'Quota Balance',
-    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
-    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
-    'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
-    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
-    'CrossChainTransForm.overQuota': 'The amount entered exceeds the balance of the locked account',
+    'CrossChainTransForm.quota': 'Capacity Left',
+    'CrossChainTransForm.estimateFee': 'Estimated Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
+    'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
+    'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
 
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',
@@ -414,7 +413,8 @@ const ko_KR = {
     'title.copy': '복사',
     'title.QRCode': 'QR코드',
 
-    'network.down': 'The network request failed, Please try again later!'
+    'network.down': 'The network request failed, Please try again later'
+
 }
 
 export default ko_KR;

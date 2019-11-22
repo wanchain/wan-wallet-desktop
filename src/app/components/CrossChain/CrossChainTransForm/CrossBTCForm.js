@@ -123,7 +123,7 @@ class CrossBTCForm extends Component {
           updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
           callback();
         }).catch(() => {
-          callback(intl.get('NormalTransForm.invalidAmount'));
+          callback(intl.get('Common.invalidAmount'));
         });
       } else {
         this.setState({ fee: btcFee });
@@ -226,12 +226,12 @@ class CrossBTCForm extends Component {
               <SelectForm
                 form={form}
                 colSpan={6}
-                formName='lockedAccount'
+                formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
                 selectedList={smgList}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('CrossChainTransForm.lockedAccount')}
+                formMessage={intl.get('CrossChainTransForm.storemanAccount')}
               />
               {
                 direction === INBOUND &&

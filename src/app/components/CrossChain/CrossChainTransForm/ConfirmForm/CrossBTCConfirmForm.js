@@ -17,18 +17,18 @@ class CrossBTCConfirmForm extends Component {
   render() {
     const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, totalFeeTitle, handleCancel, direction } = this.props;
     const { value, toAddr, storeman, btcAddress, amount } = this.props.BTCCrossTransParams;
-    let desChain, lockedAccount, sendValue, symbol;
+    let desChain, storemanAccount, sendValue, symbol;
 
     if (direction === INBOUND) {
       symbol = 'BTC'
       desChain = 'WAN';
       sendValue = value;
-      lockedAccount = btcAddress;
+      storemanAccount = btcAddress;
     } else {
       symbol = 'WBTC'
       desChain = 'BTC';
       sendValue = amount;
-      lockedAccount = storeman;
+      storemanAccount = storeman;
     }
 
     return (
@@ -50,8 +50,8 @@ class CrossBTCConfirmForm extends Component {
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }
-          <Form.Item label={intl.get('CrossChainTransForm.lockedAccount')}>
-            {getFieldDecorator('lockedAccount', { initialValue: lockedAccount })(inputCom)}
+          <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
+            {getFieldDecorator('storemanAccount', { initialValue: storemanAccount })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
