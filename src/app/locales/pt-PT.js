@@ -7,6 +7,7 @@ const pt_PT = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Montante inválido',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',

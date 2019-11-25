@@ -123,7 +123,7 @@ class TokenTrans extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><Avatar className="avatarSty" src={this.img} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
           <Col span={12} className="col-right">
-            <span className="wanTotal">Token Address: <span onClick={this.onClickRow}>{tokenAddr}</span></span>
+            <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>
         </Row>
         <Row className="mainBody">

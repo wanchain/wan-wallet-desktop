@@ -7,6 +7,7 @@ const ko_KR = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': '유효하지 않은 값',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',

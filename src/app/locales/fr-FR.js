@@ -7,6 +7,7 @@ const fr_FR = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Montant invalide',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',

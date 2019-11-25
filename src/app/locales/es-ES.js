@@ -1,4 +1,4 @@
-const en_US = {
+const es_ES = {
     'Common.days': ' days',
     'Common.amount': 'Amount',
     'Common.send': 'Send',
@@ -7,6 +7,7 @@ const en_US = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Invalid amount',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -421,4 +422,4 @@ const en_US = {
 
 }
 
-export default en_US;
+export default es_ES;

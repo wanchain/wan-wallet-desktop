@@ -7,6 +7,7 @@ const th_TH = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'จำนวนไม่ถูกต้อง',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',

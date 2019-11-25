@@ -7,6 +7,7 @@ const zh_CN = {
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': '跨链',
     'Common.invalidAmount': '金额不正确',
+    'Common.tokenAddr': '代币地址',
 
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
