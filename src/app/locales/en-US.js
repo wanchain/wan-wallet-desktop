@@ -95,7 +95,8 @@ const en_US = {
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': 'Invalid password. Try again',
     'Config.crossChain': 'Cross Chain Options',
-    'Config.wrc20': 'WRC-20 Options',
+    'Config.wallet': 'Wallet Options',
+    'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'Password',

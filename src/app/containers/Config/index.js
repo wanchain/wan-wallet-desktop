@@ -127,17 +127,8 @@ class Config extends Component {
             </Select>
           </div>
         </Card>
-        <Card title={intl.get('Config.staking')}>
-          <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
-          <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
-        </Card>
-        <Card title={intl.get('Config.crossChain')}>
-          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
-          {
-            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleCrossChainSelected(item)}>{item.symbol}</Checkbox>)
-          }
-        </Card>
-        <Card title={intl.get('Config.wrc20')}>
+
+        <Card title={intl.get('Config.wallet')}>
           <p className={style['set_title']}>{intl.get('Config.enableWrc20')}</p>
           {
             wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
@@ -145,10 +136,33 @@ class Config extends Component {
           <div className={style['add_token']} onClick={this.handleAddToken}>
             <div className={style['account_pattern']}> + </div>
           </div>
+          {
+            this.state.showAddToken && <AddToken onCancel={this.onCancel} />
+          }
+          <div className={style.sub_title}>
+            <p className={style['set_title']}>{intl.get('Config.enableErc20')}</p>
+            {
+              wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+            }
+            <div className={style['add_token']} onClick={this.handleAddToken}>
+              <div className={style['account_pattern']}> + </div>
+            </div>
+            {
+              this.state.showAddToken && <AddToken onCancel={this.onCancel} />
+            }
+          </div>
         </Card>
-        {
-          this.state.showAddToken && <AddToken onCancel={this.onCancel} />
-        }
+
+        <Card title={intl.get('Config.crossChain')}>
+          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
+          {
+            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleCrossChainSelected(item)}>{item.symbol}</Checkbox>)
+          }
+        </Card>
+        <Card title={intl.get('Config.staking')}>
+          <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
+          <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
+        </Card>
       </div>
     );
   }

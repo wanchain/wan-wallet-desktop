@@ -91,7 +91,8 @@ const fr_FR = {
     'Config.twoHours': '2 heures',
     'Config.invalidPassword': 'Mot de passe invalide, réessayer',
     'Config.crossChain': 'Cross Chain Options',
-    'Config.wrc20': 'WRC-20 Options',
+    'Config.wallet': 'Wallet Options',
+    'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'Mot de passe',

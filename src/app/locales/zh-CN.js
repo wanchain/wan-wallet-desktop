@@ -96,7 +96,8 @@ const zh_CN = {
     'Config.existedTokenAddr': '已经存在的代币地址',
     'Config.invalidPassword': '密码错误，请重试',
     'Config.crossChain': '跨链选项',
-    'Config.wrc20': 'WRC-20选项',
+    'Config.wallet': '钱包选项',
+    'Config.enableErc20': '使能ERC-20代币',
     'Config.enableWrc20': '使能WRC-20代币',
 
     'PasswordConfirmForm.password': '密码',
