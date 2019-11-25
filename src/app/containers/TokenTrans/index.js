@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Avatar } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';

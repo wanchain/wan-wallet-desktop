@@ -275,7 +275,8 @@ class CrossBTCForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='amount'
-                options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
+                options={{ rules: [{ required: true, validator: this.checkAmount }] }}
+                placeholder={0}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + (direction === INBOUND ? ' (BTC)' : ' (WBTC)')}
               />

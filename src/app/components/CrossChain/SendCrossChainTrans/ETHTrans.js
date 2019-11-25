@@ -66,6 +66,7 @@ class ETHTrans extends Component {
     this.setState({ visible: true });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList('ETH')]);
+
       this.setState({
         smgList,
         estimateFee: {

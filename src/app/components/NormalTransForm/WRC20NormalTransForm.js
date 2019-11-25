@@ -308,6 +308,7 @@ class WRC20NormalTransForm extends Component {
       <div>
         <Modal
           visible
+          wrapClassName={style.normalTransFormModal}
           destroyOnClose={true}
           closable={false}
           title={intl.get('NormalTransForm.transaction')}

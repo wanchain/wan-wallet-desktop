@@ -118,17 +118,19 @@ class CrossETHForm extends Component {
 
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
 
     if (chainType === 'ETH') {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} -> W${symbol}` : 'ETH -> WETH';
+      tokenSymbol = symbol || 'ETH';
       totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
       selectedList = Object.keys(addrInfo.normal);
       title = symbol ? `W${symbol} -> ${symbol}` : 'WETH -> ETH';
+      tokenSymbol = symbol ? `W${symbol}` : 'WETH';
       totalFeeTitle = `${estimateFee.original} WAN + ${estimateFee.destination} ETH`;
     }
 
@@ -223,9 +225,10 @@ class CrossETHForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='amount'
-                options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
+                placeholder={0}
+                options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}
+                title={intl.get('Common.amount') + ` (${tokenSymbol})`}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
