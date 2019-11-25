@@ -143,7 +143,7 @@ class Layout extends Component {
               <Row className="content">
                 {this.props.children}
               </Row>
-              <MFooter />
+              {showHeader ? <MFooter /> : null}
             </Col>
           </Row>
         )

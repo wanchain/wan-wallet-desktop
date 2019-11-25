@@ -36,7 +36,8 @@ class Window extends EventEmitter {
                 webaudio: true,
                 webgl: false,
                 webSecurity: true,
-                textAreasAreResizable: true
+                textAreasAreResizable: true,
+                webviewTag: true
             }
         }
 
