@@ -99,17 +99,23 @@ class CrossE20 extends Component {
   inboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true,
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
+      width: '10%',
       render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
@@ -117,17 +123,23 @@ class CrossE20 extends Component {
   outboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true,
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
+      width: '10%',
       render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];

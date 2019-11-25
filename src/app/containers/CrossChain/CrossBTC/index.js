@@ -99,13 +99,18 @@ class CrossBTC extends Component {
   inboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '30%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     }
   ];
@@ -113,17 +118,23 @@ class CrossBTC extends Component {
   outboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
+      width: '10%',
       render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} direction={OUTBOUND}/></div>
     }
   ];

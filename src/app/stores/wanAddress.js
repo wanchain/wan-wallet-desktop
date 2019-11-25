@@ -479,7 +479,6 @@ class WanAddress {
         addrList = addrList.concat(Object.keys(self.addrInfo[name]))
       })
     }
-
     Object.keys(self.transHistory).forEach(item => {
       if (addrList.includes(self.transHistory[item]['from']) && self.transHistory[item].transferTo && (tokens.currTokenAddr.toLowerCase() === self.transHistory[item].to.toLowerCase())) {
         let status = self.transHistory[item].status;

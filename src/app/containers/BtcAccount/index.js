@@ -142,8 +142,8 @@ class BtcAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">BTC</span></Col>
           <Col span={12} className="col-right">
-            <SendNormalTrans from={from} handleSend={this.handleSend} />
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+            <SendNormalTrans from={from} handleSend={this.handleSend} />
           </Col>
         </Row>
         <Row className="mainBody">

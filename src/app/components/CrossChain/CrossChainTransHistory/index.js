@@ -15,7 +15,6 @@ import history from 'static/image/history.png';
   crossETHTrans: stores.crossChain.crossETHTrans,
   crossE20Trans: stores.crossChain.crossE20Trans,
   transColumns: stores.languageIntl.transColumns,
-  setCurrPage: page => stores.wanAddress.setCurrPage(page),
   updateCrossTrans: () => stores.crossChain.updateCrossTrans(),
 }))
 
@@ -24,11 +23,6 @@ class CrossChainTransHistory extends Component {
   state = {
     visible: false,
     record: {},
-  }
-
-  constructor (props) {
-    super(props);
-    this.props.setCurrPage(this.props.name || []);
   }
 
   componentDidMount() {
