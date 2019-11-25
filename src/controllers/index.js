@@ -1235,7 +1235,11 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
       case 'getSmgList':
         try {
-          ret = await ccUtil.getSmgList(payload.crossChain);
+          if (payload.crossChain.startsWith('0x')) {
+            ret = await ccUtil.syncErc20StoremanGroups(payload.crossChain);
+          } else {
+            ret = await ccUtil.getSmgList(payload.crossChain);
+          }
 
           if (payload.crossChain === 'BTC') {
             let net = network === 'main' ? 'mainnet' : 'testnet';
