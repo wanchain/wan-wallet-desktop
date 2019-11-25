@@ -25,7 +25,7 @@ class Dex extends Component {
 
     webview.addEventListener('dom-ready', function(e) {
       this.setState({ loading: false });
-      webview.openDevTools();
+      // webview.openDevTools();
     }.bind(this));
 
     webview.addEventListener('ipc-message', function(event) {
