@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
-import { CHAINNAME } from 'utils/settings';
+import { getFullChainName } from 'utils/helper';
 
 const inputCom = <Input disabled={true} />
 
@@ -40,19 +40,19 @@ class CrossETHConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME[chainType]}>
+          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + ' (' + getFullChainName(chainType) + ')'}>
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
             {getFieldDecorator('storemanAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}>
+          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}>
+          <Form.Item label={intl.get('Common.amount') + ` (${chainType.toUpperCase()})`}>
             {getFieldDecorator('amount', { initialValue: amount })(inputCom)}
           </Form.Item>
         </Form>

@@ -8,6 +8,10 @@ const zh_CN = {
     'Common.crossChain': '跨链',
     'Common.invalidAmount': '金额不正确',
     'Common.tokenAddr': '代币地址',
+    'Common.wanchain': '万维链',
+    'Common.ethereum': '以太坊',
+    'Common.bitcoin': '比特币',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
@@ -120,8 +124,6 @@ const zh_CN = {
     'WanAccount.redeem': '提币',
     'WanAccount.privateTxReceiverAddress': '隐私地址',
     'WanAccount.publicKey': '公钥',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',

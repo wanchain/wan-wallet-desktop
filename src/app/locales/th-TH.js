@@ -8,6 +8,10 @@ const th_TH = {
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'จำนวนไม่ถูกต้อง',
     'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -120,8 +124,6 @@ const th_TH = {
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',

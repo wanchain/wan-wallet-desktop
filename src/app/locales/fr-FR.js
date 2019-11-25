@@ -8,6 +8,10 @@ const fr_FR = {
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Montant invalide',
     'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -116,8 +120,6 @@ const fr_FR = {
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.cancel': 'Annuler',

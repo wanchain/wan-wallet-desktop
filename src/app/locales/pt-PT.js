@@ -8,6 +8,10 @@ const pt_PT = {
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Montante inválido',
     'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
@@ -120,8 +124,6 @@ const pt_PT = {
     'WanAccount.redeem': 'Resgatar',
     'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.cancel': 'Cancelar',

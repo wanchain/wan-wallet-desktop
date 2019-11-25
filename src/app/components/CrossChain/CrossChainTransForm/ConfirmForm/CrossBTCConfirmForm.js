@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
-import { CHAINNAME, INBOUND } from 'utils/settings';
+import { INBOUND } from 'utils/settings';
+import { getFullChainName } from 'utils/helper';
 
 const inputCom = <Input disabled={true} />
 
@@ -46,14 +47,14 @@ class CrossBTCConfirmForm extends Component {
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
           {
             direction !== INBOUND &&
-            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + CHAINNAME['WAN']}>
+            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + ' (' + getFullChainName('WAN') + ')'}>
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }
           <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
             {getFieldDecorator('storemanAccount', { initialValue: storemanAccount })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}>
+          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>

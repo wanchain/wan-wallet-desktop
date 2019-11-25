@@ -8,9 +8,9 @@ import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { fromWei, isExceedBalance } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { CHAINNAME, ETHPATH, WANPATH } from 'utils/settings';
+import { ETHPATH, WANPATH } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
-import { getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 
@@ -171,7 +171,7 @@ class CrossETHForm extends Component {
                 disabled={true}
                 options={{ initialValue: from }}
                 prefix={<Icon type="wallet" className="colorInput" />}
-                title={intl.get('NormalTransForm.from') + CHAINNAME[chainType]}
+                title={intl.get('NormalTransForm.from') + ' (' + getFullChainName(chainType) + ')'}
               />
               <SelectForm
                 form={form}
@@ -210,7 +210,7 @@ class CrossETHForm extends Component {
                 formName='to'
                 initialValue={selectedList[0]}
                 selectedList={selectedList}
-                formMessage={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}
+                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />
               <CommonFormItem
                 form={form}

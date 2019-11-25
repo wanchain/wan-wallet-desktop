@@ -642,3 +642,16 @@ export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
   });
   return fromArr;
 }
+
+export const getFullChainName = function (chainType) {
+  switch (chainType.toUpperCase()) {
+    case 'WAN':
+      return intl.get('Common.wanchain');
+    case 'ETH':
+      return intl.get('Common.ethereum');
+    case 'BTC':
+      return intl.get('Common.bitcoin');
+    case 'EOS':
+      return intl.get('Common.eos');
+  }
+}

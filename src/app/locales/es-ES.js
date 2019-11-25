@@ -8,6 +8,10 @@ const es_ES = {
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': 'Invalid amount',
     'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -120,8 +124,6 @@ const es_ES = {
     'WanAccount.redeem': 'Redeem',
     'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.cancel': 'Cancel',

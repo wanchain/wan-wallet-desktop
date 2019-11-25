@@ -8,6 +8,10 @@ const ko_KR = {
     'Common.crossChain': 'Cross Chain',
     'Common.invalidAmount': '유효하지 않은 값',
     'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -120,8 +124,6 @@ const ko_KR = {
     'WanAccount.redeem': '적용',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.cancel': '취소',

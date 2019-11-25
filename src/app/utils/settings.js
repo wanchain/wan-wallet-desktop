@@ -60,12 +60,6 @@ export const FAKEVAL = '1';
 export const FAKEADDR = '0x0000000000000000000000000000000000000003';
 export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';
 
-export const CHAINNAME = {
-  WAN: ' (Wanchain)',
-  ETH: ' (Ethereum)',
-  BTC: ' (Bitcoin)',
-};
-
 export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH'];
 export const CROSSCHAINTYPE = ['BTC', 'ETH'];
 
