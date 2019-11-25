@@ -10,7 +10,12 @@ class Dex extends Component {
     super(props);
     this.state = { loading: true };
     this.dexUrl = 'https://demodex.wandevs.org/';
+    // this.dexUrl = 'http://localhost:3000/';
+
     this.preload = 'file:///Users/molin/workspace/wan-wallet-desktop/src/modules/preload/dexInject.js';
+    // this.preload = `file://${__dirname}/../preload/dexInject.js`;
+    // this.preload = `file://~/src/modules/preload/dexInject.js`;
+
     console.log(this.preload);
   }
 
@@ -159,6 +164,7 @@ class Dex extends Component {
   async sendTransaction(msg) {
     msg.err = null;
     msg.val = null;
+    console.log('msg:', msg);
     console.log('ready to sendTx:', msg.message);
     const wallet = await this.getWalletFromAddress(msg.address);
     console.log('ready to send tx with:', wallet);
@@ -172,7 +178,7 @@ class Dex extends Component {
       path: wallet.path,
       to: msg.message.to,
       amount: amountInWei.div(1e18),
-      gasLimit: `0x${(200000).toString(16)}`,
+      gasLimit: `0x${(2000000).toString(16)}`,
       gasPrice: 200,
       data: msg.message.data
     };
