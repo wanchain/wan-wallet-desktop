@@ -17,6 +17,7 @@ const ethUtil = require('ethereumjs-util');
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
+import { settings } from 'cluster'
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -32,8 +33,6 @@ const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_SETTING = 'setting'
 
-// route for DEX
-const ROUTE_DEX = 'dex'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -1486,16 +1485,19 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
-    }
-})
+        
+        case 'getDexInjectFile':
+            console.log('getDexInjectFile is called');
+            let ret = "";
 
-ipc.on(ROUTE_DEX, async (event, actionUni, payload) => {
-    let ret, err
-    const [action, id] = actionUni.split('#')
-
-    switch (action) {        
-    
-                
+            if(setting.isDev) {
+                ret = `file://${__dirname}/../modals/dexInject.js`;
+            } else {
+                ret = `file://${__dirname}/modals/dexInject.js`
+            }
+            console.log(setting.isDev, ret);
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

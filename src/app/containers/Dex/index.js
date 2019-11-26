@@ -8,29 +8,36 @@ const pu = require('promisefy-util');
 class Dex extends Component {
   constructor (props) {
     super(props);
-    this.state = { loading: true };
+    this.state = { loading: true, preload: null };
     this.dexUrl = 'https://demodex.wandevs.org/';
-    // this.dexUrl = 'http://localhost:3000/';
-
-    this.preload = 'file:///Users/molin/workspace/wan-wallet-desktop/src/modules/preload/dexInject.js';
-    // this.preload = `file://${__dirname}/../preload/dexInject.js`;
-    // this.preload = `file://~/src/modules/preload/dexInject.js`;
-
-    console.log(this.preload);
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     this.setState({ loading: true });
+    const preload = await this.getPreloadFile()
+    console.log(preload);
+    this.setState({ preload: preload });
+    this.addEventListeners();
+  }
+
+  addEventListeners = () => {
+    if (this.webview || !this.state.preload) {
+      return;
+    }
+
     var webview = document.getElementById('dexView');
+
+    if (!webview) {
+      return;
+    }
 
     webview.addEventListener('dom-ready', function(e) {
       this.setState({ loading: false });
-      // webview.openDevTools();
+      webview.openDevTools();
     }.bind(this));
 
     webview.addEventListener('ipc-message', function(event) {
       const { args, channel } = event;
-      console.log('received ipc message:', channel, args);
       if (channel === 'dex-message') {
         this.handlerDexMessage(args[0]);
       }
@@ -47,7 +54,6 @@ class Dex extends Component {
       method: args[0],
       id: args[1]
     }
-    console.log('dex-message:', msg);
     switch (msg.method) {
       case 'getAddresses':
         this.getAddresses(msg);
@@ -201,22 +207,32 @@ class Dex extends Component {
     );
   }
 
+  async getPreloadFile() {
+    return pu.promisefy(wand.request, ['setting_getDexInjectFile']);
+  }
+
   render () {
-    return (
-      <div className={style.myIframe}>
-        {this.state.loading ? <Spin tip="Loading..." size="large"/> : null}
-        <webview
+    const preload = this.state.preload;
+    console.log('preload:', preload);
+    if (preload) {
+      return (
+        <div className={style.myIframe}>
+          {this.state.loading ? <Spin tip="Loading..." size="large"/> : null}
+          <webview
           id="dexView"
           src={this.dexUrl}
           style={ { width: '100%', height: '100%' } }
           nodeintegration="on"
-          preload={ this.preload }
+          preload={ preload }
           allowpopups="on"
           >
-        Your electron doesn't support webview, please set webviewTag: true.
-        </webview>
-      </div>
-    );
+          Your electron doesn't support webview, please set webviewTag: true.
+          </webview>
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
