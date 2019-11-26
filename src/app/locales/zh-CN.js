@@ -272,6 +272,8 @@ const zh_CN = {
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
 
+    'menuConfig.dex': '交易',
+
     'utils.helper.getBalanceFailed': '获取余额失败',
     'utils.helper.getNonceFailed': '获取nonce失败',
     'utils.helper.getGasPriceFailed': '获取gas价格失败',
