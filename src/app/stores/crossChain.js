@@ -90,6 +90,7 @@ class CrossChain {
 
   @computed get crossE20Trans () {
     let crossEthTrans = [];
+    let currTokenInfo = Object.values(tokens.tokensList).find(item => item.symbol === self.currSymbol.toUpperCase())
     self.crossTrans.forEach((item, index) => {
       if (item.tokenSymbol === self.currSymbol.toUpperCase()) {
         let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
@@ -104,7 +105,7 @@ class CrossChain {
           fromAddr: item.fromAddr,
           to: (getInfoByAddress(item.toAddr, ['name'], toAddrInfo)).name,
           toAddr: item.toAddr,
-          value: formatNum(fromWei(item.contractValue)),
+          value: formatNum(formatNumByDecimals(Number(item.contractValue), currTokenInfo.decimals)),
           status: item.status,
           sendTime: item.sendTime,
           srcChainAddr: item.srcChainAddr,

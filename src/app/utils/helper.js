@@ -139,7 +139,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
 }
 
 export const getInfoByAddress = function (address, infos, addrInfo) {
-  let value;
+  let value = {};
   Object.keys(addrInfo).forEach(type => {
     let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address);
     if (index !== -1) {
@@ -643,7 +643,7 @@ export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
   return fromArr;
 }
 
-export const getFullChainName = function (chainType) {
+export const getFullChainName = function (chainType = '') {
   switch (chainType.toUpperCase()) {
     case 'WAN':
       return intl.get('Common.wanchain');

@@ -24,7 +24,7 @@ message.config({
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
   transParams: stores.sendTransParams.transParams,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getTokensListInfo: stores.tokens.getTokensListInfo_2WanTypes,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),

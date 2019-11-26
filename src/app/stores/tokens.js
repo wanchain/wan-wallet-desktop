@@ -130,6 +130,33 @@ class Tokens {
   @computed get getTokensListInfo () {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
+    normalArr.forEach(item => {
+      let balance;
+      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
+        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+      addrList.push({
+        key: item,
+        name: wanAddress.addrInfo.normal[item].name,
+        address: wanUtil.toChecksumAddress(item),
+        balance: formatNum(balance),
+        path: `${WANPATH}${wanAddress.addrInfo.normal[item].path}`,
+        action: 'send',
+        amount: balance
+      });
+    });
+    return addrList;
+  }
+
+  @computed get getTokensListInfo_2WanTypes () {
+    let addrList = [];
+    let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
     normalArr.concat(importArr).forEach((item, index) => {
       let balance;
