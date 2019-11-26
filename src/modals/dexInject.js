@@ -1,13 +1,16 @@
 const { ipcRenderer } = require('electron');
 const uuid = require('uuid/v1');
 
-class LightWallet {
+class Web3Eth {
   constructor() {
     this._callback = {}; //Save all callback funcs
     ipcRenderer.on('dex-message', this.dexMessageHandler.bind(this));
   }
 
-  getAddresses(cb) {
+  // ---------------------------------
+  // Functions called by DEX
+  // function name same to web3 protocol
+  getAccounts(cb) {
     const msg = {
       method: "getAddresses",
       id: uuid(),
@@ -18,7 +21,7 @@ class LightWallet {
     this.sendToHost([msg.method, msg.id]);
   }
 
-  signPersonalMessage(message, address, cb) {
+  sign(message, address, cb) {
     const msg = {
       method: "signPersonalMessage",
       id: uuid(),
@@ -31,20 +34,19 @@ class LightWallet {
     this.sendToHost([msg.method, msg.id, msg.message, msg.address]);
   }
 
-  sendTransaction(tx, address, cb) {
+  sendTransaction(tx, cb) {
     const msg = {
       method: "sendTransaction",
       id: uuid(),
       cb: cb,
       message: tx,
-      address: address
     };
 
     this.saveCb(msg);
-    this.sendToHost([msg.method, msg.id, msg.message, msg.address]);
+    this.sendToHost([msg.method, msg.id, msg.message]);
   }
 
-  loadNetworkId(cb) {
+  getChainId(cb) {
     const msg = {
       method: "loadNetworkId",
       id: uuid(),
@@ -54,7 +56,10 @@ class LightWallet {
     this.saveCb(msg);
     this.sendToHost([msg.method, msg.id]);
   }
+  // -------------------------------
 
+  // -------------------------------
+  // Functions used for internal data transfer
   sendToHost(obj) {
     ipcRenderer.sendToHost('dex-message', obj);
   }
@@ -82,6 +87,7 @@ class LightWallet {
     const msg = data;
     this.runCb(msg);
   }
+  // --------------------------------
 }
 
-window.lightWallet = new LightWallet();
+window.web3 = { eth: new Web3Eth() };

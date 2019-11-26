@@ -68,7 +68,6 @@ class Dex extends Component {
         break;
       case 'sendTransaction':
         msg.message = args[2];
-        msg.address = args[3];
         this.sendTransaction(msg);
         break;
       default:
@@ -172,7 +171,13 @@ class Dex extends Component {
     msg.val = null;
     console.log('msg:', msg);
     console.log('ready to sendTx:', msg.message);
-    const wallet = await this.getWalletFromAddress(msg.address);
+    if (!msg.message || !msg.message.from) {
+      msg.err = 'can not find from address.';
+      this.sendToDex(msg);
+      return;
+    }
+
+    const wallet = await this.getWalletFromAddress(msg.message.from);
     console.log('ready to send tx with:', wallet);
 
     let amountInWei = new BigNumber(msg.message.value)
