@@ -116,7 +116,7 @@ class CrossE20 extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -140,7 +140,7 @@ class CrossE20 extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 

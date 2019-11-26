@@ -113,7 +113,7 @@ class ETHTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm decimals={this.props.decimals} tokenAddr={this.props.tokenAddr} symbol={this.props.symbol} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm balance={this.props.balance} decimals={this.props.decimals} tokenAddr={this.props.tokenAddr} symbol={this.props.symbol} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

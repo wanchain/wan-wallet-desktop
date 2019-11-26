@@ -114,7 +114,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -138,7 +138,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 

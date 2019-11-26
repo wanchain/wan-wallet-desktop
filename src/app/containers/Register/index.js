@@ -102,7 +102,7 @@ class Register extends Component {
     const { mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       this.setState({ loading: true });
-      wand.request('phrase_import', { phrase: mnemonic, pwd }, (err) => {
+      wand.request('phrase_import', { phrase: mnemonic, pwd }, err => {
         if (err) {
           message.error(intl.get('Register.writeSeedPhraseToDatabaseFailed'));
           this.setState({ loading: false });

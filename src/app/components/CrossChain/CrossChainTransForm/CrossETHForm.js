@@ -48,7 +48,7 @@ class CrossETHForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo } = this.props;
+    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo, tokenAddr } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -60,10 +60,18 @@ class CrossETHForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, chainType === 'ETH' ? wanAddrInfo : addrInfo);
       let path = chainType === 'ETH' ? WANPATH + wanAddrInfo.normal[to].path : ETHPATH + addrInfo.normal[to].path;
 
-      if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination, 0)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
-        return;
+      if (tokenAddr) {
+        if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
+      } else {
+        if (isExceedBalance(origAddrAmount, estimateFee.original, chainType === 'ETH' ? sendAmount : 0) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
       }
+
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -89,8 +97,13 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (new BigNumber(value).gte('0') && checkAmountUnit(18, value)) {
-      callback();
+    const { decimals, balance } = this.props;
+    if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
+      if (new BigNumber(value).gt(balance)) {
+        callback(intl.get('CrossChainTransForm.overTransBalance'));
+      } else {
+        callback();
+      }
     } else {
       callback(intl.get('Common.invalidAmount'));
     }
