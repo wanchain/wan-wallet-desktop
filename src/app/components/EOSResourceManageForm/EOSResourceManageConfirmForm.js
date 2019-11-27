@@ -7,7 +7,6 @@ import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  // transParams: stores.sendTransParams.transParams,
 }))
 
 @observer

@@ -19,6 +19,7 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
   keyInfo: stores.eosAddress.keyInfo,
   getAmount: stores.eosAddress.getAllAmount,
   addKey: obj => stores.eosAddress.addKey(obj),
+  updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -26,11 +27,19 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
 class EosAccount extends Component {
   constructor (props) {
     super(props);
-    // this.props.updateTransHistory();
+    this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
     this.state = {
       showCreateAccountForm: false,
     }
+  }
+
+  componentDidMount () {
+    this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.timer);
   }
 
   generateKeyPair = () => {

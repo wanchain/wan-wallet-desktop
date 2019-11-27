@@ -15,6 +15,7 @@ const AddAccountForm = Form.create({ name: 'addAccountForm' })(EOSAddAccountForm
 @inject(stores => ({
   language: stores.languageIntl.language,
   getKeyList: stores.eosAddress.getKeyList,
+  accountInfo: stores.eosAddress.accountInfo,
   updateKeyName: (arr, type) => stores.eosAddress.updateKeyName(arr, type),
 }))
 
@@ -62,13 +63,20 @@ class EOSKeyPairList extends Component {
   });
 
   importAccount = (record) => {
+    const { accountInfo } = this.props;
     wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
       if (!err && response instanceof Array && response.length) {
         this.showAddAccountForm(record);
+        let accountList = [];
+        response.forEach(v => {
+          if (accountInfo[v] && accountInfo[v].activeKeys.includes(record.publicKey)) {
+            accountList.push({
+              account: v
+            });
+          }
+        });
         this.setState({
-          accountList: response.map((v) => ({
-            account: v
-          })),
+          accountList: accountList,
           spin: false
         });
       } else {

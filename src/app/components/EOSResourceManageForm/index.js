@@ -14,6 +14,7 @@ const { TabPane } = Tabs;
 @inject(stores => ({
     language: stores.languageIntl.language,
     settings: stores.session.settings,
+    selectedAccount: stores.eosAddress.selectedAccount,
 }))
 
 @observer
@@ -24,9 +25,8 @@ class EOSResourceManageForm extends Component {
     }
 
     componentDidMount() {
-        // console.log(this.props.record);
-        wand.request('address_getEOSResourcePrice', { account: this.props.record.account }, (err, res) => {
-            // console.log('prices:', res);
+        wand.request('address_getEOSResourcePrice', { account: this.props.selectedAccount.account }, (err, res) => {
+            console.log('prices:', res);
             if (!err) {
                 this.setState({
                     prices: res
@@ -62,13 +62,13 @@ class EOSResourceManageForm extends Component {
                 <Spin spinning={false} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
                     <Tabs className={style.tabs} defaultActiveKey={'0'} onChange={this.onChange} tabBarStyle={{ textAlign: 'center' }} tabBarGutter={120}>
                         <TabPane tab="RAM" key="0">
-                            <RAM record={this.props.record} price={this.state.prices.ram ? this.state.prices.ram : 0 } onCancel={this.onCancel} />
+                            <RAM price={this.state.prices.ram ? this.state.prices.ram : 0 } onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="CPU" key="1">
-                            <CPU record={this.props.record} price={this.state.prices.cpu ? this.state.prices.cpu : 0 } onCancel={this.onCancel} />
+                            <CPU price={this.state.prices.cpu ? this.state.prices.cpu : 0 } onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="NET" key="2">
-                            <NET record={this.props.record} price={this.state.prices.net ? this.state.prices.net : 0 } onCancel={this.onCancel} />
+                            <NET price={this.state.prices.net ? this.state.prices.net : 0 } onCancel={this.onCancel} />
                         </TabPane>
                     </Tabs>
                 </Spin>

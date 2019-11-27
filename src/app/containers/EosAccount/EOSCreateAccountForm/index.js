@@ -1,9 +1,10 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Select, Row, Col, Icon } from 'antd';
+import { Modal, Button, Form, Input, Select, Row, Col, Icon, message } from 'antd';
 import style from './index.less';
 import { BigNumber } from 'bignumber.js';
+import { EOSPATH } from 'utils/settings';
 
 const { Option } = Select;
 @inject(stores => ({
@@ -11,38 +12,98 @@ const { Option } = Select;
     getAccount: stores.eosAddress.getAccount,
     getKeyList: stores.eosAddress.getKeyList,
     getAccountList: stores.eosAddress.getAccountList,
+    keyInfo: stores.eosAddress.keyInfo,
+    accountInfo: stores.eosAddress.accountInfo,
 }))
 
 @observer
 class EOSCreateAccountForm extends Component {
     handleOk = () => {
-        console.log('handleOk');
-        const { form, getAccountList } = this.props;
-        console.log('getAccountList:', getAccountList);
+        const { form, getAccountList, getAccount, accountInfo, keyInfo } = this.props;
         form.validateFields(async (err) => {
-            if (err) {
-                return;
-            };
+            if (err) { return; };
             let values = form.getFieldsValue();
-            console.log('values: ', values); // {type: "buy", size: 12, account: "cuiqiangtes1"}
-            console.log('account:', values.creator);
-            if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
-                console.log(this.getBalanceByAccount(values.creator));
+            console.log('values: ', values);
+            if (getAccount.indexOf(values.name) !== -1) {
+                message.error('Duplicate account name');
             }
+            if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
+                const balance = this.getBalanceByAccount(values.creator);
+                console.log(balance);
+                if (!(typeof balance === 'number' && new BigNumber(values.CPU).plus(values.NET).lte(balance))) {
+                    message.error('No sufficient balance');
+                    return false;
+                }
+            }
+            console.log('accountInfo:', accountInfo);
+            console.log('keyInfo:', keyInfo);
+            // let pathAndId = this.getPathAndIdByPublicKey(values.active);
+            // console.log('-----pathAndId2222222222------', pathAndId);
+            console.log('path:', accountInfo[values.creator].path);
+            let params = {
+                action: 'newaccount',
+                accountName: values.name,
+                from: values.creator,
+                ownerPublicKey: values.owner,
+                activePublicKey: values.active,
+                ramBytes: values.RAM,
+                cpuAmount: values.CPU,
+                netAmount: values.NET,
+                BIP44Path: accountInfo[values.creator].path,
+                walletID: 1,
+                /* BIP44Path: `${EOSPATH}${pathAndId.path}`,
+                walletID: pathAndId.walletID, */
+            };
+            console.log('params:', params);
+            wand.request('transaction_EOSNormal', params, (err, res) => {
+                console.log(err, res);
+                if (!err) {
+                    if (res.code) {
+                        this.props.handleCancel();
+                    } else {
+                        message.error('Create account fialed');
+                    }
+                } else {
+                    console.log('Create account fialed:', err);
+                    message.error('Create account fialed');
+                }
+            });
         })
     }
 
     handleCancel = () => {
-        console.log('handleCancel');
         this.props.handleCancel();
     }
 
+    /* getPathAndIdByPublicKey = key => {
+        const { keyInfo } = this.props;
+        let obj = null;
+        Object.keys(keyInfo).find(t => {
+          if (keyInfo[t][key]) {
+            obj = {
+              path: keyInfo[t][key].path,
+              walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return obj;
+    } */
+
     getBalanceByAccount = (name) => {
-        console.log(name);
         const { getAccountList } = this.props;
         let index = getAccountList.findIndex((item) => item.account === name);
-        console.log('index:', index, getAccountList[index]);
-        return 123;
+        return getAccountList[index].balance;
+    }
+
+    checkNumber = (rule, value, callback) => {
+        if (value >= 0) {
+            callback();
+        } else {
+            callback(intl.get('Invalid'));
+        }
     }
 
     render() {
@@ -66,7 +127,7 @@ class EOSCreateAccountForm extends Component {
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={'New Account Name'}>
                             {getFieldDecorator('name', { rules: [{ required: true }] })
-                                (<Input prefix={<Icon type="wallet" className="colorInput" />} />)}
+                                (<Input placeholder={'Name'} prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
                         <Form.Item label={'Creator'}>
                             {getFieldDecorator('creator', { rules: [{ required: true }] })
@@ -116,20 +177,20 @@ class EOSCreateAccountForm extends Component {
                         <Row type="flex" justify="space-around">
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'RAM'}>
-                                    {getFieldDecorator('RAM', { initialValue: 0 })
-                                        (<Input addonAfter="KB" />)}
+                                    {getFieldDecorator('RAM', { initialValue: 3, rules: [{ message: 'Invalid value, at least 3KB', validator: this.checkNumber }] })
+                                        (<Input type="number" min={3} addonAfter="KB" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'CPU'}>
-                                    {getFieldDecorator('CPU', { initialValue: 0 })
-                                        (<Input addonAfter="EOS" />)}
+                                    {getFieldDecorator('CPU', { initialValue: 0, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                        (<Input type="number" addonAfter="EOS" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'NET'}>
-                                    {getFieldDecorator('NET', { initialValue: 0 })
-                                        (<Input addonAfter="EOS" />)}
+                                    {getFieldDecorator('NET', { initialValue: 0, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                        (<Input type="number" addonAfter="EOS" />)}
                                 </Form.Item>
                             </Col>
                         </Row>

@@ -9,6 +9,7 @@ import EOSResourceManageForm from 'components/EOSResourceManageForm';
 @inject(stores => ({
     language: stores.languageIntl.language,
     getAccountList: stores.eosAddress.getAccountList,
+    updateSelectedAccount: obj => stores.eosAddress.updateSelectedAccount(obj),
 }))
 
 @observer
@@ -17,7 +18,6 @@ class EOSAccountList extends Component {
         super(props);
         this.state = {
             showManageResourceForm: false,
-            record: {}
         }
     }
 
@@ -53,7 +53,7 @@ class EOSAccountList extends Component {
             width: '25%',
             render: (text, record) => (<div>
                 <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>Manage Resources</Button>
-                <SendEOSNormalTrans />
+                <SendEOSNormalTrans record={record}/>
             </div>)
         }
     ];
@@ -64,10 +64,9 @@ class EOSAccountList extends Component {
     }
 
     showManageResourceForm = (record) => {
-        console.log('showManageResourceForm', record);
+        this.props.updateSelectedAccount(record);
         this.setState({
-            showManageResourceForm: true,
-            record: record
+            showManageResourceForm: true
         });
     }
 
@@ -79,7 +78,6 @@ class EOSAccountList extends Component {
 
     render() {
         const { getAccountList } = this.props;
-        // console.log('getAccountList:', getAccountList);
         this.props.language && this.columns.forEach(col => {
             col.title = intl.get(`EosAccount.${col.dataIndex}`)
         })
@@ -87,7 +85,7 @@ class EOSAccountList extends Component {
         return (
             <div>
                 <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountList} />
-                {this.state.showManageResourceForm && <EOSResourceManageForm record={this.state.record} onCancel={this.onCancel} />}
+                {this.state.showManageResourceForm && <EOSResourceManageForm onCancel={this.onCancel} />}
             </div>
         );
     }

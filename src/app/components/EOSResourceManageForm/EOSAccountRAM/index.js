@@ -5,12 +5,15 @@ import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
 import ConfirmForm from '../EOSResourceManageConfirmForm';
+import { EOSPATH } from 'utils/settings';
 
 const { Option } = Select;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 @inject(stores => ({
     language: stores.languageIntl.language,
     getAccount: stores.eosAddress.getAccount,
+    selectedAccount: stores.eosAddress.selectedAccount,
+    keyInfo: stores.eosAddress.keyInfo,
 }))
 
 @observer
@@ -23,8 +26,6 @@ class EOSAccountRAM extends Component {
         maxSellRAM: 24,
         confirmVisible: false,
         formData: {},
-        availableValue: 70,
-        availableTotal: 100,
         networkValue: 35,
         networkTotal: 100,
     }
@@ -43,7 +44,11 @@ class EOSAccountRAM extends Component {
 
     checkBuySize = (rule, value, callback) => {
         if (typeof value === 'number' && value !== 0) {
-            callback();
+            if (new BigNumber(value).times(this.props.price).gte(0.0001)) {
+                callback();
+            } else {
+                callback(intl.get('Too small size'));
+            }
         } else {
             callback(intl.get('Invalid size value'));
         }
@@ -51,23 +56,25 @@ class EOSAccountRAM extends Component {
 
     checkSellSize = (rule, value, callback) => {
         if (typeof value === 'number' && value !== 0) {
-            callback();
+            if (new BigNumber(value).times(this.props.price).gte(0.0001)) {
+                callback();
+            } else {
+                callback(intl.get('Too small size'));
+            }
         } else {
             callback(intl.get('Invalid size value'));
         }
     }
 
     handleOk = () => {
-        const { form, record } = this.props;
+        const { form, selectedAccount } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
             };
             let values = form.getFieldsValue();
-            console.log('values: ', values); // {type: "buy", size: 12, account: "cuiqiangtes1"}
-            console.log('record:', record);
             if (values.type === 'buy') {
-                if (!record.balance) {
+                if (!selectedAccount.balance) {
                     message.warn('No sufficient balance');
                     return;
                 }
@@ -76,10 +83,9 @@ class EOSAccountRAM extends Component {
                     message.warn('Over the maximum size of RAM');
                 } else if (cost.gt(this.state.maxBuyEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (cost.gt(record.balance)) {
+                } else if (cost.gt(selectedAccount.balance)) {
                     message.warn('No sufficient balance');
                 } else {
-                    console.log('can buy');
                     this.setState({
                         formData: {
                             account: values.account,
@@ -94,7 +100,7 @@ class EOSAccountRAM extends Component {
                     message.warn('Over the maximum size of RAM');
                 } else if (new BigNumber(values.sellSize).times(this.props.price).gt(this.state.maxSellEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (new BigNumber(values.sellSize).gt(record.ramAvailable)) {
+                } else if (new BigNumber(values.sellSize).gt(selectedAccount.ramAvailable)) {
                     message.warn('No sufficient RAM to sell');
                 } else {
                     console.log('can sell');
@@ -120,40 +126,55 @@ class EOSAccountRAM extends Component {
         });
     }
 
-    sendTrans = (obj) => {
-        console.log('sendTrans');
-        console.log(this.props.record);
-        if (obj.type === 'sell') return;
-        let params = {
-            action: 'buyrambytes',
-            from: this.props.record.account,
-            to: obj.account,
-            ramBytes: obj.amount
+    getPathAndIdByPublicKey = key => {
+        const { keyInfo } = this.props;
+        let obj = {};
+        Object.keys(keyInfo).find(t => {
+          if (keyInfo[t][key]) {
+            obj = {
+              path: keyInfo[t][key].path,
+              walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return obj;
+    }
 
+    sendTrans = (obj) => {
+        const { selectedAccount } = this.props;
+        let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
+        let params = {
+            action: obj.type === 'buy' ? 'buyrambytes' : 'sellram',
+            from: selectedAccount.account,
+            to: obj.type === 'buy' ? obj.account : selectedAccount.account,
+            ramBytes: obj.amount,
+            BIP44Path: `${EOSPATH}${pathAndId.path}`,
+            walletID: pathAndId.walletID,
         };
         console.log('params:', params);
         wand.request('transaction_EOSNormal', params, (err, res) => {
-            console.log(err, res);
             if (!err) {
                 if (res.code) {
                     this.setState({
                         confirmVisible: false
                     });
                 } else {
-                    message.error('Buy RAM fialed');
+                    message.error('Transaction failed');
+                    console.log(res.result);
                 }
             } else {
-                console.log('Buy RAM fialed:', err);
-                message.error('Buy RAM fialed');
+                message.error('Transaction failed');
+                console.log('Transaction failed:', err);
             }
         });
     }
 
     render() {
-        let { availableValue, availableTotal, networkValue, networkTotal } = this.state;
-        let { balance, publicKey, ramAvailable, ramTotal } = this.props.record;
-        // console.log(Object.keys(this.props.record));
-        // console.log(this.props.getAccount);
+        let { networkValue, networkTotal } = this.state;
+        let { ramAvailable, ramTotal } = this.props.selectedAccount;
         const { form } = this.props;
         const { getFieldDecorator } = form;
         return (
@@ -204,7 +225,7 @@ class EOSAccountRAM extends Component {
                                                 <Select
                                                     showSearch
                                                     allowClear
-                                                    placeholder={'Enter Receiving Account'}
+                                                    placeholder={'Select Receiving Account'}
                                                     optionFilterProp="children"
                                                 >
                                                     {this.props.getAccount.map((item, index) => <Option value={item} key={item}>{item}</Option>)}

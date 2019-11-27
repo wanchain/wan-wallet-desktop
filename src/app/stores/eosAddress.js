@@ -1,9 +1,8 @@
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import languageIntl from './languageIntl';
-import { checkAddrType } from 'utils/helper';
 import { EOSPATH } from 'utils/settings';
-import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { timeFormat, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
 class EosAddress {
@@ -15,7 +14,9 @@ class EosAddress {
 
   @observable currentPage = [];
 
-  @observable selectedKey = '';
+  @observable historySelectedAccountName = '';
+
+  @observable selectedAccount = {};
 
   @observable transHistory = {};
 
@@ -30,7 +31,6 @@ class EosAddress {
   @action updateKeyName(row, chainType) {
     let walletID = 1;
     wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey, accounts: row.accounts } }, (err, res) => {
-      console.log('update key name:', res);
       if (!err && res) {
         self.keyInfo[chainType][row['publicKey']]['name'] = row.name;
       } else {
@@ -48,6 +48,14 @@ class EosAddress {
         console.log('Update accounts failed');
       }
     })
+  }
+
+  @action setHistorySelectedAccountName(name) {
+    self.historySelectedAccountName = name;
+  }
+
+  @action setCurrPage(page) {
+    self.currentPage = page;
   }
 
   @computed get getKeyList() {
@@ -93,13 +101,35 @@ class EosAddress {
                   // console.log('exist');
                 } else {
                   self.accountInfo[v] = {
-                    publicKey: item.publicKey
+                    publicKey: item.publicKey,
+                    path: path
                   }
                 }
               })
             }
           })
         });
+      }
+    })
+  }
+
+  @action updateTransHistory(initialize = false) {
+    if (initialize) {
+      self.transHistory = {};
+    }
+    wand.request('transaction_showRecords', (err, val) => {
+      if (!err && val.length !== 0) {
+        let tmp = {};
+        val = val.filter(item => item.chainType === 'EOS');
+        val.forEach(item => {
+          if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
+            tmp[item.txHash] = item;
+          }
+          if (item.txHash === '' && item.status === 'Failed') {
+            tmp[item.hashX] = item;
+          }
+        })
+        self.transHistory = tmp;
       }
     })
   }
@@ -111,9 +141,14 @@ class EosAddress {
       if (accounts.includes(name)) {
         obj[name].publicKey = self.accountInfo[name].publicKey;
         obj[name].account = name;
+        obj[name].path = self.accountInfo[name].path;
         self.accountInfo[name] = obj[name];
       }
     })
+  }
+
+  @action updateSelectedAccount(obj) {
+    self.selectedAccount = obj;
   }
 
   @computed get getAllAmount() {
@@ -122,6 +157,51 @@ class EosAddress {
       sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(isNaN(curr.wbalance) ? new BigNumber(0) : new BigNumber(curr.wbalance)), 0));
     }); */
     return sum.toString(10);
+  }
+
+  @computed get normalHistoryList() {
+    let historyList = [];
+    Object.keys(self.transHistory).forEach(item => {
+      if (!self.transHistory[item].action) {
+        if (!self.historySelectedAccountName || self.historySelectedAccountName === self.transHistory[item]['from']) {
+          let status = self.transHistory[item].status;
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item]['sendTime']),
+            from: self.transHistory[item]['from'],
+            to: self.transHistory[item]['to'],
+            value: self.transHistory[item]['value'],
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item]['sendTime'],
+            txHash: self.transHistory[item]['txHash']
+          });
+        }
+      }
+    });
+    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+  }
+
+  @computed get resourceHistoryList() {
+    let historyList = [];
+    Object.keys(self.transHistory).forEach(item => {
+      if (self.transHistory[item].action) {
+        if (!self.historySelectedAccountName || self.historySelectedAccountName === self.transHistory[item]['from']) {
+          let status = self.transHistory[item].status;
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item]['sendTime']),
+            from: self.transHistory[item]['from'],
+            to: self.transHistory[item]['to'],
+            value: self.transHistory[item]['value'],
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item]['sendTime'],
+            action: self.transHistory[item]['action'],
+            txHash: self.transHistory[item]['txHash']
+          });
+        }
+      }
+    });
+    return historyList.sort((a, b) => b.sendTime - a.sendTime);
   }
 }
 

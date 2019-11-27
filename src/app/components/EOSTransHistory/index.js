@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Select, Radio, message, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
+import { MAIN, TESTNET } from 'utils/settings';
 import style from './index.less';
 import history from 'static/image/history.png';
 
@@ -10,37 +10,50 @@ const { Option } = Select;
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.eosAddress.addrInfo,
   language: stores.languageIntl.language,
-  // normalHistoryList: stores.eosAddress.normalHistoryList,
-  // resourceHistoryList: stores.eosAddress.resourceHistoryList,
+  accountInfo: stores.eosAddress.accountInfo,
+  normalHistoryList: stores.eosAddress.normalHistoryList,
+  resourceHistoryList: stores.eosAddress.resourceHistoryList,
   selectedAddr: stores.eosAddress.selectedAddr,
   transColumns: stores.languageIntl.transColumns,
   privateTransColumns: stores.languageIntl.privateTransColumns,
-  // setCurrPage: page => stores.eosAddress.setCurrPage(page),
-  setSelectedAddr: addr => stores.eosAddress.setSelectedAddr(addr)
+  setCurrPage: page => stores.eosAddress.setCurrPage(page),
+  setHistorySelectedAccountName: name => stores.eosAddress.setHistorySelectedAccountName(name)
 }))
 
 @observer
 class EOSTransHistory extends Component {
   constructor(props) {
     super(props);
+    this.props.setCurrPage(this.props.name || []);
     this.state = {
       type: 'normal'
     }
   }
 
   onChange = value => {
+    this.props.setHistorySelectedAccountName(value);
   }
 
   onTypeChange = (e) => {
-    console.log(e.target.value);
     this.setState({
       type: e.target.value
     })
   }
 
   onClickRow = record => {
+    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.txHash}` : `${TESTNET}/tx/${record.txHash}`;
+    wand.shell.openExternal(href);
+  }
+
+  getAction = action => {
+    let type = '';
+    switch (action) {
+      case 'buyrambytes':
+        type = 'Buy RAM';
+        break;
+    }
+    return type;
   }
 
   normalColumn = [
@@ -58,8 +71,8 @@ class EOSTransHistory extends Component {
       key: 'to',
     }, {
       title: 'AMOUNT',
-      dataIndex: 'amount',
-      key: 'amount',
+      dataIndex: 'value',
+      key: 'value',
     }, {
       title: 'STATUS',
       dataIndex: 'status',
@@ -82,62 +95,24 @@ class EOSTransHistory extends Component {
       key: 'to',
     }, {
       title: 'AMOUNT',
-      dataIndex: 'amount',
-      key: 'amount',
+      dataIndex: 'value',
+      key: 'value',
     }, {
       title: 'STATUS',
       dataIndex: 'status',
       key: 'status',
+    }, {
+      title: 'ACTION',
+      dataIndex: 'action',
+      key: 'action',
+      render: (text, record) => {
+        return this.getAction(text);
+      }
     }
   ];
 
   render() {
-    const { addrInfo } = this.props;
-    let addrList = [];
-    let normalHistoryList = [{
-      time: '1',
-      from: '1',
-      to: '1',
-      amount: '1',
-      status: '1'
-    }, {
-      time: '2',
-      from: '1',
-      to: '1',
-      amount: '1',
-      status: '1'
-    }, {
-      time: '3',
-      from: '1',
-      to: '1',
-      amount: '1',
-      status: '1'
-    }];
-    let resourceHistoryList = [{
-      time: '444',
-      from: '2',
-      to: '2',
-      amount: '2',
-      status: '2'
-    }, {
-      time: '555',
-      from: '2',
-      to: '2',
-      amount: '2',
-      status: '2'
-    }, {
-      time: '666',
-      from: '2',
-      to: '2',
-      amount: '2',
-      status: '2'
-    }, {
-      time: '777',
-      from: '2',
-      to: '2',
-      amount: '2',
-      status: '2'
-    }];
+    const { accountInfo, normalHistoryList, resourceHistoryList } = this.props;
     return (
       <div>
         <div className="historyCon" id="EOSSelection">
@@ -149,11 +124,11 @@ class EOSTransHistory extends Component {
             placeholder={'Select an account name'}
             optionFilterProp="children"
             onChange={this.onChange}
-            defaultValue={1}
+            // defaultValue={1}
             getPopupContainer={() => document.getElementById('EOSSelection')}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            {addrList.map((item, index) => <Option value={item.address} key={index}>{item.name}</Option>)}
+            {Object.keys(accountInfo).map(v => <Option value={v} key={v}>{v}</Option>)}
           </Select>
           <Radio.Group className={style.typeRadio} onChange={this.onTypeChange} defaultValue={this.state.type}>
             <Radio className={style.allRadio} value={'normal'}>{'Normal'}

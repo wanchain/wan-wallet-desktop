@@ -625,9 +625,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'getAccountByPublicKey':
             try {
-                console.log('-----------getAccountByPublicKey start--------------', payload.chainType, payload.pubkey);
                 ret = await ccUtil.getEosAccountsByPubkey(payload.chainType, payload.pubkey);
-                console.log('-----------getAccountByPublicKey end--------------', ret);
             } catch (e) {
                 console.log('error:', e)
                 logger.error(e.message || e.stack)
@@ -693,9 +691,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
               logger.info('Normal transaction: ' + JSON.stringify(payload));
   
-              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('EOS', 'EOS');
-              let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
-              console.log(JSON.stringify(ret, null, 4));
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
+              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
               console.log('----------ret----------------:', ret);
             } catch (e) {
               logger.error('Send transaction failed: ' + e.message || e.stack)
