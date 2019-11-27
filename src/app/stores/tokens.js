@@ -103,14 +103,17 @@ class Tokens {
   @computed get erc20TokensInfo () {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
-      list.push({
-        ethAddr: self.tokensList[item].tokenOrigAddr,
-        symbol: self.tokensList[item].symbol,
-        decimals: self.tokensList[item].decimals
-      })
+      let val = self.tokensList[item];
+      if (!['ETH', 'BTC'].includes(val.symbol) && !val.userAdrr) {
+        list.push({
+          ethAddr: val.tokenOrigAddr,
+          symbol: val.symbol,
+          select: val.select
+        })
+      }
     })
 
-    return list.sort((a, b) => b.ethAddr - a.ethAddr)
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
   }
 
   @computed get tokensOnSideBar() {

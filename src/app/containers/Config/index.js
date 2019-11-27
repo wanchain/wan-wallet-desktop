@@ -13,6 +13,7 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   wrc20TokensInfo: stores.tokens.wrc20TokensInfo,
+  erc20TokensInfo: stores.tokens.erc20TokensInfo,
   crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
@@ -88,7 +89,7 @@ class Config extends Component {
   }
 
   render() {
-    const { wrc20TokensInfo, crossChainTokensInfo } = this.props;
+    const { wrc20TokensInfo, crossChainTokensInfo, erc20TokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
 
     const options = [{
@@ -142,7 +143,7 @@ class Config extends Component {
           <div className={style.sub_title}>
             <p className={style['set_title']}>{intl.get('Config.enableErc20')}</p>
             {
-              wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+              erc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
             }
             <div className={style['add_token']} onClick={this.handleAddToken}>
               <div className={style['account_pattern']}> + </div>

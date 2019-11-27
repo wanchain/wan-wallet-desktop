@@ -111,23 +111,27 @@ class CrossBTCForm extends Component {
   checkAmount = (rule, value, callback) => {
     const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee } = this.props;
     let { quota } = form.getFieldsValue(['quota']);
-    if (new BigNumber(value).gte(minCrossBTC) && checkAmountUnit(8, value)) {
-      if (direction === INBOUND) {
-        btcCoinSelect(utxos, value).then(data => {
-          let fee = formatNumByDecimals(data.fee, 8);
-          this.setState({ fee })
-          if (isExceedBalance(quota.split(' ')[0], value, fee)) {
-            callback(intl.get('CrossChainTransForm.overQuota'));
-            return;
-          }
-          updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+    if (new BigNumber(value).gte(minCrossBTC)) {
+      if (checkAmountUnit(8, value)) {
+        if (direction === INBOUND) {
+          btcCoinSelect(utxos, value).then(data => {
+            let fee = formatNumByDecimals(data.fee, 8);
+            this.setState({ fee })
+            if (isExceedBalance(quota.split(' ')[0], value, fee)) {
+              callback(intl.get('CrossChainTransForm.overQuota'));
+              return;
+            }
+            updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+            callback();
+          }).catch(() => {
+            callback(intl.get('Common.invalidAmount'));
+          });
+        } else {
+          this.setState({ fee: btcFee });
           callback();
-        }).catch(() => {
-          callback(intl.get('Common.invalidAmount'));
-        });
+        }
       } else {
-        this.setState({ fee: btcFee });
-        callback();
+        callback(intl.get('Common.invalidAmount'));
       }
     } else {
       let message = intl.get('CrossChainTransForm.invalidAmount') + minCrossBTC;
