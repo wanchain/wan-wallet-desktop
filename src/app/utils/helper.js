@@ -153,13 +153,15 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
 
 export const getInfoByPath = function (pathInfo, addrInfo) {
   let value = {};
-  Object.keys(addrInfo).forEach(type => {
-    let index = Object.keys(addrInfo[type]).findIndex(val => addrInfo[type][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
-    if (index !== -1) {
-      let addr = Object.keys(addrInfo[type])[index];
-      value = addrInfo[type][addr];
-    }
-  });
+  if (pathInfo) {
+    Object.keys(addrInfo).forEach(type => {
+      let index = Object.keys(addrInfo[type]).findIndex(val => addrInfo[type][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
+      if (index !== -1) {
+        let addr = Object.keys(addrInfo[type])[index];
+        value = addrInfo[type][addr];
+      }
+    });
+  }
   return value;
 }
 

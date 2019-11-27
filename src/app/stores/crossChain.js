@@ -127,8 +127,8 @@ class CrossChain {
       let inbound = item.chain === 'BTC';
       let fromAddrInfo = inbound ? btcAddress.addrInfo : wanAddress.addrInfo;
       let toAddrInfo = inbound ? wanAddress.addrInfo : btcAddress.addrInfo;
-      let redeemTxHash = inbound ? item.refundTxHash : item.btcRefundTxHash;
-      let revokeTxHash = inbound ? item.btcRevokeTxHash : item.revokeTxHash;
+      let redeemTxHash = inbound ? `0x${item.refundTxHash}` : item.btcRefundTxHash;
+      let revokeTxHash = inbound ? item.btcRevokeTxHash : `0x${item.revokeTxHash}`;
 
       let fromInfo = getInfoByPath(item.from, fromAddrInfo);
       let toInfo = getInfoByPath(inbound ? item.wanAddress : item.btcCrossAddr, toAddrInfo);
@@ -147,9 +147,10 @@ class CrossChain {
         sendTime: item.time,
         srcChainAddr: item.chain,
         dstChainAddr: item.chain === 'BTC' ? 'WAN' : 'BTC',
-        lockTxHash: inbound ? item.btcLockTxHash : item.lockTxHash,
+        lockTxHash: inbound ? item.btcLockTxHash : `0x${item.lockTxHash}`,
         redeemTxHash: redeemTxHash || 'NULL',
-        revokeTxHash: revokeTxHash || 'NULL'
+        revokeTxHash: revokeTxHash || 'NULL',
+        noticeTxHash: item.btcNoticeTxhash || 'NULL'
       });
     });
     return crossBTCTrans.sort((a, b) => b.sendTime - a.sendTime);

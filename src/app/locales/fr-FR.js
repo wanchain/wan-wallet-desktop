@@ -233,6 +233,7 @@ const fr_FR = {
     'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
+    'CrossChainTransForm.NoticeTxHash': 'NoticeTxHash',
     'CrossChainTransForm.ConfirmTxHash': 'ConfirmTxHash',
     'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'Value',
