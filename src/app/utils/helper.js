@@ -151,16 +151,14 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
   return value;
 }
 
-export const getInfoByPath = function (pathInfo, addrInfo) {
+export const getInfoByPath = function (pathInfo, addrInfo, addrType = 'normal') {
   let value = {};
   if (pathInfo) {
-    Object.keys(addrInfo).forEach(type => {
-      let index = Object.keys(addrInfo[type]).findIndex(val => addrInfo[type][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
-      if (index !== -1) {
-        let addr = Object.keys(addrInfo[type])[index];
-        value = addrInfo[type][addr];
-      }
-    });
+    let index = Object.keys(addrInfo[addrType]).findIndex(val => addrInfo[addrType][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
+    if (index !== -1) {
+      let addr = Object.keys(addrInfo[addrType])[index];
+      value = addrInfo[addrType][addr];
+    }
   }
   return value;
 }

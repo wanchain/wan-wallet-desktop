@@ -42,10 +42,13 @@ function TransInfo (props) {
           <Col span={COLLEFT}>{intl.get('CrossChainTransForm.LockTxHash')}</Col>
           <Col span={COLRIGHT}>{lockTxHash}</Col>
         </Row>
-        <Row className={style.tableRow}>
-          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.NoticeTxHash')}</Col>
-          <Col span={COLRIGHT}>{noticeTxHash}</Col>
-        </Row>
+        {
+          srcChainAddr === 'BTC' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.NoticeTxHash')}</Col>
+            <Col span={COLRIGHT}>{noticeTxHash}</Col>
+          </Row>
+        }
         <Row className={style.tableRow}>
           <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
           <Col span={COLRIGHT}>{redeemTxHash}</Col>

@@ -150,7 +150,7 @@ class CrossChain {
         lockTxHash: inbound ? item.btcLockTxHash : `0x${item.lockTxHash}`,
         redeemTxHash: redeemTxHash || 'NULL',
         revokeTxHash: revokeTxHash || 'NULL',
-        noticeTxHash: item.btcNoticeTxhash || 'NULL'
+        noticeTxHash: `0x${item.btcNoticeTxhash}` || 'NULL'
       });
     });
     return crossBTCTrans.sort((a, b) => b.sendTime - a.sendTime);

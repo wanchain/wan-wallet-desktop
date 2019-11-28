@@ -57,7 +57,7 @@ class BTCTrans extends Component {
 
       if (direction === INBOUND) {
         originalFee = 0;
-        destinationFee = new BigNumber(wanGasPrice).times(REDEEMWETH_GAS).div(BigNumber(10).pow(9)).toString(10);
+        destinationFee = new BigNumber(wanGasPrice).times(REDEEMWETH_GAS).times(2.5).div(BigNumber(10).pow(9)).toString(10);
         updateBTCTransParams({
           feeRate,
           btcAddress: smg.btcAddress,
