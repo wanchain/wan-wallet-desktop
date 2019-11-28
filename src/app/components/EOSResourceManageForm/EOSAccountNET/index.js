@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Input, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
 import ConfirmForm from '../EOSResourceManageConfirmForm';
+import { EOSPATH } from 'utils/settings';
 
 const { Option } = Select;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
@@ -12,6 +13,7 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
     language: stores.languageIntl.language,
     getAccount: stores.eosAddress.getAccount,
     selectedAccount: stores.eosAddress.selectedAccount,
+    keyInfo: stores.eosAddress.keyInfo,
 }))
 
 @observer
@@ -73,13 +75,13 @@ class EOSAccountNET extends Component {
                     message.warn('Over the maximum size of NET');
                 } else if (cost.gt(this.state.maxDelegateEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (cost.gt(selectedAccount.balance)) {
-                    message.warn('No sufficient balance');
+                } else if (new BigNumber(values.delegateSize).gt(selectedAccount.netAvailable)) {
+                    message.warn('No sufficient NET to delegate');
                 } else {
                     this.setState({
                         formData: {
                             account: values.account,
-                            amount: values.size,
+                            amount: values.delegateSize,
                             type: values.type,
                         },
                         confirmVisible: true
@@ -90,10 +92,9 @@ class EOSAccountNET extends Component {
                     message.warn('Over the maximum size of NET');
                 } else if (new BigNumber(values.undelegateSize).times(this.props.price).gt(this.state.maxUndelegateEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.netAvailable)) {
-                    message.warn('No sufficient NET to sell');
+                } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.netBalance)) {
+                    message.warn('No sufficient NET to undelegate');
                 } else {
-                    console.log('can undelegate');
                     this.setState({
                         formData: {
                             amount: values.undelegateSize,
@@ -116,39 +117,59 @@ class EOSAccountNET extends Component {
         });
     }
 
+    getPathAndIdByPublicKey = key => {
+        const { keyInfo } = this.props;
+        let obj = {};
+        Object.keys(keyInfo).find(t => {
+          if (keyInfo[t][key]) {
+            obj = {
+              path: keyInfo[t][key].path,
+              walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return obj;
+    }
+
     sendTrans = (obj) => {
-        /* if (obj.type === 'sell') return;
+        const { selectedAccount } = this.props;
+        let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
         let params = {
-            action: 'buyrambytes',
-            from: this.props.selectedAccount.account,
-            to: obj.account,
-            ramBytes: obj.amount
+            action: obj.type === 'delegate' ? 'delegatebw' : 'undelegatebw',
+            from: selectedAccount.account,
+            to: obj.type === 'delegate' ? obj.account : selectedAccount.account,
+            netAmount: obj.amount,
+            cpuAmount: 0,
+            BIP44Path: `${EOSPATH}${pathAndId.path}`,
+            walletID: pathAndId.walletID,
         };
-        console.log('params:', params);
         wand.request('transaction_EOSNormal', params, (err, res) => {
-            console.log(err, res);
             if (!err) {
                 if (res.code) {
                     this.setState({
                         confirmVisible: false
                     });
+                    this.props.onCancel();
+                    message.success('Transaction success');
                 } else {
-                    message.error('Buy RAM fialed');
+                    message.error('Transaction failed');
                     console.log(res.result);
                 }
             } else {
-                console.log('Buy RAM fialed:', err);
-                message.error('Buy RAM fialed');
+                message.error('Transaction failed');
+                console.log('Transaction failed:', err);
             }
-        }); */
+        });
     }
 
     render() {
         let { networkValue, networkTotal } = this.state;
         let { netAvailable, netTotal, netBalance } = this.props.selectedAccount;
-        const { form } = this.props;
+        const { form, price } = this.props;
         const { getFieldDecorator } = form;
-        console.log(netAvailable, netTotal, netBalance);
         return (
             <div className={style.EOSAccountNET}>
                 <Row>
@@ -157,7 +178,7 @@ class EOSAccountNET extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                format={() => netAvailable + 'KB/' + netTotal + 'KB'}
+                                format={() => new BigNumber(netAvailable).toFixed(3).toString() + 'KB/' + new BigNumber(netTotal).toFixed(3).toString() + 'KB'}
                                 percent={Number(new BigNumber(netAvailable).div(netTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(netAvailable).div(netTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -173,7 +194,7 @@ class EOSAccountNET extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        {/* <div className={style.NETPriceBar}>Current NET Price : <span className={style.NETPrice}>{new BigNumber(this.props.price)} EOS/KB</span></div>
+                        <div className={style.NETPriceBar}>Current NET Price : <span className={style.NETPrice}>{price} EOS/KB</span></div>
                         <div className={style.NETForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -215,14 +236,16 @@ class EOSAccountNET extends Component {
                                     </div>
                                 )}
                             </Form>
-                        </div> */}
+                        </div>
                     </Col>
                 </Row>
                 <div className={style.customFooter}>
                     <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
-                <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                {
+                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                }
             </div>
         );
     }

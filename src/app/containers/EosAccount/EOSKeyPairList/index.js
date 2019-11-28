@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Form, message } from 'antd';
-
+import { getEOSMultiBalances } from 'utils/helper';
 import style from './index.less';
 import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -68,20 +68,25 @@ class EOSKeyPairList extends Component {
       if (!err && response instanceof Array && response.length) {
         this.showAddAccountForm(record);
         let accountList = [];
-        response.forEach(v => {
-          if (accountInfo[v] && accountInfo[v].activeKeys.includes(record.publicKey)) {
-            accountList.push({
-              account: v
-            });
-          }
-        });
-        this.setState({
-          accountList: accountList,
-          spin: false
+        getEOSMultiBalances(response).then(info => {
+          response.forEach(v => {
+            if (info[v] && info[v].activeKeys.includes(record.publicKey)) {
+              accountList.push({
+                account: v
+              });
+            }
+          });
+          this.setState({
+            accountList: accountList,
+            spin: false
+          });
+        }).catch(err => {
+          console.log(err);
+          message.error('Get account list failed');
         });
       } else {
         console.log('error:', err);
-        message.error('Get account failed');
+        message.error('Get account list failed');
       }
     });
   }
@@ -107,7 +112,6 @@ class EOSKeyPairList extends Component {
   render() {
     const { getKeyList } = this.props;
     let { selectedRow, accountList } = this.state;
-    // console.log('getKeyList:', getKeyList);
     const components = {
       body: {
         cell: EditableCell,
@@ -122,7 +126,9 @@ class EOSKeyPairList extends Component {
     return (
       <div>
         <Table components={components} rowClassName={() => 'editable-row'} rowKey="publicKey" className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getKeyList} />
-        <AddAccountForm selectedRow={selectedRow} accounts={accountList} showModal={this.state.showAddAccountForm} handleCancel={this.handleCancel} spin={this.state.spin} />
+        {
+          this.state.showAddAccountForm && <AddAccountForm selectedRow={selectedRow} accounts={accountList} handleCancel={this.handleCancel} spin={this.state.spin} />
+        }
       </div>
     );
   }

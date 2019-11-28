@@ -21,7 +21,7 @@ class EOSResourceManageConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, formData } = this.props;
+    const { form, formData } = this.props;
     const { getFieldDecorator } = form;
     const { account, type, amount } = formData;
 
@@ -29,7 +29,7 @@ class EOSResourceManageConfirmForm extends Component {
       <Modal
         destroyOnClose
         closable={false}
-        visible={visible}
+        visible={true}
         title={'Confirm'}
         onCancel={this.handleCancel}
         footer={[
@@ -38,7 +38,7 @@ class EOSResourceManageConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-          { this.props.formData.type === 'buy' && <Form.Item label={'Account'}>
+          { (type === 'buy' || type === 'delegate') && <Form.Item label={'Account'}>
             {getFieldDecorator('account', { initialValue: account })
               (<Input disabled={true} />)}
           </Form.Item>}

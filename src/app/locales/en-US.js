@@ -127,9 +127,9 @@ const en_US = {
     'EosAccount.name': 'NAME',
     'EosAccount.publicKey': 'PUBLIC KEY',
     'EosAccount.account': 'ACCOUNT',
-    'EosAccount.ramAvailable': 'AVAILABLE RAM',
-    'EosAccount.cpuAvailable': 'AVAILABLE CPU',
-    'EosAccount.netAvailable': 'AVAILABLE NET',
+    'EosAccount.ramAvailable': 'AVAILABLE RAM (KB)',
+    'EosAccount.cpuAvailable': 'AVAILABLE CPU (ms)',
+    'EosAccount.netAvailable': 'AVAILABLE NET (KB)',
     'EosAccount.balance': 'BALANCE',
     'EosAccount.action': 'ACTION',
 

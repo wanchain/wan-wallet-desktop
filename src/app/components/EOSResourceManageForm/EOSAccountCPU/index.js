@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Input, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
@@ -72,16 +72,16 @@ class EOSAccountCPU extends Component {
                 }
                 const cost = new BigNumber(values.delegateSize).times(this.props.price);
                 if (new BigNumber(values.delegateSize).gt(this.state.maxDelegateCPU)) {
-                    message.warn('Over the maximum size of RAM');
+                    message.warn('Over the maximum size of CPU');
                 } else if (cost.gt(this.state.maxDelegateEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (cost.gt(selectedAccount.balance)) {
-                    message.warn('No sufficient balance');
+                } else if (new BigNumber(values.delegateSize).gt(selectedAccount.cpuAvailable)) {
+                    message.warn('No sufficient CPU to delegate');
                 } else {
                     this.setState({
                         formData: {
                             account: values.account,
-                            amount: values.size,
+                            amount: values.delegateSize,
                             type: values.type,
                         },
                         confirmVisible: true
@@ -89,13 +89,12 @@ class EOSAccountCPU extends Component {
                 }
             } else if (values.type === 'undelegate') {
                 if (new BigNumber(values.undelegateSize).gt(this.state.maxUndelegateCPU)) {
-                    message.warn('Over the maximum size of RAM');
+                    message.warn('Over the maximum size of CPU');
                 } else if (new BigNumber(values.undelegateSize).times(this.props.price).gt(this.state.maxUndelegateEOS)) {
                     message.warn('Over the maximum size of EOS');
-                } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.cpuAvailable)) {
-                    message.warn('No sufficient RAM to sell');
+                } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.cpuBalance)) {
+                    message.warn('No sufficient CPU to undelegate');
                 } else {
-                    console.log('can undelegate');
                     this.setState({
                         formData: {
                             amount: values.undelegateSize,
@@ -118,13 +117,58 @@ class EOSAccountCPU extends Component {
         });
     }
 
+    getPathAndIdByPublicKey = key => {
+        const { keyInfo } = this.props;
+        let obj = {};
+        Object.keys(keyInfo).find(t => {
+          if (keyInfo[t][key]) {
+            obj = {
+              path: keyInfo[t][key].path,
+              walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return obj;
+    }
+
     sendTrans = (obj) => {
+        const { selectedAccount } = this.props;
+        let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
+        let params = {
+            action: obj.type === 'delegate' ? 'delegatebw' : 'undelegatebw',
+            from: selectedAccount.account,
+            to: obj.type === 'delegate' ? obj.account : selectedAccount.account,
+            netAmount: 0,
+            cpuAmount: obj.amount,
+            BIP44Path: `${EOSPATH}${pathAndId.path}`,
+            walletID: pathAndId.walletID,
+        };
+        wand.request('transaction_EOSNormal', params, (err, res) => {
+            if (!err) {
+                if (res.code) {
+                    this.setState({
+                        confirmVisible: false
+                    });
+                    this.props.onCancel();
+                    message.success('Transaction success');
+                } else {
+                    message.error('Transaction failed');
+                    console.log(res.result);
+                }
+            } else {
+                message.error('Transaction failed');
+                console.log('Transaction failed:', err);
+            }
+        });
     }
 
     render() {
         let { networkValue, networkTotal } = this.state;
         let { cpuAvailable, cpuTotal, cpuBalance } = this.props.selectedAccount;
-        const { form } = this.props;
+        const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
             <div className={style.EOSAccountCPU}>
@@ -134,7 +178,7 @@ class EOSAccountCPU extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                format={() => cpuAvailable + 'ms/' + cpuTotal + 'ms'}
+                                format={() => new BigNumber(cpuAvailable).toFixed(3).toString() + 'ms/' + new BigNumber(cpuTotal).toFixed(3).toString() + 'ms'}
                                 percent={Number(new BigNumber(cpuAvailable).div(cpuTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(cpuAvailable).div(cpuTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -150,7 +194,7 @@ class EOSAccountCPU extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        {/* <div className={style.CPUPriceBar}>Current CPU Price : <span className={style.CPUPrice}>{new BigNumber(this.props.price)} EOS/ms</span></div>
+                        <div className={style.CPUPriceBar}>Current CPU Price : <span className={style.CPUPrice}>{price} EOS/ms</span></div>
                         <div className={style.CPUForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -192,14 +236,16 @@ class EOSAccountCPU extends Component {
                                     </div>
                                 )}
                             </Form>
-                        </div> */}
+                        </div>
                     </Col>
                 </Row>
                 <div className={style.customFooter}>
                     <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
-                <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                {
+                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                }
             </div>
         );
     }

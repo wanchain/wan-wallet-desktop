@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Input, Icon, Select, Radio, message, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Icon, Select, Radio, message, Row, Col, Progress, InputNumber } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
@@ -103,7 +103,6 @@ class EOSAccountRAM extends Component {
                 } else if (new BigNumber(values.sellSize).gt(selectedAccount.ramAvailable)) {
                     message.warn('No sufficient RAM to sell');
                 } else {
-                    console.log('can sell');
                     this.setState({
                         formData: {
                             amount: values.sellSize,
@@ -154,13 +153,14 @@ class EOSAccountRAM extends Component {
             BIP44Path: `${EOSPATH}${pathAndId.path}`,
             walletID: pathAndId.walletID,
         };
-        console.log('params:', params);
         wand.request('transaction_EOSNormal', params, (err, res) => {
             if (!err) {
                 if (res.code) {
                     this.setState({
                         confirmVisible: false
                     });
+                    this.props.onCancel();
+                    message.success('Transaction success');
                 } else {
                     message.error('Transaction failed');
                     console.log(res.result);
@@ -175,7 +175,7 @@ class EOSAccountRAM extends Component {
     render() {
         let { networkValue, networkTotal } = this.state;
         let { ramAvailable, ramTotal } = this.props.selectedAccount;
-        const { form } = this.props;
+        const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
             <div className={style.EOSAccountRAM}>
@@ -185,7 +185,7 @@ class EOSAccountRAM extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                format={() => ramAvailable + 'KB/' + ramTotal + 'KB'}
+                                format={() => new BigNumber(ramAvailable).toFixed(3).toString() + 'KB/' + new BigNumber(ramTotal).toFixed(3).toString() + 'KB'}
                                 percent={Number(new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -201,7 +201,7 @@ class EOSAccountRAM extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.RAMPriceBar}>Current RAM Price : <span className={style.RAMPrice}>{new BigNumber(this.props.price).toFixed(4)} EOS/KB</span></div>
+                        <div className={style.RAMPriceBar}>Current RAM Price : <span className={style.RAMPrice}>{price.toFixed(4)} EOS/KB</span></div>
                         <div className={style.RAMForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -234,14 +234,14 @@ class EOSAccountRAM extends Component {
                                         </Form.Item>
                                     </div>
                                 ) : (
-                                        <div>
-                                            <div className={style.sellInfo}>Sell RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
-                                            <Form.Item>
-                                                {getFieldDecorator('sellSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkSellSize }] })
-                                                    (<InputNumber placeholder={'Enter RAM Size You Want To Sell ( KB )'} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                                            </Form.Item>
-                                        </div>
-                                    )}
+                                    <div>
+                                        <div className={style.sellInfo}>Sell RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
+                                        <Form.Item>
+                                            {getFieldDecorator('sellSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkSellSize }] })
+                                                (<InputNumber placeholder={'Enter RAM Size You Want To Sell ( KB )'} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                        </Form.Item>
+                                    </div>
+                                )}
                             </Form>
                         </div>
                     </Col>
@@ -250,7 +250,9 @@ class EOSAccountRAM extends Component {
                     <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
-                <Confirm visible={this.state.confirmVisible} onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                {
+                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                }
             </div>
         );
     }

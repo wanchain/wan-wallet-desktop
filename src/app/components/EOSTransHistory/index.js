@@ -52,6 +52,12 @@ class EOSTransHistory extends Component {
       case 'buyrambytes':
         type = 'Buy RAM';
         break;
+      case 'sellram':
+        type = 'Sell RAM';
+        break;
+      case 'newaccount':
+        type = 'New Account';
+        break;
     }
     return type;
   }
@@ -94,9 +100,15 @@ class EOSTransHistory extends Component {
       dataIndex: 'to',
       key: 'to',
     }, {
-      title: 'AMOUNT',
+      title: 'RESOURCE',
       dataIndex: 'value',
       key: 'value',
+      render: (text, record) => {
+        if (record.action === 'newaccount') {
+        return <Tooltip placement="top" title={'RAM/CPU/NET'} >{text}</Tooltip>
+        }
+        return text
+      }
     }, {
       title: 'STATUS',
       dataIndex: 'status',

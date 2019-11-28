@@ -25,7 +25,7 @@ class EOSAccountList extends Component {
         {
             dataIndex: 'account',
             editable: true,
-            width: '30%',
+            width: '15%',
             render: (text, record) => <div className="addrText">
                 <p className="address">{text}</p>
                 <Tooltip className={style.copyIcon} placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={() => this.copy(text)} /></Tooltip>
@@ -33,16 +33,24 @@ class EOSAccountList extends Component {
         },
         {
             dataIndex: 'ramAvailable',
-            width: '10%',
-            render: balance => balance
+            width: '15%',
+            render: (text, record) => {
+                return Number(text).toFixed(3);
+            }
         },
         {
             dataIndex: 'cpuAvailable',
-            width: '10%',
+            width: '15%',
+            render: (text, record) => {
+                return Number(text).toFixed(3);
+            }
         },
         {
             dataIndex: 'netAvailable',
-            width: '10%',
+            width: '15%',
+            render: (text, record) => {
+                return Number(text).toFixed(3);
+            }
         },
         {
             dataIndex: 'balance',

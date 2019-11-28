@@ -16,6 +16,12 @@ class EOSAddAccountForm extends Component {
         selections: []
     };
 
+    componentDidMount () {
+        this.setState({
+            selections: this.props.selectedRow.accounts
+        })
+    }
+
     handleOk = () => {
         let { form, selectedRow } = this.props;
         form.validateFields(err => {
@@ -55,31 +61,20 @@ class EOSAddAccountForm extends Component {
     ];
 
     render() {
-        const { form, accounts, selectedRow, spin, showModal } = this.props;
+        const { form, accounts, selectedRow, spin } = this.props;
         const { selections } = this.state;
         const { getFieldDecorator } = form;
         const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
                 this.selectionChange(selectedRowKeys);
             },
-            selectedRowKeys: selections,
-            /* getCheckboxProps: record => {
-                console.log('record:', record);
-                console.log('selections:', this.props.selections);
-                let obj = {
-                    account: record.account,
-                };
-                if (this.props.selectedRow.accounts.includes(record.account)) {
-                    obj.disabled = true;
-                }
-                return obj;
-            }, */
+            selectedRowKeys: selections
         };
         return (
             <div>
                 <Modal
                     title="Import Account"
-                    visible={showModal}
+                    visible={true}
                     wrapClassName={style.EOSAddAccountForm}
                     destroyOnClose={true}
                     closable={false}

@@ -54,7 +54,6 @@ class EosAccount extends Component {
           accounts: []
         };
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: DBObject }, (err, response) => {
-          console.log('response:', response);
           if (!err && response) {
             addKey({
               start: addrLen,
@@ -81,7 +80,6 @@ class EosAccount extends Component {
   }
 
   handleCancel = () => {
-    console.log('handleCancel');
     this.setState({
       showCreateAccountForm: false
     })

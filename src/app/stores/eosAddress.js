@@ -97,9 +97,7 @@ class EosAddress {
                 accounts: item.accounts
               }
               Object.values(item.accounts).forEach((v) => {
-                if (self.accountInfo[v]) {
-                  // console.log('exist');
-                } else {
+                if (!self.accountInfo[v]) {
                   self.accountInfo[v] = {
                     publicKey: item.publicKey,
                     path: path
@@ -187,12 +185,29 @@ class EosAddress {
       if (self.transHistory[item].action) {
         if (!self.historySelectedAccountName || self.historySelectedAccountName === self.transHistory[item]['from']) {
           let status = self.transHistory[item].status;
+          let value = '';
+          switch (self.transHistory[item]['action']) {
+            case 'buyrambytes':
+              value = `${self.transHistory[item]['ramBytes']} KB`;
+              break;
+            case 'sellram':
+              value = `${self.transHistory[item]['ramBytes']} KB`;
+              break;
+            case 'newaccount':
+              let ram = self.transHistory[item]['ramBytes'];
+              let cpu = self.transHistory[item]['cpuAmount'];
+              let net = self.transHistory[item]['netAmount'];
+              value = `${ram}KB/ ${Number(cpu.replace(/ EOS/, ''))}EOS/ ${Number(net.replace(/ EOS/, ''))}EOS`;
+              break;
+            default:
+              value = self.transHistory[item]['value'];
+          }
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item]['sendTime']),
             from: self.transHistory[item]['from'],
             to: self.transHistory[item]['to'],
-            value: self.transHistory[item]['value'],
+            value: value,
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item]['sendTime'],
             action: self.transHistory[item]['action'],

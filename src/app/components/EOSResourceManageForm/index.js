@@ -21,7 +21,11 @@ const { TabPane } = Tabs;
 class EOSResourceManageForm extends Component {
     state = {
         activeKey: 0,
-        prices: {}
+        prices: {
+            ram: 0,
+            cpu: 0,
+            net: 0
+        }
     }
 
     componentDidMount() {

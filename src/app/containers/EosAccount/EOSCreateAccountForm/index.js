@@ -1,12 +1,13 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Select, Row, Col, Icon, message } from 'antd';
+import { Modal, Button, Form, Input, Select, Row, Col, Icon, message, Tooltip } from 'antd';
 import style from './index.less';
 import { BigNumber } from 'bignumber.js';
 import { EOSPATH } from 'utils/settings';
 
 const { Option } = Select;
+const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
 @inject(stores => ({
     language: stores.languageIntl.language,
     getAccount: stores.eosAddress.getAccount,
@@ -18,28 +19,50 @@ const { Option } = Select;
 
 @observer
 class EOSCreateAccountForm extends Component {
+    state = {
+        ramDefaultValue: 3,
+        cpuDefaultValue: 0,
+        netDefaultValue: 0,
+        prices: {
+            ram: 0,
+            cpu: 0,
+            net: 0
+        }
+    }
+
+    componentDidMount() {
+        if (this.props.getAccount.length === 0) {
+            console.log('No account');
+            return;
+        }
+        wand.request('address_getEOSResourcePrice', { account: this.props.getAccount[0] || DEFAULT_ACCOUNT_NAME }, (err, res) => {
+            console.log('prices:', res);
+            if (!err) {
+                this.setState({
+                    prices: res
+                });
+            } else {
+                console.log('Get resource price failed:', err);
+                message.error('Get resource price failed');
+            }
+        });
+    }
+
     handleOk = () => {
         const { form, getAccountList, getAccount, accountInfo, keyInfo } = this.props;
         form.validateFields(async (err) => {
             if (err) { return; };
             let values = form.getFieldsValue();
-            console.log('values: ', values);
             if (getAccount.indexOf(values.name) !== -1) {
                 message.error('Duplicate account name');
             }
             if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
                 const balance = this.getBalanceByAccount(values.creator);
-                console.log(balance);
                 if (!(typeof balance === 'number' && new BigNumber(values.CPU).plus(values.NET).lte(balance))) {
                     message.error('No sufficient balance');
                     return false;
                 }
             }
-            console.log('accountInfo:', accountInfo);
-            console.log('keyInfo:', keyInfo);
-            // let pathAndId = this.getPathAndIdByPublicKey(values.active);
-            // console.log('-----pathAndId2222222222------', pathAndId);
-            console.log('path:', accountInfo[values.creator].path);
             let params = {
                 action: 'newaccount',
                 accountName: values.name,
@@ -51,8 +74,6 @@ class EOSCreateAccountForm extends Component {
                 netAmount: values.NET,
                 BIP44Path: accountInfo[values.creator].path,
                 walletID: 1,
-                /* BIP44Path: `${EOSPATH}${pathAndId.path}`,
-                walletID: pathAndId.walletID, */
             };
             console.log('params:', params);
             wand.request('transaction_EOSNormal', params, (err, res) => {
@@ -75,23 +96,6 @@ class EOSCreateAccountForm extends Component {
         this.props.handleCancel();
     }
 
-    /* getPathAndIdByPublicKey = key => {
-        const { keyInfo } = this.props;
-        let obj = null;
-        Object.keys(keyInfo).find(t => {
-          if (keyInfo[t][key]) {
-            obj = {
-              path: keyInfo[t][key].path,
-              walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
-            }
-            return true;
-          } else {
-            return false;
-          }
-        });
-        return obj;
-    } */
-
     getBalanceByAccount = (name) => {
         const { getAccountList } = this.props;
         let index = getAccountList.findIndex((item) => item.account === name);
@@ -106,8 +110,31 @@ class EOSCreateAccountForm extends Component {
         }
     }
 
+    checkName = (rule, value, callback) => {
+        let reg = /[A-Z]/g;
+        if (reg.test(value)) {
+            const str = 'Invalid name';
+            callback(str);
+        } else {
+            callback();
+        }
+    }
+
+    cpuChange = e => {
+        this.setState({
+            cpuDefaultValue: e.target.value
+        });
+    }
+
+    netChange = e => {
+        this.setState({
+            netDefaultValue: e.target.value
+        });
+    }
+
     render() {
         const { form, getAccount, getKeyList } = this.props;
+        const { ramDefaultValue, cpuDefaultValue, netDefaultValue } = this.state;
         const { getFieldDecorator } = form;
         const span = 8;
         return (
@@ -126,7 +153,7 @@ class EOSCreateAccountForm extends Component {
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={'New Account Name'}>
-                            {getFieldDecorator('name', { rules: [{ required: true }] })
+                            {getFieldDecorator('name', { rules: [{ required: true, validator: this.checkName }] })
                                 (<Input placeholder={'Name'} prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
                         <Form.Item label={'Creator'}>
@@ -155,7 +182,7 @@ class EOSCreateAccountForm extends Component {
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}>{v.name} - {v.publicKey}</Option>)}
+                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
                                     </Select>
                                 )}
                         </Form.Item>
@@ -170,27 +197,27 @@ class EOSCreateAccountForm extends Component {
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}>{v.name} - {v.publicKey}</Option>)}
+                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
                                     </Select>
                                 )}
                         </Form.Item>
                         <Row type="flex" justify="space-around">
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'RAM'}>
-                                    {getFieldDecorator('RAM', { initialValue: 3, rules: [{ message: 'Invalid value, at least 3KB', validator: this.checkNumber }] })
+                                    {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: 'Invalid value, at least 3KB', validator: this.checkNumber }] })
                                         (<Input type="number" min={3} addonAfter="KB" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
-                                <Form.Item label={'CPU'}>
-                                    {getFieldDecorator('CPU', { initialValue: 0, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
-                                        (<Input type="number" addonAfter="EOS" />)}
+                                <Form.Item label={`CPU (≈${new BigNumber(cpuDefaultValue).div(this.state.prices.cpu).toFixed(4).toString()} ms)`}>
+                                    {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                        (<Input type="number" min={0} addonAfter="EOS" onChange={this.cpuChange} />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
-                                <Form.Item label={'NET'}>
-                                    {getFieldDecorator('NET', { initialValue: 0, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
-                                        (<Input type="number" addonAfter="EOS" />)}
+                                <Form.Item label={`NET (≈${new BigNumber(netDefaultValue).div(this.state.prices.net).toFixed(4).toString()} KB)`}>
+                                    {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                        (<Input type="number" min={0} addonAfter="EOS" onChange={this.netChange} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
