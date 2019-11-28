@@ -4,7 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
-import { WANPATH, ETHPATH } from 'utils/settings';
+import { WANPATH, ETHPATH, WALLET_CHAIN } from 'utils/settings';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 
 class Tokens {
@@ -92,7 +92,7 @@ class Tokens {
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
       list.push({
-        wanAddr: item,
+        addr: item,
         symbol: !val.userAdrr ? `W${val.symbol}` : val.symbol,
         select: val.select
       })
@@ -104,15 +104,15 @@ class Tokens {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
-      if (!['ETH', 'BTC'].includes(val.symbol) && !val.userAdrr) {
+      if (!WALLET_CHAIN.includes(val.symbol) && !val.userAdrr) {
         list.push({
-          ethAddr: val.tokenOrigAddr,
+          addr: item,
           symbol: val.symbol,
-          select: val.select
+          select: val.erc20Select,
+          erc20Addr: val.tokenOrigAddr
         })
       }
     })
-
     return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
   }
 

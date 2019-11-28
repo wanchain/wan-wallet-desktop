@@ -1147,57 +1147,23 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           break
 
       case 'getTokensInfo':
-          let info, tokens_advance;
+          let info;
           try {
-              tokens_advance = setting.get('settings').tokens_advance[network];
               ret = await ccUtil.getRegErc20Tokens();
               info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
-              if (network === 'main') {
-                ret = [{
-                  tokenWanAddr: '0x28362cd634646620ef2290058744f9244bb90ed9',
-                  symbol: 'ETH',
-                  decimals: 18
-                }, {
-                  tokenWanAddr: '0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
-                  symbol: 'BTC',
-                  decimals: 8
-                }].concat(ret);
-              } else {
-                ret = [{
-                  tokenWanAddr: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
-                  symbol: 'ETH',
-                  decimals: 18
-                }, {
-                  tokenWanAddr: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
-                  symbol: 'BTC',
-                  decimals: 8
-                }].concat(ret);
-              }
               ret.forEach(item => {
                 if(info[item.tokenOrigAddr]) {
                   Object.assign(item, info[item.tokenOrigAddr])
-                } else if (!['BTC', 'ETH'].includes(item.symbol)) {
-                  Object.assign(item, {
-                    symbol: 'N/A',
-                    decimals: 0
-                  })
+                } else {
+                  Object.assign(item, { symbol: 'N/A', decimals: 0 })
                 }
-                if(!tokens_advance[item.tokenWanAddr]) {
-                  tokens_advance[item.tokenWanAddr] = {
-                    tokenOrigAddr: item.tokenOrigAddr,
-                    select: false,
-                    symbol:item.symbol,
-                    decimals: item.decimals,
-                    ccSelect: false
-                  }
-                  setting.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
-                }
-              })
+              });
+              setting.updateTokensAdvance(ret);
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
           }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: tokens_advance })
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: setting.tokens_advance })
           break
 
       case 'updateTokensInfo':

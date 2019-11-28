@@ -34,7 +34,7 @@ class CrossChain {
       let val = tokens.tokensList[item];
       if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr) {
         list.push({
-          wanAddr: item,
+          addr: item,
           symbol: val.symbol,
           select: val.ccSelect
         })
