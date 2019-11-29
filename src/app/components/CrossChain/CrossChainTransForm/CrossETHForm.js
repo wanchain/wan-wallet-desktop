@@ -8,7 +8,7 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { ETHPATH, WANPATH } from 'utils/settings';
+import { ETHPATH, WANPATH, PENALTYNUM } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
@@ -28,7 +28,7 @@ const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 @observer
 class CrossETHForm extends Component {
   state = {
-    confirmVisible: false,
+    confirmVisible: false
   }
 
   componentWillUnmount () {
@@ -48,7 +48,7 @@ class CrossETHForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo, tokenAddr } = this.props;
+    const { updateTransParams, addrInfo, settings, form, from, chainType, wanAddrInfo, tokenAddr, estimateFee } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -97,11 +97,20 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { decimals, balance } = this.props;
+    const { decimals, balance, chainType, smgList, form, estimateFee } = this.props;
+
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
+        if (chainType === 'WAN') {
+          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
+          let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();
+          form.setFieldsValue({
+            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
+          });
+        }
         callback();
       }
     } else {
@@ -143,7 +152,7 @@ class CrossETHForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol, tokenAddr, decimals } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
 
     if (chainType === 'ETH') {
