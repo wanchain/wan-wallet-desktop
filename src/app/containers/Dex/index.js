@@ -216,13 +216,26 @@ class Dex extends Component {
     return pu.promisefy(wand.request, ['setting_getDexInjectFile']);
   }
 
+  renderLoadTip = () => {
+    return (
+      <div>
+        Loading...
+        <br/>
+        <br/>
+        If you're using it for the first time, it might take a few minutes...
+      </div>
+    );
+  }
+
   render () {
     const preload = this.state.preload;
     console.log('preload:', preload);
     if (preload) {
       return (
         <div className={style.myIframe}>
-          {this.state.loading ? <Spin tip="Loading..." size="large"/> : null}
+          {this.state.loading
+          ? <Spin
+          tip={this.renderLoadTip()} size="large"/> : null}
           <webview
           id="dexView"
           src={this.dexUrl}
