@@ -42,7 +42,7 @@ class EOSKeyPairList extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><Button type="primary" onClick={() => { this.importAccount(record); }}>Import</Button></div>
+      render: (text, record) => <div><Button type="primary" onClick={() => { this.importAccount(record); }}>{intl.get('EOSKeyPairList.import')}</Button></div>
     }
   ];
 
@@ -80,11 +80,11 @@ class EOSKeyPairList extends Component {
             spin: false
           });
         }).catch(() => {
-          message.error('Get account list failed');
+          message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
         });
       } else {
         console.log('error:', err);
-        message.error('Get account list failed');
+        message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
       }
     });
   }

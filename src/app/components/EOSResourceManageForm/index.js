@@ -35,8 +35,7 @@ class EOSResourceManageForm extends Component {
                     prices: res
                 });
             } else {
-                console.log('Get resource price failed:', err);
-                message.error('Get resource price failed');
+                message.error(intl.get('EOSAccountList.getResourcePriceFailed'));
             }
         });
     }
@@ -58,7 +57,7 @@ class EOSResourceManageForm extends Component {
                 wrapClassName={style.EOSResourceManageFormModal}
                 destroyOnClose={true}
                 closable={false}
-                title={'EOS Resource Management'}
+                title={intl.get('EOSAccountList.eosResourceManagement')}
                 onCancel={this.onCancel}
                 footer={null}
             >

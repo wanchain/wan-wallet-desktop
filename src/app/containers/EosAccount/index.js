@@ -76,9 +76,6 @@ class EosAccount extends Component {
     })
   }
 
-  handleSave = row => {
-  }
-
   handleCancel = () => {
     this.setState({
       showCreateAccountForm: false
@@ -91,11 +88,11 @@ class EosAccount extends Component {
       <div className={style.EOSAccount + ' account'}>
         <Row className={'title ' + style['narrow-bottom-title']}>
           <Col span={12} className="col-left">
-            <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
+            <img className="totalImg" src={totalImg} alt={'EOS'} />
             <span className="wanTex">{'EOS Key Pairs'}</span>
           </Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.generateKeyPair}>{'Generate Key Pair'}</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.generateKeyPair}>{intl.get('EosAccount.generateKeyPair')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">
@@ -105,11 +102,11 @@ class EosAccount extends Component {
         </Row>
         <Row className={'title ' + style['narrow-bottom-title'] + ' ' + style.topBorder}>
           <Col span={12} className="col-left">
-            <img className="totalImg" src={totalImg} alt={intl.get('EosAccount.eos')} />
-            <span className="wanTex">{`EOS Accounts ( ${getAmount} EOS )`}</span>
+            <img className="totalImg" src={totalImg} alt={'EOS'} />
+            <span className="wanTex">{`EOS ${intl.get('EosAccount.Accounts')} ( ${getAmount} EOS )`}</span>
           </Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{'Create Account'}</Button>
+            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('EosAccount.createAccount')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

@@ -70,23 +70,23 @@ class EOSTransHistory extends Component {
 
   normalColumn = [
     {
-      title: 'TIME',
+      title: intl.get('EOSTransHistory.time'),
       dataIndex: 'time',
       key: 'time',
     }, {
-      title: 'FROM',
+      title: intl.get('EOSTransHistory.from'),
       dataIndex: 'from',
       key: 'from',
     }, {
-      title: 'TO',
+      title: intl.get('EOSTransHistory.to'),
       dataIndex: 'to',
       key: 'to',
     }, {
-      title: 'AMOUNT',
+      title: intl.get('EOSTransHistory.AMOUNT'),
       dataIndex: 'value',
       key: 'value',
     }, {
-      title: 'STATUS',
+      title: intl.get('EOSTransHistory.status'),
       dataIndex: 'status',
       key: 'status',
     }
@@ -94,19 +94,19 @@ class EOSTransHistory extends Component {
 
   resourceColumn = [
     {
-      title: 'TIME',
+      title: intl.get('EOSTransHistory.time'),
       dataIndex: 'time',
       key: 'time',
     }, {
-      title: 'FROM',
+      title: intl.get('EOSTransHistory.from'),
       dataIndex: 'from',
       key: 'from',
     }, {
-      title: 'TO',
+      title: intl.get('EOSTransHistory.to'),
       dataIndex: 'to',
       key: 'to',
     }, {
-      title: 'RESOURCE',
+      title: intl.get('EOSTransHistory.resource'),
       dataIndex: 'value',
       key: 'value',
       render: (text, record) => {
@@ -116,11 +116,11 @@ class EOSTransHistory extends Component {
         return text
       }
     }, {
-      title: 'STATUS',
+      title: intl.get('EOSTransHistory.status'),
       dataIndex: 'status',
       key: 'status',
     }, {
-      title: 'ACTION',
+      title: intl.get('EOSTransHistory.action'),
       dataIndex: 'action',
       key: 'action',
       render: (text, record) => {
@@ -139,7 +139,7 @@ class EOSTransHistory extends Component {
             showSearch
             allowClear
             style={{ width: 400 }}
-            placeholder={'Select an account name'}
+            placeholder={intl.get('EOSTransHistory.selectAccount')}
             optionFilterProp="children"
             onChange={this.onChange}
             // defaultValue={1}
@@ -149,13 +149,13 @@ class EOSTransHistory extends Component {
             {Object.keys(accountInfo).map(v => <Option value={v} key={v}>{v}</Option>)}
           </Select>
           <Radio.Group className={style.typeRadio} onChange={this.onTypeChange} defaultValue={this.state.type}>
-            <Radio className={style.allRadio} value={'normal'}>{'Normal'}
-              <Tooltip placement="bottom" title={'Normal'} >
+            <Radio className={style.allRadio} value={'normal'}>{intl.get('EOSTransHistory.normal')}
+              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.normal')} >
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>
-            <Radio value={'resource'}>{'Resource'}
-              <Tooltip placement="bottom" title={'Resource'} >
+            <Radio value={'resource'}>{intl.get('EOSTransHistory.resource')}
+              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.resource')} >
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>

@@ -26,7 +26,7 @@ class EOSImportAccountForm extends Component {
         let { form, selectedRow } = this.props;
         form.validateFields(err => {
             if (err) {
-                message.warn('Invalid form data');
+                message.warn(intl.get('EOSKeyPairList.invalidFormData'));
                 return;
             };
             let accounts = form.getFieldValue('accounts');
@@ -34,7 +34,7 @@ class EOSImportAccountForm extends Component {
             obj.path = obj.path.includes(EOSPATH) ? `${obj.path}` : `${EOSPATH}${obj.path}`;
             obj.accounts = accounts;
             this.props.updateAccounts(obj, 'normal').catch(() => {
-                message.error('Update account failed');
+                message.error(intl.get('EOSKeyPairList.updataAccountInfoFailed'));
             });
             this.props.handleCancel();
         });
@@ -56,7 +56,7 @@ class EOSImportAccountForm extends Component {
 
     columns = () => [
         {
-            title: 'ACCOUNT',
+            title: intl.get('EosAccount.account'),
             dataIndex: 'account',
         }
     ];
@@ -74,20 +74,20 @@ class EOSImportAccountForm extends Component {
         return (
             <div>
                 <Modal
-                    title="Import Account"
+                    title={intl.get('EOSKeyPairList.importAccount')}
                     visible={true}
                     wrapClassName={style.EOSImportAccountForm}
                     destroyOnClose={true}
                     closable={false}
                     onCancel={this.handleCancel}
                     footer={[
-                        <Button key="back" className="cancel" onClick={this.handleCancel}>{'Cancel'}</Button>,
-                        <Button key="submit" type="primary" onClick={this.handleOk}>{'OK'}</Button>,
+                        <Button key="back" className="cancel" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
+                        <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>,
                     ]}
                 >
                     <Spin spinning={spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
                         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-                            <Form.Item label={'Searched Public Key'}>
+                            <Form.Item label={intl.get('EOSKeyPairList.searchPublicKey')}>
                                 {getFieldDecorator('from', { initialValue: selectedRow.publicKey })
                                     (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
                             </Form.Item>
@@ -95,7 +95,7 @@ class EOSImportAccountForm extends Component {
                                 <Table rowSelection={rowSelection} columns={this.columns()} rowKey="account" dataSource={this.props.accounts} rowKey={record => record.account} pagination={false} />
                             </div>
                             <Form.Item>
-                                {getFieldDecorator('accounts', { rules: [{ type: 'array', required: true, message: 'Please select at least one account' }] })
+                                {getFieldDecorator('accounts', { rules: [{ type: 'array', required: true, message: intl.get('EOSKeyPairList.selectOneAccount') }] })
                                     (<Input hidden={true} disabled={true} />)}
                             </Form.Item>
                         </Form>

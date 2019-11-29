@@ -30,7 +30,7 @@ class EOSResourceManageConfirmForm extends Component {
         destroyOnClose
         closable={false}
         visible={true}
-        title={'Confirm'}
+        title={intl.get('EOSResourceManageForm.confirm')}
         onCancel={this.handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
@@ -38,15 +38,15 @@ class EOSResourceManageConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-          { (type === 'buy' || type === 'delegate') && <Form.Item label={'Account'}>
+          { (type === 'buy' || type === 'delegate') && <Form.Item label={intl.get('EOSResourceManageForm.account')}>
             {getFieldDecorator('account', { initialValue: account })
               (<Input disabled={true} />)}
           </Form.Item>}
-          <Form.Item label={'Amount'}>
+          <Form.Item label={intl.get('EOSResourceManageForm.amount')}>
             {getFieldDecorator('amount', { initialValue: amount })
               (<Input disabled={true} />)}
           </Form.Item>
-          <Form.Item label={'Type'}>
+          <Form.Item label={intl.get('EOSResourceManageForm.type')}>
             {getFieldDecorator('type', { initialValue: type })
               (<Input disabled={true} />)}
           </Form.Item>

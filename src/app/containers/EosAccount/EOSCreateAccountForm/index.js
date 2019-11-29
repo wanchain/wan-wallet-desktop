@@ -42,24 +42,24 @@ class EOSCreateAccountForm extends Component {
                     prices: res
                 });
             } else {
-                console.log('Get resource price failed:', err);
-                message.error('Get resource price failed');
+                console.log(intl.get('EOSCreateAccountForm.getResourcePriceFailed'), err);
+                message.error(intl.get('EOSCreateAccountForm.getResourcePriceFailed'));
             }
         });
     }
 
     handleOk = () => {
-        const { form, getAccountList, getAccount, accountInfo, keyInfo } = this.props;
+        const { form, getAccount, accountInfo, keyInfo } = this.props;
         form.validateFields(async (err) => {
             if (err) { return; };
             let values = form.getFieldsValue();
             if (getAccount.indexOf(values.name) !== -1) {
-                message.error('Duplicate account name');
+                message.error(intl.get('EOSCreateAccountForm.duplicateAccount'));
             }
             if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
                 const balance = this.getBalanceByAccount(values.creator);
                 if (!(typeof balance === 'number' && new BigNumber(values.CPU).plus(values.NET).lte(balance))) {
-                    message.error('No sufficient balance');
+                    message.error(intl.get('EOSAccountList.noSufficientBalance'));
                     return false;
                 }
             }
@@ -75,18 +75,16 @@ class EOSCreateAccountForm extends Component {
                 BIP44Path: accountInfo[values.creator].path,
                 walletID: 1,
             };
-            console.log('params:', params);
             wand.request('transaction_EOSNormal', params, (err, res) => {
-                console.log(err, res);
                 if (!err) {
                     if (res.code) {
                         this.props.handleCancel();
                     } else {
-                        message.error('Create account fialed');
+                        message.error(intl.get('EOSCreateAccountForm.createAccountFailed'));
                     }
                 } else {
-                    console.log('Create account fialed:', err);
-                    message.error('Create account fialed');
+                    console.log(intl.get('EOSCreateAccountForm.createAccountFailed'), err);
+                    message.error(intl.get('EOSCreateAccountForm.createAccountFailed'));
                 }
             });
         })
@@ -106,7 +104,7 @@ class EOSCreateAccountForm extends Component {
         if (value >= 0) {
             callback();
         } else {
-            callback(intl.get('Invalid'));
+            callback(intl.get('EOSCreateAccountForm.invalidValue'));
         }
     }
 
@@ -115,7 +113,7 @@ class EOSCreateAccountForm extends Component {
         if (reg.test(value)) {
             callback();
         } else {
-            const str = 'Invalid name format';
+            const str = intl.get('EOSCreateAccountForm.invalidNameFormat');
             callback(str);
         }
     }
@@ -140,28 +138,28 @@ class EOSCreateAccountForm extends Component {
         return (
             <div>
                 <Modal
-                    title={'Create Account'}
+                    title={intl.get('EOSCreateAccountForm.createAccount')}
                     visible
                     wrapClassName={style.EOSCreateAccountForm}
                     destroyOnClose={true}
                     closable={false}
                     onCancel={this.handleCancel}
                     footer={[
-                        <Button key="back" className="cancel" onClick={this.handleCancel}>{'Cancel'}</Button>,
-                        <Button key="submit" type="primary" onClick={this.handleOk}>{'OK'}</Button>,
+                        <Button key="back" className="cancel" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
+                        <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>,
                     ]}
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-                        <Form.Item label={'New Account Name'}>
+                        <Form.Item label={intl.get('EOSCreateAccountForm.newAccountName')}>
                             {getFieldDecorator('name', { rules: [{ required: true, validator: this.checkName }] })
-                                (<Input placeholder={'Name'} length={12} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                                (<Input placeholder={intl.get('EOSCreateAccountForm.name')} length={12} prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
-                        <Form.Item label={'Creator'}>
+                        <Form.Item label={intl.get('EOSCreateAccountForm.creator')}>
                             {getFieldDecorator('creator', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
-                                        placeholder={'Account Used To Fund The New Account'}
+                                        placeholder={intl.get('EOSCreateAccountForm.accountToFundAccount')}
                                         optionFilterProp="children"
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -171,12 +169,12 @@ class EOSCreateAccountForm extends Component {
                                     </Select>
                                 )}
                         </Form.Item>
-                        <Form.Item label={'Owner Public Key'}>
+                        <Form.Item label={intl.get('EOSCreateAccountForm.ownerPublicKey')}>
                             {getFieldDecorator('owner', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
-                                        placeholder={'Owner Key'}
+                                        placeholder={intl.get('EOSCreateAccountForm.ownerKey')}
                                         optionFilterProp="children"
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -186,12 +184,12 @@ class EOSCreateAccountForm extends Component {
                                     </Select>
                                 )}
                         </Form.Item>
-                        <Form.Item label={'Active Public Key'}>
+                        <Form.Item label={intl.get('EOSCreateAccountForm.activePublicKey')}>
                             {getFieldDecorator('active', { rules: [{ required: true }] })
                                 (
                                     <Select
                                         showSearch
-                                        placeholder={'Active Key'}
+                                        placeholder={intl.get('EOSCreateAccountForm.activeKey')}
                                         optionFilterProp="children"
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -204,19 +202,19 @@ class EOSCreateAccountForm extends Component {
                         <Row type="flex" justify="space-around">
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={'RAM'}>
-                                    {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: 'Invalid value, at least 3KB', validator: this.checkNumber }] })
+                                    {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkNumber }] })
                                         (<Input type="number" min={3} addonAfter="KB" />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={`CPU (≈${new BigNumber(cpuDefaultValue).div(this.state.prices.cpu).toFixed(4).toString()} ms)`}>
-                                    {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                    {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
                                         (<Input type="number" min={0} addonAfter="EOS" onChange={this.cpuChange} />)}
                                 </Form.Item>
                             </Col>
                             <Col className={style.colGap} span={span}>
                                 <Form.Item label={`NET (≈${new BigNumber(netDefaultValue).div(this.state.prices.net).toFixed(4).toString()} KB)`}>
-                                    {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: 'Invalid value', validator: this.checkNumber }] })
+                                    {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
                                         (<Input type="number" min={0} addonAfter="EOS" onChange={this.netChange} />)}
                                 </Form.Item>
                             </Col>

@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
 import EOSNormalTransForm from 'components/NormalTransForm/EOSNormalTrans/EOSNormalTransForm'
-import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
 const TxForm = Form.create({ name: 'EOSNormalTransForm' })(EOSNormalTransForm);
 
@@ -28,7 +26,7 @@ class SendEOSNormalTrans extends Component {
       });
       this.props.updateSelectedAccount(this.props.record);
     } else {
-      message.warn('No sufficient balance');
+      message.warn(intl.get('EOSAccountList.noSufficientBalance'));
     }
   }
 

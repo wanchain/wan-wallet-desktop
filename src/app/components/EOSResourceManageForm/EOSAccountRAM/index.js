@@ -47,10 +47,10 @@ class EOSAccountRAM extends Component {
             if (new BigNumber(value).times(this.props.price).gte(0.0001)) {
                 callback();
             } else {
-                callback(intl.get('Too small size'));
+                callback(intl.get('EOSResourceManageForm.tooSmallSize'));
             }
         } else {
-            callback(intl.get('Invalid size value'));
+            callback(intl.get('EOSResourceManageForm.invalidSize'));
         }
     }
 
@@ -59,10 +59,10 @@ class EOSAccountRAM extends Component {
             if (new BigNumber(value).times(this.props.price).gte(0.0001)) {
                 callback();
             } else {
-                callback(intl.get('Too small size'));
+                callback(intl.get('EOSResourceManageForm.tooSmallSize'));
             }
         } else {
-            callback(intl.get('Invalid size value'));
+            callback(intl.get('EOSResourceManageForm.invalidSize'));
         }
     }
 
@@ -75,16 +75,16 @@ class EOSAccountRAM extends Component {
             let values = form.getFieldsValue();
             if (values.type === 'buy') {
                 if (!selectedAccount.balance) {
-                    message.warn('No sufficient balance');
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
                     return;
                 }
                 const cost = new BigNumber(values.buySize).times(this.props.price);
                 if (new BigNumber(values.buySize).gt(this.state.maxBuyRAM)) {
-                    message.warn('Over the maximum size of RAM');
+                    message.warn(intl.get('EOSResourceManageForm.oversizeRAM'));
                 } else if (cost.gt(this.state.maxBuyEOS)) {
-                    message.warn('Over the maximum size of EOS');
+                    message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
                 } else if (cost.gt(selectedAccount.balance)) {
-                    message.warn('No sufficient balance');
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
                 } else {
                     this.setState({
                         formData: {
@@ -97,11 +97,11 @@ class EOSAccountRAM extends Component {
                 }
             } else if (values.type === 'sell') {
                 if (new BigNumber(values.sellSize).gt(this.state.maxSellRAM)) {
-                    message.warn('Over the maximum size of RAM');
+                    message.warn(intl.get('EOSResourceManageForm.oversizeRAM'));
                 } else if (new BigNumber(values.sellSize).times(this.props.price).gt(this.state.maxSellEOS)) {
-                    message.warn('Over the maximum size of EOS');
+                    message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
                 } else if (new BigNumber(values.sellSize).gt(selectedAccount.ramAvailable)) {
-                    message.warn('No sufficient RAM to sell');
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientRAM'));
                 } else {
                     this.setState({
                         formData: {
@@ -160,14 +160,14 @@ class EOSAccountRAM extends Component {
                         confirmVisible: false
                     });
                     this.props.onCancel();
-                    message.success('Transaction success');
+                    message.success(intl.get('EOSResourceManageForm.txSentSuccess'));
                 } else {
-                    message.error('Transaction failed');
+                    message.error(intl.get('EOSResourceManageForm.txSentFailed'));
                     console.log(res.result);
                 }
             } else {
-                message.error('Transaction failed');
-                console.log('Transaction failed:', err);
+                message.error(intl.get('EOSResourceManageForm.txSentFailed'));
+                console.log('Transaction sent failed:', err);
             }
         });
     }
@@ -188,7 +188,7 @@ class EOSAccountRAM extends Component {
                                 format={() => new BigNumber(ramAvailable).toFixed(3).toString() + 'KB / ' + new BigNumber(ramTotal).toFixed(3).toString() + 'KB'}
                                 percent={Number(new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2))}
                             />
-                            <ul><li><span>Available {new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2) + '%'}</span></li></ul>
+                            <ul><li><span>{intl.get('EOSResourceManageForm.available')} {new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2) + '%'}</span></li></ul>
                         </div>
                         <div className={style.progressContainer}>
                             <Progress
@@ -197,26 +197,26 @@ class EOSAccountRAM extends Component {
                                 format={() => networkValue + 'GB / ' + networkTotal + 'GB'}
                                 percent={Number(new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2))}
                             />
-                            <ul><li><span>All Network {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>
+                            <ul><li><span>{intl.get('EOSResourceManageForm.allNetwork')} {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.RAMPriceBar}>Current RAM Price : <span className={style.RAMPrice}>{price.toFixed(4)} EOS/KB</span></div>
+                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{price.toFixed(4)} EOS/KB</span></div>
                         <div className={style.RAMForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
                                     {getFieldDecorator('type', { initialValue: 'buy' })
                                         (<Radio.Group onChange={this.onChange}>
-                                            <Radio value={'buy'} className={style.buyRadio}>BUY</Radio>
-                                            <Radio value={'sell'}>SELL</Radio>
+                                            <Radio value={'buy'} className={style.buyRadio}>{intl.get('EOSResourceManageForm.buy')}</Radio>
+                                            <Radio value={'sell'}>{intl.get('EOSResourceManageForm.sell')}</Radio>
                                         </Radio.Group>)}
                                 </Form.Item>
                                 {this.state.type === 'buy' ? (
                                     <div>
-                                        <div className={style.buyInfo}>Buy RAM ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
+                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buy')} RAM ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
                                         <Form.Item>
-                                            {getFieldDecorator('buySize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkBuySize }] })
-                                                (<InputNumber placeholder={'Enter RAM Size You Want To Buy ( KB )'} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                            {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSizeToBuy')} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -225,7 +225,7 @@ class EOSAccountRAM extends Component {
                                                 <Select
                                                     showSearch
                                                     allowClear
-                                                    placeholder={'Select Receiving Account'}
+                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
                                                     optionFilterProp="children"
                                                 >
                                                     {this.props.getAccount.map((item, index) => <Option value={item} key={item}>{item}</Option>)}
@@ -235,10 +235,10 @@ class EOSAccountRAM extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.sellInfo}>Sell RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
+                                        <div className={style.sellInfo}>{intl.get('EOSResourceManageForm.sell')} RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
                                         <Form.Item>
-                                            {getFieldDecorator('sellSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkSellSize }] })
-                                                (<InputNumber placeholder={'Enter RAM Size You Want To Sell ( KB )'} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                            {getFieldDecorator('sellSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkSellSize }] })
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSizeToSell')} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 )}

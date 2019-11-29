@@ -48,7 +48,7 @@ class EOSConfirmForm extends Component {
             {getFieldDecorator('amount', { initialValue: formatNum(amount) })
               (<Input disabled={true} />)}
           </Form.Item>
-          <Form.Item label={'Memo'}>
+          <Form.Item label={intl.get('EOSNormalTransForm.memo')}>
             {getFieldDecorator('memo', { initialValue: memo })
               (<Input disabled={true} />)}
           </Form.Item>

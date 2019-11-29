@@ -60,7 +60,7 @@ class EOSAccountList extends Component {
             dataIndex: 'action',
             width: '25%',
             render: (text, record) => (<div>
-                <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>Manage Resources</Button>
+        <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
                 <SendEOSNormalTrans record={record}/>
             </div>)
         }

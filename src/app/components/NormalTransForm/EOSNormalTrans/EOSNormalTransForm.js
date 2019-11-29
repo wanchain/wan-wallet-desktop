@@ -47,7 +47,7 @@ class EOSNormalTransForm extends Component {
       let pwd = data['pwd'];
       let amount = data['amount'];
       if (new BigNumber(amount).gt(selectedAccount.balance)) {
-        message.warn('No sufficient balance');
+        message.warn(intl.get('EOSAccountList.noSufficientBalance'));
         return false;
       }
       if (settings.reinput_pwd) {
@@ -99,12 +99,11 @@ class EOSNormalTransForm extends Component {
     }
     wand.request('transaction_EOSNormal', params, (err, res) => {
       if (err || res.code === false) {
-        message.warn('Send transaction failed');
-        console.log('Send transaction failed:', err || res);
+        message.warn(intl.get('EOSNormalTransForm.sendTxFailed'));
+        console.log(intl.get('EOSNormalTransForm.sendTxFailed'), err || res);
       } else {
         this.props.updateTransHistory();
-        console.log('res: ', res);
-        message.success('Send transaction successfully');
+        message.success(intl.get('EOSNormalTransForm.sendTxSuccess'));
       }
     });
 
@@ -116,7 +115,7 @@ class EOSNormalTransForm extends Component {
     if (reg.test(value)) {
       callback();
     } else {
-      callback(intl.get('Invalid account name'));
+      callback(intl.get('EOSNormalTransForm.invalidAccountName'));
     }
   }
 
@@ -124,7 +123,7 @@ class EOSNormalTransForm extends Component {
     if (!Number.isNaN(Number(value)) && Number(value) > 0) {
       callback();
     } else {
-      callback(intl.get('Invalid'));
+      callback(intl.get('EOSNormalTransForm.invalid'));
     }
   }
 
@@ -157,8 +156,8 @@ class EOSNormalTransForm extends Component {
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: 'Invalid account name', validator: this.checkToAccount }] })
-                  (<Input placeholder={'Recipient Account'} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('EOSNormalTransForm.invalidAccountName'), validator: this.checkToAccount }] })
+                  (<Input placeholder={intl.get('EOSNormalTransForm.recipientAccount')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
@@ -171,9 +170,9 @@ class EOSNormalTransForm extends Component {
                     (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
                 </Form.Item>
               }
-              <Form.Item label={'Memo'}>
-                {getFieldDecorator('memo', { rules: [{ message: 'Invalid', validator: this.checkMemo }] })
-                  (<TextArea style={{ borderRadius: '4px' }} placeholder='Memo' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+              <Form.Item label={intl.get('EOSNormalTransForm.memo')}>
+                {getFieldDecorator('memo', { rules: [{ message: intl.get('EOSNormalTransForm.invalid'), validator: this.checkMemo }] })
+                  (<TextArea style={{ borderRadius: '4px' }} placeholder={intl.get('EOSNormalTransForm.memo')} prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
             </Form>
           </Spin>
