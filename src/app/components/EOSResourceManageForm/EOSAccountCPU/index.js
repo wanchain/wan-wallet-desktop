@@ -178,7 +178,7 @@ class EOSAccountCPU extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                format={() => new BigNumber(cpuAvailable).toFixed(3).toString() + 'ms/' + new BigNumber(cpuTotal).toFixed(3).toString() + 'ms'}
+                                format={() => new BigNumber(cpuAvailable).toFixed(3).toString() + 'ms / ' + new BigNumber(cpuTotal).toFixed(3).toString() + 'ms'}
                                 percent={Number(new BigNumber(cpuAvailable).div(cpuTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(cpuAvailable).div(cpuTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -187,7 +187,7 @@ class EOSAccountCPU extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#108ee9"
-                                format={() => networkValue + 'ms/' + networkTotal + 'ms'}
+                                format={() => networkValue + 'ms / ' + networkTotal + 'ms'}
                                 percent={Number(new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>All Network {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>

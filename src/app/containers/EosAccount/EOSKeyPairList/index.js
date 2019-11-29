@@ -7,10 +7,10 @@ import style from './index.less';
 import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { EditableFormRow, EditableCell } from 'components/Rename';
-import EOSAddAccountForm from '../EOSAddAccountForm';
+import EOSImportAccountForm from '../EOSImportAccountForm';
 
 const CHAINTYPE = 'EOS';
-const AddAccountForm = Form.create({ name: 'addAccountForm' })(EOSAddAccountForm);
+const AddAccountForm = Form.create({ name: 'addAccountForm' })(EOSImportAccountForm);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -63,7 +63,6 @@ class EOSKeyPairList extends Component {
   });
 
   importAccount = (record) => {
-    const { accountInfo } = this.props;
     wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
       if (!err && response instanceof Array && response.length) {
         this.showAddAccountForm(record);
@@ -80,8 +79,7 @@ class EOSKeyPairList extends Component {
             accountList: accountList,
             spin: false
           });
-        }).catch(err => {
-          console.log(err);
+        }).catch(() => {
           message.error('Get account list failed');
         });
       } else {

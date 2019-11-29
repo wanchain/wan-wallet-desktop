@@ -111,12 +111,12 @@ class EOSCreateAccountForm extends Component {
     }
 
     checkName = (rule, value, callback) => {
-        let reg = /[A-Z]/g;
+        let reg = /^[a-z][1-5a-z\.]{11}$/g;
         if (reg.test(value)) {
-            const str = 'Invalid name';
-            callback(str);
-        } else {
             callback();
+        } else {
+            const str = 'Invalid name format';
+            callback(str);
         }
     }
 
@@ -154,7 +154,7 @@ class EOSCreateAccountForm extends Component {
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={'New Account Name'}>
                             {getFieldDecorator('name', { rules: [{ required: true, validator: this.checkName }] })
-                                (<Input placeholder={'Name'} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                                (<Input placeholder={'Name'} length={12} prefix={<Icon type="wallet" className="colorInput" />} />)}
                         </Form.Item>
                         <Form.Item label={'Creator'}>
                             {getFieldDecorator('creator', { rules: [{ required: true }] })

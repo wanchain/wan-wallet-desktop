@@ -693,11 +693,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
   
               let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
               ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
-              console.log('----------ret----------------:', ret);
             } catch (e) {
               logger.error('Send transaction failed: ' + e.message || e.stack)
-              console.log('-------------error--------------');
-              console.log(e);
               err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })

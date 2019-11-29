@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Icon, Table, Spin } from 'antd';
+import { Modal, Button, Form, Input, Icon, Table, Spin, message } from 'antd';
 import { EOSPATH } from 'utils/settings';
 import style from './index.less';
 
@@ -11,7 +11,7 @@ import style from './index.less';
 }))
 
 @observer
-class EOSAddAccountForm extends Component {
+class EOSImportAccountForm extends Component {
     state = {
         selections: []
     };
@@ -26,15 +26,16 @@ class EOSAddAccountForm extends Component {
         let { form, selectedRow } = this.props;
         form.validateFields(err => {
             if (err) {
-                console.log('handleNext', err);
+                message.warn('Invalid form data');
                 return;
             };
-            let from = form.getFieldValue('from');
             let accounts = form.getFieldValue('accounts');
             let obj = Object.assign({}, selectedRow);
-            obj.path = `${EOSPATH}${obj.path}`;
+            obj.path = obj.path.includes(EOSPATH) ? `${obj.path}` : `${EOSPATH}${obj.path}`;
             obj.accounts = accounts;
-            this.props.updateAccounts(obj, 'normal');
+            this.props.updateAccounts(obj, 'normal').catch(() => {
+                message.error('Update account failed');
+            });
             this.props.handleCancel();
         });
     }
@@ -75,7 +76,7 @@ class EOSAddAccountForm extends Component {
                 <Modal
                     title="Import Account"
                     visible={true}
-                    wrapClassName={style.EOSAddAccountForm}
+                    wrapClassName={style.EOSImportAccountForm}
                     destroyOnClose={true}
                     closable={false}
                     onCancel={this.handleCancel}
@@ -105,4 +106,4 @@ class EOSAddAccountForm extends Component {
     }
 }
 
-export default EOSAddAccountForm;
+export default EOSImportAccountForm;

@@ -58,6 +58,12 @@ class EOSTransHistory extends Component {
       case 'newaccount':
         type = 'New Account';
         break;
+      case 'delegatebw':
+        type = 'Delegate Bandwidth';
+        break;
+      case 'undelegatebw':
+        type = 'Undelegate Bandwidth';
+        break;
     }
     return type;
   }

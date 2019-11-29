@@ -178,7 +178,7 @@ class EOSAccountNET extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#87d068"
-                                format={() => new BigNumber(netAvailable).toFixed(3).toString() + 'KB/' + new BigNumber(netTotal).toFixed(3).toString() + 'KB'}
+                                format={() => new BigNumber(netAvailable).toFixed(3).toString() + 'KB / ' + new BigNumber(netTotal).toFixed(3).toString() + 'KB'}
                                 percent={Number(new BigNumber(netAvailable).div(netTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>Available {new BigNumber(netAvailable).div(netTotal).times(100).toFixed(2) + '%'}</span></li></ul>
@@ -187,7 +187,7 @@ class EOSAccountNET extends Component {
                             <Progress
                                 type="circle"
                                 strokeColor="#108ee9"
-                                format={() => networkValue + 'KB/' + networkTotal + 'KB'}
+                                format={() => networkValue + 'KB / ' + networkTotal + 'KB'}
                                 percent={Number(new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2))}
                             />
                             <ul><li><span>All Network {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>

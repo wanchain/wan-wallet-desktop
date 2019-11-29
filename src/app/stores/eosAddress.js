@@ -40,14 +40,26 @@ class EosAddress {
   }
 
   @action updateAccounts(row, chainType) {
-    let walletID = 1;
-    wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey, accounts: row.accounts } }, (err, res) => {
-      if (!err && res) {
-        self.keyInfo[chainType][row['publicKey']]['accounts'] = row.accounts;
-      } else {
-        console.log('Update accounts failed');
-      }
-    })
+    return new Promise((resolve, reject) => {
+      let walletID = 1;
+      wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey, accounts: row.accounts } }, (err, res) => {
+        if (!err && res) {
+          self.keyInfo[chainType][row['publicKey']]['accounts'] = row.accounts;
+          Object.values(row.accounts).forEach((v) => {
+            if (!self.accountInfo[v]) {
+              self.accountInfo[v] = {
+                publicKey: row.publicKey,
+                path: row.path
+              }
+            }
+          })
+          resolve();
+        } else {
+          console.log('Update accounts failed');
+          reject(err);
+        }
+      })
+    });
   }
 
   @action setHistorySelectedAccountName(name) {
@@ -198,6 +210,20 @@ class EosAddress {
               let cpu = self.transHistory[item]['cpuAmount'];
               let net = self.transHistory[item]['netAmount'];
               value = `${ram}KB/ ${Number(cpu.replace(/ EOS/, ''))}EOS/ ${Number(net.replace(/ EOS/, ''))}EOS`;
+              break;
+            case 'delegatebw':
+              if (self.transHistory[item]['cpuAmount'] === '0.0000 EOS') {
+                value = `${self.transHistory[item]['netAmount']}`;
+              } else {
+                value = `${self.transHistory[item]['cpuAmount']}`;
+              }
+              break;
+            case 'undelegatebw':
+              if (self.transHistory[item]['cpuAmount'] === '0.0000 EOS') {
+                value = `${self.transHistory[item]['netAmount']}`;
+              } else {
+                value = `${self.transHistory[item]['cpuAmount']}`;
+              }
               break;
             default:
               value = self.transHistory[item]['value'];

@@ -30,7 +30,6 @@ class EOSResourceManageForm extends Component {
 
     componentDidMount() {
         wand.request('address_getEOSResourcePrice', { account: this.props.selectedAccount.account }, (err, res) => {
-            console.log('prices:', res);
             if (!err) {
                 this.setState({
                     prices: res
