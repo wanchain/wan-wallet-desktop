@@ -99,36 +99,48 @@ class CrossE20 extends Component {
   inboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true,
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      width: '10%',
+      render: (text, record) => <div><ETHTrans balance={record.balance} symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
   outboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true,
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><ETHTrans symbol={this.props.symbol} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      width: '10%',
+      render: (text, record) => <div><ETHTrans balance={record.balance} symbol={this.props.symbol} decimals={this.props.tokensList[this.props.tokenAddr].decimals} tokenAddr={this.props.tokensList[this.props.tokenAddr].tokenOrigAddr} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 

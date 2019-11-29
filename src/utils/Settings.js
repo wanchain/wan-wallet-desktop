@@ -1,5 +1,3 @@
-import path from 'path'
-import fs from 'fs'
 import low from 'lowdb'
 import FileSync from 'lowdb/adapters/FileSync'
 import { app } from 'electron'
@@ -23,11 +21,39 @@ const defaultConfig = {
       staking_advance: false,
       logout_timeout: '5',
       tokens_advance: {
-        main: {},
-        testnet: {}
+        main: {
+          "0x28362cd634646620ef2290058744f9244bb90ed9": {
+            "select": false,
+            "symbol": "ETH",
+            "decimals": 18,
+            "ccSelect": false
+          },
+          "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
+            "select": false,
+            "symbol": "BTC",
+            "decimals": 8,
+            "ccSelect": false
+          },
+        },
+        testnet: {
+          "0x46397994a7e1e926ea0de95557a4806d38f10b0d": {
+            "select": false,
+            "symbol": "ETH",
+            "decimals": 18,
+            "ccSelect": false
+          },
+          "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd": {
+            "select": false,
+            "symbol": "BTC",
+            "decimals": 8,
+            "ccSelect": false
+          },
+        }
       }
     }
 }
+
+const tokensAdvanceKey = [ 'select', 'ccSelect', 'erc20Select', 'symbol', 'decimals', 'tokenOrigAddr']
 
 const cscContractAddr = "0x00000000000000000000000000000000000000da";
 
@@ -86,6 +112,24 @@ class Settings {
       })
     }
 
+    updateTokensAdvance(regErc20Tokens) {
+      let network = this.get('network');
+      let tokens_advance = this.tokens_advance;
+      regErc20Tokens.forEach(item => {
+        if(!tokens_advance[item.tokenWanAddr]) {
+          tokensAdvanceKey.forEach(key => tokens_advance[item.tokenWanAddr][key] = item[key] || false);
+          this.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
+        } else {
+          tokensAdvanceKey.forEach(key => {
+            if(tokens_advance[item.tokenWanAddr][key] === undefined) {
+              tokens_advance[item.tokenWanAddr][key] = false;
+              this.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}.${key}`, false);
+            }
+          });
+        }
+      })
+    }
+
     get appName() {
         return 'WAN Wallet'
     }
@@ -96,6 +140,11 @@ class Settings {
 
     get htlcAddresses() {
       return htlcAddresses[this.get('network')];
+    }
+
+    get tokens_advance() {
+      let network = this.get('network');
+      return this.get(`settings.tokens_advance.${network}`);
     }
 
     get isDev() {
@@ -182,17 +231,16 @@ class Settings {
     }
 
     get(key) {
-        return this._get(key)
+      return this._get(key)
     }
 
     _get(key) {
-        let val = this._db.get(key).value()
-        
-        if (!val) {
-            this._set(key, defaultConfig[key])
-        }
-
-        return val
+      let val = this._db.get(key).value();
+      if (!val) {
+        val = defaultConfig[key];
+        this._set(key, defaultConfig[key]);
+      }
+      return val;
     }
 
     set(key, value) {

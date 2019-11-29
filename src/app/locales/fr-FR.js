@@ -6,6 +6,12 @@ const fr_FR = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.invalidAmount': 'Montant invalide',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -30,7 +36,7 @@ const fr_FR = {
     'Register.next': 'Suivant',
     'Register.previous': 'Précédent',
     'Register.done': 'Terminé',
-    'Register.createFirstAddr': 'An error occurred, please try again!',
+    'Register.createFirstAddr': 'An error occurred, please try again',
 
     'Backup.invalidPassword': 'Mot de passe invalide, réessayer',
     'Backup.copySuccessfully': 'Copier avec succès',
@@ -85,7 +91,8 @@ const fr_FR = {
     'Config.twoHours': '2 heures',
     'Config.invalidPassword': 'Mot de passe invalide, réessayer',
     'Config.crossChain': 'Cross Chain Options',
-    'Config.wrc20': 'WRC-20 Options',
+    'Config.wallet': 'Wallet Options',
+    'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'Mot de passe',
@@ -114,8 +121,6 @@ const fr_FR = {
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.cancel': 'Annuler',
@@ -184,7 +189,6 @@ const fr_FR = {
 
     'NormalTransForm.estimateGasFailed': 'Estimation du gaz indisponible. Veuillez réessayer',
     'NormalTransForm.invalidAddress': 'Adresse invalide',
-    'NormalTransForm.invalidAmount': 'Montant invalide',
     'NormalTransForm.invalidFeeRate': 'Taux de frais invalide',
     'NormalTransForm.invalidPrivateAddress': 'Adresse privée invalide',
     'NormalTransForm.transaction': 'Transaction',
@@ -215,14 +219,28 @@ const fr_FR = {
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
-    'CrossChainTransForm.lockedAccount': 'Locked Account',
-    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.quota': 'Balance',
-    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
-    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
-    'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
-    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+    'CrossChainTransForm.quota': 'Capacity Left',
+    'CrossChainTransForm.estimateFee': 'Estimated Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
+    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
+    'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
+    'CrossChainTransForm.HashX': 'HashX',
+    'CrossChainTransForm.Chain': 'Chain',
+    'CrossChainTransForm.From': 'From',
+    'CrossChainTransForm.To': 'To',
+    'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
+    'CrossChainTransForm.LockTxHash': 'LockTxHash',
+    'CrossChainTransForm.NoticeTxHash': 'NoticeTxHash',
+    'CrossChainTransForm.ConfirmTxHash': 'ConfirmTxHash',
+    'CrossChainTransForm.Storeman': 'Storeman',
+    'CrossChainTransForm.Value': 'Value',
+    'CrossChainTransForm.Secret': 'Secret',
+    'CrossChainTransForm.Status': 'Status',
+    'CrossChainTransForm.Date': 'Date',
 
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',
@@ -404,9 +422,12 @@ const fr_FR = {
 
     'popup.ok': 'OK',
     'popup.cancel': 'Annuler',
+    'popup.search': 'Search',
     'title.imported': 'Adresse importée',
     'title.copy': 'Copié',
     'title.QRCode': 'Code QR',
+
+    'network.down': 'The network request failed, Please try again later'
 
 }
 

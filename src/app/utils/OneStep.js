@@ -26,6 +26,9 @@ const OneStep = {
       }
     });
     trans.canRevoke.forEach(item => {
+      if (!item.revokeTryCount) {
+        item.revokeTryCount = 1;
+      }
       if (!this.retryTransArr.get(item.hashX)) {
         this.retryTransArr.set(item.hashX, item.revokeTryCount)
       }
@@ -155,7 +158,15 @@ const OneStep = {
             this.sending.delete(trans_data.hashX);
           });
         } else {
-
+          wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'REDEEM' }, (err, ret) => {
+            if (err) {
+              this.sending.delete(trans_data.hashX);
+              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+              increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+            } else {
+              console.log('send_redeem_WBTC:', ret);
+            }
+          })
         }
       }
     });
@@ -204,6 +215,44 @@ const OneStep = {
             });
           }).catch(() => {
             this.sending.delete(trans_data.hashX)
+          });
+        }
+      }
+
+      if (['WAN', 'BTC'].includes(trans_data.chain)) {
+        let input = {
+          x: trans_data.x,
+          hashX: trans_data.hashX,
+        }
+        if (trans_data.chain === 'BTC') {
+          input.from = trans_data.from;
+          wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'REVOKE' }, (err, ret) => {
+            if (err) {
+              this.sending.delete(trans_data.hashX);
+              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+              increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+            } else {
+              console.log('send_revoke_WBTC:', ret);
+            }
+          })
+        } else {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+                gasPrice = DEFAULT_GASPRICE
+            }
+            input.gas = REVOKEWETH_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'REVOKE' }, (err, ret) => {
+              if (err) {
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+              } else {
+                console.log('send_revoke_WBTC:', ret);
+              }
+            })
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
           });
         }
       }

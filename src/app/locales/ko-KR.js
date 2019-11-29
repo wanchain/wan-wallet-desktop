@@ -6,6 +6,12 @@ const ko_KR = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.invalidAmount': '유효하지 않은 값',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -30,7 +36,7 @@ const ko_KR = {
     'Register.next': '다음 단계',
     'Register.previous': '이전 단계',
     'Register.done': '완료',
-    'Register.createFirstAddr': 'An error occurred, please try again!',
+    'Register.createFirstAddr': 'An error occurred, please try again',
 
     'Backup.invalidPassword': '비밀번호가 잘못되었습니다. 다시 시도하십시오.',
     'Backup.copySuccessfully': '성공 하였습니다.',
@@ -89,7 +95,8 @@ const ko_KR = {
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': '패스워드 오류, 재확인 바랍니다.',
     'Config.crossChain': 'Cross Chain Options',
-    'Config.wrc20': 'WRC-20 Options',
+    'Config.wallet': 'Wallet Options',
+    'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': '패스워드',
@@ -118,8 +125,6 @@ const ko_KR = {
     'WanAccount.redeem': '적용',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.cancel': '취소',
@@ -188,7 +193,6 @@ const ko_KR = {
 
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
-    'NormalTransForm.invalidAmount': '유효하지 않은 값',
     'NormalTransForm.invalidFeeRate': '유효하지 않은 값',
     'NormalTransForm.transaction': '전송',
     'NormalTransForm.cancel': '취소',
@@ -220,14 +224,28 @@ const ko_KR = {
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
-    'CrossChainTransForm.lockedAccount': 'Locked Account',
-    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.quota': 'Balance',
-    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
-    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
-    'CrossChainTransForm.transInfo': 'Cross-chain Transaction Information',
-    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+    'CrossChainTransForm.quota': 'Capacity Left',
+    'CrossChainTransForm.estimateFee': 'Estimated Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
+    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
+    'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
+    'CrossChainTransForm.HashX': 'HashX',
+    'CrossChainTransForm.Chain': 'Chain',
+    'CrossChainTransForm.From': 'From',
+    'CrossChainTransForm.To': 'To',
+    'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
+    'CrossChainTransForm.LockTxHash': 'LockTxHash',
+    'CrossChainTransForm.NoticeTxHash': 'NoticeTxHash',
+    'CrossChainTransForm.ConfirmTxHash': 'ConfirmTxHash',
+    'CrossChainTransForm.Storeman': 'Storeman',
+    'CrossChainTransForm.Value': 'Value',
+    'CrossChainTransForm.Secret': 'Secret',
+    'CrossChainTransForm.Status': 'Status',
+    'CrossChainTransForm.Date': 'Date',
 
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',
@@ -413,7 +431,8 @@ const ko_KR = {
     'title.copy': '복사',
     'title.QRCode': 'QR코드',
 
-    'network.down': 'The network request failed, Please try again later!'
+    'network.down': 'The network request failed, Please try again later'
+
 }
 
 export default ko_KR;

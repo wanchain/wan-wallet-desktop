@@ -13,6 +13,7 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   wrc20TokensInfo: stores.tokens.wrc20TokensInfo,
+  erc20TokensInfo: stores.tokens.erc20TokensInfo,
   crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
@@ -42,14 +43,6 @@ class Config extends Component {
 
   handleTimeoutChange = e => {
     this.props.updateSettings({ logout_timeout: e });
-  }
-
-  handleTokensSelected = val => {
-    this.props.updateTokensInfo(val.wanAddr, 'select', !val.select);
-  }
-
-  handleCrossChainSelected = val => {
-    this.props.updateTokensInfo(val.wanAddr, 'ccSelect', !val.select);
   }
 
   handleAddToken = () => {
@@ -88,7 +81,7 @@ class Config extends Component {
   }
 
   render() {
-    const { wrc20TokensInfo, crossChainTokensInfo } = this.props;
+    const { wrc20TokensInfo, crossChainTokensInfo, erc20TokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
 
     const options = [{
@@ -127,28 +120,42 @@ class Config extends Component {
             </Select>
           </div>
         </Card>
-        <Card title={intl.get('Config.staking')}>
-          <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
-          <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
-        </Card>
-        <Card title={intl.get('Config.crossChain')}>
-          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
-          {
-            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleCrossChainSelected(item)}>{item.symbol}</Checkbox>)
-          }
-        </Card>
-        <Card title={intl.get('Config.wrc20')}>
+
+        <Card title={intl.get('Config.wallet')}>
           <p className={style['set_title']}>{intl.get('Config.enableWrc20')}</p>
           {
-            wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.handleTokensSelected(item)}>{item.symbol}</Checkbox>)
+            wrc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'select', !item.select)}>{item.symbol}</Checkbox>)
           }
           <div className={style['add_token']} onClick={this.handleAddToken}>
             <div className={style['account_pattern']}> + </div>
           </div>
+          {
+            this.state.showAddToken && <AddToken onCancel={this.onCancel} />
+          }
+          <div className={style.sub_title}>
+            <p className={style['set_title']}>{intl.get('Config.enableErc20')}</p>
+            {
+              erc20TokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'erc20Select', !item.select)}>{item.symbol}</Checkbox>)
+            }
+            <div className={style['add_token']} onClick={this.handleAddToken}>
+              <div className={style['account_pattern']}> + </div>
+            </div>
+            {
+              this.state.showAddToken && <AddToken onCancel={this.onCancel} />
+            }
+          </div>
         </Card>
-        {
-          this.state.showAddToken && <AddToken onCancel={this.onCancel} />
-        }
+
+        <Card title={intl.get('Config.crossChain')}>
+          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
+          {
+            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
+          }
+        </Card>
+        <Card title={intl.get('Config.staking')}>
+          <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
+          <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
+        </Card>
       </div>
     );
   }

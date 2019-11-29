@@ -4,7 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
-import { WANPATH, ETHPATH } from 'utils/settings';
+import { WANPATH, ETHPATH, WALLET_CHAIN } from 'utils/settings';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 
 class Tokens {
@@ -92,7 +92,7 @@ class Tokens {
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
       list.push({
-        wanAddr: item,
+        addr: item,
         symbol: !val.userAdrr ? `W${val.symbol}` : val.symbol,
         select: val.select
       })
@@ -103,14 +103,17 @@ class Tokens {
   @computed get erc20TokensInfo () {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
-      list.push({
-        ethAddr: self.tokensList[item].tokenOrigAddr,
-        symbol: self.tokensList[item].symbol,
-        decimals: self.tokensList[item].decimals
-      })
+      let val = self.tokensList[item];
+      if (!WALLET_CHAIN.includes(val.symbol) && !val.userAdrr) {
+        list.push({
+          addr: item,
+          symbol: val.symbol,
+          select: val.erc20Select,
+          erc20Addr: val.tokenOrigAddr
+        })
+      }
     })
-
-    return list.sort((a, b) => b.ethAddr - a.ethAddr)
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
   }
 
   @computed get tokensOnSideBar() {
@@ -128,6 +131,33 @@ class Tokens {
   }
 
   @computed get getTokensListInfo () {
+    let addrList = [];
+    let normalArr = Object.keys(wanAddress.addrInfo['normal']);
+    normalArr.forEach(item => {
+      let balance;
+      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
+        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+      addrList.push({
+        key: item,
+        name: wanAddress.addrInfo.normal[item].name,
+        address: wanUtil.toChecksumAddress(item),
+        balance: formatNum(balance),
+        path: `${WANPATH}${wanAddress.addrInfo.normal[item].path}`,
+        action: 'send',
+        amount: balance
+      });
+    });
+    return addrList;
+  }
+
+  @computed get getTokensListInfo_2WanTypes () {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);

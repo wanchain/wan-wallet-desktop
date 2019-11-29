@@ -1,0 +1,12 @@
+{
+    "title": "Atualização de software",
+    "head": "Atualização de software",
+    "newVersion": "Uma nova versão da Carteira WAN esta disponível!",
+    "version": "A versão da carteira WAN $ 1 já está disponível, sua versão atual é $ 2. <br> Você gostaria de atualizá-la agora?",
+    "release": "Notas de lançamento:",
+    "info": "$1",
+    "no": "Não",
+    "upgrade": "Atualizar agora",
+    "downloadingProgress": "Carregando...",
+    "downloadingComplete": "Download completo. Sairá da carteira Wan e instalará atualizações agora!"
+}

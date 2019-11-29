@@ -239,7 +239,7 @@ class NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 
@@ -254,7 +254,7 @@ class NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 

@@ -8,7 +8,7 @@ const COLLEFT = 5;
 const COLRIGHT = 19;
 
 function TransInfo (props) {
-  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time } = props.record
+  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash } = props.record
   return (
     <Modal
       className={style.transModal}
@@ -23,47 +23,61 @@ function TransInfo (props) {
     >
       <div className={style.transInfoMain}>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>HashX</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.HashX')}</Col>
           <Col span={COLRIGHT}>{hashX}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Chain</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Chain')}</Col>
           <Col span={COLRIGHT}>{srcChainAddr}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>From</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.From')}</Col>
           <Col span={COLRIGHT}>{from}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>To</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.To')}</Col>
           <Col span={COLRIGHT}>{to}</Col>
         </Row>
+        {
+          tokenStand === 'E20' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
+            <Col span={COLRIGHT}>{approveTxHash}</Col>
+          </Row>
+        }
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>lockTxHash</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.LockTxHash')}</Col>
           <Col span={COLRIGHT}>{lockTxHash}</Col>
         </Row>
+        {
+          srcChainAddr === 'BTC' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.NoticeTxHash')}</Col>
+            <Col span={COLRIGHT}>{noticeTxHash}</Col>
+          </Row>
+        }
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>confirmTxHash</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
           <Col span={COLRIGHT}>{redeemTxHash}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Storeman</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Storeman')}</Col>
           <Col span={COLRIGHT}>{storeman}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Value</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Value')}</Col>
           <Col span={COLRIGHT}>{value}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Secret</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Secret')}</Col>
           <Col span={COLRIGHT}>{secret}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Status</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Status')}</Col>
           <Col span={COLRIGHT}>{status}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>Date</Col>
+          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Date')}</Col>
           <Col span={COLRIGHT}>{time}</Col>
         </Row>
       </div>

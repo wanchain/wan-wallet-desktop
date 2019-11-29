@@ -1,16 +1,17 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
-import { fromWei, isExceedBalance } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { CHAINNAME, ETHPATH, WANPATH } from 'utils/settings';
+import { ETHPATH, WANPATH } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
-import { getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 
@@ -47,7 +48,7 @@ class CrossETHForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo } = this.props;
+    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo, tokenAddr } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -59,10 +60,18 @@ class CrossETHForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, chainType === 'ETH' ? wanAddrInfo : addrInfo);
       let path = chainType === 'ETH' ? WANPATH + wanAddrInfo.normal[to].path : ETHPATH + addrInfo.normal[to].path;
 
-      if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination, 0)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
-        return;
+      if (tokenAddr) {
+        if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
+      } else {
+        if (isExceedBalance(origAddrAmount, estimateFee.original, chainType === 'ETH' ? sendAmount : 0) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+          message.warn(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
       }
+
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -88,24 +97,29 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 0 && checkAmountUnit(18, value)) {
-      callback();
+    const { decimals, balance } = this.props;
+    if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
+      if (new BigNumber(value).gt(balance)) {
+        callback(intl.get('CrossChainTransForm.overTransBalance'));
+      } else {
+        callback();
+      }
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 
   updateLockAccounts = (storeman, option) => {
-    let { from, form, updateTransParams, smgList, chainType } = this.props;
+    let { from, form, updateTransParams, smgList, chainType, tokenAddr, decimals } = this.props;
 
     if (chainType === 'ETH') {
       form.setFieldsValue({
-        capacity: fromWei(smgList[option.key].quota),
-        quota: fromWei(smgList[option.key].inboundQuota),
+        capacity: tokenAddr ? formatNumByDecimals(smgList[option.key].quota, decimals) : fromWei(smgList[option.key].quota),
+        quota: tokenAddr ? formatNumByDecimals(smgList[option.key].inboundQuota, decimals) : fromWei(smgList[option.key].inboundQuota),
       });
     } else {
       form.setFieldsValue({
-        quota: fromWei(smgList[option.key].outboundQuota),
+        quota: tokenAddr ? formatNumByDecimals(smgList[option.key].outboundQuota, decimals) : fromWei(smgList[option.key].outboundQuota),
       });
     }
 
@@ -113,23 +127,29 @@ class CrossETHForm extends Component {
   }
 
   filterStoremanData = item => {
-    return item[this.props.chainType === 'ETH' ? 'ethAddress' : 'wanAddress'];
+    if (this.props.chainType === 'ETH') {
+      return item[this.props.tokenAddr ? 'smgOrigAddr' : 'ethAddress']
+    } else {
+      return item[this.props.tokenAddr ? 'smgWanAddr' : 'wanAddress']
+    }
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
+    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol, tokenAddr, decimals } = this.props;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
 
     if (chainType === 'ETH') {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
-      title = symbol ? `${symbol} TO W${symbol}` : 'ETH TO WETH';
-      totalFeeTitle = `${estimateFee.original} eth + ${estimateFee.destination} wan`;
+      title = symbol ? `${symbol} -> W${symbol}` : 'ETH -> WETH';
+      tokenSymbol = symbol || 'ETH';
+      totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
       selectedList = Object.keys(addrInfo.normal);
-      title = symbol ? `W${symbol} TO ${symbol}` : 'WETH TO ETH';
-      totalFeeTitle = `${estimateFee.original} wan + ${estimateFee.destination} eth`;
+      title = symbol ? `W${symbol} -> ${symbol}` : 'WETH -> ETH';
+      tokenSymbol = symbol ? `W${symbol}` : 'WETH';
+      totalFeeTitle = `${estimateFee.original} WAN + ${estimateFee.destination} ETH`;
     }
 
     if (smgList.length === 0) {
@@ -137,12 +157,12 @@ class CrossETHForm extends Component {
       capacity = quota = 0;
     } else {
       if (chainType === 'ETH') {
-        defaultSelectStoreman = smgList[0].ethAddress;
-        capacity = fromWei(smgList[0].quota)
-        quota = fromWei(smgList[0].inboundQuota)
+        defaultSelectStoreman = tokenAddr ? smgList[0].smgOrigAddr : smgList[0].ethAddress;
+        capacity = tokenAddr ? formatNumByDecimals(smgList[0].quota, decimals) : fromWei(smgList[0].quota)
+        quota = tokenAddr ? formatNumByDecimals(smgList[0].inboundQuota, decimals) : fromWei(smgList[0].inboundQuota)
       } else {
-        defaultSelectStoreman = smgList[0].wanAddress;
-        quota = fromWei(smgList[0].outboundQuota);
+        defaultSelectStoreman = tokenAddr ? smgList[0].smgWanAddr : smgList[0].wanAddress;
+        quota = tokenAddr ? formatNumByDecimals(smgList[0].outboundQuota, decimals) : fromWei(smgList[0].outboundQuota)
       }
     }
 
@@ -169,17 +189,17 @@ class CrossETHForm extends Component {
                 disabled={true}
                 options={{ initialValue: from }}
                 prefix={<Icon type="wallet" className="colorInput" />}
-                title={intl.get('NormalTransForm.from') + CHAINNAME[chainType]}
+                title={intl.get('NormalTransForm.from') + ' (' + getFullChainName(chainType) + ')'}
               />
               <SelectForm
                 form={form}
                 colSpan={6}
-                formName='lockedAccount'
+                formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
                 selectedList={smgList}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('CrossChainTransForm.lockedAccount')}
+                formMessage={intl.get('CrossChainTransForm.storemanAccount')}
               />
               {
                 chainType === 'ETH' &&
@@ -208,7 +228,7 @@ class CrossETHForm extends Component {
                 formName='to'
                 initialValue={selectedList[0]}
                 selectedList={selectedList}
-                formMessage={intl.get('NormalTransForm.to') + CHAINNAME[desChain]}
+                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />
               <CommonFormItem
                 form={form}
@@ -223,9 +243,10 @@ class CrossETHForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='amount'
-                options={{ initialValue: 0, rules: [{ required: true, validator: this.checkAmount }] }}
+                placeholder={0}
+                options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${chainType.toLowerCase()})`}
+                title={intl.get('Common.amount') + ` (${tokenSymbol})`}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>

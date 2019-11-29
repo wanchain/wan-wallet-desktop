@@ -1,0 +1,80 @@
+{
+    "main": {
+        "applicationMenu": {
+            "app": {
+                "label": "{{aplicativo}}",
+                "about": "Sobre o {{aplicativo}}",
+                "version": " Versão da Carteira Wan {{versão}}",
+                "developer": {
+                    "label": "Desenvolvedor",
+                    "assets": {
+                        "label": "Ativos",
+                        "wan": {
+                            "label": "Wanchain",
+                            "import": "Importar Arquivo Keystore"
+                        }
+                    },
+                    "data": {
+                        "label": "Pasta de dados",
+                        "db": "Abrir pasta de dados",
+                        "log": "Abrir Pasta de Log"
+                    }
+                },
+                "services": "Serviços",
+                "checkForUpdate": "Verificar atualizações...",
+                "hide": "Ocultar {{ aplicativo }}",
+                "hideOthers": "Ocultar outros",
+                "showAll": "Mostrar tudo",
+                "quit": "Sair do {{ aplicativo }}"
+            },
+            "edit": {
+                "label": "Editar",
+                "undo": "Desfazer",
+                "redo": "Refazer",
+                "cut": "Recortar",
+                "copy": "Copiar",
+                "paste": "Colar",
+                "selectAll": "Selecionar tudo"
+            },
+            "setting": {
+                "label": "Configurações",
+                "network": {
+                    "label": "Rede",
+                    "main": "Rede Principal",
+                    "test": "Rede de Teste"
+                },
+                "mode": {
+                    "label": "Modo",
+                    "full": "Carteira Full Node",
+                    "light": "Carteira Light"
+                },
+                "lang": {
+                    "label": "Língua",
+                    "code": {
+                        "en": "English",
+                        "zh": "中文(简体)",
+                        "th-TH": "ไทย",
+                        "ko-KR": "한국어",
+                        "fr-FR": "Français",
+                        "pt-PT": "Português(BR)"
+                    }
+                }
+            },
+            "window": {
+                "label": "Janela",
+                "fullscreen": " Tela inteira",
+                "minimize": "Minimizar",
+                "close": "Fechar",
+                "front": "Trazer tudo para a frente",
+            },
+            "help": {
+                "label": "Ajuda",
+                "web": "Site Oficial da Wanchain",
+                "explorer": " Explorador da Wanchain",
+                "webURL": "https://wanchain.org",
+                "explorerURL": "https://www.wanscan.org",
+                "toggle": "Alternar ferramentas de desenvolvedor"
+            }
+        }
+    }
+}

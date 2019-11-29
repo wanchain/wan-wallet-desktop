@@ -1,0 +1,20 @@
+{
+    "title": "Importar o Arquivo Keystore da Wanchain",
+    "head": "Importar arquivo Keystore da Wanchain",
+    "warning": "ATENÇÃO: A conta do keystore não é recomendada como forma de acesso. Não suportamos a funcionalidade de backup do arquivo keystore. Proteja seu arquivo keystore original com segurança ou transfira seus ativos para contas HD ou contas de hardware.",
+    "enterKfPw": "Insira a senha do Keystore",
+    "kfFeedback": "Senha do Keystore inválida",
+    "enterWwPw": "Insira a senha da carteira WAN",
+    "wWPwInvalid": "Senha da carteira WAN inválida.",
+    "chooseKf": "Escolha o arquivo Keystore",
+    "kFInvalid": "Arquivo Keystore inválido",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "ERR_NOT_FOUND": "Não é possível continuar, a carteira não está criada ou está bloqueada",
+    "ERR_WRONG_PWD_KEYFILE": " Senha do Keystore inválida",
+    "ERR_WRONG_PWD_WALLET": "Senha da carteira WAN inválida",
+    "ERR_INVALID_KEYFILE": "Formato do arquivo keystore inválido",
+    "ERR_DUPLICATE_KEYFILE": "Não importe o mesmo arquivo de chave novamente.",
+    "TEXT_SUCCESS": "A importação foi bem sucedida. Essa janela será fechada em 5 segundos",
+    "browse": "Navegador de Internet"
+}

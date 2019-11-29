@@ -16,6 +16,7 @@ const GASLIMIT = 300000;
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getNormalAmount,
+  feeRate: stores.sendCrossChainParams.feeRate,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
 }))
@@ -34,7 +35,7 @@ class BTCTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount } = this.props;
+    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, feeRate, path } = this.props;
 
     if (direction === INBOUND) {
       if (getAmount === 0) {
@@ -52,13 +53,35 @@ class BTCTrans extends Component {
     try {
       let [wanGasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList('BTC')]);
       let originalFee, destinationFee;
+      let smg = smgList[0];
+
       if (direction === INBOUND) {
         originalFee = 0;
-        destinationFee = new BigNumber(wanGasPrice).times(REDEEMWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
+        destinationFee = new BigNumber(wanGasPrice).times(REDEEMWETH_GAS).times(2.5).div(BigNumber(10).pow(9)).toString(10);
+        updateBTCTransParams({
+          feeRate,
+          btcAddress: smg.btcAddress,
+          changeAddress: from,
+          storeman: smg.wanAddress,
+          smgBtcAddr: smg.smgBtcAddr,
+          gasPrice: wanGasPrice,
+          gas: GASLIMIT
+        });
       } else {
         originalFee = new BigNumber(wanGasPrice).times(LOCKWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
         destinationFee = 0;
+        updateBTCTransParams({
+          from: {
+            walletID: 1,
+            path
+          },
+          txFeeRatio: smg.txFeeRatio,
+          storeman: smg.wanAddress,
+          gasPrice: wanGasPrice,
+          gas: GASLIMIT
+        });
       }
+
       this.setState({
         smgList,
         estimateFee: {
@@ -66,8 +89,7 @@ class BTCTrans extends Component {
           destination: destinationFee
         }
       });
-      let smg = smgList[0];
-      updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: from, storeman: smg.wanAddress, feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr, gasPrice: wanGasPrice, gas: GASLIMIT });
+
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log('showModal:', err)
@@ -83,7 +105,7 @@ class BTCTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {
+  handleSend = () => {
     this.setState({ loading: true });
     this.props.handleSend().then(() => {
       this.setState({ visible: false, loading: false, spin: true });
@@ -94,13 +116,22 @@ class BTCTrans extends Component {
 
   render () {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
-    let btnStyle = this.props.direction === INBOUND ? { className: 'creatBtn', shape: 'round', size: 'large' } : {};
+    const { from, getAmount, direction, getTokensListInfo } = this.props;
+    let balance, btnStyle;
+
+    if (direction === INBOUND) {
+      btnStyle = { className: 'creatBtn', shape: 'round', size: 'large' };
+      balance = getAmount;
+    } else {
+      btnStyle = {};
+      balance = (getTokensListInfo.find(item => item.address === from)).amount;
+    }
 
     return (
       <div>
         <Button type="primary" {...btnStyle} onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm direction={this.props.direction} symbol={this.props.symbol} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} symbol={this.props.symbol} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

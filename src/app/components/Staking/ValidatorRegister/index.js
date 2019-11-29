@@ -91,7 +91,7 @@ class ValidatorRegister extends Component {
     let { form } = this.props;
     let balance = form.getFieldValue('balance');
     if (value === undefined || !checkAmountUnit(18, value)) {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
     if (new BigNumber(value).minus(10000).lt(0)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));

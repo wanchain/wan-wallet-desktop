@@ -6,6 +6,12 @@ const th_TH = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.invalidAmount': 'จำนวนไม่ถูกต้อง',
+    'Common.tokenAddr': 'TOKEN ADDRESS',
+    'Common.wanchain': 'Wanchain',
+    'Common.ethereum': 'Ethereum',
+    'Common.bitcoin': 'Bitcoin',
+    'Common.eos': 'EOS',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -30,7 +36,7 @@ const th_TH = {
     'Register.next': 'ถัดไป',
     'Register.previous': 'ก่อนหน้า',
     'Register.done': 'เสร็จสิ้น',
-    'Register.createFirstAddr': 'An error occurred, please try again!',
+    'Register.createFirstAddr': 'An error occurred, please try again',
 
     'Backup.invalidPassword': 'รหัสผ่านผิดพลาด กรุณาลองอีกครั้ง',
     'Backup.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
@@ -89,7 +95,8 @@ const th_TH = {
     'Config.existedTokenAddr': 'Existing token address',
     'Config.invalidPassword': 'รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง',
     'Config.crossChain': 'Cross Chain Options',
-    'Config.wrc20': 'WRC-20 Options',
+    'Config.wallet': 'Wallet Options',
+    'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
 
     'PasswordConfirmForm.password': 'รหัสผ่าน',
@@ -118,8 +125,6 @@ const th_TH = {
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',
     'WanAccount.publicKey': 'Public Key',
-
-    'EosAccount.eos': 'EOS',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.cancel': 'ยกเลิก',
@@ -188,7 +193,6 @@ const th_TH = {
 
     'NormalTransForm.estimateGasFailed': 'ค่าแก๊สไม่เพียงพอต่อการดำเนินการ กรุณาลองใหม่อีกครั้ง',
     'NormalTransForm.invalidAddress': 'แอดเดรสไม่ถูกต้อง',
-    'NormalTransForm.invalidAmount': 'จำนวนไม่ถูกต้อง',
     'NormalTransForm.invalidFeeRate': 'ค่าธรรมเนียมไม่ถูกต้อง',
     'NormalTransForm.transaction': 'การทำธุรกรรม',
     'NormalTransForm.cancel': 'ยกเลิก',
@@ -220,14 +224,28 @@ const th_TH = {
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Cross Chain Transaction Confirm',
-    'CrossChainTransForm.lockedAccount': 'Locked Account',
-    'CrossChainTransForm.selectLockAccount': 'Select A Locked Account',
+    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacity',
-    'CrossChainTransForm.quota': 'Balance',
-    'CrossChainTransForm.estimateFee': 'Estimated Gas Fee',
-    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check balance both original chain and destination chain',
-    'CrossChainTransForm.transInfo': 'Crosschain Transaction Information',
-    'CrossChainTransForm.invalidAmount': 'Please input amount equal or greater than ',
+    'CrossChainTransForm.quota': 'Capacity Left',
+    'CrossChainTransForm.estimateFee': 'Estimated Fee',
+    'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
+    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
+    'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
+    'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
+    'CrossChainTransForm.HashX': 'HashX',
+    'CrossChainTransForm.Chain': 'Chain',
+    'CrossChainTransForm.From': 'From',
+    'CrossChainTransForm.To': 'To',
+    'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
+    'CrossChainTransForm.LockTxHash': 'LockTxHash',
+    'CrossChainTransForm.NoticeTxHash': 'NoticeTxHash',
+    'CrossChainTransForm.ConfirmTxHash': 'ConfirmTxHash',
+    'CrossChainTransForm.Storeman': 'Storeman',
+    'CrossChainTransForm.Value': 'Value',
+    'CrossChainTransForm.Secret': 'Secret',
+    'CrossChainTransForm.Status': 'Status',
+    'CrossChainTransForm.Date': 'Date',
 
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',
@@ -415,6 +433,6 @@ const th_TH = {
     'title.copy': 'คัดลอก',
     'title.QRCode': 'QR Code',
 
-    'network.down': 'The network request failed, Please try again later!'
+    'network.down': 'The network request failed, Please try again later'
 }
 export default th_TH;

@@ -198,7 +198,7 @@ class ETHNormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 

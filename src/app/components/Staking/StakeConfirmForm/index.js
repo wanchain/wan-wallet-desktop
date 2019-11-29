@@ -43,8 +43,8 @@ class StakeConfirmForm extends Component {
             <div className="withdraw-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
-                <Col span={18}>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.name')}</span></Col>
+                <Col span={14}>
                   {/* <Validator img={this.props.record.validator.img} name={this.props.record.validator.name} /> */}
                   <div><Avatar src={this.props.record.validator.img}/>{' '}{this.props.record.validator.name}</div>
                   </Col>
@@ -52,20 +52,20 @@ class StakeConfirmForm extends Component {
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.validator.address}</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{this.props.record.validator.address}</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.validator.maxFeeRate}</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('ValidatorRegister.maxFeeRate')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{this.props.record.validator.maxFeeRate}</span></Col>
               </Row>
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.commission')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.validator.commission}</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{this.props.record.validator.commission}</span></Col>
               </Row>
             </div>
           </div>
@@ -73,20 +73,20 @@ class StakeConfirmForm extends Component {
             <div className="withdraw-title">{intl.get('StakeInForm.myAccount')}</div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{formatNum(this.props.record.myStake.title)} WAN</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.stake')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{formatNum(this.props.record.myStake.title)} WAN</span></Col>
               </Row>
             </div>
             {/* <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.balance} WAN</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.balance')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{this.props.record.balance} WAN</span></Col>
               </Row>
             </div> */}
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={18}><span className="withdraw-addr">{this.props.record.accountAddress}</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.address')}</span></Col>
+                <Col span={14}><span className="withdraw-addr">{this.props.record.accountAddress}</span></Col>
               </Row>
             </div>
           </div>

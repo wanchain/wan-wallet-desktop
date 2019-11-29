@@ -220,7 +220,7 @@ class WRC20NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 
@@ -235,7 +235,7 @@ class WRC20NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 
@@ -308,6 +308,7 @@ class WRC20NormalTransForm extends Component {
       <div>
         <Modal
           visible
+          wrapClassName={style.normalTransFormModal}
           destroyOnClose={true}
           closable={false}
           title={intl.get('NormalTransForm.transaction')}

@@ -139,7 +139,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
 }
 
 export const getInfoByAddress = function (address, infos, addrInfo) {
-  let value;
+  let value = {};
   Object.keys(addrInfo).forEach(type => {
     let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address);
     if (index !== -1) {
@@ -148,6 +148,18 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
       infos.forEach(item => { value[item] = addrInfo[type][addr][item] });
     }
   });
+  return value;
+}
+
+export const getInfoByPath = function (pathInfo, addrInfo, addrType = 'normal') {
+  let value = {};
+  if (pathInfo) {
+    let index = Object.keys(addrInfo[addrType]).findIndex(val => addrInfo[addrType][val].path === pathInfo.path.substr(pathInfo.path.lastIndexOf('\/') + 1));
+    if (index !== -1) {
+      let addr = Object.keys(addrInfo[addrType])[index];
+      value = addrInfo[addrType][addr];
+    }
+  }
   return value;
 }
 
@@ -179,9 +191,9 @@ export const getGasPrice = function (chainType) {
   })
 };
 
-export const getSmgList = function (crossChain) {
+export const getSmgList = function (crossChain, getCoin2WanRatio = 'false') {
   return new Promise((resolve, reject) => {
-    wand.request('crossChain_getSmgList', { crossChain }, (err, val) => {
+    wand.request('crossChain_getSmgList', { crossChain, getCoin2WanRatio }, (err, val) => {
       if (err) {
         console.log('Get Smg list failed', err)
         return reject(err);
@@ -629,4 +641,17 @@ export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
     });
   });
   return fromArr;
+}
+
+export const getFullChainName = function (chainType = '') {
+  switch (chainType.toUpperCase()) {
+    case 'WAN':
+      return intl.get('Common.wanchain');
+    case 'ETH':
+      return intl.get('Common.ethereum');
+    case 'BTC':
+      return intl.get('Common.bitcoin');
+    case 'EOS':
+      return intl.get('Common.eos');
+  }
 }

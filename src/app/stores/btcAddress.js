@@ -3,7 +3,6 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
-import { createBTCAddr } from 'utils/helper';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 
@@ -75,14 +74,13 @@ class BtcAddress {
         if (!err && val.length !== 0) {
           let tmpTransHistory = {};
           val.forEach(item => {
-            if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
+            if (item.txHash && (item.txHash !== item.hashX || item.status === 'Failed')) {
               tmpTransHistory[item.txHash] = item;
             }
-            if (item.txHash === '' && item.status === 'Failed') {
+            if (item.txHash === undefined) {
               tmpTransHistory[item.hashX] = item;
             }
           });
-
           self.transHistory = tmpTransHistory;
         }
       })
@@ -180,10 +178,9 @@ class BtcAddress {
 
     @computed get historyList () {
       let historyList = [];
-
       Object.keys(self.transHistory).forEach(item => {
         let status = self.transHistory[item].status;
-        if (!item.crossAddress) {
+        if (self.transHistory[item].crossAddress === undefined) {
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item].time / 1000),
@@ -194,7 +191,6 @@ class BtcAddress {
           });
         }
       });
-
       return historyList.sort((a, b) => b.sendTime - a.sendTime);
     }
 

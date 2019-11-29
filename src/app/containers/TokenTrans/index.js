@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Avatar } from 'antd';
 
-import './index.less';
+import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -24,7 +24,7 @@ message.config({
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
   transParams: stores.sendTransParams.transParams,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getTokensListInfo: stores.tokens.getTokensListInfo_2WanTypes,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -123,7 +123,7 @@ class TokenTrans extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><Avatar className="avatarSty" src={this.img} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
           <Col span={12} className="col-right">
-            <span className="wanTotal">Token Address: <span onClick={this.onClickRow}>{tokenAddr}</span></span>
+            <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>
         </Row>
         <Row className="mainBody">

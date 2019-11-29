@@ -7,7 +7,7 @@ import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
-import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
@@ -18,6 +18,7 @@ const CHAINTYPE = 'BTC';
   getAmount: stores.btcAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -36,6 +37,7 @@ class CrossBTC extends Component {
   componentDidMount() {
     let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'BTC');
     this.timer = setInterval(() => {
+      this.props.updateTransHistory();
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)
   }
@@ -60,7 +62,7 @@ class CrossBTC extends Component {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockBTCInbound:', err);
+          console.log('crossChain_lockBTC:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -71,20 +73,20 @@ class CrossBTC extends Component {
   }
 
   outboundHandleSend = () => {
-    let transParams = this.props.transParams;
+    let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
-      to: transParams.to,
       amount: transParams.amount,
+      crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
-      gasLimit: transParams.gasLimit,
-      storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
+      gas: transParams.gas,
+      txFeeRatio: transParams.txFeeRatio,
+      storeman: transParams.storeman
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWBTCInbound:', err);
+          console.log('crossChain_lockWBTC:', err);
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -97,13 +99,18 @@ class CrossBTC extends Component {
   inboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '30%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     }
   ];
@@ -111,17 +118,23 @@ class CrossBTC extends Component {
   outboundColumns = [
     {
       dataIndex: 'name',
+      width: '20%',
+      ellipsis: true
     },
     {
       dataIndex: 'address',
+      width: '50%',
       render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
     },
     {
       dataIndex: 'balance',
+      width: '20%',
+      ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
     },
     {
       dataIndex: 'action',
+      width: '10%',
       render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} direction={OUTBOUND}/></div>
     }
   ];
@@ -161,7 +174,7 @@ class CrossBTC extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} symbol='BTC' />
+            <CrossBTCHistory name={['normal']} />
           </Col>
         </Row>
       </div>

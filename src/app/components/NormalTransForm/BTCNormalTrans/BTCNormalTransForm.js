@@ -105,10 +105,10 @@ class BTCNormalTransForm extends Component {
         })
         callback();
       }).catch(() => {
-        callback(intl.get('NormalTransForm.invalidAmount'));
+        callback(intl.get('Common.invalidAmount'));
       });
     } else {
-      callback(intl.get('NormalTransForm.invalidAmount'));
+      callback(intl.get('Common.invalidAmount'));
     }
   }
 

@@ -87,7 +87,7 @@ class AddToken extends Component {
           ]}
         >
           <div>
-            <Input placeholder="TOKEN CONTRACT ADDRESS" value={this.state.tokenAddr} onChange={this.handleChange}/>
+            <Input placeholder={intl.get('Common.tokenAddr')} value={this.state.tokenAddr} onChange={this.handleChange}/>
           </div>
         </Modal>
         {

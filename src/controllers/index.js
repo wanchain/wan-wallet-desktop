@@ -1172,57 +1172,23 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           break
 
       case 'getTokensInfo':
-          let info, tokens_advance;
+          let info;
           try {
-              tokens_advance = setting.get('settings').tokens_advance[network];
               ret = await ccUtil.getRegErc20Tokens();
               info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
-              if (network === 'main') {
-                ret = [{
-                  tokenWanAddr: '0x28362cd634646620ef2290058744f9244bb90ed9',
-                  symbol: 'ETH',
-                  decimals: 18
-                }, {
-                  tokenWanAddr: '0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
-                  symbol: 'BTC',
-                  decimals: 8
-                }].concat(ret);
-              } else {
-                ret = [{
-                  tokenWanAddr: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
-                  symbol: 'ETH',
-                  decimals: 18
-                }, {
-                  tokenWanAddr: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
-                  symbol: 'BTC',
-                  decimals: 8
-                }].concat(ret);
-              }
               ret.forEach(item => {
                 if(info[item.tokenOrigAddr]) {
                   Object.assign(item, info[item.tokenOrigAddr])
-                } else if (!['BTC', 'ETH'].includes(item.symbol)) {
-                  Object.assign(item, {
-                    symbol: 'N/A',
-                    decimals: 0
-                  })
+                } else {
+                  Object.assign(item, { symbol: 'N/A', decimals: 0 })
                 }
-                if(!tokens_advance[item.tokenWanAddr]) {
-                  tokens_advance[item.tokenWanAddr] = {
-                    tokenOrigAddr: item.tokenOrigAddr,
-                    select: false,
-                    symbol:item.symbol,
-                    decimals: item.decimals,
-                    ccSelect: false
-                  }
-                  setting.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
-                }
-              })
+              });
+              setting.updateTokensAdvance(ret);
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
           }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: tokens_advance })
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: setting.tokens_advance })
           break
 
       case 'updateTokensInfo':
@@ -1259,8 +1225,23 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           break
 
       case 'getSmgList':
+        let coin2WanRatio
         try {
-          ret = await ccUtil.getSmgList(payload.crossChain);
+          if (payload.crossChain.startsWith('0x')) {
+            if(payload.getCoin2WanRatio) {
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.syncErc20StoremanGroups(payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+            } else {
+              ret = await ccUtil.syncErc20StoremanGroups(payload.crossChain);
+            }
+          } else {
+            if(payload.getCoin2WanRatio) {
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getEthC2wRatio()]);
+              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+            } else {
+              ret = await ccUtil.getSmgList(payload.crossChain);
+            }
+          }
 
           if (payload.crossChain === 'BTC') {
             let net = network === 'main' ? 'mainnet' : 'testnet';
@@ -1294,9 +1275,23 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
       case 'crossBTC':
         try {
+          let feeHard = network === 'main' ? 10000 : 100000;
           let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
           let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          if (payload.type === 'LOCK' && payload.source === 'WAN') {
+            payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
+          }
+          if (payload.type === 'REDEEM') {
+            if (payload.source === 'WAN') {
+              payload.input.feeHard = feeHard
+            }
+            payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          }
+          if (payload.type === 'REVOKE') {
+            if(payload.source === 'BTC') {
+              payload.input.feeHard = feeHard
+            }
+          }
           ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
           if(!ret.code) {
             err = ret;

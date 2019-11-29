@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Input, message, Col, Row, Statistic, Divider, Icon, Tooltip, Form } from 'antd';
+import { Button, Input, message, Col, Row, Divider, Icon, Tooltip, Form } from 'antd';
 
 import style from './index.less';
 import TransHistory from 'components/TransHistory';

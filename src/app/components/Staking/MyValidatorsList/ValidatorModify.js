@@ -368,7 +368,7 @@ class ValidatorModify extends Component {
   render () {
     return (
       <div>
-        <Button className="modifyTopUpBtn" onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
+        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
         {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />}
       </div>
     );

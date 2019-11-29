@@ -1,4 +1,4 @@
-const en_US = {
+const es_ES = {
     'Common.days': ' days',
     'Common.amount': 'Amount',
     'Common.send': 'Send',
@@ -290,8 +290,6 @@ const en_US = {
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
 
-    'menuConfig.dex': 'DEX',
-
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
     'utils.helper.getGasPriceFailed': 'Get gas price failed',
@@ -441,4 +439,4 @@ const en_US = {
 
 }
 
-export default en_US;
+export default es_ES;
