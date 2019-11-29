@@ -238,6 +238,7 @@ const zh_CN = {
     'CrossChainTransForm.Chain': 'Chain',
     'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
+    'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
     'CrossChainTransForm.NoticeTxHash': 'NoticeTxHash',
     'CrossChainTransForm.ConfirmTxHash': 'ConfirmTxHash',

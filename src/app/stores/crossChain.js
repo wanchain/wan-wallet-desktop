@@ -90,9 +90,9 @@ class CrossChain {
 
   @computed get crossE20Trans () {
     let crossEthTrans = [];
-    let currTokenInfo = Object.values(tokens.tokensList).find(item => item.symbol === self.currSymbol.toUpperCase())
+    let currTokenInfo = Object.values(tokens.tokensList).find(item => item.symbol.toUpperCase() === self.currSymbol.toUpperCase())
     self.crossTrans.forEach((item, index) => {
-      if (item.tokenSymbol === self.currSymbol.toUpperCase()) {
+      if (item.tokenSymbol.toUpperCase() === self.currSymbol.toUpperCase()) {
         let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
         let toAddrInfo = item.srcChainAddr === 'WAN' ? ethAddress.addrInfo : wanAddress.addrInfo;
         crossEthTrans.push({
@@ -110,11 +110,13 @@ class CrossChain {
           sendTime: item.sendTime,
           srcChainAddr: item.srcChainAddr,
           dstChainAddr: item.dstChainAddr,
+          approveTxHash: item.approveTxHash,
           lockTxHash: item.lockTxHash,
           redeemTxHash: item.redeemTxHash || 'NULL',
           revokeTxHash: item.revokeTxHash || 'NULL',
-          srcChainType: item.srcChainType === 'WAN' ? 'WAN' : item.tokenSymbol,
-          dstChainType: item.srcChainType === 'WAN' ? item.tokenSymbol : 'WAN',
+          srcChainType: item.srcChainType,
+          dstChainType: item.dstChainType,
+          tokenStand: item.tokenStand
         });
       }
     });

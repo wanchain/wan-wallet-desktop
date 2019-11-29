@@ -1200,11 +1200,22 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           break
 
       case 'getSmgList':
+        let coin2WanRatio
         try {
           if (payload.crossChain.startsWith('0x')) {
-            ret = await ccUtil.syncErc20StoremanGroups(payload.crossChain);
+            if(payload.getCoin2WanRatio) {
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.syncErc20StoremanGroups(payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+            } else {
+              ret = await ccUtil.syncErc20StoremanGroups(payload.crossChain);
+            }
           } else {
-            ret = await ccUtil.getSmgList(payload.crossChain);
+            if(payload.getCoin2WanRatio) {
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getEthC2wRatio()]);
+              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+            } else {
+              ret = await ccUtil.getSmgList(payload.crossChain);
+            }
           }
 
           if (payload.crossChain === 'BTC') {

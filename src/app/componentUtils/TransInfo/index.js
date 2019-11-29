@@ -8,7 +8,7 @@ const COLLEFT = 5;
 const COLRIGHT = 19;
 
 function TransInfo (props) {
-  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash } = props.record
+  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash } = props.record
   return (
     <Modal
       className={style.transModal}
@@ -38,6 +38,13 @@ function TransInfo (props) {
           <Col span={COLLEFT}>{intl.get('CrossChainTransForm.To')}</Col>
           <Col span={COLRIGHT}>{to}</Col>
         </Row>
+        {
+          tokenStand === 'E20' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
+            <Col span={COLRIGHT}>{approveTxHash}</Col>
+          </Row>
+        }
         <Row className={style.tableRow}>
           <Col span={COLLEFT}>{intl.get('CrossChainTransForm.LockTxHash')}</Col>
           <Col span={COLRIGHT}>{lockTxHash}</Col>
