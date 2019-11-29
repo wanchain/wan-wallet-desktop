@@ -7,7 +7,7 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { CROSSCHAINTYPE } from 'utils/settings';
-import { timeFormat, fromWei, formatNum, formatNumByDecimals } from 'utils/support';
+import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 
 class CrossChain {
   @observable currSymbol = '';
@@ -90,9 +90,9 @@ class CrossChain {
 
   @computed get crossE20Trans () {
     let crossEthTrans = [];
-    let currTokenInfo = Object.values(tokens.tokensList).find(item => item.symbol.toUpperCase() === self.currSymbol.toUpperCase())
+    let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {
-      if (item.tokenSymbol.toUpperCase() === self.currSymbol.toUpperCase()) {
+      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
         let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
         let toAddrInfo = item.srcChainAddr === 'WAN' ? ethAddress.addrInfo : wanAddress.addrInfo;
         crossEthTrans.push({

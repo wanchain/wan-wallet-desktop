@@ -109,6 +109,14 @@ class CrossETHForm extends Component {
     }
   }
 
+  checkQuota = (rule, value, callback) => {
+    if (new BigNumber(value).gt(0)) {
+      callback();
+    } else {
+      callback(intl.get('Common.invalidAmount'));
+    }
+  }
+
   updateLockAccounts = (storeman, option) => {
     let { from, form, updateTransParams, smgList, chainType, tokenAddr, decimals } = this.props;
 
@@ -218,7 +226,7 @@ class CrossETHForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota }}
+                options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
