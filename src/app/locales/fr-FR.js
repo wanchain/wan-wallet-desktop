@@ -6,6 +6,7 @@ const fr_FR = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.create': 'Créer',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -109,7 +110,6 @@ const fr_FR = {
     'WanAccount.sendTransactionFailed': 'L\'envoi de la transaction a échoué. Veuillez réessayer',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'Créer',
     'WanAccount.notSameName': 'Le nom du compte ne peut pas être répété. Veuillez réessayer',
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',

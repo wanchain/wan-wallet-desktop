@@ -34,7 +34,7 @@ class EOSImportAccountForm extends Component {
             obj.path = obj.path.includes(EOSPATH) ? `${obj.path}` : `${EOSPATH}${obj.path}`;
             obj.accounts = accounts;
             this.props.updateAccounts(obj, 'normal').catch(() => {
-                message.error(intl.get('EOSKeyPairList.updataAccountInfoFailed'));
+                message.error(intl.get('EOSKeyPairList.updateAccountInfoFailed'));
             });
             this.props.handleCancel();
         });

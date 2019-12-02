@@ -6,6 +6,7 @@ const th_TH = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.create': 'สร้างแอดเดรส',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -113,7 +114,6 @@ const th_TH = {
     'WanAccount.sendTransactionFailed': 'การส่งธุรกรรมผิดพลาดกรุณาลองใหม่อีกครั้ง',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'สร้างแอดเดรส',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',

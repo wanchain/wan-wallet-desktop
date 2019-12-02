@@ -6,6 +6,7 @@ const ko_KR = {
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
+    'Common.create': '생성',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -113,7 +114,6 @@ const ko_KR = {
     'WanAccount.sendTransactionFailed': ' 전송이 실패 하였습니다. 재시도 바랍니다. ',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': '생성',
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
     'WanAccount.redeem': '적용',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
