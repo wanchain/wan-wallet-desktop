@@ -104,7 +104,7 @@ class EosAccount extends Component {
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={'EOS'} />
             <span className="wanTotal">
-              {intl.get('EosAccount.Accounts')} ( {getAmount} <span className="wanTex">EOS</span> )
+              {intl.get('EosAccount.Accounts')} ({getAmount} <span className="wanTex">EOS</span>)
             </span>
           </Col>
           <Col span={12} className="col-right">
