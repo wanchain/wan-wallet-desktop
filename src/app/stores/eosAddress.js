@@ -162,10 +162,13 @@ class EosAddress {
   }
 
   @computed get getAllAmount() {
-    let sum = new BigNumber(1234);
-    /* Object.values(self.addrInfo).forEach(value => {
-      sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)).plus(isNaN(curr.wbalance) ? new BigNumber(0) : new BigNumber(curr.wbalance)), 0));
-    }); */
+    let sum = Object.values(self.accountInfo).reduce((prev, curr) => {
+      if (curr.balance) {
+        return prev instanceof BigNumber ? prev.plus(new BigNumber(curr.balance)) : new BigNumber(prev).plus(new BigNumber(curr.balance));
+      } else {
+        return prev instanceof BigNumber ? prev : new BigNumber(prev);
+      }
+    }, 0);
     return sum.toString(10);
   }
 
