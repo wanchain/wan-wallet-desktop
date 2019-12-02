@@ -65,3 +65,5 @@ export const CROSSCHAINTYPE = ['BTC', 'ETH'];
 
 export const MAX_CONFIRM_BLKS = 100000000;
 export const MIN_CONFIRM_BLKS = 0;
+
+export const OPEN_DEX = true;
