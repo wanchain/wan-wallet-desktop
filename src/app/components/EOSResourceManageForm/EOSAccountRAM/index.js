@@ -213,7 +213,7 @@ class EOSAccountRAM extends Component {
                                 </Form.Item>
                                 {this.state.type === 'buy' ? (
                                     <div>
-                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buy')} RAM ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
+                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buyRAM')} ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSizeToBuy')} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}

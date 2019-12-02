@@ -50,19 +50,19 @@ class EOSTransHistory extends Component {
     let type = '';
     switch (action) {
       case 'buyrambytes':
-        type = 'Buy RAM';
+        type = intl.get('EOSTransHistory.buyRAM');
         break;
       case 'sellram':
-        type = 'Sell RAM';
+        type = intl.get('EOSTransHistory.sellRAM');
         break;
       case 'newaccount':
-        type = 'New Account';
+        type = intl.get('EOSTransHistory.newAccount');
         break;
       case 'delegatebw':
-        type = 'Delegate Bandwidth';
+        type = intl.get('EOSTransHistory.delegateBandwidth');
         break;
       case 'undelegatebw':
-        type = 'Undelegate Bandwidth';
+        type = intl.get('EOSTransHistory.undelegateBandwidth');
         break;
     }
     return type;
@@ -82,7 +82,7 @@ class EOSTransHistory extends Component {
       dataIndex: 'to',
       key: 'to',
     }, {
-      title: intl.get('EOSTransHistory.AMOUNT'),
+      title: intl.get('EOSTransHistory.amount'),
       dataIndex: 'value',
       key: 'value',
     }, {

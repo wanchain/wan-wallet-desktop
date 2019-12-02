@@ -42,6 +42,8 @@ class EOSKeyPairList extends Component {
     },
     {
       dataIndex: 'action',
+      align: 'center',
+      width: 114,
       render: (text, record) => <div><Button type="primary" onClick={() => { this.importAccount(record); }}>{intl.get('EOSKeyPairList.import')}</Button></div>
     }
   ];

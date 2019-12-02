@@ -89,7 +89,7 @@ class EosAccount extends Component {
         <Row className={'title ' + style['narrow-bottom-title']}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={'EOS'} />
-            <span className="wanTex">{'EOS Key Pairs'}</span>
+            <span className="wanTotal">{intl.get('EosAccount.keyPair')}</span>
           </Col>
           <Col span={12} className="col-right">
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.generateKeyPair}>{intl.get('Common.create')}</Button>
@@ -103,7 +103,9 @@ class EosAccount extends Component {
         <Row className={'title ' + style['narrow-bottom-title'] + ' ' + style.topBorder}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={'EOS'} />
-            <span className="wanTex">{`EOS ${intl.get('EosAccount.Accounts')} ( ${getAmount} EOS )`}</span>
+            <span className="wanTotal">
+              {intl.get('EosAccount.Accounts')} ( {getAmount} <span className="wanTex">EOS</span> )
+            </span>
           </Col>
           <Col span={12} className="col-right">
             <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
