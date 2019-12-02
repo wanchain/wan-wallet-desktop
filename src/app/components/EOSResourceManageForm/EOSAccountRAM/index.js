@@ -216,7 +216,7 @@ class EOSAccountRAM extends Component {
                                         <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buyRAM')} ({this.state.maxBuyEOS} EOS ~ {this.state.maxBuyRAM} KB MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSizeToBuy')} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} max={this.state.maxBuyRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -238,7 +238,7 @@ class EOSAccountRAM extends Component {
                                         <div className={style.sellInfo}>{intl.get('EOSResourceManageForm.sell')} RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('sellSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkSellSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSizeToSell')} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 )}

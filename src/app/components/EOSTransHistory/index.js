@@ -59,10 +59,10 @@ class EOSTransHistory extends Component {
         type = intl.get('EOSTransHistory.newAccount');
         break;
       case 'delegatebw':
-        type = intl.get('EOSTransHistory.delegateBandwidth');
+        type = intl.get('EOSTransHistory.stakeBandwidth');
         break;
       case 'undelegatebw':
-        type = intl.get('EOSTransHistory.undelegateBandwidth');
+        type = intl.get('EOSTransHistory.unstakeBandwidth');
         break;
     }
     return type;

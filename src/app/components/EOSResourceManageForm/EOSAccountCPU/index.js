@@ -76,7 +76,7 @@ class EOSAccountCPU extends Component {
                 } else if (cost.gt(this.state.maxDelegateEOS)) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
                 } else if (new BigNumber(values.delegateSize).gt(selectedAccount.cpuAvailable)) {
-                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUToDelegate'));
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUToStake'));
                 } else {
                     this.setState({
                         formData: {
@@ -93,7 +93,7 @@ class EOSAccountCPU extends Component {
                 } else if (new BigNumber(values.undelegateSize).times(this.props.price).gt(this.state.maxUndelegateEOS)) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
                 } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.cpuBalance)) {
-                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUndelegate'));
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUnstake'));
                 } else {
                     this.setState({
                         formData: {
@@ -199,13 +199,13 @@ class EOSAccountCPU extends Component {
                                 <Form.Item className={style.type}>
                                     {getFieldDecorator('type', { initialValue: 'delegate' })
                                         (<Radio.Group onChange={this.onChange}>
-                                            <Radio value={'delegate'} className={style.delegateRadio}>{intl.get('EOSResourceManageForm.delegate')}</Radio>
-                                        <Radio value={'undelegate'}>{intl.get('EOSResourceManageForm.undelegate')}</Radio>
+                                            <Radio value={'delegate'} className={style.delegateRadio}>{intl.get('EOSResourceManageForm.stake')}</Radio>
+                                        <Radio value={'undelegate'}>{intl.get('EOSResourceManageForm.unstake')}</Radio>
                                         </Radio.Group>)}
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.delegateCPU')} ({this.state.maxDelegateEOS} EOS ~ {this.state.maxDelegateCPU} ms MAX)</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} ({this.state.maxDelegateEOS} EOS ~ {this.state.maxDelegateCPU} ms MAX)</div>
                                         <Form.Item>s
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkDelegateSize }] })
                                                 (<InputNumber placeholder={'Enter EOS Amount You Want To Delegate'} precision={4} min={0.0001} max={this.state.maxDelegateEOS} prefix={<Icon type="credit-card" className="colorInput" />} />)}
@@ -227,7 +227,7 @@ class EOSAccountCPU extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.undelegate')} CPU ({this.state.maxUndelegateCPU} ms ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstake')} CPU ({this.state.maxUndelegateCPU} ms ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkUndelegateSize }] })
                                                 (<InputNumber placeholder={'Enter EOS Amount You Want To Undelegate'} precision={4} min={0.0001} max={this.state.maxUndelegateCPU} prefix={<Icon type="credit-card" className="colorInput" />} />)}
