@@ -26,8 +26,6 @@ class EOSAccountCPU extends Component {
         maxUndelegateCPU: 24,
         confirmVisible: false,
         formData: {},
-        networkValue: 35,
-        networkTotal: 100,
     }
 
     componentWillUnmount() {
@@ -70,13 +68,9 @@ class EOSAccountCPU extends Component {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
                     return;
                 }
-                const cost = new BigNumber(values.delegateSize).times(this.props.price);
-                if (new BigNumber(values.delegateSize).gt(this.state.maxDelegateCPU)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeCPU'));
-                } else if (cost.gt(this.state.maxDelegateEOS)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
-                } else if (new BigNumber(values.delegateSize).gt(selectedAccount.cpuAvailable)) {
-                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUToStake'));
+                const cost = new BigNumber(values.delegateSize);
+                if (cost.gt(selectedAccount.balance)) {
+                    message.warn(intl.get('EOSResourceManageForm.noSufficientEOSToStake'));
                 } else {
                     this.setState({
                         formData: {
@@ -88,11 +82,13 @@ class EOSAccountCPU extends Component {
                     });
                 }
             } else if (values.type === 'undelegate') {
-                if (new BigNumber(values.undelegateSize).gt(this.state.maxUndelegateCPU)) {
+                const cost = new BigNumber(values.undelegateSize);
+                const count = cost.div(this.props.price);
+                if (count.gt(this.state.maxUndelegateCPU)) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeCPU'));
-                } else if (new BigNumber(values.undelegateSize).times(this.props.price).gt(this.state.maxUndelegateEOS)) {
+                } else if (cost.gt(this.state.maxUndelegateEOS)) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
-                } else if (new BigNumber(values.undelegateSize).gt(selectedAccount.cpuBalance)) {
+                } else if (count.gt(selectedAccount.cpuAvailable)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUnstake'));
                 } else {
                     this.setState({
@@ -165,8 +161,7 @@ class EOSAccountCPU extends Component {
     }
 
     render() {
-        let { networkValue, networkTotal } = this.state;
-        let { cpuAvailable, cpuTotal, cpuBalance } = this.props.selectedAccount;
+        let { cpuAvailable, cpuTotal } = this.props.selectedAccount;
         const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
@@ -182,18 +177,9 @@ class EOSAccountCPU extends Component {
                             />
                             <ul><li><span>{intl.get('EOSResourceManageForm.available')} {new BigNumber(cpuAvailable).div(cpuTotal).times(100).toFixed(2) + '%'}</span></li></ul>
                         </div>
-                        <div className={style.progressContainer}>
-                            <Progress
-                                type="circle"
-                                strokeColor="#108ee9"
-                                format={() => networkValue + 'ms / ' + networkTotal + 'ms'}
-                                percent={Number(new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2))}
-                            />
-                            <ul><li><span>{intl.get('EOSResourceManageForm.allNetwork')} {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>
-                        </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.CPUPriceBar}>{intl.get('EOSResourceManageForm.currentCPUPrice')} : <span className={style.CPUPrice}>{price} EOS/ms</span></div>
+                        <div className={style.CPUPriceBar}>{intl.get('EOSResourceManageForm.currentCPUPrice')} : <span className={style.CPUPrice}>{price.toString(10)} EOS/ms</span></div>
                         <div className={style.CPUForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -206,9 +192,9 @@ class EOSAccountCPU extends Component {
                                 {this.state.type === 'delegate' ? (
                                     <div>
                                         <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} ({this.state.maxDelegateEOS} EOS ~ {this.state.maxDelegateCPU} ms MAX)</div>
-                                        <Form.Item>s
-                                            {getFieldDecorator('delegateSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkDelegateSize }] })
-                                                (<InputNumber placeholder={'Enter EOS Amount You Want To Delegate'} precision={4} min={0.0001} max={this.state.maxDelegateEOS} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                        <Form.Item>
+                                            {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={this.state.maxDelegateEOS} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -217,7 +203,7 @@ class EOSAccountCPU extends Component {
                                                 <Select
                                                     showSearch
                                                     allowClear
-                                                    placeholder={'Select Receiving Account'}
+                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
                                                     optionFilterProp="children"
                                                 >
                                                     {this.props.getAccount.map((item, index) => <Option value={item} key={item}>{item}</Option>)}
@@ -227,10 +213,10 @@ class EOSAccountCPU extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstake')} CPU ({this.state.maxUndelegateCPU} ms ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeCPU')} ({this.state.maxUndelegateCPU} ms ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
                                         <Form.Item>
-                                            {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: 'Invalid size', validator: this.checkUndelegateSize }] })
-                                                (<InputNumber placeholder={'Enter EOS Amount You Want To Undelegate'} precision={4} min={0.0001} max={this.state.maxUndelegateCPU} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                            {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={this.state.maxUndelegateCPU} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 )}

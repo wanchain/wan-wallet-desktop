@@ -26,8 +26,6 @@ class EOSAccountRAM extends Component {
         maxSellRAM: 24,
         confirmVisible: false,
         formData: {},
-        networkValue: 35,
-        networkTotal: 100,
     }
 
     componentWillUnmount() {
@@ -173,7 +171,6 @@ class EOSAccountRAM extends Component {
     }
 
     render() {
-        let { networkValue, networkTotal } = this.state;
         let { ramAvailable, ramTotal } = this.props.selectedAccount;
         const { form, price } = this.props;
         const { getFieldDecorator } = form;
@@ -190,18 +187,9 @@ class EOSAccountRAM extends Component {
                             />
                             <ul><li><span>{intl.get('EOSResourceManageForm.available')} {new BigNumber(ramAvailable).div(ramTotal).times(100).toFixed(2) + '%'}</span></li></ul>
                         </div>
-                        <div className={style.progressContainer}>
-                            <Progress
-                                type="circle"
-                                strokeColor="#108ee9"
-                                format={() => networkValue + 'GB / ' + networkTotal + 'GB'}
-                                percent={Number(new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2))}
-                            />
-                            <ul><li><span>{intl.get('EOSResourceManageForm.allNetwork')} {new BigNumber(networkValue).div(networkTotal).times(100).toFixed(2) + '%'}</span></li></ul>
-                        </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{price.toFixed(4)} EOS/KB</span></div>
+                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{price.toFixed(4).toString(10)} EOS/KB</span></div>
                         <div className={style.RAMForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -235,7 +223,7 @@ class EOSAccountRAM extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.sellInfo}>{intl.get('EOSResourceManageForm.sell')} RAM ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
+                                        <div className={style.sellInfo}>{intl.get('EOSResourceManageForm.sellRAM')} ({this.state.maxSellRAM} KB ~ {this.state.maxSellEOS} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('sellSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkSellSize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} max={this.state.maxSellRAM} prefix={<Icon type="credit-card" className="colorInput" />} />)}
