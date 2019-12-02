@@ -150,12 +150,12 @@ class EOSTransHistory extends Component {
           </Select>
           <Radio.Group className={style.typeRadio} onChange={this.onTypeChange} defaultValue={this.state.type}>
             <Radio className={style.allRadio} value={'normal'}>{intl.get('EOSTransHistory.normal')}
-              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.normal')} >
+              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.normalTip')} >
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>
             <Radio value={'resource'}>{intl.get('EOSTransHistory.resource')}
-              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.resource')} >
+              <Tooltip placement="bottom" title={intl.get('EOSTransHistory.resourceTip')} >
                 <Icon type="question-circle" />
               </Tooltip>
             </Radio>

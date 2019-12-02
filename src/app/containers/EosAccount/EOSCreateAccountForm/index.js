@@ -1,10 +1,9 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Select, Row, Col, Icon, message, Tooltip } from 'antd';
+import { Modal, Button, Form, Input, Select, message, Tooltip } from 'antd';
 import style from './index.less';
 import { BigNumber } from 'bignumber.js';
-import { EOSPATH } from 'utils/settings';
 
 const { Option } = Select;
 const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
@@ -20,9 +19,9 @@ const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
 @observer
 class EOSCreateAccountForm extends Component {
     state = {
-        ramDefaultValue: 3,
-        cpuDefaultValue: 0,
-        netDefaultValue: 0,
+        ramDefaultValue: 4,
+        cpuDefaultValue: 0.15,
+        netDefaultValue: 0.05,
         prices: {
             ram: 0,
             cpu: 0,
@@ -152,7 +151,7 @@ class EOSCreateAccountForm extends Component {
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                         <Form.Item label={intl.get('EOSCreateAccountForm.newAccountName')}>
                             {getFieldDecorator('name', { rules: [{ required: true, validator: this.checkName }] })
-                                (<Input placeholder={intl.get('EOSCreateAccountForm.name')} length={12} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                                (<Input placeholder={intl.get('EOSCreateAccountForm.name')} length={12} />)}
                         </Form.Item>
                         <Form.Item label={intl.get('EOSCreateAccountForm.creator')}>
                             {getFieldDecorator('creator', { rules: [{ required: true }] })
@@ -199,26 +198,18 @@ class EOSCreateAccountForm extends Component {
                                     </Select>
                                 )}
                         </Form.Item>
-                        <Row type="flex" justify="space-around">
-                            <Col className={style.colGap} span={span}>
-                                <Form.Item label={'RAM'}>
-                                    {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkNumber }] })
-                                        (<Input type="number" min={3} addonAfter="KB" />)}
-                                </Form.Item>
-                            </Col>
-                            <Col className={style.colGap} span={span}>
-                                <Form.Item label={`CPU (≈${new BigNumber(cpuDefaultValue).div(this.state.prices.cpu).toFixed(4).toString()} ms)`}>
-                                    {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
-                                        (<Input type="number" min={0} addonAfter="EOS" onChange={this.cpuChange} />)}
-                                </Form.Item>
-                            </Col>
-                            <Col className={style.colGap} span={span}>
-                                <Form.Item label={`NET (≈${new BigNumber(netDefaultValue).div(this.state.prices.net).toFixed(4).toString()} KB)`}>
-                                    {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
-                                        (<Input type="number" min={0} addonAfter="EOS" onChange={this.netChange} />)}
-                                </Form.Item>
-                            </Col>
-                        </Row>
+                        <Form.Item label={'RAM'}>
+                            {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkNumber }] })
+                                (<Input min={3} addonAfter="KB" />)}
+                        </Form.Item>
+                        <Form.Item label={`CPU (${new BigNumber(cpuDefaultValue).div(this.state.prices.cpu).toFixed(4).toString()} ms)`}>
+                            {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
+                                (<Input min={0} addonAfter="EOS" onChange={this.cpuChange} />)}
+                        </Form.Item>
+                        <Form.Item label={`NET (${new BigNumber(netDefaultValue).div(this.state.prices.net).toFixed(4).toString()} KB)`}>
+                            {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
+                                (<Input min={0} addonAfter="EOS" onChange={this.netChange} />)}
+                        </Form.Item>
                     </Form>
                 </Modal>
             </div>
