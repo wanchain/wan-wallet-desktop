@@ -62,7 +62,7 @@ class EOSResourceManageForm extends Component {
                 footer={null}
             >
                 <Spin spinning={false} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
-                    <Tabs className={style.tabs} defaultActiveKey={'0'} onChange={this.onChange} tabBarStyle={{ textAlign: 'center' }} tabBarGutter={120}>
+                    <Tabs className={style.tabs} defaultActiveKey={'0'} onChange={this.onChange} tabBarStyle={{ textAlign: 'center' }} tabBarGutter={150}>
                         <TabPane tab="RAM" key="0">
                             <RAM price={this.state.prices.ram ? this.state.prices.ram : 0 } onCancel={this.onCancel} />
                         </TabPane>

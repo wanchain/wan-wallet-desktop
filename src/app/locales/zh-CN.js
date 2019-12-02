@@ -221,7 +221,7 @@ const zh_CN = {
     'EOSNormalTransForm.invalidAccountName': '账户名称不可用',
     'EOSNormalTransForm.invalid': '不可用',
     'EOSNormalTransForm.recipientAccount': '接收人账户',
-    'EOSNormalTransForm.memo': '备忘录',
+    'EOSNormalTransForm.memo': '备注',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.cancel': '取消',
