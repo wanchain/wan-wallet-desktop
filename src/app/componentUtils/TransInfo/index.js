@@ -8,7 +8,7 @@ const COLLEFT = 5;
 const COLRIGHT = 19;
 
 function TransInfo (props) {
-  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash } = props.record
+  const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash } = props.record
   return (
     <Modal
       className={style.transModal}
@@ -56,10 +56,20 @@ function TransInfo (props) {
             <Col span={COLRIGHT}>{noticeTxHash}</Col>
           </Row>
         }
-        <Row className={style.tableRow}>
-          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
-          <Col span={COLRIGHT}>{redeemTxHash}</Col>
-        </Row>
+        {
+          redeemTxHash !== 'NULL' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
+            <Col span={COLRIGHT}>{redeemTxHash}</Col>
+          </Row>
+        }
+        {
+          revokeTxHash !== 'NULL' &&
+          <Row className={style.tableRow}>
+            <Col span={COLLEFT}>{intl.get('CrossChainTransForm.CancelTxHash')}</Col>
+            <Col span={COLRIGHT}>{revokeTxHash}</Col>
+          </Row>
+        }
         <Row className={style.tableRow}>
           <Col span={COLLEFT}>{intl.get('CrossChainTransForm.Storeman')}</Col>
           <Col span={COLRIGHT}>{storeman}</Col>

@@ -98,7 +98,6 @@ class CrossETHForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     const { decimals, balance, chainType, smgList, form, estimateFee } = this.props;
-
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
@@ -120,6 +119,11 @@ class CrossETHForm extends Component {
 
   checkQuota = (rule, value, callback) => {
     if (new BigNumber(value).gt(0)) {
+      let { amount } = this.props.form.getFieldsValue(['amount']);
+      if (isExceedBalance(value, amount)) {
+        callback(intl.get('CrossChainTransForm.overQuota'));
+        return;
+      }
       callback();
     } else {
       callback(intl.get('Common.invalidAmount'));
@@ -269,7 +273,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

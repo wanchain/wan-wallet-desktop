@@ -15,7 +15,7 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossETHConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, direction } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
     let desChain, totalFeeTitle;
 
@@ -52,7 +52,7 @@ class CrossETHConfirmForm extends Component {
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('Common.amount') + ` (${chainType.toUpperCase()})`}>
+          <Form.Item label={intl.get('Common.amount') + ` (${tokenSymbol})`}>
             {getFieldDecorator('amount', { initialValue: amount })(inputCom)}
           </Form.Item>
         </Form>
