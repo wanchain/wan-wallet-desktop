@@ -112,7 +112,8 @@ class EosAddress {
                 if (!self.accountInfo[v]) {
                   self.accountInfo[v] = {
                     publicKey: item.publicKey,
-                    path: path
+                    path: path,
+                    account: v,
                   }
                 }
               })

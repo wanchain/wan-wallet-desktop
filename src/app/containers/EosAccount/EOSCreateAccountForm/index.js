@@ -12,7 +12,6 @@ const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
     getAccount: stores.eosAddress.getAccount,
     getKeyList: stores.eosAddress.getKeyList,
     getAccountList: stores.eosAddress.getAccountList,
-    keyInfo: stores.eosAddress.keyInfo,
     accountInfo: stores.eosAddress.accountInfo,
 }))
 
@@ -35,20 +34,18 @@ class EOSCreateAccountForm extends Component {
             return;
         }
         wand.request('address_getEOSResourcePrice', { account: this.props.getAccount[0] || DEFAULT_ACCOUNT_NAME }, (err, res) => {
-            console.log('prices:', res);
             if (!err) {
                 this.setState({
                     prices: res
                 });
             } else {
-                console.log(intl.get('EOSCreateAccountForm.getResourcePriceFailed'), err);
                 message.error(intl.get('EOSCreateAccountForm.getResourcePriceFailed'));
             }
         });
     }
 
     handleOk = () => {
-        const { form, getAccount, accountInfo, keyInfo } = this.props;
+        const { form, getAccount, accountInfo } = this.props;
         form.validateFields(async (err) => {
             if (err) { return; };
             let values = form.getFieldsValue();
@@ -160,8 +157,11 @@ class EOSCreateAccountForm extends Component {
                                         showSearch
                                         placeholder={intl.get('EOSCreateAccountForm.accountToFundAccount')}
                                         optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        filterOption={(input, option) => {
+                                            console.log(option.props);
+                                            console.log(option.props.children);
+                                            return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
                                         }
                                     >
                                         {getAccount.map(v => <Option value={v} key={v}>{v}</Option>)}

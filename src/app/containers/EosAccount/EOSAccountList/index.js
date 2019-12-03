@@ -60,10 +60,23 @@ class EOSAccountList extends Component {
             dataIndex: 'action',
             width: '25%',
             align: 'center',
-            render: (text, record) => (<div>
-        <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
-                <SendEOSNormalTrans record={record}/>
-            </div>)
+            render: (text, record) => {
+                if (Object.prototype.hasOwnProperty.call(record, 'address')) {
+                    return (
+                        <div>
+                            <Button type="primary" onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
+                            <SendEOSNormalTrans record={record} />
+                        </div>
+                    )
+                } else {
+                    return (
+                        <div>
+                            <Button type="primary" disabled onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
+                            <SendEOSNormalTrans record={record} buttonDisabled={true} />
+                        </div>
+                    )
+                }
+            }
         }
     ];
 
