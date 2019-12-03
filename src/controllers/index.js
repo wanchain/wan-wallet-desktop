@@ -400,6 +400,34 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
           sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
+          
+        case 'getEOSMultiBalances':
+            let obj = {};
+            try {
+                const { accounts } = payload;
+                let [...eosMultiBalances] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
+                accounts.forEach( (v, i) => {
+                    obj[v] = eosMultiBalances[i];
+                });
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+  
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: obj })
+            break
+
+        case 'getEOSResourcePrice':
+                try {
+                    const { account } = payload;
+                    ret = await ccUtil.getResourcePrice('EOS', account);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+      
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+                break
         
         case 'balances':
             {
@@ -557,7 +585,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
     }
 })
 
-ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
+ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
     let err, ret;
     const [action, id] = actionUni.split('#');
     switch (action) {
@@ -607,6 +635,18 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.deleteUserAccount(payload.walletID, payload.path)
             } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getAccountByPublicKey':
+            try {
+                ret = await ccUtil.getEosAccountsByPubkey(payload.chainType, payload.pubkey);
+            } catch (e) {
+                console.log('error:', e)
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -664,6 +704,19 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
           }
           sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break;
+
+        case 'EOSNormal':
+            try {
+              logger.info('Normal transaction: ' + JSON.stringify(payload));
+  
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
+              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+            } catch (e) {
+              logger.error('Send transaction failed: ' + e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'private':
             try {

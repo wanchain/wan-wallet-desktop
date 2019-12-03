@@ -34,7 +34,7 @@ class StakeConfirmForm extends Component {
           title={this.state.title}
           onCancel={this.props.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.onSend} loading={!!this.props.confirmLoading}>{intl.get('Common.send')}</Button>,
           ]}
           className="withdraw-modal"

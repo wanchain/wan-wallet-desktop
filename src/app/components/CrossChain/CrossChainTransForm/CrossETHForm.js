@@ -197,8 +197,8 @@ class CrossETHForm extends Component {
           onCancel={this.onCancel}
           className={style['cross-chain-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
@@ -210,7 +210,7 @@ class CrossETHForm extends Component {
                 disabled={true}
                 options={{ initialValue: from }}
                 prefix={<Icon type="wallet" className="colorInput" />}
-                title={intl.get('NormalTransForm.from') + ' (' + getFullChainName(chainType) + ')'}
+                title={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}
               />
               <SelectForm
                 form={form}

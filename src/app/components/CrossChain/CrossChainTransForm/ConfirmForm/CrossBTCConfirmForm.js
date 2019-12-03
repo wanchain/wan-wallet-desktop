@@ -40,14 +40,14 @@ class CrossBTCConfirmForm extends Component {
         title={intl.get('CrossChainTransForm.ConfirmForm.transactionConfirm')}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" className="cancel-button" onClick={handleCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
+          <Button key="back" className="cancel-button" onClick={handleCancel}>{intl.get('Common.cancel')}</Button>,
           <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('Common.send')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
           {
             direction !== INBOUND &&
-            <Form.Item label={intl.get('NormalTransForm.ConfirmForm.from') + ' (' + getFullChainName('WAN') + ')'}>
+            <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName('WAN') + ')'}>
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }

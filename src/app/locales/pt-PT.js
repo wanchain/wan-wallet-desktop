@@ -1,4 +1,7 @@
 const pt_PT = {
+    'Common.copy': 'Copiar',
+    'Common.QRCode': 'Código QR',
+    'Common.from': 'De',
     'Common.days': ' dias',
     'Common.amount': 'Montante',
     'Common.send': 'Enviar',
@@ -12,6 +15,11 @@ const pt_PT = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.options': 'Options',
+    'Common.ok': 'OK',
+    'Common.cancel': 'Cancelar',
+    'Common.next': 'Próximo',
+    'Common.create': 'Criar',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
@@ -33,7 +41,6 @@ const pt_PT = {
     'Register.writeSeedPhraseToDatabaseFailed': 'Falha na gravação da Seed Phrase no banco de dados',
     'Register.unlockWalletFailed': 'Falha ao desbloquear carteira',
     'Register.seedPhraseMismatched': 'Seed phrase incompatível',
-    'Register.next': 'Próximo',
     'Register.previous': 'Anterior',
     'Register.done': 'Concluído',
     'Register.createFirstAddr': 'An error occurred, please try again',
@@ -120,14 +127,12 @@ const pt_PT = {
     'WanAccount.sendTransactionFailed': 'Falha na transação de envio. Por favor, tente novamente',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'Criar',
     'WanAccount.notSameName': 'O nome da conta não pode ser repetido. Por favor, tente novamente',
     'WanAccount.redeem': 'Resgatar',
     'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
-    'AdvancedOptionForm.cancel': 'Cancelar',
     'AdvancedOptionForm.save': 'Salvar',
     'AdvancedOptionForm.gasPrice': 'Preço do gás',
     'AdvancedOptionForm.gwin': 'GWIN',
@@ -181,8 +186,6 @@ const pt_PT = {
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'Escreva esta Seed Phrase em um pedaço de papel e guarde-a em um local seguro',
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'Confirmação de transação',
-    'NormalTransForm.ConfirmForm.cancel': 'Cancelar',
-    'NormalTransForm.ConfirmForm.from': 'De',
     'NormalTransForm.ConfirmForm.to': 'Para',
     'NormalTransForm.ConfirmForm.gasPrice': 'Preço do gás',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
@@ -196,9 +199,6 @@ const pt_PT = {
     'NormalTransForm.invalidFeeRate': 'Taxa inválida',
     'NormalTransForm.invalidPrivateAddress': 'Endereço privado inválido',
     'NormalTransForm.transaction': 'Transação',
-    'NormalTransForm.cancel': 'Cancelar',
-    'NormalTransForm.next': 'Próximo',
-    'NormalTransForm.from': 'De',
     'NormalTransForm.mode': 'Modo de transação',
     'NormalTransForm.normalTransaction': 'Transação normal',
     'NormalTransForm.privateTransaction': 'Transação privada',
@@ -236,7 +236,6 @@ const pt_PT = {
     'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.Chain': 'Chain',
-    'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
@@ -429,12 +428,8 @@ const pt_PT = {
     'Offline.inputRawTxText': 'Insira a transação assinada',
     'Offline.linkToWebsite': 'Baixar a carteira offline',
 
-    'popup.ok': 'OK',
-    'popup.cancel': 'Cancelar',
     'popup.search': 'Search',
     'title.imported': 'Importar endereço',
-    'title.copy': 'Copiar',
-    'title.QRCode': 'Código QR',
 
     'network.down': 'The network request failed, Please try again later'
 

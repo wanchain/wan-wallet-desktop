@@ -50,6 +50,7 @@ export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
 export const BTCPATH_TEST = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";
+export const EOSPATH = "m/44'/194'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
 
 export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
@@ -60,8 +61,8 @@ export const FAKEVAL = '1';
 export const FAKEADDR = '0x0000000000000000000000000000000000000003';
 export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';
 
-export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH'];
-export const CROSSCHAINTYPE = ['BTC', 'ETH'];
+export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH', 'EOS'];
+export const CROSSCHAINTYPE = ['BTC', 'ETH', 'EOS'];
 
 export const MAX_CONFIRM_BLKS = 100000000;
 export const MIN_CONFIRM_BLKS = 0;

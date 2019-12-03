@@ -1,4 +1,7 @@
 const ko_KR = {
+    'Common.copy': '복사',
+    'Common.QRCode': 'QR코드',
+    'Common.from': '발신자',
     'Common.days': ' 일',
     'Common.amount': '금액',
     'Common.send': '전송',
@@ -12,6 +15,11 @@ const ko_KR = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.options': 'Options',
+    'Common.ok': '확인',
+    'Common.cancel': '취소',
+    'Common.next': '다음',
+    'Common.create': '생성',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -33,7 +41,6 @@ const ko_KR = {
     'Register.writeSeedPhraseToDatabaseFailed': 'DB에서 Mnemonic을 사용하지 못했습니다.',
     'Register.unlockWalletFailed': '지갑을 잠금 해제하지 못했습니다.',
     'Register.seedPhraseMismatched': 'Mnemonic가 일치하지 않습니다.',
-    'Register.next': '다음 단계',
     'Register.previous': '이전 단계',
     'Register.done': '완료',
     'Register.createFirstAddr': 'An error occurred, please try again',
@@ -120,14 +127,12 @@ const ko_KR = {
     'WanAccount.sendTransactionFailed': ' 전송이 실패 하였습니다. 재시도 바랍니다. ',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': '생성',
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
     'WanAccount.redeem': '적용',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
-    'AdvancedOptionForm.cancel': '취소',
     'AdvancedOptionForm.save': '저장',
     'AdvancedOptionForm.gasPrice': 'Gas 비용',
     'AdvancedOptionForm.gwin': 'GWIN',
@@ -181,8 +186,6 @@ const ko_KR = {
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'Mnemonic을 종이에 적어서보관 바랍니다.',
 
     'NormalTransForm.ConfirmForm.transactionConfirm': '거래 확인',
-    'NormalTransForm.ConfirmForm.cancel': '취소',
-    'NormalTransForm.ConfirmForm.from': '발신자',
     'NormalTransForm.ConfirmForm.to': '수신자',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas 비용',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
@@ -195,9 +198,6 @@ const ko_KR = {
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
     'NormalTransForm.invalidFeeRate': '유효하지 않은 값',
     'NormalTransForm.transaction': '전송',
-    'NormalTransForm.cancel': '취소',
-    'NormalTransForm.next': '다음',
-    'NormalTransForm.from': '발신자',
     'NormalTransForm.mode': '트랜잭션 모드',
     'NormalTransForm.normalTransaction': '일반적인 트랜잭션',
     'NormalTransForm.privateTransaction': '프라이빗 트랜잭션',
@@ -235,7 +235,6 @@ const ko_KR = {
     'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.Chain': 'Chain',
-    'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
@@ -425,12 +424,8 @@ const ko_KR = {
     'Offline.inputRawTxText': '합의된 트랜잭션을 입력 바랍니다',
     'Offline.linkToWebsite': '오프라인 지갑 다운로드',
 
-    'popup.ok': '확인',
-    'popup.cancel': '취소',
     'popup.search': 'Search',
     'title.imported': '가져온 주소',
-    'title.copy': '복사',
-    'title.QRCode': 'QR코드',
 
     'network.down': 'The network request failed, Please try again later'
 

@@ -1,4 +1,7 @@
 const th_TH = {
+    'Common.copy': 'คัดลอก',
+    'Common.QRCode': 'QR Code',
+    'Common.from': 'ผู้ส่ง',
     'Common.days': ' วัน',
     'Common.amount': 'จำนวน',
     'Common.send': 'ส่ง',
@@ -12,6 +15,11 @@ const th_TH = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.options': 'Options',
+    'Common.cancel': 'ยกเลิก',
+    'Common.ok': 'ตกลง',
+    'Common.next': 'ถัดไป',
+    'Common.create': 'สร้างแอดเดรส',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -33,7 +41,6 @@ const th_TH = {
     'Register.writeSeedPhraseToDatabaseFailed': 'ไม่สามารถบันทึกกลุ่มคำลับใส่ฐานข้อมุลได้',
     'Register.unlockWalletFailed': 'ไม่สามารถเปิดกระเป๋าได้',
     'Register.seedPhraseMismatched': 'กลุ่มคำลับไม่ตรงกัน',
-    'Register.next': 'ถัดไป',
     'Register.previous': 'ก่อนหน้า',
     'Register.done': 'เสร็จสิ้น',
     'Register.createFirstAddr': 'An error occurred, please try again',
@@ -120,14 +127,12 @@ const th_TH = {
     'WanAccount.sendTransactionFailed': 'การส่งธุรกรรมผิดพลาดกรุณาลองใหม่อีกครั้ง',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'สร้างแอดเดรส',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
-    'AdvancedOptionForm.cancel': 'ยกเลิก',
     'AdvancedOptionForm.save': 'บันทึก',
     'AdvancedOptionForm.gasPrice': 'ค่าแก๊ส',
     'AdvancedOptionForm.gwin': 'GWIN',
@@ -181,8 +186,6 @@ const th_TH = {
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'เขียนกลุ่มคำลับเหล่านี้ลงกระดาษและเก็บไว้ในที่ปลอดภัย',
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรม',
-    'NormalTransForm.ConfirmForm.cancel': 'ยกเลิก',
-    'NormalTransForm.ConfirmForm.from': 'ผู้ส่ง',
     'NormalTransForm.ConfirmForm.to': 'ผู้รับ',
     'NormalTransForm.ConfirmForm.gasPrice': 'ค่าแก๊ส',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
@@ -195,9 +198,6 @@ const th_TH = {
     'NormalTransForm.invalidAddress': 'แอดเดรสไม่ถูกต้อง',
     'NormalTransForm.invalidFeeRate': 'ค่าธรรมเนียมไม่ถูกต้อง',
     'NormalTransForm.transaction': 'การทำธุรกรรม',
-    'NormalTransForm.cancel': 'ยกเลิก',
-    'NormalTransForm.next': 'ถัดไป',
-    'NormalTransForm.from': 'ผู้ส่ง',
     'NormalTransForm.mode': 'ประเภทธุรกรรม',
     'NormalTransForm.normalTransaction': 'ธุรกรรมแบบปกติ',
     'NormalTransForm.privateTransaction': 'ธุรกรรมแบบส่วนตัว',
@@ -235,7 +235,6 @@ const th_TH = {
     'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.Chain': 'Chain',
-    'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
@@ -427,12 +426,8 @@ const th_TH = {
     'Offline.inputRawTxText': 'กรุณากรอกข้อมูลธุรกรรม',
     'Offline.linkToWebsite': 'ดาวน์โหลดกระเป๋าแบบออฟไลน์',
 
-    'popup.ok': 'ตกลง',
-    'popup.cancel': 'ยกเลิก',
     'popup.search': 'Search',
     'title.imported': 'นำเข้าแอดเดรส',
-    'title.copy': 'คัดลอก',
-    'title.QRCode': 'QR Code',
 
     'network.down': 'The network request failed, Please try again later'
 }

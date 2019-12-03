@@ -14,3 +14,4 @@ export { default as BtcAccount } from './BtcAccount';
 export { default as CrossETH } from './CrossChain/CrossETH';
 export { default as CrossE20 } from './CrossChain/CrossE20';
 export { default as CrossBTC } from './CrossChain/CrossBTC';
+export { default as EosAccount } from './EosAccount';

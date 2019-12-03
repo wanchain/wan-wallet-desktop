@@ -148,7 +148,7 @@ class Register extends Component {
           <div className={style['steps-content']}>{steps[current].content}</div>
           <div className={style['steps-action']}>
             {
-              current < steps.length - 1 && <Button type="primary" onClick={this.next}>{intl.get('Register.next')}</Button>
+              current < steps.length - 1 && <Button type="primary" onClick={this.next}>{intl.get('Common.next')}</Button>
             }
             {
               current > 1 && (<Button onClick={this.prev} className="cancel">{intl.get('Register.previous')}</Button>)

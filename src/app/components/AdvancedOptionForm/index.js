@@ -87,7 +87,7 @@ class AdvancedOptionForm extends Component {
         onCancel={this.handleCancel}
         onOk={this.handleSave}
         footer={[
-          <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('AdvancedOptionForm.cancel')}</Button>,
+          <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
           <Button key="submit" type="primary" className="confirm-button" loading={this.state.loading} onClick={this.handleSave}>{intl.get('AdvancedOptionForm.save')}</Button>,
         ]}
       >

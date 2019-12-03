@@ -1,4 +1,7 @@
 const es_ES = {
+    'Common.copy': 'Copy',
+    'Common.QRCode': 'QR Code',
+    'Common.from': 'From',
     'Common.days': ' days',
     'Common.amount': 'Amount',
     'Common.send': 'Send',
@@ -12,6 +15,11 @@ const es_ES = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.options': 'Options',
+    'Common.ok': 'OK',
+    'Common.cancel': 'Cancel',
+    'Common.next': 'Next',
+    'Common.create': 'Create',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -33,7 +41,6 @@ const es_ES = {
     'Register.writeSeedPhraseToDatabaseFailed': 'Write seed phrase to database failed',
     'Register.unlockWalletFailed': 'Unlock wallet failed',
     'Register.seedPhraseMismatched': 'Seed phrase mismatched',
-    'Register.next': 'Next',
     'Register.previous': 'Previous',
     'Register.done': 'Done',
     'Register.createFirstAddr': 'An error occurred, please try again',
@@ -120,14 +127,12 @@ const es_ES = {
     'WanAccount.sendTransactionFailed': 'Send transaction failed. Please try again',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'Create',
     'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
     'WanAccount.redeem': 'Redeem',
     'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
-    'AdvancedOptionForm.cancel': 'Cancel',
     'AdvancedOptionForm.save': 'Save',
     'AdvancedOptionForm.gasPrice': 'Gas Price',
     'AdvancedOptionForm.gwin': 'GWIN',
@@ -181,8 +186,6 @@ const es_ES = {
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'Write this seed phrase on a piece of paper and store in a secure place',
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'Transaction Confirm',
-    'NormalTransForm.ConfirmForm.cancel': 'Cancel',
-    'NormalTransForm.ConfirmForm.from': 'From',
     'NormalTransForm.ConfirmForm.to': 'To',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas Price',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
@@ -196,9 +199,6 @@ const es_ES = {
     'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
     'NormalTransForm.invalidPrivateAddress': 'Invalid private address',
     'NormalTransForm.transaction': 'Transaction',
-    'NormalTransForm.cancel': 'Cancel',
-    'NormalTransForm.next': 'Next',
-    'NormalTransForm.from': 'From',
     'NormalTransForm.mode': 'Transaction Mode',
     'NormalTransForm.normalTransaction': 'Normal Transaction',
     'NormalTransForm.privateTransaction': 'Private Transaction',
@@ -236,7 +236,6 @@ const es_ES = {
     'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.Chain': 'Chain',
-    'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
@@ -429,12 +428,8 @@ const es_ES = {
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
 
-    'popup.ok': 'OK',
-    'popup.cancel': 'Cancel',
     'popup.search': 'Search',
     'title.imported': 'Imported Address',
-    'title.copy': 'Copy',
-    'title.QRCode': 'QR Code',
 
     'network.down': 'The network request failed, Please try again later'
 

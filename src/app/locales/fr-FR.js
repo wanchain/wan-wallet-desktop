@@ -1,4 +1,7 @@
 const fr_FR = {
+    'Common.copy': 'Copié',
+    'Common.QRCode': 'Code QR',
+    'Common.from': 'De',
     'Common.days': ' jours',
     'Common.amount': 'Montant',
     'Common.send': 'Envoyer',
@@ -12,6 +15,11 @@ const fr_FR = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.options': 'Options',
+    'Common.ok': 'OK',
+    'Common.cancel': 'Annuler',
+    'Common.next': 'Prochain',
+    'Common.create': 'Créer',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -33,7 +41,6 @@ const fr_FR = {
     'Register.writeSeedPhraseToDatabaseFailed': 'L\'écriture de la phrase mnémonique (seed) dans la base de donnée a échoué',
     'Register.unlockWalletFailed': 'Le déverouillage du portefeuille a échoué',
     'Register.seedPhraseMismatched': 'Phrase mnémonique (seed) erronée',
-    'Register.next': 'Suivant',
     'Register.previous': 'Précédent',
     'Register.done': 'Terminé',
     'Register.createFirstAddr': 'An error occurred, please try again',
@@ -116,14 +123,12 @@ const fr_FR = {
     'WanAccount.sendTransactionFailed': 'L\'envoi de la transaction a échoué. Veuillez réessayer',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
-    'WanAccount.create': 'Créer',
     'WanAccount.notSameName': 'Le nom du compte ne peut pas être répété. Veuillez réessayer',
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
-    'AdvancedOptionForm.cancel': 'Annuler',
     'AdvancedOptionForm.save': 'Sauvegarder',
     'AdvancedOptionForm.gasPrice': 'Prix du Gas',
     'AdvancedOptionForm.gwin': 'GWIN',
@@ -177,8 +182,6 @@ const fr_FR = {
     'Mnemonic.ShowPhrase.writeSeedPhraseOnPaperAndStoreInSecurePlace': 'Écrivez cette phrase mnémonique (seed) sur un morceau de papier et rangez-la dans un endroit sûr',
 
     'NormalTransForm.ConfirmForm.transactionConfirm': 'Confirmer la transaction',
-    'NormalTransForm.ConfirmForm.cancel': 'Annuler',
-    'NormalTransForm.ConfirmForm.from': 'De',
     'NormalTransForm.ConfirmForm.to': 'À',
     'NormalTransForm.ConfirmForm.gasPrice': 'Prix du gas',
     'NormalTransForm.ConfirmForm.gwin': 'GWIN',
@@ -192,9 +195,6 @@ const fr_FR = {
     'NormalTransForm.invalidFeeRate': 'Taux de frais invalide',
     'NormalTransForm.invalidPrivateAddress': 'Adresse privée invalide',
     'NormalTransForm.transaction': 'Transaction',
-    'NormalTransForm.cancel': 'Annuler',
-    'NormalTransForm.next': 'Prochain',
-    'NormalTransForm.from': 'De',
     'NormalTransForm.mode': 'Mode de transaction',
     'NormalTransForm.normalTransaction': 'Transaction normale',
     'NormalTransForm.privateTransaction': 'Transaction privée',
@@ -230,7 +230,6 @@ const fr_FR = {
     'CrossChainTransForm.overQuota': 'The amount is greater than the left capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.Chain': 'Chain',
-    'CrossChainTransForm.From': 'From',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'ApproveTxHash',
     'CrossChainTransForm.LockTxHash': 'LockTxHash',
@@ -421,12 +420,8 @@ const fr_FR = {
     'Offline.inputRawTxText': 'Veuillez saisir la transaction signée',
     'Offline.linkToWebsite': 'Télécharger le portefeuille hors ligne',
 
-    'popup.ok': 'OK',
-    'popup.cancel': 'Annuler',
     'popup.search': 'Search',
     'title.imported': 'Adresse importée',
-    'title.copy': 'Copié',
-    'title.QRCode': 'Code QR',
 
     'network.down': 'The network request failed, Please try again later'
 

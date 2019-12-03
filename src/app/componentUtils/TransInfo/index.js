@@ -18,7 +18,7 @@ function TransInfo (props) {
       title={intl.get('CrossChainTransForm.transInfo')}
       onCancel={props.handleCancel}
       footer={[
-        <Button key="submit" type="primary" className="confirm-button" onClick={props.handleCancel}>{intl.get('popup.ok')}</Button>,
+        <Button key="submit" type="primary" className="confirm-button" onClick={props.handleCancel}>{intl.get('Common.ok')}</Button>,
       ]}
     >
       <div className={style.transInfoMain}>
@@ -31,7 +31,7 @@ function TransInfo (props) {
           <Col span={COLRIGHT}>{srcChainAddr}</Col>
         </Row>
         <Row className={style.tableRow}>
-          <Col span={COLLEFT}>{intl.get('CrossChainTransForm.From')}</Col>
+          <Col span={COLLEFT}>{intl.get('Common.from')}</Col>
           <Col span={COLRIGHT}>{from}</Col>
         </Row>
         <Row className={style.tableRow}>

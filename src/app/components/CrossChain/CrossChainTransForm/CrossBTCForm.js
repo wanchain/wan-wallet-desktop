@@ -200,8 +200,8 @@ class CrossBTCForm extends Component {
           onCancel={this.props.onCancel}
           className={style['cross-chain-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
@@ -215,7 +215,7 @@ class CrossBTCForm extends Component {
                   disabled={true}
                   options={{ initialValue: from }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
-                  title={intl.get('NormalTransForm.from')}
+                  title={intl.get('Common.from')}
                 />
               }
               <CommonFormItem
