@@ -1393,7 +1393,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 ret.canRedeem.push(item);
               }
               if(['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
-                ret.canRedeem.push(item);
+                ret.canRevoke.push(item);
               }
             }
           })
