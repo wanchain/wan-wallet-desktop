@@ -1,7 +1,8 @@
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH } from 'utils/settings';
+import { WANPATH, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
+
 import { fromWei, isNumber } from 'utils/support';
 
 const wanUtil = require('wanchain-util');
@@ -359,4 +360,16 @@ export const openScanOTA = function(path) {
       }
     });
   })
+}
+
+export const getSplitAmountToArray = function (amount) {
+  let collections = {};
+  let current = amount;
+  PRIVATE_TX_AMOUNT_SELECTION.forEach(item => {
+    if (new BigNumber(current).gte(item)) {
+      collections[item] = new BigNumber(current).idiv(item).toNumber();
+      current = new BigNumber(current).mod(item);
+    }
+  });
+  return collections;
 }

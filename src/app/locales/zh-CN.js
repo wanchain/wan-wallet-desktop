@@ -99,6 +99,7 @@ const zh_CN = {
     'WanAccount.action': '操作',
     'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': '发送交易失败，请重试',
+    'WanAccount.sendTransactionSuccessFully': '交易发送成功',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.create': '创建',
@@ -170,6 +171,8 @@ const zh_CN = {
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': '费用',
     'NormalTransForm.ConfirmForm.inputData': '附加数据',
+    'NormalTransForm.ConfirmForm.faceValue': '面值',
+    'NormalTransForm.ConfirmForm.count': '数量',
 
     'NormalTransForm.estimateGasFailed': '估算gas失败，请重试',
     'NormalTransForm.invalidAddress': '非法地址',

@@ -99,6 +99,7 @@ const en_US = {
     'WanAccount.action': 'ACTION',
     'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': 'Send transaction failed. Please try again',
+    'WanAccount.sendTransactionSuccessFully': 'Transaction sent successfully',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.create': 'Create',
@@ -170,6 +171,8 @@ const en_US = {
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'Fee',
     'NormalTransForm.ConfirmForm.inputData': 'Input Data',
+    'NormalTransForm.ConfirmForm.faceValue': 'Face Value',
+    'NormalTransForm.ConfirmForm.count': 'Count',
 
     'NormalTransForm.estimateGasFailed': 'Estimate gas failed. Please try again',
     'NormalTransForm.invalidAddress': 'Invalid address',

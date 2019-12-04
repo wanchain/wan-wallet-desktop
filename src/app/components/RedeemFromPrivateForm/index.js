@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
 import './index.less';
 
-const privateTxGasLimit = 800000;
+const privateTxGasLimit = 300000;
 @inject(stores => ({
   settings: stores.session.settings,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
