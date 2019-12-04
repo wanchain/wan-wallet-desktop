@@ -570,10 +570,10 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path);
+                let action = 'SEND';
                 let input = {
                     "from": '0x' + from.address,
                     "to": to,
-                    "amount": amount,
                     "gasPrice": gasPrice,
                     "gasLimit": gasLimit,
                     "BIP44Path": path,
@@ -581,8 +581,17 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 }
 
                 logger.info('Private transaction: ' + JSON.stringify(input));
-                let action = 'SEND';
-                ret = await global.crossInvoker.invokePrivateTrans(action, input);
+                for (let obj of amount) {
+                    input.amount = obj.face;
+                    for (let i = 0; i < obj.count; i++) {
+                        let res = await global.crossInvoker.invokePrivateTrans(action, input);
+                        if (res.code === false) {
+                            err = {
+                                message: res.result
+                            };
+                        }
+                    }
+                }
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
                 logger.error('Send private transaction failed: ' + e.message || e.stack)
