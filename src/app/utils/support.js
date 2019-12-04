@@ -11,7 +11,7 @@ export function formatNumByDecimals (value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
   }
-  return new BigNumber(value).dividedBy(10 ** decimals).toString();
+  return new BigNumber(value).dividedBy(10 ** decimals).toString(10);
 }
 
 export function keep2Decimals (value) {

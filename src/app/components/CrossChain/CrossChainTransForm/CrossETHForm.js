@@ -156,7 +156,7 @@ class CrossETHForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
 
     if (chainType === 'ETH') {
@@ -211,6 +211,15 @@ class CrossETHForm extends Component {
                 options={{ initialValue: from }}
                 prefix={<Icon type="wallet" className="colorInput" />}
                 title={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='balance'
+                disabled={true}
+                options={{ initialValue: balance + ` ${tokenSymbol}` }}
+                prefix={<Icon type="wallet" className="colorInput" />}
+                title={intl.get('Common.balance')}
               />
               <SelectForm
                 form={form}

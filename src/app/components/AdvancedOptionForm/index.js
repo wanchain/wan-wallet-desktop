@@ -75,7 +75,7 @@ class AdvancedOptionForm extends Component {
   }
 
   render () {
-    const { visible, form, minGasPrice, from, transParams, transType } = this.props;
+    const { visible, form, minGasPrice, from, transParams, transType, chain } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
     return (
@@ -92,7 +92,7 @@ class AdvancedOptionForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-          <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + intl.get('AdvancedOptionForm.gwin') + ')'}> {
+          <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}> {
             getFieldDecorator('gasPrice', { initialValue: gasPrice, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasPriceIsIncorrect') }] })
               (<InputNumber min={minGasPrice} />)
           }
