@@ -45,6 +45,10 @@ const WANBIP44Path = "m/44'/5718350'/0'/0/"
 const WAN_ID = 5718350;
 const network = setting.get('network');
 
+const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
+const WALLET_ID_LEDGER   = 0x02;
+const WALLET_ID_TREZOR   = 0x03;
+
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
     const [action, id] = actionUni.split('#')
@@ -206,18 +210,25 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             {
                 let ret = null;
                 let { walletID, path, rawTx } = payload;
+
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
     
                 logger.info('Sign signPersonalMessage:');
+                console.log('hdWallet: ', hdWallet);
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
     
-                try {
-                    ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
-                    console.log('ret:', ret);
-                } catch (e) {
-                    logger.error(e.message || e.stack);
-                    console.log('hdWallet.signMessage error:', e);
-                    err = e
+                if (hdWallet) {
+                    try {
+                        ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
+                        console.log('ret:', ret);
+                    } catch (e) {
+                        logger.error(e.message || e.stack);
+                        console.log('hdWallet.signMessage error:', e);
+                        err = e
+                    }
+                } else {
+                    err = new Error('Can not found wallet.');
+                    console.log('hdWallet is undefine');
                 }
     
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -649,9 +660,13 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
+                let fromAddr = from.address;
+                if (fromAddr.indexOf('0x') === -1) {
+                    fromAddr = '0x' + fromAddr;
+                }
                 let input = {
                     symbol: symbol,
-                    from: '0x' + from.address,
+                    from: fromAddr,
                     to: to,
                     amount: amount,
                     gasPrice: gasPrice,

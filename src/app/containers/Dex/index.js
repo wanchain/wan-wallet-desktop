@@ -3,8 +3,15 @@ import { Spin } from 'antd';
 import style from './index.less';
 import { WALLETID } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
-const pu = require('promisefy-util');
+import { observer, inject } from 'mobx-react';
 
+const pu = require('promisefy-util');
+const WAN_PATH = "m/44'/5718350'/0'";
+@inject(stores => ({
+  addrSelectedList: stores.wanAddress.addrSelectedList,
+}))
+
+@observer
 class Dex extends Component {
   constructor (props) {
     super(props);
@@ -89,16 +96,21 @@ class Dex extends Component {
 
     try {
       let chainID = 5718350;
-      const val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
+      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
       console.log(val);
       let addrs = [];
       for (var account in val.accounts) {
         console.log(account);
         addrs.push(val.accounts[account]['1'].addr);
       }
-      console.log(addrs);
-      msg.val = addrs;
       // TODO: Add hardware wallet
+      let addrAll = this.props.addrSelectedList.slice();
+      for (var i = 0, len = addrAll.length; i < len; i++) {
+        addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
+        addrAll[i] = addrAll[i].replace(/^Trezor: /, '').toLowerCase();
+      }
+      console.log('addrAll:', addrAll);
+      msg.val = addrAll;
     } catch (error) {
       console.log(error);
       msg.err = error;
@@ -127,6 +139,27 @@ class Dex extends Component {
     }.bind(this));
   }
 
+  async getLedgerPathByAddress(address) {
+    try {
+      for (let i = 0; i < 10000; i++) {
+        const val = await pu.promisefy(wand.request, [
+          'wallet_getPubKeyChainId', {
+            walletID: WALLETID.LEDGER,
+            path: WAN_PATH + '/' + i,
+          }
+        ]);
+        console.log('getPk:', WAN_PATH + '/' + i, val);
+        if (val.address.toLowerCase() === address) {
+          console.log('found path:', WAN_PATH + '/' + i, address);
+          return WAN_PATH + '/' + i;
+        }
+      }
+      return '';
+    } catch (error) {
+      console.log('error:', error);
+    }
+  }
+
   async getWalletFromAddress(address) {
     try {
       let chainID = 5718350;
@@ -142,6 +175,24 @@ class Dex extends Component {
       }
 
       // TODO: Add hardware wallet
+      for (var i = 0; i < this.props.addrSelectedList.length; i++) {
+        console.log('addr:', address, this.props.addrSelectedList[i]);
+        if (this.props.addrSelectedList[i].toLowerCase().indexOf(address) !== -1) {
+          console.log('find:', this.props.addrSelectedList[i]);
+          let find = this.props.addrSelectedList[i];
+          if (find.indexOf('Ledger') !== -1) {
+            return {
+              id: WALLETID.LEDGER,
+              path: await this.getLedgerPathByAddress(address),
+            }
+          }
+          if (find.indexOf('Trezor') !== -1) {
+            return {
+              id: WALLETID.TREZOR,
+            }
+          }
+        }
+      }
     } catch (error) {
       console.log('getWalletFromAddress error', error);
     }

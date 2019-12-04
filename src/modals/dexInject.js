@@ -91,3 +91,4 @@ class Web3Eth {
 }
 
 window.web3 = { eth: new Web3Eth() };
+window.injectWeb3 = true;
