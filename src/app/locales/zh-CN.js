@@ -178,6 +178,7 @@ const zh_CN = {
     'NormalTransForm.estimateGasFailed': '估算gas失败，请重试',
     'NormalTransForm.invalidAddress': '非法地址',
     'NormalTransForm.invalidAmount': '非法金额',
+    'NormalTransForm.shouldBe10Times': '必须是十的倍数',
     'NormalTransForm.invalidFeeRate': '非法费率',
     'NormalTransForm.invalidPrivateAddress': '非法隐私地址',
     'NormalTransForm.transaction': '转账',

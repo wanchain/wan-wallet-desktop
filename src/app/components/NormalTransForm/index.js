@@ -240,7 +240,7 @@ class NormalTransForm extends Component {
       if (new BigNumber(value).mod(10).eq(0)) {
         callback();
       } else {
-        callback(intl.get('NormalTransForm.invalidAmount'));
+        callback(intl.get('NormalTransForm.shouldBe10Times'));
       }
     } else {
       callback();
@@ -328,7 +328,7 @@ class NormalTransForm extends Component {
               }
 
               <Form.Item label={intl.get('Common.amount')}>
-                {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
+                {getFieldDecorator('amount', { rules: [{ required: true, /* message: intl.get('NormalTransForm.amountIsIncorrect'),  */validator: this.checkAmount }] })
                   (<InputNumber disabled={disabledAmount} min={1e-18} /* precision={18} */ />)}
                 {!isPrivate && (<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               </Form.Item>

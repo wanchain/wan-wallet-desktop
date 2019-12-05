@@ -178,6 +178,7 @@ const en_US = {
     'NormalTransForm.estimateGasFailed': 'Estimate gas failed. Please try again',
     'NormalTransForm.invalidAddress': 'Invalid address',
     'NormalTransForm.invalidAmount': 'Invalid amount',
+    'NormalTransForm.shouldBe10Times': 'The amount should be divisible by 10',
     'NormalTransForm.invalidFeeRate': 'Invalid fee rate',
     'NormalTransForm.invalidPrivateAddress': 'Invalid private address',
     'NormalTransForm.transaction': 'Transaction',
