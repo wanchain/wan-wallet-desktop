@@ -4,11 +4,18 @@ import style from './index.less';
 import { WALLETID } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
+import {
+  signPersonalMessage as trezorSignPersonalMessage,
+  signTransaction as trezorSignTransaction
+ } from 'componentUtils/trezor'
+ import { toWei } from 'utils/support.js';
+import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
 @inject(stores => ({
   addrSelectedList: stores.wanAddress.addrSelectedList,
+  addrInfo: stores.wanAddress.addrInfo,
 }))
 
 @observer
@@ -17,6 +24,7 @@ class Dex extends Component {
     super(props);
     this.state = { loading: true, preload: null };
     this.dexUrl = 'https://demodex.wandevs.org/';
+    this.addresses = {};
   }
 
   async componentDidMount () {
@@ -103,13 +111,21 @@ class Dex extends Component {
         console.log(account);
         addrs.push(val.accounts[account]['1'].addr);
       }
-      // TODO: Add hardware wallet
       let addrAll = this.props.addrSelectedList.slice();
       for (var i = 0, len = addrAll.length; i < len; i++) {
+        const addr = addrAll[i];
         addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
-        addrAll[i] = addrAll[i].replace(/^Trezor: /, '').toLowerCase();
+        addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
+
+        this.addresses[addrAll[i]] = {};
+        if (addr.indexOf('Ledger') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
+        } else if (addr.indexOf('Trezor') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
+        } else {
+          this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
+        }
       }
-      console.log('addrAll:', addrAll);
       msg.val = addrAll;
     } catch (error) {
       console.log(error);
@@ -139,59 +155,40 @@ class Dex extends Component {
     }.bind(this));
   }
 
-  async getLedgerPathByAddress(address) {
-    try {
-      for (let i = 0; i < 10000; i++) {
-        const val = await pu.promisefy(wand.request, [
-          'wallet_getPubKeyChainId', {
-            walletID: WALLETID.LEDGER,
-            path: WAN_PATH + '/' + i,
-          }
-        ]);
-        console.log('getPk:', WAN_PATH + '/' + i, val);
-        if (val.address.toLowerCase() === address) {
-          console.log('found path:', WAN_PATH + '/' + i, address);
-          return WAN_PATH + '/' + i;
-        }
-      }
-      return '';
-    } catch (error) {
-      console.log('error:', error);
-    }
-  }
-
   async getWalletFromAddress(address) {
     try {
-      let chainID = 5718350;
-      const val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
-      for (var account in val.accounts) {
-        console.log('compare:', address, val.accounts[account]['1'].addr);
-        if (address === val.accounts[account]['1'].addr) {
-          return {
-            id: WALLETID.NATIVE,
-            path: account
-          }
-        }
+      if (!this.addresses[address]) {
+        return '';
       }
+      const { addrInfo } = this.props;
 
-      // TODO: Add hardware wallet
-      for (var i = 0; i < this.props.addrSelectedList.length; i++) {
-        console.log('addr:', address, this.props.addrSelectedList[i]);
-        if (this.props.addrSelectedList[i].toLowerCase().indexOf(address) !== -1) {
-          console.log('find:', this.props.addrSelectedList[i]);
-          let find = this.props.addrSelectedList[i];
-          if (find.indexOf('Ledger') !== -1) {
-            return {
-              id: WALLETID.LEDGER,
-              path: await this.getLedgerPathByAddress(address),
-            }
-          }
-          if (find.indexOf('Trezor') !== -1) {
-            return {
-              id: WALLETID.TREZOR,
-            }
-          }
-        }
+      console.log('addresses:', this.addresses);
+      let addrType = '';
+      let pathPre;
+      switch (this.addresses[address].walletID) {
+        case WALLETID.NATIVE:
+          addrType = 'normal';
+          pathPre = WAN_PATH + '/0';
+          break;
+        case WALLETID.LEDGER:
+          addrType = 'ledger';
+          break;
+        case WALLETID.TREZOR:
+          addrType = 'trezor';
+          break;
+      }
+      console.log('addrInfo:', addrInfo[addrType]);
+      let index = Object.keys(addrInfo[addrType]).findIndex(val => val.toLowerCase() === address);
+      let addr = '';
+      if (index !== -1) {
+        addr = Object.keys(addrInfo[addrType])[index];
+        console.log('index:', index, addr);
+      }
+      const path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
+      console.log('new path:', path, address);
+      return {
+        id: this.addresses[address].walletID,
+        path: pathPre ? pathPre + path : path,
       }
     } catch (error) {
       console.log('getWalletFromAddress error', error);
@@ -205,34 +202,31 @@ class Dex extends Component {
     const wallet = await this.getWalletFromAddress(msg.address);
     console.log('ready to sign message with:', wallet);
 
-    wand.request('wallet_signPersonalMessage', { walletID: wallet.id, path: wallet.path, rawTx: msg.message }, (err, sig) => {
-      if (err) {
-        msg.err = err;
-        console.log(`Sign Failed:`, JSON.stringify(err));
-      } else {
-        console.log('Signature: ', sig)
+    if (wallet.id === WALLETID.TREZOR) {
+      try {
+        let sig = await trezorSignPersonalMessage(wallet.path, msg.message);
         msg.val = sig;
+      } catch (error) {
+        console.log(error);
+        msg.err = error;
       }
       this.sendToDex(msg);
-    });
+    } else {
+      wand.request('wallet_signPersonalMessage', { walletID: wallet.id, path: wallet.path, rawTx: msg.message }, (err, sig) => {
+        if (err) {
+          msg.err = err;
+          console.log(`Sign Failed:`, JSON.stringify(err));
+        } else {
+          console.log('Signature: ', sig)
+          msg.val = sig;
+        }
+        this.sendToDex(msg);
+      });
+    }
   }
 
-  async sendTransaction(msg) {
-    msg.err = null;
-    msg.val = null;
-    console.log('msg:', msg);
-    console.log('ready to sendTx:', msg.message);
-    if (!msg.message || !msg.message.from) {
-      msg.err = 'can not find from address.';
-      this.sendToDex(msg);
-      return;
-    }
-
-    const wallet = await this.getWalletFromAddress(msg.message.from);
-    console.log('ready to send tx with:', wallet);
-
+  async nativeSendTransaction(msg, wallet) {
     let amountInWei = new BigNumber(msg.message.value)
-
     let trans = {
       walletID: wallet.id,
       chainType: 'WAN',
@@ -261,6 +255,57 @@ class Dex extends Component {
         this.sendToDex(msg);
       }.bind(this)
     );
+  }
+
+  async trezorSendTransaction(msg, wallet) {
+    let chainId = await getChainId();
+    try {
+      let nonce = await getNonce(msg.message.from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let data = msg.message.data;
+      let amountWei = msg.message.value;
+      let rawTx = {};
+      rawTx.from = msg.message.from;
+      rawTx.to = msg.message.to;
+      rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = '0x' + Number(800000).toString(16);
+      rawTx.gasPrice = toWei(gasPrice, 'gwei');
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      console.log('rawTx:', rawTx);
+      let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }]);
+      console.log('Transaction hash:', txHash);
+      msg.val = txHash;
+    } catch (error) {
+      console.log(error)
+      msg.err = error;
+    }
+
+    this.sendToDex(msg);
+  }
+
+  async sendTransaction(msg) {
+    msg.err = null;
+    msg.val = null;
+    console.log('msg:', msg);
+    console.log('ready to sendTx:', msg.message);
+    if (!msg.message || !msg.message.from) {
+      msg.err = 'can not find from address.';
+      this.sendToDex(msg);
+      return;
+    }
+
+    const wallet = await this.getWalletFromAddress(msg.message.from);
+    console.log('ready to send tx with:', wallet);
+
+    if (wallet.id === WALLETID.TREZOR) {
+      await this.trezorSendTransaction(msg, wallet);
+    } else {
+      await this.nativeSendTransaction(msg, wallet);
+    }
   }
 
   async getPreloadFile() {
