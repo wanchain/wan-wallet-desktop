@@ -3,6 +3,7 @@ import { Button, Modal, Form, Input, Icon, Radio, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
+import { BigNumber } from 'bignumber.js';
 import './index.less';
 
 const privateTxGasLimit = 300000;
@@ -79,7 +80,6 @@ class RedeemFromPrivateForm extends Component {
     this.props.onCancel();
   }
 
-  // Refund tx check
   handleCheck = (arr) => {
     this.setState({
       redeemCount: arr.length === 0 ? 1 : arr.length
@@ -140,9 +140,9 @@ class RedeemFromPrivateForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{new BigNumber(minFee).times(this.state.redeemCount).toString()} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{new BigNumber(averageFee).times(this.state.redeemCount).toString()} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{new BigNumber(maxFee).times(this.state.redeemCount).toString()} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>

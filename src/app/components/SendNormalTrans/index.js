@@ -71,7 +71,6 @@ class SendNormalTrans extends Component {
       gasPrice: params.gasPrice,
     };
     this.setState({ loading: true });
-    console.log('splitAmount:', splitAmount);
 
     // Private tx
     if (wanUtil.isValidChecksumOTAddress(trans.to)) {

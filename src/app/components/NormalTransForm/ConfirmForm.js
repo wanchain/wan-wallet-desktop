@@ -55,7 +55,7 @@ class ConfirmForm extends Component {
     });
   }
 
-  columns = [
+  columns = () => [
     {
       title: intl.get('NormalTransForm.ConfirmForm.faceValue'),
       dataIndex: 'face',
@@ -103,7 +103,7 @@ class ConfirmForm extends Component {
           </Form.Item>
           {
             isPrivate ? (
-              <Table className="splitAmountTable" rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns} pagination={false} />
+              <Table className="splitAmountTable" rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns()} pagination={false} />
             ) : (
                 <div>
                   <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {

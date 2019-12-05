@@ -225,7 +225,7 @@ class NormalTransForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('Common.invalidAmount'));
+      callback(intl.get('NormalTransForm.invalidAmount'));
     }
   }
 
@@ -240,7 +240,7 @@ class NormalTransForm extends Component {
       if (new BigNumber(value).mod(10).eq(0)) {
         callback();
       } else {
-        callback(intl.get('Common.invalidAmount'));
+        callback(intl.get('NormalTransForm.invalidAmount'));
       }
     } else {
       callback();
