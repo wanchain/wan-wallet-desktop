@@ -214,7 +214,6 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
     
                 logger.info('Sign signPersonalMessage:');
-                console.log('hdWallet: ', hdWallet);
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
     
                 if (hdWallet) {
