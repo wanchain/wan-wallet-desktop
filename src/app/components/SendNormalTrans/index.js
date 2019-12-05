@@ -78,13 +78,13 @@ class SendNormalTrans extends Component {
 
   render () {
     const { visible, loading, spin } = this.state;
-    const { tokenAddr, transType } = this.props;
+    const { tokenAddr, transType, balance } = this.props;
 
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible && !tokenAddr && <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
-        { visible && tokenAddr && <WRC20CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
+        { visible && tokenAddr && <WRC20CollectionCreateForm balance={balance} tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
       </div>
     );
   }

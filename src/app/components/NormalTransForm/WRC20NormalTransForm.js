@@ -94,7 +94,7 @@ class WRC20NormalTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, transType } = this.props;
+    const { updateTransParams, addrInfo, settings } = this.props;
     let form = this.props.form;
     let from = this.props.from;
     form.validateFields(err => {
@@ -115,25 +115,16 @@ class WRC20NormalTransForm extends Component {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
-        wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+        wand.request('phrase_reveal', { pwd }, (err) => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            if (transType === TRANSTYPE.tokenTransfer) {
-              updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount), transferTo: form.getFieldValue('transferTo'), token: form.getFieldValue('token') })
-            } else {
-              updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) });
-            }
+            updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount), transferTo: form.getFieldValue('transferTo'), token: form.getFieldValue('token') })
             this.setState({ advanced: false, confirmVisible: true });
           }
         })
       } else {
-        if (transType === TRANSTYPE.tokenTransfer) {
-          updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount), transferTo: form.getFieldValue('transferTo'), token: form.getFieldValue('token') })
-        } else {
-          updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) });
-        }
-
+        updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount), transferTo: form.getFieldValue('transferTo'), token: form.getFieldValue('token') })
         this.setState({ advanced: false, confirmVisible: true });
       }
     });
@@ -194,10 +185,8 @@ class WRC20NormalTransForm extends Component {
 
   checkToWanAddr = (rule, value, callback) => {
     let { transType, form, tokenAddr } = this.props;
-    if (transType === TRANSTYPE.tokenTransfer) {
-      if (form.getFieldValue('transferTo').toLowerCase() === tokenAddr.toLowerCase()) {
-        callback(intl.get('NormalTransForm.invalidAddress'));
-      }
+    if (form.getFieldValue('transferTo').toLowerCase() === tokenAddr.toLowerCase()) {
+      callback(intl.get('NormalTransForm.invalidAddress'));
     }
     checkWanAddr(value).then(ret => {
       if (ret) {
@@ -211,17 +200,6 @@ class WRC20NormalTransForm extends Component {
     }).catch((err) => {
       callback(err);
     })
-  }
-
-  checkAmount = (rule, value, callback) => {
-    if (value >= 0 && checkAmountUnit(18, value)) {
-      if (!this.state.advanced) {
-        this.updateGasLimit();
-      }
-      callback();
-    } else {
-      callback(intl.get('Common.invalidAmount'));
-    }
   }
 
   checkTokenAmount = (rule, value, callback) => {
@@ -289,20 +267,15 @@ class WRC20NormalTransForm extends Component {
   }
 
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, tokenAddr, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
 
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
-    let inputDisabled = transType === TRANSTYPE.tokenTransfer;
-    let defaultTo = inputDisabled ? 'transferTo' : 'to';
-
-    if (inputDisabled) {
-      form.getFieldDecorator('to', { initialValue: tokenAddr })
-      form.getFieldDecorator('amount', { initialValue: '0' })
-    }
+    form.getFieldDecorator('to', { initialValue: tokenAddr })
+    form.getFieldDecorator('amount', { initialValue: '0' })
 
     return (
       <div>
@@ -322,28 +295,21 @@ class WRC20NormalTransForm extends Component {
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: from })
-                  (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
+              <Form.Item label={intl.get('Common.balance')}>
+                {getFieldDecorator('balance', { initialValue: balance })
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator(defaultTo, { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                {getFieldDecorator('transferTo', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-              {
-                !inputDisabled &&
-                <Form.Item label={intl.get('Common.amount')}>
-                  {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                    (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                  {<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
-                </Form.Item>
-              }
-              {
-                inputDisabled &&
-                <Form.Item label={intl.get('Common.amount')}>
-                  {getFieldDecorator('token', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
-                    (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                  <Checkbox onChange={this.sendAllTokenAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
-                </Form.Item>
-              }
+              <Form.Item label={intl.get('Common.amount')}>
+                {getFieldDecorator('token', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
+                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                <Checkbox onChange={this.sendAllTokenAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
+              </Form.Item>
               {
                 settings.reinput_pwd &&
                 <Form.Item label={intl.get('NormalTransForm.password')}>

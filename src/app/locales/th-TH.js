@@ -21,6 +21,7 @@ const th_TH = {
     'Common.next': 'ถัดไป',
     'Common.create': 'สร้างแอดเดรส',
     'Common.balance': 'Balance',
+    'Common.sendFailed': 'Network is not stable, sending failed, please try again later',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',

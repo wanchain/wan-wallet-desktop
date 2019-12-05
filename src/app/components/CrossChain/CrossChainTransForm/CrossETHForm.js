@@ -126,7 +126,7 @@ class CrossETHForm extends Component {
       }
       callback();
     } else {
-      callback(intl.get('Common.invalidAmount'));
+      callback(intl.get('CrossChainTransForm.overQuota'));
     }
   }
 

@@ -21,6 +21,7 @@ const pt_PT = {
     'Common.next': 'Próximo',
     'Common.create': 'Criar',
     'Common.balance': 'Balance',
+    'Common.sendFailed': 'Network is not stable, sending failed, please try again later',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',

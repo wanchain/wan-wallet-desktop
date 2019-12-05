@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -63,6 +63,7 @@ class CrossBTC extends Component {
       wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockBTC:', err);
+          message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -87,6 +88,7 @@ class CrossBTC extends Component {
       wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockWBTC:', err);
+          message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));

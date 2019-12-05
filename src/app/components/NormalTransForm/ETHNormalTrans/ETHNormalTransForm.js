@@ -232,7 +232,7 @@ class ETHNormalTransForm extends Component {
   }
 
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
@@ -258,7 +258,11 @@ class ETHNormalTransForm extends Component {
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: from })
-                  (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
+              <Form.Item label={intl.get('Common.balance')}>
+                {getFieldDecorator('balance', { initialValue: balance })
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
@@ -298,7 +302,7 @@ class ETHNormalTransForm extends Component {
           </Spin>
         </Modal>
         <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} chain='ETH' />
-        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm chain='ETH' visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

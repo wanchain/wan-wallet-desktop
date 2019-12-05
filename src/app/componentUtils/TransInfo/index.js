@@ -50,21 +50,21 @@ function TransInfo (props) {
           <Col span={COLRIGHT}>{lockTxHash}</Col>
         </Row>
         {
-          srcChainAddr === 'BTC' &&
+          srcChainAddr === 'BTC' && noticeTxHash !== '0x' &&
           <Row className={style.tableRow}>
             <Col span={COLLEFT}>{intl.get('CrossChainTransForm.NoticeTxHash')}</Col>
             <Col span={COLRIGHT}>{noticeTxHash}</Col>
           </Row>
         }
         {
-          redeemTxHash !== 'NULL' &&
+          redeemTxHash !== 'NULL' && redeemTxHash !== '0x' &&
           <Row className={style.tableRow}>
             <Col span={COLLEFT}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
             <Col span={COLRIGHT}>{redeemTxHash}</Col>
           </Row>
         }
         {
-          revokeTxHash !== 'NULL' &&
+          revokeTxHash !== 'NULL' && revokeTxHash !== '0x' &&
           <Row className={style.tableRow}>
             <Col span={COLLEFT}>{intl.get('CrossChainTransForm.CancelTxHash')}</Col>
             <Col span={COLRIGHT}>{revokeTxHash}</Col>

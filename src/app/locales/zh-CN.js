@@ -21,6 +21,7 @@ const zh_CN = {
     'Common.next': '下一步',
     'Common.create': '创建',
     'Common.balance': '余额',
+    'Common.sendFailed': '网络不稳定，发送失败，请稍后再试',
 
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',

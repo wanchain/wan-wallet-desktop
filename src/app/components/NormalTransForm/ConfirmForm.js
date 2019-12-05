@@ -24,7 +24,7 @@ class ConfirmForm extends Component {
   }
 
   render() {
-    const { visible, form, from, loading, sendTrans, transType } = this.props;
+    const { visible, form, from, loading, sendTrans, transType, chain } = this.props;
     const { getFieldDecorator } = form;
     const { to, amount, gasLimit, gasPrice, nonce, data, transferTo, token } = this.props.transParams[from];
     let fee = new BigNumber(gasPrice).times(gasLimit).div(BigNumber(10).pow(9)).toString(10);
@@ -56,7 +56,7 @@ class ConfirmForm extends Component {
             {getFieldDecorator('amount', { initialValue: formatNum(initialAmount) })
               (<Input disabled={true} />)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + intl.get('NormalTransForm.ConfirmForm.gwin') + ')'}> {
+          <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}> {
             getFieldDecorator(
               'gasPrice', { initialValue: gasPrice })
               (<Input disabled={true} />)

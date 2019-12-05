@@ -52,7 +52,7 @@ class EthAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
   ];
 

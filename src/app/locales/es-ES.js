@@ -21,6 +21,7 @@ const es_ES = {
     'Common.next': 'Next',
     'Common.create': 'Create',
     'Common.balance': 'Balance',
+    'Common.sendFailed': 'Network is not stable, sending failed, please try again later',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',

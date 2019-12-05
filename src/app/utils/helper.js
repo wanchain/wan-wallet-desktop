@@ -70,7 +70,7 @@ export const getEthBalance = function (arr) {
     wand.request('address_ethBalance', { ethAddr: addrArr }, (err, val) => {
       thisVal = Object.assign({}, val);
       if (err) {
-        console.log('Get balance failed ', err)
+        console.log('Get ETH Balance failed ', err)
         return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {

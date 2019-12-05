@@ -42,7 +42,7 @@ const OneStep = {
 
   handleRedeem: function() {
     this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
-      console.log('trans_data:', trans_data)
+      console.log('handle_redeem_trans_data:', trans_data)
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'E20') {
         let input = {
@@ -176,7 +176,7 @@ const OneStep = {
 
   handleRevoke: function() {
     this.pending.revoke.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
-      console.log('trans_data:', trans_data)
+      console.log('handle_revoke_trans_data:', trans_data)
 
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'E20') {
@@ -197,7 +197,7 @@ const OneStep = {
                 console.log('send_revoke_token:', ret);
               }
             });
-          }).catch(() => {
+          }).catch(e => {
             this.sending.delete(trans_data.hashX);
           });
         } else {
@@ -217,7 +217,7 @@ const OneStep = {
                 console.log('send_revoke_token:', ret);
               }
             })
-          }).catch(() => {
+          }).catch(e => {
             this.sending.delete(trans_data.hashX);
           });
         }
