@@ -23,7 +23,6 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
   btcFee: stores.sendCrossChainParams.btcFee,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)

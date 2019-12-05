@@ -217,10 +217,26 @@ class Tokens {
 
   @computed get getTokenAmount () {
     let amount = new BigNumber(0);
+    let importArr = Object.keys(wanAddress.addrInfo['import']);
+
     self.getTokensListInfo.forEach(item => {
       amount = amount.plus(item.amount);
+    });
+    importArr.forEach(item => {
+      let balance;
+      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
+        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+
+      amount = amount.plus(balance);
     })
-    return formatNum(amount.toString());
+    return formatNum(amount.toString(10));
   }
 }
 
