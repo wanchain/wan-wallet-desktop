@@ -77,7 +77,7 @@ class SendNormalTrans extends Component {
       trans.amount = splitAmount;
       wand.request('transaction_private', trans, (err, txHash) => {
         if (err) {
-          message.warn(intl.get('WanAccount.sendTransactionFailed'));
+          message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
           console.log('Send transaction failed:', err);
         } else {
           message.success(intl.get('WanAccount.sendTransactionSuccessFully'));

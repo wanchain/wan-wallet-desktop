@@ -99,6 +99,7 @@ const en_US = {
     'WanAccount.action': 'ACTION',
     'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': 'Send transaction failed. Please try again',
+    'WanAccount.sendBatchTransactionFailed': 'Some transactions sending failed. Please check the private history',
     'WanAccount.sendTransactionSuccessFully': 'Transaction sent successfully',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',

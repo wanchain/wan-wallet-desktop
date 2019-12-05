@@ -99,6 +99,7 @@ const zh_CN = {
     'WanAccount.action': '操作',
     'WanAccount.blank': ' ',
     'WanAccount.sendTransactionFailed': '发送交易失败，请重试',
+    'WanAccount.sendBatchTransactionFailed': '有交易发生失败，请查看隐私交易历史记录',
     'WanAccount.sendTransactionSuccessFully': '交易发送成功',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
