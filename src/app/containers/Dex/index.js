@@ -164,11 +164,9 @@ class Dex extends Component {
 
       console.log('addresses:', this.addresses);
       let addrType = '';
-      let pathPre;
       switch (this.addresses[address].walletID) {
         case WALLETID.NATIVE:
           addrType = 'normal';
-          pathPre = WAN_PATH + '/0';
           break;
         case WALLETID.LEDGER:
           addrType = 'ledger';
@@ -184,11 +182,14 @@ class Dex extends Component {
         addr = Object.keys(addrInfo[addrType])[index];
         console.log('index:', index, addr);
       }
-      const path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
+      let path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
       console.log('new path:', path, address);
+      if (path.indexOf('m') === -1) {
+        path = WAN_PATH + '/0/' + path;
+      }
       return {
         id: this.addresses[address].walletID,
-        path: pathPre ? pathPre + path : path,
+        path: path,
       }
     } catch (error) {
       console.log('getWalletFromAddress error', error);
