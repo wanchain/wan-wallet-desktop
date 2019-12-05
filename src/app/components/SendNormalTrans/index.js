@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import wanUtil from 'wanchain-util';
+import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 
 import './index.less';
 import NormalTransForm from 'components/NormalTransForm'
@@ -66,7 +66,7 @@ class SendNormalTrans extends Component {
       walletID: walletID,
       chainType: chainType,
       path: params.path,
-      to: params.to,
+      to: toChecksumOTAddress(params.to),
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
     };
