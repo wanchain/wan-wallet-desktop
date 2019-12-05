@@ -82,8 +82,8 @@ class SendNormalTrans extends Component {
         } else {
           message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
           this.props.updateTransHistory();
-          this.setState({ visible: false, loading: false, spin: true });
         }
+        this.setState({ visible: false, loading: false, spin: true });
       });
     } else { // normal tx
       trans.amount = params.amount;
@@ -97,8 +97,8 @@ class SendNormalTrans extends Component {
         } else {
           this.props.updateTransHistory();
           console.log('Tx hash: ', txHash);
-          this.setState({ visible: false, loading: false, spin: true });
         }
+        this.setState({ visible: false, loading: false, spin: true });
       });
     }
   }

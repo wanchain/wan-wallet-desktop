@@ -203,7 +203,11 @@ class NormalTransForm extends Component {
   }
 
   checkToWanPrivateAddr = (rule, value, callback) => {
-    if (isValidChecksumOTAddress(value)) {
+    if (/^0x[0-9a-f]{132}$/.test(value)) {
+      callback();
+    } else if (/^0x[0-9A-F]{132}$/.test(value)) {
+      callback();
+    } else if (isValidChecksumOTAddress(value)) {
       callback();
     } else {
       callback(intl.get('NormalTransForm.invalidPrivateAddress'));
