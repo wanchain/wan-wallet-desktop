@@ -9,6 +9,7 @@ export { default as Offline } from './Offline';
 export { default as Delegation } from './Delegation';
 export { default as Validator } from './Validator';
 export { default as TokenTrans } from './TokenTrans';
+export { default as E20TokenTrans } from './TokenTrans/E20TokenTrans';
 export { default as EthAccount } from './EthAccount';
 export { default as BtcAccount } from './BtcAccount';
 export { default as CrossETH } from './CrossChain/CrossETH';

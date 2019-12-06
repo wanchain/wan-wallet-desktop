@@ -18,6 +18,7 @@ const { SubMenu, Item } = Menu;
   chainId: stores.session.chainId,
   settings: stores.session.settings,
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
+  e20TokensOnSideBar: stores.tokens.e20TokensOnSideBar,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
 }))
@@ -73,7 +74,7 @@ class Sidebar extends Component {
   }
 
   render () {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, e20TokensOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
@@ -94,12 +95,21 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
 
-    if (tokensOnSideBar.length) {
-      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen, ...tokensOnSideBar.map(item => ({
-        title: item.symbol,
-        key: `/tokens/${item.tokenAddr}/${item.symbol}`,
-        icon: 'block'
-      })));
+    if (tokensOnSideBar.length + e20TokensOnSideBar.length) {
+      walletChildren.splice(
+        walletChainLen,
+        walletChildren.length - walletChainLen,
+        ...tokensOnSideBar.map(item => ({
+          title: item.symbol,
+          key: `/tokens/${item.tokenAddr}/${item.symbol}`,
+          icon: 'block'
+        })),
+        ...e20TokensOnSideBar.map(item => ({
+          title: item.symbol,
+          key: `/e20tokens/${item.tokenAddr}/${item.symbol}`,
+          icon: 'block'
+        })),
+      );
     } else {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }

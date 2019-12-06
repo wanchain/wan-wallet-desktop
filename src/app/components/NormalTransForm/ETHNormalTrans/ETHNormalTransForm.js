@@ -5,8 +5,8 @@ import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from
 import intl from 'react-intl-universal';
 
 import style from '../index.less';
-import { toWei } from 'utils/support';
-import { DEFAULT_GAS } from 'utils/settings';
+import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
+import { toWei, formatNumByDecimals } from 'utils/support';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
@@ -20,11 +20,11 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
-  tokensBalance: stores.tokens.tokensBalance,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
   transParams: stores.sendTransParams.transParams,
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
+  E20TokensBalance: stores.tokens.E20TokensBalance,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
   updateGasLimit: gasLimit => stores.sendTransParams.updateGasLimit(gasLimit),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
@@ -231,8 +231,29 @@ class ETHNormalTransForm extends Component {
     }
   }
 
+  sendAllE20TokenAmount = e => {
+    let { form, E20TokensBalance, tokenAddr, tokensList } = this.props;
+    let from = form.getFieldValue('from');
+
+    if (e.target.checked) {
+      form.setFieldsValue({
+        amount: formatNumByDecimals(E20TokensBalance[tokenAddr][from], (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals)
+      });
+      this.setState({
+        disabledAmount: true,
+      })
+    } else {
+      form.setFieldsValue({
+        amount: 0
+      });
+      this.setState({
+        disabledAmount: false,
+      })
+    }
+  }
+
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, transType } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
@@ -271,7 +292,7 @@ class ETHNormalTransForm extends Component {
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                {<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
+                {<Checkbox onChange={transType === TRANSTYPE.tokenTransfer ? this.sendAllE20TokenAmount : this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
               </Form.Item>
               {
                 settings.reinput_pwd &&

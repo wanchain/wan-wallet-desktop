@@ -130,6 +130,20 @@ class Tokens {
     return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
   }
 
+  @computed get e20TokensOnSideBar() {
+    let list = [];
+    Object.keys(self.tokensList).forEach(item => {
+      if (self.tokensList[item].erc20Select) {
+        list.push({
+          tokenAddr: self.tokensList[item].tokenOrigAddr,
+          tokenWanAddr: item || '',
+          symbol: self.tokensList[item].symbol
+        })
+      }
+    });
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt());
+  }
+
   @computed get getTokensListInfo () {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
@@ -236,6 +250,16 @@ class Tokens {
 
       amount = amount.plus(balance);
     })
+    return formatNum(amount.toString(10));
+  }
+
+  @computed get getE20TokenAmount () {
+    let amount = new BigNumber(0);
+
+    self.getE20TokensListInfo.forEach(item => {
+      amount = amount.plus(item.amount);
+    });
+
     return formatNum(amount.toString(10));
   }
 }
