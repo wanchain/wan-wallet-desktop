@@ -66,14 +66,13 @@ class SendNormalTrans extends Component {
       walletID: walletID,
       chainType: chainType,
       path: params.path,
-      to: toChecksumOTAddress(params.to),
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
     };
     this.setState({ loading: true });
-
     // Private tx
-    if (wanUtil.isValidChecksumOTAddress(trans.to)) {
+    if (/^0x[0-9a-fA-F]{132}$/i.test(params.to)) {
+      trans.to = toChecksumOTAddress(params.to);
       trans.amount = splitAmount;
       wand.request('transaction_private', trans, (err, txHash) => {
         if (err) {
@@ -86,6 +85,7 @@ class SendNormalTrans extends Component {
         this.setState({ visible: false, loading: false, spin: true });
       });
     } else { // normal tx
+      trans.to = params.to;
       trans.amount = params.amount;
       trans.symbol = chainType;
       trans.nonce = params.nonce;
