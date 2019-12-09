@@ -135,9 +135,9 @@ class NormalTransForm extends Component {
 
   sendTrans = (splitAmount) => {
     if (this.state.isPrivate && splitAmount) {
-      this.props.onSend(this.props.from, splitAmount);
+      this.props.sendPrivate(this.props.from, splitAmount);
     } else {
-      this.props.onSend(this.props.from);
+      this.props.sendNormal(this.props.from);
     }
   }
 

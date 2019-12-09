@@ -32,7 +32,6 @@ class SendNormalTrans extends Component {
 
   showModal = async () => {
     const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
-
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
@@ -58,7 +57,7 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  onSend = (from, splitAmount = []) => {
+  onSendNormalTransaction = (from) => {
     const { chainType } = this.props;
     let params = this.props.transParams[from];
     let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
@@ -68,39 +67,49 @@ class SendNormalTrans extends Component {
       path: params.path,
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
+      to: params.to,
+      amount: params.amount,
+      symbol: chainType,
+      nonce: params.nonce,
+      data: params.data,
     };
     this.setState({ loading: true });
-    // Private tx
-    if (/^0x[0-9a-fA-F]{132}$/i.test(params.to)) {
-      trans.to = toChecksumOTAddress(params.to);
-      trans.amount = splitAmount;
-      wand.request('transaction_private', trans, (err, txHash) => {
-        if (err) {
-          message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
-          console.log('Send transaction failed:', err);
-        } else {
-          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
-          this.props.updateTransHistory();
-        }
-        this.setState({ visible: false, loading: false, spin: true });
-      });
-    } else { // normal tx
-      trans.to = params.to;
-      trans.amount = params.amount;
-      trans.symbol = chainType;
-      trans.nonce = params.nonce;
-      trans.data = params.data;
-      wand.request('transaction_normal', trans, (err, txHash) => {
-        if (err) {
-          message.warn(intl.get('WanAccount.sendTransactionFailed'));
-          console.log('Send transaction failed:', err);
-        } else {
-          this.props.updateTransHistory();
-          console.log('Tx hash: ', txHash);
-        }
-        this.setState({ visible: false, loading: false, spin: true });
-      });
-    }
+    wand.request('transaction_normal', trans, (err, txHash) => {
+      if (err) {
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        console.log('Send transaction failed:', err);
+      } else {
+        this.props.updateTransHistory();
+        console.log('Tx hash: ', txHash);
+      }
+      this.setState({ visible: false, loading: false, spin: true });
+    });
+  }
+
+  onSendPrivateTransaction = (from, splitAmount = []) => {
+    const { chainType } = this.props;
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: chainType,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: toChecksumOTAddress(params.to),
+      amount: splitAmount,
+    };
+    this.setState({ loading: true });
+    wand.request('transaction_private', trans, (err, txHash) => {
+      if (err) {
+        message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
+        console.log('Send transaction failed:', err);
+      } else {
+        message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+        this.props.updateTransHistory();
+      }
+      this.setState({ visible: false, loading: false, spin: true });
+    });
   }
 
   render() {
@@ -108,7 +117,7 @@ class SendNormalTrans extends Component {
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
-        {visible && <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.onSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx} />}
+        {visible && <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} sendNormal={this.onSendNormalTransaction} sendPrivate={this.onSendPrivateTransaction} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx} />}
       </div>
     );
   }
