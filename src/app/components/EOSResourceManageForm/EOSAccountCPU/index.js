@@ -20,10 +20,6 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 class EOSAccountCPU extends Component {
     state = {
         type: 'delegate',
-        maxDelegateEOS: 100,
-        maxDelegateCPU: 12,
-        maxUndelegateEOS: 200,
-        maxUndelegateCPU: 24,
         confirmVisible: false,
         formData: {},
     }
@@ -84,11 +80,7 @@ class EOSAccountCPU extends Component {
             } else if (values.type === 'undelegate') {
                 const cost = new BigNumber(values.undelegateSize);
                 const count = cost.div(this.props.price);
-                if (count.gt(this.state.maxUndelegateCPU)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeCPU'));
-                } else if (cost.gt(this.state.maxUndelegateEOS)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
-                } else if (count.gt(selectedAccount.cpuAvailable)) {
+                if (count.gt(selectedAccount.cpuAvailable)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUnstake'));
                 } else {
                     this.setState({
@@ -161,7 +153,7 @@ class EOSAccountCPU extends Component {
     }
 
     render() {
-        let { cpuAvailable, cpuTotal } = this.props.selectedAccount;
+        let { cpuAvailable, cpuTotal, balance } = this.props.selectedAccount;
         const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
@@ -191,10 +183,10 @@ class EOSAccountCPU extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} ({this.state.maxDelegateEOS} EOS ~ {this.state.maxDelegateCPU} ms MAX)</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} ({balance} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={this.state.maxDelegateEOS} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -213,10 +205,10 @@ class EOSAccountCPU extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeCPU')} ({this.state.maxUndelegateCPU} ms ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeCPU')} ({new BigNumber(cpuAvailable).times(price).toString(10)} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={this.state.maxUndelegateCPU} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={new BigNumber(cpuAvailable).times(price).toNumber()} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 )}

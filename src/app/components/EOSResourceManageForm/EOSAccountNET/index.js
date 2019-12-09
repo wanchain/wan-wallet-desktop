@@ -20,10 +20,6 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 class EOSAccountNET extends Component {
     state = {
         type: 'delegate',
-        maxDelegateEOS: 100,
-        maxDelegateNET: 12,
-        maxUndelegateEOS: 200,
-        maxUndelegateNET: 24,
         confirmVisible: false,
         formData: {},
     }
@@ -84,11 +80,7 @@ class EOSAccountNET extends Component {
             } else if (values.type === 'undelegate') {
                 const cost = new BigNumber(values.undelegateSize);
                 const count = cost.div(this.props.price);
-                if (count.gt(this.state.maxUndelegateNET)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeNET'));
-                } else if (cost.gt(this.state.maxUndelegateEOS)) {
-                    message.warn(intl.get('EOSResourceManageForm.oversizeEOS'));
-                } else if (count.gt(selectedAccount.cpuAvailable)) {
+                if (this.props.price !== 0 && count.gt(selectedAccount.netAvailable)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientNetToUnstake'));
                 } else {
                     this.setState({
@@ -162,7 +154,7 @@ class EOSAccountNET extends Component {
     }
 
     render() {
-        let { netAvailable, netTotal, netBalance } = this.props.selectedAccount;
+        let { netAvailable, netTotal, balance } = this.props.selectedAccount;
         const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
@@ -192,10 +184,10 @@ class EOSAccountNET extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeNet')} ({this.state.maxDelegateEOS} EOS ~ {this.state.maxDelegateNET} KB MAX)</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeNet')} ({balance} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={this.state.maxDelegateEOS} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -214,10 +206,10 @@ class EOSAccountNET extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeNET')} ({this.state.maxUndelegateNET} KB ~ {this.state.maxUndelegateEOS} EOS MAX)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeNET')} ({new BigNumber(netAvailable).times(price).toString(10)} EOS MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={this.state.maxUndelegateNET} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={new BigNumber(netAvailable).times(price).toNumber()} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 )}
