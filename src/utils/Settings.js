@@ -117,6 +117,7 @@ class Settings {
       let tokens_advance = this.tokens_advance;
       regErc20Tokens.forEach(item => {
         if(!tokens_advance[item.tokenWanAddr]) {
+          tokens_advance[item.tokenWanAddr] = {};
           tokensAdvanceKey.forEach(key => tokens_advance[item.tokenWanAddr][key] = item[key] || false);
           this.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
         } else {

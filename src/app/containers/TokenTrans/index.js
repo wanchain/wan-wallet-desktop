@@ -80,7 +80,7 @@ class TokenTrans extends Component {
       symbol: CHAINTYPE,
       path: params.path,
       to: params.to,
-      amount: params.amount,
+      amount: '0',
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,

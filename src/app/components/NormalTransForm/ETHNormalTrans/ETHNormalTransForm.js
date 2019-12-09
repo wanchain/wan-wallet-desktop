@@ -9,7 +9,7 @@ import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
 import { toWei, formatNumByDecimals } from 'utils/support';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
-import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, encodeTransferInput } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
@@ -78,16 +78,17 @@ class ETHNormalTransForm extends Component {
   }
 
   handleSave = () => {
-    let { form, addrInfo } = this.props;
-    let from = form.getFieldValue('from');
+    let { form, addrInfo, transType } = this.props;
+    let { from, fee: gasFee } = form.getFieldsValue(['from', 'fee']);
+
     this.setState({
+      gasFee,
       advancedVisible: false,
       advanced: true,
     }, () => {
-      if (this.state.disabledAmount) {
-        let fee = form.getFieldValue('fee');
+      if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
         form.setFieldsValue({
-          amount: getBalanceByAddr(from, addrInfo) - fee
+          amount: getBalanceByAddr(from, addrInfo) - gasFee
         });
       }
     });
@@ -135,13 +136,13 @@ class ETHNormalTransForm extends Component {
   }
 
   handleClick = (e, gasPrice, gasLimit, nonce, fee) => {
-    let { form, addrInfo } = this.props;
+    let { form, addrInfo, transType } = this.props;
     let from = form.getFieldValue('from');
     this.props.updateTransParams(this.props.from, { gasLimit, gasPrice, nonce });
     this.setState({
       gasFee: fee
     })
-    if (this.state.disabledAmount) {
+    if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
       form.setFieldsValue({
         amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
       });
@@ -150,12 +151,19 @@ class ETHNormalTransForm extends Component {
 
   updateGasLimit = () => {
     let val;
-    let { form } = this.props;
+    let { form, transType, tokensList, tokenAddr } = this.props;
     let from = form.getFieldValue('from');
     try {
       val = toWei((form.getFieldValue('amount') || 0).toString(10))
     } catch (err) {
       return;
+    }
+    if (transType === TRANSTYPE.tokenTransfer) {
+      if (form.getFieldValue('to')) {
+        let tokenAmount = form.getFieldValue('amount');
+        let decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals;
+        this.props.updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('to'), decimals, tokenAmount) });
+      }
     }
     let tx = {
       from: from,
