@@ -401,13 +401,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
           sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
           
-        case 'getEOSMultiBalances':
+        case 'getEosAccountInfo':
             let obj = {};
             try {
                 const { accounts } = payload;
-                let [...eosMultiBalances] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
+                let [...eosAccountInfo] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
                 accounts.forEach( (v, i) => {
-                    obj[v] = eosMultiBalances[i];
+                    obj[v] = eosAccountInfo[i];
                 });
             } catch (e) {
                 logger.error(e.message || e.stack)

@@ -147,6 +147,7 @@ const en_US = {
 
     'EOSKeyPairList.import': 'Import',
     'EOSKeyPairList.getAccountListFailed': 'Get account list failed',
+    'EOSKeyPairList.noAccountFound': 'No account available',
     'EOSKeyPairList.invalidFormData': 'Invalid form data',
     'EOSKeyPairList.updateAccountInfoFailed': 'Update account information failed',
     'EOSKeyPairList.importAccount': 'Import Account',

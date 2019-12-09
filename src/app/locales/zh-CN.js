@@ -147,6 +147,7 @@ const zh_CN = {
 
     'EOSKeyPairList.import': '导入',
     'EOSKeyPairList.getAccountListFailed': '获取账户列表失败',
+    'EOSKeyPairList.noAccountFound': '没有找到相应的账户',
     'EOSKeyPairList.invalidFormData': '非法表单数据',
     'EOSKeyPairList.updateAccountInfoFailed': '更新账户信息失败',
     'EOSKeyPairList.importAccount': '导入账户',

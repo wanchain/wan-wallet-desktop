@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Form, message } from 'antd';
-import { getEOSMultiBalances } from 'utils/helper';
+import { getEosAccountInfo } from 'utils/helper';
 import style from './index.less';
 import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -66,10 +66,13 @@ class EOSKeyPairList extends Component {
 
   importAccount = (record) => {
     wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
-      if (!err && response instanceof Array && response.length) {
+      if (err) {
+        console.log('error:', err);
+        message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
+      } else if (response instanceof Array && response.length) {
         this.showAddAccountForm(record);
         let accountList = [];
-        getEOSMultiBalances(response).then(info => {
+        getEosAccountInfo(response).then(info => {
           response.forEach(v => {
             if (info[v] && info[v].activeKeys.includes(record.publicKey)) {
               accountList.push({
@@ -85,8 +88,7 @@ class EOSKeyPairList extends Component {
           message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
         });
       } else {
-        console.log('error:', err);
-        message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
+        message.warn(intl.get('EOSKeyPairList.noAccountFound'));
       }
     });
   }

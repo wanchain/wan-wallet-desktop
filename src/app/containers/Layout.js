@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getEthBalance, getBTCMultiBalances, getEOSMultiBalances } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getEthBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
 
 import style from './Layout.less';
 import SideBar from './Sidebar';
@@ -123,7 +123,7 @@ class Layout extends Component {
     const { accountInfo } = this.props;
     const allAccounts = Object.keys(accountInfo);
     if (Array.isArray(allAccounts) && allAccounts.length === 0) return;
-    getEOSMultiBalances(allAccounts).then(res => {
+    getEosAccountInfo(allAccounts).then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateEOSBalance(res);
       }
