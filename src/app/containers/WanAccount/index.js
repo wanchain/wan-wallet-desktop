@@ -1,5 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
-import wanUtil from 'wanchain-util';
+import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -13,7 +13,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
-import { hasSameName } from 'utils/helper';
+import { hasSameName, checkAddrType } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
@@ -129,6 +129,78 @@ class WanAccount extends Component {
         }
       });
     }
+  }
+
+  handleSend = (from, splitAmount) => {
+    console.log('handleSend:', from, splitAmount);
+    if (splitAmount && splitAmount instanceof Array) {
+      return this.onSendPrivateTransaction(from, splitAmount);
+    } else {
+      return this.onSendNormalTransaction(from);
+    }
+  }
+
+  onSendNormalTransaction = (from) => {
+    console.log('Normal:', from);
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: CHAINTYPE,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: params.to,
+      amount: params.amount,
+      symbol: CHAINTYPE,
+      nonce: params.nonce,
+      data: params.data,
+    };
+    console.log('trans:', trans);
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_normal', trans, (err, txHash) => {
+        if (err) {
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
+          console.log('Send transaction failed:', err);
+          reject(err);
+        } else {
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+          resolve();
+          this.props.updateTransHistory();
+          console.log('Tx hash: ', txHash);
+        }
+      });
+    });
+  }
+
+  onSendPrivateTransaction = (from, splitAmount = []) => {
+    console.log('Private:', from, splitAmount);
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: CHAINTYPE,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: toChecksumOTAddress(params.to),
+      amount: splitAmount,
+    };
+    console.log('private trans:', trans);
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_private', trans, (err, txHash) => {
+        if (err) {
+          message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
+          console.log('Send transaction failed:', err);
+          reject(err);
+        } else {
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+          resolve();
+          this.props.updateTransHistory();
+          console.log('Tx hash: ', txHash);
+        }
+      });
+    });
   }
 
   handleSave = row => {

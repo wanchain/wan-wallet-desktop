@@ -4,10 +4,10 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 
-import { TRANSTYPE, WALLETID } from 'utils/settings';
+import { TRANSTYPE } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm';
 import WRC20NormalTransForm from 'components/NormalTransForm/WRC20NormalTransForm';
-import { getNonce, getGasPrice, getBalanceByAddr, checkAddrType } from 'utils/helper';
+import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 const WRC20CollectionCreateForm = Form.create({ name: 'WRC20NormalTransForm' })(WRC20NormalTransForm);
@@ -67,57 +67,13 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  onSendNormalTransaction = (from) => {
-    const { chainType } = this.props;
-    let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
-    let trans = {
-      walletID: walletID,
-      chainType: chainType,
-      path: params.path,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
-      gasPrice: params.gasPrice,
-      to: params.to,
-      amount: params.amount,
-      symbol: chainType,
-      nonce: params.nonce,
-      data: params.data,
-    };
+  handleSend = (from, splitAmount) => {
+    console.log('splitAmount:', splitAmount);
     this.setState({ loading: true });
-    wand.request('transaction_normal', trans, (err, txHash) => {
-      if (err) {
-        message.warn(intl.get('WanAccount.sendTransactionFailed'));
-        console.log('Send transaction failed:', err);
-      } else {
-        this.props.updateTransHistory();
-        console.log('Tx hash: ', txHash);
-      }
+    this.props.handleSend(from, splitAmount).then(ret => {
       this.setState({ visible: false, loading: false, spin: true });
-    });
-  }
-
-  onSendPrivateTransaction = (from, splitAmount = []) => {
-    const { chainType } = this.props;
-    let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
-    let trans = {
-      walletID: walletID,
-      chainType: chainType,
-      path: params.path,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
-      gasPrice: params.gasPrice,
-      to: toChecksumOTAddress(params.to),
-      amount: splitAmount,
-    };
-    this.setState({ loading: true });
-    wand.request('transaction_private', trans, (err, txHash) => {
-      if (err) {
-        message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
-        console.log('Send transaction failed:', err);
-      } else {
-        message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
-        this.props.updateTransHistory();
-      }
+    }).catch(err => {
+      console.log(err);
       this.setState({ visible: false, loading: false, spin: true });
     });
   }
