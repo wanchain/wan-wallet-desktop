@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Row, Col, Form, message } from 'antd';
+import { Button, Row, Col, Form } from 'antd';
 
 import style from './index.less';
 import totalImg from 'static/image/eos_gray.png';

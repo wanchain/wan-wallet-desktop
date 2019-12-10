@@ -8,7 +8,7 @@ import EOSResourceManageForm from 'components/EOSResourceManageForm';
 
 @inject(stores => ({
     language: stores.languageIntl.language,
-    getAccountList: stores.eosAddress.getAccountList,
+    getAccountListWithBalance: stores.eosAddress.getAccountListWithBalance,
     updateSelectedAccount: obj => stores.eosAddress.updateSelectedAccount(obj),
 }))
 
@@ -18,6 +18,11 @@ class EOSAccountList extends Component {
         super(props);
         this.state = {
             showManageResourceForm: false,
+            prices: {
+                ram: 0,
+                cpu: 0,
+                net: 0,
+            }
         }
     }
 
@@ -87,6 +92,15 @@ class EOSAccountList extends Component {
 
     showManageResourceForm = (record) => {
         this.props.updateSelectedAccount(record);
+        wand.request('address_getEOSResourcePrice', { account: record.account }, (err, res) => {
+            if (!err) {
+                this.setState({
+                    prices: res,
+                });
+            } else {
+                message.error(intl.get('EOSAccountList.getResourcePriceFailed'));
+            }
+        });
         this.setState({
             showManageResourceForm: true
         });
@@ -99,15 +113,15 @@ class EOSAccountList extends Component {
     }
 
     render() {
-        const { getAccountList } = this.props;
+        const { getAccountListWithBalance } = this.props;
         this.props.language && this.columns.forEach(col => {
             col.title = intl.get(`EosAccount.${col.dataIndex}`)
         })
 
         return (
             <div>
-                <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountList} />
-                {this.state.showManageResourceForm && <EOSResourceManageForm onCancel={this.onCancel} />}
+                <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountListWithBalance} />
+                {this.state.showManageResourceForm && <EOSResourceManageForm prices={this.state.prices} onCancel={this.onCancel} />}
             </div>
         );
     }

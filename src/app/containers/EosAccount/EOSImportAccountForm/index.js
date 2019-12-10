@@ -85,7 +85,7 @@ class EOSImportAccountForm extends Component {
                         <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>,
                     ]}
                 >
-                    <Spin spinning={spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+                    <Spin spinning={spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} />} className="loadingData">
                         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                             <Form.Item label={intl.get('EOSKeyPairList.searchPublicKey')}>
                                 {getFieldDecorator('from', { initialValue: selectedRow.publicKey })

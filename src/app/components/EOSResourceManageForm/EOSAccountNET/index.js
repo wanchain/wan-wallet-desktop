@@ -22,6 +22,7 @@ class EOSAccountNET extends Component {
         type: 'delegate',
         confirmVisible: false,
         formData: {},
+        loading: false,
     }
 
     componentWillUnmount() {
@@ -134,6 +135,9 @@ class EOSAccountNET extends Component {
             BIP44Path: `${EOSPATH}${pathAndId.path}`,
             walletID: pathAndId.walletID,
         };
+        this.setState({
+            loading: true
+        });
         wand.request('transaction_EOSNormal', params, (err, res) => {
             if (!err) {
                 if (res.code) {
@@ -150,6 +154,9 @@ class EOSAccountNET extends Component {
                 message.error(intl.get('EOSResourceManageForm.txSentFailed'));
                 console.log(intl.get('EOSResourceManageForm.txSentFailed'), err);
             }
+            this.setState({
+                loading: false
+            });
         });
     }
 
@@ -222,7 +229,7 @@ class EOSAccountNET extends Component {
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
                 {
-                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} loading={this.state.loading}/>
                 }
             </div>
         );

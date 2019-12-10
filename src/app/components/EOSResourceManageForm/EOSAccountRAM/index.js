@@ -20,22 +20,15 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 class EOSAccountRAM extends Component {
     state = {
         type: 'buy',
-        maxBuyRAM: 0,
         confirmVisible: false,
         formData: {},
+        loading: false,
     }
 
     componentWillUnmount() {
         this.setState = (state, callback) => {
             return false;
         };
-    }
-
-    componentDidMount() {
-        const { selectedAccount, price } = this.props;
-        this.setState({
-            maxBuyRAM: price === 0 ? null : new BigNumber(selectedAccount.balance).div(price).toString(10)
-        });
     }
 
     onChange = e => {
@@ -69,7 +62,7 @@ class EOSAccountRAM extends Component {
     }
 
     handleOk = () => {
-        const { form, selectedAccount } = this.props;
+        const { form, selectedAccount, price } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
@@ -81,7 +74,7 @@ class EOSAccountRAM extends Component {
                     return;
                 }
                 const cost = new BigNumber(values.buySize).times(this.props.price);
-                if (this.props.price !== 0 && new BigNumber(values.buySize).gt(this.state.maxBuyRAM)) {
+                if (this.props.price !== 0 && new BigNumber(values.buySize).gt(new BigNumber(selectedAccount.balance).div(price))) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeRAM'));
                 } else if (this.props.price !== 0 && cost.gt(selectedAccount.balance)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
@@ -149,11 +142,14 @@ class EOSAccountRAM extends Component {
             BIP44Path: `${EOSPATH}${pathAndId.path}`,
             walletID: pathAndId.walletID,
         };
+        this.setState({
+            loading: true
+        });
         wand.request('transaction_EOSNormal', params, (err, res) => {
             if (!err) {
                 if (res.code) {
                     this.setState({
-                        confirmVisible: false
+                        confirmVisible: false,
                     });
                     this.props.onCancel();
                     message.success(intl.get('EOSResourceManageForm.txSentSuccess'));
@@ -165,12 +161,15 @@ class EOSAccountRAM extends Component {
                 message.error(intl.get('EOSResourceManageForm.txSentFailed'));
                 console.log('Transaction sent failed:', err);
             }
+            this.setState({
+                loading: false
+            });
         });
     }
 
     render() {
-        let { ramAvailable, ramTotal } = this.props.selectedAccount;
-        const { form, price } = this.props;
+        const { form, price, selectedAccount } = this.props;
+        let { ramAvailable, ramTotal, balance } = selectedAccount;
         const { getFieldDecorator } = form;
         return (
             <div className={style.EOSAccountRAM}>
@@ -187,7 +186,7 @@ class EOSAccountRAM extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{price.toFixed(4).toString(10)} EOS/KB</span></div>
+                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{new BigNumber(price).toFixed(4).toString(10)} EOS/KB</span></div>
                         <div className={style.RAMForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -199,10 +198,10 @@ class EOSAccountRAM extends Component {
                                 </Form.Item>
                                 {this.state.type === 'buy' ? (
                                     <div>
-                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buyRAM')} ({this.state.maxBuyRAM} KB MAX)</div>
+                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.buyRAM')} ({price === 0 ? 'NULL' : new BigNumber(balance).div(price).toString(10)} KB MAX)</div>
                                         <Form.Item>
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} /* max={this.state.maxBuyRAM} */ prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
@@ -237,7 +236,7 @@ class EOSAccountRAM extends Component {
                     <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>
                 </div>
                 {
-                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} />
+                    this.state.confirmVisible && <Confirm onCancel={this.handleConfirmCancel} formData={this.state.formData} sendTrans={this.sendTrans} loading={this.state.loading}/>
                 }
             </div>
         );

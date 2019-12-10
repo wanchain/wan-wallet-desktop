@@ -65,12 +65,18 @@ class EOSKeyPairList extends Component {
   });
 
   importAccount = (record) => {
+    this.showAddAccountForm(record);
+    this.setState({
+      spin: true
+    });
     wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
       if (err) {
         console.log('error:', err);
         message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
+        this.setState({
+          spin: false
+        });
       } else if (response instanceof Array && response.length) {
-        this.showAddAccountForm(record);
         let accountList = [];
         getEosAccountInfo(response).then(info => {
           response.forEach(v => {
@@ -86,9 +92,15 @@ class EOSKeyPairList extends Component {
           });
         }).catch(() => {
           message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
+          this.setState({
+            spin: false
+          });
         });
       } else {
         message.warn(intl.get('EOSKeyPairList.noAccountFound'));
+        this.setState({
+          spin: false
+        });
       }
     });
   }

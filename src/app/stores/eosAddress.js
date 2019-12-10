@@ -89,13 +89,20 @@ class EosAddress {
     return Object.values(self.accountInfo);
   }
 
+  @computed get getAccountListWithBalance() {
+    return Object.values(self.accountInfo).filter((item) => Object.prototype.hasOwnProperty.call(item, 'address'));
+  }
+
   @computed get getAccount() {
     return Object.keys(self.accountInfo);
   }
 
   @action getUserKeyFromDB() {
     wand.request('account_getAll', { chainID: 194 }, (err, ret) => {
-      if (err) console.log('Get user from DB failed ', err)
+      if (err) {
+        console.log('Get user from DB failed ', err);
+        return;
+      }
       let info = ret.accounts;
       if (info && Object.keys(info).length) {
         let typeFunc = id => id === '1' ? 'normal' : 'import';
@@ -149,7 +156,7 @@ class EosAddress {
     let keys = Object.keys(obj);
     let accounts = Object.keys(self.accountInfo);
     keys.forEach(name => {
-      if (accounts.includes(name)) {
+      if (accounts.includes(name) && Object.prototype.hasOwnProperty.call(obj[name], 'address')) {
         obj[name].publicKey = self.accountInfo[name].publicKey;
         obj[name].account = name;
         obj[name].path = self.accountInfo[name].path;
