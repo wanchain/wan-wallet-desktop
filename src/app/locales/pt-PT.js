@@ -46,6 +46,7 @@ const pt_PT = {
     'Register.previous': 'Anterior',
     'Register.done': 'Concluído',
     'Register.createFirstAddr': 'An error occurred, please try again',
+    'Register.next': 'Próximo',
 
     'Backup.invalidPassword': 'Senha inválida. Tente novamente',
     'Backup.copySuccessfully': 'Cópia feita com sucesso',
@@ -131,6 +132,7 @@ const pt_PT = {
     'WanAccount.wan': 'WAN',
     'WanAccount.notSameName': 'O nome da conta não pode ser repetido. Por favor, tente novamente',
     'WanAccount.redeem': 'Resgatar',
+    'WanAccount.create': 'Criar',
     'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
     'WanAccount.publicKey': 'Public Key',
 
@@ -138,6 +140,7 @@ const pt_PT = {
     'AdvancedOptionForm.save': 'Salvar',
     'AdvancedOptionForm.gasPrice': 'Preço do gás',
     'AdvancedOptionForm.gwin': 'Gwin',
+    'AdvancedOptionForm.cancel': 'Cancelar',
     'AdvancedOptionForm.gasPriceIsIncorrect': ' Preço do gás está incorreto',
     'AdvancedOptionForm.gasLimit': 'Limite do gás',
     'AdvancedOptionForm.gasLimitIsIncorrect': 'Limite do gás está incorreto',
@@ -190,7 +193,7 @@ const pt_PT = {
     'NormalTransForm.ConfirmForm.transactionConfirm': 'Confirmação de transação',
     'NormalTransForm.ConfirmForm.to': 'Para',
     'NormalTransForm.ConfirmForm.gasPrice': 'Preço do gás',
-    'NormalTransForm.ConfirmForm.gwin': 'Gwin',
+    'NormalTransForm.ConfirmForm.gwin': 'GWIN',
     'NormalTransForm.ConfirmForm.gasLimit': 'Limite de gás',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'Taxa',

@@ -23,6 +23,7 @@ const Confirm = Form.create({ name: 'EOSConfirmForm' })(EOSConfirmForm);
 class EOSNormalTransForm extends Component {
   state = {
     confirmVisible: false,
+    loading: false,
     formData: {}
   }
 
@@ -86,7 +87,7 @@ class EOSNormalTransForm extends Component {
   }
 
   sendTrans = () => {
-    const { form, selectedAccount, keyInfo } = this.props;
+    const { form, selectedAccount } = this.props;
     const data = form.getFieldsValue();
     let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
     let params = {
@@ -96,7 +97,10 @@ class EOSNormalTransForm extends Component {
       amount: `${data.amount} EOS`,
       BIP44Path: `${EOSPATH}${pathAndId.path}`,
       walletID: pathAndId.walletID,
-    }
+    };
+    this.setState({
+      loading: true
+    });
     wand.request('transaction_EOSNormal', params, (err, res) => {
       if (err || res.code === false) {
         message.warn(intl.get('EOSNormalTransForm.sendTxFailed'));
@@ -105,9 +109,8 @@ class EOSNormalTransForm extends Component {
         this.props.updateTransHistory();
         message.success(intl.get('EOSNormalTransForm.sendTxSuccess'));
       }
+      this.props.onCancel();
     });
-
-    this.props.onCancel();
   }
 
   checkToAccount = (rule, value, callback) => {
@@ -177,7 +180,7 @@ class EOSNormalTransForm extends Component {
             </Form>
           </Spin>
         </Modal>
-        {this.state.confirmVisible && <Confirm sendTrans={this.sendTrans} onCancel={this.handleConfirmCancel} formData={this.state.formData} />}
+        {this.state.confirmVisible && <Confirm sendTrans={this.sendTrans} onCancel={this.handleConfirmCancel} loading={this.state.loading} formData={this.state.formData} />}
       </div>
     );
   }

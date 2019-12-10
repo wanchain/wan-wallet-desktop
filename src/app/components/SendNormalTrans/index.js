@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 
-import { TRANSTYPE } from 'utils/settings';
+import { TRANSTYPE, WALLETID } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm';
 import WRC20NormalTransForm from 'components/NormalTransForm/WRC20NormalTransForm';
-
-import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
+import { getNonce, getGasPrice, getBalanceByAddr, checkAddrType } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 const WRC20CollectionCreateForm = Form.create({ name: 'WRC20NormalTransForm' })(WRC20NormalTransForm);
@@ -19,6 +19,7 @@ const WRC20CollectionCreateForm = Form.create({ name: 'WRC20NormalTransForm' })(
   tokensBalance: stores.tokens.tokensBalance,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
 }))
@@ -66,17 +67,62 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {
+  onSendNormalTransaction = (from) => {
+    const { chainType } = this.props;
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: chainType,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: params.to,
+      amount: params.amount,
+      symbol: chainType,
+      nonce: params.nonce,
+      data: params.data,
+    };
     this.setState({ loading: true });
-    this.props.handleSend(from).then(ret => {
-      this.setState({ visible: false, loading: false, spin: true });
-    }).catch(err => {
-      console.log(err);
+    wand.request('transaction_normal', trans, (err, txHash) => {
+      if (err) {
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        console.log('Send transaction failed:', err);
+      } else {
+        this.props.updateTransHistory();
+        console.log('Tx hash: ', txHash);
+      }
       this.setState({ visible: false, loading: false, spin: true });
     });
   }
 
-  render () {
+  onSendPrivateTransaction = (from, splitAmount = []) => {
+    const { chainType } = this.props;
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: chainType,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: toChecksumOTAddress(params.to),
+      amount: splitAmount,
+    };
+    this.setState({ loading: true });
+    wand.request('transaction_private', trans, (err, txHash) => {
+      if (err) {
+        message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
+        console.log('Send transaction failed:', err);
+      } else {
+        message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+        this.props.updateTransHistory();
+      }
+      this.setState({ visible: false, loading: false, spin: true });
+    });
+  }
+
+  render() {
     const { visible, loading, spin } = this.state;
     const { tokenAddr, transType, balance } = this.props;
 

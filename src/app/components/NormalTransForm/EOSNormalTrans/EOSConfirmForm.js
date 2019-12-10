@@ -20,7 +20,7 @@ class EOSConfirmForm extends Component {
   }
 
   render() {
-    const { form, sendTrans } = this.props;
+    const { form, sendTrans, loading } = this.props;
     const { getFieldDecorator } = form;
     const { from, to, amount, memo } = this.props.formData;
     return (
@@ -32,7 +32,7 @@ class EOSConfirmForm extends Component {
         onCancel={this.handleCancel}
         footer={[
           <Button key="back" className="cancel-button" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
-          <Button key="submit" type="primary" className="confirm-button" onClick={sendTrans}>{intl.get('Common.send')}</Button>,
+          <Button key="submit" type="primary" className="confirm-button" onClick={sendTrans} loading={loading}>{intl.get('Common.send')}</Button>,
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>

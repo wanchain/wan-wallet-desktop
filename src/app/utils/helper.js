@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
 
@@ -667,4 +667,16 @@ export const getFullChainName = function (chainType = '') {
     case 'EOS':
       return intl.get('Common.eos');
   }
+}
+
+export const getSplitAmountToArray = function (amount) {
+  let collections = {};
+  let current = amount;
+  PRIVATE_TX_AMOUNT_SELECTION.forEach(item => {
+    if (new BigNumber(current).gte(item)) {
+      collections[item] = new BigNumber(current).idiv(item).toNumber();
+      current = new BigNumber(current).mod(item);
+    }
+  });
+  return collections;
 }

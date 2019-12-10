@@ -67,3 +67,4 @@ export const CROSSCHAINTYPE = ['BTC', 'ETH', 'EOS'];
 export const MAX_CONFIRM_BLKS = 100000000;
 export const MIN_CONFIRM_BLKS = 0;
 export const PENALTYNUM = 10000;
+export const PRIVATE_TX_AMOUNT_SELECTION = [50000, 5000, 1000, 500, 200, 100, 50, 20, 10];

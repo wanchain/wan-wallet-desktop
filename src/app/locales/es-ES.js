@@ -46,6 +46,7 @@ const es_ES = {
     'Register.previous': 'Previous',
     'Register.done': 'Done',
     'Register.createFirstAddr': 'An error occurred, please try again',
+    'Register.next': 'Next',
 
     'Backup.invalidPassword': 'Invalid password. Try again',
     'Backup.copySuccessfully': 'Copy successfully',
@@ -130,12 +131,14 @@ const es_ES = {
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
     'WanAccount.notSameName': 'The account name cannot be repeated. Please try again',
+    'WanAccount.create': 'Create',
     'WanAccount.redeem': 'Redeem',
     'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
     'WanAccount.publicKey': 'Public Key',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.save': 'Save',
+    'AdvancedOptionForm.cancel': 'Cancel',
     'AdvancedOptionForm.gasPrice': 'Gas Price',
     'AdvancedOptionForm.gwin': 'Gwin',
     'AdvancedOptionForm.gasPriceIsIncorrect': 'Gas price is incorrect',
@@ -191,6 +194,7 @@ const es_ES = {
     'NormalTransForm.ConfirmForm.to': 'To',
     'NormalTransForm.ConfirmForm.gasPrice': 'Gas Price',
     'NormalTransForm.ConfirmForm.gwin': 'Gwin',
+
     'NormalTransForm.ConfirmForm.gasLimit': 'Gas Limit',
     'NormalTransForm.ConfirmForm.nonce': 'Nonce',
     'NormalTransForm.ConfirmForm.fee': 'Fee',
@@ -433,8 +437,7 @@ const es_ES = {
     'popup.search': 'Search',
     'title.imported': 'Imported Address',
 
-    'network.down': 'The network request failed, Please try again later'
-
+    'network.down': 'The network request failed, Please try again later',
 }
 
 export default es_ES;

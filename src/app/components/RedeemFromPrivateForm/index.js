@@ -6,7 +6,7 @@ import PrivateTransactionTable from './PrivateTransactionTable.js';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
 
-const privateTxGasLimit = 800000;
+const privateTxGasLimit = 300000;
 @inject(stores => ({
   settings: stores.session.settings,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
@@ -80,7 +80,6 @@ class RedeemFromPrivateForm extends Component {
     this.props.onCancel();
   }
 
-  // Refund tx check
   handleCheck = (arr) => {
     this.setState({
       redeemCount: arr.length === 0 ? 1 : arr.length
