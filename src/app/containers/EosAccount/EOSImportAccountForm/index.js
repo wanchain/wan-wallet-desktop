@@ -98,6 +98,7 @@ class EOSImportAccountForm extends Component {
                                 {getFieldDecorator('accounts', { rules: [{ type: 'array', required: true, message: intl.get('EOSKeyPairList.selectOneAccount') }] })
                                     (<Input hidden={true} disabled={true} />)}
                             </Form.Item>
+                            <div className={style.tip}>{intl.get('EOSKeyPairList.tipText')}</div>
                         </Form>
                     </Spin>
                 </Modal>

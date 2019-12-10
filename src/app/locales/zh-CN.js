@@ -153,6 +153,7 @@ const zh_CN = {
     'EOSKeyPairList.importAccount': '导入账户',
     'EOSKeyPairList.searchPublicKey': '查询公钥',
     'EOSKeyPairList.selectOneAccount': '请选择至少一条账户',
+    'EOSKeyPairList.tipText': `如果本地公私钥对没有账户关联，可到第三方创建并关联；如果已有关联账户，可直接通过该账户进行新账户创建；`,
 
     'EOSAccountList.manageResource': '资源管理',
     'EOSAccountList.getResourcePriceFailed': '获取资源价格失败',
