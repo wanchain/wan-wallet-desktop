@@ -107,7 +107,7 @@ class ConfirmForm extends Component {
 
           {
             isPrivate ? (
-              <Table className="splitAmountTable" rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns()} pagination={false} />
+              <Table className={style.splitAmountTable} rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns()} pagination={false} />
             ) : (
                 <div>
                   <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}> {
