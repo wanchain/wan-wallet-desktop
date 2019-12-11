@@ -67,6 +67,7 @@ class EOSKeyPairList extends Component {
   importAccount = (record) => {
     this.showAddAccountForm(record);
     this.setState({
+      accountList: [],
       spin: true
     });
     wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
