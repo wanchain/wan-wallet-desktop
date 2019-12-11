@@ -153,6 +153,7 @@ const en_US = {
     'EOSKeyPairList.invalidFormData': 'Invalid form data',
     'EOSKeyPairList.updateAccountInfoFailed': 'Update account information failed',
     'EOSKeyPairList.importAccount': 'Import Account',
+    'EOSKeyPairList.publicKey': 'Public Key',
     'EOSKeyPairList.searchPublicKey': 'Searched Public Key',
     'EOSKeyPairList.selectOneAccount': 'Please select at least one account',
     'EOSKeyPairList.tipText': `If you have never associated EOS accounts to EOS key pairs created by Wan Wallet, you can use third party service to create account and associate it to key pairs. If you already have EOS accounts associated to key pairs, you can create new EOS accounts using existing ones.`,

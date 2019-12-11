@@ -153,6 +153,7 @@ const zh_CN = {
     'EOSKeyPairList.invalidFormData': '非法表单数据',
     'EOSKeyPairList.updateAccountInfoFailed': '更新账户信息失败',
     'EOSKeyPairList.importAccount': '导入账户',
+    'EOSKeyPairList.publicKey': '公钥',
     'EOSKeyPairList.searchPublicKey': '查询公钥',
     'EOSKeyPairList.selectOneAccount': '请选择至少一条账户',
     'EOSKeyPairList.tipText': `如果本地公私钥对没有账户关联，可到第三方创建并关联；如果已有关联账户，可直接通过该账户进行新账户创建；`,
