@@ -2,6 +2,7 @@
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 
+import tokens from './tokens';
 import languageIntl from './languageIntl';
 import { checkAddrType } from 'utils/helper';
 import { ETHPATH, WALLETID } from 'utils/settings';
@@ -182,17 +183,47 @@ class EthAddress {
         })
       }
       Object.keys(self.transHistory).forEach(item => {
-        if (addrList.includes(self.transHistory[item]['from'])) {
+        if (addrList.includes(self.transHistory[item].from) && !self.transHistory[item].transferTo) {
           let status = self.transHistory[item].status;
-          let type = checkAddrType(self.transHistory[item]['from'], self.addrInfo)
+          let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
           historyList.push({
             key: item,
-            time: timeFormat(self.transHistory[item]['sendTime']),
-            from: self.addrInfo[type][self.transHistory[item]['from']].name,
+            time: timeFormat(self.transHistory[item].sendTime),
+            from: self.addrInfo[type][self.transHistory[item].from].name,
             to: self.transHistory[item].to.toLowerCase(),
             value: formatNum(fromWei(self.transHistory[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]['sendTime'],
+            sendTime: self.transHistory[item].sendTime,
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    }
+
+    @computed get tokenTransferHistoryList() {
+      let historyList = [];
+      let page = self.currentPage;
+      let addrList = [];
+      if (self.selectedAddr) {
+        addrList = self.selectedAddr
+      } else {
+        page.forEach(name => {
+          addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+        })
+      }
+      Object.keys(self.transHistory).forEach(item => {
+        if (addrList.includes(self.transHistory[item].from) && self.transHistory[item].transferTo && (tokens.currTokenAddr.toLowerCase() === self.transHistory[item].to.toLowerCase())) {
+          let status = self.transHistory[item].status;
+          let type = checkAddrType(self.transHistory[item].from, self.addrInfo);
+
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item].sendTime),
+            from: self.addrInfo[type][self.transHistory[item].from].name,
+            to: self.transHistory[item].transferTo.toLowerCase(),
+            value: formatNum(self.transHistory[item].token || 0),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item].sendTime,
           });
         }
       });

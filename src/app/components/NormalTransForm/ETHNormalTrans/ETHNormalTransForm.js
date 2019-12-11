@@ -5,8 +5,7 @@ import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from
 import intl from 'react-intl-universal';
 
 import style from '../index.less';
-import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
-import { toWei, formatNumByDecimals } from 'utils/support';
+import { TRANSTYPE } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, encodeTransferInput } from 'utils/helper';
@@ -40,6 +39,12 @@ class ETHNormalTransForm extends Component {
     advancedVisible: false,
   }
 
+  constructor(props) {
+    super(props);
+    let { tokensList, tokenAddr } = props;
+    this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals || 18;
+  }
+
   componentWillUnmount () {
     this.setState = (state, callback) => {
       return false;
@@ -47,11 +52,8 @@ class ETHNormalTransForm extends Component {
   }
 
   onAdvanced = () => {
-    let { form, updateTransParams } = this.props;
-    let from = form.getFieldValue('from');
-    form.validateFields(['from', 'to'], err => {
+    this.props.form.validateFields(['to', 'amount'], err => {
       if (err) return;
-      updateTransParams(from, { to: form.getFieldValue('to') });
       this.setState({
         advancedVisible: true,
       });
@@ -78,36 +80,37 @@ class ETHNormalTransForm extends Component {
   }
 
   handleSave = () => {
-    let { form, addrInfo, transType } = this.props;
-    let { from, fee: gasFee } = form.getFieldsValue(['from', 'fee']);
-
+    const { form, transType, balance, from, minGasPrice, transParams } = this.props;
+    const { gasPrice, gasLimit } = transParams[from];
+    let savedFee = new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)).toString(10);
     this.setState({
-      gasFee,
+      gasFee: savedFee,
       advancedVisible: false,
       advanced: true,
     }, () => {
       if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
         form.setFieldsValue({
-          amount: getBalanceByAddr(from, addrInfo) - gasFee
+          amount: new BigNumber(balance).minus(savedFee).toString(10)
         });
       }
     });
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings } = this.props;
-    let form = this.props.form;
-    let from = this.props.from;
+    const { form, from, updateTransParams, addrInfo, settings, balance, tokenAddr } = this.props;
+
     form.validateFields(err => {
       if (err) {
         console.log('handleNext', err);
         return;
       };
-      let pwd = form.getFieldValue('pwd');
+      let { pwd, amount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       let addrAmount = getBalanceByAddr(from, addrInfo);
-      let sendAmount = form.getFieldValue('amount');
-      let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
-      if (new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
+      if (new BigNumber(addrAmount).minus(this.state.gasFee).lt(tokenAddr ? '0' : amount)) {
+        message.warn(intl.get('NormalTransForm.overBalance'));
+        return;
+      }
+      if (tokenAddr && new BigNumber(balance).lt(amount)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -116,17 +119,17 @@ class ETHNormalTransForm extends Component {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
-        wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+        wand.request('phrase_reveal', { pwd }, err => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) });
-            this.setState({ advanced: false, confirmVisible: true });
+            updateTransParams(from, { to, amount: formatAmount(amount) });
+            this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: form.getFieldValue('to'), amount: formatAmount(sendAmount) });
-        this.setState({ advanced: false, confirmVisible: true });
+        updateTransParams(from, { to, amount: formatAmount(amount) });
+        this.setState({ confirmVisible: true });
       }
     });
   }
@@ -135,56 +138,49 @@ class ETHNormalTransForm extends Component {
     this.props.onSend(this.props.from);
   }
 
-  handleClick = (e, gasPrice, gasLimit, nonce, fee) => {
-    let { form, addrInfo, transType } = this.props;
-    let from = form.getFieldValue('from');
-    this.props.updateTransParams(this.props.from, { gasLimit, gasPrice, nonce });
-    this.setState({
-      gasFee: fee
-    })
+  handleClick = (e, gasPrice, gasLimit, nonce, gasFee) => {
+    let { form, transType, from, balance } = this.props;
+    this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
+    this.setState({ gasFee })
     if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
       form.setFieldsValue({
-        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
+        amount: new BigNumber(balance).minus(gasFee).toString(10)
       });
     }
   }
 
   updateGasLimit = () => {
-    let val;
-    let { form, transType, tokensList, tokenAddr } = this.props;
-    let from = form.getFieldValue('from');
-    try {
-      val = toWei((form.getFieldValue('amount') || 0).toString(10))
-    } catch (err) {
-      return;
-    }
+    let data = '0x';
+    let { form, transType, from, tokenAddr } = this.props;
+    let { to, amount } = form.getFieldsValue(['to', 'amount']);
+
     if (transType === TRANSTYPE.tokenTransfer) {
-      if (form.getFieldValue('to')) {
-        let tokenAmount = form.getFieldValue('amount');
-        let decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals;
-        this.props.updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('to'), decimals, tokenAmount) });
+      if (to) {
+        data = encodeTransferInput(to, this.decimals, amount || 0);
+        this.props.updateTransParams(from, { data });
       }
     }
-    let tx = {
-      from: from,
-      to: form.getFieldValue('to'),
-      value: val,
-      data: this.props.transParams[from].data,
-      gas: DEFAULT_GAS
-    };
-    let { chainType } = this.props.transParams[from];
-    wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
+    let tx = { from, to: tokenAddr, data, value: '0x0' };
+    wand.request('transaction_estimateGas', { chainType: 'ETH', tx }, (err, gasLimit) => {
       if (err) {
         message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
-        console.log('Update gas limit:', gasLimit);
+        console.log('Update Gas Limit:', gasLimit);
         this.props.updateTransParams(from, { gasLimit });
         this.props.updateGasLimit(gasLimit);
       }
     });
   }
 
-  checkToWanAddr = (rule, value, callback) => {
+  checkToETHAddr = (rule, value, callback) => {
+    let { tokenAddr } = this.props;
+    if (value === undefined) {
+      callback(rule.message);
+      return;
+    }
+    if (tokenAddr && value.toLowerCase() === tokenAddr.toLowerCase()) {
+      callback(rule.message);
+    }
     checkETHAddr(value).then(ret => {
       if (ret) {
         if (!this.state.advanced) {
@@ -192,61 +188,47 @@ class ETHNormalTransForm extends Component {
         }
         callback();
       } else {
-        callback(intl.get('NormalTransForm.invalidAddress'));
+        callback(rule.message);
       }
-    }).catch((err) => {
-      callback(err);
+    }).catch(err => {
+      console.log('checkToETHAddr:', err)
+      callback(intl.get('network.down'));
     })
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 0 && checkAmountUnit(18, value)) {
-      if (!this.state.advanced) {
-        this.updateGasLimit();
-      }
-      callback();
-    } else {
-      callback(intl.get('Common.invalidAmount'));
+    let { tokenAddr, balance } = this.props;
+    if (value === undefined) {
+      callback(rule.message);
+      return;
     }
+    if (new BigNumber(value).lte(0) || !checkAmountUnit(this.decimals, value)) {
+      callback(rule.message);
+      return;
+    }
+    if (tokenAddr && new BigNumber(value).gt(balance)) {
+      callback(intl.get('NormalTransForm.overBalance'));
+      return;
+    }
+    if (!this.state.advanced) {
+      this.updateGasLimit();
+    }
+
+    callback();
   }
 
   sendAllAmount = e => {
-    let { form, addrInfo } = this.props;
-    let from = form.getFieldValue('from');
+    let { form, balance, tokenAddr } = this.props;
     if (e.target.checked) {
-      if (this.state.advanced) {
-        let fee = form.getFieldValue('fee');
+      if (tokenAddr) {
         form.setFieldsValue({
-          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
+          amount: balance
         });
       } else {
         form.setFieldsValue({
-          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(this.state.gasFee)).toString(10)
+          amount: new BigNumber(balance).minus(this.state.advanced ? form.getFieldValue('fixedFee') : this.state.gasFee).toString(10)
         });
       }
-
-      this.setState({
-        disabledAmount: true,
-      })
-    } else {
-      form.setFieldsValue({
-        amount: 0
-      });
-      this.setState({
-        gasFee: 0,
-        disabledAmount: false,
-      })
-    }
-  }
-
-  sendAllE20TokenAmount = e => {
-    let { form, E20TokensBalance, tokenAddr, tokensList } = this.props;
-    let from = form.getFieldValue('from');
-
-    if (e.target.checked) {
-      form.setFieldsValue({
-        amount: formatNumByDecimals(E20TokensBalance[tokenAddr][from], (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals)
-      });
       this.setState({
         disabledAmount: true,
       })
@@ -261,13 +243,11 @@ class ETHNormalTransForm extends Component {
   }
 
   render () {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, transType } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
-    const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
+    const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
-
-    let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
 
     return (
       <div>
@@ -294,13 +274,13 @@ class ETHNormalTransForm extends Component {
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
+                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToETHAddr }] })
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
                   (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                {<Checkbox onChange={transType === TRANSTYPE.tokenTransfer ? this.sendAllE20TokenAmount : this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
+                {<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
               </Form.Item>
               {
                 settings.reinput_pwd &&
@@ -312,12 +292,12 @@ class ETHNormalTransForm extends Component {
               {
               advanced
               ? <Form.Item label={intl.get('NormalTransForm.fee')}>
-                  {getFieldDecorator('fee', { initialValue: savedFee.toString(10), rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
+                  {getFieldDecorator('fixedFee', { initialValue: this.state.gasFee, rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                     <Input disabled={true} className="colorInput" />
                   )}
                 </Form.Item>
               : <Form.Item label={intl.get('NormalTransForm.fee')}>
-                  {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
+                  {getFieldDecorator('fee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                     <Radio.Group>
                       <Radio.Button onClick={e => this.handleClick(e, minGasPrice, gasLimit, nonce, minFee)} value="minFee"><p>{intl.get('NormalTransForm.slow')}</p>{minFee} ETH</Radio.Button>
                       <Radio.Button onClick={e => this.handleClick(e, averageGasPrice, gasLimit, nonce, averageFee)} value="averageFee"><p>{intl.get('NormalTransForm.average')}</p>{averageFee} ETH</Radio.Button>

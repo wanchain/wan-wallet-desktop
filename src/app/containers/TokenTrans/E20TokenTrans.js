@@ -5,8 +5,8 @@ import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Avatar } from 'antd';
 
 import style from './index.less';
-// import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
+import TransHistory from 'components/TransHistory/ETHTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
@@ -55,7 +55,7 @@ class E20TokenTrans extends Component {
   constructor (props) {
     super(props);
     this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString();
-    this.props.setCurrToken(this.props.tokenAddr, this.props.symbol);
+    this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
   }
@@ -72,22 +72,23 @@ class E20TokenTrans extends Component {
   }
 
   handleSend = from => {
-    let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    const { transParams, addrInfo, tokenAddr } = this.props;
+    let params = transParams[from];
+    let walletID = checkAddrType(from, addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
       symbol: CHAINTYPE,
       path: params.path,
-      to: params.to,
-      amount: params.amount,
+      to: tokenAddr.toLowerCase(),
+      amount: '0',
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
       data: params.data,
       satellite: {
-        transferTo: params.transferTo.toLowerCase(),
-        token: params.token
+        transferTo: params.to.toLowerCase(),
+        token: params.amount
       }
     };
     return new Promise((resolve, reject) => {
@@ -133,6 +134,7 @@ class E20TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
+            <TransHistory name={['normal']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>
