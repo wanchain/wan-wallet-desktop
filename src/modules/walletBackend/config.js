@@ -11,29 +11,32 @@ class ConfigFactoryService {
 
         if (this.config.network.includes('main')) {
             this.config.wanchain_js_testnet = false
-            this.config.socketUrl = 'wss://api.wanchain.info'
 
             this.config.iWAN = {
-              "url": 'api.wanchain.org',
-              "port": 8443,
-              "wallet": {
-                  "apikey": process.env.API_KEY,
-                  "secret": process.env.SECRET_KEY
-              }
-          }
+                "url": 'api.wanchain.org',
+                "port": 8443,
+                "wallet": {
+                    "apikey": process.env.API_KEY,
+                    "secret": process.env.SECRET_KEY
+                }
+            }
 
         } else {
             this.config.wanchain_js_testnet = true
-            // this.config.socketUrl = 'wss://apitest.wanchain.info'
-            this.config.socketUrl = 'wss://192.168.1.179:10443'
             this.config.iWAN = {
-              "url": "192.168.1.179",
-              "port": 10443,
-              "wallet": {
-                  "apikey": "d21b98b09c1b4f1001986401e25a27a07a4673140b5125b81cdfedcea4db9e7b",
-                  "secret": "93c30e4a70f5ec3d4427f76602851791aa58fb823773c96cf1347f8b0276b036"
-              }
-          }
+                //   "url": "192.168.1.179",
+                //   "port": 10443,
+                //   "wallet": {
+                //       "apikey": "d21b98b09c1b4f1001986401e25a27a07a4673140b5125b81cdfedcea4db9e7b",
+                //       "secret": "93c30e4a70f5ec3d4427f76602851791aa58fb823773c96cf1347f8b0276b036"
+                //   }
+                "url": 'apitest.wanchain.org',
+                "port": 8443,
+                "wallet": {
+                    "apikey": process.env.API_KEY,
+                    "secret": process.env.SECRET_KEY
+                }
+            }
         }
 
         this.config.logPathPrex = WalletHelper.getLogPath()
