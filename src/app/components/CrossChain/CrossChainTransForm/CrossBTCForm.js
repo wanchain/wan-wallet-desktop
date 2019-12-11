@@ -166,12 +166,12 @@ class CrossBTCForm extends Component {
     if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
-      title = symbol ? `${symbol} TO W${symbol}` : 'BTC TO WBTC';
+      title = symbol ? `${symbol} -> W${symbol}` : 'BTC -> WBTC';
       totalFeeTitle = `${this.state.fee} BTC + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'BTC';
       selectedList = Object.keys(addrInfo.normal);
-      title = symbol ? `W${symbol} TO ${symbol}` : 'WBTC TO BTC';
+      title = symbol ? `W${symbol} -> ${symbol}` : 'WBTC -> BTC';
       totalFeeTitle = `${estimateFee.original} WAN + ${this.state.fee} BTC`;
     }
 

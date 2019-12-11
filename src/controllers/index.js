@@ -316,13 +316,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
         case 'balance':
             let balance
-            const { addr } = payload
+            const { addr, chainType } = payload
             try {
                 if (_.isArray(addr) && addr.length > 1) {
                     const addresses = addr.map(item => `0x${item}`)
-                    balance = await ccUtil.getMultiWanBalances(addresses)
+                    balance = await ccUtil.getMultiBalances(addresses, chainType)
                 } else {
-                    balance = await ccUtil.getWanBalance(`0x${addr}`)
+                    balance = await ccUtil.getBalance(`0x${addr}`, chainType)
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
@@ -332,26 +332,6 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
-
-        case 'ethBalance':
-          let ethbalance
-          const { ethAddr } = payload
-
-          try {
-              if (_.isArray(ethAddr) && ethAddr.length > 1) {
-                  const addresses = ethAddr.map(item => `0x${item}`)
-                  ethbalance = await ccUtil.getMultiEthBalances(addresses)
-              } else {
-                ethbalance = await ccUtil.getEthBalance(`0x${ethAddr}`)
-                ethbalance = { [`0x${ethAddr}`]: ethbalance }
-              }
-            } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ethbalance })
-          break
 
         case 'btcImportAddress':
           try {
@@ -453,9 +433,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     if (addr) {
                         if (_.isArray(addr) && addr.length > 1) {
                             const addresses = addr.map(item => `0x${item}`)
-                            balance = await ccUtil.getMultiWanBalances(addresses)
+                            balance = await ccUtil.getMultiBalances(addresses, 'WAN')
                         } else {
-                            balance = await ccUtil.getWanBalance(`0x${addr}`)
+                            balance = await ccUtil.getBalance(`0x${addr}`, 'WAN')
                             balance = { [`0x${addr}`]: balance }
                         }
                     } else {
@@ -1200,7 +1180,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'getTokenInfo':
           let { scAddr } = payload;
           try {
-            ret = await ccUtil.getErc20Info(scAddr, 'WAN');
+            ret = await ccUtil.getTokenInfo(scAddr, 'WAN');
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
@@ -1208,18 +1188,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
 
-      case 'getTokensInfo':
-          let info;
+      case 'getRegTokensInfo':
           try {
-              ret = await ccUtil.getRegErc20Tokens();
-              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenWanAddr), 'WAN');
-              ret.forEach(item => {
-                if(info[item.tokenWanAddr]) {
-                  Object.assign(item, info[item.tokenWanAddr])
-                } else {
-                  Object.assign(item, { symbol: 'N/A', decimals: 0 })
-                }
-              });
+              ret = await ccUtil.getRegTokens('ETH');
               setting.updateTokensAdvance(ret);
           } catch (e) {
               logger.error(e.message || e.stack)
@@ -1273,7 +1244,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
           } else {
             if(payload.getCoin2WanRatio) {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getEthC2wRatio()]);
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio('ETH')]);
               ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
             } else {
               ret = await ccUtil.getSmgList(payload.crossChain);

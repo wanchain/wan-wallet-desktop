@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getEthBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
 
 import style from './Layout.less';
 import SideBar from './Sidebar';
@@ -21,7 +21,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  getTokensInfo: () => stores.tokens.getTokensInfo(),
+  getRegTokensInfo: () => stores.tokens.getRegTokensInfo(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
@@ -61,7 +61,7 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
-          await this.props.getTokensInfo();
+          await this.props.getRegTokensInfo();
           await this.props.getMnemonic();
           this.setState({
             loading: false
@@ -96,7 +96,7 @@ class Layout extends Component {
     const { ethAddrInfo } = this.props;
     const allAddr = (Object.values(ethAddrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
-    getEthBalance(allAddr).then(res => {
+    getBalance(allAddr, 'ETH').then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateETHBalance(res);
       }

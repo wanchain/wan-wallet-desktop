@@ -23,9 +23,9 @@ class Tokens {
     self.currTokenAddr = addr;
   }
 
-  @action getTokensInfo () {
+  @action getRegTokensInfo () {
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_getTokensInfo', null, (err, data) => {
+      wand.request('crossChain_getRegTokensInfo', null, (err, data) => {
         if (err) {
           console.log('getWrcTokensInfo: ', err);
           reject(err)

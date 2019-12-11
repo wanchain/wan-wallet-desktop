@@ -53,6 +53,7 @@ class NormalTransForm extends Component {
   }
 
   onAdvanced = () => {
+    console.log(this.props);
     let { form, updateTransParams } = this.props;
     let from = form.getFieldValue('from');
     form.validateFields(['from', 'to'], err => {

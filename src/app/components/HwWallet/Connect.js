@@ -84,7 +84,7 @@ class Connect extends Component {
       addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
     });
     visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
-    getBalance(addresses.map(item => item.address)).then(res => {
+    getBalance(addresses.map(item => item.address), 'WAN').then(res => {
       if (res && Object.keys(res).length) {
         let addresses = this.state.addresses;
         addresses.forEach(item => {

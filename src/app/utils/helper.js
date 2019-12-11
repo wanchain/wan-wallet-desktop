@@ -42,15 +42,15 @@ export const wanPubKey2Address = function (pubKey) {
   return '0x' + address;
 }
 
-export const getBalance = function (arr) {
+export const getBalance = function (arr, chainType = 'WAN') {
   const addrArr = arr.map(item => item.substr(2));
 
   return new Promise((resolve, reject) => {
     let thisVal
-    wand.request('address_balance', { addr: addrArr }, (err, val) => {
+    wand.request('address_balance', { addr: addrArr, chainType }, (err, val) => {
       thisVal = Object.assign({}, val);
       if (err) {
-        console.log('Get balance failed ', err)
+        console.log(`Get ${chainType} balance failed`, err)
         return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {
@@ -61,26 +61,6 @@ export const getBalance = function (arr) {
     })
   })
 };
-
-export const getEthBalance = function (arr) {
-  const addrArr = arr.map(item => item.substr(2));
-
-  return new Promise((resolve, reject) => {
-    let thisVal
-    wand.request('address_ethBalance', { ethAddr: addrArr }, (err, val) => {
-      thisVal = Object.assign({}, val);
-      if (err) {
-        console.log('Get ETH Balance failed ', err)
-        return reject(err)
-      } else {
-        Object.keys(thisVal).forEach(item => {
-          thisVal[item] = fromWei(thisVal[item]);
-        });
-        return resolve(thisVal);
-      }
-    })
-  })
-}
 
 export const getBTCMultiBalances = function (addresses) {
   return new Promise((resolve, reject) => {
