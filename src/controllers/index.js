@@ -1212,10 +1212,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           let info;
           try {
               ret = await ccUtil.getRegErc20Tokens();
-              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
+              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenWanAddr), 'WAN');
               ret.forEach(item => {
-                if(info[item.tokenOrigAddr]) {
-                  Object.assign(item, info[item.tokenOrigAddr])
+                if(info[item.tokenWanAddr]) {
+                  Object.assign(item, info[item.tokenWanAddr])
                 } else {
                   Object.assign(item, { symbol: 'N/A', decimals: 0 })
                 }
