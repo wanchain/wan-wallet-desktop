@@ -724,13 +724,12 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                         }
                     }
                 }
-                logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
                 logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
 
-            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: null })
             break;
 
         case 'refund':
@@ -751,7 +750,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: null })
             break;
 
         case 'raw':

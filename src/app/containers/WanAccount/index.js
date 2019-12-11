@@ -132,7 +132,6 @@ class WanAccount extends Component {
   }
 
   handleSend = (from, splitAmount) => {
-    console.log('handleSend:', from, splitAmount);
     if (splitAmount && splitAmount instanceof Array) {
       return this.onSendPrivateTransaction(from, splitAmount);
     } else {
@@ -174,7 +173,6 @@ class WanAccount extends Component {
   }
 
   onSendPrivateTransaction = (from, splitAmount = []) => {
-    console.log('Private:', from, splitAmount);
     let params = this.props.transParams[from];
     let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
     let trans = {
@@ -186,7 +184,6 @@ class WanAccount extends Component {
       to: toChecksumOTAddress(params.to),
       amount: splitAmount,
     };
-    console.log('private trans:', trans);
     return new Promise((resolve, reject) => {
       wand.request('transaction_private', trans, (err, txHash) => {
         if (err) {
@@ -197,7 +194,6 @@ class WanAccount extends Component {
           message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
           resolve();
           this.props.updateTransHistory();
-          console.log('Tx hash: ', txHash);
         }
       });
     });

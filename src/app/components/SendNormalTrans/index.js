@@ -68,7 +68,6 @@ class SendNormalTrans extends Component {
   }
 
   handleSend = (from, splitAmount) => {
-    console.log('splitAmount:', splitAmount);
     this.setState({ loading: true });
     this.props.handleSend(from, splitAmount).then(ret => {
       this.setState({ visible: false, loading: false, spin: true });
