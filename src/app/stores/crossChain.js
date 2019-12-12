@@ -88,7 +88,7 @@ class CrossChain {
     return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  @computed get crossE20Trans () {
+  @computed get crossErc20Trans () {
     let crossEthTrans = [];
     let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {

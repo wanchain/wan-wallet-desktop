@@ -1325,7 +1325,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break
 
-        case 'crossE20':
+        case 'crossErc20':
           try {
             let srcChain, dstChain;
             if(payload.source !== 'WAN') {

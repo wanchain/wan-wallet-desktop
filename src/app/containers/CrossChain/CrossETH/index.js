@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 
 import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
@@ -60,7 +60,12 @@ class CrossETH extends Component {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockETHInbound:', err);
+          console.log('ETH inbound lock:', err);
+          if (err.desc.includes('ready')) {
+            message.warn(intl.get('Common.networkError'));
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+          }
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -84,7 +89,12 @@ class CrossETH extends Component {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWETHInbound:', err);
+          console.log('ETH outbound lock:', err);
+          if (err.desc.includes('ready')) {
+            message.warn(intl.get('Common.networkError'));
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+          }
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
