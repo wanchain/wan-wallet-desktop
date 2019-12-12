@@ -81,6 +81,9 @@ class Portfolio {
         });
       });
     }
+    list.sort((m, n) => {
+      return new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, '')) ? 1 : -1;
+    });
     list.forEach(item => {
       item.price = `$${formatNum(item.price.substr(1))}`;
       item.balance = formatNum(item.balance);
