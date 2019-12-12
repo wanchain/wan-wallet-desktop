@@ -1,11 +1,11 @@
 .transModal {
   :global {
     .ant-modal-content {
-      width: 700px !important;
+      width: 600px !important;
     }
 
     .ant-modal-body {
-      width: 650px !important;
+      width: 500px !important;
     }
 
     .ant-modal-footer {
@@ -13,7 +13,10 @@
     }
 
     .ant-input {
-      width: 500px;
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 }
@@ -43,10 +46,11 @@
   opacity: .5;
   cursor: pointer !important;
   text-decoration: underline;
-  width: 500px;
+  width: 100%;
   padding: 10px 12px;
   background: #1F2034 !important;
   border-radius: 20px;
   overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }

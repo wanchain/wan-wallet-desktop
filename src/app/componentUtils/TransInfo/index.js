@@ -7,7 +7,7 @@ import { MAIN, TESTNET } from 'utils/settings';
 import style from './index.less';
 
 const COLLEFT = 5;
-const COLRIGHT = 17;
+const COLRIGHT = 19;
 
 @inject(stores => ({
   chainId: stores.session.chainId,
@@ -17,14 +17,11 @@ const COLRIGHT = 17;
 @observer
 class TransInfo extends Component {
   openInBrowser = (hash) => {
-    console.log('openInBrowser');
-    console.log(hash);
     if (hash === '') {
       message.warn('No txHash');
       return false;
     }
     let href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
-    console.log('href:', href);
     wand.shell.openExternal(href);
   }
 

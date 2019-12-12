@@ -141,9 +141,9 @@ class RedeemFromPrivateForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{new BigNumber(minFee).times(this.state.redeemCount).toString(10) } {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{new BigNumber(averageFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{new BigNumber(maxFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={'minFee'}><p>{intl.get('NormalTransForm.slow')}</p>{new BigNumber(minFee).times(this.state.redeemCount).toString(10) } {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={'averageFee'}><p>{intl.get('NormalTransForm.average')}</p>{new BigNumber(averageFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={'maxFee'}><p>{intl.get('NormalTransForm.fast')}</p>{new BigNumber(maxFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>
