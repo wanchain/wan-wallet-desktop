@@ -26,7 +26,7 @@ class BTCConfirmForm extends Component {
         title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
         onCancel={onCancel}
         footer={[
-          <Button key="back" className="cancel-button" onClick={onCancel}>{intl.get('NormalTransForm.ConfirmForm.cancel')}</Button>,
+          <Button key="back" className="cancel-button" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
           <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={sendTrans}>{intl.get('Common.send')}</Button>,
         ]}
       >

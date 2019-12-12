@@ -31,8 +31,8 @@ class PasswordConfirmForm extends Component {
         onOk={this.handleSave}
         onCancel={handleCancel}
         closable={false}
-        okText={intl.get('popup.ok')}
-        cancelText={intl.get('popup.cancel')}
+        okText={intl.get('Common.ok')}
+        cancelText={intl.get('Common.cancel')}
       >
         <Form layout="inline">
           <Form.Item>

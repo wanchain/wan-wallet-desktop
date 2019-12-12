@@ -99,8 +99,8 @@ class Login extends Component {
           onOk={this.handleOk}
           onCancel={this.resetStateVal}
           closable={false}
-          okText={intl.get('popup.ok')}
-          cancelText={intl.get('popup.cancel')}
+          okText={intl.get('Common.ok')}
+          cancelText={intl.get('Common.cancel')}
         >
           <p className="textP">{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
         </Modal>

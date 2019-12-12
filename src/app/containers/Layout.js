@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getEthBalance, getBTCMultiBalances } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
 
 import style from './Layout.less';
 import SideBar from './Sidebar';
@@ -18,13 +18,15 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   addrInfo: stores.wanAddress.addrInfo,
   ethAddrInfo: stores.ethAddress.addrInfo,
   btcAddrInfo: stores.btcAddress.addrInfo,
+  accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  getTokensInfo: () => stores.tokens.getTokensInfo(),
+  getRegTokensInfo: () => stores.tokens.getRegTokensInfo(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
   updateBTCBalance: newBalanceArr => stores.btcAddress.updateBTCBalance(newBalanceArr),
+  updateEOSBalance: newBalanceArr => stores.eosAddress.updateEOSBalance(newBalanceArr),
 }))
 
 @observer
@@ -39,6 +41,7 @@ class Layout extends Component {
       this.updateWANBalanceForInter();
       this.updateETHBalanceForInter();
       this.updateBTCBalanceForInter();
+      this.updateEOSBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
   }
@@ -58,7 +61,7 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
-          await this.props.getTokensInfo();
+          await this.props.getRegTokensInfo();
           await this.props.getMnemonic();
           this.setState({
             loading: false
@@ -93,7 +96,7 @@ class Layout extends Component {
     const { ethAddrInfo } = this.props;
     const allAddr = (Object.values(ethAddrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
-    getEthBalance(allAddr).then(res => {
+    getBalance(allAddr, 'ETH').then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateETHBalance(res);
       }
@@ -110,6 +113,19 @@ class Layout extends Component {
       if (res.btcMultiBalances && Object.keys(res.btcMultiBalances).length) {
         this.props.updateUtxos(res.utxos);
         this.props.updateBTCBalance(res.btcMultiBalances);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  updateEOSBalanceForInter = () => {
+    const { accountInfo } = this.props;
+    const allAccounts = Object.keys(accountInfo);
+    if (Array.isArray(allAccounts) && allAccounts.length === 0) return;
+    getEosAccountInfo(allAccounts).then(res => {
+      if (res && Object.keys(res).length) {
+        this.props.updateEOSBalance(res);
       }
     }).catch(err => {
       console.log(err);

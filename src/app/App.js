@@ -24,6 +24,7 @@ class App extends Component {
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
+        stores.eosAddress.getUserKeyFromDB();
         clearInterval(id);
       }
     }, 1000);
@@ -72,7 +73,7 @@ class App extends Component {
           return
         }
         stores.session.setAuth(false);
-        stores.tokens.getTokensInfo();
+        stores.tokens.getRegTokensInfo();
         stores.session.setChainId(net.includes('main') ? 1 : 3);
         stores.wanAddress.updateAddress(['ledger', 'trezor']);
         stores.wanAddress.updateTransHistory(true);

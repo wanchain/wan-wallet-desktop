@@ -48,7 +48,7 @@ class TokenTrans extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer}/></div>
     }
   ];
 
@@ -80,7 +80,7 @@ class TokenTrans extends Component {
       symbol: CHAINTYPE,
       path: params.path,
       to: params.to,
-      amount: params.amount,
+      amount: '0',
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
@@ -107,7 +107,7 @@ class TokenTrans extends Component {
 
   onClickRow = () => {
     let { chainId, tokenAddr } = this.props;
-    let href = chainId === 1 ? `${MAIN}/address/${tokenAddr}` : `${TESTNET}/address/${tokenAddr}`
+    let href = chainId === 1 ? `${MAIN}/token/${tokenAddr}` : `${TESTNET}/token/${tokenAddr}`
     wand.shell.openExternal(href);
   }
 

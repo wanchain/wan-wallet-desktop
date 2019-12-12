@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Select, Modal, Form, Input, InputNumber, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
 import { toWei, formatNumByDecimals } from 'utils/support';
-import { DEFAULT_GAS, TRANSTYPE } from 'utils/settings';
+import { DEFAULT_GAS, TRANSTYPE, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount, encodeTransferInput } from 'utils/helper';
@@ -16,7 +16,8 @@ import { isValidChecksumOTAddress } from 'wanchain-util';
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 const { Option } = Select;
-const PrivateTxGasLimit = 800000;
+const PrivateTxGasLimit = 100000;
+
 @inject(stores => ({
   settings: stores.session.settings,
   tokensList: stores.tokens.tokensList,
@@ -41,7 +42,8 @@ class NormalTransForm extends Component {
     confirmVisible: false,
     disabledAmount: false,
     advancedVisible: false,
-    isPrivate: false
+    isPrivate: false,
+    needSplitAmount: false,
   }
 
   componentWillUnmount() {
@@ -51,6 +53,7 @@ class NormalTransForm extends Component {
   }
 
   onAdvanced = () => {
+    console.log(this.props);
     let { form, updateTransParams } = this.props;
     let from = form.getFieldValue('from');
     form.validateFields(['from', 'to'], err => {
@@ -145,8 +148,8 @@ class NormalTransForm extends Component {
     });
   }
 
-  sendTrans = () => {
-    this.props.onSend(this.props.from);
+  sendTrans = (splitAmount) => {
+    this.props.onSend(this.props.from, splitAmount);
   }
 
   handleClick = (e, gasPrice, gasLimit, nonce, fee) => {
@@ -165,7 +168,7 @@ class NormalTransForm extends Component {
 
   updateGasLimit = () => {
     let val;
-    let { form, transType, tokensList } = this.props;
+    let { form, transType, tokensList, updateTransParams, updateGasLimit, transParams } = this.props;
     let mode = form.getFieldValue('mode');
     let from = form.getFieldValue('from');
     try {
@@ -177,13 +180,13 @@ class NormalTransForm extends Component {
       if (form.getFieldValue('transferTo')) {
         let tokenAmount = form.getFieldValue('token');
         let decimals = tokensList[form.getFieldValue('to')].decimals;
-        this.props.updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('transferTo'), decimals, tokenAmount) });
+        updateTransParams(from, { data: encodeTransferInput(form.getFieldValue('transferTo'), decimals, tokenAmount) });
       }
     }
     let tx = {
       from: from,
       value: val,
-      data: this.props.transParams[from].data,
+      data: transParams[from].data,
       gas: DEFAULT_GAS
     };
     if (mode === 'private') {
@@ -191,14 +194,13 @@ class NormalTransForm extends Component {
     } else {
       tx.to = form.getFieldValue('to');
     }
-    let { chainType } = this.props.transParams[from];
+    let { chainType } = transParams[from];
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
       if (err) {
         message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
-        console.log('Update gas limit:', gasLimit);
-        this.props.updateTransParams(from, { gasLimit });
-        this.props.updateGasLimit(gasLimit);
+        updateTransParams(from, { gasLimit });
+        updateGasLimit(gasLimit);
       }
     });
   }
@@ -225,7 +227,11 @@ class NormalTransForm extends Component {
   }
 
   checkToWanPrivateAddr = (rule, value, callback) => {
-    if (isValidChecksumOTAddress(value)) {
+    if (/^0x[0-9a-f]{132}$/.test(value)) {
+      callback();
+    } else if (/^0x[0-9A-F]{132}$/.test(value)) {
+      callback();
+    } else if (isValidChecksumOTAddress(value)) {
       callback();
     } else {
       callback(intl.get('NormalTransForm.invalidPrivateAddress'));
@@ -233,22 +239,15 @@ class NormalTransForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    if (value >= 0 && checkAmountUnit(18, value)) {
-      if (!this.state.advanced) {
-        this.updateGasLimit();
-      }
-      callback();
+    if (this.state.isPrivate) {
+      this.checkPrivateAmount(rule, value, callback);
     } else {
-      callback(intl.get('Common.invalidAmount'));
+      this.checkNormalAmount(rule, value, callback);
     }
   }
 
-  checkTokenAmount = (rule, value, callback) => {
-    let { form, tokensList, tokensBalance } = this.props;
-    let { from, to } = form.getFieldsValue(['to', 'from']);
-    let decimals = tokensList[to].decimals;
-
-    if (value >= 0 && checkAmountUnit(decimals, value) && new BigNumber(value).lt(formatNumByDecimals(tokensBalance[to][from], decimals))) {
+  checkNormalAmount = (rule, value, callback) => {
+    if (value >= 0 && checkAmountUnit(18, value)) {
       if (!this.state.advanced) {
         this.updateGasLimit();
       }
@@ -265,7 +264,15 @@ class NormalTransForm extends Component {
       this.props.updateTransParams(from, { gasLimit: PrivateTxGasLimit });
       this.props.updateGasLimit(PrivateTxGasLimit);
     }
-    callback();
+    if (!PRIVATE_TX_AMOUNT_SELECTION.includes(value)) {
+      if (new BigNumber(value).mod(10).eq(0)) {
+        callback();
+      } else {
+        callback(intl.get('NormalTransForm.shouldBe10Times'));
+      }
+    } else {
+      callback();
+    }
   }
 
   sendAllAmount = e => {
@@ -297,46 +304,19 @@ class NormalTransForm extends Component {
     }
   }
 
-  sendAllTokenAmount = e => {
-    let { form, tokensBalance, tokenAddr, tokensList } = this.props;
-    let from = form.getFieldValue('from');
-    if (e.target.checked) {
-      form.setFieldsValue({
-        token: formatNumByDecimals(tokensBalance[tokenAddr][from], tokensList[tokenAddr].decimals)
-      });
-      this.setState({
-        disabledAmount: true,
-      })
-    } else {
-      form.setFieldsValue({
-        token: 0
-      });
-      this.setState({
-        disabledAmount: false,
-      })
-    }
-  }
-
   modeChange = (v) => {
     this.setState({
-      isPrivate: v !== 'normal'
+      isPrivate: v !== 'normal',
     });
   }
 
   render() {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr } = this.props;
-    const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr, balance } = this.props;
+    const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
     let savedFee = advanced ? new BigNumber(Math.max(minGasPrice, gasPrice)).times(gasLimit).div(BigNumber(10).pow(9)) : '';
-    let inputDisabled = transType === TRANSTYPE.tokenTransfer;
-    let defaultTo = inputDisabled ? 'transferTo' : 'to';
-
-    if (inputDisabled) {
-      form.getFieldDecorator('to', { initialValue: tokenAddr })
-      form.getFieldDecorator('amount', { initialValue: '0' })
-    }
 
     return (
       <div>
@@ -348,24 +328,27 @@ class NormalTransForm extends Component {
           title={intl.get('NormalTransForm.transaction')}
           onCancel={this.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-              <Form.Item label={intl.get('NormalTransForm.from')}>
+              <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-
+              <Form.Item label={intl.get('Common.balance')}>
+                {getFieldDecorator('balance', { initialValue: balance })
+                  (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.mode')}>
-                {getFieldDecorator('mode', { initialValue: this.state.isPrivate ? 'private' : 'normal' })
+                {getFieldDecorator('mode', { initialValue: isPrivate ? 'private' : 'normal' })
                   (<Select onChange={this.modeChange} disabled={this.props.disablePrivateTx}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
               </Form.Item>
 
               {
-                this.state.isPrivate
+                isPrivate
                   ? <Form.Item label={intl.get('NormalTransForm.to')}>
                     {getFieldDecorator('toPrivate', { rules: [{ required: true, message: intl.get('NormalTransForm.privateAddressIsIncorrect'), validator: this.checkToWanPrivateAddr }] })
                       (<Input placeholder={intl.get('NormalTransForm.recipientPrivateAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
@@ -376,39 +359,12 @@ class NormalTransForm extends Component {
                   </Form.Item>
               }
 
-              {
-                this.state.isPrivate &&
-                <Form.Item label={intl.get('Common.amount')}>
-                  {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkPrivateAmount }] })
-                    (<Select placeholder={intl.get('NormalTransForm.chooseValue')} >
-                      <Option value="10">10</Option>
-                      <Option value="20">20</Option>
-                      <Option value="50">50</Option>
-                      <Option value="100">100</Option>
-                      <Option value="200">200</Option>
-                      <Option value="500">500</Option>
-                      <Option value="1000">1000</Option>
-                      <Option value="5000">5000</Option>
-                      <Option value="50000">50000</Option>
-                    </Select>)}
-                </Form.Item>
-              }
-              {
-                !inputDisabled && !this.state.isPrivate &&
-                <Form.Item label={intl.get('Common.amount')}>
-                  {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                    (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                  {<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>}
-                </Form.Item>
-              }
-              {
-                inputDisabled && !this.state.isPrivate &&
-                <Form.Item label={intl.get('Common.amount')}>
-                  {getFieldDecorator('token', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
-                    (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                  <Checkbox onChange={this.sendAllTokenAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
-                </Form.Item>
-              }
+              <Form.Item label={intl.get('Common.amount')}>
+                {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
+                  (<InputNumber disabled={disabledAmount} min={1e-18} />)}
+                {!isPrivate && (<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
+              </Form.Item>
+
               {
                 settings.reinput_pwd && <Form.Item label={intl.get('NormalTransForm.password')}>
                   {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
@@ -439,7 +395,11 @@ class NormalTransForm extends Component {
         </Modal>
 
         <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
-        <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        {
+          confirmVisible &&
+          <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        }
+
       </div>
     );
   }

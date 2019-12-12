@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message } from 'antd';
 
-import style from './index.less';
 import totalImg from 'static/image/eth.png';
 import { ETHPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
@@ -53,7 +52,7 @@ class EthAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
     }
   ];
 
@@ -165,7 +164,7 @@ class EthAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">ETH</span></Col>
           <Col span={12} className="col-right">
-          <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+          <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

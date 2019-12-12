@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 
 import { TRANSTYPE } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm';
 import WRC20NormalTransForm from 'components/NormalTransForm/WRC20NormalTransForm';
-
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
 const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
@@ -19,6 +19,7 @@ const WRC20CollectionCreateForm = Form.create({ name: 'WRC20NormalTransForm' })(
   tokensBalance: stores.tokens.tokensBalance,
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
 }))
@@ -66,9 +67,9 @@ class SendNormalTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = from => {
+  handleSend = (from, splitAmount) => {
     this.setState({ loading: true });
-    this.props.handleSend(from).then(ret => {
+    this.props.handleSend(from, splitAmount).then(ret => {
       this.setState({ visible: false, loading: false, spin: true });
     }).catch(err => {
       console.log(err);
@@ -76,15 +77,15 @@ class SendNormalTrans extends Component {
     });
   }
 
-  render () {
+  render() {
     const { visible, loading, spin } = this.state;
-    const { tokenAddr, transType } = this.props;
+    const { tokenAddr, transType, balance } = this.props;
 
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
-        { visible && !tokenAddr && <CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
-        { visible && tokenAddr && <WRC20CollectionCreateForm tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
+        { visible && !tokenAddr && <CollectionCreateForm balance={balance} tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
+        { visible && tokenAddr && <WRC20CollectionCreateForm balance={balance} tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
       </div>
     );
   }

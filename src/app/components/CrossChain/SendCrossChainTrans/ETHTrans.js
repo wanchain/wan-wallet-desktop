@@ -54,7 +54,7 @@ class ETHTrans extends Component {
       origGas = LOCKETH_GAS;
       destGas = REDEEMWETH_GAS;
     } else {
-      if ((getTokensListInfo.find(item => item.address === from)).amount === 0) {
+      if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }

@@ -11,7 +11,7 @@ export function formatNumByDecimals (value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
   }
-  return value / (10 ** decimals);
+  return new BigNumber(value).dividedBy(10 ** decimals).toString(10);
 }
 
 export function keep2Decimals (value) {
@@ -104,6 +104,14 @@ export function normalNum (num, type = 'string') {
 
 export function isExceedBalance(balance, fee = 0, sendAmount = 0) {
   return new BigNumber(balance).minus(new BigNumber(fee)).lt(new BigNumber(sendAmount));
+}
+
+export function isSameString(a, b) {
+  if (typeof a === 'string' && typeof b === 'string') {
+    return a.toUpperCase() === b.toUpperCase();
+  } else {
+    return false;
+  }
 }
 
 export function promiseTimeout (ms, p, desc) {

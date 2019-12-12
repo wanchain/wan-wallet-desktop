@@ -84,7 +84,7 @@ class Connect extends Component {
       addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
     });
     visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
-    getBalance(addresses.map(item => item.address)).then(res => {
+    getBalance(addresses.map(item => item.address), 'WAN').then(res => {
       if (res && Object.keys(res).length) {
         let addresses = this.state.addresses;
         addresses.forEach(item => {
@@ -133,7 +133,7 @@ class Connect extends Component {
         <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>
           <this.props.Instruction />
           <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
-          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} okText={intl.get('popup.ok')} cancelText={intl.get('popup.cancel')} className={style.popTable}>
+          <Modal destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} okText={intl.get('Common.ok')} cancelText={intl.get('Common.cancel')} className={style.popTable}>
             <div>
               <Table rowSelection={this.rowSelection} pagination={false} columns={this.props.selectAddrColumns} dataSource={addresses}></Table>
               <div className={style.rollPage}>

@@ -33,7 +33,7 @@ class BtcAccount extends Component {
     normalTransVisiable: false
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
@@ -70,11 +70,11 @@ class BtcAccount extends Component {
     };
   });
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -122,7 +122,7 @@ class BtcAccount extends Component {
     }
   }
 
-  render () {
+  render() {
     const { getAmount, getAddrList } = this.props;
     const components = {
       body: {
@@ -142,7 +142,7 @@ class BtcAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">BTC</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('WanAccount.create')}</Button>
+            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('Common.create')}</Button>
             <SendNormalTrans from={from} handleSend={this.handleSend} />
           </Col>
         </Row>

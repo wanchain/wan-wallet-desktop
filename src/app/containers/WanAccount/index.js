@@ -1,5 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
-import wanUtil from 'wanchain-util';
+import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -13,7 +13,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
-import { checkAddrType, hasSameName } from 'utils/helper';
+import { hasSameName, checkAddrType } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
@@ -63,7 +63,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '13%'
     },
     {
@@ -95,53 +95,6 @@ class WanAccount extends Component {
 
   componentWillUnmount () {
     clearInterval(this.timer);
-  }
-
-  handleSend = from => {
-    let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
-    let trans = {
-      walletID: walletID,
-      chainType: CHAINTYPE,
-      symbol: CHAINTYPE,
-      path: params.path,
-      to: params.to,
-      amount: params.amount,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
-      gasPrice: params.gasPrice,
-      nonce: params.nonce,
-      data: params.data
-    };
-    // Private tx
-    if (wanUtil.isValidChecksumOTAddress(trans.to)) {
-      return new Promise((resolve, reject) => {
-        wand.request('transaction_private', trans, function (err, txHash) {
-          if (err) {
-            message.warn(intl.get('WanAccount.sendTransactionFailed'));
-            console.log('Send transaction failed:', err);
-            reject(false)
-          } else {
-            this.props.updateTransHistory();
-            console.log('Tx hash:', txHash);
-            resolve(txHash)
-          }
-        }.bind(this));
-      });
-    } else { // normal tx
-      return new Promise((resolve, reject) => {
-        wand.request('transaction_normal', trans, function (err, txHash) {
-          if (err) {
-            message.warn(intl.get('WanAccount.sendTransactionFailed'));
-            console.log('Send transaction failed:', err);
-            reject(false)
-          } else {
-            this.props.updateTransHistory();
-            console.log('Tx hash: ', txHash);
-            resolve(txHash)
-          }
-        }.bind(this));
-      });
-    }
   }
 
   createAccount = () => {
@@ -176,6 +129,74 @@ class WanAccount extends Component {
         }
       });
     }
+  }
+
+  handleSend = (from, splitAmount) => {
+    if (splitAmount && splitAmount instanceof Array) {
+      return this.onSendPrivateTransaction(from, splitAmount);
+    } else {
+      return this.onSendNormalTransaction(from);
+    }
+  }
+
+  onSendNormalTransaction = (from) => {
+    console.log('Normal:', from);
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: CHAINTYPE,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: params.to,
+      amount: params.amount,
+      symbol: CHAINTYPE,
+      nonce: params.nonce,
+      data: params.data,
+    };
+    console.log('trans:', trans);
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_normal', trans, (err, txHash) => {
+        if (err) {
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
+          console.log('Send transaction failed:', err);
+          reject(err);
+        } else {
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+          resolve();
+          this.props.updateTransHistory();
+          console.log('Tx hash: ', txHash);
+        }
+      });
+    });
+  }
+
+  onSendPrivateTransaction = (from, splitAmount = []) => {
+    let params = this.props.transParams[from];
+    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let trans = {
+      walletID: walletID,
+      chainType: CHAINTYPE,
+      path: params.path,
+      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasPrice: params.gasPrice,
+      to: toChecksumOTAddress(params.to),
+      amount: splitAmount,
+    };
+    return new Promise((resolve, reject) => {
+      wand.request('transaction_private', trans, (err, txHash) => {
+        if (err) {
+          message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
+          console.log('Send transaction failed:', err);
+          reject(err);
+        } else {
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+          resolve();
+          this.props.updateTransHistory();
+        }
+      });
+    });
   }
 
   handleSave = row => {
@@ -290,7 +311,7 @@ class WanAccount extends Component {
         <Row className={style.title + ' title'}>
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
           <Col span={12} className="col-right">
-            <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('WanAccount.create')}</Button>
+            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

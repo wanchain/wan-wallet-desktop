@@ -30,7 +30,7 @@ class CopyAndQrcode extends Component {
           </div>
         ),
         maskClosable: true,
-        okText: intl.get('popup.ok')
+        okText: intl.get('Common.ok')
       });
     })
     .catch(err => {
@@ -47,8 +47,8 @@ class CopyAndQrcode extends Component {
     const { addr, addrInfo } = this.props;
     return (
       <div className="handleIco">
-        <Tooltip placement="bottom" title={intl.get('title.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
-        <Tooltip placement="bottom" title={intl.get('title.QRCode')}><Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} /></Tooltip>
+        <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
+        <Tooltip placement="bottom" title={intl.get('Common.QRCode')}><Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} /></Tooltip>
         { Object.keys(addrInfo['import']).includes(addr)
             ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
             : ''

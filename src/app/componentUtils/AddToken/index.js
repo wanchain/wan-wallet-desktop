@@ -82,7 +82,7 @@ class AddToken extends Component {
       <div>
         <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('popup.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.handleSearch}>{intl.get('popup.search')}</Button>,
           ]}
         >
@@ -95,8 +95,8 @@ class AddToken extends Component {
           <div>
             <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false} className={style.showTokenModal}
             footer={[
-                <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('popup.cancel')}</Button>,
-                <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('popup.ok')}</Button>,
+                <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
+                <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('Common.ok')}</Button>,
               ]}
             >
               <Descriptions title="Token Contract Information">

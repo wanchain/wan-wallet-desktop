@@ -8,7 +8,7 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { ETHPATH, WANPATH } from 'utils/settings';
+import { ETHPATH, WANPATH, PENALTYNUM } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
@@ -28,7 +28,7 @@ const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 @observer
 class CrossETHForm extends Component {
   state = {
-    confirmVisible: false,
+    confirmVisible: false
   }
 
   componentWillUnmount () {
@@ -48,7 +48,7 @@ class CrossETHForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, estimateFee, form, from, chainType, wanAddrInfo, tokenAddr } = this.props;
+    const { updateTransParams, addrInfo, settings, form, from, chainType, wanAddrInfo, tokenAddr, estimateFee } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -97,15 +97,36 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { decimals, balance } = this.props;
+    const { decimals, balance, chainType, smgList, form, estimateFee } = this.props;
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
+        if (chainType === 'WAN') {
+          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
+          let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();
+          form.setFieldsValue({
+            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
+          });
+        }
         callback();
       }
     } else {
       callback(intl.get('Common.invalidAmount'));
+    }
+  }
+
+  checkQuota = (rule, value, callback) => {
+    if (new BigNumber(value).gt(0)) {
+      let { amount } = this.props.form.getFieldsValue(['amount']);
+      if (isExceedBalance(value, amount)) {
+        callback(intl.get('CrossChainTransForm.overQuota'));
+        return;
+      }
+      callback();
+    } else {
+      callback(intl.get('CrossChainTransForm.overQuota'));
     }
   }
 
@@ -135,7 +156,7 @@ class CrossETHForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, chainType, addrInfo, symbol, tokenAddr, decimals } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
 
     if (chainType === 'ETH') {
@@ -176,8 +197,8 @@ class CrossETHForm extends Component {
           onCancel={this.onCancel}
           className={style['cross-chain-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
@@ -189,7 +210,16 @@ class CrossETHForm extends Component {
                 disabled={true}
                 options={{ initialValue: from }}
                 prefix={<Icon type="wallet" className="colorInput" />}
-                title={intl.get('NormalTransForm.from') + ' (' + getFullChainName(chainType) + ')'}
+                title={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='balance'
+                disabled={true}
+                options={{ initialValue: balance + ` ${tokenSymbol}` }}
+                prefix={<Icon type="wallet" className="colorInput" />}
+                title={intl.get('Common.balance')}
               />
               <SelectForm
                 form={form}
@@ -218,7 +248,7 @@ class CrossETHForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota }}
+                options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
@@ -252,7 +282,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

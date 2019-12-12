@@ -351,13 +351,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
         case 'balance':
             let balance
-            const { addr } = payload
+            const { addr, chainType } = payload
             try {
                 if (_.isArray(addr) && addr.length > 1) {
                     const addresses = addr.map(item => `0x${item}`)
-                    balance = await ccUtil.getMultiWanBalances(addresses)
+                    balance = await ccUtil.getMultiBalances(addresses, chainType)
                 } else {
-                    balance = await ccUtil.getWanBalance(`0x${addr}`)
+                    balance = await ccUtil.getBalance(`0x${addr}`, chainType)
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
@@ -367,26 +367,6 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
-
-        case 'ethBalance':
-          let ethbalance
-          const { ethAddr } = payload
-
-          try {
-              if (_.isArray(ethAddr) && ethAddr.length > 1) {
-                  const addresses = ethAddr.map(item => `0x${item}`)
-                  ethbalance = await ccUtil.getMultiEthBalances(addresses)
-              } else {
-                ethbalance = await ccUtil.getEthBalance(`0x${ethAddr}`)
-                ethbalance = { [`0x${ethAddr}`]: ethbalance }
-              }
-            } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ethbalance })
-          break
 
         case 'btcImportAddress':
           try {
@@ -435,6 +415,34 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
           sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
+          
+        case 'getEosAccountInfo':
+            let obj = {};
+            try {
+                const { accounts } = payload;
+                let [...eosAccountInfo] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
+                accounts.forEach( (v, i) => {
+                    obj[v] = eosAccountInfo[i];
+                });
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+  
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: obj })
+            break
+
+        case 'getEOSResourcePrice':
+                try {
+                    const { account } = payload;
+                    ret = await ccUtil.getResourcePrice('EOS', account);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+      
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+                break
         
         case 'balances':
             {
@@ -460,9 +468,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     if (addr) {
                         if (_.isArray(addr) && addr.length > 1) {
                             const addresses = addr.map(item => `0x${item}`)
-                            balance = await ccUtil.getMultiWanBalances(addresses)
+                            balance = await ccUtil.getMultiBalances(addresses, 'WAN')
                         } else {
-                            balance = await ccUtil.getWanBalance(`0x${addr}`)
+                            balance = await ccUtil.getBalance(`0x${addr}`, 'WAN')
                             balance = { [`0x${addr}`]: balance }
                         }
                     } else {
@@ -592,7 +600,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
     }
 })
 
-ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
+ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
     let err, ret;
     const [action, id] = actionUni.split('#');
     switch (action) {
@@ -642,6 +650,18 @@ ipc.on(ROUTE_ACCOUNT, (event, actionUni, payload) => {
             try {
                 ret = hdUtil.deleteUserAccount(payload.walletID, payload.path)
             } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getAccountByPublicKey':
+            try {
+                ret = await ccUtil.getEosAccountsByPubkey(payload.chainType, payload.pubkey);
+            } catch (e) {
+                console.log('error:', e)
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -704,14 +724,27 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
           sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break;
 
+        case 'EOSNormal':
+            try {
+              logger.info('Normal transaction: ' + JSON.stringify(payload));
+  
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
+              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+            } catch (e) {
+              logger.error('Send transaction failed: ' + e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
         case 'private':
             try {
                 let { walletID, chainType, path, to, amount, gasPrice, gasLimit } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path);
+                let action = 'SEND';
                 let input = {
                     "from": '0x' + from.address,
                     "to": to,
-                    "amount": amount,
                     "gasPrice": gasPrice,
                     "gasLimit": gasLimit,
                     "BIP44Path": path,
@@ -719,15 +752,23 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 }
 
                 logger.info('Private transaction: ' + JSON.stringify(input));
-                let action = 'SEND';
-                ret = await global.crossInvoker.invokePrivateTrans(action, input);
-                logger.info('Transaction hash: ' + JSON.stringify(ret));
+                for (let obj of amount) {
+                    input.amount = obj.face;
+                    for (let i = 0; i < obj.count; i++) {
+                        let res = await global.crossInvoker.invokePrivateTrans(action, input);
+                        if (res.code === false) {
+                            err = {
+                                message: res.result
+                            };
+                        }
+                    }
+                }
             } catch (e) {
                 logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
 
-            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: null })
             break;
 
         case 'refund':
@@ -748,7 +789,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: null })
             break;
 
         case 'raw':
@@ -1177,7 +1218,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
       case 'getTokenInfo':
           let { scAddr } = payload;
           try {
-            ret = await ccUtil.getErc20Info(scAddr, 'WAN');
+            ret = await ccUtil.getTokenInfo(scAddr, 'WAN');
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
@@ -1185,18 +1226,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
           break
 
-      case 'getTokensInfo':
-          let info;
+      case 'getRegTokensInfo':
           try {
-              ret = await ccUtil.getRegErc20Tokens();
-              info = await ccUtil.getMultiErc20Info(ret.map(item => item.tokenOrigAddr));
-              ret.forEach(item => {
-                if(info[item.tokenOrigAddr]) {
-                  Object.assign(item, info[item.tokenOrigAddr])
-                } else {
-                  Object.assign(item, { symbol: 'N/A', decimals: 0 })
-                }
-              });
+              ret = await ccUtil.getRegTokens('ETH');
               setting.updateTokensAdvance(ret);
           } catch (e) {
               logger.error(e.message || e.stack)
@@ -1250,7 +1282,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
           } else {
             if(payload.getCoin2WanRatio) {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getEthC2wRatio()]);
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio('ETH')]);
               ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
             } else {
               ret = await ccUtil.getSmgList(payload.crossChain);
@@ -1379,7 +1411,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 ret.canRedeem.push(item);
               }
               if(['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
-                ret.canRedeem.push(item);
+                ret.canRevoke.push(item);
               }
             }
           })

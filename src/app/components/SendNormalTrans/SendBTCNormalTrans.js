@@ -57,7 +57,7 @@ class SendBTCNormalTrans extends Component {
 
     return (
       <div style={{ display: 'inline-block', marginLeft: '10px' }}>
-        <Button className="creatBtn" type="primary" shape="round" size="large" onClick={this.showModal}>{intl.get('Common.send')}</Button>
+        <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
           <CollectionCreateForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }

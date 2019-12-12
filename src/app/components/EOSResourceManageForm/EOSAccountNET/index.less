@@ -1,0 +1,131 @@
+@borderColor: rgba(255, 255, 255, 0.06);
+
+.EOSAccountNET {
+    border-top: 1px solid @borderColor;
+
+    .progressContainer {
+        text-align: center;
+        padding: 90px 0px 10px;
+
+        &:first-child {
+            border: 0px solid @borderColor;
+            border-right-width: 1px;
+            border-bottom-width: 1px;
+        }
+
+        &:last-child {
+            border: 0px solid @borderColor;
+            border-right-width: 1px;
+        }
+
+        :global {
+            .ant-progress-text {
+                font-size: 14px;
+                color: white;
+            }
+
+            ul {
+                padding: 0px;
+                color: #4453FF;
+                margin-top: 12px;
+                margin-bottom: 0px;
+                font-family: 'Roboto-Regular';
+
+                li {
+                    list-style: inside;
+
+                    span {
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    .NETPriceBar {
+        font-size: 18px;
+        font-family: 'Roboto-Regular';
+        padding: 20px;
+        border-bottom: 1px solid @borderColor;
+    }
+
+    .NETPrice {
+        color: #40DABF;
+        margin-left: 10px;
+    }
+
+    .NETForm {
+        padding: 24px;
+        font-family: 'Roboto-Regular';
+
+        :global {
+            .ant-input {
+                width: 100%;
+            }
+
+            .ant-input-number {
+                width: 100%;
+            }
+
+            .ant-form-item {
+                margin-bottom: 20px;
+            }
+
+            .ant-select-selection .ant-select-selection__clear {
+                right: 28px;
+                color: white;
+                background-color: #1F2034;
+            }
+
+            .ant-select-selection {
+                width: 100%;
+                border-radius: 20px;
+                border: none;
+                font-size: 16px;
+                color: #FFFFFF !important;
+                padding: 0px 20px;
+                font-size: 14px;
+                background: #1F2034 !important;
+            }
+
+            .ant-input-number-handler:active {
+                background: transparent;
+            }
+        }
+
+        .type {
+            margin-bottom: 0px;
+        }
+
+        .delegateRadio {
+            margin-right: 40px !important;
+        }
+
+        .delegateInfo,
+        .undelegateInfo {
+            height: 40px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 40px;
+            font-family: 'Roboto-Bold';
+            word-spacing: 2px;
+            letter-spacing: 1px;
+        }
+    }
+}
+
+.customFooter {
+    text-align: center;
+    padding: 50px 0px;
+
+    button {
+        width: 150px;
+        height: 40px;
+        border-radius: 20px;
+        border: none;
+        margin: 0px 10px;
+        font-family: "Roboto-Regular";
+        font-size: 18px;
+    }
+}

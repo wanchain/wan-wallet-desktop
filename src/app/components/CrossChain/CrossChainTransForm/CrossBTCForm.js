@@ -23,7 +23,6 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
   btcFee: stores.sendCrossChainParams.btcFee,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
@@ -167,12 +166,12 @@ class CrossBTCForm extends Component {
     if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.keys(wanAddrInfo.normal);
-      title = symbol ? `${symbol} TO W${symbol}` : 'BTC TO WBTC';
+      title = symbol ? `${symbol} -> W${symbol}` : 'BTC -> WBTC';
       totalFeeTitle = `${this.state.fee} BTC + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'BTC';
       selectedList = Object.keys(addrInfo.normal);
-      title = symbol ? `W${symbol} TO ${symbol}` : 'WBTC TO BTC';
+      title = symbol ? `W${symbol} -> ${symbol}` : 'WBTC -> BTC';
       totalFeeTitle = `${estimateFee.original} WAN + ${this.state.fee} BTC`;
     }
 
@@ -200,8 +199,8 @@ class CrossBTCForm extends Component {
           onCancel={this.props.onCancel}
           className={style['cross-chain-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
@@ -215,7 +214,7 @@ class CrossBTCForm extends Component {
                   disabled={true}
                   options={{ initialValue: from }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
-                  title={intl.get('NormalTransForm.from')}
+                  title={intl.get('Common.from')}
                 />
               }
               <CommonFormItem

@@ -3,9 +3,10 @@ import { Button, Modal, Form, Input, Icon, Radio, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import PrivateTransactionTable from './PrivateTransactionTable.js';
+import { BigNumber } from 'bignumber.js';
 import style from './index.less';
 
-const privateTxGasLimit = 800000;
+const privateTxGasLimit = 300000;
 @inject(stores => ({
   settings: stores.session.settings,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
@@ -79,7 +80,6 @@ class RedeemFromPrivateForm extends Component {
     this.props.onCancel();
   }
 
-  // Refund tx check
   handleCheck = (arr) => {
     this.setState({
       redeemCount: arr.length === 0 ? 1 : arr.length
@@ -110,7 +110,7 @@ class RedeemFromPrivateForm extends Component {
           title={intl.get('RedeemFromPrivateForm.redeem')}
           onCancel={this.onCancel}
           footer={[
-            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.handleSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
@@ -118,7 +118,7 @@ class RedeemFromPrivateForm extends Component {
           <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
 
-              <Form.Item label={intl.get('NormalTransForm.from')}>
+              <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: from })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
@@ -141,9 +141,9 @@ class RedeemFromPrivateForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fixFee', { rules: [{ required: true, message: intl.get('NormalTransForm.pleaseSelectTransactionFee') }] })(
                   <Radio.Group>
-                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={minFee}><p>{intl.get('NormalTransForm.slow')}</p>{minFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={averageFee}><p>{intl.get('NormalTransForm.average')}</p>{averageFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
-                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={maxFee}><p>{intl.get('NormalTransForm.fast')}</p>{maxFee * this.state.redeemCount} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, minGasPrice)} value={'minFee'}><p>{intl.get('NormalTransForm.slow')}</p>{new BigNumber(minFee).times(this.state.redeemCount).toString(10) } {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, averageGasPrice)} value={'averageFee'}><p>{intl.get('NormalTransForm.average')}</p>{new BigNumber(averageFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
+                    <Radio.Button onClick={e => this.handleClick(e, maxGasPrice)} value={'maxFee'}><p>{intl.get('NormalTransForm.fast')}</p>{new BigNumber(maxFee).times(this.state.redeemCount).toString(10)} {intl.get('NormalTransForm.wan')}</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>

@@ -419,8 +419,8 @@ class DelegateInForm extends Component {
       <div>
         <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal']}
           footer={[
-            <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
-            <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('NormalTransForm.next')}</Button>,
+            <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
+            <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className={style['stakein-bg']}>

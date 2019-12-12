@@ -18,14 +18,14 @@ class Tokens {
 
   @action setCurrToken (addr, symbol) {
     if (symbol) {
-      addr = Object.keys(self.tokensList).filter(item => self.tokensList[item].symbol === symbol)
+      addr = Object.keys(self.tokensList).find(item => self.tokensList[item].symbol === symbol)
     }
     self.currTokenAddr = addr;
   }
 
-  @action getTokensInfo () {
+  @action getRegTokensInfo () {
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_getTokensInfo', null, (err, data) => {
+      wand.request('crossChain_getRegTokensInfo', null, (err, data) => {
         if (err) {
           console.log('getWrcTokensInfo: ', err);
           reject(err)
@@ -130,6 +130,20 @@ class Tokens {
     return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
   }
 
+  @computed get e20TokensOnSideBar() {
+    let list = [];
+    Object.keys(self.tokensList).forEach(item => {
+      if (self.tokensList[item].erc20Select) {
+        list.push({
+          tokenAddr: self.tokensList[item].tokenOrigAddr,
+          tokenWanAddr: item || '',
+          symbol: self.tokensList[item].symbol
+        })
+      }
+    });
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt());
+  }
+
   @computed get getTokensListInfo () {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
@@ -217,10 +231,36 @@ class Tokens {
 
   @computed get getTokenAmount () {
     let amount = new BigNumber(0);
+    let importArr = Object.keys(wanAddress.addrInfo['import']);
+
     self.getTokensListInfo.forEach(item => {
       amount = amount.plus(item.amount);
+    });
+    importArr.forEach(item => {
+      let balance;
+      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
+        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+
+      amount = amount.plus(balance);
     })
-    return formatNum(amount.toString());
+    return formatNum(amount.toString(10));
+  }
+
+  @computed get getE20TokenAmount () {
+    let amount = new BigNumber(0);
+
+    self.getE20TokensListInfo.forEach(item => {
+      amount = amount.plus(item.amount);
+    });
+
+    return formatNum(amount.toString(10));
   }
 }
 

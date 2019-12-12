@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
 
@@ -42,15 +42,15 @@ export const wanPubKey2Address = function (pubKey) {
   return '0x' + address;
 }
 
-export const getBalance = function (arr) {
+export const getBalance = function (arr, chainType = 'WAN') {
   const addrArr = arr.map(item => item.substr(2));
 
   return new Promise((resolve, reject) => {
     let thisVal
-    wand.request('address_balance', { addr: addrArr }, (err, val) => {
+    wand.request('address_balance', { addr: addrArr, chainType }, (err, val) => {
       thisVal = Object.assign({}, val);
       if (err) {
-        console.log('Get balance failed ', err)
+        console.log(`Get ${chainType} balance failed`, err)
         return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {
@@ -62,31 +62,24 @@ export const getBalance = function (arr) {
   })
 };
 
-export const getEthBalance = function (arr) {
-  const addrArr = arr.map(item => item.substr(2));
-
-  return new Promise((resolve, reject) => {
-    let thisVal
-    wand.request('address_ethBalance', { ethAddr: addrArr }, (err, val) => {
-      thisVal = Object.assign({}, val);
-      if (err) {
-        console.log('Get balance failed ', err)
-        return reject(err)
-      } else {
-        Object.keys(thisVal).forEach(item => {
-          thisVal[item] = fromWei(thisVal[item]);
-        });
-        return resolve(thisVal);
-      }
-    })
-  })
-}
-
 export const getBTCMultiBalances = function (addresses) {
   return new Promise((resolve, reject) => {
     wand.request('address_getBtcMultiBalances', { minconf: MIN_CONFIRM_BLKS, maxconf: MAX_CONFIRM_BLKS, addresses }, (err, data) => {
       if (err) {
         console.log('Get BTC UTXO Failed: ', err);
+        return reject(err);
+      } else {
+        return resolve(data);
+      }
+    })
+  })
+}
+
+export const getEosAccountInfo = function (accounts) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getEosAccountInfo', { accounts }, (err, data) => {
+      if (err) {
+        console.log('Get EOS balance Failed: ', err);
         return reject(err);
       } else {
         return resolve(data);
@@ -654,4 +647,16 @@ export const getFullChainName = function (chainType = '') {
     case 'EOS':
       return intl.get('Common.eos');
   }
+}
+
+export const getSplitAmountToArray = function (amount) {
+  let collections = {};
+  let current = amount;
+  PRIVATE_TX_AMOUNT_SELECTION.forEach(item => {
+    if (new BigNumber(current).gte(item)) {
+      collections[item] = new BigNumber(current).idiv(item).toNumber();
+      current = new BigNumber(current).mod(item);
+    }
+  });
+  return collections;
 }

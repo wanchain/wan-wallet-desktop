@@ -1,35 +1,56 @@
 .transModal {
-  :global(.ant-modal-content) {
-    width: 700px !important;
-  }
+  :global {
+    .ant-modal-content {
+      width: 600px !important;
+    }
 
-  :global(.ant-modal-body) {
-    width: 650px !important;
-  }
+    .ant-modal-body {
+      width: 500px !important;
+    }
 
-  :global(.ant-modal-footer) {
-    padding: 15px 0 !important;
-  }
+    .ant-modal-footer {
+      padding: 15px 0 40px !important;
+    }
 
-  :global(.ant-modal-header) {
-    padding: 35px 0 !important;
+    .ant-input {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
+}
+
+.colLeft {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 32px;
+  opacity: 0.6;
 }
 
 .transInfoMain {
   color: #fff;
   font-size: 15px;
-  // background-color: #123456;
   font-weight: 500;
 
   .tableRow {
-    line-height: 50px;
-    padding: 0 15px;
-    height: 50px;
+    margin: 5px 0 0 0;
+    padding: 10px;
+    height: 60px;
   }
+}
 
-  .tableRow:nth-of-type(odd) {
-    background-color: #162240;
-    border-radius: 5px;
-  }
+.checkInfoInBrowser {
+  color: #FFFFFF !important;
+  opacity: .5;
+  cursor: pointer !important;
+  text-decoration: underline;
+  width: 100%;
+  padding: 10px 12px;
+  background: #1F2034 !important;
+  border-radius: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

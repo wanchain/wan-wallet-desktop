@@ -25,7 +25,7 @@ class ValidatorConfirmForm extends Component {
       <div className="withdraw">
         <Modal visible destroyOnClose={true} closable={false} title={title} onCancel={onCancel} className="withdraw-modal"
           footer={[
-            <Button key="back" className="cancel" onClick={onCancel}>{intl.get('NormalTransForm.cancel')}</Button>,
+            <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
