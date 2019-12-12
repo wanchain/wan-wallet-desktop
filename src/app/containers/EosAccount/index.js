@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Row, Col, Form } from 'antd';
 
 import style from './index.less';
-import totalImg from 'static/image/eos_gray.png';
+import totalImg from 'static/image/eos.png';
 import { EOSPATH, WALLETID } from 'utils/settings';
 import EOSTransHistory from 'components/EOSTransHistory';
 import EOSKeyPairList from './EOSKeyPairList';

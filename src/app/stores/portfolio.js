@@ -4,6 +4,7 @@ import axios from 'axios';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
+import eosAddress from './eosAddress';
 
 import { formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
@@ -11,7 +12,7 @@ import { BigNumber } from 'bignumber.js';
 class Portfolio {
   @observable coinPriceArr;
 
-  @observable coinList = ['WAN', 'ETH', 'BTC'];
+  @observable coinList = ['WAN', 'ETH', 'BTC', 'EOS'];
 
   @action addCoin (newCoin) {
     if (self.coinList.indexOf(newCoin) === -1) {
@@ -62,6 +63,9 @@ class Portfolio {
               case 'BTC':
                 val.balance = btcAddress.getAllAmount;
                 break;
+              case 'EOS':
+              val.balance = eosAddress.getAllAmount;
+              break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
             val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);

@@ -6,6 +6,7 @@ import style from './index.less';
 import wanLogo from 'static/image/wan.png';
 import ethLogo from 'static/image/eth.png';
 import btcLogo from 'static/image/btc.png';
+import eosLogo from 'static/image/eos.png';
 
 function TokenImg (text) {
   let img;
@@ -18,6 +19,9 @@ function TokenImg (text) {
       break;
     case 'BTC':
       img = btcLogo;
+      break;
+    case 'EOS':
+      img = eosLogo;
       break;
   }
   return (
