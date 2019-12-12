@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import { Modal, Button, Col, Row, Input, message } from 'antd';
+import { Modal, Button, Col, Row, Input, message, Icon, Tooltip } from 'antd';
 import { MAIN, TESTNET } from 'utils/settings';
 
 import style from './index.less';
@@ -25,6 +25,11 @@ class TransInfo extends Component {
     wand.shell.openExternal(href);
   }
 
+  copy2Clipboard = hashX => {
+    wand.writeText(hashX);
+    message.success(intl.get('CopyAndQrcode.copySuccessfully'));
+  }
+
   render() {
     const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
 
@@ -43,7 +48,10 @@ class TransInfo extends Component {
         <div className={style.transInfoMain}>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.HashX')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={hashX} /></Col>
+            <Col span={COLRIGHT}>
+              <Input disabled={true} placeholder={hashX} />
+              <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(hashX, e)} /></Tooltip>
+            </Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Chain')}</Col>
@@ -61,38 +69,55 @@ class TransInfo extends Component {
             tokenStand === 'E20' &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
-              <Col span={COLRIGHT}><Input disabled={true} placeholder={approveTxHash} /></Col>
+              <Col span={COLRIGHT}>
+                <Input disabled={true} placeholder={approveTxHash} />
+                <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(approveTxHash, e)} /></Tooltip>
+              </Col>
             </Row>
           }
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.LockTxHash')}</Col>
-            {/* <Col span={COLRIGHT}><Input disabled={false} placeholder={lockTxHash} className={style.checkInfoInBrowser} onClick={(e) => this.openInBrowser(lockTxHash, e)} /></Col> */}
-            <Col span={COLRIGHT}><div className={style.checkInfoInBrowser} onClick={(e) => this.openInBrowser(lockTxHash)}>{lockTxHash}</div></Col>
+            <Col span={COLRIGHT}>
+              <div className={style.checkInfoInBrowser} onClick={(e) => this.openInBrowser(lockTxHash)}>{lockTxHash}</div>
+              <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon className={style.lock_copyIcon} type="copy" onClick={e => this.copy2Clipboard(lockTxHash, e)} /></Tooltip>
+            </Col>
           </Row>
           {
             srcChainAddr === 'BTC' && noticeTxHash !== '0x' &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.NoticeTxHash')}</Col>
-              <Col span={COLRIGHT}><Input disabled={true} placeholder={noticeTxHash} /></Col>
+              <Col span={COLRIGHT}>
+                <Input disabled={true} placeholder={noticeTxHash} />
+                <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(noticeTxHash, e)} /></Tooltip>
+              </Col>
             </Row>
           }
           {
             redeemTxHash !== 'NULL' && redeemTxHash !== '0x' &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.ConfirmTxHash')}</Col>
-              <Col span={COLRIGHT}><Input disabled={true} placeholder={redeemTxHash} /></Col>
+              <Col span={COLRIGHT}>
+                <Input disabled={true} placeholder={redeemTxHash} />
+                <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(redeemTxHash, e)} /></Tooltip>
+              </Col>
             </Row>
           }
           {
             revokeTxHash !== 'NULL' && revokeTxHash !== '0x' &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.CancelTxHash')}</Col>
-              <Col span={COLRIGHT}><Input disabled={true} placeholder={revokeTxHash} /></Col>
+              <Col span={COLRIGHT}>
+                <Input disabled={true} placeholder={revokeTxHash} />
+                <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(revokeTxHash, e)} /></Tooltip>
+              </Col>
             </Row>
           }
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Storeman')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={storeman} /></Col>
+            <Col span={COLRIGHT}>
+              <Input disabled={true} placeholder={storeman} />
+              <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(storeman, e)} /></Tooltip>
+            </Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Value')}</Col>
@@ -100,7 +125,10 @@ class TransInfo extends Component {
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Secret')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={secret} /></Col>
+            <Col span={COLRIGHT}>
+              <Input disabled={true} placeholder={secret} />
+              <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(secret, e)} /></Tooltip>
+            </Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Status')}</Col>
