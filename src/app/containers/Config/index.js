@@ -12,9 +12,11 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
+  eosTokensInfo: stores.tokens.erc20TokensInfo,
   wrc20TokensInfo: stores.tokens.wrc20TokensInfo,
   erc20TokensInfo: stores.tokens.erc20TokensInfo,
-  crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
+  eosCrossChainTokensInfo: stores.crossChain.eosCrossChainTokensInfo,
+  erc20CrossChainTokensInfo: stores.crossChain.erc20CrossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
   updateTokensInfo: (addr, key, val) => stores.tokens.updateTokensInfo(addr, key, val),
@@ -81,8 +83,8 @@ class Config extends Component {
   }
 
   render() {
-    const { wrc20TokensInfo, crossChainTokensInfo, erc20TokensInfo } = this.props;
-    const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
+    const { wrc20TokensInfo, erc20CrossChainTokensInfo, erc20TokensInfo, eosCrossChainTokensInfo, settings } = this.props;
+    const { reinput_pwd, staking_advance, logout_timeout } = settings;
 
     const options = [{
       value: '0',
@@ -149,7 +151,11 @@ class Config extends Component {
         <Card title={intl.get('Config.crossChain')}>
           <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
           {
-            crossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
+            erc20CrossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
+          }
+          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
+          {
+            eosCrossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
           }
         </Card>
         <Card title={intl.get('Config.staking')}>

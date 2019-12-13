@@ -1189,11 +1189,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
       case 'getRegTokensInfo':
           try {
-              ret = await ccUtil.getRegTokens('ETH');
-              setting.updateTokensAdvance(ret);
+            let erc20Tokens = ccUtil.getRegTokens('ETH');
+            let eosTokens = ccUtil.getRegTokens('EOS');
+            erc20Tokens.forEach(item => item.chain = 'ETH')
+            eosTokens.forEach(item => {
+              item.decimals = item.decimal
+              item.tokenOrigAddr = item.tokenOrigAccount;
+              item.chain = 'EOS'
+            })
+            setting.updateTokensAdvance(erc20Tokens.concat(eosTokens));
           } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
+            logger.error(e.message || e.stack)
+            err = e
           }
           sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: setting.tokens_advance })
           break
@@ -1235,11 +1242,11 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         let coin2WanRatio
         try {
           if (payload.crossChain.startsWith('0x')) {
-            if(payload.getCoin2WanRatio) {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.syncErc20StoremanGroups(payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+            if(payload.getCoin2WanRatio && payload.chain === 'ETH') {
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
               ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
             } else {
-              ret = await ccUtil.syncErc20StoremanGroups(payload.crossChain);
+              ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
             }
           } else {
             if(payload.getCoin2WanRatio) {
