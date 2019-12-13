@@ -12,7 +12,13 @@ import { BigNumber } from 'bignumber.js';
 class Portfolio {
   @observable coinPriceArr;
 
-  @observable coinList = ['WAN', 'ETH', 'BTC', 'EOS'];
+  @observable defaultCoinList = ['WAN', 'ETH', 'BTC', 'EOS'];
+
+  @observable coinList = [...this.defaultCoinList];
+
+  @action setCoin (coins) {
+    self.coinList = self.defaultCoinList.concat(coins);
+  }
 
   @action addCoin (newCoin) {
     if (self.coinList.indexOf(newCoin) === -1) {
@@ -40,6 +46,8 @@ class Portfolio {
   }
 
   @computed get portfolioList () {
+    // console.log('------ Coin List:', self.coinList);
+    // console.log('------ Price:', self.coinPriceArr);
     let list = self.coinList.map((item, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: item },
@@ -88,7 +96,7 @@ class Portfolio {
       item.price = `$${formatNum(item.price.substr(1))}`;
       item.balance = formatNum(item.balance);
       item.value = `$${formatNum(item.value.substr(1))}`
-    })
+    });
     return list;
   }
 }
