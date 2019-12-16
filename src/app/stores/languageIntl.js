@@ -1,7 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import intl from 'react-intl-universal';
 
-import { WALLET_CHAIN, CROSSCHAINTYPE, OPEN_DEX } from 'utils/settings';
+import { WALLET_CHAIN, CROSSCHAINTYPE, THIRD_PARTY_OPEN } from 'utils/settings';
 
 class LanguageIntl {
   @observable language = 'en_US';
@@ -270,12 +270,19 @@ class LanguageIntl {
       },
     ];
 
-    if (OPEN_DEX) {
+    if (THIRD_PARTY_OPEN) {
       sidebar.splice(sidebar.length - 1, 0, {
-        title: intl.get('menuConfig.dex'),
+        title: intl.get('menuConfig.thirdPartyDapps'),
         step: '1',
-        key: '/dex',
+        key: '/thirdPartyDapps',
         icon: 'stock',
+        children: [
+          {
+            title: intl.get('menuConfig.dex'),
+            key: '/dex',
+            icon: 'stock',
+          }
+        ]
       });
     }
 

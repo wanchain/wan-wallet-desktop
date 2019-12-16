@@ -423,6 +423,7 @@ const zh_CN = {
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
 
+    'menuConfig.thirdPartyDapps': '第三方应用',
     'menuConfig.dex': '交易',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
