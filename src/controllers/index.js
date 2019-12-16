@@ -688,8 +688,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
         case 'EOSNormal':
             try {
               logger.info('Normal transaction: ' + JSON.stringify(payload));
-  
-              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
+              const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53';
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
               ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
               logger.error('Send transaction failed: ' + e.message || e.stack)
