@@ -7,6 +7,6 @@ module.exports = {
     query: [ 'config', 'getGasPrice' ],
     staking: [ 'getContractAddr', 'info', 'delegateIn', 'delegateOut', 'getContractData', 'insertTransToDB', 'posInfo', 'registerValidator', 'insertRegisterValidatorToDB', 'validatorInfo', 'validatorAppend', 'validatorUpdate', 'getValidatorsInfo', 'getCurrentEpochInfo', 'PosStakeUpdateFeeRate' ],
     setting: ['switchNetwork', 'set', 'get'],
-    crossChain: ['getRegTokensInfo', 'updateTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'getSmgList', 'getHtmlAddr', 'crossBTC', 'crossETH', 'crossErc20', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans'],
+    crossChain: ['getRegTokensInfo', 'updateTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'getSmgList', 'getHtmlAddr', 'crossBTC', 'crossETH', 'crossEOS', 'crossErc20', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans'],
     upgrade: ['start']
 }

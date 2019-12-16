@@ -6,7 +6,7 @@ import { message, Button, Form } from 'antd';
 
 import { getGasPrice, getSmgList } from 'utils/helper';
 import CrossEOSForm from 'components/CrossChain/CrossChainTransForm/CrossEOSForm';
-import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS } from 'utils/settings';
+import { INBOUND, REDEEMWEOS_GAS, LOCKWEOS_GAS } from 'utils/settings';
 
 const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
 const CollectionCreateForm = Form.create({ name: 'CrossEOSForm' })(CrossEOSForm);
@@ -41,25 +41,24 @@ class EOSTrans extends Component {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
-      wanGas = REDEEMWETH_GAS;
+      wanGas = REDEEMWEOS_GAS;
     } else {
       if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
-      wanGas = LOCKWETH_GAS;
+      wanGas = LOCKWEOS_GAS;
     }
-
-    addCrossTransTemplate(from, { chainType: 'EOS', path: record.path });
+    addCrossTransTemplate(from, { path: record.path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList(EOSSYMBOL, 'EOS')]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList(EOSSYMBOL, 'EOS', direction !== INBOUND)]);
       this.setState({
         smgList,
         estimateFee: new BigNumber(gasPrice).times(wanGas).div(BigNumber(10).pow(9)).toString(10)
       });
       storeman = smgList[0].storemanGroup;
-      updateTransParams(from, { storeman, txFeeRatio: smgList[0].txFeeRatio });
+      updateTransParams(from, { storeman, gasPrice, gasLimit: wanGas, txFeeRatio: smgList[0].txFeeRatio });
       setTimeout(() => { this.setState({ spin: false }) }, 0);
     } catch (err) {
       console.log('showModal:', err)
@@ -91,7 +90,7 @@ class EOSTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm balance={this.props.record.balance} decimals={this.props.decimals} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm balance={this.props.record.amount} decimals={this.props.decimals} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

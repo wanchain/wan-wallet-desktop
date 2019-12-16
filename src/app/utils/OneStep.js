@@ -169,6 +169,45 @@ const OneStep = {
           })
         }
       }
+
+      if (trans_data.tokenStand === 'EOS') {
+        let input = {
+          x: trans_data.x,
+          hashX: trans_data.hashX,
+        };
+        if (trans_data.srcChainType !== 'WAN') {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+              gasPrice = DEFAULT_GASPRICE
+            }
+            input.gasLimit = REDEEMWETH_GAS * 1.2;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossEOS', { input, tokenScAddr: trans_data.srcChainAddr, source: 'EOS', destination: 'WAN', type: 'REDEEM' }, (err, ret) => {
+              if (err) {
+                console.log('crossChain_crossEOS:', err);
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+              } else {
+                console.log('send_redeem_WEOS:', ret);
+              }
+            });
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        } else {
+          wand.request('crossChain_crossEOS', { input, tokenScAddr: trans_data.dstChainAddr, source: 'WAN', destination: 'EOS', type: 'REDEEM' }, (err, ret) => {
+            if (err) {
+              console.log('crossChain_crossEOS:', err);
+              this.sending.delete(trans_data.hashX);
+              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+              increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+            } else {
+              console.log('send_redeem_EOS:', ret);
+            }
+          })
+        }
+      }
     });
 
     return this;

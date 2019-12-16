@@ -333,6 +333,24 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   return balance;
 }
 
+export const getAddrInfoByTypes = function (info, type, addrInfo, needType) {
+  let tmp = {};
+  let val;
+  Object.keys(addrInfo).forEach(item => {
+    tmp = Object.assign(tmp, addrInfo[item])
+  })
+  Object.keys(tmp).forEach(item => {
+    if (tmp[item][type] === info) {
+      if (needType === 'address') {
+        val = item;
+      } else {
+        val = tmp[item][needType];
+      }
+    }
+  })
+  return val;
+}
+
 export const getPrivateBalanceByAddr = function (addr, addrInfo) {
   let addrArr = { ...addrInfo.normal, ...addrInfo.import };
   return addrArr[addr] ? addrArr[addr].wbalance : '0';

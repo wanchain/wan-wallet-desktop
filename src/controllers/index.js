@@ -688,7 +688,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
         case 'EOSNormal':
             try {
               logger.info('Normal transaction: ' + JSON.stringify(payload));
-              const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53';
+              const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'  
               let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
               ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
@@ -1193,7 +1193,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             let eosTokens = ccUtil.getRegTokens('EOS');
             erc20Tokens.forEach(item => item.chain = 'ETH')
             eosTokens.forEach(item => {
-              item.decimals = item.decimal
               item.tokenOrigAddr = item.tokenOrigAccount;
               item.chain = 'EOS'
             })
@@ -1242,15 +1241,20 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         let coin2WanRatio
         try {
           if (payload.crossChain.startsWith('0x')) {
-            if(payload.getCoin2WanRatio && payload.chain === 'ETH') {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+            if(payload.getCoin2WanRatio) {
+              if (payload.chain === 'EOS') {
+                ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
+                coin2WanRatio = (ccUtil.getRegTokens('EOS'))[0].ratio;
+              } else {
+                [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+              }
               ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
             } else {
               ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
             }
           } else {
             if(payload.getCoin2WanRatio) {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio('ETH')]);
+              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio(payload.crossChain)]);
               ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
             } else {
               ret = await ccUtil.getSmgList(payload.crossChain);
@@ -1323,6 +1327,24 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
           let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
           if (payload.type === 'REDEEM') {
             payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+          }
+          ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+        } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+        }
+        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break
+
+      case 'crossEOS':
+        try {
+          let srcChain, dstChain;
+          if(payload.source !== 'WAN') {
+            srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
+            dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+          } else {
+            srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+            dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
           }
           ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
         } catch (e) {
