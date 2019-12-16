@@ -4,6 +4,7 @@ import axios from 'axios';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
+import eosAddress from './eosAddress';
 
 import { formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
@@ -11,7 +12,13 @@ import { BigNumber } from 'bignumber.js';
 class Portfolio {
   @observable coinPriceArr;
 
-  @observable coinList = ['WAN', 'ETH', 'BTC'];
+  @observable defaultCoinList = ['WAN', 'ETH', 'BTC', 'EOS'];
+
+  @observable coinList = [...this.defaultCoinList];
+
+  @action setCoin (coins) {
+    self.coinList = self.defaultCoinList.concat(coins);
+  }
 
   @action addCoin (newCoin) {
     if (self.coinList.indexOf(newCoin) === -1) {
@@ -39,6 +46,8 @@ class Portfolio {
   }
 
   @computed get portfolioList () {
+    // console.log('------ Coin List:', self.coinList);
+    // console.log('------ Price:', self.coinPriceArr);
     let list = self.coinList.map((item, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: item },
@@ -62,6 +71,9 @@ class Portfolio {
               case 'BTC':
                 val.balance = btcAddress.getAllAmount;
                 break;
+              case 'EOS':
+              val.balance = eosAddress.getAllAmount;
+              break;
             }
             val.price = `$${self.coinPriceArr[item]['USD']}`;
             val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
@@ -77,11 +89,14 @@ class Portfolio {
         });
       });
     }
+    list.sort((m, n) => {
+      return new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, '')) ? 1 : -1;
+    });
     list.forEach(item => {
       item.price = `$${formatNum(item.price.substr(1))}`;
       item.balance = formatNum(item.balance);
       item.value = `$${formatNum(item.value.substr(1))}`
-    })
+    });
     return list;
   }
 }

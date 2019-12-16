@@ -21,7 +21,8 @@ const fr_FR = {
     'Common.next': 'Prochain',
     'Common.create': 'Créer',
     'Common.balance': 'Balance',
-    'Common.sendFailed': 'Network is not stable, sending failed, please try again later',
+    'Common.sendFailed': 'Network is not stable. Please try again',
+    'Common.networkError': 'Network error. Please reboot wallet',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',

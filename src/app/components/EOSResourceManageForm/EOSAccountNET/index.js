@@ -191,7 +191,7 @@ class EOSAccountNET extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeNet')} ({balance} EOS MAX)</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeNet')} (MAX {balance}EOS)</div>
                                         <Form.Item>
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
@@ -213,7 +213,7 @@ class EOSAccountNET extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeNET')} ({new BigNumber(netAvailable).times(price).toString(10)} EOS MAX)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeNET')} (MAX {new BigNumber(netAvailable).times(price).toString(10)}EOS)</div>
                                         <Form.Item>
                                             {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={new BigNumber(netAvailable).times(price).toNumber()} prefix={<Icon type="credit-card" className="colorInput" />} />)}

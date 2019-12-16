@@ -3,23 +3,21 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
 
-import totalImg from 'static/image/eth.png';
+import totalImg from 'static/image/eos.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
-import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
-import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import EOSTrans from 'components/CrossChain/SendCrossChainTrans/EOSTrans';
+import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 
-const CHAINTYPE = 'ETH';
-const WANCHAIN = 'WAN';
+const CHAINTYPE = 'EOS';
 
 @inject(stores => ({
   tokensList: stores.tokens.tokensList,
-  addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAddrList: stores.ethAddress.getAddrList,
-  getAmount: stores.ethAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
+  getAccountListWithBalance: stores.eosAddress.getAccountListWithBalance,
+  updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -27,17 +25,18 @@ const WANCHAIN = 'WAN';
 }))
 
 @observer
-class CrossETH extends Component {
+class CrossEOS extends Component {
   constructor (props) {
     super(props);
-    this.props.setCurrSymbol('ETH');
-    this.props.setCurrToken(null, 'ETH');
+    this.props.setCurrSymbol(CHAINTYPE);
+    this.props.setCurrToken(null, CHAINTYPE);
     this.props.changeTitle('Common.crossChain');
   }
 
   componentDidMount() {
-    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'ETH');
+    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === CHAINTYPE);
     this.timer = setInterval(() => {
+      this.props.updateTransHistory();
       this.props.updateTokensBalance(tokenAddr);
     }, 5000)
   }
@@ -46,26 +45,14 @@ class CrossETH extends Component {
     clearInterval(this.timer);
   }
 
-  inboundHandleSend = from => {
-    let transParams = this.props.transParams[from];
-    let input = {
-      from: transParams.from,
-      to: transParams.to,
-      amount: transParams.amount,
-      gasPrice: transParams.gasPrice,
-      gasLimit: transParams.gasLimit,
-      storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
-    };
+  inboundHandleSend = () => {
+    let { transParams: { from, to, amount, storeman, txFeeRatio } } = this.props;
+    let input = { from, to, amount, storeman, txFeeRatio };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossEOS', { input, source: 'EOS', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('ETH inbound lock:', err);
-          if (err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
-          } else {
-            message.warn(intl.get('Common.sendFailed'));
-          }
+          console.log('crossChain_lockEOS:', err);
+          message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -75,26 +62,22 @@ class CrossETH extends Component {
     })
   }
 
-  outboundHandleSend = from => {
-    let transParams = this.props.transParams[from];
+  outboundHandleSend = () => {
+    let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
-      to: transParams.to,
       amount: transParams.amount,
+      crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
-      gasLimit: transParams.gasLimit,
-      storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
+      gas: transParams.gas,
+      txFeeRatio: transParams.txFeeRatio,
+      storeman: transParams.storeman
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('ETH outbound lock:', err);
-          if (err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
-          } else {
-            message.warn(intl.get('Common.sendFailed'));
-          }
+          console.log('crossChain_lockWBTC:', err);
+          message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -106,14 +89,8 @@ class CrossETH extends Component {
 
   inboundColumns = [
     {
-      dataIndex: 'name',
-      width: '20%',
-      ellipsis: true
-    },
-    {
       dataIndex: 'address',
-      width: '50%',
-      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+      width: '70%'
     },
     {
       dataIndex: 'balance',
@@ -124,7 +101,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><EOSTrans record={record} from={record.address} decimals={4} handleSend={this.outboundHandleSend} direction={INBOUND}/></div>
     }
   ];
 
@@ -148,12 +125,12 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><EOSTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} direction={OUTBOUND}/></div>
     }
   ];
 
   render () {
-    const { getAddrList, getTokensListInfo } = this.props;
+    const { getAccountListWithBalance, getTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -166,15 +143,15 @@ class CrossETH extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">ETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">EOS </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getAddrList} />
+            <Table className="content-wrap" pagination={false} rowKey="account" columns={this.inboundColumns} dataSource={getAccountListWithBalance} />
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WEOS </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -183,7 +160,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossChainTransHistory name={['normal']} symbol='ETH' />
+
           </Col>
         </Row>
       </div>
@@ -191,4 +168,4 @@ class CrossETH extends Component {
   }
 }
 
-export default CrossETH;
+export default CrossEOS;

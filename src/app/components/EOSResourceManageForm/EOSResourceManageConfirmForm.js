@@ -16,14 +16,17 @@ class EOSResourceManageConfirmForm extends Component {
   }
 
   handleSave = () => {
-    const { form } = this.props;
-    this.props.sendTrans(form.getFieldsValue());
+    const { form, formData } = this.props;
+    let data = form.getFieldsValue();
+    data.type = formData.type;
+    this.props.sendTrans(data);
   }
 
   render() {
     const { form, formData, loading } = this.props;
     const { getFieldDecorator } = form;
     const { account, type, amount } = formData;
+    const text = type === 'delegate' ? 'stake' : (type === 'undelegate' ? 'unstake' : type);
 
     return (
       <Modal
@@ -47,7 +50,7 @@ class EOSResourceManageConfirmForm extends Component {
               (<Input disabled={true} />)}
           </Form.Item>
           <Form.Item label={intl.get('EOSResourceManageForm.type')}>
-            {getFieldDecorator('type', { initialValue: type })
+            {getFieldDecorator('text', { initialValue: intl.get(`EOSResourceManageForm.${text}`) })
               (<Input disabled={true} />)}
           </Form.Item>
         </Form>

@@ -28,11 +28,11 @@ class CrossChain {
     })
   }
 
-  @computed get crossChainTokensInfo () {
+  @computed get erc20CrossChainTokensInfo () {
     let list = [];
     Object.keys(tokens.tokensList).forEach(item => {
-      let val = tokens.tokensList[item];
-      if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr) {
+    let val = tokens.tokensList[item];
+    if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr && val.chain === 'ETH') {
         list.push({
           addr: item,
           symbol: val.symbol,
@@ -40,7 +40,21 @@ class CrossChain {
         })
       }
     })
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
+  }
 
+  @computed get eosCrossChainTokensInfo () {
+    let list = [];
+    Object.keys(tokens.tokensList).forEach(item => {
+    let val = tokens.tokensList[item];
+    if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr && val.chain === 'EOS') {
+        list.push({
+          addr: item,
+          symbol: val.symbol,
+          select: val.ccSelect
+        })
+      }
+    })
     return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
   }
 
@@ -88,7 +102,7 @@ class CrossChain {
     return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  @computed get crossE20Trans () {
+  @computed get crossErc20Trans () {
     let crossEthTrans = [];
     let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {

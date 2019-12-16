@@ -56,9 +56,9 @@ const OneStep = {
             }
             input.gasLimit = REDEEMWETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crossChain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
+            wand.request('crossChain_crossErc20', { input, source: 'ETH', destination: 'WAN', type: 'REDEEM', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossE20:', err);
+                console.log('crossChain_crossErc20:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -73,9 +73,9 @@ const OneStep = {
           getGasPrice('ETH').then(gasPrice => {
             input.gasLimit = REDEEMETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crossChain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM', tokenScAddr: trans_data.dstChainAddr }, (err, ret) => {
+            wand.request('crossChain_crossErc20', { input, source: 'WAN', destination: 'ETH', type: 'REDEEM', tokenScAddr: trans_data.dstChainAddr }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossE20:', err);
+                console.log('crossChain_crossErc20:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -187,9 +187,9 @@ const OneStep = {
           getGasPrice('ETH').then(gasPrice => {
             input.gasLimit = REVOKEETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crossChain_crossE20', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
+            wand.request('crossChain_crossErc20', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossE20:', err);
+                console.log('crossChain_crossErc20:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
@@ -207,9 +207,9 @@ const OneStep = {
             }
             input.gasLimit = REVOKEWETH_GAS;
             input.gasPrice = gasPrice;
-            wand.request('crossChain_crossE20', { input, source: 'WAN', destination: 'ETH', type: 'REVOKE', tokenScAddr: trans_data.dstChainAddr }, (err, ret) => {
+            wand.request('crossChain_crossErc20', { input, source: 'WAN', destination: 'ETH', type: 'REVOKE', tokenScAddr: trans_data.dstChainAddr }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossE20:', err);
+                console.log('crossChain_crossErc20:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });

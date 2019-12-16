@@ -26,7 +26,7 @@ const defaultConfig = {
             "select": false,
             "symbol": "ETH",
             "decimals": 18,
-            "ccSelect": false
+            "ccSelect": false,
           },
           "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
             "select": false,
@@ -53,7 +53,7 @@ const defaultConfig = {
     }
 }
 
-const tokensAdvanceKey = [ 'select', 'ccSelect', 'erc20Select', 'symbol', 'decimals', 'tokenOrigAddr']
+const tokensAdvanceKey = [ 'select', 'ccSelect', 'symbol', 'decimals', 'tokenOrigAddr', 'chain']
 
 const cscContractAddr = "0x00000000000000000000000000000000000000da";
 
@@ -112,12 +112,20 @@ class Settings {
       })
     }
 
-    updateTokensAdvance(regErc20Tokens) {
+    updateTokensAdvance(tokens) {
       let network = this.get('network');
       let tokens_advance = this.tokens_advance;
-      regErc20Tokens.forEach(item => {
+      tokens.forEach(item => {
         if(!tokens_advance[item.tokenWanAddr]) {
           tokens_advance[item.tokenWanAddr] = {};
+          switch (item.chain) {
+            case 'ETH':
+              tokens_advance[item.tokenWanAddr].erc20Select = false;
+              break;
+            case 'EOS':
+              tokens_advance[item.tokenWanAddr].eosSelect = false;
+              break;
+          }
           tokensAdvanceKey.forEach(key => tokens_advance[item.tokenWanAddr][key] = item[key] || false);
           this.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}`, tokens_advance[item.tokenWanAddr]);
         } else {
@@ -127,6 +135,7 @@ class Settings {
               this.set(`settings.tokens_advance.${network}.${item.tokenWanAddr}.${key}`, false);
             }
           });
+
         }
       })
     }

@@ -14,7 +14,7 @@ import history from 'static/image/history.png';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   crossETHTrans: stores.crossChain.crossETHTrans,
-  crossE20Trans: stores.crossChain.crossE20Trans,
+  crossErc20Trans: stores.crossChain.crossErc20Trans,
   transColumns: stores.languageIntl.transColumns,
   updateCrossTrans: () => stores.crossChain.updateCrossTrans(),
 }))
@@ -49,7 +49,7 @@ class CrossChainTransHistory extends Component {
   }
 
   render () {
-    const { crossETHTrans, crossE20Trans, transColumns, symbol } = this.props;
+    const { crossETHTrans, crossErc20Trans, transColumns, symbol } = this.props;
     let trans;
 
     if (symbol === 'ETH') {
@@ -58,7 +58,7 @@ class CrossChainTransHistory extends Component {
       transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainAddr)}</span></div>;
     transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${text}`)}>{text}</Tooltip>;
     } else {
-      trans = crossE20Trans;
+      trans = crossErc20Trans;
       transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
       transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
     }

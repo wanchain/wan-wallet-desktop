@@ -67,7 +67,7 @@ class ETHTrans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(smgParams, type !== INBOUND)]);
+      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList(smgParams, 'ETH', type !== INBOUND)]);
       this.setState({
         smgList,
         estimateFee: {

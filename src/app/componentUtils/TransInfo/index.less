@@ -13,10 +13,11 @@
     }
 
     .ant-input {
-      width: 100%;
+      width: calc(~"100% - 22px");
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      margin-right: 6px;
     }
   }
 }
@@ -43,14 +44,21 @@
 
 .checkInfoInBrowser {
   color: #FFFFFF !important;
+  display: inline-block;
   opacity: .5;
   cursor: pointer !important;
   text-decoration: underline;
-  width: 100%;
+  width: calc(~"100% - 22px");
   padding: 10px 12px;
+  margin-right: 6px;
   background: #1F2034 !important;
   border-radius: 20px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.lock_copyIcon {
+  position: absolute;
+  top: 14px;
 }

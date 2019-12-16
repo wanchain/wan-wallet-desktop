@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import React, { Component } from 'react';
+import React, { Component, message } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col } from 'antd';
 
@@ -60,9 +60,14 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossErc20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockE20Inbound:', err);
+          console.log('ERC-20 inbound lock:', err);
+          if (err.desc.includes('ready')) {
+            message.warn(intl.get('Common.networkError'));
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+          }
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));
@@ -84,9 +89,14 @@ class CrossE20 extends Component {
       txFeeRatio: transParams.txFeeRatio
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossE20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossErc20', { input, tokenScAddr: this.props.tokensList[this.props.tokenAddr].tokenOrigAddr, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWTokenInbound:', err);
+          console.log('ERC-20 outbound lock:', err);
+          if (err.desc.includes('ready')) {
+            message.warn(intl.get('Common.networkError'));
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+          }
           return reject(err);
         } else {
           console.log(JSON.stringify(ret, null, 4));

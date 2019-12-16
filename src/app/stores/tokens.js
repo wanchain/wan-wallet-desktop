@@ -4,8 +4,8 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
-import { WANPATH, ETHPATH, WALLET_CHAIN } from 'utils/settings';
 import { formatNum, formatNumByDecimals } from 'utils/support';
+import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -104,7 +104,23 @@ class Tokens {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
-      if (!WALLET_CHAIN.includes(val.symbol) && !val.userAdrr) {
+      if (!WALLET_CHAIN.includes(val.symbol) && !val.userAdrr && val.chain === 'ETH') {
+        list.push({
+          addr: item,
+          symbol: val.symbol,
+          select: val.erc20Select,
+          erc20Addr: val.tokenOrigAddr
+        })
+      }
+    })
+    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
+  }
+
+  @computed get eosTokensInfo () {
+    let list = [];
+    Object.keys(self.tokensList).forEach(item => {
+      let val = self.tokensList[item];
+      if (!CROSSCHAINTYPE.includes(val.symbol) && val.chain === 'EOS') {
         list.push({
           addr: item,
           symbol: val.symbol,

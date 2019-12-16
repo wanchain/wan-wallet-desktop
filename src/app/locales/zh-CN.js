@@ -22,6 +22,7 @@ const zh_CN = {
     'Common.create': '创建',
     'Common.balance': '余额',
     'Common.sendFailed': '网络不稳定，发送失败，请稍后再试',
+    'Common.networkError': '网络故障，请重启钱包',
 
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
