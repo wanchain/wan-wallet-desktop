@@ -5,6 +5,7 @@ import session from './session';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
+import eosAddress from './eosAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { CROSSCHAINTYPE } from 'utils/settings';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
@@ -170,6 +171,37 @@ class CrossChain {
       });
     });
     return crossBTCTrans.sort((a, b) => b.sendTime - a.sendTime);
+  }
+
+  @computed get crossEOSTrans () {
+    let crossEOSTrans = [];
+    let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
+    self.crossTrans.forEach((item, index) => {
+      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+        crossEOSTrans.push({
+          key: index,
+          hashX: item.hashX,
+          storeman: item.storeman,
+          secret: item.x,
+          time: timeFormat(item.sendTime),
+          from: item.srcChainAddr === 'WAN' ? (getInfoByAddress(item.fromAddr, ['name'], wanAddress.addrInfo)).name : item.fromAddr,
+          fromAddr: item.fromAddr,
+          to: item.srcChainAddr === 'WAN' ? item.toAddr : (getInfoByAddress(item.toAddr, ['name'], wanAddress.addrInfo)).name,
+          toAddr: item.toAddr,
+          value: formatNum(formatNumByDecimals(item.contractValue, currTokenInfo.decimals)),
+          status: item.status,
+          sendTime: item.sendTime,
+          approveTxHash: item.approveTxHash,
+          srcChainType: item.srcChainType,
+          dstChainType: item.dstChainType,
+          lockTxHash: item.lockTxHash,
+          redeemTxHash: item.redeemTxHash || 'NULL',
+          revokeTxHash: item.revokeTxHash || 'NULL',
+          tokenStand: item.tokenStand
+        });
+      }
+    });
+    return crossEOSTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 }
 

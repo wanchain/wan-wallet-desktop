@@ -7,7 +7,7 @@ import totalImg from 'static/image/eos.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import EOSTrans from 'components/CrossChain/SendCrossChainTrans/EOSTrans';
-import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
+import CrossEOSHistory from 'components/CrossChain/CrossChainTransHistory/CrossEOSHistory';
 
 const CHAINTYPE = 'EOS';
 
@@ -154,7 +154,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-
+            <CrossEOSHistory name={['normal']} symbol='EOS' />
           </Col>
         </Row>
       </div>
