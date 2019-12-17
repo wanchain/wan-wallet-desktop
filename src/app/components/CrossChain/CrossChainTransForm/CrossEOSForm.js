@@ -48,7 +48,7 @@ class CrossEOSForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, form, from, direction, wanAddrInfo, tokenAddr, estimateFee, balance: origAddrAmount } = this.props;
+    const { updateTransParams, addrInfo, settings, form, from, direction, wanAddrInfo, estimateFee, balance: origAddrAmount } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -59,20 +59,14 @@ class CrossEOSForm extends Component {
       let destAddrAmount = direction === INBOUND ? getAddrInfoByTypes(to, 'name', wanAddrInfo, 'balance') : addrInfo[to].balance;
       let path = direction === INBOUND ? WANPATH + getAddrInfoByTypes(to, 'name', wanAddrInfo, 'path') : addrInfo[to].path;
       let toAddress = direction === INBOUND ? getAddrInfoByTypes(to, 'name', wanAddrInfo, 'address') : to
-      if (tokenAddr) {
-        if (isExceedBalance(origAddrAmount, estimateFee) || isExceedBalance(destAddrAmount, estimateFee)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } else {
-        if (isExceedBalance(origAddrAmount, sendAmount) || isExceedBalance(destAddrAmount, direction === INBOUND ? estimateFee : 0)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-        if (direction !== INBOUND && isExceedBalance(getBalanceByAddr(from, wanAddrInfo), totalFee)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
+
+      if (isExceedBalance(origAddrAmount, sendAmount) || isExceedBalance(destAddrAmount, direction === INBOUND ? estimateFee : 0)) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      }
+      if (direction !== INBOUND && isExceedBalance(getBalanceByAddr(from, wanAddrInfo), totalFee)) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
       }
 
       if (settings.reinput_pwd) {
@@ -106,7 +100,7 @@ class CrossEOSForm extends Component {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
         if (direction !== INBOUND) {
-          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
+          let storemanAccount = form.getFieldValue('storemanAccount');
           let smg = smgList.find(item => item.storemanGroup === storemanAccount);
           let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString();
           form.setFieldsValue({
@@ -122,7 +116,7 @@ class CrossEOSForm extends Component {
 
   checkQuota = (rule, value, callback) => {
     if (new BigNumber(value).gt(0)) {
-      let { amount } = this.props.form.getFieldsValue(['amount']);
+      let amount = this.props.form.getFieldValue('amount');
       if (isExceedBalance(value, amount)) {
         callback(intl.get('CrossChainTransForm.overQuota'));
         return;
@@ -155,13 +149,13 @@ class CrossEOSForm extends Component {
     if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.values(wanAddrInfo.normal).map(item => item.name);
-      title = symbol ? `${symbol} -> W${symbol}` : 'EOS -> WEOS';
-      tokenSymbol = symbol || 'EOS';
+      title = `${symbol} -> W${symbol}`;
+      tokenSymbol = symbol;
     } else {
       desChain = 'EOS';
       selectedList = Object.keys(addrInfo);
-      title = symbol ? `W${symbol} -> ${symbol}` : 'WEOS -> EOS';
-      tokenSymbol = symbol ? `W${symbol}` : 'WEOS';
+      title = `W${symbol} -> ${symbol}`;
+      tokenSymbol = `W${symbol}`;
     }
 
     if (smgList.length === 0) {

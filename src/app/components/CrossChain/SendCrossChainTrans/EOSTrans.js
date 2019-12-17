@@ -8,7 +8,6 @@ import { getGasPrice, getSmgList } from 'utils/helper';
 import CrossEOSForm from 'components/CrossChain/CrossChainTransForm/CrossEOSForm';
 import { INBOUND, REDEEMWEOS_GAS, LOCKWEOS_GAS } from 'utils/settings';
 
-const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
 const CollectionCreateForm = Form.create({ name: 'CrossEOSForm' })(CrossEOSForm);
 
 @inject(stores => ({
@@ -33,7 +32,7 @@ class EOSTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, record, getTokensListInfo, addCrossTransTemplate, updateTransParams, direction } = this.props;
+    const { from, record, getTokensListInfo, addCrossTransTemplate, updateTransParams, direction, tokenOrigAddr } = this.props;
     let wanGas, storeman;
 
     if (direction === INBOUND) {
@@ -52,7 +51,7 @@ class EOSTrans extends Component {
     addCrossTransTemplate(from, { path: record.path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList(EOSSYMBOL, 'EOS', direction !== INBOUND)]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList(tokenOrigAddr, 'EOS', direction !== INBOUND)]);
       this.setState({
         smgList,
         estimateFee: new BigNumber(gasPrice).times(wanGas).div(BigNumber(10).pow(9)).toString(10)
@@ -85,12 +84,13 @@ class EOSTrans extends Component {
 
   render () {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
+    const { symbol, decimals, direction, record } = this.props;
 
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm balance={this.props.record.amount} decimals={this.props.decimals} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm symbol={symbol} balance={direction === INBOUND ? record.balance : record.amount} decimals={decimals} direction={direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

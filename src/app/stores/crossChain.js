@@ -66,7 +66,8 @@ class CrossChain {
         list.push({
           tokenAddr: item,
           tokenOrigAddr: tokens.tokensList[item].tokenOrigAddr || '',
-          symbol: tokens.tokensList[item].symbol
+          symbol: tokens.tokensList[item].symbol,
+          chain: tokens.tokensList[item].chain
         })
       }
     });

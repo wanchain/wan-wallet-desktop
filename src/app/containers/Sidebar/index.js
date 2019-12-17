@@ -117,7 +117,7 @@ class Sidebar extends Component {
     if (crossChainOnSideBar.length) {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => ({
         title: item.symbol,
-        key: `/crossChain/${item.tokenAddr}/${item.symbol}`,
+        key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
         icon: 'block'
       })));
     } else {
