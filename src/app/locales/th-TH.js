@@ -23,6 +23,7 @@ const th_TH = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',

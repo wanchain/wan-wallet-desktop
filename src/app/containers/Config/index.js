@@ -153,7 +153,7 @@ class Config extends Component {
           {
             erc20CrossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
           }
-          <p className={style['set_title']}>{intl.get('Common.erc20')}</p>
+          <p className={style['set_title']}>{intl.get('Common.eosTokens')}</p>
           {
             eosCrossChainTokensInfo.map((item, index) => <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'ccSelect', !item.select)}>{item.symbol}</Checkbox>)
           }

@@ -23,6 +23,7 @@ const es_ES = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',

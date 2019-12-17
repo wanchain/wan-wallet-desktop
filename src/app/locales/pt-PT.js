@@ -23,6 +23,7 @@ const pt_PT = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',

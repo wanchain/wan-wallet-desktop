@@ -23,6 +23,7 @@ const ko_KR = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
