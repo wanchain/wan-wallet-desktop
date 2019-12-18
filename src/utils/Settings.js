@@ -41,16 +41,16 @@ const defaultConfig = {
         "ETH": {
           "select": false,
           "wan_addr": "0x28362cd634646620ef2290058744f9244bb90ed9",
-          "symbol": "WETH",
+          "symbol": "ETH",
           "decimals": 18,
-          "chain": "WAN"
+          "chain": "ETH"
         },
         "BTC": {
           "select": false,
           "wan_addr": "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7",
-          "symbol": "WBTC",
+          "symbol": "BTC",
           "decimals": 8,
-          "chain": "WAN",
+          "chain": "BTC",
         }
       },
     },
@@ -75,16 +75,16 @@ const defaultConfig = {
         "ETH": {
           "select": false,
           "wan_addr": "0x46397994a7e1e926ea0de95557a4806d38f10b0d",
-          "symbol": "WETH",
+          "symbol": "ETH",
           "decimals": 18,
-          "chain": "WAN"
+          "chain": "ETH"
         },
         "BTC": {
           "select": false,
           "wan_addr": "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd",
-          "symbol": "WBTC",
+          "symbol": "BTC",
           "decimals": 8,
-          "chain": "WAN",
+          "chain": "BTC",
         }
       }
     }
