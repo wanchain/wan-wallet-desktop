@@ -46,6 +46,10 @@ class Tokens {
     }
   }
 
+  @action deleteCustomToken (tokenAddr) {
+    delete self.tokensList[tokenAddr.toLowerCase()];
+  }
+
   @action updateTokensBalance (tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);

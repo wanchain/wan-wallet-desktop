@@ -261,6 +261,14 @@ class Settings {
         this._db.set(key, value).write()
     }
 
+    remove(key) {
+      this._remove(key)
+    }
+
+    _remove(key) {
+      this._db.unset(key).write()
+    }
+
     switchNetwork() {
         const beforeSwitchNetwork = _network
         _network = undefined
