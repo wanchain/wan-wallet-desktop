@@ -127,6 +127,7 @@ class Tokens {
         chain: val.chain,
         symbol: val.symbol,
         decimals: val.decimals,
+        buddy: val.buddy,
         select: val.select
       })
     })
@@ -142,9 +143,9 @@ class Tokens {
         if (!excludedList.includes(item)) {
           list.push({
             addr: item,
-            chain: self.tokensList[item].chain,
-            symbol: self.tokensList[item].symbol,
-            decimals: self.tokensList[item].decimals,
+            chain: val.chain,
+            symbol: val.symbol,
+            decimals: val.decimals,
             select: val.select
           })
         }

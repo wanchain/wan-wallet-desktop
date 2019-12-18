@@ -26,23 +26,31 @@ const defaultConfig = {
           "select": false,
           "symbol": "WETH",
           "decimals": 18,
-          "chain": "WAN"
+          "chain": "WAN",
+          "buddy": true
         },
         "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
-          "chain": "WAN"
+          "chain": "WAN",
+          "buddy": true
         },
       },
       cc_tokens: {
         "ETH": {
           "select": false,
-          "wan_addr": "0x28362cd634646620ef2290058744f9244bb90ed9"
+          "wan_addr": "0x28362cd634646620ef2290058744f9244bb90ed9",
+          "symbol": "WETH",
+          "decimals": 18,
+          "chain": "WAN"
         },
         "BTC": {
           "select": false,
-          "wan_addr": "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7"
+          "wan_addr": "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7",
+          "symbol": "WBTC",
+          "decimals": 8,
+          "chain": "WAN",
         }
       },
     },
@@ -52,23 +60,31 @@ const defaultConfig = {
           "select": false,
           "symbol": "WETH",
           "decimals": 18,
-          "chain": "WAN"
+          "chain": "WAN",
+          "buddy": true
         },
         "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
-          "chain": "WAN"
+          "chain": "WAN",
+          "buddy": true
         },
       },
       cc_tokens: {
         "ETH": {
           "select": false,
-          "wan_addr": "0x46397994a7e1e926ea0de95557a4806d38f10b0d"
+          "wan_addr": "0x46397994a7e1e926ea0de95557a4806d38f10b0d",
+          "symbol": "WETH",
+          "decimals": 18,
+          "chain": "WAN"
         },
         "BTC": {
           "select": false,
-          "wan_addr": "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd"
+          "wan_addr": "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd",
+          "symbol": "WBTC",
+          "decimals": 8,
+          "chain": "WAN",
         }
       }
     }
@@ -169,11 +185,13 @@ class Settings {
       if (tokens[item.tokenWanAddr]) {
         tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
         tokens[item.tokenWanAddr].decimals = item.decimals;
+        tokens[item.tokenWanAddr].buddy = true;
       } else {
         tokens[item.tokenWanAddr] = {
           chain: 'WAN',
           symbol: `W${item.symbol}`,
-          decimals: item.decimals
+          decimals: item.decimals,
+          buddy: true
         }
       }
       this.set(`settings.${network}.tokens`, tokens);
@@ -181,9 +199,15 @@ class Settings {
       /** Add cross-chain token */
       if (ccTokens[item.tokenOrigAddr]) {
         ccTokens[item.tokenOrigAddr].wan_addr = item.tokenWanAddr;
+        ccTokens[item.tokenOrigAddr].chain = crossChain;
+        ccTokens[item.tokenOrigAddr].symbol = item.symbol;
+        ccTokens[item.tokenOrigAddr].decimals = item.decimals;
       } else {
         ccTokens[item.tokenOrigAddr] = {
           wan_addr: item.tokenWanAddr,
+          chain: crossChain,
+          symbol: item.symbol,
+          decimals: item.decimals
         }
       }
     });
