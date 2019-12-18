@@ -113,6 +113,7 @@ const zh_CN = {
     'Config.enableWrc20': '使能WRC-20代币',
     'Config.deleteConfirm': '确认',
     'Config.confirmText': '你确定要进行删除操作吗？',
+    'Config.enableEosToken': '使能EOS代币',
 
     'PasswordConfirmForm.password': '密码',
     'PasswordConfirmForm.inputPwd': '输入密码',

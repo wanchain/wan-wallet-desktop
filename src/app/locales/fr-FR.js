@@ -105,6 +105,7 @@ const fr_FR = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
+    'Config.enableEosToken': 'Enable EOS tokens',
 
     'PasswordConfirmForm.password': 'Mot de passe',
     'PasswordConfirmForm.inputPwd': 'Saisir le mot de passe',

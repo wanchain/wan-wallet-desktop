@@ -109,6 +109,7 @@ const ko_KR = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
+    'Config.enableEosToken': 'Enable EOS tokens',
 
     'PasswordConfirmForm.password': '패스워드',
     'PasswordConfirmForm.inputPwd': '패스워드를 입력하세요',

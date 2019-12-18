@@ -18,7 +18,6 @@ const { SubMenu, Item } = Menu;
   chainId: stores.session.chainId,
   settings: stores.session.settings,
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
-  e20TokensOnSideBar: stores.tokens.e20TokensOnSideBar,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
 }))
@@ -73,8 +72,8 @@ class Sidebar extends Component {
     });
   }
 
-  render () {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, e20TokensOnSideBar } = this.props;
+  render() {
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
@@ -95,7 +94,7 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
 
-    if (tokensOnSideBar.length + e20TokensOnSideBar.length) {
+    if (tokensOnSideBar.length) {
       walletChildren.splice(
         walletChainLen,
         walletChildren.length - walletChainLen,
@@ -104,22 +103,19 @@ class Sidebar extends Component {
           key: `/tokens/${item.tokenAddr}/${item.symbol}`,
           icon: 'block'
         })),
-        ...e20TokensOnSideBar.map(item => ({
-          title: item.symbol,
-          key: `/e20tokens/${item.tokenAddr}/${item.symbol}`,
-          icon: 'block'
-        })),
       );
     } else {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }
 
     if (crossChainOnSideBar.length) {
-      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => ({
-        title: item.symbol,
-        key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
-        icon: 'block'
-      })));
+      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
+        return ({
+          title: item.symbol,
+          key: `/crossChain/${item.addr}/${item.symbol}`,
+          icon: 'block'
+        })
+      }));
     } else {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
     }

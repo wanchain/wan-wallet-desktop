@@ -334,81 +334,81 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'btcImportAddress':
-          try {
-            ret = await ccUtil.btcImportAddress(payload.address);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break  
-        
-        case 'getBtcMultiBalances':
-          let utxos;
-          let btcMultiBalances = {};
-          try {
-            utxos = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
-            utxos.forEach(item => {
-              if (btcMultiBalances[item.address]) {
-                let balance = btcMultiBalances[item.address];
-                btcMultiBalances[item.address] = new BigNumber(balance).plus(item.value).toString();
-              } else {
-                btcMultiBalances[item.address] = item.value
-              }
-            });
-            ret = {
-              utxos,
-              btcMultiBalances
-            };
+            try {
+                ret = await ccUtil.btcImportAddress(payload.address);
             } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getBtcMultiBalances':
+            let utxos;
+            let btcMultiBalances = {};
+            try {
+                utxos = await ccUtil.getBtcUtxo(payload.minconf, payload.maxconf, payload.addresses);
+                utxos.forEach(item => {
+                    if (btcMultiBalances[item.address]) {
+                        let balance = btcMultiBalances[item.address];
+                        btcMultiBalances[item.address] = new BigNumber(balance).plus(item.value).toString();
+                    } else {
+                        btcMultiBalances[item.address] = item.value
+                    }
+                });
+                ret = {
+                    utxos,
+                    btcMultiBalances
+                };
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
         case 'btcCoinSelect':
-          try {
-            let feeRate = network === 'main' ? 30 : 300;
-            ret = await ccUtil.btcCoinSelect(payload.utxos, payload.value * Math.pow(10, 8), feeRate, payload.minConfParam);
-          } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-          }
+            try {
+                let feeRate = network === 'main' ? 30 : 300;
+                ret = await ccUtil.btcCoinSelect(payload.utxos, payload.value * Math.pow(10, 8), feeRate, payload.minConfParam);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
-          
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getEosAccountInfo':
             let obj = {};
             try {
                 const { accounts } = payload;
                 let [...eosAccountInfo] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
-                accounts.forEach( (v, i) => {
+                accounts.forEach((v, i) => {
                     obj[v] = eosAccountInfo[i];
                 });
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-  
+
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: obj })
             break
 
         case 'getEOSResourcePrice':
-                try {
-                    const { account } = payload;
-                    ret = await ccUtil.getResourcePrice('EOS', account);
-                } catch (e) {
-                    logger.error(e.message || e.stack)
-                    err = e
-                }
-      
-                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-                break
-        
+            try {
+                const { account } = payload;
+                ret = await ccUtil.getResourcePrice('EOS', account);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'balances':
             {
                 let balance, privateBalance;
@@ -671,29 +671,32 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             break;
 
         case 'BTCNormal':
-          try {
-            logger.info('Normal transaction: ' + JSON.stringify(payload));
-            payload.feeRate = network === 'main' ? 30 : 300;
+            try {
+                logger.info('Normal transaction: ' + JSON.stringify(payload));
+                payload.feeRate = network === 'main' ? 30 : 300;
 
-            let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('BTC', 'BTC');
-            let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
-            console.log(JSON.stringify(ret, null, 4));
-          } catch (e) {
-            logger.error('Send transaction failed: ' + e.message || e.stack)
-            err = e
-          }
-          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('BTC', 'BTC');
+                let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+                console.log(JSON.stringify(ret, null, 4));
+            } catch (e) {
+                logger.error('Send transaction failed: ' + e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'EOSNormal':
             try {
-              logger.info('Normal transaction: ' + JSON.stringify(payload));
-              const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'  
-              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
-              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+                logger.info('Normal transaction: ' + JSON.stringify(payload));
+
+                // let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
+                const EOSSYMBOL = ccUtil.encodeAccount('EOS', 'eosio.token:EOS');
+                console.log('EOSSYMBOL', EOSSYMBOL)
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
-              logger.error('Send transaction failed: ' + e.message || e.stack)
-              err = e
+                logger.error('Send transaction failed: ' + e.message || e.stack)
+                err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
@@ -802,19 +805,19 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
-        
-        case 'showBTCRecords':
-          try {
-              ret = global.wanDb.queryComm(DB_BTC_COLLECTION, items => {
-                  return items
-              })
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
 
-          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+        case 'showBTCRecords':
+            try {
+                ret = global.wanDb.queryComm(DB_BTC_COLLECTION, items => {
+                    return items
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'insertTransToDB':
             try {
@@ -1172,289 +1175,319 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
-  let err, ret
-  const [action, id] = actionUni.split('#')
+    let err, ret
+    const [action, id] = actionUni.split('#')
 
-  switch (action) {
-      case 'getTokenInfo':
-          let { scAddr } = payload;
-          try {
-            ret = await ccUtil.getTokenInfo(scAddr, 'WAN');
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
-
-      case 'getRegTokensInfo':
-          try {
-            let erc20Tokens = ccUtil.getRegTokens('ETH');
-            let eosTokens = ccUtil.getRegTokens('EOS');
-            erc20Tokens.forEach(item => item.chain = 'ETH')
-            eosTokens.forEach(item => {
-              item.tokenOrigAddr = item.tokenOrigAccount;
-              item.chain = 'EOS'
-            })
-            setting.updateTokensAdvance(erc20Tokens.concat(eosTokens));
-          } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: setting.tokens_advance })
-          break
-
-      case 'updateTokensInfo':
-          let { addr, key, value } = payload;
-          try {
-            setting.set(`settings.tokens_advance.${network}.${addr}.${key}`, value);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
-          break
-
-      case 'addCustomToken':
-        let { tokenAddr, symbol, decimals, select } = payload;
-        try {
-          setting.set(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`, { select, symbol, decimals });
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
-        break
-
-      case 'deleteCustomToken':
-        try {
-            let { tokenAddr } = payload;
-            setting.remove(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`);
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
-        break
-
-      case 'updateTokensBalance':
-          let { address, tokenScAddr, chain } = payload;
-          try {
-            ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
-
-      case 'getSmgList':
-        let coin2WanRatio
-        try {
-          if (payload.crossChain.startsWith('0x')) {
-            if(payload.getCoin2WanRatio) {
-              if (payload.chain === 'EOS') {
-                ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
-                coin2WanRatio = (ccUtil.getRegTokens('EOS'))[0].ratio;
-              } else {
-                [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
-              }
-              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
-            } else {
-              ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
+    switch (action) {
+        case 'getTokenInfo':
+            let { scAddr } = payload;
+            try {
+                ret = await ccUtil.getTokenInfo(scAddr, 'WAN');
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-          } else {
-            if(payload.getCoin2WanRatio) {
-              [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio(payload.crossChain)]);
-              ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
-            } else {
-              ret = await ccUtil.getSmgList(payload.crossChain);
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getTokensInfo':
+            try {
+                ret = setting.tokens;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-          }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
-          if (payload.crossChain === 'BTC') {
-            let net = network === 'main' ? 'mainnet' : 'testnet';
-            ret.forEach(smg=>{
-              if (smg.btcAddress.startsWith('0x')) {
-                smg.smgBtcAddr = smg.btcAddress;
-                smg.btcAddress = btcUtil.hash160ToAddress(smg.btcAddress, 'pubkeyhash', net);
-              }
-            });
-          }
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
-
-      case 'getHtmlAddr':
-        try {
-          if (payload && payload.symbol) {
-            ret = setting.htlcAddresses[payload.symbol];
-          } else {
-            ret = setting.htlcAddresses;
-          }
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
-
-      case 'crossBTC':
-        try {
-          let feeHard = network === 'main' ? 10000 : 100000;
-          let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-          let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          if (payload.type === 'LOCK' && payload.source === 'WAN') {
-            payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
-          }
-          if (payload.type === 'REDEEM') {
-            if (payload.source === 'WAN') {
-              payload.input.feeHard = feeHard
+        case 'getCcTokensInfo':
+            try {
+                ret = setting.ccTokens;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-            payload.input.x = ccUtil.hexAdd0x(payload.input.x);
-          }
-          if (payload.type === 'REVOKE') {
-            if(payload.source === 'BTC') {
-              payload.input.feeHard = feeHard
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'initRegTokens':
+            let { crossChain } = payload;
+            try {
+                ret = await ccUtil.getRegTokens(crossChain);
+                setting.updateRegTokens(ret, crossChain);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-          }
-          ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
-          if(!ret.code) {
-            err = ret;
-          }
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
-      case 'crossETH':
-        try {
-          let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-          let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          if (payload.type === 'REDEEM') {
-            payload.input.x = ccUtil.hexAdd0x(payload.input.x);
-          }
-          ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
+        case 'updateTokensInfo':
+            {
+                let { addr, key, value } = payload;
+                try {
+                    setting.updateTokenKeyValue(addr, key, value);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+                break
+            }
 
-      case 'crossEOS':
-        try {
-          let srcChain, dstChain;
-          if(payload.source !== 'WAN') {
-            srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
-            dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-          } else {
-            srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-            dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
-          }
-          ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
+        case 'updateCcTokensInfo':
+            {
+                let { addr, key, value } = payload;
+                try {
+                    setting.updateCcTokenKeyValue(addr, key, value);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+                break
+            }
+
+        case 'addCustomToken':
+            let { tokenAddr, symbol, decimals, select } = payload;
+            try {
+                setting.addToken(tokenAddr, { select, symbol, decimals });
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+            break
+
+        case 'deleteCustomToken':
+            try {
+                let { tokenAddr } = payload;
+                setting.remove(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+            break
+
+        case 'updateTokensBalance':
+            let { address, tokenScAddr, chain } = payload;
+            try {
+                ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getSmgList':
+            let coin2WanRatio
+            try {
+                if (payload.crossChain.startsWith('0x')) {
+                    if (payload.getCoin2WanRatio) {
+                        if (payload.chain === 'EOS') {
+                            ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
+                            coin2WanRatio = (ccUtil.getRegTokens('EOS'))[0].ratio;
+                        } else {
+                            [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
+                        }
+                        ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+                    } else {
+                        ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
+                    }
+                } else {
+                    if (payload.getCoin2WanRatio) {
+                        [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio(payload.crossChain)]);
+                        ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
+                    } else {
+                        ret = await ccUtil.getSmgList(payload.crossChain);
+                    }
+                }
+
+                if (payload.crossChain === 'BTC') {
+                    let net = network === 'main' ? 'mainnet' : 'testnet';
+                    ret.forEach(smg => {
+                        if (smg.btcAddress.startsWith('0x')) {
+                            smg.smgBtcAddr = smg.btcAddress;
+                            smg.btcAddress = btcUtil.hash160ToAddress(smg.btcAddress, 'pubkeyhash', net);
+                        }
+                    });
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getHtmlAddr':
+            try {
+                if (payload && payload.symbol) {
+                    ret = setting.htlcAddresses[payload.symbol];
+                } else {
+                    ret = setting.htlcAddresses;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'crossBTC':
+            try {
+                let feeHard = network === 'main' ? 10000 : 100000;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                if (payload.type === 'LOCK' && payload.source === 'WAN') {
+                    payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
+                }
+                if (payload.type === 'REDEEM') {
+                    if (payload.source === 'WAN') {
+                        payload.input.feeHard = feeHard
+                    }
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                if (payload.type === 'REVOKE') {
+                    if (payload.source === 'BTC') {
+                        payload.input.feeHard = feeHard
+                    }
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                    err = ret;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'crossETH':
+            try {
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                if (payload.type === 'REDEEM') {
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'crossEOS':
+            try {
+                let srcChain, dstChain;
+                if (payload.source !== 'WAN') {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                } else {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
         case 'crossErc20':
-          try {
-            let srcChain, dstChain;
-            if(payload.source !== 'WAN') {
-              srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
-              dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-            } else {
-              srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-              dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
+            try {
+                let srcChain, dstChain;
+                if (payload.source !== 'WAN') {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                } else {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
+                }
+                if (payload.type === 'REDEEM') {
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-            if (payload.type === 'REDEEM') {
-              payload.input.x = ccUtil.hexAdd0x(payload.input.x);
-            }
-            ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
-      case 'getAllUndoneCrossTrans':
-        try {
-          ret = {
-            canRedeem: [],
-            canRevoke: []
-          };
-          let crossCollection = global.wanDb.getItemAll('crossTrans', {});
-          let crossBTCCollection = global.wanDb.getItemAll('crossTransBtc', {});
+        case 'getAllUndoneCrossTrans':
+            try {
+                ret = {
+                    canRedeem: [],
+                    canRevoke: []
+                };
+                let crossCollection = global.wanDb.getItemAll('crossTrans', {});
+                let crossBTCCollection = global.wanDb.getItemAll('crossTransBtc', {});
 
-          crossCollection.forEach(record =>{
-            if(ccUtil.canRedeem(record).code) {
-                record.redeemTryCount = 1;
-                ret.canRedeem.push(record);
-            }
-            if(ccUtil.canRevoke(record).code) {
-                record.revokeTryCount = 1;
-                ret.canRevoke.push(record);
-            }
-          });
+                crossCollection.forEach(record => {
+                    if (ccUtil.canRedeem(record).code) {
+                        record.redeemTryCount = 1;
+                        ret.canRedeem.push(record);
+                    }
+                    if (ccUtil.canRevoke(record).code) {
+                        record.revokeTryCount = 1;
+                        ret.canRevoke.push(record);
+                    }
+                });
 
-          crossBTCCollection.forEach(item => {
-            if(item.hashX) {
-              if(['sentRedeemFailed', 'waitingX'].includes(item.status)) {
-                ret.canRedeem.push(item);
-              }
-              if(['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
-                ret.canRevoke.push(item);
-              }
+                crossBTCCollection.forEach(item => {
+                    if (item.hashX) {
+                        if (['sentRedeemFailed', 'waitingX'].includes(item.status)) {
+                            ret.canRedeem.push(item);
+                        }
+                        if (['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
+                            ret.canRevoke.push(item);
+                        }
+                    }
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-          })
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
-      case 'getAllCrossTrans':
-        try {
-          ret = global.wanDb.getItemAll('crossTrans', {});
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
-
-      case 'increaseFailedRetryCount':
-        try {
-          let { hashX, toCount, isRedeem, transType } = payload;
-          let record = global.wanDb.getItem(transType, { hashX });
-          if (record) {
-            if (isRedeem) {
-              record.redeemTryCount = toCount;
-            } else {
-              record.revokeTryCount = toCount;
+        case 'getAllCrossTrans':
+            try {
+                ret = global.wanDb.getItemAll('crossTrans', {});
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-            global.wanDb.updateItem(transType, { hashX:record.hashX }, record);
-            ret = true;
-          } else {
-            ret = false;
-          }
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-        sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break
-  }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'increaseFailedRetryCount':
+            try {
+                let { hashX, toCount, isRedeem, transType } = payload;
+                let record = global.wanDb.getItem(transType, { hashX });
+                if (record) {
+                    if (isRedeem) {
+                        record.redeemTryCount = toCount;
+                    } else {
+                        record.revokeTryCount = toCount;
+                    }
+                    global.wanDb.updateItem(transType, { hashX: record.hashX }, record);
+                    ret = true;
+                } else {
+                    ret = false;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+    }
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {

@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, initRegTokens } from 'utils/helper';
 
 import style from './Layout.less';
 import SideBar from './Sidebar';
@@ -21,7 +21,8 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  getRegTokensInfo: () => stores.tokens.getRegTokensInfo(),
+  getTokensInfo: () => stores.tokens.getTokensInfo(),
+  getCcTokensInfo: () => stores.tokens.getCcTokensInfo(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
@@ -61,14 +62,17 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
-          await this.props.getRegTokensInfo();
+          await initRegTokens('ETH');
+          await initRegTokens('EOS');
+          await this.props.getTokensInfo();
+          await this.props.getCcTokensInfo();
           await this.props.getMnemonic();
           this.setState({
             loading: false
           });
           clearInterval(id);
         } catch (err) {
-          console.log('Get mnemonic failed');
+          console.log('Init failed');
         }
       }
     }, 3000);

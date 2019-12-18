@@ -112,6 +112,7 @@ const en_US = {
     'Config.enableWrc20': 'Enable WRC-20 tokens',
     'Config.deleteConfirm': 'Deletion confirm',
     'Config.confirmText': 'Are you sure to delete it?',
+    'Config.enableEosToken': 'Enable EOS tokens',
 
     'PasswordConfirmForm.password': 'Password',
     'PasswordConfirmForm.inputPwd': 'Input password',

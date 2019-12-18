@@ -7,7 +7,6 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
-import { CROSSCHAINTYPE } from 'utils/settings';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 
 class CrossChain {
@@ -29,49 +28,18 @@ class CrossChain {
     })
   }
 
-  @computed get erc20CrossChainTokensInfo () {
-    let list = [];
-    Object.keys(tokens.tokensList).forEach(item => {
-    let val = tokens.tokensList[item];
-    if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr && val.chain === 'ETH') {
-        list.push({
-          addr: item,
-          symbol: val.symbol,
-          select: val.ccSelect
-        })
-      }
-    })
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
-  }
-
-  @computed get eosCrossChainTokensInfo () {
-    let list = [];
-    Object.keys(tokens.tokensList).forEach(item => {
-    let val = tokens.tokensList[item];
-    if (!CROSSCHAINTYPE.includes(val.symbol) && !val.userAddr && val.chain === 'EOS') {
-        list.push({
-          addr: item,
-          symbol: val.symbol,
-          select: val.ccSelect
-        })
-      }
-    })
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
+  @computed get crossChainTokensInfo () {
+    return tokens.ccTokens;
   }
 
   @computed get crossChainOnSideBar() {
     let list = [];
-    Object.keys(tokens.tokensList).forEach(item => {
-      if (tokens.tokensList[item].ccSelect && !CROSSCHAINTYPE.includes(tokens.tokensList[item].symbol)) {
-        list.push({
-          tokenAddr: item,
-          tokenOrigAddr: tokens.tokensList[item].tokenOrigAddr || '',
-          symbol: tokens.tokensList[item].symbol,
-          chain: tokens.tokensList[item].chain
-        })
+    Object.keys(tokens.ccTokens).forEach(item => {
+      if (tokens.ccTokens[item].select) {
+        list.push(tokens.ccTokens[item]);
       }
     });
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt());
+    return list;
   }
 
   @computed get crossETHTrans () {

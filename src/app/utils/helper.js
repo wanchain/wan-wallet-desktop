@@ -287,6 +287,19 @@ export const isSdkReady = function () {
   });
 };
 
+export const initRegTokens = (crossChain) => {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_initRegTokens', { crossChain }, (err, data) => {
+      if (err) {
+        console.log('initRegTokens: ', err);
+        reject(err)
+        return;
+      }
+      resolve()
+    })
+  })
+}
+
 export const checkAddrType = function (addr, addrInfo) {
   let type = false;
   if (typeof addr === 'string') {
