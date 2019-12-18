@@ -1262,7 +1262,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'deleteCustomToken':
             try {
                 let { tokenAddr } = payload;
-                setting.remove(`settings.tokens_advance.${network}.${tokenAddr.toLowerCase()}`);
+                setting.remove(`settings.${network}.tokens.${tokenAddr.toLowerCase()}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

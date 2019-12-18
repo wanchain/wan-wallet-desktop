@@ -99,17 +99,16 @@ class Config extends Component {
   }
 
   deleteToken = () => {
-    // console.log('deleteToken:', this.state.tokenToDelete.addr);
-    this.props.deleteCustomToken(this.state.tokenToDelete.addr);
-    /* wand.request('crossChain_deleteCustomToken', { tokenAddr: token }, err => {
+    const addr = this.state.tokenToDelete.addr;
+    wand.request('crossChain_deleteCustomToken', { tokenAddr: addr }, err => {
       if (err) {
         console.log('stores_deleteCustomToken', err);
         message.warn(intl.get('Config.deleteTokenAddrErr'));
       } else {
-        this.props.deleteCustomToken(token);
+        this.props.deleteCustomToken(addr);
         message.success(intl.get('TransHistory.success'))
       }
-    }); */
+    });
     this.hideDeleteToken();
   }
 
@@ -170,7 +169,7 @@ class Config extends Component {
               }
             })
           }
-          < div className={style['add_token']} onClick={this.handleAddToken}>
+          <div className={style['add_token']} onClick={this.handleAddToken}>
             <div className={style['account_pattern']}> + </div>
           </div>
           {
