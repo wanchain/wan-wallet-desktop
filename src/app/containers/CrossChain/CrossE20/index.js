@@ -13,7 +13,7 @@ const CHAINTYPE = 'ETH';
 const WANCHAIN = 'WAN';
 
 @inject(stores => ({
-  tokensList: stores.tokens.tokensList,
+  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.ethAddress.getNormalAmount,

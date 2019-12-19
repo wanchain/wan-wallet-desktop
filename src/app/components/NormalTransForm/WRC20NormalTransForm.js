@@ -14,7 +14,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
 
 @inject(stores => ({
   settings: stores.session.settings,
-  tokensList: stores.tokens.tokensList,
+  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
@@ -225,7 +225,7 @@ class WRC20NormalTransForm extends Component {
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
-
+    console.log(confirmVisible, 'kkkkkkkk')
     return (
       <div>
         <Modal

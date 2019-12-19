@@ -114,6 +114,29 @@ export function isSameString(a, b) {
   }
 }
 
+export function formatTokensList(data) {
+  let newData = {};
+  Object.keys(data).forEach(item => {
+    let tmp = data[item];
+    if (item.startsWith('eosio') || item.startsWith('0x')) {
+      newData[data[item].wan_addr] = {
+        symbol: tmp.symbol,
+        decimals: tmp.decimals,
+        tokenOrigAddr: item.startsWith('eosio') ? wand.ccUtil.encodeAccount('EOS', item) : item,
+        chain: tmp.chain
+      }
+    } else {
+      newData[data[item].wan_addr] = {
+        symbol: tmp.symbol,
+        decimals: tmp.decimals,
+        chain: tmp.chain
+      }
+    }
+  });
+
+  return newData;
+}
+
 export function promiseTimeout (ms, p, desc) {
   // Create a promise that rejects in <ms> milliseconds
   let id;

@@ -13,7 +13,7 @@ const CHAINTYPE = 'EOS';
 const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
 
 @inject(stores => ({
-  tokensList: stores.tokens.tokensList,
+  tokensList: stores.tokens.formatTokensList,
   language: stores.languageIntl.language,
   addrInfo: stores.eosAddress.accountInfo,
   wanAddrInfo: stores.wanAddress.addrInfo,

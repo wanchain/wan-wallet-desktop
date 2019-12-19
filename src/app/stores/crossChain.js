@@ -34,9 +34,9 @@ class CrossChain {
 
   @computed get crossChainOnSideBar() {
     let list = [];
-    Object.keys(tokens.ccTokens).forEach(item => {
-      if (tokens.ccTokens[item].select) {
-        list.push(tokens.ccTokens[item]);
+    tokens.ccTokensSiderbar.forEach(item => {
+      if (item.select) {
+        list.push(item);
       }
     });
     return list;
@@ -74,7 +74,7 @@ class CrossChain {
 
   @computed get crossErc20Trans () {
     let crossEthTrans = [];
-    let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
+    let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
         let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
@@ -144,7 +144,7 @@ class CrossChain {
 
   @computed get crossEOSTrans () {
     let crossEOSTrans = [];
-    let currTokenInfo = Object.values(tokens.tokensList).find(item => isSameString(item.symbol, self.currSymbol))
+    let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
         crossEOSTrans.push({

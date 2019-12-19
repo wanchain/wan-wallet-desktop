@@ -104,6 +104,7 @@ class Sidebar extends Component {
           icon: 'block'
         })),
       );
+      console.log(walletChildren, 'kkkkkkk')
     } else {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }
@@ -112,7 +113,7 @@ class Sidebar extends Component {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
         return ({
           title: item.symbol,
-          key: `/crossChain/${item.addr}/${item.symbol}`,
+          key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
           icon: 'block'
         })
       }));
