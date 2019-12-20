@@ -23,6 +23,7 @@ const fr_FR = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -104,6 +105,7 @@ const fr_FR = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
+    'Config.enableEosToken': 'Enable EOS tokens',
 
     'PasswordConfirmForm.password': 'Mot de passe',
     'PasswordConfirmForm.inputPwd': 'Saisir le mot de passe',

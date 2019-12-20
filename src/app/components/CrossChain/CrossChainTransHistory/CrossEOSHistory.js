@@ -12,14 +12,13 @@ import history from 'static/image/history.png';
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
-  crossETHTrans: stores.crossChain.crossETHTrans,
-  crossErc20Trans: stores.crossChain.crossErc20Trans,
+  crossEOSTrans: stores.crossChain.crossEOSTrans,
   transColumns: stores.languageIntl.transColumns,
   updateCrossTrans: () => stores.crossChain.updateCrossTrans(),
 }))
 
 @observer
-class CrossChainTransHistory extends Component {
+class CrossEOSHistory extends Component {
   state = {
     visible: false,
     record: {},
@@ -48,13 +47,13 @@ class CrossChainTransHistory extends Component {
   }
 
   render () {
-    const { crossETHTrans, crossErc20Trans, transColumns, symbol } = this.props;
+    const { crossEOSTrans, crossErc20Trans, transColumns, symbol } = this.props;
     let trans;
 
-    if (symbol === 'ETH') {
-      trans = crossETHTrans;
-      transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainAddr)}</span></div>;
-      transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainAddr)}</span></div>;
+    if (symbol === 'EOS') {
+      trans = crossEOSTrans;
+      transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
+      transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
       transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${text}`)}>{text}</Tooltip>;
     } else {
       trans = crossErc20Trans;
@@ -76,4 +75,4 @@ class CrossChainTransHistory extends Component {
   }
 }
 
-export default CrossChainTransHistory;
+export default CrossEOSHistory;

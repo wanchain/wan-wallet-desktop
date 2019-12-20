@@ -25,7 +25,8 @@ export default () => {
             <Route path="/validator" component={Validator} />
             <Route path="/tokens/:tokenAddr/:symbol" component={TokenTrans} />
             <Route path="/e20tokens/:tokenAddr/:symbol" component={E20TokenTrans} />
-            <Route path="/crossChain/:tokenAddr/:symbol" component={CrossE20} />
+            <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
+            <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
             <Route path="/dex" component={Dex} />
           </Switch>
         </Main>

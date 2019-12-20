@@ -41,7 +41,7 @@ class SendCrossChainParams {
       self.transParams[addr] = {
         gasPrice,
         source: params.chainType,
-        destination: params.chainType === 'ETH' ? 'ETH' : 'WAN',
+        destination: params.chainType !== 'WAN' ? 'WAN' : params.chainType,
         from: {
           walletID: 1,
           path: params.path

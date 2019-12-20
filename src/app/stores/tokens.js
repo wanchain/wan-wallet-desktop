@@ -12,22 +12,24 @@ class Tokens {
 
   @observable tokensList = {};
 
+  @observable ccTokensList = {};
+
   @observable tokensBalance = {};
 
   @observable E20TokensBalance = {};
 
-  @action setCurrToken (addr, symbol) {
+  @action setCurrToken(addr, symbol) {
     if (symbol) {
       addr = Object.keys(self.tokensList).find(item => self.tokensList[item].symbol === symbol)
     }
     self.currTokenAddr = addr;
   }
 
-  @action getRegTokensInfo () {
+  @action getTokensInfo() {
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_getRegTokensInfo', null, (err, data) => {
+      wand.request('crossChain_getTokensInfo', {}, (err, data) => {
         if (err) {
-          console.log('getWrcTokensInfo: ', err);
+          console.log('getTokensInfo: ', err);
           reject(err)
           return;
         }
@@ -37,13 +39,31 @@ class Tokens {
     })
   }
 
-  @action addCustomToken (tokenInfo) {
+  @action getCcTokensInfo() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getCcTokensInfo', {}, (err, data) => {
+        if (err) {
+          console.log('getCcTokensInfo: ', err);
+          reject(err)
+          return;
+        }
+        self.ccTokensList = data;
+        resolve()
+      })
+    })
+  }
+
+  @action addCustomToken(tokenInfo) {
     let { tokenAddr } = tokenInfo;
     self.tokensList[tokenAddr.toLowerCase()] = {
       select: false,
       symbol: tokenInfo.symbol,
       decimals: tokenInfo.decimals
     }
+  }
+
+  @action deleteCustomToken (tokenAddr) {
+    delete self.tokensList[tokenAddr.toLowerCase()];
   }
 
   @action updateTokensBalance (tokenScAddr) {
@@ -58,7 +78,7 @@ class Tokens {
     })
   }
 
-  @action updateE20TokensBalance (tokenScAddr) {
+  @action updateE20TokensBalance(tokenScAddr) {
     let normalArr = Object.keys(ethAddress.addrInfo['normal']);
     wand.request('crossChain_updateTokensBalance', { address: normalArr, tokenScAddr, chain: 'ETH' }, (err, data) => {
       if (err) {
@@ -69,7 +89,7 @@ class Tokens {
     })
   }
 
-  @action updateTokensInfo (addr, key, value) {
+  @action updateTokensInfo(addr, key, value) {
     wand.request('crossChain_updateTokensInfo', { addr, key, value }, (err) => {
       if (err) {
         console.log('crossChain_updateTokensInfo: ', err)
@@ -80,56 +100,60 @@ class Tokens {
     })
   }
 
-  @action addWrc20Tokens (scInfo) {
+  @action updateCcTokensInfo(addr, key, value) {
+    wand.request('crossChain_updateCcTokensInfo', { addr, key, value }, (err) => {
+      if (err) {
+        console.log('crossChain_updateCcTokensInfo: ', err)
+        return;
+      }
+      self.ccTokensList[addr][key] = value;
+      // self.tokensList[addr] = Object.assign({}, self.tokensList[addr], { [key]: value });
+    })
+  }
+
+  @action addWrc20Tokens(scInfo) {
     const { addr } = scInfo;
     if (addr) {
       self.wrc20List.addr = { ...scInfo };
     }
   }
 
-  @computed get wrc20TokensInfo () {
+  @computed get getTokenList() {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
       list.push({
         addr: item,
-        symbol: !val.userAdrr ? `W${val.symbol}` : val.symbol,
+        chain: val.chain,
+        symbol: val.symbol,
+        decimals: val.decimals,
+        buddy: val.buddy,
         select: val.select
       })
     })
-    return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
+    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
-  @computed get erc20TokensInfo () {
+  @computed get ccTokens() {
+    let excludedList = CROSSCHAINTYPE;
     let list = [];
-    Object.keys(self.tokensList).forEach(item => {
-      let val = self.tokensList[item];
-      if (!WALLET_CHAIN.includes(val.symbol) && !val.userAdrr && val.chain === 'ETH') {
-        list.push({
-          addr: item,
-          symbol: val.symbol,
-          select: val.erc20Select,
-          erc20Addr: val.tokenOrigAddr
-        })
+    Object.keys(self.ccTokensList).forEach(item => {
+      try {
+        let val = self.ccTokensList[item];
+        if (!excludedList.includes(item)) {
+          list.push({
+            addr: item,
+            chain: val.chain,
+            symbol: val.symbol,
+            decimals: val.decimals,
+            select: val.select
+          })
+        }
+      } catch (err) {
+        console.log(`Get cross chain ${item} failed`, err);
       }
     })
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
-  }
-
-  @computed get eosTokensInfo () {
-    let list = [];
-    Object.keys(self.tokensList).forEach(item => {
-      let val = self.tokensList[item];
-      if (!CROSSCHAINTYPE.includes(val.symbol) && val.chain === 'EOS') {
-        list.push({
-          addr: item,
-          symbol: val.symbol,
-          select: val.erc20Select,
-          erc20Addr: val.tokenOrigAddr
-        })
-      }
-    })
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt())
+    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
   @computed get tokensOnSideBar() {
@@ -138,29 +162,14 @@ class Tokens {
       if (self.tokensList[item].select) {
         list.push({
           tokenAddr: item,
-          tokenOrigAddr: self.tokensList[item].tokenOrigAddr || '',
-          symbol: !self.tokensList[item].userAddr ? `W${self.tokensList[item].symbol}` : self.tokensList[item].symbol
-        })
-      }
-    });
-    return list.sort((a, b) => a.symbol.substr(1).codePointAt() - b.symbol.substr(1).codePointAt())
-  }
-
-  @computed get e20TokensOnSideBar() {
-    let list = [];
-    Object.keys(self.tokensList).forEach(item => {
-      if (self.tokensList[item].erc20Select) {
-        list.push({
-          tokenAddr: self.tokensList[item].tokenOrigAddr,
-          tokenWanAddr: item || '',
           symbol: self.tokensList[item].symbol
         })
       }
     });
-    return list.sort((a, b) => a.symbol.codePointAt() - b.symbol.codePointAt());
+    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
-  @computed get getTokensListInfo () {
+  @computed get getTokensListInfo() {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     normalArr.forEach(item => {
@@ -187,7 +196,7 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getTokensListInfo_2WanTypes () {
+  @computed get getTokensListInfo_2WanTypes() {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo['normal']);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
@@ -216,7 +225,7 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getE20TokensListInfo () {
+  @computed get getE20TokensListInfo() {
     let addrList = [];
     let normalArr = Object.keys(ethAddress.addrInfo.normal);
     normalArr.forEach(item => {
@@ -245,7 +254,7 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getTokenAmount () {
+  @computed get getTokenAmount() {
     let amount = new BigNumber(0);
     let importArr = Object.keys(wanAddress.addrInfo['import']);
 
@@ -269,7 +278,7 @@ class Tokens {
     return formatNum(amount.toString(10));
   }
 
-  @computed get getE20TokenAmount () {
+  @computed get getE20TokenAmount() {
     let amount = new BigNumber(0);
 
     self.getE20TokensListInfo.forEach(item => {

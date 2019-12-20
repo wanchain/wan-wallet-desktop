@@ -282,7 +282,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

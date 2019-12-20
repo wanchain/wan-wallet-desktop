@@ -23,6 +23,7 @@ const th_TH = {
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
+    'Common.eosTokens': 'EOS Tokens',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -108,6 +109,7 @@ const th_TH = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 tokens',
     'Config.enableWrc20': 'Enable WRC-20 tokens',
+    'Config.enableEosToken': 'Enable EOS tokens',
 
     'PasswordConfirmForm.password': 'รหัสผ่าน',
     'PasswordConfirmForm.inputPwd': 'กรอกรหัสผ่าน',

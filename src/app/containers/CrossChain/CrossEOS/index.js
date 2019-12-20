@@ -7,13 +7,16 @@ import totalImg from 'static/image/eos.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import EOSTrans from 'components/CrossChain/SendCrossChainTrans/EOSTrans';
-import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
+import CrossEOSHistory from 'components/CrossChain/CrossChainTransHistory/CrossEOSHistory';
 
 const CHAINTYPE = 'EOS';
+const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
 
 @inject(stores => ({
   tokensList: stores.tokens.tokensList,
   language: stores.languageIntl.language,
+  addrInfo: stores.eosAddress.accountInfo,
+  wanAddrInfo: stores.wanAddress.addrInfo,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getAccountListWithBalance: stores.eosAddress.getAccountListWithBalance,
@@ -28,16 +31,16 @@ const CHAINTYPE = 'EOS';
 class CrossEOS extends Component {
   constructor (props) {
     super(props);
-    this.props.setCurrSymbol(CHAINTYPE);
-    this.props.setCurrToken(null, CHAINTYPE);
+    this.props.setCurrSymbol(props.symbol);
+    this.props.setCurrToken(null, props.symbol);
     this.props.changeTitle('Common.crossChain');
+    this.tokenAddr = Object.keys(props.tokensList).find(item => props.tokensList[item].symbol === props.symbol);
   }
 
   componentDidMount() {
-    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === CHAINTYPE);
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
-      this.props.updateTokensBalance(tokenAddr);
+      this.props.updateTokensBalance(this.tokenAddr);
     }, 5000)
   }
 
@@ -45,42 +48,34 @@ class CrossEOS extends Component {
     clearInterval(this.timer);
   }
 
-  inboundHandleSend = () => {
-    let { transParams: { from, to, amount, storeman, txFeeRatio } } = this.props;
-    let input = { from, to, amount, storeman, txFeeRatio };
+  inboundHandleSend = from => {
+    let { to, amount, storeman, txFeeRatio } = this.props.transParams[from];
+    let input = { from: { walletID: 1, address: from, path: this.props.addrInfo[from].path }, to, amount, storeman, txFeeRatio };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossEOS', { input, source: 'EOS', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossEOS', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'EOS', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockEOS:', err);
           message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
+          console.log(ret.result.transaction_id);
           return resolve(ret)
         }
-      })
-    })
+      });
+    });
   }
 
-  outboundHandleSend = () => {
-    let transParams = this.props.BTCCrossTransParams;
-    let input = {
-      from: transParams.from,
-      amount: transParams.amount,
-      crossAddr: transParams.crossAddr,
-      gasPrice: transParams.gasPrice,
-      gas: transParams.gas,
-      txFeeRatio: transParams.txFeeRatio,
-      storeman: transParams.storeman
-    };
+  outboundHandleSend = from => {
+    let { to, amount, storeman, txFeeRatio, gasPrice, gasLimit, from: fromParams } = this.props.transParams[from];
+    let input = { from: fromParams, to, amount, storeman, txFeeRatio, gasPrice, gasLimit };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossEOS', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'WAN', destination: 'EOS', type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('crossChain_lockWBTC:', err);
+          console.log('crossChain_lockWEOS:', err);
           message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
+          console.log(ret);
           return resolve(ret)
         }
       })
@@ -101,7 +96,7 @@ class CrossEOS extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><EOSTrans record={record} from={record.address} decimals={4} handleSend={this.outboundHandleSend} direction={INBOUND}/></div>
+      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.inboundHandleSend} direction={INBOUND}/></div>
     }
   ];
 
@@ -125,12 +120,12 @@ class CrossEOS extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><EOSTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} direction={OUTBOUND}/></div>
+      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} path={record.path} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.outboundHandleSend} direction={OUTBOUND}/></div>
     }
   ];
 
   render () {
-    const { getAccountListWithBalance, getTokensListInfo } = this.props;
+    const { getAccountListWithBalance, getTokensListInfo, symbol } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -143,7 +138,7 @@ class CrossEOS extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">EOS </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{symbol} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -151,7 +146,7 @@ class CrossEOS extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WEOS </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{`W${symbol}`} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -160,7 +155,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-
+            <CrossEOSHistory name={['normal']} symbol={symbol} />
           </Col>
         </Row>
       </div>
@@ -168,4 +163,4 @@ class CrossEOS extends Component {
   }
 }
 
-export default CrossEOS;
+export default props => <CrossEOS {...props} symbol={props.match.params.symbol || CHAINTYPE} key={props.match.params.tokenAddr || EOSSYMBOL} tokenOrigAddr={props.match.params.tokenAddr || EOSSYMBOL} />;

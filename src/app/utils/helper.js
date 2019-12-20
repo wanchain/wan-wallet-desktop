@@ -287,6 +287,19 @@ export const isSdkReady = function () {
   });
 };
 
+export const initRegTokens = (crossChain) => {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_initRegTokens', { crossChain }, (err, data) => {
+      if (err) {
+        console.log('initRegTokens: ', err);
+        reject(err)
+        return;
+      }
+      resolve()
+    })
+  })
+}
+
 export const checkAddrType = function (addr, addrInfo) {
   let type = false;
   if (typeof addr === 'string') {
@@ -331,6 +344,24 @@ export const getBalanceByAddr = function (addr, addrInfo) {
     }
   })
   return balance;
+}
+
+export const getAddrInfoByTypes = function (info, type, addrInfo, needType) {
+  let tmp = {};
+  let val;
+  Object.keys(addrInfo).forEach(item => {
+    tmp = Object.assign(tmp, addrInfo[item])
+  })
+  Object.keys(tmp).forEach(item => {
+    if (tmp[item][type] === info) {
+      if (needType === 'address') {
+        val = item;
+      } else {
+        val = tmp[item][needType];
+      }
+    }
+  })
+  return val;
 }
 
 export const getPrivateBalanceByAddr = function (addr, addrInfo) {

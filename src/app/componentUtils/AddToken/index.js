@@ -61,7 +61,7 @@ class AddToken extends Component {
     }
     wand.request('crossChain_addCustomToken', token, err => {
       if (err) {
-        console.log('stores_addCustomToken', err);
+        console.log('crossChain_addCustomToken', err);
         message.warn(intl.get('Config.addTokenAddrErr'));
       } else {
         addCustomToken(token)

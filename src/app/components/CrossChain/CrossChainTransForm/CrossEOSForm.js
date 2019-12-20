@@ -9,11 +9,11 @@ import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, PENALTYNUM, INBOUND } from 'utils/settings';
-import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
+import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossEOSConfirmForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr } from 'utils/helper';
 
-const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
+const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -48,28 +48,25 @@ class CrossEOSForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, addrInfo, settings, form, from, direction, wanAddrInfo, tokenAddr, estimateFee, balance } = this.props;
+    const { updateTransParams, addrInfo, settings, form, from, direction, wanAddrInfo, estimateFee, balance: origAddrAmount } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
         return;
       };
 
-      let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let origAddrAmount = balance;
-      let destAddrAmount = direction === INBOUND ? getBalanceByAddr(to, wanAddrInfo) : addrInfo[from].balance;
-      let path = direction === INBOUND ? WANPATH + wanAddrInfo.normal[to].path : addrInfo[to].path;
+      let { pwd, amount: sendAmount, to, totalFee } = form.getFieldsValue(['pwd', 'amount', 'to', 'totalFee']);
+      let destAddrAmount = direction === INBOUND ? getAddrInfoByTypes(to, 'name', wanAddrInfo, 'balance') : addrInfo[to].balance;
+      let path = direction === INBOUND ? WANPATH + getAddrInfoByTypes(to, 'name', wanAddrInfo, 'path') : addrInfo[to].path;
+      let toAddress = direction === INBOUND ? getAddrInfoByTypes(to, 'name', wanAddrInfo, 'address') : to
 
-      if (tokenAddr) {
-        if (isExceedBalance(origAddrAmount, estimateFee) || isExceedBalance(destAddrAmount, estimateFee)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } else {
-        if (isExceedBalance(origAddrAmount, direction === INBOUND ? 0 : estimateFee, sendAmount) || isExceedBalance(destAddrAmount, direction === INBOUND ? estimateFee : 0)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
+      if (isExceedBalance(origAddrAmount, sendAmount) || isExceedBalance(destAddrAmount, direction === INBOUND ? estimateFee : 0)) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      }
+      if (direction !== INBOUND && isExceedBalance(getBalanceByAddr(from, wanAddrInfo), totalFee)) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
       }
 
       if (settings.reinput_pwd) {
@@ -81,12 +78,12 @@ class CrossEOSForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: { walletID: 1, path, address: to }, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: { walletID: 1, path, address: toAddress }, toAddr: to, amount: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: { walletID: 1, path, address: to }, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: { walletID: 1, path, address: toAddress }, toAddr: to, amount: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -98,16 +95,16 @@ class CrossEOSForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     const { decimals, balance, direction, smgList, form, estimateFee } = this.props;
-    if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
+    if (new BigNumber(value).gt('0') && checkAmountUnit(decimals || 18, value)) {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
         if (direction !== INBOUND) {
-          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
+          let storemanAccount = form.getFieldValue('storemanAccount');
           let smg = smgList.find(item => item.storemanGroup === storemanAccount);
           let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString();
           form.setFieldsValue({
-            totalFee: `${newOriginalFee} WAN`,
+            totalFee: `${new BigNumber(newOriginalFee).plus(estimateFee)} WAN`,
           });
         }
         callback();
@@ -119,7 +116,7 @@ class CrossEOSForm extends Component {
 
   checkQuota = (rule, value, callback) => {
     if (new BigNumber(value).gt(0)) {
-      let { amount } = this.props.form.getFieldsValue(['amount']);
+      let amount = this.props.form.getFieldValue('amount');
       if (isExceedBalance(value, amount)) {
         callback(intl.get('CrossChainTransForm.overQuota'));
         return;
@@ -152,13 +149,13 @@ class CrossEOSForm extends Component {
     if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.values(wanAddrInfo.normal).map(item => item.name);
-      title = symbol ? `${symbol} -> W${symbol}` : 'EOS -> WEOS';
-      tokenSymbol = symbol || 'EOS';
+      title = `${symbol} -> W${symbol}`;
+      tokenSymbol = symbol;
     } else {
       desChain = 'EOS';
       selectedList = Object.keys(addrInfo);
-      title = symbol ? `W${symbol} -> ${symbol}` : 'WEOS -> EOS';
-      tokenSymbol = symbol ? `W${symbol}` : 'WEOS';
+      title = `W${symbol} -> ${symbol}`;
+      tokenSymbol = `W${symbol}`;
     }
 
     if (smgList.length === 0) {
@@ -251,7 +248,7 @@ class CrossEOSForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} chainType={'EOS'} estimateFee={estimateFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm tokenSymbol={tokenSymbol} direction={direction} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
       </div>
     );
   }

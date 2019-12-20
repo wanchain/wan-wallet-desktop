@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
 import { getFullChainName } from 'utils/helper';
+import { INBOUND } from 'utils/settings';
 
 const inputCom = <Input disabled={true} />
 
@@ -13,16 +14,18 @@ const inputCom = <Input disabled={true} />
 }))
 
 @observer
-class CrossETHConfirmForm extends Component {
+class CrossEOSConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, direction, estimateFee, handleCancel, tokenSymbol } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
-    let desChain;
+    let srcChain, desChain;
 
-    if (chainType === 'ETH') {
+    if (direction === INBOUND) {
+      srcChain = 'EOS'
       desChain = 'WAN';
     } else {
-      desChain = 'ETH';
+      srcChain = 'WAN'
+      desChain = 'EOS';
     }
 
     return (
@@ -38,7 +41,7 @@ class CrossETHConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}>
+          <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName(srcChain) + ')'}>
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
@@ -48,7 +51,7 @@ class CrossETHConfirmForm extends Component {
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
-            {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}
+            {getFieldDecorator('fee', { initialValue: `${estimateFee}` })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('Common.amount') + ` (${tokenSymbol})`}>
             {getFieldDecorator('amount', { initialValue: amount })(inputCom)}
@@ -59,4 +62,4 @@ class CrossETHConfirmForm extends Component {
   }
 }
 
-export default CrossETHConfirmForm;
+export default CrossEOSConfirmForm;
