@@ -12,10 +12,12 @@ import Identicon from 'identicon.js';
 import keccak from 'keccak';
 import BigNumber from 'bignumber.js';
 import wanUtil from 'wanchain-util';
+const ethUtil = require('ethereumjs-util');
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
+import { settings } from 'cluster'
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -31,6 +33,7 @@ const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_SETTING = 'setting'
 
+
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
 const DB_BTC_COLLECTION = 'crossTransBtc'
@@ -41,6 +44,10 @@ const WANBIP44Path = "m/44'/5718350'/0'/0/"
 // chain ID consts
 const WAN_ID = 5718350;
 const network = setting.get('network');
+
+const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
+const WALLET_ID_LEDGER   = 0x02;
+const WALLET_ID_TREZOR   = 0x03;
 
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
@@ -112,6 +119,7 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
     let err
     const [action, id] = actionUni.split('#')
+    console.log(actionUni);
 
     switch (action) {
         case 'lock':
@@ -198,7 +206,33 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
+        case 'signPersonalMessage':
+            {
+                let ret = null;
+                let { walletID, path, rawTx } = payload;
 
+                let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
+    
+                logger.info('Sign signPersonalMessage:');
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
+    
+                if (hdWallet) {
+                    try {
+                        ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
+                        console.log('ret:', ret);
+                    } catch (e) {
+                        logger.error(e.message || e.stack);
+                        console.log('hdWallet.signMessage error:', e);
+                        err = e
+                    }
+                } else {
+                    err = new Error('Can not found wallet.');
+                    console.log('hdWallet is undefine');
+                }
+    
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+                break
+            }
         case 'signTransaction':
             {
                 let sig = {};
@@ -210,6 +244,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
+                    console.log('ret:', ret);
                     sig.r = '0x' + ret.r.toString('hex');
                     sig.s = '0x' + ret.s.toString('hex');
                     sig.v = '0x' + ret.v.toString('hex');
@@ -644,9 +679,13 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path)
+                let fromAddr = from.address;
+                if (fromAddr.indexOf('0x') === -1) {
+                    fromAddr = '0x' + fromAddr;
+                }
                 let input = {
                     symbol: symbol,
-                    from: '0x' + from.address,
+                    from: fromAddr,
                     to: to,
                     amount: amount,
                     gasPrice: gasPrice,
@@ -1560,17 +1599,36 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
+        
+        case 'getDexInjectFile':
+            console.log('getDexInjectFile is called');
+            let ret = "";
+
+            if(setting.isDev) {
+                ret = `file://${__dirname}/../modals/dexInject.js`;
+            } else {
+                ret = `file://${__dirname}/modals/dexInject.js`
+            }
+            console.log(setting.isDev, ret);
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 
-
 function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
-    const senderWindow = Windows.getById(id)
+    let senderWindow = Windows.getById(id)
     const { err } = payload
 
-    if (_.isObject(err) || !_.isEmpty(err)) payload.err = errorWrapper(err)
-    senderWindow.send('renderer_windowMessage', endpoint, payload)
+    if (_.isObject(err) || !_.isEmpty(err)) {
+        payload.err = errorWrapper(err)
+    }
+
+    if (senderWindow) {
+        senderWindow.send('renderer_windowMessage', endpoint, payload)
+    } else {
+        console.log('can not find window id');
+    }
 }
 
 function errorWrapper(err) {

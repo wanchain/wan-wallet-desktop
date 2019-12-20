@@ -47,3 +47,36 @@ export const getPublicKey = callback => {
     callback(error, {})
   });
 }
+
+export const signPersonalMessage = async (path, message) => {
+  let bHex = false;
+  if (message.indexOf('0x') !== -1) {
+    bHex = true;
+    message = message.slice(2);
+  }
+
+  const result = await TrezorConnect.ethereumSignMessage({ path, message: message, hex: bHex });
+  if (!result.success) {
+    throw new Error('Signature failed!');
+  }
+  return '0x' + result.payload.signature;
+}
+
+export const getAddresses = async (basePath, from, count) => {
+  let bundle = [];
+  for (let i = from; i < from + count; i++) {
+    const path = basePath + '/' + i.toString();
+    bundle.push({ path: path, showOnTrezor: false });
+  }
+  if (bundle.length > 0) {
+    const bundleResult = await TrezorConnect.ethereumGetAddress({
+      bundle: bundle
+    });
+    if (!bundleResult.success) {
+      throw new Error('Get address failed!');
+    }
+
+    return bundleResult;
+  }
+  return null;
+}

@@ -429,6 +429,9 @@ const en_US = {
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
 
+    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.dex': 'DEX',
+
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
     'utils.helper.getGasPriceFailed': 'Get gas price failed',

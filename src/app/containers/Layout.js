@@ -144,6 +144,7 @@ class Layout extends Component {
 
   render () {
     const { hasMnemonicOrNot, auth, location } = this.props;
+    const showHeader = this.props.location.pathname !== '/dex';
     if (this.state.loading) {
       return <Loading />
     } else {
@@ -158,11 +159,11 @@ class Layout extends Component {
               <SideBar handleNav={this.toggleNav} path={location.pathname}/>
             </Col>
             <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
-              <MHeader />
+              {showHeader ? <MHeader /> : null}
               <Row className="content">
                 {this.props.children}
               </Row>
-              <MFooter />
+              {showHeader ? <MFooter /> : null}
             </Col>
           </Row>
         )

@@ -1,7 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import intl from 'react-intl-universal';
 
-import { WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
+import { WALLET_CHAIN, CROSSCHAINTYPE, THIRD_PARTY_OPEN } from 'utils/settings';
 
 class LanguageIntl {
   @observable language = 'en_US';
@@ -195,8 +195,8 @@ class LanguageIntl {
     ]
   }
 
-  @computed get sidebarColumns() {
-    return self.language && [
+  @computed get sidebarColumns () {
+    let sidebar = self.language && [
       {
         title: intl.get('menuConfig.portfolio'),
         step: '1',
@@ -269,6 +269,24 @@ class LanguageIntl {
         icon: 'setting'
       },
     ];
+
+    if (THIRD_PARTY_OPEN) {
+      sidebar.splice(sidebar.length - 1, 0, {
+        title: intl.get('menuConfig.thirdPartyDapps'),
+        step: '1',
+        key: '/thirdPartyDapps',
+        icon: 'stock',
+        children: [
+          {
+            title: intl.get('menuConfig.dex'),
+            key: '/dex',
+            icon: 'stock',
+          }
+        ]
+      });
+    }
+
+    return sidebar;
   }
 
   @computed get portfolioColumns() {

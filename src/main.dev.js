@@ -62,6 +62,8 @@ async function createMain () {
     }
   }
 
+  console.log('setting.isDev:', setting.isDev);
+
   if (process.platform === 'linux') {
     opts.electronOptions.icon = path.join(__dirname, '/icons/icon-512x512.png')
   }

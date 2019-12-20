@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, E20TokenTrans, EthAccount, BtcAccount, EosAccount, CrossETH, CrossE20, CrossBTC, CrossEOS } from './containers';
+import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, E20TokenTrans, EthAccount, BtcAccount, EosAccount, CrossETH, CrossE20, CrossBTC, CrossEOS, Dex } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -27,6 +27,7 @@ export default () => {
             <Route path="/e20tokens/:tokenAddr/:symbol" component={E20TokenTrans} />
             <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
             <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
+            <Route path="/dex" component={Dex} />
           </Switch>
         </Main>
       </HashRouter>
