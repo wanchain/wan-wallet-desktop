@@ -41,7 +41,7 @@ class Portfolio {
   } */
 
   @action setCoin() {
-    Object.assign(self.coinList, self.getToken);
+    self.coinList = Object.assign({}, self.defaultCoinList, self.getToken);
   }
 
   @computed get getToken() {
