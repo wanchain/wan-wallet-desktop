@@ -24,7 +24,7 @@ message.config({
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getE20TokenAmount,
   transParams: stores.sendTransParams.transParams,
-  getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
+  getE20TokensListInfo: stores.tokens.getE20TokensInfo,
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),

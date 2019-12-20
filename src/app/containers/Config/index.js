@@ -209,7 +209,7 @@ class Config extends Component {
             <p className={style['set_title']}>{intl.get('Config.enableEosToken')}</p>
             {
               crossChainTokensInfo.map((item, index) => {
-                if (item.chain === 'EOS') {
+                if (item.chain === 'EOS' && item.symbol !== 'EOS') {
                   return <Checkbox key={index} checked={item.select} onChange={() => this.props.updateCcTokensInfo(item.addr, 'select', !item.select)}>{item.symbol}</Checkbox>
                 }
               })

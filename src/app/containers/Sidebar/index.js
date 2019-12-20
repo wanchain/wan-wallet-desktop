@@ -100,11 +100,10 @@ class Sidebar extends Component {
         walletChildren.length - walletChainLen,
         ...tokensOnSideBar.map(item => ({
           title: item.symbol,
-          key: `/tokens/${item.tokenAddr}/${item.symbol}`,
+          key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}`,
           icon: 'block'
         })),
       );
-      console.log(walletChildren, 'kkkkkkk')
     } else {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }

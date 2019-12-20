@@ -225,7 +225,7 @@ class WRC20NormalTransForm extends Component {
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
-    console.log(confirmVisible, 'kkkkkkkk')
+
     return (
       <div>
         <Modal

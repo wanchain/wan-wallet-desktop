@@ -23,8 +23,8 @@ export default () => {
             <Route path="/offline" component={Offline} />
             <Route path="/delegation" component={Delegation} />
             <Route path="/validator" component={Validator} />
-            <Route path="/tokens/:tokenAddr/:symbol" component={TokenTrans} />
-            <Route path="/e20tokens/:tokenAddr/:symbol" component={E20TokenTrans} />
+            <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
+            <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
             <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
             <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
             <Route path="/dex" component={Dex} />

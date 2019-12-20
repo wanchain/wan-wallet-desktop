@@ -55,7 +55,6 @@ class TokenTrans extends Component {
   constructor (props) {
     super(props);
     this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString()
-    console.log(this.props.tokenAddr, 'hjhhhhhh')
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
