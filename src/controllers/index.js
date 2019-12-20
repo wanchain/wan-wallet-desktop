@@ -1219,9 +1219,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
     switch (action) {
         case 'getTokenInfo':
-            let { scAddr } = payload;
             try {
-                ret = await ccUtil.getTokenInfo(scAddr, 'WAN');
+              let { scAddr, chain } = payload;
+              console.log(scAddr, chain, 'kkk')
+              ret = await ccUtil.getTokenInfo(scAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1310,9 +1311,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             break
 
         case 'updateTokensBalance':
-            let { address, tokenScAddr, chain } = payload;
             try {
-                ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
+              let { address, tokenScAddr, chain } = payload;
+              ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

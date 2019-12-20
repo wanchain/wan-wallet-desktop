@@ -49,7 +49,8 @@ class Config extends Component {
     this.props.updateSettings({ logout_timeout: e });
   }
 
-  handleAddToken = () => {
+  handleAddToken = chain => {
+    this.addTokenChain = chain
     this.setState({
       showAddToken: true
     });
@@ -169,12 +170,9 @@ class Config extends Component {
               }
             })
           }
-          <div className={style['add_token']} onClick={this.handleAddToken}>
+          <div className={style['add_token']} onClick={() => this.handleAddToken('WAN')}>
             <div className={style['account_pattern']}> + </div>
           </div>
-          {
-            this.state.showAddToken && <AddToken onCancel={this.onCancel} />
-          }
           <div className={style.sub_title}>
             <p className={style['set_title']}>{intl.get('Config.enableErc20')}</p>
             {
@@ -187,12 +185,9 @@ class Config extends Component {
                 }
               })
             }
-            <div className={style['add_token']} onClick={this.handleAddToken}>
+            <div className={style['add_token']} onClick={() => this.handleAddToken('ETH')}>
               <div className={style['account_pattern']}> + </div>
             </div>
-            {
-              this.state.showAddToken && <AddToken onCancel={this.onCancel} />
-            }
           </div>
         </Card>
 
@@ -220,7 +215,9 @@ class Config extends Component {
           <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
         </Card>
-
+        {
+          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />
+        }
         {
           this.state.showDeleteToken && <ConfirmDeleteToken token={this.state.tokenToDelete} onOk={this.deleteToken} onClose={this.hideDeleteToken} />
         }

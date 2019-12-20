@@ -102,6 +102,8 @@ const pt_PT = {
     'Config.oneHour': '1 hora',
     'Config.twoHours': '2 horas',
     'Config.addToken': 'Add Token',
+    'Config.addTokenETH': 'Add ERC20 Token',
+    'Config.addTokenWAN': 'Add WRC20 Token',
     'Config.checkTokenAddr': 'Token Address is invalid',
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.existedTokenAddr': 'Existing token address',

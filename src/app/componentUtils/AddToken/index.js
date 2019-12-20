@@ -17,17 +17,20 @@ class AddToken extends Component {
     showConfirm: false,
     tokenAddr: '',
     tokenInfo: null,
-    btnLoading: false
+    btnLoading: false,
+    loading: false
   }
 
   handleSearch = () => {
-    wand.request('crossChain_getTokenInfo', { scAddr: this.state.tokenAddr }, (err, ret) => {
+    this.setState({ loading: true })
+    wand.request('crossChain_getTokenInfo', { scAddr: this.state.tokenAddr, chain: this.props.chain }, (err, ret) => {
       if (err) {
         console.log('crossChain_getTokenInfo:', err);
+        this.setState({ loading: false })
         message.warn(intl.get('Config.checkTokenAddr'))
         return;
       }
-      if (ret.decimals !== '0') {
+      if (ret.symbol !== '') {
         this.setState({
           showConfirm: true,
           tokenInfo: ret
@@ -35,6 +38,7 @@ class AddToken extends Component {
       } else {
         message.warn(intl.get('Config.checkTokenAddr'))
       }
+      this.setState({ loading: false })
     })
   }
 
@@ -45,9 +49,9 @@ class AddToken extends Component {
   }
 
   handleAddToken = () => {
-    const { tokensList, addCustomToken } = this.props;
+    const { tokensList, addCustomToken, chain } = this.props;
     const { tokenAddr, tokenInfo } = this.state;
-    let token = { tokenAddr, select: false, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals, userAdd: true };
+    let token = { tokenAddr, select: false, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals, chain };
     if (tokensList[tokenAddr.toLowerCase()]) {
       message.warn(intl.get('Config.existedTokenAddr'));
       this.setState({
@@ -80,10 +84,10 @@ class AddToken extends Component {
   render () {
     return (
       <div>
-        <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false}
+        <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken${this.props.chain}`)} closable={false}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.handleSearch}>{intl.get('popup.search')}</Button>,
+            <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleSearch}>{intl.get('popup.search')}</Button>,
           ]}
         >
           <div>
@@ -93,7 +97,7 @@ class AddToken extends Component {
         {
           this.state.showConfirm &&
           <div>
-            <Modal visible destroyOnClose={true} title={intl.get('Config.addToken')} closable={false} className={style.showTokenModal}
+            <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken${this.props.chain}`)} closable={false} className={style.showTokenModal}
             footer={[
                 <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
                 <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('Common.ok')}</Button>,

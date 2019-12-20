@@ -101,6 +101,8 @@ const en_US = {
     'Config.oneHour': '1 hour',
     'Config.twoHours': '2 hours',
     'Config.addToken': 'Add Token',
+    'Config.addTokenETH': 'Add ERC20 Token',
+    'Config.addTokenWAN': 'Add WRC20 Token',
     'Config.checkTokenAddr': 'Token Address is invalid',
     'Config.addTokenAddrErr': 'Failed to add token, Please try again!',
     'Config.deleteTokenAddrErr': 'Failed to delete token',

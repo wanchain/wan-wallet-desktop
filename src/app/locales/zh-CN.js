@@ -102,6 +102,8 @@ const zh_CN = {
     'Config.oneHour': '1小时',
     'Config.twoHours': '2小时',
     'Config.addToken': '添加代币信息',
+    'Config.addTokenETH': '添加ERC20代币信息',
+    'Config.addTokenWAN': '添加WRC20代币信息',
     'Config.checkTokenAddr': '代币合约地址不可用',
     'Config.addTokenAddrErr': '添加代币失败，请重新尝试',
     'Config.deleteTokenAddrErr': '删除代币失败',
