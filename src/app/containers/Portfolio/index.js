@@ -51,7 +51,7 @@ class Portfolio extends Component {
     this.props.updateCoinPrice();
     this.timer = setInterval(() => {
       this.props.updateCoinPrice();
-    }, 5000)
+    }, 60 * 1000)
   }
 
   componentWillUnmount () {
