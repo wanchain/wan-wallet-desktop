@@ -15,7 +15,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
 
 @inject(stores => ({
   settings: stores.session.settings,
-  tokensList: stores.tokens.tokensList,
+  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,

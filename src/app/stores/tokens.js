@@ -4,7 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
-import { formatNum, formatNumByDecimals } from 'utils/support';
+import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
 import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
 
 class Tokens {
@@ -20,7 +20,7 @@ class Tokens {
 
   @action setCurrToken(addr, symbol) {
     if (symbol) {
-      addr = Object.keys(self.tokensList).find(item => self.tokensList[item].symbol === symbol)
+      addr = Object.keys(self.formatTokensList).find(item => self.formatTokensList[item].symbol === symbol)
     }
     self.currTokenAddr = addr;
   }
@@ -51,6 +51,10 @@ class Tokens {
         resolve()
       })
     })
+  }
+
+  @computed get formatTokensList() {
+    return formatTokensList(self.ccTokensList)
   }
 
   @action addCustomToken(tokenInfo) {
@@ -96,7 +100,6 @@ class Tokens {
         return;
       }
       self.tokensList[addr][key] = value;
-      // self.tokensList[addr] = Object.assign({}, self.tokensList[addr], { [key]: value });
     })
   }
 
@@ -107,7 +110,6 @@ class Tokens {
         return;
       }
       self.ccTokensList[addr][key] = value;
-      // self.tokensList[addr] = Object.assign({}, self.tokensList[addr], { [key]: value });
     })
   }
 
@@ -156,6 +158,28 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
+  @computed get ccTokensSiderbar() {
+    let list = [];
+    Object.keys(self.ccTokensList).forEach(item => {
+      try {
+        let val = self.ccTokensList[item];
+        if (!CROSSCHAINTYPE.includes(item)) {
+          list.push({
+            tokenAddr: val.wan_addr,
+            tokenOrigAddr: val.chain === 'EOS' ? wand.ccUtil.encodeAccount('EOS', item) : item,
+            chain: val.chain,
+            symbol: val.symbol,
+            decimals: val.decimals,
+            select: val.select
+          })
+        }
+      } catch (err) {
+        console.log(`Get cross chain ${item} failed`, err);
+      }
+    })
+    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
+  }
+
   @computed get tokensOnSideBar() {
     let list = [];
     Object.keys(self.tokensList).forEach(item => {
@@ -171,12 +195,12 @@ class Tokens {
 
   @computed get getTokensListInfo() {
     let addrList = [];
-    let normalArr = Object.keys(wanAddress.addrInfo['normal']);
+    let normalArr = Object.keys(wanAddress.addrInfo.normal);
     normalArr.forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }
@@ -198,14 +222,14 @@ class Tokens {
 
   @computed get getTokensListInfo_2WanTypes() {
     let addrList = [];
-    let normalArr = Object.keys(wanAddress.addrInfo['normal']);
-    let importArr = Object.keys(wanAddress.addrInfo['import']);
+    let normalArr = Object.keys(wanAddress.addrInfo.normal);
+    let importArr = Object.keys(wanAddress.addrInfo.import);
     normalArr.concat(importArr).forEach((item, index) => {
       let balance;
       let type = normalArr.length - 1 < index ? 'import' : 'normal';
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }
@@ -230,11 +254,11 @@ class Tokens {
     let normalArr = Object.keys(ethAddress.addrInfo.normal);
     normalArr.forEach(item => {
       let balance;
-      if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-        let tokenOrigAddr = self.tokensList[self.currTokenAddr].tokenOrigAddr;
+      if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
+        let tokenOrigAddr = self.formatTokensList[self.currTokenAddr].tokenOrigAddr;
 
         if (self.E20TokensBalance && self.E20TokensBalance[tokenOrigAddr]) {
-          balance = formatNumByDecimals(self.E20TokensBalance[tokenOrigAddr][item], self.tokensList[self.currTokenAddr].decimals)
+          balance = formatNumByDecimals(self.E20TokensBalance[tokenOrigAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }

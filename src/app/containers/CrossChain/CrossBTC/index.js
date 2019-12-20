@@ -11,7 +11,7 @@ import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossB
 
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
-  tokensList: stores.tokens.tokensList,
+  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.btcAddress.getAddrList,
