@@ -4,6 +4,8 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
+import btcAddress from './btcAddress';
+import eosAddress from './eosAddress';
 import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
 import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
 
@@ -67,11 +69,11 @@ class Tokens {
     }
   }
 
-  @action deleteCustomToken (tokenAddr) {
+  @action deleteCustomToken(tokenAddr) {
     delete self.tokensList[tokenAddr.toLowerCase()];
   }
 
-  @action updateTokensBalance (tokenScAddr) {
+  @action updateTokensBalance(tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo.normal);
     let importArr = Object.keys(wanAddress.addrInfo.import);
     wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
@@ -81,6 +83,44 @@ class Tokens {
       }
       self.tokensBalance[tokenScAddr] = data;
     })
+  }
+
+  @action getTokenBalance(item) {
+    const { chain, scAddr } = item;
+    return new Promise((resolve, reject) => {
+      let normalArr = [];
+      let importArr = [];
+      switch (chain) {
+        case 'WAN':
+          normalArr = Object.keys(wanAddress.addrInfo['normal'] || []);
+          importArr = Object.keys(wanAddress.addrInfo['import'] || []);
+          break;
+        case 'ETH':
+          normalArr = Object.keys(ethAddress.addrInfo['normal'] || []);
+          importArr = Object.keys(ethAddress.addrInfo['import'] || []);
+          break;
+        case 'BTC':
+          normalArr = Object.keys(btcAddress.addrInfo['normal'] || []);
+          importArr = Object.keys(btcAddress.addrInfo['import'] || []);
+          break;
+        case 'EOS':
+          /* normalArr = Object.keys(eosAddress.keyInfo['normal']);
+          importArr = Object.keys(eosAddress.keyInfo['import']); */
+          break;
+        default:
+          console.log('Default.....');
+      }
+      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
+        // console.log('===========result:', err, data);
+        if (err) {
+          console.log('stores_getTokensBalance:', err);
+          reject(err);
+        } else {
+          // self.tokensBalance[scAddr] = data;
+          resolve(data);
+        }
+      });
+    });
   }
 
   @action updateE20TokensBalance(tokenScAddr) {
@@ -189,7 +229,9 @@ class Tokens {
         list.push({
           chain: val.chain,
           tokenAddr: item,
-          symbol: val.symbol
+          symbol: val.symbol,
+          buddy: val.buddy,
+          decimals: val.decimals,
         })
       }
     });

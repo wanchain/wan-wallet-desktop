@@ -1310,6 +1310,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             break
 
         case 'updateTokensBalance':
+            let { address, tokenScAddr, chain } = payload;
             try {
               let { address, tokenScAddr, chain } = payload;
               ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);

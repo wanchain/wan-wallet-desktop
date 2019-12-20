@@ -32,9 +32,9 @@ function TokenImg (text) {
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
-  tokensOnSideBar: stores.tokens.tokensOnSideBar,
   setCoin: (coins) => stores.portfolio.setCoin(coins),
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
+  updateTokenBalance: () => stores.portfolio.updateTokenBalance(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -46,12 +46,13 @@ class Portfolio extends Component {
   }
 
   componentDidMount () {
-    const { tokensOnSideBar } = this.props;
-    this.props.setCoin(tokensOnSideBar.map(v => v.symbol));
+    this.props.setCoin();
     this.props.updateCoinPrice();
+    this.props.updateTokenBalance();
     this.timer = setInterval(() => {
       this.props.updateCoinPrice();
-    }, 60 * 1000)
+      this.props.updateTokenBalance();
+    }, 60000);
   }
 
   componentWillUnmount () {
