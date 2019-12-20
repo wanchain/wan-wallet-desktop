@@ -1221,7 +1221,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'getTokenInfo':
             try {
               let { scAddr, chain } = payload;
-              console.log(scAddr, chain, 'kkk')
               ret = await ccUtil.getTokenInfo(scAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1289,9 +1288,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
 
         case 'addCustomToken':
-            let { tokenAddr, symbol, decimals, select } = payload;
             try {
-                setting.addToken(tokenAddr, { select, symbol, decimals });
+              let { tokenAddr, symbol, decimals, select, chain } = payload;
+              setting.addToken(tokenAddr, { select, symbol, decimals, chain });
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

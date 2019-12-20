@@ -60,7 +60,8 @@ class Tokens {
   @action addCustomToken(tokenInfo) {
     let { tokenAddr } = tokenInfo;
     self.tokensList[tokenAddr.toLowerCase()] = {
-      select: false,
+      select: tokenInfo.select,
+      chain: tokenInfo.chain,
       symbol: tokenInfo.symbol,
       decimals: tokenInfo.decimals
     }
