@@ -22,6 +22,7 @@ const WANCHAIN = 'WAN';
   getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  getTokenIcon: tokenScAddr => stores.tokens.getTokenIcon(tokenScAddr),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr),
   updateE20TokensBalance: tokenScAddr => stores.tokens.updateE20TokensBalance(tokenScAddr)
@@ -34,6 +35,7 @@ class CrossE20 extends Component {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(this.props.symbol);
     this.props.setCurrToken(this.props.tokenAddr);
+    this.img = this.props.getTokenIcon(this.props.tokenAddr);
   }
 
   componentDidMount() {
@@ -167,7 +169,7 @@ class CrossE20 extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{symbol} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{symbol} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -175,7 +177,7 @@ class CrossE20 extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{`W${symbol}`} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{`W${symbol}`} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
