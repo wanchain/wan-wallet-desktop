@@ -186,7 +186,7 @@ export const getGasPrice = function (chainType) {
 
 export const getSmgList = function (crossChain, origAddr, getCoin2WanRatio = 'false') {
   return new Promise((resolve, reject) => {
-    wand.request('crossChain_getSmgList', { crossChain, origAddr, getCoin2WanRatio }, (err, val) => {
+    wand.request('crossChain_getSmgList', { crossChain, chain: origAddr, getCoin2WanRatio }, (err, val) => {
       if (err) {
         console.log('Get Smg list failed', err)
         return reject(err);
