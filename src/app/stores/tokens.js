@@ -1,6 +1,10 @@
 import wanUtil from 'wanchain-util';
 import BigNumber from 'bignumber.js';
 import { observable, action, computed, toJS } from 'mobx';
+import Identicon from 'identicon.js';
+import btcImg from 'static/image/btc.png';
+import ethImg from 'static/image/eth.png';
+import eosImg from 'static/image/eos.png';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
@@ -25,6 +29,29 @@ class Tokens {
       addr = Object.keys(self.formatTokensList).find(item => self.formatTokensList[item].symbol === symbol)
     }
     self.currTokenAddr = addr;
+  }
+
+  @action getToken(scAddr) {
+    let token = self.tokensList[scAddr];
+    if (token.buddy && self.tokensList[token.buddy]) {
+      token.iconData = self.tokensList[token.buddy].iconData;
+      token.iconType = self.tokensList[token.buddy].iconType;
+    }
+    return token;
+  }
+
+  @action getTokenIcon(scAddr) {
+    let token = self.getToken(scAddr);
+    switch (token.symbol) {
+      case 'WBTC':
+        return btcImg;
+      case 'WETH':
+        return ethImg;
+      case 'WEOS':
+        return eosImg;
+      default:
+        return token && token.iconData ? `data:image/${token.iconType};base64,` + token.iconData : 'data:image/png;base64,' + new Identicon(scAddr).toString();
+    }
   }
 
   @action getTokensInfo() {

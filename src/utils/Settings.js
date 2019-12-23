@@ -4,6 +4,7 @@ import { app } from 'electron'
 import Logger from './Logger'
 import yargs from 'yargs'
 import WalletHelper from '~/src/utils/Helper'
+// import totalImg from '~/static/image/btc.png';
 
 // caches for config
 let _mode = undefined
@@ -27,14 +28,14 @@ const defaultConfig = {
           "symbol": "WETH",
           "decimals": 18,
           "chain": "WAN",
-          "buddy": true
+          "buddy": 'ETH'
         },
         "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
           "chain": "WAN",
-          "buddy": true
+          "buddy": 'BTC'
         },
       },
       cc_tokens: {
@@ -61,14 +62,14 @@ const defaultConfig = {
           "symbol": "WETH",
           "decimals": 18,
           "chain": "WAN",
-          "buddy": true
+          "buddy": 'ETH'
         },
         "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
           "chain": "WAN",
-          "buddy": true
+          "buddy": 'BTC'
         },
       },
       cc_tokens: {
@@ -170,14 +171,19 @@ class Settings {
 
     regTokens.forEach(item => {
       /** Add original token */
-      if (tokens[item.tokenOrigAddr]) {
-        tokens[item.tokenOrigAddr].symbol = item.symbol;
-        tokens[item.tokenOrigAddr].decimals = item.decimals;
+      let token = tokens[item.tokenOrigAddr];
+      if (token) {
+        token.symbol = item.symbol;
+        token.decimals = item.decimals;
+        token.iconData = item.iconData;
+        token.iconType = item.iconType;
       } else {
         tokens[item.tokenOrigAddr] = {
           chain: crossChain,
           symbol: item.symbol,
-          decimals: item.decimals
+          decimals: item.decimals,
+          iconData: item.iconData,
+          iconType: item.iconType
         }
       }
 
@@ -185,13 +191,13 @@ class Settings {
       if (tokens[item.tokenWanAddr]) {
         tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
         tokens[item.tokenWanAddr].decimals = item.decimals;
-        tokens[item.tokenWanAddr].buddy = true;
+        tokens[item.tokenWanAddr].buddy = item.tokenOrigAddr;
       } else {
         tokens[item.tokenWanAddr] = {
           chain: 'WAN',
           symbol: `W${item.symbol}`,
           decimals: item.decimals,
-          buddy: true
+          buddy: item.tokenOrigAddr
         }
       }
       this.set(`settings.${network}.tokens`, tokens);

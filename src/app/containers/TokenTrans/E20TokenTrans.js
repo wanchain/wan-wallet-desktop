@@ -1,4 +1,3 @@
-import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -28,6 +27,7 @@ message.config({
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
   updateE20TokensBalance: tokenScAddr => stores.tokens.updateE20TokensBalance(tokenScAddr)
 }))
 
@@ -48,26 +48,26 @@ class E20TokenTrans extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer} /></div>
     }
   ];
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-    this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString();
+    this.img = this.props.getTokenIcon(this.props.tokenAddr);
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.updateE20TokensBalance(this.props.tokenAddr);
     }, 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -112,7 +112,7 @@ class E20TokenTrans extends Component {
     wand.shell.openExternal(href);
   }
 
-  render () {
+  render() {
     const { getAmount, getE20TokensListInfo, symbol, tokenAddr } = this.props;
 
     this.props.language && this.columns.forEach(col => {

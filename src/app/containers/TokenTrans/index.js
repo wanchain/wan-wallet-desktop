@@ -1,4 +1,3 @@
-import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -26,6 +25,7 @@ message.config({
   transParams: stores.sendTransParams.transParams,
   getTokensListInfo: stores.tokens.getTokensListInfo_2WanTypes,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
+  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
@@ -54,7 +54,7 @@ class TokenTrans extends Component {
 
   constructor (props) {
     super(props);
-    this.img = 'data:image/png;base64,' + new Identicon(this.props.tokenAddr).toString()
+    this.img = this.props.getTokenIcon(this.props.tokenAddr);
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
