@@ -11,6 +11,9 @@ export function formatNumByDecimals (value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
   }
+  if (decimals === 0) {
+    return new BigNumber(value).isInteger();
+  }
   return new BigNumber(value).dividedBy(10 ** decimals).toString(10);
 }
 
