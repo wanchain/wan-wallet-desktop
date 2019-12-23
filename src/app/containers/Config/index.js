@@ -159,19 +159,21 @@ class Config extends Component {
         </Card>
 
         <Card title={intl.get('Config.wallet')}>
-          <p className={style['set_title']}>{intl.get('Config.enableWrc20')}</p>
-          {
-            getTokenList.map((item, index) => {
-              if (item.chain === 'WAN') {
-                return <div key={index} style={{ display: 'inline-block' }}>
-                  <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'select', !item.select)}>{item.symbol}</Checkbox>
-                  <Icon type="close-circle" theme="filled" className={style.deleteIcon} onClick={() => this.showDeleteToken(item)} />
-                </div>
-              }
-            })
-          }
-          <div className={style['add_token']} onClick={() => this.handleAddToken('WAN')}>
-            <div className={style['account_pattern']}> + </div>
+          <div className={style.sub_title}>
+            <p className={style['set_title']}>{intl.get('Config.enableWrc20')}</p>
+            {
+              getTokenList.map((item, index) => {
+                if (item.chain === 'WAN') {
+                  return <div className={style.tokenStyle} key={index} style={{ display: 'inline-block' }}>
+                    <Checkbox key={index} checked={item.select} onChange={() => this.props.updateTokensInfo(item.addr, 'select', !item.select)}>{item.symbol}</Checkbox>
+                    <Icon type="close-circle" theme="filled" className={style.deleteIcon} onClick={() => this.showDeleteToken(item)} />
+                  </div>
+                }
+              })
+            }
+            <div className={style['add_token']} onClick={() => this.handleAddToken('WAN')}>
+              <div className={style['account_pattern']}> + </div>
+            </div>
           </div>
           <div className={style.sub_title}>
             <p className={style['set_title']}>{intl.get('Config.enableErc20')}</p>
