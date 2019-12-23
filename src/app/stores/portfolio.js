@@ -73,7 +73,8 @@ class Portfolio {
       url: 'https://min-api.cryptocompare.com/data/pricemulti',
       params: {
         fsyms: param.join(),
-        tsyms: 'USD'
+        tsyms: 'USD',
+        // api_key: '0e0983552fbfd1f4c8d166a3151bb956f0858554e395fb2c40f45206ce75e750',
       }
     }).then((res) => {
       console.log('<<<<<<<<<<< coin prices >>>>>>>>>>', res.data);
@@ -123,7 +124,8 @@ class Portfolio {
       price: { value: '$0', writable: true },
       balance: { value: self.coinList[key].balance ? self.coinList[key].balance : '0', writable: true }, // To do
       value: { value: '$0', writable: true },
-      portfolio: { value: '0%', writable: true }
+      portfolio: { value: '0%', writable: true },
+      scAddr: { value: self.coinList[key].scAddr, writable: true },
     }));
     if (self.coinPriceArr) {
       let amountValue = 0;
@@ -151,7 +153,17 @@ class Portfolio {
       }
     }
     list.sort((m, n) => {
-      return new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, '')) ? 1 : -1;
+      if (new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, ''))) {
+        return 1;
+      } else if (new BigNumber(m.value.replace(/\$/g, '')).eq(n.value.replace(/\$/g, ''))) {
+        if (new BigNumber(m.balance).lt(n.balance)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else {
+        return -1;
+      }
     });
     list.forEach(item => {
       item.name = Object.keys(self.defaultCoinList).includes(item.name) ? item.name : self.coinList[item.name].symbol;

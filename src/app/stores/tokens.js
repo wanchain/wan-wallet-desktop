@@ -138,12 +138,10 @@ class Tokens {
           console.log('Default.....');
       }
       wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
-        // console.log('===========result:', err, data);
         if (err) {
           console.log('stores_getTokensBalance:', err);
           reject(err);
         } else {
-          // self.tokensBalance[scAddr] = data;
           resolve(data);
         }
       });

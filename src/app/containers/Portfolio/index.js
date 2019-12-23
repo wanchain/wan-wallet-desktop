@@ -8,27 +8,6 @@ import ethLogo from 'static/image/eth.png';
 import btcLogo from 'static/image/btc.png';
 import eosLogo from 'static/image/eos.png';
 
-function TokenImg (text) {
-  let img;
-  switch (text) {
-    case 'WAN':
-      img = wanLogo;
-      break;
-    case 'ETH':
-      img = ethLogo;
-      break;
-    case 'BTC':
-      img = btcLogo;
-      break;
-    case 'EOS':
-      img = eosLogo;
-      break;
-  }
-  return (
-    <div><img className={style.nameIco} src={img} /><span>{text}</span></div>
-  );
-}
-
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
@@ -36,6 +15,7 @@ function TokenImg (text) {
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
   updateTokenBalance: () => stores.portfolio.updateTokenBalance(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
 }))
 
 @observer
@@ -59,10 +39,33 @@ class Portfolio extends Component {
     clearInterval(this.timer);
   }
 
+  TokenImg = (text, record) => {
+    let img;
+    switch (text) {
+      case 'WAN':
+        img = wanLogo;
+        break;
+      case 'ETH':
+        img = ethLogo;
+        break;
+      case 'BTC':
+        img = btcLogo;
+        break;
+      case 'EOS':
+        img = eosLogo;
+        break;
+      default:
+        img = this.props.getTokenIcon(record.scAddr);
+    }
+    return (
+      <div><img className={style.nameIco} src={img} /><span>{text}</span></div>
+    );
+  }
+
   render () {
     const { portfolioColumns, portfolioList } = this.props;
     const columns = [...portfolioColumns];
-    columns[0]['render'] = TokenImg;
+    columns[0]['render'] = this.TokenImg;
 
     return (
         <div>
