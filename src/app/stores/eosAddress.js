@@ -24,13 +24,12 @@ class EosAddress {
     self.keyInfo['normal'][newKey.publicKey] = {
       name: `EOS-PublicKey${newKey.start + 1}`,
       path: newKey.path,
-      accounts: newKey.accounts ? newKey.accounts : []
     };
   }
 
   @action updateKeyName(row, chainType) {
     let walletID = 1;
-    wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey, accounts: row.accounts } }, (err, res) => {
+    wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey } }, (err, res) => {
       if (!err && res) {
         self.keyInfo[chainType][row['publicKey']]['name'] = row.name;
       } else {
@@ -39,26 +38,16 @@ class EosAddress {
     })
   }
 
-  @action updateAccounts(row, chainType) {
+  @action setImportedUserAccount(accounts, network, wid, path, pubKey) {
     return new Promise((resolve, reject) => {
-      let walletID = 1;
-      wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey, accounts: row.accounts } }, (err, res) => {
-        if (!err && res) {
-          self.keyInfo[chainType][row['publicKey']]['accounts'] = row.accounts;
-          Object.values(row.accounts).forEach((v) => {
-            if (!self.accountInfo[v]) {
-              self.accountInfo[v] = {
-                publicKey: row.publicKey,
-                path: row.path
-              }
-            }
-          })
+      wand.request('account_setImportedUserAccounts', { accounts, network, wid, path, pubKey }, (err, res) => {
+        if (!err) {
           resolve();
         } else {
           console.log('Update accounts failed');
           reject(err);
         }
-      })
+      });
     });
   }
 
@@ -78,8 +67,7 @@ class EosAddress {
       keyList.push({
         name: item.name,
         path: item.path,
-        publicKey: key,
-        accounts: item.accounts ? [].concat(item.accounts) : [],
+        publicKey: key
       });
     });
     return keyList;
@@ -90,7 +78,7 @@ class EosAddress {
   }
 
   @computed get getAccountListWithBalance() {
-    return Object.values(self.accountInfo).filter((item) => Object.prototype.hasOwnProperty.call(item, 'address'));
+    return Object.values(self.accountInfo);
   }
 
   @computed get getAccount() {
@@ -104,31 +92,40 @@ class EosAddress {
         return;
       }
       let info = ret.accounts;
-      if (info && Object.keys(info).length) {
-        let typeFunc = id => id === '1' ? 'normal' : 'import';
+      if (ret && Object.keys(info).length) {
         Object.keys(info).forEach(path => {
-          Object.keys(info[path]).forEach(id => {
-            if (['1'].includes(id)) {
-              let item = info[path][id];
-              self.keyInfo[typeFunc(id)][item.publicKey] = {
-                name: item.name,
-                path: path.substr(path.lastIndexOf('\/') + 1),
-                accounts: item.accounts
-              }
-              Object.values(item.accounts).forEach((v) => {
-                if (!self.accountInfo[v]) {
-                  self.accountInfo[v] = {
-                    publicKey: item.publicKey,
-                    path: path,
-                    account: v,
-                  }
-                }
-              })
-            }
-          })
+          let item = info[path]['1'];
+          self.keyInfo['normal'][item.publicKey] = {
+            name: item.name,
+            path: path
+          }
         });
       }
-    })
+    });
+
+    wand.request('account_getAllAccounts', { chainID: 194 }, (err, ret) => {
+      if (err) {
+        console.log('Get user from DB failed ', err);
+        return;
+      }
+      if (ret && Object.keys(ret).length) {
+        Object.keys(ret).forEach(name => {
+          let item = ret[name]['active']['keys']['1'];
+          const path = Object.keys(item)[0];
+          if (name in self.accountInfo) {
+            self.accountInfo[name].path = path;
+            self.accountInfo[name].account = name;
+            self.accountInfo[name].id = '1';
+          } else {
+            self.accountInfo[name] = {
+              path: path,
+              account: name,
+              id: '1'
+            }
+          }
+        });
+      }
+    });
   }
 
   @action updateTransHistory(initialize = false) {
@@ -156,11 +153,8 @@ class EosAddress {
     let keys = Object.keys(obj);
     let accounts = Object.keys(self.accountInfo);
     keys.forEach(name => {
-      if (accounts.includes(name) && Object.prototype.hasOwnProperty.call(obj[name], 'address')) {
-        obj[name].publicKey = self.accountInfo[name].publicKey;
-        obj[name].account = name;
-        obj[name].path = self.accountInfo[name].path;
-        self.accountInfo[name] = obj[name];
+      if (accounts.includes(name)) {
+        self.accountInfo[name] = Object.assign({}, self.accountInfo[name], obj[name]);
       }
     })
   }

@@ -165,6 +165,7 @@ const en_US = {
     'EOSKeyPairList.searchPublicKey': 'Searched Public Key',
     'EOSKeyPairList.selectOneAccount': 'Please select at least one account',
     'EOSKeyPairList.tipText': `If you have never associated EOS accounts to EOS key pairs created by Wan Wallet, you can use third party service to create account and associate it to key pairs. If you already have EOS accounts associated to key pairs, you can create new EOS accounts using existing ones.`,
+    'EOSKeyPairList.getImportedAccountsFailed': 'Get imported accounts failed',
 
     'EOSAccountList.manageResource': 'Manage',
     'EOSAccountList.getResourcePriceFailed': 'Get resource price failed',
@@ -418,6 +419,9 @@ const en_US = {
     'CrossChainTransHistory.RevokeSendFailAfterRetries': 'Revocation Request Failed',
     'CrossChainTransHistory.RevokeSent': 'Revocation Request Sent',
     'CrossChainTransHistory.Revoked': 'Revoked',
+    'CrossChainTransHistory.redeemFinished': 'Redemption Finished',
+    'CrossChainTransHistory.sentHashConfirming': 'Confirming Transaction',
+    'CrossChainTransHistory.waitingCross': 'Waiting For Lock Request',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',

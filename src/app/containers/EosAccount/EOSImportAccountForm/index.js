@@ -7,7 +7,9 @@ import style from './index.less';
 
 @inject(stores => ({
     language: stores.languageIntl.language,
-    updateAccounts: (arr, type) => stores.eosAddress.updateAccounts(arr, type),
+    chainId: stores.session.chainId,
+    setImportedUserAccount: (...args) => stores.eosAddress.setImportedUserAccount(...args),
+    getUserKeyFromDB: () => stores.eosAddress.getUserKeyFromDB(),
 }))
 
 @observer
@@ -16,12 +18,6 @@ class EOSImportAccountForm extends Component {
         selections: []
     };
 
-    componentDidMount () {
-        this.setState({
-            selections: this.props.selectedRow.accounts
-        })
-    }
-
     handleOk = () => {
         let { form, selectedRow } = this.props;
         form.validateFields(err => {
@@ -29,11 +25,13 @@ class EOSImportAccountForm extends Component {
                 message.warn(intl.get('EOSKeyPairList.invalidFormData'));
                 return;
             };
-            let accounts = form.getFieldValue('accounts');
-            let obj = Object.assign({}, selectedRow);
-            obj.path = obj.path.includes(EOSPATH) ? `${obj.path}` : `${EOSPATH}${obj.path}`;
-            obj.accounts = accounts;
-            this.props.updateAccounts(obj, 'normal').catch(() => {
+            const accounts = form.getFieldValue('accounts');
+            const path = selectedRow.path.includes(EOSPATH) ? `${selectedRow.path}` : `${EOSPATH}${selectedRow.path}`;
+            const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
+            const wid = 1;
+            this.props.setImportedUserAccount(accounts, network, wid, path, selectedRow.publicKey).then(() => {
+                this.props.getUserKeyFromDB();
+            }).catch(() => {
                 message.error(intl.get('EOSKeyPairList.updateAccountInfoFailed'));
             });
             this.props.handleCancel();
@@ -92,7 +90,7 @@ class EOSImportAccountForm extends Component {
                                     (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
                             </Form.Item>
                             <div style={{ marginBottom: '24px' }}>
-                                <Table rowSelection={rowSelection} columns={this.columns()} rowKey="account" dataSource={this.props.accounts} rowKey={record => record.account} pagination={false} />
+                                <Table rowSelection={rowSelection} columns={this.columns()} rowKey="account" dataSource={accounts} rowKey={record => record.account} pagination={false} />
                             </div>
                             <Form.Item>
                                 {getFieldDecorator('accounts', { rules: [{ type: 'array', required: true, message: intl.get('EOSKeyPairList.selectOneAccount') }] })

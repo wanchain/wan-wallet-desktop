@@ -165,6 +165,7 @@ const zh_CN = {
     'EOSKeyPairList.searchPublicKey': '查询公钥',
     'EOSKeyPairList.selectOneAccount': '请选择至少一条账户',
     'EOSKeyPairList.tipText': `如果本地公私钥对没有账户关联，可到第三方创建并关联；如果已有关联账户，可直接通过该账户进行新账户创建；`,
+    'EOSKeyPairList.getImportedAccountsFailed': '获取已导入账户信息失败',
 
     'EOSAccountList.manageResource': '资源管理',
     'EOSAccountList.getResourcePriceFailed': '获取资源价格失败',
@@ -418,6 +419,9 @@ const zh_CN = {
     'CrossChainTransHistory.RevokeSendFailAfterRetries': '撤销申请失败',
     'CrossChainTransHistory.RevokeSent': '撤销申请已发送',
     'CrossChainTransHistory.Revoked': '已撤销',
+    'CrossChainTransHistory.redeemFinished': '赎回成功',
+    'CrossChainTransHistory.sentHashConfirming': '交易确认中',
+    'CrossChainTransHistory.waitingCross': '等待锁定',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

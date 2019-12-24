@@ -125,15 +125,14 @@ class EOSAccountNET extends Component {
 
     sendTrans = (obj) => {
         const { selectedAccount } = this.props;
-        let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
         let params = {
             action: obj.type === 'delegate' ? 'delegatebw' : 'undelegatebw',
             from: selectedAccount.account,
             to: obj.type === 'delegate' ? obj.account : selectedAccount.account,
             netAmount: obj.amount,
             cpuAmount: 0,
-            BIP44Path: `${EOSPATH}${pathAndId.path}`,
-            walletID: pathAndId.walletID,
+            BIP44Path: selectedAccount.path,
+            walletID: selectedAccount.id,
         };
         this.setState({
             loading: true

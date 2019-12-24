@@ -188,6 +188,9 @@ class Tokens {
 
   @computed get getTokenList() {
     let list = [];
+    if (!(self.tokensList instanceof Object)) {
+      return [];
+    }
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
       list.push({
@@ -205,6 +208,9 @@ class Tokens {
   @computed get ccTokens() {
     let excludedList = CROSSCHAINTYPE;
     let list = [];
+    if (!(self.ccTokensList instanceof Object)) {
+      return [];
+    }
     Object.keys(self.ccTokensList).forEach(item => {
       try {
         let val = self.ccTokensList[item];
@@ -226,6 +232,9 @@ class Tokens {
 
   @computed get ccTokensSiderbar() {
     let list = [];
+    if (!(self.ccTokensList instanceof Object)) {
+      return [];
+    }
     Object.keys(self.ccTokensList).forEach(item => {
       try {
         let val = self.ccTokensList[item];
@@ -248,6 +257,9 @@ class Tokens {
 
   @computed get tokensOnSideBar() {
     let list = [];
+    if (!(self.tokensList instanceof Object)) {
+      return [];
+    }
     Object.keys(self.tokensList).forEach(item => {
       let val = self.tokensList[item];
       if (val.select) {

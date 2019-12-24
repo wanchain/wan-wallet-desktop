@@ -625,6 +625,17 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getAllAccounts':
+            try {
+                ret = ccUtil.getEosAccounts();
+            } catch (e) {
+                logger.error('Get all accounts failed: ' + e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getAll':
             try {
                 ret = hdUtil.getUserAccountForChain(payload.chainID)
@@ -635,9 +646,34 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getImportedAccountsByPublicKey':
+            const { network, chainID, pubKey } = payload;
+            try {
+                ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey)
+            } catch (e) {
+                logger.error('Get all accounts failed: ' + e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+        
         case 'update':
             try {
                 ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'setImportedUserAccounts':
+            try {
+                const { network, wid, path, accounts, pubKey } = payload;
+                let [...ret] = await Promise.all(accounts.map(v => hdUtil.importUserAccount(network, wid, path, v, pubKey)));
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -728,7 +764,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 logger.info('Normal transaction: ' + JSON.stringify(payload));
 
-                // let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('eosio.token:EOS', 'EOS');
                 const EOSSYMBOL = ccUtil.encodeAccount('EOS', 'eosio.token:EOS');
                 console.log('EOSSYMBOL', EOSSYMBOL)
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');

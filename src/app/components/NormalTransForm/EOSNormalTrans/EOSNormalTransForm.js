@@ -89,14 +89,13 @@ class EOSNormalTransForm extends Component {
   sendTrans = () => {
     const { form, selectedAccount } = this.props;
     const data = form.getFieldsValue();
-    let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
     let params = {
       symbol: 'EOS',
       from: data.from,
       to: data.to,
       amount: `${data.amount} EOS`,
-      BIP44Path: `${EOSPATH}${pathAndId.path}`,
-      walletID: pathAndId.walletID,
+      BIP44Path: `${selectedAccount.path}`,
+      walletID: selectedAccount.id,
     };
     this.setState({
       loading: true

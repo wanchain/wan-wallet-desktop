@@ -8,14 +8,17 @@ import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import EOSImportAccountForm from '../EOSImportAccountForm';
+const pu = require('promisefy-util');
 
 const CHAINTYPE = 'EOS';
 const AddAccountForm = Form.create({ name: 'addAccountForm' })(EOSImportAccountForm);
+const CHAINID = 194;
 
 @inject(stores => ({
   language: stores.languageIntl.language,
   getKeyList: stores.eosAddress.getKeyList,
   accountInfo: stores.eosAddress.accountInfo,
+  chainId: stores.session.chainId,
   updateKeyName: (arr, type) => stores.eosAddress.updateKeyName(arr, type),
 }))
 
@@ -27,7 +30,7 @@ class EOSKeyPairList extends Component {
       showAddAccountForm: false,
       selectedRow: {},
       accountList: [],
-      spin: true
+      spin: false
     }
   }
 
@@ -64,46 +67,34 @@ class EOSKeyPairList extends Component {
     };
   });
 
-  importAccount = (record) => {
-    this.showAddAccountForm(record);
+  importAccount = async (record) => {
     this.setState({
-      accountList: [],
       spin: true
     });
-    wand.request('account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }, (err, response) => {
-      if (err) {
-        console.log('error:', err);
-        message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
-        this.setState({
-          spin: false
-        });
-      } else if (response instanceof Array && response.length) {
-        let accountList = [];
-        getEosAccountInfo(response).then(info => {
-          response.forEach(v => {
-            if (info[v] && info[v].activeKeys.includes(record.publicKey)) {
-              accountList.push({
-                account: v
-              });
-            }
+    this.showAddAccountForm(record);
+    const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
+    try {
+      let [importedList, accountList] = await Promise.all([pu.promisefy(wand.request, ['account_getImportedAccountsByPublicKey', { network: network, chainID: CHAINID, pubKey: record.publicKey }]), pu.promisefy(wand.request, ['account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }])]);
+      let importSelections = [];
+      accountList.forEach(v => {
+        if (!importedList.includes(v)) {
+          importSelections.push({
+            account: v
           });
-          this.setState({
-            accountList: accountList,
-            spin: false
-          });
-        }).catch(() => {
-          message.error(intl.get('EOSKeyPairList.getAccountListFailed'));
-          this.setState({
-            spin: false
-          });
-        });
-      } else {
-        message.warn(intl.get('EOSKeyPairList.noAccountFound'));
-        this.setState({
-          spin: false
-        });
-      }
-    });
+        }
+      });
+      this.setState({
+        accountList: importSelections,
+        spin: false
+      });
+    } catch (e) {
+      console.log('error:', e);
+      // message.error();
+      this.setState({
+        accountList: [],
+        spin: false
+      });
+    }
   }
 
   showAddAccountForm = (record) => {
@@ -120,7 +111,7 @@ class EOSKeyPairList extends Component {
 
   handleCancel = () => {
     this.setState({
-      showAddAccountForm: false
+      showAddAccountForm: false,
     })
   }
 

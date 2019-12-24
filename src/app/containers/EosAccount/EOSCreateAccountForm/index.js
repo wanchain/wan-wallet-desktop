@@ -25,7 +25,8 @@ class EOSCreateAccountForm extends Component {
             ram: 0,
             cpu: 0,
             net: 0
-        }
+        },
+        spin: false
     }
 
     componentDidMount() {

@@ -133,14 +133,13 @@ class EOSAccountRAM extends Component {
 
     sendTrans = (obj) => {
         const { selectedAccount } = this.props;
-        let pathAndId = this.getPathAndIdByPublicKey(selectedAccount.publicKey);
         let params = {
             action: obj.type === 'buy' ? 'buyrambytes' : 'sellram',
             from: selectedAccount.account,
             to: obj.type === 'buy' ? obj.account : selectedAccount.account,
             ramBytes: obj.amount,
-            BIP44Path: `${EOSPATH}${pathAndId.path}`,
-            walletID: pathAndId.walletID,
+            BIP44Path: selectedAccount.path,
+            walletID: selectedAccount.id,
         };
         this.setState({
             loading: true

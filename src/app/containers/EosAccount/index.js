@@ -51,7 +51,6 @@ class EosAccount extends Component {
         let DBObject = {
           name: `EOS-PublicKey${addrLen + 1}`,
           publicKey: res.address,
-          accounts: []
         };
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: DBObject }, (err, response) => {
           if (!err && response) {
