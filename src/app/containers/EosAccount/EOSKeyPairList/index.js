@@ -90,7 +90,6 @@ class EOSKeyPairList extends Component {
       });
     } catch (e) {
       console.log('error:', e);
-      // message.error();
       this.setState({
         accountList: [],
         spin: false

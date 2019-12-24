@@ -228,6 +228,7 @@ const en_US = {
     'EOSCreateAccountForm.getResourcePriceFailed': 'Get resource price failed',
     'EOSCreateAccountForm.duplicateAccount': 'Duplicate account name',
     'EOSCreateAccountForm.createAccountFailed': 'Create account failed',
+    'EOSCreateAccountForm.createAccountSuccess': 'Create account successfully',
     'EOSCreateAccountForm.invalidValue': 'Invalid value',
     'EOSCreateAccountForm.invalidNameFormat': 'Start with a-z; Only a-z, 1-5 and dot are allowed; Only 12 characters are allowed',
     'EOSCreateAccountForm.createAccount': 'Create Account',

@@ -92,7 +92,7 @@ class EosAddress {
         return;
       }
       let info = ret.accounts;
-      if (ret && Object.keys(info).length) {
+      if (ret && info instanceof Object && Object.keys(info).length) {
         Object.keys(info).forEach(path => {
           let item = info[path]['1'];
           self.keyInfo['normal'][item.publicKey] = {
@@ -108,7 +108,7 @@ class EosAddress {
         console.log('Get user from DB failed ', err);
         return;
       }
-      if (ret && Object.keys(ret).length) {
+      if (ret && ret instanceof Object && Object.keys(ret).length) {
         Object.keys(ret).forEach(name => {
           let item = ret[name]['active']['keys']['1'];
           const path = Object.keys(item)[0];

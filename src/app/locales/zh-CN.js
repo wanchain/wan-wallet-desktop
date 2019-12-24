@@ -228,6 +228,7 @@ const zh_CN = {
     'EOSCreateAccountForm.getResourcePriceFailed': '获取资源价格失败',
     'EOSCreateAccountForm.duplicateAccount': '账户名称已存在',
     'EOSCreateAccountForm.createAccountFailed': '创建账户失败',
+    'EOSCreateAccountForm.createAccountSuccess': '创建账户成功',
     'EOSCreateAccountForm.invalidValue': '无效值',
     'EOSCreateAccountForm.invalidNameFormat': '必须a-z开头; 只允许a-z, 1-5以及逗号; 必须是12个字符',
     'EOSCreateAccountForm.createAccount': '创建账户',

@@ -47,8 +47,16 @@ class EOSCreateAccountForm extends Component {
 
     handleOk = () => {
         const { form, getAccount, accountInfo } = this.props;
+        this.setState({
+            spin: true
+        });
         form.validateFields(async (err) => {
-            if (err) { return; };
+            if (err) {
+                this.setState({
+                    spin: false
+                });
+                return;
+            };
             let values = form.getFieldsValue();
             if (getAccount.indexOf(values.name) !== -1) {
                 message.error(intl.get('EOSCreateAccountForm.duplicateAccount'));
@@ -57,6 +65,9 @@ class EOSCreateAccountForm extends Component {
                 const balance = this.getBalanceByAccount(values.creator);
                 if (!(typeof balance === 'number' && new BigNumber(values.CPU).plus(values.NET).lte(balance))) {
                     message.error(intl.get('EOSAccountList.noSufficientBalance'));
+                    this.setState({
+                        spin: false
+                    });
                     return false;
                 }
             }
@@ -73,9 +84,13 @@ class EOSCreateAccountForm extends Component {
                 walletID: 1,
             };
             wand.request('transaction_EOSNormal', params, (err, res) => {
+                this.setState({
+                    spin: false
+                });
                 if (!err) {
                     if (res.code) {
                         this.props.handleCancel();
+                        message.success(intl.get('EOSCreateAccountForm.createAccountSuccess'));
                     } else {
                         message.error(intl.get('EOSCreateAccountForm.createAccountFailed'));
                     }
@@ -143,7 +158,7 @@ class EOSCreateAccountForm extends Component {
                     onCancel={this.handleCancel}
                     footer={[
                         <Button key="back" className="cancel" onClick={this.handleCancel}>{intl.get('Common.cancel')}</Button>,
-                        <Button key="submit" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>,
+                        <Button key="submit" type="primary" onClick={this.handleOk} loading={this.state.spin}>{intl.get('Common.ok')}</Button>,
                     ]}
                 >
                     <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
