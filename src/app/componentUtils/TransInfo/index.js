@@ -16,12 +16,15 @@ const COLRIGHT = 19;
 
 @observer
 class TransInfo extends Component {
-  openInBrowser = (hash) => {
+  openInBrowser = (hash, chain) => {
     if (hash === '') {
       message.warn('No txHash');
       return false;
     }
     let href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+    if (chain === 'EOS') {
+      href = `https://jungle.bloks.io/transaction/${hash}`
+    }
     wand.shell.openExternal(href);
   }
 
@@ -78,7 +81,7 @@ class TransInfo extends Component {
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.LockTxHash')}</Col>
             <Col span={COLRIGHT}>
-              <div className={style.checkInfoInBrowser} onClick={(e) => this.openInBrowser(lockTxHash)}>{lockTxHash}</div>
+              <div className={style.checkInfoInBrowser} onClick={(e) => this.openInBrowser(lockTxHash, srcChainType)}>{lockTxHash}</div>
               <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon className={style.lock_copyIcon} type="copy" onClick={e => this.copy2Clipboard(lockTxHash, e)} /></Tooltip>
             </Col>
           </Row>

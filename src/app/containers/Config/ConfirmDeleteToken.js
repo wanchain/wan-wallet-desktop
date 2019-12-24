@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import { Modal, Form, Input, Icon } from 'antd';
-import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
+import { Modal, Form, Input, Icon } from 'antd';
+
 import style from './index.less';
 
 @inject(stores => ({
@@ -22,9 +23,9 @@ class ConfirmDeleteToken extends Component {
         closable={false}
         okText={intl.get('Common.ok')}
         cancelText={intl.get('Common.cancel')}
+        bodyStyle={{ textAlign: 'center' }}
       >
-        <div>{intl.get('Config.confirmText')}</div>
-        <div style={{ textAlign: 'center', fontSize: '18px', color: 'goldenrod' }}>{this.props.token.symbol}</div>
+        <div className={style.deleteMsg}>{intl.get('Config.confirmText')} <span className={style.symbolSty}>{token.symbol} </span>?</div>
       </Modal>
     );
   }
