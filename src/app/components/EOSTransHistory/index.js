@@ -42,6 +42,9 @@ class EOSTransHistory extends Component {
   }
 
   onClickRow = record => {
+    if (record.status === 'Failed') {
+      return;
+    }
     let href = this.props.chainId === 1 ? `${MAIN}/transaction/${record.txHash}` : `${TESTNET}/transaction/${record.txHash}`;
     wand.shell.openExternal(href);
   }
