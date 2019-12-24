@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Modal, Button, Form, Input, Icon, Table, Spin, message } from 'antd';
-import { EOSPATH } from 'utils/settings';
+import { EOSPATH, WALLETID } from 'utils/settings';
 import style from './index.less';
 
 @inject(stores => ({
@@ -28,7 +28,7 @@ class EOSImportAccountForm extends Component {
             const accounts = form.getFieldValue('accounts');
             const path = selectedRow.path.includes(EOSPATH) ? `${selectedRow.path}` : `${EOSPATH}${selectedRow.path}`;
             const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
-            const wid = 1;
+            const wid = WALLETID.NATIVE;
             this.props.setImportedUserAccount(accounts, network, wid, path, selectedRow.publicKey).then(() => {
                 this.props.getUserKeyFromDB();
             }).catch(() => {

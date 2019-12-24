@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Modal, Button, Form, Input, Select, message, Tooltip } from 'antd';
 import style from './index.less';
 import { BigNumber } from 'bignumber.js';
+import { WALLETID } from 'utils/settings';
 
 const { Option } = Select;
 const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
@@ -81,7 +82,7 @@ class EOSCreateAccountForm extends Component {
                 cpuAmount: values.CPU,
                 netAmount: values.NET,
                 BIP44Path: accountInfo[values.creator].path,
-                walletID: 1,
+                walletID: WALLETID.NATIVE,
             };
             wand.request('transaction_EOSNormal', params, (err, res) => {
                 this.setState({
