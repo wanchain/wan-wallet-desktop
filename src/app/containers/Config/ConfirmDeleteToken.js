@@ -25,7 +25,7 @@ class ConfirmDeleteToken extends Component {
         cancelText={intl.get('Common.cancel')}
         bodyStyle={{ textAlign: 'center' }}
       >
-        <div className={style.deleteMsg}>{intl.get('Config.confirmText')} <span className={style.symbolSty}>{token.symbol} </span>?</div>
+        <div className={style.deleteMsg}>{intl.get('Config.confirmText')} <span className={style.symbolSty}>{token.symbol}</span></div>
       </Modal>
     );
   }

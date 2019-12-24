@@ -113,8 +113,8 @@ const zh_CN = {
     'Config.wallet': '钱包选项',
     'Config.enableErc20': '使能ERC-20代币',
     'Config.enableWrc20': '使能WRC-20代币',
-    'Config.deleteConfirm': '确认',
-    'Config.confirmText': '是否确认删除 ',
+    'Config.deleteConfirm': '删除确认',
+    'Config.confirmText': '确认删除: ',
     'Config.enableEosToken': '使能EOS代币',
 
     'PasswordConfirmForm.password': '密码',
