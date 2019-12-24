@@ -12,7 +12,6 @@ const CollectionCreateForm = Form.create({ name: 'CrossEOSForm' })(CrossEOSForm)
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.eosAddress.addrInfo,
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
   getTokensListInfo: stores.tokens.getTokensListInfo,
