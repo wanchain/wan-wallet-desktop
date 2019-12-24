@@ -1,11 +1,12 @@
 import fs from 'fs'
 import _ from 'lodash'
 import path from 'path'
-import { app, BrowserWindow, ipcMain as ipc } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain as ipc } from 'electron'
 import Logger from '~/src/utils/Logger'
 import EventEmitter from 'events'
 import setting from '~/src/utils/Settings'
 import desktopIdle from 'desktop-idle'
+import i18n from '~/config/i18n'
 
 const MAX_LOCKTIME = Math.pow(2, 31) - 1
 const logger = Logger.getLogger('Windows')
@@ -58,6 +59,46 @@ class Window extends EventEmitter {
             this.isContentReady = false
             this.emit('closed')
         })
+
+        this.window.on('close', (e) => {
+            if (this.type === 'main') {
+                let history = global.wanDb.getItemAll('crossTrans', {});
+                let BTCHistory = global.wanDb.queryComm('crossTransBtc', items => {
+                    return items;
+                });
+                let hasPendingTx = history.concat(BTCHistory).find((item) => {
+                    if (item.status !== 'Redeemed' && item.status !== 'Revoked') {
+                        if ('revokeTryCount' in item && item.revokeTryCount >= 4) {
+                            return false;
+                        } else if ('redeemTryCount' in item && item.redeemTryCount >= 4) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
+                });
+                if (hasPendingTx !== undefined) {
+                    e.preventDefault();
+                    dialog.showMessageBox(this.window, {
+                        type: 'info',
+                        buttons: [i18n.t('main.exitDialog.ok'), i18n.t('main.exitDialog.cancel')],
+                        title: i18n.t('main.exitDialog.title'),
+                        message: i18n.t('main.exitDialog.message'),
+                    }, (button) => {
+                        if (button === 0) {
+                            this.emit('close', e);
+                            this.window.destroy();
+                        }
+                    });
+                } else {
+                    this.emit('close', e);
+                }
+            } else {
+                this.emit('close', e);
+            }
+        });
 
         this.window.on('blur', () => {
             if (this.type === 'main') {

@@ -75,6 +75,12 @@
                 "explorerURL": "https://www.wanscan.org",
                 "toggle": "开发者工具"
             }
+        },
+        "exitDialog": {
+            "title": "警告",
+            "message": "有交易尚未完成，确定要继续退出吗",
+            "ok": "确定",
+            "cancel": "取消"
         }
     }
 }

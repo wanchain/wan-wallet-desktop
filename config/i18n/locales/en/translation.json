@@ -75,6 +75,12 @@
                 "explorerURL": "https://www.wanscan.org",
                 "toggle": "Toggle Developer Tools"
             }
+        },
+        "exitDialog": {
+            "title": "Warning",
+            "message": "There are some transactions still not finished in backend, do you want to exit now?",
+            "ok": "OK",
+            "cancel": "Cancel"
         }
     }
 }
