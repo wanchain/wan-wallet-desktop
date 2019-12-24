@@ -44,7 +44,7 @@ class SendEOSNormalTrans extends Component {
     return (
       <div style={{ display: 'inline-block', marginLeft: '10px' }}>
         {
-          this.props.buttonDisabled ? (<Button type="primary" disabled onClick={this.showModal}>{intl.get('Common.send')}</Button>) : (<Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>)
+          this.props.buttonDisabled ? (<Button style={{ color: '#fff' }} type="primary" disabled onClick={this.showModal}>{intl.get('Common.send')}</Button>) : (<Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>)
         }
         { visible &&
           <TxForm wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel}/>

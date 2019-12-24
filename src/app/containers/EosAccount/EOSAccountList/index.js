@@ -76,7 +76,7 @@ class EOSAccountList extends Component {
                 } else {
                     return (
                         <div>
-                            <Button type="primary" disabled onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
+                            <Button type="primary" style={{ color: '#fff' }} disabled onClick={() => { this.showManageResourceForm(record); }}>{intl.get('EOSAccountList.manageResource')}</Button>
                             <SendEOSNormalTrans record={record} buttonDisabled={true} />
                         </div>
                     )
