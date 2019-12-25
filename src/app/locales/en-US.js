@@ -435,7 +435,6 @@ const en_US = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
-
     'menuConfig.thirdPartyDapps': 'Third Party DApps',
     'menuConfig.dex': 'DEX',
 
@@ -520,6 +519,7 @@ const en_US = {
     'ValidatorNode.table.exit': 'Exit',
     'ValidatorNode.table.type': 'TYPE',
     'ValidatorNode.table.validatorNum': 'validators',
+
     'ValidatorRegister.myPrincipal': 'My Stake',
     'ValidatorRegister.myEntrusted': 'Delegation Stake',
     'ValidatorRegister.topup': 'Validator Top-up',
