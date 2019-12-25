@@ -1648,6 +1648,105 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             console.log(setting.isDev, ret);
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+        case 'rpcDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getCurrentStakerInfo('WAN');
+                let cost = Date.now() - startTime;
+                if (!result) {
+                    ret = 'Timeout';
+                } else {
+                    if (cost < 500) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Timeout ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'wanNodeDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'WAN');
+                let cost = Date.now() - startTime;
+                if (!result) {
+                    ret = 'Timeout';
+                } else {
+                    if (cost < 100) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Timeout ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'ethNodeDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'ETH');
+                let cost = Date.now() - startTime;
+                console.log('ethNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Timeout';
+                } else {
+                    if (cost < 100) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Timeout ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'btcNodeDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getBtcUtxo(0, 10000000, ['mtAXbCHDkgBZmL9zjq9kgYRpPA13gVFqYZ']);
+                let cost = Date.now() - startTime;
+                console.log('btcNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Timeout';
+                } else {
+                    if (cost < 100) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Timeout ' + error;
+                console.log('btcNodeDelay error:', error);
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'eosNodeDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('1xsridm5splx', 'EOS');
+                let cost = Date.now() - startTime;
+                console.log('eosNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Timeout';
+                } else {
+                    if (cost < 100) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Timeout ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 

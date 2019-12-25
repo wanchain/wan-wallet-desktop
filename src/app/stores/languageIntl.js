@@ -333,6 +333,9 @@ class LanguageIntl {
       }, {
         title: intl.get('Settings.restore'),
         key: 'restore',
+      }, {
+        title: intl.get('Settings.network'),
+        key: 'network',
       }
     ];
   }

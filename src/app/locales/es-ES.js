@@ -88,6 +88,7 @@ const es_ES = {
     'Settings.config': 'Config',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restore',
+    'Settings.network': 'Network',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',
