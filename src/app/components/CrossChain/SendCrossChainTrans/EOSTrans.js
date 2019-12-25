@@ -50,7 +50,7 @@ class EOSTrans extends Component {
     addCrossTransTemplate(from, { path: record.path });
     this.setState({ visible: true });
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList(tokenOrigAddr, 'EOS', direction !== INBOUND)]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice('WAN'), getSmgList('EOS', tokenOrigAddr)]);
       this.setState({
         smgList,
         estimateFee: new BigNumber(gasPrice).times(wanGas).div(BigNumber(10).pow(9)).toString(10)

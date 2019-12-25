@@ -101,7 +101,7 @@ class CrossEOSForm extends Component {
       } else {
         if (direction !== INBOUND) {
           let storemanAccount = form.getFieldValue('storemanAccount');
-          let smg = smgList.find(item => item.storemanGroup === storemanAccount);
+          let smg = smgList.find(item => item.storemanGroup.substr(0, 24) === storemanAccount.substr(0, 24));
           let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString();
           form.setFieldsValue({
             totalFee: `${new BigNumber(newOriginalFee).plus(estimateFee)} WAN`,
@@ -132,7 +132,8 @@ class CrossEOSForm extends Component {
 
     if (direction === INBOUND) {
       form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].inboundQuota, decimals)
+        quota: formatNumByDecimals(smgList[option.key].inboundQuota, decimals),
+        txFeeRatio: smgList[option.key].txFeeRatio / 100 + '%'
       });
     } else {
       form.setFieldsValue({
@@ -145,7 +146,7 @@ class CrossEOSForm extends Component {
 
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance } = this.props;
-    let desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol;
+    let desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio;
     if (direction === INBOUND) {
       desChain = 'WAN';
       selectedList = Object.values(wanAddrInfo.normal).map(item => item.name);
@@ -161,9 +162,11 @@ class CrossEOSForm extends Component {
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
       quota = 0;
+      txFeeRatio = 0;
     } else {
       defaultSelectStoreman = smgList[0].storemanGroup;
       quota = formatNumByDecimals(direction === INBOUND ? smgList[0].inboundQuota : smgList[0].outboundQuota, decimals);
+      txFeeRatio = smgList[0].txFeeRatio / 100 + '%';
     }
     return (
       <div>
@@ -205,7 +208,7 @@ class CrossEOSForm extends Component {
                 formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
                 selectedList={smgList}
-                filterItem={item => item.storemanGroup}
+                filterItem={item => item.storemanGroup.replace(/^([a-zA-z0-9]{24})[a-zA-z0-9]{84}([a-zA-z0-9]{24})$/, '$1****$2')}
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('CrossChainTransForm.storemanAccount')}
               />
@@ -217,6 +220,15 @@ class CrossEOSForm extends Component {
                 options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='txFeeRatio'
+                disabled={true}
+                options={{ initialValue: txFeeRatio }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.txFeeRatio')}
               />
               <SelectForm
                 form={form}

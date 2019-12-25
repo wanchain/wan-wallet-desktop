@@ -28,22 +28,22 @@ class Sidebar extends Component {
     collapsed: false
   }
 
-  componentDidMount() {
-    this.timer = setInterval(() => {
-      // Handle one step cross chain and undo cross chain trans
-      getAllUndoneCrossTrans((err, ret) => {
-        if (!err) {
-          OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
-        } else {
-          message.warn(intl.get('network.down'));
-        }
-      })
-    }, 10000);
-  }
+  // componentDidMount() {
+  //   this.timer = setInterval(() => {
+  //     // Handle one step cross chain and undo cross chain trans
+  //     getAllUndoneCrossTrans((err, ret) => {
+  //       if (!err) {
+  //         OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
+  //       } else {
+  //         message.warn(intl.get('network.down'));
+  //       }
+  //     })
+  //   }, 10000);
+  // }
 
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.timer);
+  // }
 
   toggleMenu = () => {
     this.setState({

@@ -9,6 +9,8 @@ class Session {
 
   @observable auth = false;
 
+  @observable isFirstLogin = true;
+
   @observable settings = {
     reinput_pwd: false,
     staking_advance: false,
@@ -17,6 +19,10 @@ class Session {
 
   @action setChainId (id) {
     self.chainId = id;
+  }
+
+  @action setIsFirstLogin (value) {
+    self.isFirstLogin = value;
   }
 
   @action getMnemonic () {

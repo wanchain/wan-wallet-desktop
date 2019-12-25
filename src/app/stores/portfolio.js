@@ -77,13 +77,12 @@ class Portfolio {
         // api_key: '0e0983552fbfd1f4c8d166a3151bb956f0858554e395fb2c40f45206ce75e750',
       }
     }).then((res) => {
-      console.log('<<<<<<<<<<< coin prices >>>>>>>>>>', res.data);
       if (res.status === 200 && res.data.Response !== 'Error') {
         runInAction(() => {
           self.coinPriceArr = res.data;
         })
       } else {
-        console.log('Get prices failed!');
+        console.log('Get prices failed.', res.data);
       }
     })
   }
