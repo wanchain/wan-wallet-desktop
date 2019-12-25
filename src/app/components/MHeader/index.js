@@ -13,19 +13,21 @@ import style from './index.less';
   trezorAddrList: stores.wanAddress.trezorAddrList,
   setAuth: val => stores.session.setAuth(val),
   getMnemonic: ret => stores.session.getMnemonic(ret),
+  setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
   updateAddress: (type, newAddress) => stores.wanAddress.updateAddress(type, newAddress),
 }))
 
 @observer
 class MHeader extends Component {
   logOut = () => {
-    wand.request('wallet_lock', null, (err, val) => {
-      if (err) {
-          console.log('error printed inside callback: ', err)
-          return
-      }
-      this.props.setAuth(false);
-    })
+    // wand.request('wallet_lock', null, (err, val) => {
+    //   if (err) {
+    //       console.log('error printed inside callback: ', err)
+    //       return
+    //   }
+    //   this.props.setAuth(false);
+    // })
+    this.props.setAuth(false);
   }
 
   handleDisconnect = () => {

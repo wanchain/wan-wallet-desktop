@@ -9,7 +9,8 @@ import './global.less';
 import Router from './Routes';
 import stores from './stores';
 import locales from './locales';
-import { initEmitterHandler, regEmitterHandler, isSdkReady } from 'utils/helper';
+import OneStep from 'utils/OneStep';
+import { initEmitterHandler, regEmitterHandler, isSdkReady, getAllUndoneCrossTrans } from 'utils/helper';
 
 class App extends Component {
   constructor (props) {
@@ -48,13 +49,14 @@ class App extends Component {
 
     regEmitterHandler('uiAction', action => {
       if (action === 'lockWallet' && stores.session.auth === true) {
-        wand.request('wallet_lock', null, (err, val) => {
-          if (err) {
-            console.log('Lock failed ', err)
-            return
-          }
-          stores.session.setAuth(false);
-        })
+        // wand.request('wallet_lock', null, (err, val) => {
+        //   if (err) {
+        //     console.log('Lock failed ', err)
+        //     return
+        //   }
+        //   stores.session.setAuth(false);
+        // })
+        stores.session.setAuth(false);
       }
     });
 
@@ -77,12 +79,31 @@ class App extends Component {
         stores.session.setChainId(net.includes('main') ? 1 : 3);
         stores.wanAddress.updateAddress(['ledger', 'trezor']);
         stores.wanAddress.updateTransHistory(true);
+        stores.session.setIsFirstLogin(true)
       })
     });
 
     regEmitterHandler('keyfilepath', data => {
       stores.wanAddress.addKeyStoreAddr(data);
     })
+
+    this.timer = setInterval(() => {
+      // Handle one step cross chain and undo cross chain trans
+      if (!stores.session.isFirstLogin) {
+        console.log('<<<<<<<< Handle Undo Cross Chain Trans >>>>>>>>>')
+        getAllUndoneCrossTrans((err, ret) => {
+          if (!err) {
+            OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
+          } else {
+            message.warn(intl.get('network.down'));
+          }
+        })
+      }
+    }, 10000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   changeLanguage = lan => {

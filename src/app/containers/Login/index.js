@@ -17,7 +17,9 @@ message.config({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   btcAddrInfo: stores.btcAddress.addrInfo,
+  isFirstLogin: stores.session.isFirstLogin,
   setAuth: val => stores.session.setAuth(val),
+  setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB()
 }))
@@ -40,6 +42,9 @@ class Login extends Component {
         if (err) {
           message.error(intl.get('Login.wrongPassword'))
           return;
+        }
+        if (this.props.isFirstLogin) {
+          this.props.setIsFirstLogin(false);
         }
         this.props.setAuth(true);
         // If the user DB is not the latest version, update user account DB
