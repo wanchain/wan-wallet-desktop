@@ -1,14 +1,14 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Avatar } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 
 import style from './index.less';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType } from 'utils/helper';
-import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
+import { WALLETID, TRANSTYPE, ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 const CHAINTYPE = 'ETH';
 
@@ -108,7 +108,7 @@ class E20TokenTrans extends Component {
 
   onClickRow = () => {
     let { chainId, tokenAddr } = this.props;
-    let href = chainId === 1 ? `${MAIN}/token/${tokenAddr}` : `${TESTNET}/token/${tokenAddr}`
+    let href = chainId === 1 ? `${ETHMAIN}/token/${tokenAddr}` : `${ETHTESTNET}/token/${tokenAddr}`
     wand.shell.openExternal(href);
   }
 
