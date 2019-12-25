@@ -1359,28 +1359,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'getSmgList':
             let coin2WanRatio
             try {
-                if (payload.crossChain.startsWith('0x')) {
-                    if (payload.getCoin2WanRatio) {
-                        if (payload.chain === 'EOS') {
-                            ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
-                            coin2WanRatio = (ccUtil.getRegTokens('EOS'))[0].ratio;
-                        } else {
-                            [ret, coin2WanRatio] = await Promise.all([ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain), ccUtil.getToken2WanRatio(payload.crossChain)]);
-                        }
-                        ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
-                    } else {
-                        ret = await ccUtil.syncTokenStoremanGroups(payload.chain, payload.crossChain);
-                    }
+                let { crossChain, tokenAddr } = payload;
+                if (tokenAddr && tokenAddr.startsWith('0x')) {
+                    ret = await ccUtil.syncTokenStoremanGroups(crossChain, tokenAddr);
+                    coin2WanRatio = ccUtil.getRegTokenInfo(crossChain, tokenAddr).ratio;
+                    console.log(ccUtil.getRegTokenInfo(crossChain, tokenAddr))
                 } else {
-                    if (payload.getCoin2WanRatio) {
-                        [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(payload.crossChain), ccUtil.getC2WRatio(payload.crossChain)]);
-                        ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
-                    } else {
-                        ret = await ccUtil.getSmgList(payload.crossChain);
-                    }
+                    [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(crossChain), ccUtil.getC2WRatio(crossChain)]);
                 }
+                ret.forEach(item => item.coin2WanRatio = coin2WanRatio)
 
-                if (payload.crossChain === 'BTC') {
+                if (crossChain === 'BTC') {
                     let net = network === 'main' ? 'mainnet' : 'testnet';
                     ret.forEach(smg => {
                         if (smg.btcAddress.startsWith('0x')) {

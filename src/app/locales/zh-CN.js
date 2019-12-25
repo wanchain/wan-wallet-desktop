@@ -119,7 +119,7 @@ const zh_CN = {
 
     'PasswordConfirmForm.password': '密码',
     'PasswordConfirmForm.inputPwd': '输入密码',
-    'PasswordConfirmForm.pwdMessage': '请输入密码!',
+    'PasswordConfirmForm.pwdMessage': '请输入密码',
 
     'Sidebar.wanchain': 'Wanchain',
 
@@ -580,7 +580,7 @@ const zh_CN = {
     'popup.search': '搜索',
     'title.imported': '已导入的地址',
 
-    'network.down': '网络请求失败，请稍后再试!'
+    'network.down': '网络请求失败，请稍后再试'
 
 }
 
