@@ -290,7 +290,10 @@ class WRC20NormalTransForm extends Component {
         </Modal>
 
         <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
-        <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        {
+          confirmVisible &&
+          <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        }
       </div>
     );
   }

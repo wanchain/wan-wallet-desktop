@@ -311,7 +311,10 @@ class ETHNormalTransForm extends Component {
           </Spin>
         </Modal>
         <AdvancedOption visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} chain='ETH' />
-        <Confirm chain='ETH' visible={confirmVisible} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        {
+          confirmVisible &&
+          <Confirm chain='ETH' visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        }
       </div>
     );
   }

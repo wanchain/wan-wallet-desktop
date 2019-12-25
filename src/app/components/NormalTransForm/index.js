@@ -395,7 +395,10 @@ class NormalTransForm extends Component {
         </Modal>
 
         <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
-        <Confirm visible={confirmVisible} tokenAddr={this.props.tokenAddr} transType={this.props.transType} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        {
+          confirmVisible &&
+          <Confirm visible={true} tokenAddr={this.props.tokenAddr} transType={this.props.transType} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        }
       </div>
     );
   }
