@@ -348,6 +348,7 @@ const zh_CN = {
     'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': '最大配额',
     'CrossChainTransForm.quota': '剩余配额',
+    'CrossChainTransForm.txFeeRatio': '比率',
     'CrossChainTransForm.estimateFee': '估算的费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
     'CrossChainTransForm.overTransBalance': '输入金额超过账户余额',
