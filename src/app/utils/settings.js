@@ -32,13 +32,13 @@ export const DEFAULT_GAS = 4700000;
 
 export const REDEEMWEOS_GAS = '150000';
 export const LOCKETH_GAS = '300000';
-export const REDEEMWETH_GAS = '100000';
-export const REVOKEETH_GAS = '100000';
+export const REDEEMWETH_GAS = '150000';
+export const REVOKEETH_GAS = '150000';
 
 export const LOCKWEOS_GAS = '500000'
 export const LOCKWETH_GAS = '300000';
 export const REDEEMETH_GAS = '150000';
-export const REVOKEWETH_GAS = '100000';
+export const REVOKEWETH_GAS = '150000';
 
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'https://testnet.wanscan.org';
