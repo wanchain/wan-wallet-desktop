@@ -302,7 +302,7 @@ class ModifyForm extends Component {
                       <Form layout="inline">
                         <Form.Item>
                           {getFieldDecorator('lockTime', { initialValue: record.lockTime, rules: [{ required: true }] })
-                            (<Slider className='locktime-slider' min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
+                            (<Slider className={style.locktimeSlider} min={MINDAYS} max={MAXDAYS} step={1} onChange={this.onSliderChange} />)}
                         </Form.Item>
                       </Form>
                     </Col>
