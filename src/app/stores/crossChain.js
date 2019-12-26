@@ -123,7 +123,7 @@ class CrossChain {
         hashX: item.hashX,
         storeman: inbound ? wand.btcUtil.hash160ToAddress(item.storeman, 'pubkeyhash', session.chainId === 1 ? 'mainnet' : 'testnet') : item.storeman,
         secret: item.x,
-        time: timeFormat(item.time / 1000),
+        time: timeFormat(item.time),
         from: fromInfo.name,
         fromAddr: fromInfo.address,
         to: toInfo.name,

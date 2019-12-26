@@ -1492,7 +1492,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let crossCollection = global.wanDb.getItemAll('crossTrans', {});
                 let crossBTCCollection = global.wanDb.getItemAll('crossTransBtc', {});
 
-                crossCollection.forEach(record => {
+                crossCollection.concat(crossBTCCollection).forEach(record => {
                     if (ccUtil.canRedeem(record).code) {
                         record.redeemTryCount = 1;
                         ret.canRedeem.push(record);
@@ -1502,17 +1502,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                         ret.canRevoke.push(record);
                     }
                 });
-
-                crossBTCCollection.forEach(item => {
-                    if (item.hashX) {
-                        if (['sentRedeemFailed', 'waitingX'].includes(item.status)) {
-                            ret.canRedeem.push(item);
-                        }
-                        if (['waitingRevoke', 'sentRevokeFailed'].includes(item.status)) {
-                            ret.canRevoke.push(item);
-                        }
-                    }
-                })
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

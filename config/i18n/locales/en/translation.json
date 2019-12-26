@@ -78,7 +78,7 @@
         },
         "exitDialog": {
             "title": "Warning",
-            "message": "There are some transactions still not finished in backend, do you want to exit now?",
+            "message": "There are cross-chain transactions which are not finished yet, are you sure to exit?",
             "ok": "OK",
             "cancel": "Cancel"
         }
