@@ -189,7 +189,7 @@ class EOSAccountCPU extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} (MAX {balance}EOS)</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeCPU')} (MAX {balance} EOS)</div>
                                         <Form.Item>
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
@@ -211,7 +211,7 @@ class EOSAccountCPU extends Component {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeCPU')} (MAX {new BigNumber(cpuAvailable).times(price).toString(10)}EOS)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeCPU')} (MAX {new BigNumber(cpuAvailable).times(price).toFixed(4).toString(10)} EOS)</div>
                                         <Form.Item>
                                             {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} max={new BigNumber(cpuAvailable).times(price).toNumber()} prefix={<Icon type="credit-card" className="colorInput" />} />)}

@@ -7,6 +7,7 @@ import style from './index.less';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
+import { BigNumber } from 'bignumber.js';
 import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
 import { signTransaction } from 'componentUtils/trezor'
 
@@ -332,18 +333,18 @@ class DelegateInForm extends Component {
     let tx = {
       from: from,
       validatorAddr: to,
-      amount: (form.getFieldValue('amount') || 0).toString(),
+      amount: new BigNumber(amount || 0).toString(),
       gasPrice: 0,
       gasLimit: 0,
       BIP44Path: path,
       walletID: walletID,
-      stakeAmount: (form.getFieldValue('amount') || 0).toString(),
+      stakeAmount: new BigNumber(amount || 0).toString(),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
-      await this.trezorDelegateIn(path, from, to, (form.getFieldValue('amount') || 0).toString());
+      await this.trezorDelegateIn(path, from, to, new BigNumber(amount || 0).toString());
       this.props.onSend(walletID);
     } else {
       wand.request('staking_delegateIn', tx, (err, ret) => {
@@ -384,7 +385,6 @@ class DelegateInForm extends Component {
       rawTx.chainId = chainId;
 
       let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
-
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
       console.log('Transaction hash:', txHash);
       let params = {
@@ -398,7 +398,7 @@ class DelegateInForm extends Component {
         annotate: 'DelegateIn',
         status: 'Sent',
         source: 'external',
-        stakeAmount: value,
+        stakeAmount: value.toString(),
         ...rawTx
       }
 
