@@ -4,14 +4,14 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
-import imgBtc from 'static/image/network_btc.png';
-import imgEos from 'static/image/network_eos.png';
-import imgEth from 'static/image/network_eth.png';
+import imgBtc from 'static/image/btc.png';
+import imgEos from 'static/image/eos.png';
+import imgEth from 'static/image/eth.png';
 import imgLine1 from 'static/image/network_line1.png';
 import imgLine2 from 'static/image/network_line2.png';
 import imgServer from 'static/image/network_server.png';
 import imgWallet from 'static/image/network_wallet.png';
-import imgWanchain from 'static/image/network_wanchain.png';
+import imgWanchain from 'static/image/wan.png';
 import imgRed from 'static/image/network_red.png';
 
 @inject(stores => ({
@@ -71,43 +71,23 @@ class Network extends Component {
       return;
     }
     if (value.toLowerCase().indexOf('wait') !== -1) {
-      return style.itemColorIdle;
+      return style.idle;
     }
 
     if (value.toLowerCase().indexOf('good') !== -1) {
-      return style.itemColorGood;
+      return style.good;
     }
 
     if (value.toLowerCase().indexOf('slow') !== -1) {
-      return style.itemColorSlow;
+      return style.slow;
     }
 
-    if (value.toLowerCase().indexOf('timeout') !== -1) {
-      return style.itemColorTimeout;
+    if (value.toLowerCase().indexOf('time') !== -1) {
+      return style.timeOut;
     }
-  }
-
-  isTimeout(value) {
-    if (value.toLowerCase().indexOf('timeout') !== -1) {
-      return true;
-    }
-    return false;
   }
 
   render () {
-    let walletStyle = this.getStyleByState('good');
-    let serverStyle = this.getStyleByState(this.state.rpcDelay);
-    let wanStyle = this.getStyleByState(this.state.wanNodeDelay);
-    let ethStyle = this.getStyleByState(this.state.ethNodeDelay);
-    let btcStyle = this.getStyleByState(this.state.btcNodeDelay);
-    let eosStyle = this.getStyleByState(this.state.eosNodeDelay);
-
-    let serverTimeout = this.isTimeout(this.state.rpcDelay);
-    let wanTimeout = this.isTimeout(this.state.wanNodeDelay);
-    let ethTimeout = this.isTimeout(this.state.ethNodeDelay);
-    let btcTimeout = this.isTimeout(this.state.btcNodeDelay);
-    let eosTimeout = this.isTimeout(this.state.eosNodeDelay);
-
     return (
       <div className={style['settings_network']}>
         <Card title={intl.get('Network.title')}>
@@ -122,39 +102,39 @@ class Network extends Component {
           <div className={style.layoutDiv}>
             <div className={style.layoutCol}>
                 <Tooltip title='Local Wallet'>
-                  <div className={style.wallet + ' ' + walletStyle}><img className={style.imgSize} src={imgWallet} /></div>
+                  <div className={style.wallet + ' ' + style.itemColorIdle}><img className={style.imgSize} src={imgWallet} /></div>
                 </Tooltip>
               </div>
             <div className={style.layoutCol}>
-              <div><img className={style.line1} src={imgLine1} /></div>
+              <div><Tooltip title={this.state.rpcDelay}><div className={style.line1 + ' ' + this.getStyleByState(this.state.rpcDelay)} /></Tooltip></div>
             </div>
             <div className={style.layoutCol}>
-              <Tooltip title={'iWan RPC Server' + ': ' + this.state.rpcDelay}>
-                <div className={style.server + ' ' + serverStyle}>
+              <Tooltip title={'iWan RPC Server'}>
+                <div className={style.server + ' ' + style.itemColorIdle}>
                   <img className={style.imgSize} src={imgServer} />
-                  { serverTimeout ? <div><div className={style.timeOutServer}>Timeout</div><img className={style.redSizeServer} src={imgRed}/></div> : null }
                 </div>
               </Tooltip>
             </div>
             <div className={style.layoutCol}>
-              <div><img className={style.line2} src={imgLine2} /></div>
+              <div>
+                <Tooltip title={this.state.wanNodeDelay}><div className={style.line2 + ' ' + this.getStyleByState(this.state.wanNodeDelay)}/></Tooltip>
+                <Tooltip title={this.state.ethNodeDelay}><div className={style.line3 + ' ' + this.getStyleByState(this.state.ethNodeDelay)}/></Tooltip>
+                <Tooltip title={this.state.btcNodeDelay}><div className={style.line4 + ' ' + this.getStyleByState(this.state.btcNodeDelay)}/></Tooltip>
+                <Tooltip title={this.state.eosNodeDelay}><div className={style.line5 + ' ' + this.getStyleByState(this.state.eosNodeDelay)}/></Tooltip>
+              </div>
             </div>
             <div className={style.layoutCol}>
-              <Tooltip title={'Wanchain Node' + ': ' + this.state.wanNodeDelay}><div className={style.node + ' ' + wanStyle}>
+              <Tooltip title={'Wanchain Node'}><div className={style.node + ' ' + style.itemColorIdle}>
                 <img className={style.nodeSize} src={imgWanchain} />
-                { wanTimeout ? <div><div className={style.timeOut}>Timeout</div><img className={style.redSize} src={imgRed}/></div> : null }
               </div></Tooltip>
-              <Tooltip title={'Ethereum Node' + ': ' + this.state.ethNodeDelay}><div className={style.node + ' ' + ethStyle}>
+              <Tooltip title={'Ethereum Node'}><div className={style.node + ' ' + style.itemColorIdle}>
                 <img className={style.nodeSize} src={imgEth} />
-                { ethTimeout ? <div><div className={style.timeOut}>Timeout</div><img className={style.redSize} src={imgRed}/></div> : null }
               </div></Tooltip>
-              <Tooltip title={'Bitcoin Node' + ': ' + this.state.btcNodeDelay}><div className={style.node + ' ' + btcStyle}>
+              <Tooltip title={'Bitcoin Node'}><div className={style.node + ' ' + style.itemColorIdle}>
                 <img className={style.nodeSize} src={imgBtc} />
-                { btcTimeout ? <div><div className={style.timeOut}>Timeout</div><img className={style.redSize} src={imgRed}/></div> : null }
               </div></Tooltip>
-              <Tooltip title={'EOS Node' + ': ' + this.state.eosNodeDelay}><div className={style.node + ' ' + eosStyle}>
+              <Tooltip title={'EOS Node'}><div className={style.node + ' ' + style.itemColorIdle}>
                 <img style={ { width: '30px', height: '30px' } } src={imgEos} />
-                { eosTimeout ? <div><div className={style.timeOut}>Timeout</div><img className={style.redSize} src={imgRed}/></div> : null }
               </div>
               </Tooltip>
             </div>

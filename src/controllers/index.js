@@ -1651,99 +1651,128 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
         case 'rpcDelay':
             try {
                 let startTime = Date.now();
-                let result = await ccUtil.getCurrentStakerInfo('WAN');
+                let result = await ccUtil.getEpochID('WAN');
                 let cost = Date.now() - startTime;
                 if (!result) {
-                    ret = 'Timeout';
+                    ret = 'Time out';
                 } else {
-                    if (cost < 500) {
+                    if (cost < 200) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
                     }
                 }
             } catch (error) {
-                ret = 'Timeout ' + error;
+                ret = 'Time out ' + error;
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
         case 'wanNodeDelay':
             try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
                 let startTime = Date.now();
                 let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'WAN');
-                let cost = Date.now() - startTime;
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
+
                 if (!result) {
-                    ret = 'Timeout';
+                    ret = 'Time out';
                 } else {
-                    if (cost < 100) {
+                    if (cost < 50) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
                     }
                 }
             } catch (error) {
-                ret = 'Timeout ' + error;
+                ret = 'Time out ' + error;
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
         case 'ethNodeDelay':
             try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
                 let startTime = Date.now();
                 let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'ETH');
-                let cost = Date.now() - startTime;
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
                 console.log('ethNodeDelay result:', result);
                 if (!result) {
-                    ret = 'Timeout';
+                    ret = 'Time out';
                 } else {
-                    if (cost < 100) {
+                    if (cost < 50) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
                     }
                 }
             } catch (error) {
-                ret = 'Timeout ' + error;
+                ret = 'Time out ' + error;
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
         case 'btcNodeDelay':
             try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
                 let startTime = Date.now();
                 let result = await ccUtil.getBtcUtxo(0, 10000000, ['mtAXbCHDkgBZmL9zjq9kgYRpPA13gVFqYZ']);
-                let cost = Date.now() - startTime;
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
                 console.log('btcNodeDelay result:', result);
                 if (!result) {
-                    ret = 'Timeout';
+                    ret = 'Time out';
                 } else {
-                    if (cost < 100) {
+                    if (cost < 50) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
                     }
                 }
             } catch (error) {
-                ret = 'Timeout ' + error;
+                ret = 'Time out ' + error;
                 console.log('btcNodeDelay error:', error);
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
         case 'eosNodeDelay':
             try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
                 let startTime = Date.now();
                 let result = await ccUtil.getBalance('1xsridm5splx', 'EOS');
-                let cost = Date.now() - startTime;
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
                 console.log('eosNodeDelay result:', result);
                 if (!result) {
-                    ret = 'Timeout';
+                    ret = 'Time out';
                 } else {
-                    if (cost < 100) {
+                    if (cost < 50) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
                     }
                 }
             } catch (error) {
-                ret = 'Timeout ' + error;
+                ret = 'Time out ' + error;
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
