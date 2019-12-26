@@ -90,7 +90,6 @@ class App extends Component {
     this.timer = setInterval(() => {
       // Handle one step cross chain and undo cross chain trans
       if (!stores.session.isFirstLogin) {
-        console.log('<<<<<<<< Handle Undo Cross Chain Trans >>>>>>>>>')
         getAllUndoneCrossTrans((err, ret) => {
           if (!err) {
             OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
