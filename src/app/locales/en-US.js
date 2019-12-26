@@ -77,8 +77,8 @@ const en_US = {
     'Portfolio.value': 'VALUE',
     'Portfolio.portfolioUppercase': 'PORTFOLIO',
 
-    'Network.title': 'Network Analysis And Diagnosis',
-    'Network.desc': 'Here you can diagnose the state of the network link between the wallet and the RPC and blockchain nodes.',
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
     'Network.startButton': 'Start',
 
     'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
