@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Select, Modal, Form, Input, InputNumber, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
-import { toWei, formatNumByDecimals } from 'utils/support';
+import { toWei } from 'utils/support';
 import { DEFAULT_GAS, TRANSTYPE, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
@@ -94,7 +94,7 @@ class NormalTransForm extends Component {
       if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
         let fee = form.getFieldValue('fee');
         form.setFieldsValue({
-          amount: getBalanceByAddr(from, addrInfo) - fee
+          amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(fee).toString(10)
         });
       }
     });
@@ -161,7 +161,7 @@ class NormalTransForm extends Component {
     })
     if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
       form.setFieldsValue({
-        amount: new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))
+        amount: (new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))).toString(10)
       });
     }
   }
@@ -247,7 +247,7 @@ class NormalTransForm extends Component {
   }
 
   checkNormalAmount = (rule, value, callback) => {
-    if (value >= 0 && checkAmountUnit(18, value)) {
+    if (new BigNumber(value).gte(0) && checkAmountUnit(18, value)) {
       if (!this.state.advanced) {
         this.updateGasLimit();
       }
@@ -311,7 +311,7 @@ class NormalTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, transType, tokenAddr, balance } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
@@ -361,7 +361,7 @@ class NormalTransForm extends Component {
 
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
-                  (<InputNumber disabled={disabledAmount} min={1e-18} />)}
+                  (<Input disabled={disabledAmount} />)}
                 {!isPrivate && (<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               </Form.Item>
 
