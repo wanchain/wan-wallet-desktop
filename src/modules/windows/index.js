@@ -67,16 +67,10 @@ class Window extends EventEmitter {
                     return items;
                 });
                 let hasPendingTx = history.concat(BTCHistory).find((item) => {
-                    if (item.status !== 'Redeemed' && item.status !== 'Revoked') {
-                        if ('revokeTryCount' in item && item.revokeTryCount >= 4) {
-                            return false;
-                        } else if ('redeemTryCount' in item && item.redeemTryCount >= 4) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    } else {
+                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail')) {
                         return false;
+                    } else {
+                        return true;
                     }
                 });
                 if (hasPendingTx !== undefined) {
@@ -102,7 +96,7 @@ class Window extends EventEmitter {
 
         this.window.on('blur', () => {
             if (this.type === 'main') {
-                let lockTimeThreshold = setting.autoLockTimeout 
+                let lockTimeThreshold = setting.autoLockTimeout
                 if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME
                 this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`)
 
@@ -120,7 +114,7 @@ class Window extends EventEmitter {
                     }
 
                     this._logger.info('main window losing focus, start an away-from-main-window timer')
-                    if(this._timer !== null) {
+                    if (this._timer !== null) {
                         this._logger.info('Remain a timer should be cleared:' + this._timer)
                         clearTimeout(this._timer)
                         this._timer = null
@@ -138,14 +132,14 @@ class Window extends EventEmitter {
 
         this.window.on('focus', () => {
             if (this.type === 'main') {
-                let lockTimeThreshold = setting.autoLockTimeout 
+                let lockTimeThreshold = setting.autoLockTimeout
                 if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME
                 this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`)
 
                 if (this._timer) {
                     this._logger.info('main window getting focus again, clear away-from-main-window timer')
                     let timer = this._timer
-                    
+
                     try {
                         clearTimeout(timer)
                         this._logger.info('away-from-main-window timer cleared')
@@ -158,7 +152,7 @@ class Window extends EventEmitter {
 
                 if (global.chainManager) {
                     this._logger.info('start an interval checker for idle time')
-                    if(this._idleChecker !== null) {
+                    if (this._idleChecker !== null) {
                         this._logger.info('Remain a idle timer should be cleared:' + this._idleChecker)
                         clearInterval(this._idleChecker)
                         this._idleChecker = null
@@ -320,7 +314,7 @@ class Windows {
                 }
             }
         }
-        
+
 
         const parent = _.find(this._windows, (w) => {
             return w.type === 'main';
@@ -344,7 +338,7 @@ class Windows {
         }
 
         wnd.on('ready', () => {
-          wnd.show()
+            wnd.show()
         })
 
         return wnd
@@ -357,7 +351,7 @@ class Windows {
     }
 
     getById(id) {
-        return _.find(this._windows, (w) => w.id === id )
+        return _.find(this._windows, (w) => w.id === id)
     }
 
     broadcast() {
@@ -371,16 +365,16 @@ class Windows {
     }
 
     addDevToolsExtension() {
-      const { addDevToolsExtension, getDevToolsExtensions } = BrowserWindow
-      let currExt = Object.keys(getDevToolsExtensions())
-      let extBasePath = path.join(__dirname, '../../../', '/static/extensions/')
-      let extPathArr = fs.readdirSync(extBasePath).filter(item => fs.lstatSync(`${extBasePath}${item}`).isDirectory() === true)
-      extPathArr.forEach(val => {
-        let ext = `${extBasePath}/${val}/${(fs.readdirSync(extBasePath+val))[0]}`
-        if (!currExt.includes(val)) {
-          addDevToolsExtension(ext)
-        }
-      })
+        const { addDevToolsExtension, getDevToolsExtensions } = BrowserWindow
+        let currExt = Object.keys(getDevToolsExtensions())
+        let extBasePath = path.join(__dirname, '../../../', '/static/extensions/')
+        let extPathArr = fs.readdirSync(extBasePath).filter(item => fs.lstatSync(`${extBasePath}${item}`).isDirectory() === true)
+        extPathArr.forEach(val => {
+            let ext = `${extBasePath}/${val}/${(fs.readdirSync(extBasePath + val))[0]}`
+            if (!currExt.includes(val)) {
+                addDevToolsExtension(ext)
+            }
+        })
     }
 
     _onWindowClosed(wnd) {
