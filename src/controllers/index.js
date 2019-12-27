@@ -49,6 +49,8 @@ const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
 const WALLET_ID_LEDGER   = 0x02;
 const WALLET_ID_TREZOR   = 0x03;
 
+const NETWORK_SLOW = 200;  // If network delay large than 200ms it shows Good.
+
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
     const [action, id] = actionUni.split('#')
@@ -1656,7 +1658,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (!result) {
                     ret = 'Time out';
                 } else {
-                    if (cost < 200) {
+                    if (cost < NETWORK_SLOW) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
@@ -1683,7 +1685,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (!result) {
                     ret = 'Time out';
                 } else {
-                    if (cost < 50) {
+                    if (cost < NETWORK_SLOW) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
@@ -1710,7 +1712,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (!result) {
                     ret = 'Time out';
                 } else {
-                    if (cost < 50) {
+                    if (cost < NETWORK_SLOW) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
@@ -1737,7 +1739,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (!result) {
                     ret = 'Time out';
                 } else {
-                    if (cost < 50) {
+                    if (cost < NETWORK_SLOW) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
@@ -1765,7 +1767,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (!result) {
                     ret = 'Time out';
                 } else {
-                    if (cost < 50) {
+                    if (cost < NETWORK_SLOW) {
                         ret = 'Good (' + cost + 'ms)';
                     } else {
                         ret = 'Slow (' + cost + 'ms)';
