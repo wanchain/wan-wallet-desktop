@@ -75,6 +75,12 @@
                 "explorerURL": "https://www.wanscan.org",
                 "toggle": "Basculer les outils de développement"
             }
+        },
+        "exitDialog": {
+            "title": "Warning",
+            "message": "There are cross-chain transactions which are not finished yet, are you sure to exit?",
+            "ok": "OK",
+            "cancel": "Cancel"
         }
     }
 }
