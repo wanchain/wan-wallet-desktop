@@ -10,7 +10,7 @@ import imgEth from 'static/image/eth.png';
 import imgLine1 from 'static/image/network_line1.png';
 import imgLine2 from 'static/image/network_line2.png';
 import imgServer from 'static/image/network_server.png';
-import imgWallet from 'static/image/network_wallet.png';
+import imgWallet from 'static/image/network_wallet2.png';
 import imgWanchain from 'static/image/wan.png';
 import imgRed from 'static/image/network_red.png';
 
