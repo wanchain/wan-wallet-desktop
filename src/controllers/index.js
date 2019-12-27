@@ -49,6 +49,8 @@ const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
 const WALLET_ID_LEDGER   = 0x02;
 const WALLET_ID_TREZOR   = 0x03;
 
+const NETWORK_SLOW = 200;  // If network delay large than 200ms it shows Good.
+
 ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
     let err, phrase, ret
     const [action, id] = actionUni.split('#')
@@ -1626,6 +1628,134 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             console.log(setting.isDev, ret);
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+        case 'rpcDelay':
+            try {
+                let startTime = Date.now();
+                let result = await ccUtil.getEpochID('WAN');
+                let cost = Date.now() - startTime;
+                if (!result) {
+                    ret = 'Time out';
+                } else {
+                    if (cost < NETWORK_SLOW) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Time out ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'wanNodeDelay':
+            try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'WAN');
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
+
+                if (!result) {
+                    ret = 'Time out';
+                } else {
+                    if (cost < NETWORK_SLOW) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Time out ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'ethNodeDelay':
+            try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('0xa4626e2bb450204c4b34bcc7525e585e8f678c0d', 'ETH');
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
+                console.log('ethNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Time out';
+                } else {
+                    if (cost < NETWORK_SLOW) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Time out ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'btcNodeDelay':
+            try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
+                let startTime = Date.now();
+                let result = await ccUtil.getBtcUtxo(0, 10000000, ['mtAXbCHDkgBZmL9zjq9kgYRpPA13gVFqYZ']);
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
+                console.log('btcNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Time out';
+                } else {
+                    if (cost < NETWORK_SLOW) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Time out ' + error;
+                console.log('btcNodeDelay error:', error);
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'eosNodeDelay':
+            try {
+                let startTime0 = Date.now();
+                let result0 = await ccUtil.getEpochID('WAN');
+                let cost0 = Date.now() - startTime0;
+
+                let startTime = Date.now();
+                let result = await ccUtil.getBalance('1xsridm5splx', 'EOS');
+                let cost = Date.now() - startTime - cost0;
+                if (cost < 0) {
+                    cost = cost * -1;
+                }
+                console.log('eosNodeDelay result:', result);
+                if (!result) {
+                    ret = 'Time out';
+                } else {
+                    if (cost < NETWORK_SLOW) {
+                        ret = 'Good (' + cost + 'ms)';
+                    } else {
+                        ret = 'Slow (' + cost + 'ms)';
+                    }
+                }
+            } catch (error) {
+                ret = 'Time out ' + error;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 

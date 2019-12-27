@@ -87,6 +87,7 @@ const fr_FR = {
     'Settings.config': 'Configuration',
     'Settings.backup': 'Sauvegarde',
     'Settings.restore': 'Réinitialisation',
+    'Settings.network': 'Network',
 
     'Config.option': 'Options de sécurité',
     'Config.inputPwd': 'Confirmer une transaction en validant votre mot de passe',

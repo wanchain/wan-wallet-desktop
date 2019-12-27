@@ -87,6 +87,7 @@ const pt_PT = {
     'Settings.config': 'Configurações',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restaurar',
+    'Settings.network': 'Network',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',

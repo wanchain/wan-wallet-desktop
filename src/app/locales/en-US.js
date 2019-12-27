@@ -77,6 +77,10 @@ const en_US = {
     'Portfolio.value': 'VALUE',
     'Portfolio.portfolioUppercase': 'PORTFOLIO',
 
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
+    'Network.startButton': 'Start',
+
     'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.warning': 'WARNING',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',
@@ -87,6 +91,7 @@ const en_US = {
     'Settings.config': 'Config',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restore',
+    'Settings.network': 'Network',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',

@@ -88,6 +88,7 @@ const zh_CN = {
     'Settings.config': '配置',
     'Settings.backup': '备份',
     'Settings.restore': '恢复',
+    'Settings.network': '网络',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

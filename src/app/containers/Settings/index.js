@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react';
 import Backup from 'containers/Backup';
 import Restore from 'containers/Restore';
 import Config from 'containers/Config';
+import Network from 'containers/Network';
 import style from './index.less';
 
 const { TabPane } = Tabs;
@@ -25,6 +26,7 @@ class Settings extends Component {
     config: <Config />,
     backup: <Backup />,
     restore: <Restore />,
+    network: <Network />,
   }
 
   renderTab = data => data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);

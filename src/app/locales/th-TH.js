@@ -87,6 +87,7 @@ const th_TH = {
     'Settings.config': 'ตั้งค่า',
     'Settings.backup': 'การสำรองข้อมูลกระเป๋า',
     'Settings.restore': 'การกู้คืนกระเป๋า',
+    'Settings.network': 'Network',
 
     'Config.option': 'ตัวเลือกความปลอดภัย',
     'Config.inputPwd': 'กรอกรหัสผ่านทุกครั้งก่อนทำรายการต่างๆ',

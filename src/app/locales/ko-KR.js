@@ -87,6 +87,7 @@ const ko_KR = {
     'Settings.config': '구성',
     'Settings.backup': '백업',
     'Settings.restore': '복구',
+    'Settings.network': 'Network',
 
     'Config.option': '보안 옵션',
     'Config.inputPwd': ' 트랜잭션을 보낼때 비밀번호를 다시 입력 바랍니다. ',
