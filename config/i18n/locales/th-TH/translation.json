@@ -77,10 +77,10 @@
             }
         },
         "exitDialog": {
-            "title": "Warning",
-            "message": "There are cross-chain transactions which are not finished yet, are you sure to exit?",
-            "ok": "OK",
-            "cancel": "Cancel"
+            "title": "คำเตือน",
+            "message": "ยังมีธุรกรรมประเภท Cross-chain ที่ยังดำเนินการอยู่ คุณแน่ใจที่จะออกหรือไม่?",
+            "ok": "ฉันแน่ใจ",
+            "cancel": "ยกเลิก"
         }
     }
 }
