@@ -77,6 +77,10 @@ const th_TH = {
     'Portfolio.value': 'มูลค่า',
     'Portfolio.portfolioUppercase': 'พอร์ตฟอลิโอ',
 
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
+    'Network.startButton': 'Start',
+
     'Restore.restoreFromSeedPhrase': 'กู้กระเป๋าโดยใช้กลุ่มคำลับ',
     'Restore.warning': 'ระวัง',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'หากคุณกู้กระเป๋าโดยใช้ "กลุ่มคำลับ" ข้อมูลในปัจจุบันทั้งหมดจะถูกลบทิ้งและกระเป๋าจะทำการปิดและเปิดใหม่ กรุณายืนยันเพื่อดำเนินการต่อ',

@@ -77,6 +77,10 @@ const pt_PT = {
     'Portfolio.value': 'VALOR',
     'Portfolio.portfolioUppercase': 'PORTFÓLIO',
 
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
+    'Network.startButton': 'Start',
+
     'Restore.restoreFromSeedPhrase': 'Restaurar a partir da sua Seed Phrase',
     'Restore.warning': 'ATENÇÃO',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Se você restaurar uma nova carteira a partir da sua Seed phrase, todos os dados locais da carteira atual serão excluídos e o aplicativo será reiniciado. Confirme e continue.',

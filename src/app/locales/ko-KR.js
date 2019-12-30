@@ -77,6 +77,10 @@ const ko_KR = {
     'Portfolio.value': '자산 가치',
     'Portfolio.portfolioUppercase': '자산 비율',
 
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
+    'Network.startButton': 'Start',
+
     'Restore.restoreFromSeedPhrase': '복구 Mnemonic',
     'Restore.warning': '경고',
     'Restore.restoreNewWalletWillDeleteAllLocalData': ' Mnemonic을 복원하고 싶으시다면, 모든 로컬데이터가 삭제되고 프로그램이 다시 설치 됩니다. 계속 진행 하시겠습니까.',

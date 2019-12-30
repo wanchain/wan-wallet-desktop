@@ -77,6 +77,10 @@ const fr_FR = {
     'Portfolio.value': 'VALEUR',
     'Portfolio.portfolioUppercase': 'PORTFOLIO',
 
+    'Network.title': 'Network Diagnosis',
+    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
+    'Network.startButton': 'Start',
+
     'Restore.restoreFromSeedPhrase': 'Réinitialiser votre portefeuille à partir de la phrase mnénomique (seed) ',
     'Restore.warning': 'ATTENTION',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Si vous réinitialisez un nouveau portefeuille à partir d\'une phrase mnénomique (seed), toutes les données locales du portefeuille actuel seront supprimées et l\'application redémarrera automatiquement. Veuillez confirmer et continuer.',
