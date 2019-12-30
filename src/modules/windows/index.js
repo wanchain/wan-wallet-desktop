@@ -66,14 +66,28 @@ class Window extends EventEmitter {
                 let BTCHistory = global.wanDb.queryComm('crossTransBtc', items => {
                     return items;
                 });
-                let hasPendingTx = history.concat(BTCHistory).find((item) => {
+                let hasPendingCrossTx = history.find((item) => {
                     if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail')) {
                         return false;
                     } else {
+                        this._logger.info(`Unfinished cross chain Tx: ${item.status}`);
+                        this._logger.info(JSON.stringify(item));
                         return true;
                     }
                 });
-                if (hasPendingTx !== undefined) {
+                let hasPendingBTCCrossTx = BTCHistory.find((item) => {
+                    if (!item.crossAddress) { // skip normal tx
+                        return false;
+                    }
+                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail')) {
+                        return false;
+                    } else {
+                        this._logger.info(`Unfinished BTC cross chain Tx: ${item.status}`);
+                        this._logger.info(JSON.stringify(item));
+                        return true;
+                    }
+                });
+                if (hasPendingCrossTx !== undefined || hasPendingBTCCrossTx !== undefined) {
                     e.preventDefault();
                     dialog.showMessageBox(this.window, {
                         type: 'info',
