@@ -170,7 +170,7 @@ export default (i18n) => {
                         label: i18n.t('main.applicationMenu.setting.network.main'),
                         accelerator: 'Shift+CommandOrControl+M',
                         checked: setting.network === 'main',
-                        enabled: false,
+                        enabled: sdkInitialized,
                         type: 'radio',
                         click: async (m) => {
                             // !sdkInitialized

@@ -22,7 +22,7 @@ const defaultConfig = {
     reinput_pwd: false,
     staking_advance: false,
     logout_timeout: '5',
-    mainnet: {
+    main: {
       tokens: {
         "0x28362cd634646620ef2290058744f9244bb90ed9": {
           "select": false,
@@ -218,7 +218,6 @@ class Settings {
         }
       }
     });
-
     this.set(`settings.${network}.cc_tokens`, ccTokens);
   }
 
