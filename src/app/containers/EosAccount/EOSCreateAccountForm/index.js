@@ -1,10 +1,11 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Button, Form, Input, Select, message, Tooltip } from 'antd';
+import { Modal, Button, Form, Input, Select, message, Tooltip, AutoComplete } from 'antd';
 import style from './index.less';
 import { BigNumber } from 'bignumber.js';
 import { WALLETID } from 'utils/settings';
+import { checkEosPublicKey, checkEosNameExist } from 'utils/helper';
 
 const { Option } = Select;
 const DEFAULT_ACCOUNT_NAME = 'eosnewyorkio';
@@ -59,8 +60,10 @@ class EOSCreateAccountForm extends Component {
                 return;
             };
             let values = form.getFieldsValue();
+            console.log('values:', values);
             if (getAccount.indexOf(values.name) !== -1) {
                 message.error(intl.get('EOSCreateAccountForm.duplicateAccount'));
+                return;
             }
             if (new BigNumber(values.CPU).plus(values.NET).gt(0)) {
                 const balance = this.getBalanceByAccount(values.creator);
@@ -85,6 +88,7 @@ class EOSCreateAccountForm extends Component {
                 walletID: WALLETID.NATIVE,
             };
             wand.request('transaction_EOSNormal', params, (err, res) => {
+                console.log('create:', err, res);
                 this.setState({
                     spin: false
                 });
@@ -93,6 +97,7 @@ class EOSCreateAccountForm extends Component {
                         this.props.handleCancel();
                         message.success(intl.get('EOSCreateAccountForm.createAccountSuccess'));
                     } else {
+                        // Duplicate name error info: { code: false, result: "Cannot create account named zxcvbnm12345, as that name is already taken" }
                         message.error(intl.get('EOSCreateAccountForm.createAccountFailed'));
                     }
                 } else {
@@ -121,13 +126,33 @@ class EOSCreateAccountForm extends Component {
         }
     }
 
-    checkName = (rule, value, callback) => {
+    checkName = async (rule, value, callback) => {
         let reg = /^[a-z][1-5a-z\.]{11}$/g;
         if (reg.test(value)) {
+            try {
+                let res = await checkEosNameExist(value);
+                if (res) {
+                    console.log('EOS name exist.');
+                    callback(intl.get('EOSCreateAccountForm.isExistEosName'));
+                } else {
+                    console.log('valid name');
+                    callback();
+                }
+            } catch (err) {
+                console.log('err:', err);
+                callback(intl.get('EOSCreateAccountForm.isExistEosName'));
+            }
+        } else {
+            callback(intl.get('EOSCreateAccountForm.invalidNameFormat'));
+        }
+    }
+
+    checkEosPublicKey = async (rule, value, callback) => {
+        let result = await checkEosPublicKey(value);
+        if (result) {
             callback();
         } else {
-            const str = intl.get('EOSCreateAccountForm.invalidNameFormat');
-            callback(str);
+            callback(intl.get('EOSCreateAccountForm.invalidEosPublicKey'));
         }
     }
 
@@ -175,45 +200,41 @@ class EOSCreateAccountForm extends Component {
                                         placeholder={intl.get('EOSCreateAccountForm.accountToFundAccount')}
                                         optionFilterProp="children"
                                         filterOption={(input, option) => {
-                                            console.log(option.props);
-                                            console.log(option.props.children);
-                                            return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                        }
+                                            return option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }}
                                     >
                                         {getAccount.map(v => <Option value={v} key={v}>{v}</Option>)}
                                     </Select>
-                                )}
+                                )
+                            }
                         </Form.Item>
                         <Form.Item label={intl.get('EOSCreateAccountForm.ownerPublicKey')}>
-                            {getFieldDecorator('owner', { rules: [{ required: true }] })
+                            {getFieldDecorator('owner', { rules: [{ required: true, validator: this.checkEosPublicKey }] })
                                 (
-                                    <Select
-                                        showSearch
+                                    <AutoComplete
+                                        dataSource={getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
                                         placeholder={intl.get('EOSCreateAccountForm.ownerKey')}
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                    >
-                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
-                                    </Select>
-                                )}
+                                        optionLabelProp={'value'}
+                                        filterOption={(input, option) => {
+                                            return option.props.children.props.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }}
+                                    />
+                                )
+                            }
                         </Form.Item>
                         <Form.Item label={intl.get('EOSCreateAccountForm.activePublicKey')}>
-                            {getFieldDecorator('active', { rules: [{ required: true }] })
+                            {getFieldDecorator('active', { rules: [{ required: true, validator: this.checkEosPublicKey }] })
                                 (
-                                    <Select
-                                        showSearch
+                                    <AutoComplete
+                                        dataSource={getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
                                         placeholder={intl.get('EOSCreateAccountForm.activeKey')}
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                    >
-                                        {getKeyList.map(v => <Option value={v.publicKey} key={v.publicKey}><Tooltip placement="right" title={`${v.name} - ${v.publicKey}`}>{v.name} - {v.publicKey}</Tooltip></Option>)}
-                                    </Select>
-                                )}
+                                        optionLabelProp={'value'}
+                                        filterOption={(input, option) => {
+                                            return option.props.children.props.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }}
+                                    />
+                                )
+                            }
                         </Form.Item>
                         <Form.Item label={'RAM'}>
                             {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkNumber }] })

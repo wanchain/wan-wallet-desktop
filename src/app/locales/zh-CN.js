@@ -246,6 +246,8 @@ const zh_CN = {
     'EOSCreateAccountForm.activePublicKey': '账户使用权公钥',
     'EOSCreateAccountForm.activeKey': '请选择公钥',
     'EOSCreateAccountForm.atLeast3KB': '数值不正确，至少3KB',
+    'EOSCreateAccountForm.isExistEosName': '账户名称已存在',
+    'EOSCreateAccountForm.invalidEosPublicKey': '非法公钥',
 
     'EOSNormalTransForm.sendTxFailed': '交易失败',
     'EOSNormalTransForm.sendTxSuccess': '交易成功',

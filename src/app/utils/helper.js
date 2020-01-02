@@ -691,3 +691,29 @@ export const getSplitAmountToArray = function (amount) {
   });
   return collections;
 }
+
+export const checkEosPublicKey = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isEosPublicKey', { address }, (err, val) => {
+      if (err) {
+        console.log('Check WAN address failed ', err);
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};
+
+export const checkEosNameExist = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isEosNameExist', { name: address }, (err, val) => {
+      if (err) {
+        console.log('Check EOS name failed ', err);
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};

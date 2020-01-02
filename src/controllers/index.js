@@ -563,6 +563,34 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'isEosPublicKey':
+            {
+                let ret;
+                try {
+                    ret = await ccUtil.isEosPublicKey(payload.address);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            }
+            break
+
+        case 'isEosNameExist':
+            {
+                let ret;
+                try {
+                    ret = await ccUtil.checkEosAccountExists(payload.name);
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            }
+            break
+
         case 'fromKeyFile':
             const { keyFilePwd, hdWalletPwd, keyFilePath } = payload;
             const keyFileContent = fs.readFileSync(keyFilePath).toString();
