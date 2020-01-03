@@ -105,7 +105,7 @@ class EOSKeyPairList extends Component {
   }
 
   handleSave = row => {
-    row.path = `${EOSPATH}${row.path}`;
+    // row.path = `${EOSPATH}${row.path}`;
     this.props.updateKeyName(row, 'normal');
   }
 
