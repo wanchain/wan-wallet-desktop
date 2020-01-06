@@ -213,6 +213,7 @@ const fr_FR = {
     'EOSResourceManageForm.account': 'Account',
     'EOSResourceManageForm.amount': 'Amount',
     'EOSResourceManageForm.type': 'Type',
+    'EOSResourceManageForm.accountName': 'Account Name',
 
     'EOSTransHistory.time': 'TIME',
     'EOSTransHistory.from': 'FROM',

@@ -213,6 +213,7 @@ const zh_CN = {
     'EOSResourceManageForm.account': '账户',
     'EOSResourceManageForm.amount': '数量',
     'EOSResourceManageForm.type': '类型',
+    'EOSResourceManageForm.accountName': '账户名称',
 
     'EOSTransHistory.time': '时间',
     'EOSTransHistory.from': '转出方',

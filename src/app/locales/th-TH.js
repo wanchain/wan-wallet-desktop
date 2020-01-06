@@ -213,6 +213,7 @@ const th_TH = {
     'EOSResourceManageForm.account': 'บัญชี',
     'EOSResourceManageForm.amount': 'จำนวน',
     'EOSResourceManageForm.type': 'ประเภท',
+    'EOSResourceManageForm.accountName': 'Account Name',
 
     'EOSTransHistory.time': 'เวลา',
     'EOSTransHistory.from': 'จาก',

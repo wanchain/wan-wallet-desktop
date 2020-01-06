@@ -211,7 +211,7 @@ class EOSAccountRAM extends Component {
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
-                                        <div className={style.buyInfo}>{'Account Name'}</div>
+                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.accountName')}</div>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
                                                 rules: [{ required: true, validator: this.checkName }]
