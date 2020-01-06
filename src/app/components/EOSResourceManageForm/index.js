@@ -28,8 +28,10 @@ class EOSResourceManageForm extends Component {
     componentDidMount () {
         wand.request('account_getAccountStakeInfo', { chain: CHAINNAME, account: this.props.selectedAccount.account }, (err, res) => {
             if (!err && res) {
-                this.setState({
-                    accountStakeInfo: res.rows
+                setTimeout(() => {
+                    this.setState({
+                        accountStakeInfo: res.rows
+                    });
                 });
             } else {
                 console.log('Get account stake information failed');

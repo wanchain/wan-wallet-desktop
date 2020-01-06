@@ -93,7 +93,6 @@ class EOSAccountCPU extends Component {
                 }
             } else if (values.type === 'undelegate') {
                 const cost = new BigNumber(values.undelegateSize);
-                const count = cost.div(price);
                 let stakedIndex = accountStakeInfo.findIndex((item) => {
                     return item.to === values.holderAccount
                 });
@@ -104,18 +103,14 @@ class EOSAccountCPU extends Component {
                         return;
                     }
                 }
-                if (count.gt(selectedAccount.cpuAvailable)) {
-                    message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUnstake'));
-                } else {
-                    this.setState({
-                        formData: {
-                            account: values.holderAccount,
-                            amount: values.undelegateSize,
-                            type: values.type,
-                        },
-                        confirmVisible: true
-                    });
-                }
+                this.setState({
+                    formData: {
+                        account: values.holderAccount,
+                        amount: values.undelegateSize,
+                        type: values.type,
+                    },
+                    confirmVisible: true
+                });
             }
         });
     }
@@ -182,12 +177,25 @@ class EOSAccountCPU extends Component {
         });
     }
 
-    onHolderChange = (value) => {
+    onHolderChange = (value, opts) => {
+        let { form } = this.props;
         let reg = /^[a-z][1-5a-z\.]{11}$/g;
         if (reg.test(value)) {
             this.setState({
                 showHolder: true
             });
+            if (value !== undefined) {
+                let index = opts.key.indexOf(':');
+                if (index !== -1) {
+                    let cpu_weight = opts.key.substring(index + 1);
+                    cpu_weight = cpu_weight.replace(/ EOS/g, '');
+                    setTimeout(() => {
+                        form.setFieldsValue({
+                            undelegateSize: cpu_weight
+                        });
+                    }, 0);
+                }
+            }
         } else {
             this.setState({
                 showHolder: false
@@ -256,7 +264,7 @@ class EOSAccountCPU extends Component {
                                                 rules: [{ required: true, validator: this.checkName }]
                                             })(
                                                 <AutoComplete
-                                                    dataSource={this.props.accountStakeInfo.map(v => <Option value={v.to} key={v.to}><Tooltip placement="right" title={`${v.to} - Max ${v.cpu_weight}`}>{v.to} - {v.cpu_weight}</Tooltip></Option>)}
+                                                    dataSource={this.props.accountStakeInfo.map((v, index) => <Option value={v.to} key={`${index}:${v.cpu_weight}`}><Tooltip placement="right" title={`${v.to} - Max ${v.cpu_weight}`}>{v.to} - Max {v.cpu_weight}</Tooltip></Option>)}
                                                     placeholder={intl.get('EOSResourceManageForm.selectHolderAccount')}
                                                     allowClear={true}
                                                     optionLabelProp={'value'}
@@ -270,7 +278,7 @@ class EOSAccountCPU extends Component {
                                         {
                                             this.state.showHolder &&
                                             <div>
-                                                <div className={style.undelegateInfo}>{`${intl.get('EOSResourceManageForm.unstakeCPU')}(EOS)`}</div>
+                                                <div className={style.undelegateInfo}>{`${intl.get('EOSResourceManageForm.unstakeCPU')} (EOS)`}</div>
                                                 <Form.Item>
                                                     {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
                                                         (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} prefix={<Icon type="credit-card" className="colorInput" />} />)}
