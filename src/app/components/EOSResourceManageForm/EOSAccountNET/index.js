@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Icon, Select, Radio, message, Spin, Row, Col, Progress, InputNumber, AutoComplete, Tooltip } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
@@ -9,6 +9,7 @@ import { WALLETID } from 'utils/settings';
 
 const { Option } = Select;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
+
 @inject(stores => ({
     language: stores.languageIntl.language,
     getAccount: stores.eosAddress.getAccount,
@@ -23,6 +24,8 @@ class EOSAccountNET extends Component {
         confirmVisible: false,
         formData: {},
         loading: false,
+        accountInfo: [],
+        showHolder: false,
     }
 
     componentWillUnmount() {
@@ -34,6 +37,7 @@ class EOSAccountNET extends Component {
     onChange = e => {
         this.setState({
             type: e.target.value,
+            showHolder: false,
         });
     };
 
@@ -53,8 +57,17 @@ class EOSAccountNET extends Component {
         }
     }
 
+    checkName = (rule, value, callback) => {
+        let reg = /^[a-z][1-5a-z\.]{11}$/g;
+        if (reg.test(value)) {
+            callback();
+        } else {
+            callback(intl.get('EOSCreateAccountForm.invalidNameFormat'));
+        }
+    }
+
     handleOk = () => {
-        const { form, selectedAccount } = this.props;
+        const { form, selectedAccount, accountStakeInfo, price } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
@@ -80,12 +93,23 @@ class EOSAccountNET extends Component {
                 }
             } else if (values.type === 'undelegate') {
                 const cost = new BigNumber(values.undelegateSize);
-                const count = cost.div(this.props.price);
-                if (this.props.price !== 0 && count.gt(selectedAccount.netAvailable)) {
+                const count = cost.div(price);
+                let stakedIndex = accountStakeInfo.findIndex((item) => {
+                    return item.to === values.holderAccount
+                });
+                if (stakedIndex !== -1) {
+                    let max = accountStakeInfo[stakedIndex].net_weight.replace(/ EOS/g, '');
+                    if (max && cost.gt(max)) {
+                        message.warn(intl.get('EOSResourceManageForm.noSufficientNetToUnstake'));
+                        return;
+                    }
+                }
+                if (price !== 0 && count.gt(selectedAccount.netAvailable)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientNetToUnstake'));
                 } else {
                     this.setState({
                         formData: {
+                            account: values.holderAccount,
                             amount: values.undelegateSize,
                             type: values.type,
                         },
@@ -93,7 +117,7 @@ class EOSAccountNET extends Component {
                     });
                 }
             }
-        })
+        });
     }
 
     onCancel = () => {
@@ -128,7 +152,7 @@ class EOSAccountNET extends Component {
         let params = {
             action: obj.type === 'delegate' ? 'delegatebw' : 'undelegatebw',
             from: selectedAccount.account,
-            to: obj.type === 'delegate' ? obj.account : selectedAccount.account,
+            to: obj.account,
             netAmount: obj.amount,
             cpuAmount: 0,
             BIP44Path: selectedAccount.path,
@@ -159,9 +183,22 @@ class EOSAccountNET extends Component {
         });
     }
 
+    onHolderChange = (value) => {
+        let reg = /^[a-z][1-5a-z\.]{11}$/g;
+        if (reg.test(value)) {
+            this.setState({
+                showHolder: true
+            });
+        } else {
+            this.setState({
+                showHolder: false
+            });
+        }
+    }
+
     render() {
+        const { form, price, getAccount, selectedAccount } = this.props;
         let { netAvailable, netTotal, balance } = this.props.selectedAccount;
-        const { form, price } = this.props;
         const { getFieldDecorator } = form;
         return (
             <div className={style.EOSAccountNET}>
@@ -190,33 +227,57 @@ class EOSAccountNET extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.selectHolderAccount')}</div>
+                                        <Form.Item>
+                                            {getFieldDecorator('account', {
+                                                rules: [{ required: true, validator: this.checkName }],
+                                            })(
+                                                <AutoComplete
+                                                    dataSource={getAccount.map(v => <Option value={v} key={v}><Tooltip placement="right" title={`${v}`}>{v}</Tooltip></Option>)}
+                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
+                                                    allowClear={true}
+                                                    optionLabelProp={'value'}
+                                                    filterOption={(input, option) => {
+                                                        return option.props.children.props.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    }}
+                                                />
+                                            )}
+                                        </Form.Item>
                                         <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.stakeNet')} (MAX {balance} EOS)</div>
                                         <Form.Item>
                                             {getFieldDecorator('delegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkDelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                                        </Form.Item>
-                                        <Form.Item>
-                                            {getFieldDecorator('account', {
-                                                rules: [{ required: true }],
-                                            })(
-                                                <Select
-                                                    showSearch
-                                                    allowClear
-                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
-                                                    optionFilterProp="children"
-                                                >
-                                                    {this.props.getAccount.map((item, index) => <Option value={item} key={item}>{item}</Option>)}
-                                                </Select>
-                                            )}
+                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0} max={balance} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.unstakeNET')} (MAX {new BigNumber(netAvailable).times(price).toFixed(4).toString(10)} EOS)</div>
+                                        <div className={style.undelegateInfo}>{intl.get('EOSResourceManageForm.selectHolderAccount')}</div>
                                         <Form.Item>
-                                            {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
-                                                (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} min={0} max={new BigNumber(netAvailable).times(price).toNumber()} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                            {getFieldDecorator('holderAccount', {
+                                                rules: [{ required: true, validator: this.checkName }],
+                                            })(
+                                                <AutoComplete
+                                                    dataSource={this.props.accountStakeInfo.map(v => <Option value={v.to} key={v.to}><Tooltip placement="right" title={`${v.to} - Max ${v.cpu_weight}`}>{v.to} - {v.cpu_weight}</Tooltip></Option>)}
+                                                    placeholder={intl.get('EOSResourceManageForm.selectHolderAccount')}
+                                                    allowClear={true}
+                                                    optionLabelProp={'value'}
+                                                    onChange={this.onHolderChange}
+                                                    filterOption={(input, option) => {
+                                                        return option.props.children.props.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    }}
+                                                />
+                                            )}
                                         </Form.Item>
+                                        {
+                                            this.state.showHolder &&
+                                            <div>
+                                                <div className={style.undelegateInfo}>{`${intl.get('EOSResourceManageForm.unstakeNET')}(EOS)`}</div>
+                                                <Form.Item>
+                                                    {getFieldDecorator('undelegateSize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkUndelegateSize }] })
+                                                        (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterEOSAmount')} precision={4} min={0.0001} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                                                </Form.Item>
+                                            </div>
+                                        }
                                     </div>
                                 )}
                             </Form>

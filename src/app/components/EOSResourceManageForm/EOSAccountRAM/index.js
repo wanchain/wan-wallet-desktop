@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Form, Icon, Select, Radio, message, Row, Col, Progress, InputNumber } from 'antd';
+import { Button, Form, Icon, Select, Radio, message, Row, Col, Progress, InputNumber, AutoComplete, Tooltip } from 'antd';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
@@ -61,6 +61,15 @@ class EOSAccountRAM extends Component {
         }
     }
 
+    checkName = (rule, value, callback) => {
+        let reg = /^[a-z][1-5a-z\.]{11}$/g;
+        if (reg.test(value)) {
+            callback();
+        } else {
+            callback(intl.get('EOSCreateAccountForm.invalidNameFormat'));
+        }
+    }
+
     handleOk = () => {
         const { form, selectedAccount, price } = this.props;
         form.validateFields(async (err) => {
@@ -73,10 +82,10 @@ class EOSAccountRAM extends Component {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
                     return;
                 }
-                const cost = new BigNumber(values.buySize).times(this.props.price);
-                if (this.props.price !== 0 && new BigNumber(values.buySize).gt(new BigNumber(selectedAccount.balance).div(price))) {
+                const cost = new BigNumber(values.buySize).times(price);
+                if (price !== 0 && new BigNumber(values.buySize).gt(new BigNumber(selectedAccount.balance).div(price))) {
                     message.warn(intl.get('EOSResourceManageForm.oversizeRAM'));
-                } else if (this.props.price !== 0 && cost.gt(selectedAccount.balance)) {
+                } else if (price !== 0 && cost.gt(selectedAccount.balance)) {
                     message.warn(intl.get('EOSResourceManageForm.noSufficientBalance'));
                 } else {
                     this.setState({
@@ -167,7 +176,7 @@ class EOSAccountRAM extends Component {
     }
 
     render() {
-        const { form, price, selectedAccount } = this.props;
+        const { form, price, selectedAccount, getAccount } = this.props;
         let { ramAvailable, ramTotal, balance } = selectedAccount;
         const { getFieldDecorator } = form;
         return (
@@ -202,18 +211,20 @@ class EOSAccountRAM extends Component {
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
+                                        <div className={style.buyInfo}>{'Account Name'}</div>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
-                                                rules: [{ required: true }],
+                                                rules: [{ required: true, validator: this.checkName }]
                                             })(
-                                                <Select
-                                                    showSearch
-                                                    allowClear
-                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
-                                                    optionFilterProp="children"
-                                                >
-                                                    {this.props.getAccount.map((item, index) => <Option value={item} key={item}>{item}</Option>)}
-                                                </Select>
+                                                <AutoComplete
+                                                    dataSource={getAccount.map(v => <Option value={v} key={v}><Tooltip placement="right" title={`${v}`}>{v}</Tooltip></Option>)}
+                                                    placeholder={'Input receiving account'}
+                                                    allowClear={true}
+                                                    optionLabelProp={'value'}
+                                                    filterOption={(input, option) => {
+                                                        return option.props.children.props.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    }}
+                                                />
                                             )}
                                         </Form.Item>
                                     </div>

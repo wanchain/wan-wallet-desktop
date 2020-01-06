@@ -18,6 +18,7 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
   language: stores.languageIntl.language,
   keyInfo: stores.eosAddress.keyInfo,
   getAmount: stores.eosAddress.getAllAmount,
+  getAccount: stores.eosAddress.getAccount,
   addKey: obj => stores.eosAddress.addKey(obj),
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -107,7 +108,7 @@ class EosAccount extends Component {
             </span>
           </Col>
           <Col span={12} className="col-right">
-            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
+            <Button className="createBtn" type="primary" disabled={this.props.getAccount.length === 0} shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

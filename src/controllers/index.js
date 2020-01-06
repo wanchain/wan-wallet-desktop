@@ -734,6 +734,19 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getAccountStakeInfo':
+            try {
+                const { chain, account } = payload;
+                ret = await ccUtil.getAccountStakeInfo(chain, account);
+            } catch (e) {
+                console.log('error:', e)
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

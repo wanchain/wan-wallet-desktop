@@ -193,6 +193,7 @@ const th_TH = {
     'EOSResourceManageForm.buy': 'ซื้อ',
     'EOSResourceManageForm.buyRAM': 'ซื้อ RAM',
     'EOSResourceManageForm.selectReceivingAccount': 'เลือกบัญชีผู้รับ',
+    'EOSResourceManageForm.selectHolderAccount': 'Select holder account',
     'EOSResourceManageForm.enterRAMSize': 'กรอกขนาด RAM (KB)',
     'EOSResourceManageForm.oversizeCPU': 'เกินขนาดสูงสุดของ CPU',
     'EOSResourceManageForm.noSufficientEOSToStake': 'ยอด EOS คงเหลือไม่เพียงพอที่จะ Stake',

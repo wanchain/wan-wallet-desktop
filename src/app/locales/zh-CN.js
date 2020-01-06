@@ -193,6 +193,7 @@ const zh_CN = {
     'EOSResourceManageForm.buy': '买入',
     'EOSResourceManageForm.buyRAM': '买入内存',
     'EOSResourceManageForm.selectReceivingAccount': '选择接收账户',
+    'EOSResourceManageForm.selectHolderAccount': '选择持有者账户',
     'EOSResourceManageForm.enterRAMSize': '输入内存数量(KB)',
     'EOSResourceManageForm.oversizeCPU': '超出CPU最大值',
     'EOSResourceManageForm.noSufficientEOSToStake': '没有足够的EOS进行质押',

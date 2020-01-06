@@ -10,6 +10,7 @@ const RAM = Form.create({ name: 'EOSAccountRAM' })(EOSAccountRAM);
 const CPU = Form.create({ name: 'EOSAccountCPU' })(EOSAccountCPU);
 const NET = Form.create({ name: 'EOSAccountNET' })(EOSAccountNET);
 const { TabPane } = Tabs;
+const CHAINNAME = 'EOS';
 
 @inject(stores => ({
     language: stores.languageIntl.language,
@@ -21,6 +22,20 @@ const { TabPane } = Tabs;
 class EOSResourceManageForm extends Component {
     state = {
         activeKey: 0,
+        accountStakeInfo: []
+    }
+
+    componentDidMount () {
+        wand.request('account_getAccountStakeInfo', { chain: CHAINNAME, account: this.props.selectedAccount.account }, (err, res) => {
+            if (!err && res) {
+                this.setState({
+                    accountStakeInfo: res.rows
+                });
+            } else {
+                console.log('Get account stake information failed');
+                console.log('err:', err);
+            }
+        });
     }
 
     onChange = (activeKey) => {
@@ -51,10 +66,10 @@ class EOSResourceManageForm extends Component {
                             <RAM price={prices.ram ? prices.ram : 0 } onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="CPU" key="1">
-                            <CPU price={prices.cpu ? prices.cpu : 0 } onCancel={this.onCancel} />
+                            <CPU price={prices.cpu ? prices.cpu : 0 } accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="NET" key="2">
-                            <NET price={prices.net ? prices.net : 0 } onCancel={this.onCancel} />
+                            <NET price={prices.net ? prices.net : 0 } accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
                         </TabPane>
                     </Tabs>
                 </Spin>

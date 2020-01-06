@@ -41,7 +41,7 @@ class EOSResourceManageConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-          { (type === 'buy' || type === 'delegate') && <Form.Item label={intl.get('EOSResourceManageForm.account')}>
+          { (type === 'buy' || type === 'delegate' || type === 'undelegate') && <Form.Item label={intl.get('EOSResourceManageForm.account')}>
             {getFieldDecorator('account', { initialValue: account })
               (<Input disabled={true} />)}
           </Form.Item>}
