@@ -446,6 +446,17 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getRamPrice':
+            try {
+                ret = await ccUtil.getRamPrice('EOS');
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'balances':
             {
                 let balance, privateBalance;

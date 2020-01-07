@@ -67,7 +67,7 @@ class EOSAccountCPU extends Component {
     }
 
     handleOk = () => {
-        const { form, selectedAccount, accountStakeInfo, price } = this.props;
+        const { form, selectedAccount, accountStakeInfo } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
@@ -97,8 +97,8 @@ class EOSAccountCPU extends Component {
                     return item.to === values.holderAccount
                 });
                 if (stakedIndex !== -1) {
-                    let max = accountStakeInfo[stakedIndex].cpu_weight.replace(/ EOS/g, '');
-                    if (max && cost.gt(max)) {
+                    let max = parseFloat(accountStakeInfo[stakedIndex].cpu_weight);
+                    if (Number(max) && max && cost.gt(max)) {
                         message.warn(intl.get('EOSResourceManageForm.noSufficientCPUtoUnstake'));
                         return;
                     }
@@ -187,13 +187,14 @@ class EOSAccountCPU extends Component {
             if (value !== undefined) {
                 let index = opts.key.indexOf(':');
                 if (index !== -1) {
-                    let cpu_weight = opts.key.substring(index + 1);
-                    cpu_weight = cpu_weight.replace(/ EOS/g, '');
-                    setTimeout(() => {
-                        form.setFieldsValue({
-                            undelegateSize: cpu_weight
-                        });
-                    }, 0);
+                    let cpu_weight = parseFloat(opts.key.substring(index + 1));
+                    if (!Number.isNaN(cpu_weight)) {
+                        setTimeout(() => {
+                            form.setFieldsValue({
+                                undelegateSize: cpu_weight
+                            });
+                        }, 0);
+                     }
                 }
             }
         } else {
@@ -204,7 +205,7 @@ class EOSAccountCPU extends Component {
     }
 
     render() {
-        const { form, price, getAccount, selectedAccount } = this.props;
+        const { form, getAccount, selectedAccount } = this.props;
         let { cpuAvailable, cpuTotal, balance } = selectedAccount;
         const { getFieldDecorator } = form;
         return (
@@ -222,7 +223,6 @@ class EOSAccountCPU extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.CPUPriceBar}>{intl.get('EOSResourceManageForm.currentCPUPrice')} : <span className={style.CPUPrice}>{price.toString(10)} EOS/ms</span></div>
                         <div className={style.CPUForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -234,7 +234,7 @@ class EOSAccountCPU extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.selectHolderAccount')}</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.selectReceivingAccount')}</div>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
                                                 rules: [{ required: true, validator: this.checkName }]

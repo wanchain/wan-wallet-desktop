@@ -67,7 +67,7 @@ class EOSAccountNET extends Component {
     }
 
     handleOk = () => {
-        const { form, selectedAccount, accountStakeInfo, price } = this.props;
+        const { form, selectedAccount, accountStakeInfo } = this.props;
         form.validateFields(async (err) => {
             if (err) {
                 return;
@@ -97,8 +97,8 @@ class EOSAccountNET extends Component {
                     return item.to === values.holderAccount
                 });
                 if (stakedIndex !== -1) {
-                    let max = accountStakeInfo[stakedIndex].net_weight.replace(/ EOS/g, '');
-                    if (max && cost.gt(max)) {
+                    let max = parseFloat(accountStakeInfo[stakedIndex].net_weight);
+                    if (Number(max) && max && cost.gt(max)) {
                         message.warn(intl.get('EOSResourceManageForm.noSufficientNetToUnstake'));
                         return;
                     }
@@ -188,13 +188,14 @@ class EOSAccountNET extends Component {
             if (value !== undefined) {
                 let index = opts.key.indexOf(':');
                 if (index !== -1) {
-                    let net_weight = opts.key.substring(index + 1);
-                    net_weight = net_weight.replace(/ EOS/g, '');
-                    setTimeout(() => {
-                        form.setFieldsValue({
-                            undelegateSize: net_weight
-                        });
-                    }, 0);
+                    let net_weight = parseFloat(opts.key.substring(index + 1));
+                    if (!Number.isNaN(net_weight)) {
+                        setTimeout(() => {
+                            form.setFieldsValue({
+                                undelegateSize: net_weight
+                            });
+                        }, 0);
+                    }
                 }
             }
         } else {
@@ -205,7 +206,7 @@ class EOSAccountNET extends Component {
     }
 
     render() {
-        const { form, price, getAccount, selectedAccount } = this.props;
+        const { form, getAccount, selectedAccount } = this.props;
         let { netAvailable, netTotal, balance } = this.props.selectedAccount;
         const { getFieldDecorator } = form;
         return (
@@ -223,7 +224,6 @@ class EOSAccountNET extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.NETPriceBar}>{intl.get('EOSResourceManageForm.currentNetPrice')} : <span className={style.NETPrice}>{price} EOS/KB</span></div>
                         <div className={style.NETForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>
@@ -235,7 +235,7 @@ class EOSAccountNET extends Component {
                                 </Form.Item>
                                 {this.state.type === 'delegate' ? (
                                     <div>
-                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.selectHolderAccount')}</div>
+                                        <div className={style.delegateInfo}>{intl.get('EOSResourceManageForm.selectReceivingAccount')}</div>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
                                                 rules: [{ required: true, validator: this.checkName }],

@@ -23,28 +23,7 @@ class EOSCreateAccountForm extends Component {
         ramDefaultValue: 4,
         cpuDefaultValue: 0.15,
         netDefaultValue: 0.05,
-        prices: {
-            ram: 0,
-            cpu: 0,
-            net: 0
-        },
         spin: false
-    }
-
-    componentDidMount() {
-        if (this.props.getAccount.length === 0) {
-            console.log('No account');
-            return;
-        }
-        wand.request('address_getEOSResourcePrice', { account: this.props.getAccount[0] || DEFAULT_ACCOUNT_NAME }, (err, res) => {
-            if (!err) {
-                this.setState({
-                    prices: res
-                });
-            } else {
-                message.error(intl.get('EOSCreateAccountForm.getResourcePriceFailed'));
-            }
-        });
     }
 
     handleOk = () => {
@@ -60,7 +39,6 @@ class EOSCreateAccountForm extends Component {
                 return;
             };
             let values = form.getFieldsValue();
-            console.log('values:', values);
             if (getAccount.indexOf(values.name) !== -1) {
                 message.error(intl.get('EOSCreateAccountForm.duplicateAccount'));
                 return;
@@ -119,7 +97,24 @@ class EOSCreateAccountForm extends Component {
     }
 
     checkNumber = (rule, value, callback) => {
-        if (value >= 0) {
+        if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 0.0001) {
+            let index = value.indexOf('.');
+            if (index !== -1) {
+                if (value.substring(index + 1).length > 4) {
+                    callback(intl.get('EOSCreateAccountForm.invalidValue'));
+                } else {
+                    callback();
+                }
+            } else {
+                callback();
+            }
+        } else {
+            callback(intl.get('EOSCreateAccountForm.invalidValue'));
+        }
+    }
+
+    checkRAMNumber = (rule, value, callback) => {
+        if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 3) {
             callback();
         } else {
             callback(intl.get('EOSCreateAccountForm.invalidValue'));
@@ -237,14 +232,14 @@ class EOSCreateAccountForm extends Component {
                             }
                         </Form.Item>
                         <Form.Item label={'RAM'}>
-                            {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkNumber }] })
+                            {getFieldDecorator('RAM', { initialValue: ramDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.atLeast3KB'), validator: this.checkRAMNumber }] })
                                 (<Input min={3} addonAfter="KB" />)}
                         </Form.Item>
-                        <Form.Item label={`CPU (${new BigNumber(cpuDefaultValue).div(this.state.prices.cpu).toFixed(4).toString()} ms)`}>
+                        <Form.Item label={`CPU`}>
                             {getFieldDecorator('CPU', { initialValue: cpuDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
                                 (<Input min={0} addonAfter="EOS" onChange={this.cpuChange} />)}
                         </Form.Item>
-                        <Form.Item label={`NET (${new BigNumber(netDefaultValue).div(this.state.prices.net).toFixed(4).toString()} KB)`}>
+                        <Form.Item label={`NET`}>
                             {getFieldDecorator('NET', { initialValue: netDefaultValue, rules: [{ message: intl.get('EOSCreateAccountForm.invalidValue'), validator: this.checkNumber }] })
                                 (<Input min={0} addonAfter="EOS" onChange={this.netChange} />)}
                         </Form.Item>

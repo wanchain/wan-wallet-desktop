@@ -68,10 +68,10 @@ class EOSResourceManageForm extends Component {
                             <RAM price={prices.ram ? prices.ram : 0 } onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="CPU" key="1">
-                            <CPU price={prices.cpu ? prices.cpu : 0 } accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
+                            <CPU accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
                         </TabPane>
                         <TabPane tab="NET" key="2">
-                            <NET price={prices.net ? prices.net : 0 } accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
+                            <NET accountStakeInfo={this.state.accountStakeInfo} onCancel={this.onCancel} />
                         </TabPane>
                     </Tabs>
                 </Spin>

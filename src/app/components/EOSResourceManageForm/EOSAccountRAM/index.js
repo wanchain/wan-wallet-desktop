@@ -154,6 +154,7 @@ class EOSAccountRAM extends Component {
             loading: true
         });
         wand.request('transaction_EOSNormal', params, (err, res) => {
+            // console.log(err, res);
             if (!err) {
                 if (res.code) {
                     this.setState({
@@ -194,7 +195,7 @@ class EOSAccountRAM extends Component {
                         </div>
                     </Col>
                     <Col span={16}>
-                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{new BigNumber(price).toFixed(4).toString(10)} EOS/KB</span></div>
+                        <div className={style.RAMPriceBar}>{intl.get('EOSResourceManageForm.currentRAMPrice')} : <span className={style.RAMPrice}>{Number(new BigNumber(price).toFixed(8)) === 0 ? '0' : new BigNumber(price).toFixed(8).toString(10)} EOS/KB</span></div>
                         <div className={style.RAMForm}>
                             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
                                 <Form.Item className={style.type}>

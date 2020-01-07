@@ -92,10 +92,14 @@ class EOSAccountList extends Component {
 
     showManageResourceForm = (record) => {
         this.props.updateSelectedAccount(record);
-        wand.request('address_getEOSResourcePrice', { account: record.account }, (err, res) => {
+        wand.request('address_getRamPrice', (err, res) => {
             if (!err) {
                 this.setState({
-                    prices: res,
+                    prices: {
+                        ram: res,
+                        cpu: 0,
+                        net: 0,
+                    }
                 });
             } else {
                 message.error(intl.get('EOSAccountList.getResourcePriceFailed'));
@@ -116,8 +120,7 @@ class EOSAccountList extends Component {
         const { getAccountListWithBalance } = this.props;
         this.props.language && this.columns.forEach(col => {
             col.title = intl.get(`EosAccount.${col.dataIndex}`)
-        })
-
+        });
         return (
             <div>
                 <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountListWithBalance} />
