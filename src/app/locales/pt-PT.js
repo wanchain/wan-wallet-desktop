@@ -441,7 +441,7 @@ const pt_PT = {
     'menuConfig.validator': 'Validador',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Configurações',
-    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
 
     'utils.helper.getBalanceFailed': 'Falha ao obter saldo',

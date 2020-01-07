@@ -442,7 +442,7 @@ const es_ES = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
-    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',

@@ -442,7 +442,7 @@ const ko_KR = {
     'menuConfig.validator': '검증인',
     'menuConfig.staking': '스테이킹',
     'menuConfig.settings': '설정',
-    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
 
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
