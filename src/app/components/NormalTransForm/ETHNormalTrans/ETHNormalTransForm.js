@@ -42,7 +42,11 @@ class ETHNormalTransForm extends Component {
   constructor(props) {
     super(props);
     let { tokensList, tokenAddr } = props;
-    this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals || 18;
+    if (tokenAddr) {
+      this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals;
+    } else {
+      this.decimals = 18;
+    }
   }
 
   componentWillUnmount () {

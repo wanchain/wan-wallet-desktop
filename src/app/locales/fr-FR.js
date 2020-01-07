@@ -442,8 +442,9 @@ const fr_FR = {
     'menuConfig.validator': 'Validateur',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Paramètres',
-    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'L\'obtention du solde a échoué',
     'utils.helper.getNonceFailed': 'L\'obtention du nonce a échoué',

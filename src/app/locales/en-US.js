@@ -445,8 +445,9 @@ const en_US = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Settings',
-    'menuConfig.thirdPartyDapps': 'Third Party DApps',
+    'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
