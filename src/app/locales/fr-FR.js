@@ -444,6 +444,7 @@ const fr_FR = {
     'menuConfig.settings': 'Paramètres',
     'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'L\'obtention du solde a échoué',
     'utils.helper.getNonceFailed': 'L\'obtention du nonce a échoué',

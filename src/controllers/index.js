@@ -1657,14 +1657,14 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
         
-        case 'getDexInjectFile':
-            console.log('getDexInjectFile is called');
+        case 'getDAppInjectFile':
+            console.log('getDAppInjectFile is called');
             let ret = "";
 
             if(setting.isDev) {
-                ret = `file://${__dirname}/../modals/dexInject.js`;
+                ret = `file://${__dirname}/../modals/dAppInject.js`;
             } else {
-                ret = `file://${__dirname}/modals/dexInject.js`
+                ret = `file://${__dirname}/modals/dAppInject.js`
             }
             console.log(setting.isDev, ret);
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })

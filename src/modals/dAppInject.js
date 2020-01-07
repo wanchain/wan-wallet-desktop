@@ -4,7 +4,7 @@ const uuid = require('uuid/v1');
 class Web3Eth {
   constructor() {
     this._callback = {}; //Save all callback funcs
-    ipcRenderer.on('dex-message', this.dexMessageHandler.bind(this));
+    ipcRenderer.on('dapp-message', this.dexMessageHandler.bind(this));
   }
 
   // ---------------------------------
@@ -61,7 +61,7 @@ class Web3Eth {
   // -------------------------------
   // Functions used for internal data transfer
   sendToHost(obj) {
-    ipcRenderer.sendToHost('dex-message', obj);
+    ipcRenderer.sendToHost('dapp-message', obj);
   }
 
   saveCb(msg) {

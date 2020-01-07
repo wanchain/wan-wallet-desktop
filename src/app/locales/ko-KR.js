@@ -444,6 +444,7 @@ const ko_KR = {
     'menuConfig.settings': '설정',
     'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',

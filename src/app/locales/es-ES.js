@@ -444,6 +444,7 @@ const es_ES = {
     'menuConfig.settings': 'Settings',
     'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',

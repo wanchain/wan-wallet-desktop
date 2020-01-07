@@ -443,6 +443,7 @@ const pt_PT = {
     'menuConfig.settings': 'Configurações',
     'menuConfig.thirdPartyDapps': 'DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'Falha ao obter saldo',
     'utils.helper.getNonceFailed': 'Falha ao obter nonce',
