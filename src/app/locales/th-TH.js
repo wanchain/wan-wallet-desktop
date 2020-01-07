@@ -444,6 +444,7 @@ const th_TH = {
     'menuConfig.settings': 'การตั้งค่า',
     'menuConfig.thirdPartyDapps': 'DApps จากบุคคลที่สาม',
     'menuConfig.dex': 'DEX',
+    'menuConfig.wanGame': 'WanGame',
 
     'utils.helper.getBalanceFailed': 'ไม่สามารถดึงยอดคงเหลือได้',
     'utils.helper.getNonceFailed': 'ไม่สามารถดึง nonce ได้',
