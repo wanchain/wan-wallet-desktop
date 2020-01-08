@@ -10,6 +10,7 @@ import {
  } from 'componentUtils/trezor'
  import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
+import intl from 'react-intl-universal';
 
 const { confirm } = Modal;
 
@@ -332,16 +333,16 @@ class DApp extends Component {
   async showConfirm(type, msg, onOk, onCancel) {
     let title = '';
     if (type === 'sign') {
-      title = 'Do you allow DApp to sign with your wallet?';
+      title = intl.get('dAppConfirm.sign');
     } else {
-      title = 'Do you allow DApp to sendTransaction with your wallet?';
+      title = intl.get('dAppConfirm.send');
     }
 
     confirm({
       title: title,
-      content: 'This operation may cause changes to the assets in your wallet.',
-      okText: 'Yes',
-      cancelText: 'No',
+      content: intl.get('dAppConfirm.warn'),
+      okText: intl.get('ValidatorRegister.acceptAgency'),
+      cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
       async onOk() {
         console.log('OK');
         await onOk(msg);

@@ -446,6 +446,10 @@ const es_ES = {
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 
+    'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
+    'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
+    'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
+    
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
     'utils.helper.getGasPriceFailed': 'Get gas price failed',
