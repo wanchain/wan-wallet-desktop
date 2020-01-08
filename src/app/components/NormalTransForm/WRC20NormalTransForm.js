@@ -135,23 +135,25 @@ class WRC20NormalTransForm extends Component {
     let data = '0x';
     let { form, tokensList, tokenAddr: to, from } = this.props;
     let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
-
-    if (transferTo) {
-      let decimals = tokensList[to].decimals;
-      data = encodeTransferInput(transferTo, decimals, amount || 0)
-      this.props.updateTransParams(from, { data });
-    }
-
-    let tx = { from, to, data, value: '0x0' };
-    wand.request('transaction_estimateGas', { chainType: 'WAN', tx }, (err, gasLimit) => {
-      if (err) {
-        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
-      } else {
-        console.log('Update gas limit:', gasLimit);
-        this.props.updateTransParams(from, { gasLimit });
-        this.props.updateGasLimit(gasLimit)
+    try {
+      if (transferTo) {
+        let decimals = tokensList[to].decimals;
+        data = encodeTransferInput(transferTo, decimals, amount || 0)
+        this.props.updateTransParams(from, { data });
       }
-    });
+      let tx = { from, to, data, value: '0x0' };
+      wand.request('transaction_estimateGas', { chainType: 'WAN', tx }, (err, gasLimit) => {
+        if (err) {
+          message.warn(intl.get('NormalTransForm.estimateGasFailed'));
+        } else {
+          console.log('Update gas limit:', gasLimit);
+          this.props.updateTransParams(from, { gasLimit });
+          this.props.updateGasLimit(gasLimit)
+        }
+      });
+    } catch (err) {
+      console.log('updateGasLimit failed', err);
+    }
   }
 
   checkToWANAddr = (rule, value, callback) => {

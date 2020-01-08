@@ -113,7 +113,7 @@ class EOSNormalTransForm extends Component {
   }
 
   checkToAccount = (rule, value, callback) => {
-    let reg = new RegExp(/^[a-z][a-z1-5\.]+$/);
+    let reg = /^[a-z][1-5a-z\.]{11}$/g;
     if (reg.test(value)) {
       callback();
     } else {
@@ -163,7 +163,7 @@ class EOSNormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                  (<InputNumber min={0} precision={4} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                  (<InputNumber min={0.0001} precision={4} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
               {
                 settings.reinput_pwd &&
