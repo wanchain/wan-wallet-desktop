@@ -449,7 +449,7 @@ const ko_KR = {
     'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
     'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
     'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
-    
+
     'utils.helper.getBalanceFailed': '잔액을 가져 오지 못했습니다.',
     'utils.helper.getNonceFailed': 'Nonce를 가져 오지 못했습니다.',
     'utils.helper.getGasPriceFailed': 'Gas 가격을 가져 오지 못했습니다.',

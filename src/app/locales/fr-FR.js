@@ -449,7 +449,7 @@ const fr_FR = {
     'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
     'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
     'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
-    
+
     'utils.helper.getBalanceFailed': 'L\'obtention du solde a échoué',
     'utils.helper.getNonceFailed': 'L\'obtention du nonce a échoué',
     'utils.helper.getGasPriceFailed': 'L\'obtention du prix du gas a échoué',
