@@ -281,7 +281,12 @@ class LanguageIntl {
             title: intl.get('menuConfig.dex'),
             key: '/dex',
             icon: 'stock',
-          }
+          },
+          {
+            title: intl.get('menuConfig.wanGame'),
+            key: '/wanGame',
+            icon: 'crown',
+          },
         ]
       });
     }
