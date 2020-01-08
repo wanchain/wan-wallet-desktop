@@ -445,6 +445,10 @@ const pt_PT = {
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 
+    'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
+    'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
+    'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
+
     'utils.helper.getBalanceFailed': 'Falha ao obter saldo',
     'utils.helper.getNonceFailed': 'Falha ao obter nonce',
     'utils.helper.getGasPriceFailed': 'Falha ao obter preço do gás',

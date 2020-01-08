@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin } from 'antd';
+import { Spin, Modal } from 'antd';
 import style from './index.less';
 import { WALLETID } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
@@ -10,6 +10,9 @@ import {
  } from 'componentUtils/trezor'
  import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
+import intl from 'react-intl-universal';
+
+const { confirm } = Modal;
 
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
@@ -201,33 +204,38 @@ class DApp extends Component {
   }
 
   async signPersonalMessage(msg) {
-    msg.err = null;
-    msg.val = null;
+    await this.showConfirm('sign', msg, async (msg) => {
+      msg.err = null;
+      msg.val = null;
 
-    const wallet = await this.getWalletFromAddress(msg.address);
-    console.log('ready to sign message with:', wallet);
+      const wallet = await this.getWalletFromAddress(msg.address);
+      console.log('ready to sign message with:', wallet);
 
-    if (wallet.id === WALLETID.TREZOR) {
-      try {
-        let sig = await trezorSignPersonalMessage(wallet.path, msg.message);
-        msg.val = sig;
-      } catch (error) {
-        console.log(error);
-        msg.err = error;
-      }
-      this.sendToDApp(msg);
-    } else {
-      wand.request('wallet_signPersonalMessage', { walletID: wallet.id, path: wallet.path, rawTx: msg.message }, (err, sig) => {
-        if (err) {
-          msg.err = err;
-          console.log(`Sign Failed:`, JSON.stringify(err));
-        } else {
-          console.log('Signature: ', sig)
+      if (wallet.id === WALLETID.TREZOR) {
+        try {
+          let sig = await trezorSignPersonalMessage(wallet.path, msg.message);
           msg.val = sig;
+        } catch (error) {
+          console.log(error);
+          msg.err = error;
         }
         this.sendToDApp(msg);
-      });
-    }
+      } else {
+        wand.request('wallet_signPersonalMessage', { walletID: wallet.id, path: wallet.path, rawTx: msg.message }, (err, sig) => {
+          if (err) {
+            msg.err = err;
+            console.log(`Sign Failed:`, JSON.stringify(err));
+          } else {
+            console.log('Signature: ', sig)
+            msg.val = sig;
+          }
+          this.sendToDApp(msg);
+        });
+      }
+    }, async (msg) => {
+      msg.err = 'The user rejects in the wallet.';
+      this.sendToDApp(msg);
+    });
   }
 
   async nativeSendTransaction(msg, wallet) {
@@ -293,28 +301,57 @@ class DApp extends Component {
   }
 
   async sendTransaction(msg) {
-    msg.err = null;
-    msg.val = null;
-    console.log('msg:', msg);
-    console.log('ready to sendTx:', msg.message);
-    if (!msg.message || !msg.message.from) {
-      msg.err = 'can not find from address.';
+    await this.showConfirm('send', msg, async (msg) => {
+      msg.err = null;
+      msg.val = null;
+      console.log('msg:', msg);
+      console.log('ready to sendTx:', msg.message);
+      if (!msg.message || !msg.message.from) {
+        msg.err = 'can not find from address.';
+        this.sendToDApp(msg);
+        return;
+      }
+
+      const wallet = await this.getWalletFromAddress(msg.message.from);
+      console.log('ready to send tx with:', wallet);
+
+      if (wallet.id === WALLETID.TREZOR) {
+        await this.trezorSendTransaction(msg, wallet);
+      } else {
+        await this.nativeSendTransaction(msg, wallet);
+      }
+    }, async (msg) => {
+      msg.err = 'The user rejects in the wallet.';
       this.sendToDApp(msg);
-      return;
-    }
-
-    const wallet = await this.getWalletFromAddress(msg.message.from);
-    console.log('ready to send tx with:', wallet);
-
-    if (wallet.id === WALLETID.TREZOR) {
-      await this.trezorSendTransaction(msg, wallet);
-    } else {
-      await this.nativeSendTransaction(msg, wallet);
-    }
+    });
   }
 
   async getPreloadFile() {
     return pu.promisefy(wand.request, ['setting_getDAppInjectFile']);
+  }
+
+  async showConfirm(type, msg, onOk, onCancel) {
+    let title = '';
+    if (type === 'sign') {
+      title = intl.get('dAppConfirm.sign');
+    } else {
+      title = intl.get('dAppConfirm.send');
+    }
+
+    confirm({
+      title: title,
+      content: intl.get('dAppConfirm.warn'),
+      okText: intl.get('ValidatorRegister.acceptAgency'),
+      cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
+      async onOk() {
+        console.log('OK');
+        await onOk(msg);
+      },
+      async onCancel() {
+        console.log('Cancel');
+        await onCancel(msg);
+      },
+    });
   }
 
   renderLoadTip = () => {

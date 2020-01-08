@@ -448,6 +448,11 @@ const zh_CN = {
 
     'menuConfig.thirdPartyDapps': '第三方应用',
     'menuConfig.dex': '交易',
+    'menuConfig.wanGame': 'WanGame',
+
+    'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
+    'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
+    'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
     'utils.helper.getNonceFailed': '获取nonce失败',
