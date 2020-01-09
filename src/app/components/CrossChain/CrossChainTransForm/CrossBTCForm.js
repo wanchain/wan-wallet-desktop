@@ -48,7 +48,7 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from, btcPath } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from, btcPath, smgList } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -73,7 +73,7 @@ class CrossBTCForm extends Component {
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
 
-        if (isExceedBalance(origAddrAmount, origAddrFee)) {
+        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(balance, sendAmount) || isExceedBalance(formatNumByDecimals(smgList[0].quota, 8), sendAmount)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
