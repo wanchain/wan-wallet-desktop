@@ -18,3 +18,6 @@ export { default as CrossBTC } from './CrossChain/CrossBTC';
 export { default as Dex } from './Dex';
 export { default as CrossEOS } from './CrossChain/CrossEOS';
 export { default as EosAccount } from './EosAccount';
+export { default as DeployContract } from './DeployContract';
+export { default as RegisterToken } from './DeployContract/RegisterToken';
+export { default as RegisterStoremanGroup } from './DeployContract/RegisterStoremanGroup';

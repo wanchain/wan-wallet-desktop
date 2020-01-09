@@ -250,6 +250,29 @@ class LanguageIntl {
         icon: 'bank'
       },
       {
+        title: intl.get('menuConfig.offlineWallet'),
+        step: '1',
+        key: '/offlineWallet',
+        icon: 'bank',
+        children: [
+          {
+            title: intl.get('menuConfig.deployContract'),
+            key: '/deployContract',
+            icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.registerToken'),
+            key: '/registerToken',
+            icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.registerStoremanGroup'),
+            key: '/registerStoremanGroup',
+            icon: 'block'
+          }
+        ]
+      },
+      {
         title: intl.get('menuConfig.galaxyPos'),
         step: '1',
         key: '/staking',

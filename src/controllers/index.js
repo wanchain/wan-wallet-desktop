@@ -2,8 +2,8 @@ import fs from 'fs'
 import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
-import { ipcMain, app } from 'electron'
-import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
+import { ipcMain, app, dialog } from 'electron'
+import { hdUtil, ccUtil, btcUtil, wanDeployer } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -12,12 +12,13 @@ import Identicon from 'identicon.js';
 import keccak from 'keccak';
 import BigNumber from 'bignumber.js';
 import wanUtil from 'wanchain-util';
+import configService from '~/src/modules/walletBackend/config'
+
 const ethUtil = require('ethereumjs-util');
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
-import { settings } from 'cluster'
 
 const logger = Logger.getLogger('controllers')
 const ipc = ipcMain
@@ -32,7 +33,7 @@ const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_SETTING = 'setting'
-
+const ROUTE_OFFLINE = 'offline'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -1759,6 +1760,80 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
     }
 })
 
+ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
+  let err, ret
+  const [action, id] = actionUni.split('#')
+
+  switch (action) {
+    case 'openFile':
+      let fileContent;
+
+      try {
+        ret = await dialog.showOpenDialog({ properties: ['openFile'] })
+        if (ret) {
+          wanDeployer.setFilePath(payload.type, ret[0])
+        }
+      } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+      }
+
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+      break;
+    
+    case 'updateNonce':
+      try {
+        Object.keys(payload).forEach(item => wanDeployer.updateNonce(item, payload[item]))
+      } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+      }
+
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+      break;
+
+    case 'buildContract':
+      try {
+        let { type, data } = payload
+        await wanDeployer[type](data.walletId, data.path)
+        ret = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', 'deployContract')
+      } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+      }
+
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+      break;
+
+      case 'downloadFile':  
+        try {
+          let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...payload.type)
+          let extension = path.extname(filePath).substr(1)
+          ret = await dialog.showSaveDialog({ title : '文件另存为', defaultPath: filePath, filters: [
+            { name: extension.toUpperCase(), extensions: [extension] }
+          ] })
+          fs.createReadStream(filePath).pipe(fs.createWriteStream(ret));
+        } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+        }
+  
+        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break;
+      
+      case 'deployContractAction':
+        try {
+          ret = await wanDeployer[payload.type]();
+        } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+        }
+  
+        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err, data: ret })
+        break;
+  }
+})
+
 function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
     let senderWindow = Windows.getById(id)
@@ -1776,7 +1851,11 @@ function sendResponse(endpoint, e, payload) {
 }
 
 function errorWrapper(err) {
+  if (typeof err === 'string') {
+    return { desc: err, code: 1, cat: 'ERROR' }
+  } else {
     return { desc: err.message, code: err.errno, cat: err.name }
+  }
 }
 
 function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {

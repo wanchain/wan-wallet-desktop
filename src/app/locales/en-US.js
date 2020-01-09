@@ -443,6 +443,7 @@ const en_US = {
     'menuConfig.settings': 'Settings',
     'menuConfig.thirdPartyDapps': 'Third Party DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.deployContract': 'Deploy Contract',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',

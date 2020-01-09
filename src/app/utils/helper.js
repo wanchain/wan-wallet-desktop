@@ -134,7 +134,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
 export const getInfoByAddress = function (address, infos, addrInfo) {
   let value = {};
   Object.keys(addrInfo).forEach(type => {
-    let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address);
+    let index = Object.keys(addrInfo[type]).findIndex(val => val.toLowerCase() === address.toLowerCase());
     if (index !== -1) {
       let addr = Object.keys(addrInfo[type])[index];
       value = { type, addr }

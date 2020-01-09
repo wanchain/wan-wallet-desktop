@@ -441,6 +441,7 @@ const zh_CN = {
     'menuConfig.validator': '验证人',
     'menuConfig.staking': '权益挖矿',
     'menuConfig.settings': '设置',
+    'menuConfig.deployContract': '合约部署',
 
     'menuConfig.thirdPartyDapps': '第三方应用',
     'menuConfig.dex': '交易',
