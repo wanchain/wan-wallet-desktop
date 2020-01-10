@@ -920,7 +920,9 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
             try {
                 let conf
                 if (param === 'sdkStatus') {
-                    conf = global.chainManager ? 'ready' : 'init'
+                  conf = global.chainManager ? 'ready' : 'init'
+                } else if (param === 'netStatus') {
+                  conf = !global.offlineMode
                 } else {
                     conf = setting[`${param}`]
                 }

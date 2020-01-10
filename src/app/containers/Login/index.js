@@ -14,6 +14,7 @@ message.config({
 
 @inject(stores => ({
   auth: stores.session.auth,
+  netStatus: stores.session.netStatus,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   btcAddrInfo: stores.btcAddress.addrInfo,
@@ -54,9 +55,11 @@ class Login extends Component {
         // Open scanner to scan the smart contract to get private tx balance.
         const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
         const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
-        openScanOTA(normalObj.concat(importObj));
+        if (this.props.netStatus) {
+          openScanOTA(normalObj.concat(importObj));
+        }
 
-        if (!Object.keys(this.props.btcAddrInfo.normal).length) {
+        if (!Object.keys(this.props.btcAddrInfo.normal).length && this.props.netStatus) {
           createBTCAddr(BTCPATH_TEST, 0).then(addressInfo => {
             this.props.addAddress(addressInfo);
           }).catch(err => {

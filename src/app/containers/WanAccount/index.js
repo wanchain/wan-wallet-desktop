@@ -20,6 +20,7 @@ import arrow from 'static/image/arrow.png';
 const CHAINTYPE = 'WAN';
 
 @inject(stores => ({
+  netStatus: stores.session.netStatus,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
@@ -98,7 +99,7 @@ class WanAccount extends Component {
   }
 
   createAccount = () => {
-    const { addrInfo, addAddress } = this.props;
+    const { addrInfo, addAddress, netStatus } = this.props;
     const addrLen = Object.keys(addrInfo['normal']).length;
     this.setState({
       bool: false
@@ -119,11 +120,13 @@ class WanAccount extends Component {
                 bool: true
               });
               // Scan new account
-              wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
-                if (err) {
-                  console.log('Open OTA scanner failed:', err);
-                }
-              });
+              if (netStatus) {
+                wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
+                  if (err) {
+                    console.log('Open OTA scanner failed:', err);
+                  }
+                });
+              }
             }
           });
         }

@@ -20,12 +20,20 @@ class App extends Component {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
-        stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
-        stores.session.initSettings();
-        stores.portfolio.updateCoinPrice();
-        stores.wanAddress.getUserAccountFromDB();
-        stores.ethAddress.getUserAccountFromDB();
-        stores.eosAddress.getUserKeyFromDB();
+        let netStatus = await stores.session.initNetStatus()
+        if (netStatus) {
+          stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
+          stores.session.initSettings();
+          stores.portfolio.updateCoinPrice();
+          stores.wanAddress.getUserAccountFromDB();
+          stores.ethAddress.getUserAccountFromDB();
+          stores.eosAddress.getUserKeyFromDB();
+        } else {
+          stores.session.initChainId().then();
+          stores.session.initSettings();
+          stores.portfolio.updateCoinPrice();
+          stores.wanAddress.getUserAccountFromDB();
+        }
         clearInterval(id);
       }
     }, 1000);
@@ -86,17 +94,18 @@ class App extends Component {
     regEmitterHandler('keyfilepath', data => {
       stores.wanAddress.addKeyStoreAddr(data);
     })
-
     this.timer = setInterval(() => {
       // Handle one step cross chain and undo cross chain trans
-      if (!stores.session.isFirstLogin) {
-        getAllUndoneCrossTrans((err, ret) => {
-          if (!err) {
-            OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
-          } else {
-            message.warn(intl.get('network.down'));
-          }
-        })
+      if (this.props.netStatus) {
+        if (!stores.session.isFirstLogin) {
+          getAllUndoneCrossTrans((err, ret) => {
+            if (!err) {
+              OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
+            } else {
+              message.warn(intl.get('network.down'));
+            }
+          })
+        }
       }
     }, 10000);
   }

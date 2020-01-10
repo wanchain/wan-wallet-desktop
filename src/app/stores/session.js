@@ -1,5 +1,5 @@
 import { observable, action, toJS } from 'mobx';
-import { getChainId } from 'utils/helper';
+import { getChainId, getNetStatus } from 'utils/helper';
 
 class Session {
   @observable hasMnemonicOrNot = false;
@@ -8,6 +8,8 @@ class Session {
   @observable chainId = 1;
 
   @observable auth = false;
+
+  @observable netStatus = false;
 
   @observable isFirstLogin = true;
 
@@ -44,6 +46,14 @@ class Session {
       self.chainId = chainId;
       console.log('Chain ID:', chainId);
       return chainId;
+    });
+  }
+
+  @action initNetStatus () {
+    return getNetStatus().then(status => {
+      self.netStatus = status;
+      console.log('Net Status:', status);
+      return status;
     });
   }
 

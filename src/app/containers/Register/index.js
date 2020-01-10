@@ -20,6 +20,7 @@ const Step = Steps.Step;
   chainId: stores.session.chainId,
   current: stores.mnemonic.current,
   mnemonic: stores.mnemonic.mnemonic,
+  netStatus: stores.session.netStatus,
   newPhrase: stores.mnemonic.newPhrase,
   isSamePwd: stores.mnemonic.isSamePwd,
   language: stores.languageIntl.language,
@@ -100,7 +101,7 @@ class Register extends Component {
   }
 
   done = () => {
-    const { chainId, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress } = this.props;
+    const { chainId, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, netStatus } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       this.setState({ loading: true });
       wand.request('phrase_import', { phrase: mnemonic, pwd }, err => {
@@ -115,14 +116,21 @@ class Register extends Component {
             this.setState({ loading: false });
           } else {
             try {
-              let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
-                createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'Account1'),
-                createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
-                createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
-              ]);
-              addWANAddress(wanAddrInfo);
-              addETHAddress(ethAddrInfo);
-              addBTCAddress(btcMainAddInfo);
+              if (netStatus) {
+                let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
+                  createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'Account1'),
+                  createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
+                  createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                ]);
+                addWANAddress(wanAddrInfo);
+                addETHAddress(ethAddrInfo);
+                addBTCAddress(btcMainAddInfo);
+              } else {
+                let [wanAddrInfo] = await Promise.all([
+                  createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'Account1'),
+                ]);
+                addWANAddress(wanAddrInfo);
+              }
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });

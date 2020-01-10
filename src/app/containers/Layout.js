@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, initRegTokens } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, initRegTokens, getNetStatus } from 'utils/helper';
 
 import style from './Layout.less';
 import SideBar from './Sidebar';
@@ -15,6 +15,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
 
 @inject(stores => ({
   auth: stores.session.auth,
+  netStatus: stores.session.netStatus,
   addrInfo: stores.wanAddress.addrInfo,
   ethAddrInfo: stores.ethAddress.addrInfo,
   btcAddrInfo: stores.btcAddress.addrInfo,
@@ -39,10 +40,12 @@ class Layout extends Component {
 
   componentDidMount () {
     this.wanTimer = setInterval(() => {
-      this.updateWANBalanceForInter();
-      this.updateETHBalanceForInter();
-      this.updateBTCBalanceForInter();
-      this.updateEOSBalanceForInter();
+      if (this.props.netStatus) {
+        this.updateWANBalanceForInter();
+        this.updateETHBalanceForInter();
+        this.updateBTCBalanceForInter();
+        this.updateEOSBalanceForInter();
+      }
     }, 5000);
     this.waitUntilSdkReady();
   }
@@ -62,11 +65,16 @@ class Layout extends Component {
       let ready = await isSdkReady();
       if (ready) {
         try {
-          await initRegTokens('ETH');
-          await initRegTokens('EOS');
-          await this.props.getTokensInfo();
-          await this.props.getCcTokensInfo();
-          await this.props.getMnemonic();
+          let netStatus = await getNetStatus();
+          if (netStatus) {
+            await initRegTokens('ETH');
+            await initRegTokens('EOS');
+            await this.props.getTokensInfo();
+            await this.props.getCcTokensInfo();
+            await this.props.getMnemonic();
+          } else {
+            await this.props.getMnemonic();
+          }
           this.setState({
             loading: false
           });

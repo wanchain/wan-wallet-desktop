@@ -312,6 +312,65 @@ class LanguageIntl {
     return sidebar;
   }
 
+  @computed get offlineSidebarColumns () {
+    let sidebar = self.language && [
+      {
+        title: intl.get('menuConfig.portfolio'),
+        step: '1',
+        key: '/',
+        icon: 'user'
+      },
+      {
+        title: intl.get('menuConfig.wallet'),
+        step: '1',
+        key: '/wallet',
+        icon: 'wallet',
+        children: ['WAN'].map(item => ({
+          title: item,
+          key: `/${item.toLowerCase()}Account`,
+          icon: 'block'
+        }))
+      },
+      {
+        title: intl.get('menuConfig.offline'),
+        step: '1',
+        key: '/offline',
+        icon: 'bank'
+      },
+      {
+        title: intl.get('menuConfig.offlineDeploy'),
+        step: '1',
+        key: '/offlineDeploy',
+        icon: 'bank',
+        children: [
+          {
+            title: intl.get('menuConfig.deployContract'),
+            key: '/deployContract',
+            icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.registerToken'),
+            key: '/registerToken',
+            icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.registerStoremanGroup'),
+            key: '/registerStoremanGroup',
+            icon: 'block'
+          }
+        ]
+      },
+      {
+        title: intl.get('menuConfig.settings'),
+        step: '1',
+        key: '/settings',
+        icon: 'setting'
+      },
+    ];
+
+    return sidebar;
+  }
+
   @computed get portfolioColumns() {
     return self.language && [
       {

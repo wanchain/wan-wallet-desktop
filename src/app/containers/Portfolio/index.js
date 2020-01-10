@@ -9,6 +9,7 @@ import btcLogo from 'static/image/btc.png';
 import eosLogo from 'static/image/eos.png';
 
 @inject(stores => ({
+  netStatus: stores.session.netStatus,
   portfolioList: stores.portfolio.portfolioList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
   setCoin: (coins) => stores.portfolio.setCoin(coins),
@@ -26,13 +27,19 @@ class Portfolio extends Component {
   }
 
   componentDidMount () {
-    this.props.setCoin();
-    this.props.updateCoinPrice();
-    this.props.updateTokenBalance();
-    this.timer = setInterval(() => {
+    if (this.props.netStatus) {
+      this.props.setCoin();
       this.props.updateCoinPrice();
       this.props.updateTokenBalance();
-    }, 60000);
+      this.timer = setInterval(() => {
+        this.props.updateCoinPrice();
+        this.props.updateTokenBalance();
+      }, 60000);
+    } else {
+      this.timer = setInterval(() => {
+        this.props.updateCoinPrice();
+      }, 60000);
+    }
   }
 
   componentWillUnmount () {

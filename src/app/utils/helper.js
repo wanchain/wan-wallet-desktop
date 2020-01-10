@@ -268,6 +268,21 @@ export const getChainId = function () {
   });
 };
 
+export const getNetStatus = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('query_config', {
+      param: 'netStatus'
+    }, function (err, val) {
+      if (err) {
+        err = 'NetStatus:' + err;
+        return reject(err);
+      } else {
+        return resolve(val.netStatus);
+      }
+    });
+  });
+};
+
 export const isSdkReady = function () {
   return new Promise((resolve, reject) => {
     wand.request('query_config', {

@@ -17,9 +17,11 @@ const { SubMenu, Item } = Menu;
 @inject(stores => ({
   chainId: stores.session.chainId,
   settings: stores.session.settings,
+  netStatus: stores.session.netStatus,
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
-  sidebarColumns: stores.languageIntl.sidebarColumns,
+  onlineSidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
+  offlineSidebarColumns: stores.languageIntl.offlineSidebarColumns,
 }))
 
 @observer
@@ -73,51 +75,55 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar } = this.props;
-    let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-    let stakeChildren = sidebarColumns[stakeIndex].children;
-    let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
-    let walletChildren = sidebarColumns[walletIndex].children;
-    let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
-    let crossChainChildren = sidebarColumns[crossChainIndex].children;
-    let crossChainLen = CROSSCHAINTYPE.length;
-    let walletChainLen = WALLET_CHAIN.length;
+    const { settings, tokensOnSideBar, crossChainOnSideBar, offlineSidebarColumns, onlineSidebarColumns, netStatus } = this.props;
 
-    let index = stakeChildren.findIndex(item => item.key === '/validator');
-    if (index === -1 && settings.staking_advance) {
-      stakeChildren.push({
-        title: intl.get('menuConfig.validator'),
-        key: '/validator',
-        icon: 'block'
-      })
-    } else if (index !== -1 && !settings.staking_advance) {
-      stakeChildren.splice(index, 1);
-    }
+    let sidebarColumns = netStatus ? onlineSidebarColumns : offlineSidebarColumns;
+    if (netStatus) {
+      let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
+      let stakeChildren = sidebarColumns[stakeIndex].children;
+      let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
+      let walletChildren = sidebarColumns[walletIndex].children;
+      let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
+      let crossChainChildren = sidebarColumns[crossChainIndex].children;
+      let crossChainLen = CROSSCHAINTYPE.length;
+      let walletChainLen = WALLET_CHAIN.length;
 
-    if (tokensOnSideBar.length) {
-      walletChildren.splice(
-        walletChainLen,
-        walletChildren.length - walletChainLen,
-        ...tokensOnSideBar.map(item => ({
-          title: item.symbol,
-          key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}`,
-          icon: 'block'
-        })),
-      );
-    } else {
-      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
-    }
-
-    if (crossChainOnSideBar.length) {
-      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
-        return ({
-          title: item.symbol,
-          key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
+      let index = stakeChildren.findIndex(item => item.key === '/validator');
+      if (index === -1 && settings.staking_advance) {
+        stakeChildren.push({
+          title: intl.get('menuConfig.validator'),
+          key: '/validator',
           icon: 'block'
         })
-      }));
-    } else {
-      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
+      } else if (index !== -1 && !settings.staking_advance) {
+        stakeChildren.splice(index, 1);
+      }
+
+      if (tokensOnSideBar.length) {
+        walletChildren.splice(
+          walletChainLen,
+          walletChildren.length - walletChainLen,
+          ...tokensOnSideBar.map(item => ({
+            title: item.symbol,
+            key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}`,
+            icon: 'block'
+          })),
+        );
+      } else {
+        walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
+      }
+
+      if (crossChainOnSideBar.length) {
+        crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
+          return ({
+            title: item.symbol,
+            key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
+            icon: 'block'
+          })
+        }));
+      } else {
+        crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
+      }
     }
 
     return (
