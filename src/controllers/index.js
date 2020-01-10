@@ -1795,8 +1795,8 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
     case 'buildContract':
       try {
         let { type, data } = payload
-        await wanDeployer[type](data.walletId, data.path)
-        ret = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', 'deployContract')
+        ret = await wanDeployer[type](data.walletId, data.path)
+        // ret = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', 'deployContract(step2)')
       } catch (e) {
           logger.error(e.message || e.stack)
           err = e

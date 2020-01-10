@@ -443,7 +443,10 @@ const en_US = {
     'menuConfig.settings': 'Settings',
     'menuConfig.thirdPartyDapps': 'Third Party DApps',
     'menuConfig.dex': 'DEX',
+    'menuConfig.offlineDeploy': 'Offline Deploy',
     'menuConfig.deployContract': 'Deploy Contract',
+    'menuConfig.registerToken': 'Register Token',
+    'menuConfig.registerStoremanGroup': 'Register Storeman Group',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',

@@ -250,9 +250,9 @@ class LanguageIntl {
         icon: 'bank'
       },
       {
-        title: intl.get('menuConfig.offlineWallet'),
+        title: intl.get('menuConfig.offlineDeploy'),
         step: '1',
-        key: '/offlineWallet',
+        key: '/offlineDeploy',
         icon: 'bank',
         children: [
           {

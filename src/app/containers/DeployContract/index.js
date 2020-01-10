@@ -7,15 +7,13 @@ import style from './index.less';
 import { fromWei } from 'utils/support';
 import { WANPATH } from 'utils/settings';
 
-import { deserializeWanTx, getInfoByAddress } from 'utils/helper';
+import { getInfoByAddress } from 'utils/helper';
 
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
-  sgAddrPath: stores.deployContract.sgAddrPath,
   contractOwnerPath: stores.deployContract.contractOwnerPath,
-  setSgAddrPath: val => stores.deployContract.setSgAddrPath(val),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setContractOwnerPath: val => stores.deployContract.setContractOwnerPath(val),
 }))
@@ -46,7 +44,6 @@ class DeployContract extends Component {
   handleGetInfo = type => {
     let action;
     switch (type) {
-      case 'libAddress':
       case 'contractAddress':
       case 'setDependencyImport':
         action = 'contractAddress';
@@ -81,16 +78,12 @@ class DeployContract extends Component {
     }
   }
 
-  handleBuildContract = (type, data) => {
+  handleBuildContract = type => {
+    const { wanAddrInfo, setContractOwnerPath, contractOwnerPath } = this.props;
+    const { contractOwner, contractOwnerNonce } = this.state;
     this.setState({ [`${type}Loading`]: true });
-    if (data !== undefined && Object.keys(data).length === 0) {
-      message.warn('Please select an address to build/deploy the transactions!');
-      return;
-    }
 
     if (type === 'buildDeployContract') {
-      const { wanAddrInfo, setContractOwnerPath } = this.props;
-      const { contractOwner, contractOwnerNonce } = this.state;
       if (![contractOwner, contractOwnerNonce].includes('')) {
         let obj = {
           [contractOwner]: contractOwnerNonce
@@ -101,11 +94,12 @@ class DeployContract extends Component {
             this.setState({ [`${type}Loading`]: false });
             return;
           };
-          setContractOwnerPath({ walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}` });
-          wand.request('offline_buildContract', { type, data }, (err, ret) => {
-            if (err) {
+          let path = { walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}` };
+          setContractOwnerPath(path);
+          wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
+            if (err || !ret) {
               this.setState({ [`${type}Loading`]: false });
-              message.success('Build Failures!')
+              message.warn('Build Failures!')
               return;
             }
             this.setState({ [`${type}Loading`]: false, [`${type}Status`]: true });
@@ -117,10 +111,14 @@ class DeployContract extends Component {
         this.setState({ [`${type}Loading`]: false });
       }
     } else {
-      wand.request('offline_buildContract', { type, data }, (err, ret) => {
-        if (err) {
+      if (contractOwnerPath !== undefined && Object.keys(contractOwnerPath).length === 0) {
+        message.warn('Please select an address to build/deploy the transactions!');
+        return;
+      }
+      wand.request('offline_buildContract', { type, data: contractOwnerPath }, (err, ret) => {
+        if (err || !ret) {
           this.setState({ [`${type}Loading`]: false });
-          message.success('Build Failures!')
+          message.warn('Build Failures!')
           return;
         }
         this.setState({ [`${type}Loading`]: false, [`${type}Status`]: true });
@@ -158,7 +156,7 @@ class DeployContract extends Component {
 
   render () {
     const { setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, contractAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
-    const { wanAddrInfo, contractOwnerPath } = this.props;
+    const { wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
     return (
@@ -199,7 +197,7 @@ class DeployContract extends Component {
           <Button type="primary" className={style.stepOne}>2_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
           <Button type="primary" loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
-          { buildDeployContractStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'deployContract.dat'])}>Download</Button> }
+          { buildDeployContractStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -207,15 +205,15 @@ class DeployContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
           <Button type="primary" onClick={() => this.handleGetInfo('deployContract')}>Import</Button>
           { deployContractStatus && <Button type="primary" loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button> }
-          { deployContractFile && <Button type="primary" onClick={() => this.handleDownloadFile(['contractAddress.json'])}>Download</Button> }
+          { deployContractFile && <Button type="primary" onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>4_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
           <Button type="primary" onClick={() => this.handleGetInfo('setDependencyImport')}>Import</Button>
-          { setDependencyImportStatus && <Button type="primary" loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildSetDependency', contractOwnerPath)}>Build</Button> }
-          { buildSetDependencyStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'setDependency.dat'])}>Download</Button> }
+          { setDependencyImportStatus && <Button type="primary" loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildSetDependency')}>Build</Button> }
+          { buildSetDependencyStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'setDependency(step4).dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
