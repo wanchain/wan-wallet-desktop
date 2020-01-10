@@ -8,6 +8,7 @@ import { WANPATH } from 'utils/settings';
 
 import { getInfoByAddress } from 'utils/helper';
 
+const btnStyle = { marginLeft: '10px' }
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
@@ -79,7 +80,7 @@ class RegisterStoremanGroup extends Component {
         let path = { walletId: sgAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${sgAddrPath.path}` };
         setSgAddrPath(path);
         wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-          if (err || !ret) {
+          if (err || !ret.ret) {
             this.setState({ [`${type}Loading`]: false });
             message.warn('Build Failures!')
             return;
@@ -156,16 +157,16 @@ class RegisterStoremanGroup extends Component {
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>1_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Register Storeman Group</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('smg')}>Import</Button>
-          { smgStatus && <Button type="primary" loading={buildRegisterSmgLoading} onClick={() => this.handleBuildContract('buildRegisterSmg')}>Build</Button> }
-          { buildRegisterSmgStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'registerSmg.dat'])}>Download</Button> }
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('smg')}>Import smg.json File</Button>
+          { smgStatus && <Button type="primary" style={btnStyle} loading={buildRegisterSmgLoading} onClick={() => this.handleBuildContract('buildRegisterSmg')}>Build</Button> }
+          { buildRegisterSmgStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'registerSmg.dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>2_Online</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Register Storeman Group</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('registerSmg')}>Import</Button>
-          { registerSmgStatus && <Button type="primary" loading={registerSmgLoading} onClick={() => this.deployContractAction('registerSmg')}>Deploy</Button> }
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Register Storeman Group</h3>
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('registerSmg')}>Import registerSmg.dat File</Button>
+          { registerSmgStatus && <Button type="primary" style={btnStyle} loading={registerSmgLoading} onClick={() => this.deployContractAction('registerSmg')}>Deploy</Button> }
         </div>
       </React.Fragment>
     );

@@ -9,6 +9,7 @@ import { WANPATH } from 'utils/settings';
 
 import { getInfoByAddress } from 'utils/helper';
 
+const btnStyle = { marginLeft: '10px' }
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
@@ -97,7 +98,7 @@ class DeployContract extends Component {
           let path = { walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}` };
           setContractOwnerPath(path);
           wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-            if (err || !ret) {
+            if (err || !ret.ret) {
               this.setState({ [`${type}Loading`]: false });
               message.warn('Build Failures!')
               return;
@@ -116,7 +117,7 @@ class DeployContract extends Component {
         return;
       }
       wand.request('offline_buildContract', { type, data: contractOwnerPath }, (err, ret) => {
-        if (err || !ret) {
+        if (err || !ret.ret) {
           this.setState({ [`${type}Loading`]: false });
           message.warn('Build Failures!')
           return;
@@ -166,7 +167,7 @@ class DeployContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Data Preparation</h3>
           <div>
             <h5 className={style.fontText + ' ' + style.inlineBlock}>Import Deployment Library File</h5>
-            <Button type="primary" onClick={() => this.handleGetInfo('libAddress')}>Import</Button>
+            <Button type="primary" onClick={() => this.handleGetInfo('libAddress')}>Import libAddress file</Button>
             { contractAddressStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
           </div>
           <div>
@@ -196,31 +197,31 @@ class DeployContract extends Component {
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>2_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
-          <Button type="primary" loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
-          { buildDeployContractStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button> }
+          <Button type="primary" style={btnStyle} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+          { buildDeployContractStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>3_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('deployContract')}>Import</Button>
-          { deployContractStatus && <Button type="primary" loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button> }
-          { deployContractFile && <Button type="primary" onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button> }
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import deployContract(step2) File</Button>
+          { deployContractStatus && <Button type="primary" style={btnStyle} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button> }
+          { deployContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>4_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('setDependencyImport')}>Import</Button>
-          { setDependencyImportStatus && <Button type="primary" loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildSetDependency')}>Build</Button> }
-          { buildSetDependencyStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'setDependency(step4).dat'])}>Download</Button> }
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('setDependencyImport')}>Import contractAddress(step3) File</Button>
+          { setDependencyImportStatus && <Button type="primary" style={btnStyle} loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildSetDependency')}>Build</Button> }
+          { buildSetDependencyStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'setDependency(step4).dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>5_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Set TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('setDependency')}>Import</Button>
-          { setDependencyStatus && <Button type="primary" loading={setDependencyLoading} onClick={() => this.deployContractAction('setDependency')}>Deploy</Button> }
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('setDependency')}>Import setDependency(step4) File</Button>
+          { setDependencyStatus && <Button type="primary" style={btnStyle} loading={setDependencyLoading} onClick={() => this.deployContractAction('setDependency')}>Deploy</Button> }
         </div>
       </React.Fragment>
     );

@@ -1795,16 +1795,37 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
       break;
 
     case 'buildContract':
+      let fileContent
       try {
         let { type, data } = payload
         ret = await wanDeployer[type](data.walletId, data.path)
-        // ret = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', 'deployContract(step2)')
+        if (ret) {
+          let fileName;
+          switch(type) {
+            case 'buildDeployContract':
+              fileName = 'deployContract(step2).dat';
+              break;
+            case 'buildSetDependency':
+              fileName = 'setDependency(step4).dat';
+              break;
+            case 'buildRegisterToken':
+              fileName = 'registerToken.dat';
+              break;
+            case 'buildRegisterSmg':
+              fileName = 'registerSmg.dat';
+              break;
+          }
+          let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
+          fileContent = JSON.parse(fs.readFileSync(filePath));
+          fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
+          console.log('fileContent', fileContent)
+        }
       } catch (e) {
           logger.error(e.message || e.stack)
           err = e
       }
 
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, fileContent } })
       break;
 
       case 'downloadFile':  
@@ -1826,6 +1847,27 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
       case 'deployContractAction':
         try {
           ret = await wanDeployer[payload.type]();
+          if (ret) {
+            let fileName;
+            switch(type) {
+              case 'deployContract':
+                fileName = 'contractAddress(step3).json';
+                break;
+              case 'setDependency':
+                fileName = 'setDependency(step4).dat';
+                break;
+              case 'registerToken':
+                fileName = 'registerToken.dat';
+                break;
+              case 'registerSmg':
+                fileName = 'registerSmg.dat';
+                break;
+            }
+            let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
+            fileContent = JSON.parse(fs.readFileSync(filePath));
+            fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
+            console.log('fileContent', fileContent)
+          }
         } catch (e) {
           logger.error(e.message || e.stack)
           err = e
@@ -2041,4 +2083,10 @@ async function getNameAndIcon(address) {
         ret = value;
     }
     return ret;
+}
+
+function deserializeWanTx(data) {
+  let tx = new wanUtil.wanchainTx(data) // eslint-disable-line
+  let from = tx.getSenderAddress();
+  return { ...tx.toJSON(true), from: `0x${from.toString('hex')}` };
 }

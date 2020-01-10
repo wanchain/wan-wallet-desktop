@@ -8,6 +8,7 @@ import { WANPATH } from 'utils/settings';
 
 import { getInfoByAddress } from 'utils/helper';
 
+const btnStyle = { marginLeft: '10px' }
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
@@ -80,7 +81,7 @@ class RegisterToken extends Component {
         let path = { walletId: registerTokenAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${registerTokenAddrPath.path}` };
         setRegisterTokenPath(path);
         wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-          if (err || !ret) {
+          if (err || !ret.ret) {
             this.setState({ [`${type}Loading`]: false });
             message.warn('Build Failures!')
             return;
@@ -157,16 +158,16 @@ class RegisterToken extends Component {
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>1_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Register Token</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('token')}>Import</Button>
-          { tokenStatus && <Button type="primary" loading={buildRegisterTokenLoading} onClick={() => this.handleBuildContract('buildRegisterToken')}>Build</Button> }
-          { buildRegisterTokenStatus && <Button type="primary" onClick={() => this.handleDownloadFile(['txData', 'registerToken.dat'])}>Download</Button> }
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('token')}>Import token.json File</Button>
+          { tokenStatus && <Button type="primary" style={btnStyle} loading={buildRegisterTokenLoading} onClick={() => this.handleBuildContract('buildRegisterToken')}>Build</Button> }
+          { buildRegisterTokenStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'registerToken.dat'])}>Download</Button> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
           <Button type="primary" className={style.stepOne}>2_Online</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy Register Token</h3>
-          <Button type="primary" onClick={() => this.handleGetInfo('registerToken')}>Import</Button>
-          { registerTokenStatus && <Button type="primary" loading={registerTokenLoading} onClick={() => this.deployContractAction('registerToken')}>Deploy</Button> }
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Register Token</h3>
+          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('registerToken')}>Import registerToken.dat File</Button>
+          { registerTokenStatus && <Button type="primary" style={btnStyle} loading={registerTokenLoading} onClick={() => this.deployContractAction('registerToken')}>Deploy</Button> }
         </div>
       </React.Fragment>
     );
