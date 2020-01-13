@@ -8,7 +8,7 @@ export const APP_ROOT = 'root'
 export const APP_NAME = 'Wan Wallet'
 
 // export const LANGUAGES = ['en', 'zh', 'th-TH', 'ko-KR', 'fr-FR', 'pt-PT']
-export const LANGUAGES = ['en', 'zh', 'th-TH']
+export const LANGUAGES = ['en']
 
 export const FALLBACK_LANG = 'en'
 export const NAMESPACE = 'translation'
