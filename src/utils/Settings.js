@@ -15,8 +15,7 @@ let _settings = undefined
 
 const defaultConfig = {
   mode: 'light',
-  // network: 'main',
-  network: 'testnet',
+  network: 'main',
   lang: 'en',
   settings: {
     reinput_pwd: false,
