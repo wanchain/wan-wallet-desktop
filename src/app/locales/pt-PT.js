@@ -169,7 +169,7 @@ const pt_PT = {
     'EOSKeyPairList.publicKey': 'Chave Pública',
     'EOSKeyPairList.searchPublicKey': 'Chave pública pesquisada',
     'EOSKeyPairList.selectOneAccount': 'Selecione pelo menos uma conta',
-    'EOSKeyPairList.tipText': 'Se você nunca associou contas EOS a pares de chaves EOS criados por Wan Wallet, pode usar um serviço de terceiros para criar uma conta e associá-la a pares de chaves. Se você já possui contas EOS associadas a pares de chaves, pode criar novas contas EOS usando as existentes.`,
+    'EOSKeyPairList.tipText': 'Se você nunca associou contas EOS a pares de chaves EOS criados por Wan Wallet, pode usar um serviço de terceiros para criar uma conta e associá-la a pares de chaves. Se você já possui contas EOS associadas a pares de chaves, pode criar novas contas EOS usando as existentes.',
     'EOSKeyPairList.getImportedAccountsFailed': 'Falha ao importar contas',
 
     'EOSAccountList.manageResource': 'Gerenciar',
