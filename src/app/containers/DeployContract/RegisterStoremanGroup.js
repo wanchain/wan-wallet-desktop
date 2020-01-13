@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Input, message, Divider, Icon, Tooltip, Select, Row, Col } from 'antd';
+import { Button, Input, message, Divider, Icon, Tooltip, Select, Row, Col, Modal } from 'antd';
 
 import style from './index.less';
 import { WANPATH } from 'utils/settings';
@@ -116,8 +116,11 @@ class RegisterStoremanGroup extends Component {
   deployContractAction = type => {
     this.setState({ [`${type}Loading`]: true });
     wand.request('offline_deployContractAction', { type }, (err, data) => {
-      if (err) {
-        message.warn(err.desc);
+      if (err || !data.ret) {
+        // message.warn(err.desc);
+        Modal.error({
+          content: err.desc || 'Error occurred. Please restart!',
+        });
         this.setState({ [`${type}Loading`]: false });
         return;
       }
