@@ -1768,7 +1768,6 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
 
   switch (action) {
     case 'openFile':
-      let fileContent;
 
       try {
         ret = await dialog.showOpenDialog({ properties: ['openFile'] })
@@ -1845,35 +1844,36 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
         break;
       
       case 'deployContractAction':
+        let content;
         try {
           ret = await wanDeployer[payload.type]();
           if (ret) {
-            let fileName;
-            switch(type) {
+            let files;
+            switch(payload.type) {
               case 'deployContract':
-                fileName = 'contractAddress(step3).json';
-                break;
-              case 'setDependency':
-                fileName = 'setDependency(step4).dat';
+              case 'registerToken':
+              case 'registerSmg':
+                files = ['contractAddress(step3).json'];
                 break;
               case 'registerToken':
-                fileName = 'registerToken.dat';
+                files = ['txData', 'registerToken.dat'];
                 break;
               case 'registerSmg':
-                fileName = 'registerSmg.dat';
+                files = ['txData', 'registerSmg.dat'];
                 break;
             }
-            let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
-            fileContent = JSON.parse(fs.readFileSync(filePath));
-            fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
-            console.log('fileContent', fileContent)
+            if (files) {
+              let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...files);
+              content = JSON.parse(fs.readFileSync(filePath));
+              console.log('content', content)
+            }
           }
         } catch (e) {
           logger.error(e.message || e.stack)
           err = e
         }
   
-        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err, data: ret })
+        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err, data: { ret, content } })
         break;
   }
 })

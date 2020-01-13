@@ -25,7 +25,7 @@ class DeployContract extends Component {
     contractOwner: '',
     contractOwnerNonce: '',
     deployContractStatus: false,
-    contractAddressStatus: false,
+    libAddressStatus: false,
     deployContractLoading: false,
     setDependencyImportStatus: false,
     deployContractFile: false,
@@ -156,7 +156,7 @@ class DeployContract extends Component {
   }
 
   render () {
-    const { setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, contractAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
+    const { setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
     const { wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -168,7 +168,7 @@ class DeployContract extends Component {
           <div>
             <h5 className={style.fontText + ' ' + style.inlineBlock}>Import Deployment Library File</h5>
             <Button type="primary" onClick={() => this.handleGetInfo('libAddress')}>Import libAddress file</Button>
-            { contractAddressStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
+            { libAddressStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
           </div>
           <div>
             <h5 className={style.fontText + ' ' + style.inlineBlock}>Select Address</h5>
