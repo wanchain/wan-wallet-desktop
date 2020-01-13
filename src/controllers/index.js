@@ -1768,18 +1768,35 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
 
   switch (action) {
     case 'openFile':
-
+      let openFileContent;
       try {
         ret = await dialog.showOpenDialog({ properties: ['openFile'] })
         if (ret) {
-          wanDeployer.setFilePath(payload.type, ret[0])
+          wanDeployer.setFilePath(payload.type, ret[0]);
+          switch(payload.type) {
+            case 'token':
+            case 'smg':
+              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+              break;
+            case 'deployContract':
+            case 'registerToken':
+            case 'registerSmg':
+            case 'setDependency':
+              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+              openFileContent.forEach(item => {item.from = deserializeWanTx(item.data).from; delete(item.data)})
+              break;
+            case 'contractAddress':
+              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+              openFileContent = openFileContent.map(item => ({ name: item[0], address: item[1] }))
+              break;
+          }
         }
       } catch (e) {
           logger.error(e.message || e.stack)
           err = e
       }
 
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, openFileContent } })
       break;
     
     case 'updateNonce':

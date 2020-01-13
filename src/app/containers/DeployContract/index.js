@@ -1,11 +1,11 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Input, message, Divider, Icon, Tooltip, Select, Row, Col } from 'antd';
+import { Button, Input, message, Divider, Icon, Select, Row, Col } from 'antd';
 
 import style from './index.less';
-import { fromWei } from 'utils/support';
 import { WANPATH } from 'utils/settings';
+import TableShowing from 'componentUtils/TableShowing';
 
 import { getInfoByAddress } from 'utils/helper';
 
@@ -35,6 +35,12 @@ class DeployContract extends Component {
     buildSetDependencyLoading: false,
     buildDeployContractStatus: false,
     buildDeployContractLoading: false,
+    deployContractFileShowing: false,
+    deployContractFileContent: [],
+    setDependencyFileShowing: false,
+    setDependencyContent: [],
+    setDependencyImportFileShowing: false,
+    setDependencyImportContent: []
   }
 
   constructor (props) {
@@ -45,7 +51,6 @@ class DeployContract extends Component {
   handleGetInfo = type => {
     let action;
     switch (type) {
-      case 'contractAddress':
       case 'setDependencyImport':
         action = 'contractAddress';
         break;
@@ -58,9 +63,12 @@ class DeployContract extends Component {
         message.warn('Import File Error, Please insert it again')
         return;
       }
-      if (data) {
+      if (data.ret) {
         message.success('Success')
-        this.setState({ [`${type}Status`]: true })
+        this.setState({ [`${type}Status`]: true });
+        if (data.openFileContent && data.openFileContent.length !== 0) {
+          this.setState({ [`${type}FileShowing`]: true, [`${type}Content`]: data.openFileContent })
+        }
       }
     })
   }
@@ -156,7 +164,7 @@ class DeployContract extends Component {
   }
 
   render () {
-    const { setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
+    const { setDependencyImportContent, setDependencyImportFileShowing, setDependencyFileShowing, setDependencyContent, deployContractFileShowing, deployContractContent, setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
     const { wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -207,6 +215,7 @@ class DeployContract extends Component {
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import deployContract(step2) File</Button>
           { deployContractStatus && <Button type="primary" style={btnStyle} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button> }
           { deployContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button> }
+          { deployContractFileShowing && <TableShowing type="deployContract" data={deployContractContent}/> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -215,6 +224,7 @@ class DeployContract extends Component {
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('setDependencyImport')}>Import contractAddress(step3) File</Button>
           { setDependencyImportStatus && <Button type="primary" style={btnStyle} loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildSetDependency')}>Build</Button> }
           { buildSetDependencyStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'setDependency(step4).dat'])}>Download</Button> }
+          { setDependencyImportFileShowing && <TableShowing type="setDependencyImport" data={setDependencyImportContent}/> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -222,6 +232,7 @@ class DeployContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Set TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('setDependency')}>Import setDependency(step4) File</Button>
           { setDependencyStatus && <Button type="primary" style={btnStyle} loading={setDependencyLoading} onClick={() => this.deployContractAction('setDependency')}>Deploy</Button> }
+          { setDependencyFileShowing && <TableShowing type="setDependency" data={setDependencyContent}/> }
         </div>
       </React.Fragment>
     );

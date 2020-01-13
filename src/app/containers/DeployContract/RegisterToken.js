@@ -5,6 +5,7 @@ import { Button, Input, message, Divider, Select, Row, Col } from 'antd';
 
 import style from './index.less';
 import { WANPATH } from 'utils/settings';
+import TableShowing from 'componentUtils/TableShowing';
 
 import { getInfoByAddress } from 'utils/helper';
 
@@ -21,6 +22,10 @@ const btnStyle = { marginLeft: '10px' }
 @observer
 class RegisterToken extends Component {
   state = {
+    tokenFileShowing: false,
+    tokenContent: [],
+    registerTokenFileShowing: false,
+    registerTokenContent: [],
     registerTokenAddr: '',
     registerTokenAddrNonce: '',
     tokenStatus: false,
@@ -33,7 +38,7 @@ class RegisterToken extends Component {
 
   constructor (props) {
     super(props);
-    this.props.changeTitle('menuConfig.deployContract');
+    this.props.changeTitle('menuConfig.registerToken');
   }
 
   handleGetInfo = type => {
@@ -42,9 +47,12 @@ class RegisterToken extends Component {
         message.warn('Import File Error, Please insert it again')
         return;
       }
-      if (data) {
+      if (data.ret) {
         message.success('Success')
-        this.setState({ [`${type}Status`]: true })
+        this.setState({ [`${type}Status`]: true });
+        if (data.openFileContent && data.openFileContent.length !== 0) {
+          this.setState({ [`${type}FileShowing`]: true, [`${type}Content`]: data.openFileContent })
+        }
       }
     })
   }
@@ -124,7 +132,7 @@ class RegisterToken extends Component {
   }
 
   render () {
-    const { registerTokenLoading, registerTokenStatus, buildRegisterTokenStatus, buildRegisterTokenLoading, tokenStatus, setDependencyImportFile } = this.state;
+    const { registerTokenFileShowing, registerTokenContent, tokenContent, tokenFileShowing, registerTokenLoading, registerTokenStatus, buildRegisterTokenStatus, buildRegisterTokenLoading, tokenStatus } = this.state;
     const { wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -161,6 +169,7 @@ class RegisterToken extends Component {
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('token')}>Import token.json File</Button>
           { tokenStatus && <Button type="primary" style={btnStyle} loading={buildRegisterTokenLoading} onClick={() => this.handleBuildContract('buildRegisterToken')}>Build</Button> }
           { buildRegisterTokenStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'registerToken.dat'])}>Download</Button> }
+          { tokenFileShowing && <TableShowing type="token" data={tokenContent}/> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -168,6 +177,7 @@ class RegisterToken extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Register Token</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('registerToken')}>Import registerToken.dat File</Button>
           { registerTokenStatus && <Button type="primary" style={btnStyle} loading={registerTokenLoading} onClick={() => this.deployContractAction('registerToken')}>Deploy</Button> }
+          { registerTokenFileShowing && <TableShowing type="registerToken" data={registerTokenContent}/> }
         </div>
       </React.Fragment>
     );

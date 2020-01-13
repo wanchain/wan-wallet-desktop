@@ -5,6 +5,7 @@ import { Button, Input, message, Divider, Icon, Tooltip, Select, Row, Col } from
 
 import style from './index.less';
 import { WANPATH } from 'utils/settings';
+import TableShowing from 'componentUtils/TableShowing';
 
 import { getInfoByAddress } from 'utils/helper';
 
@@ -23,6 +24,10 @@ class RegisterStoremanGroup extends Component {
   state = {
     sgAddr: '',
     sgAddrNonce: '',
+    registerSmgFileShowing: false,
+    registerSmgContent: [],
+    smgFileShowing: false,
+    smgContent: [],
     smgStatus: false,
     buildRegisterSmgStatus: false,
     registerSmgStatus: false,
@@ -32,7 +37,7 @@ class RegisterStoremanGroup extends Component {
 
   constructor (props) {
     super(props);
-    this.props.changeTitle('menuConfig.deployContract');
+    this.props.changeTitle('menuConfig.registerStoremanGroup');
   }
 
   handleGetInfo = type => {
@@ -41,9 +46,12 @@ class RegisterStoremanGroup extends Component {
         message.warn('Import File Error, Please insert it again')
         return;
       }
-      if (data) {
+      if (data.ret) {
         message.success('Success')
-        this.setState({ [`${type}Status`]: true })
+        this.setState({ [`${type}Status`]: true });
+        if (data.openFileContent && data.openFileContent.length !== 0) {
+          this.setState({ [`${type}FileShowing`]: true, [`${type}Content`]: data.openFileContent })
+        }
       }
     })
   }
@@ -123,7 +131,7 @@ class RegisterStoremanGroup extends Component {
   }
 
   render () {
-    const { registerSmgLoading, registerSmgStatus, buildRegisterSmgLoading, buildRegisterSmgStatus, smgStatus } = this.state;
+    const { registerSmgContent, registerSmgFileShowing, smgContent, smgFileShowing, registerSmgLoading, registerSmgStatus, buildRegisterSmgLoading, buildRegisterSmgStatus, smgStatus } = this.state;
     const { wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -160,6 +168,7 @@ class RegisterStoremanGroup extends Component {
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('smg')}>Import smg.json File</Button>
           { smgStatus && <Button type="primary" style={btnStyle} loading={buildRegisterSmgLoading} onClick={() => this.handleBuildContract('buildRegisterSmg')}>Build</Button> }
           { buildRegisterSmgStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'registerSmg.dat'])}>Download</Button> }
+          { smgFileShowing && <TableShowing type="smg" data={smgContent}/> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -167,6 +176,7 @@ class RegisterStoremanGroup extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Register Storeman Group</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('registerSmg')}>Import registerSmg.dat File</Button>
           { registerSmgStatus && <Button type="primary" style={btnStyle} loading={registerSmgLoading} onClick={() => this.deployContractAction('registerSmg')}>Deploy</Button> }
+          { registerSmgFileShowing && <TableShowing type="registerToken" data={registerSmgContent}/> }
         </div>
       </React.Fragment>
     );
