@@ -22,7 +22,7 @@ const btnStyle = { marginLeft: '10px' }
 @observer
 class RegisterStoremanGroup extends Component {
   state = {
-    sgAddr: '',
+    sgAddr: this.props.setSgAddrPath.addr,
     sgAddrNonce: '',
     registerSmgFileShowing: false,
     registerSmgContent: [],
@@ -57,7 +57,7 @@ class RegisterStoremanGroup extends Component {
   }
 
   handleSelectAddr = (value, type) => {
-    const { wanAddrInfo } = this.props;
+    const { wanAddrInfo, setSgAddrPath } = this.props;
     if (value === undefined) {
       value = ''
     }
@@ -65,7 +65,7 @@ class RegisterStoremanGroup extends Component {
     switch (type) {
       case 'sgAddr':
         let sgAddrInfo = getInfoByAddress(value, ['path'], wanAddrInfo);
-        this.props.setSgAddrPath({ walletId: sgAddrInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${sgAddrInfo.path}` });
+        setSgAddrPath({ walletId: sgAddrInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${sgAddrInfo.path}`, addr: value });
         break;
     }
   }
@@ -85,10 +85,10 @@ class RegisterStoremanGroup extends Component {
           this.setState({ [`${type}Loading`]: false });
           return;
         };
-        let path = { walletId: sgAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${sgAddrPath.path}` };
+        let path = { walletId: sgAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${sgAddrPath.path}`, addr: sgAddrPath.addr };
         setSgAddrPath(path);
-        wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-          if (err || !ret.ret) {
+        wand.request('offline_buildContract', { type, data: path }, (err, data) => {
+          if (err || !data.ret) {
             this.setState({ [`${type}Loading`]: false });
             message.warn('Build Failures!')
             return;
@@ -135,7 +135,7 @@ class RegisterStoremanGroup extends Component {
 
   render () {
     const { registerSmgContent, registerSmgFileShowing, smgContent, smgFileShowing, registerSmgLoading, registerSmgStatus, buildRegisterSmgLoading, buildRegisterSmgStatus, smgStatus } = this.state;
-    const { wanAddrInfo } = this.props;
+    const { wanAddrInfo, sgAddrPath } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
     return (
@@ -148,6 +148,7 @@ class RegisterStoremanGroup extends Component {
               className="colorInput"
               optionLabelProp="value"
               optionFilterProp="children"
+              defaultValue={sgAddrPath.addr}
               onChange={value => this.handleSelectAddr(value, 'sgAddr')}
               placeholder="Select contract owner"
               dropdownMatchSelectWidth={false}

@@ -26,7 +26,7 @@ class RegisterToken extends Component {
     tokenContent: [],
     registerTokenFileShowing: false,
     registerTokenContent: [],
-    registerTokenAddr: '',
+    registerTokenAddr: this.props.registerTokenPath.addr,
     registerTokenAddrNonce: '',
     tokenStatus: false,
     updateNonce: false,
@@ -66,7 +66,7 @@ class RegisterToken extends Component {
     switch (type) {
       case 'registerTokenAddr':
         let registerTokenAddrInfo = getInfoByAddress(value, ['path'], wanAddrInfo);
-        setRegisterTokenPath({ walletId: registerTokenAddrInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${registerTokenAddrInfo.path}` });
+        setRegisterTokenPath({ walletId: registerTokenAddrInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${registerTokenAddrInfo.path}`, addr: value });
         break;
     }
   }
@@ -86,10 +86,10 @@ class RegisterToken extends Component {
           this.setState({ [`${type}Loading`]: false });
           return;
         };
-        let path = { walletId: registerTokenAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${registerTokenAddrPath.path}` };
+        let path = { walletId: registerTokenAddrPath.type === 'normal' ? 1 : 5, path: `${WANPATH}${registerTokenAddrPath.path}`, addr: registerTokenAddrPath.addr };
         setRegisterTokenPath(path);
-        wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-          if (err || !ret.ret) {
+        wand.request('offline_buildContract', { type, data: path }, (err, data) => {
+          if (err || !data.ret) {
             this.setState({ [`${type}Loading`]: false });
             message.warn('Build Failures!')
             return;
@@ -136,7 +136,7 @@ class RegisterToken extends Component {
 
   render () {
     const { registerTokenFileShowing, registerTokenContent, tokenContent, tokenFileShowing, registerTokenLoading, registerTokenStatus, buildRegisterTokenStatus, buildRegisterTokenLoading, tokenStatus } = this.state;
-    const { wanAddrInfo } = this.props;
+    const { registerTokenPath, wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
     return (
@@ -147,6 +147,7 @@ class RegisterToken extends Component {
             <Select
               autoFocus
               className="colorInput"
+              defaultValue={registerTokenPath.addr}
               optionLabelProp="value"
               optionFilterProp="children"
               onChange={value => this.handleSelectAddr(value, 'registerTokenAddr')}

@@ -1,10 +1,6 @@
 import { observable, action, toJS } from 'mobx';
-import { getChainId } from 'utils/helper';
 
 class DeployContract {
-  @observable hasMnemonicOrNot = false;
-
-  // 1 for main net, 3 for test net
   @observable contractOwnerPath = {};
 
   @observable registerTokenPath = {};

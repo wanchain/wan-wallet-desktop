@@ -22,7 +22,7 @@ const btnStyle = { marginLeft: '10px' }
 @observer
 class DeployContract extends Component {
   state = {
-    contractOwner: '',
+    contractOwner: this.props.contractOwnerPath.addr,
     contractOwnerNonce: '',
     deployContractStatus: false,
     libAddressStatus: false,
@@ -74,7 +74,7 @@ class DeployContract extends Component {
   }
 
   handleSelectAddr = (value, type) => {
-    const { wanAddrInfo } = this.props;
+    const { wanAddrInfo, setContractOwnerPath } = this.props;
     if (value === undefined) {
       value = ''
     }
@@ -82,7 +82,7 @@ class DeployContract extends Component {
     switch (type) {
       case 'contractOwner':
         let contractOwnerInfo = getInfoByAddress(value, ['path'], wanAddrInfo);
-        this.props.setContractOwnerPath({ walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}` });
+        setContractOwnerPath({ walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}`, addr: value });
         break;
     }
   }
@@ -103,10 +103,10 @@ class DeployContract extends Component {
             this.setState({ [`${type}Loading`]: false });
             return;
           };
-          let path = { walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}` };
+          let path = { walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}`, addr: contractOwnerInfo.addr };
           setContractOwnerPath(path);
-          wand.request('offline_buildContract', { type, data: path }, (err, ret) => {
-            if (err || !ret.ret) {
+          wand.request('offline_buildContract', { type, data: path }, (err, data) => {
+            if (err || !data.ret) {
               this.setState({ [`${type}Loading`]: false });
               message.warn('Build Failures!')
               return;
@@ -124,8 +124,8 @@ class DeployContract extends Component {
         message.warn('Please select an address to build/deploy the transactions!');
         return;
       }
-      wand.request('offline_buildContract', { type, data: contractOwnerPath }, (err, ret) => {
-        if (err || !ret.ret) {
+      wand.request('offline_buildContract', { type, data: contractOwnerPath }, (err, data) => {
+        if (err || !data.ret) {
           this.setState({ [`${type}Loading`]: false });
           message.warn('Build Failures!')
           return;
@@ -168,7 +168,7 @@ class DeployContract extends Component {
 
   render () {
     const { setDependencyImportContent, setDependencyImportFileShowing, setDependencyFileShowing, setDependencyContent, deployContractFileShowing, deployContractContent, setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
-    const { wanAddrInfo } = this.props;
+    const { wanAddrInfo, contractOwnerPath } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
     return (
@@ -188,6 +188,7 @@ class DeployContract extends Component {
               className="colorInput"
               optionLabelProp="value"
               optionFilterProp="children"
+              defaultValue={contractOwnerPath.addr}
               onChange={value => this.handleSelectAddr(value, 'contractOwner')}
               placeholder="Select contract owner"
               dropdownMatchSelectWidth={false}

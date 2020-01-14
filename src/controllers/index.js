@@ -1780,7 +1780,6 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
               break;
             case 'deployContract':
             case 'registerToken':
-            case 'registerSmg':
             case 'setDependency':
               openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
               openFileContent.forEach(item => {item.from = deserializeWanTx(item.data).from; delete(item.data)})
@@ -1788,6 +1787,15 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
             case 'contractAddress':
               openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
               openFileContent = openFileContent.map(item => ({ name: item[0], address: item[1] }))
+              break;
+            case 'registerSmg':
+              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+              openFileContent.forEach(item => {
+                let { from, value } = deserializeWanTx(item.data);
+                item.from = from;
+                item.amount = new BigNumber(value).dividedBy(10 ** 18).toString(10) + ' WAN';
+                delete(item.data)
+              })
               break;
           }
         }

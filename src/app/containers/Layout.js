@@ -67,8 +67,9 @@ class Layout extends Component {
         try {
           let netStatus = await getNetStatus();
           if (netStatus) {
-            await initRegTokens('ETH');
-            await initRegTokens('EOS');
+            // UNDO
+            // await initRegTokens('ETH');
+            // await initRegTokens('EOS');
             await this.props.getTokensInfo();
             await this.props.getCcTokensInfo();
             await this.props.getMnemonic();
