@@ -17,7 +17,8 @@
                     "data": {
                         "label": "Data Folder",
                         "db": "Open Data Folder",
-                        "log": "Open Log Folder"
+                        "log": "Open Log Folder",
+                        "offline": "Open Offline Deploy Folder"
                     }
                 },
                 "services": "Services",

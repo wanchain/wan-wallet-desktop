@@ -225,7 +225,14 @@ export default (i18n) => {
                             const logDir = setting.appLogPath
                             shell.showItemInFolder(logDir)
                         }
-                    }
+                    },
+                    {
+                      label: i18n.t('main.applicationMenu.app.developer.data.offline'),
+                      click: () => {
+                          const offlineDeployDir = path.join(global.databasePathPrex, 'wanDeployer/')
+                          shell.showItemInFolder(offlineDeployDir)
+                      }
+                  }
                 ]
             },
             { type: 'separator' },
