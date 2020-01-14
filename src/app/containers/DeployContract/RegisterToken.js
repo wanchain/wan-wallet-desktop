@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Input, message, Divider, Select, Row, Col, Modal } from 'antd';
+import { Button, Input, message, Divider, Select, Row, Col, Modal, Icon } from 'antd';
 
 import style from './index.less';
 import { WANPATH } from 'utils/settings';
@@ -22,6 +22,7 @@ const btnStyle = { marginLeft: '10px' }
 @observer
 class RegisterToken extends Component {
   state = {
+    deployStatus: false,
     tokenFileShowing: false,
     tokenContent: [],
     registerTokenFileShowing: false,
@@ -118,24 +119,18 @@ class RegisterToken extends Component {
     this.setState({ [`${type}Loading`]: true });
     wand.request('offline_deployContractAction', { type }, (err, data) => {
       if (err || !data.ret) {
-        // message.warn(err.desc);
-        Modal.error({
-          content: err.desc || 'Error occurred. Please restart!',
-        });
+        let content = err ? err.desc : 'Error occurred. Please restart!';
+        Modal.error({ content });
         this.setState({ [`${type}Loading`]: false });
         return;
       }
       message.success('Success!');
-      if (!['setDependency'].includes(type)) {
-        this.setState({ [`${type}File`]: true, [`${type}Loading`]: false });
-      } else {
-        this.setState({ [`${type}Loading`]: false });
-      }
+      this.setState({ deployStatus: true, [`${type}Loading`]: false });
     })
   }
 
   render () {
-    const { registerTokenFileShowing, registerTokenContent, tokenContent, tokenFileShowing, registerTokenLoading, registerTokenStatus, buildRegisterTokenStatus, buildRegisterTokenLoading, tokenStatus } = this.state;
+    const { deployStatus, registerTokenFileShowing, registerTokenContent, tokenContent, tokenFileShowing, registerTokenLoading, registerTokenStatus, buildRegisterTokenStatus, buildRegisterTokenLoading, tokenStatus } = this.state;
     const { registerTokenPath, wanAddrInfo } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -181,6 +176,7 @@ class RegisterToken extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Register Token</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('registerToken')}>Import registerToken.dat File</Button>
           { registerTokenStatus && <Button type="primary" style={btnStyle} loading={registerTokenLoading} onClick={() => this.deployContractAction('registerToken')}>Deploy</Button> }
+          { deployStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
           { registerTokenFileShowing && <TableShowing type="registerToken" data={registerTokenContent}/> }
         </div>
       </React.Fragment>

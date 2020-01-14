@@ -22,6 +22,7 @@ const btnStyle = { marginLeft: '10px' }
 @observer
 class DeployContract extends Component {
   state = {
+    deployStatus: false,
     contractOwner: this.props.contractOwnerPath.addr,
     contractOwnerNonce: '',
     deployContractStatus: false,
@@ -150,10 +151,8 @@ class DeployContract extends Component {
     this.setState({ [`${type}Loading`]: true });
     wand.request('offline_deployContractAction', { type }, (err, data) => {
       if (err || !data.ret) {
-        // message.warn(err.desc);
-        Modal.error({
-          content: err.desc || 'Error occurred. Please restart!',
-        });
+        let content = err ? err.desc : 'Error occurred. Please restart!';
+        Modal.error({ content });
         this.setState({ [`${type}Loading`]: false });
         return;
       }
@@ -161,13 +160,13 @@ class DeployContract extends Component {
       if (!['setDependency'].includes(type)) {
         this.setState({ [`${type}File`]: true, [`${type}Loading`]: false });
       } else {
-        this.setState({ [`${type}Loading`]: false });
+        this.setState({ deployStatus: true, [`${type}Loading`]: false });
       }
     })
   }
 
   render () {
-    const { setDependencyImportContent, setDependencyImportFileShowing, setDependencyFileShowing, setDependencyContent, deployContractFileShowing, deployContractContent, setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
+    const { deployStatus, setDependencyImportContent, setDependencyImportFileShowing, setDependencyFileShowing, setDependencyContent, deployContractFileShowing, deployContractContent, setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
     const { wanAddrInfo, contractOwnerPath } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -236,6 +235,7 @@ class DeployContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Set TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('setDependency')}>Import setDependency(step4) File</Button>
           { setDependencyStatus && <Button type="primary" style={btnStyle} loading={setDependencyLoading} onClick={() => this.deployContractAction('setDependency')}>Deploy</Button> }
+          { deployStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
           { setDependencyFileShowing && <TableShowing type="setDependency" data={setDependencyContent}/> }
         </div>
       </React.Fragment>
