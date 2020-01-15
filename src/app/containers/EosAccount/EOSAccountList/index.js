@@ -121,9 +121,16 @@ class EOSAccountList extends Component {
         this.props.language && this.columns.forEach(col => {
             col.title = intl.get(`EosAccount.${col.dataIndex}`)
         });
+        let data = getAccountListWithBalance.map((v) => {
+            let obj = Object.assign({}, v);
+            if (obj.balance === undefined) {
+                obj.balance = 0;
+            }
+            return obj;
+        });
         return (
             <div>
-                <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={getAccountListWithBalance} />
+                <Table className="content-wrap" rowKey="account" pagination={false} columns={this.columns} dataSource={data} />
                 {this.state.showManageResourceForm && <EOSResourceManageForm prices={this.state.prices} onCancel={this.onCancel} />}
             </div>
         );
