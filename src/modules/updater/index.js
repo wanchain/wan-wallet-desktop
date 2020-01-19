@@ -15,6 +15,7 @@ class WalletUpdater {
         this.updater.autoInstallOnAppQuit = false
         this.updater.autoDownload = false
         this.updater.allowDowngrade = false
+        this.updater.allowPrerelease = false
     }
 
     start() {
