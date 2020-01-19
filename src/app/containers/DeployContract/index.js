@@ -37,7 +37,7 @@ class DeployContract extends Component {
     buildDeployContractStatus: false,
     buildDeployContractLoading: false,
     deployContractFileShowing: false,
-    deployContractFileContent: [],
+    deployContractContent: [],
     setDependencyFileShowing: false,
     setDependencyContent: [],
     setDependencyImportFileShowing: false,

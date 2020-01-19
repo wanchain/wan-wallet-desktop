@@ -445,6 +445,7 @@ const en_US = {
     'menuConfig.dex': 'DEX',
     'menuConfig.offlineDeploy': 'Offline Deploy',
     'menuConfig.deployContract': 'Deploy Contract',
+    'menuConfig.upgradeContract': 'Upgrade Contract',
     'menuConfig.registerToken': 'Register Token',
     'menuConfig.registerStoremanGroup': 'Register Storeman Group',
 

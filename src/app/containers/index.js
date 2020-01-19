@@ -20,4 +20,5 @@ export { default as CrossEOS } from './CrossChain/CrossEOS';
 export { default as EosAccount } from './EosAccount';
 export { default as DeployContract } from './DeployContract';
 export { default as RegisterToken } from './DeployContract/RegisterToken';
+export { default as UpgradeContract } from './DeployContract/UpgradeContract';
 export { default as RegisterStoremanGroup } from './DeployContract/RegisterStoremanGroup';

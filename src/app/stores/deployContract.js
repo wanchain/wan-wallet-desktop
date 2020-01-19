@@ -7,6 +7,10 @@ class DeployContract {
 
   @observable sgAddrPath = {};
 
+  @observable upgradeAddrPath = {};
+
+  @observable upgradeComponents = [];
+
   @action setContractOwnerPath(val) {
     self.contractOwnerPath = val;
   }
@@ -17,6 +21,14 @@ class DeployContract {
 
   @action setSgAddrPath(val) {
     self.sgAddrPath = val;
+  }
+
+  @action setUpgradeAddrPath(val) {
+    self.upgradeAddrPath = val;
+  }
+
+  @action setUpgradeComponents(val) {
+    self.upgradeComponents = val;
   }
 }
 

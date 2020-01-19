@@ -269,6 +269,11 @@ class LanguageIntl {
             title: intl.get('menuConfig.registerStoremanGroup'),
             key: '/registerStoremanGroup',
             icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.upgradeContract'),
+            key: '/upgradeContract',
+            icon: 'block'
           }
         ]
       },
