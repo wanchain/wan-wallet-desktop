@@ -1781,10 +1781,13 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
             case 'deployContract':
             case 'registerToken':
             case 'setDependency':
+            case 'upgradeContract':
+            case 'upgradeDependency':
               openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
               openFileContent.forEach(item => {item.from = deserializeWanTx(item.data).from; delete(item.data)})
               break;
             case 'contractAddress':
+            case 'upgradeContractAddress':
               openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
               openFileContent = openFileContent.map(item => ({ name: item[0], address: item[1] }))
               break;
@@ -1817,6 +1820,17 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
 
       sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
       break;
+    
+    case 'upgradeComponents':
+      try {
+        wanDeployer.setUpgradeComponents(payload.components)
+      } catch (e) {
+          logger.error(e.message || e.stack)
+          err = e
+      }
+
+      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+      break;
 
     case 'buildContract':
       let fileContent
@@ -1838,11 +1852,15 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
             case 'buildRegisterSmg':
               fileName = 'registerSmg.dat';
               break;
+            case 'buildUpgradeContract':
+              fileName = 'upgradeContract(step2).dat';
+              break;
+            case 'buildUpgradeDependency':
+              fileName = 'upgradeDependency(step4).dat'
           }
           let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
           fileContent = JSON.parse(fs.readFileSync(filePath));
           fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
-          console.log('fileContent', fileContent)
         }
       } catch (e) {
           logger.error(e.message || e.stack)

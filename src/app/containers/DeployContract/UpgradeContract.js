@@ -13,7 +13,7 @@ const btnStyle = { marginLeft: '10px' }
 const { Option } = Select;
 
 const children = [];
-const upgradeType = ['Lib', 'TokenManager', 'Htlc', 'StoremanGroupAdmin'];
+const upgradeType = ['lib', 'tokenManager', 'htlc', 'storemanGroupAdmin'];
 for (let i = 0; i < upgradeType.length; i++) {
   children.push(<Option key={upgradeType[i]}>{upgradeType[i]}</Option>);
 }
@@ -39,20 +39,20 @@ class UpgradeContract extends Component {
     libAddressStatus: false,
     contractAddressStatus: false,
     upgradeContractLoading: false,
-    upgradeDependencyImportStatus: false,
+    upgradeContractAddressStatus: false,
     upgradeContractFile: false,
     upgradeDependencyStatus: false,
     upgradeDependencyLoading: false,
     buildUpgradeDependencyStatus: false,
-    buildSetDependencyLoading: false,
+    buildUpgradeDependencyLoading: false,
     buildUpgradeContractStatus: false,
     buildUpgradeContractLoading: false,
     upgradeContractFileShowing: false,
     upgradeContractContent: [],
     upgradeDependencyFileShowing: false,
     upgradeDependencyContent: [],
-    upgradeDependencyImportFileShowing: false,
-    upgradeDependencyImportContent: []
+    upgradeContractAddressFileShowing: false,
+    upgradeContractAddressContent: []
   }
 
   constructor (props) {
@@ -61,16 +61,7 @@ class UpgradeContract extends Component {
   }
 
   handleGetInfo = type => {
-    let action;
-    switch (type) {
-      case 'upgradeContractAddress':
-        action = 'contractAddress';
-        break;
-      default:
-        action = type;
-        break;
-    }
-    wand.request('offline_openFile', { type: action }, (err, data) => {
+    wand.request('offline_openFile', { type }, (err, data) => {
       if (err) {
         message.warn('Import File Error, Please insert it again')
         return;
@@ -100,9 +91,15 @@ class UpgradeContract extends Component {
   }
 
   handleBuildContract = type => {
-    const { wanAddrInfo, setUpgradeAddrPath, upgradeAddrPath } = this.props;
+    const { wanAddrInfo, setUpgradeAddrPath, upgradeAddrPath, upgradeComponents } = this.props;
     const { upgradeAddr, upgradeAddrNonce } = this.state;
     this.setState({ [`${type}Loading`]: true });
+
+    if (upgradeComponents.length === 0) {
+      this.setState({ [`${type}Loading`]: false });
+      message.warn('Please select the contract components to upgrade!')
+      return;
+    }
 
     if (type === 'buildUpgradeContract') {
       if (![upgradeAddr, upgradeAddrNonce].includes('')) {
@@ -168,7 +165,7 @@ class UpgradeContract extends Component {
         return;
       }
       message.success('Success!');
-      if (!['setDependency'].includes(type)) {
+      if (type === 'upgradeContract') {
         this.setState({ [`${type}File`]: true, [`${type}Loading`]: false });
       } else {
         this.setState({ dependencyStatus: true, [`${type}Loading`]: false });
@@ -177,11 +174,17 @@ class UpgradeContract extends Component {
   }
 
   handleUpgradeType = types => {
-    this.props.setUpgradeComponents(types)
+    wand.request('offline_upgradeComponents', { components: types }, (err, data) => {
+      if (err && types.length !== 0) {
+        message.warn('Select Upgrade Components Failures!')
+        return;
+      };
+      this.props.setUpgradeComponents(types)
+    })
   }
 
   render () {
-    const { contractAddressStatus, dependencyStatus, upgradeDependencyImportContent, upgradeDependencyImportFileShowing, upgradeDependencyFileShowing, upgradeDependencyContent, upgradeContractFileShowing, upgradeContractContent, upgradeDependencyLoading, upgradeDependencyStatus, buildUpgradeDependencyStatus, buildSetDependencyLoading, upgradeDependencyImportStatus, libAddressStatus, buildUpgradeContractLoading, buildUpgradeContractStatus, upgradeContractStatus, upgradeContractFile, upgradeContractLoading, setDependencyImportFile } = this.state;
+    const { contractAddressStatus, dependencyStatus, upgradeContractAddressContent, upgradeContractAddressFileShowing, upgradeDependencyFileShowing, upgradeDependencyContent, upgradeContractFileShowing, upgradeContractContent, upgradeDependencyLoading, upgradeDependencyStatus, buildUpgradeDependencyStatus, buildUpgradeDependencyLoading, upgradeContractAddressStatus, libAddressStatus, buildUpgradeContractLoading, buildUpgradeContractStatus, upgradeContractStatus, upgradeContractFile, upgradeContractLoading, setDependencyImportFile } = this.state;
     const { upgradeComponents, wanAddrInfo, upgradeAddrPath } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
 
@@ -221,7 +224,7 @@ class UpgradeContract extends Component {
             <Input onChange={e => this.handleSelectAddr(e.target.value, 'upgradeAddrNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small"/>
           </div>
           <div className={style.selectStyle}>
-            <h5 className={style.fontText + ' ' + style.inlineBlock}>Select Upgrade Type</h5>
+            <h5 className={style.fontText + ' ' + style.inlineBlock}>Select Upgrade Components</h5>
             <Select
               showArrow
               mode="multiple"
@@ -247,7 +250,7 @@ class UpgradeContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Upgrade TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('upgradeContract')}>Import upgradeContract(step2) File</Button>
           { upgradeContractStatus && <Button type="primary" style={btnStyle} loading={upgradeContractLoading} onClick={() => this.deployContractAction('upgradeContract')}>Deploy</Button> }
-          { upgradeContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'upgradeContractAddress(step3).json'])}>Download</Button> }
+          { upgradeContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['upgradeContractAddress(step3).dat'])}>Download</Button> }
           { upgradeContractFileShowing && <TableShowing type="deployContract" data={upgradeContractContent}/> }
         </div>
         <Divider className={style.borderSty} />
@@ -255,9 +258,9 @@ class UpgradeContract extends Component {
           <Button type="primary" className={style.stepOne}>4_Offline</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Upgrade TokenManager/HTLC/StoremanGroupAdmin Dependency</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('upgradeContractAddress')}>Import upgradeContractAddress(step3) File</Button>
-          { upgradeDependencyImportStatus && <Button type="primary" style={btnStyle} loading={buildSetDependencyLoading} onClick={() => this.handleBuildContract('buildUpgradeDependency')}>Build</Button> }
+          { upgradeContractAddressStatus && <Button type="primary" style={btnStyle} loading={buildUpgradeDependencyLoading} onClick={() => this.handleBuildContract('buildUpgradeDependency')}>Build</Button> }
           { buildUpgradeDependencyStatus && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'upgradeDependency(step4).dat'])}>Download</Button> }
-          { upgradeDependencyImportFileShowing && <TableShowing type="upgradeContractAddress" data={upgradeDependencyImportContent}/> }
+          { upgradeContractAddressFileShowing && <TableShowing type="upgradeContractAddress" data={upgradeContractAddressContent}/> }
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -266,7 +269,7 @@ class UpgradeContract extends Component {
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('upgradeDependency')}>Import upgradeDependency(step4) File</Button>
           { upgradeDependencyStatus && <Button type="primary" style={btnStyle} loading={upgradeDependencyLoading} onClick={() => this.deployContractAction('upgradeDependency')}>Deploy</Button> }
           { dependencyStatus && <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> }
-          { upgradeDependencyFileShowing && <TableShowing type="setDependency" data={upgradeDependencyContent}/> }
+          { upgradeDependencyFileShowing && <TableShowing type="upgradeDependency" data={upgradeDependencyContent}/> }
         </div>
       </React.Fragment>
     );
