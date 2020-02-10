@@ -1759,8 +1759,13 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 let result0 = await ccUtil.getEpochID('WAN');
                 let cost0 = Date.now() - startTime0;
 
+                let addr = 'mtAXbCHDkgBZmL9zjq9kgYRpPA13gVFqYZ';
+                if (network === 'main') {
+                    addr = '1MzM2FMP1nbphaLgGRqKh7TRkgLtXXghWc';
+                }
+
                 let startTime = Date.now();
-                let result = await ccUtil.getBtcUtxo(0, 10000000, ['mtAXbCHDkgBZmL9zjq9kgYRpPA13gVFqYZ']);
+                let result = await ccUtil.getBtcUtxo(0, 10000000, [addr]);
                 let cost = Date.now() - startTime - cost0;
                 if (cost < 0) {
                     cost = cost * -1;
