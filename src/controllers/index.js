@@ -1965,7 +1965,6 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
                         minEpochId = obj.minEpochId;
-                        epochCount = obj.epochCount;
                     }
                 }
             }
