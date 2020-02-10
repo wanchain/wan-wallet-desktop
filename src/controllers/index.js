@@ -1344,7 +1344,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             let { crossChain } = payload;
             try {
                 ret = await ccUtil.getRegTokens(crossChain);
-                setting.updateRegTokens(ret, crossChain);
+                if (Array.isArray(ret)) {
+                    setting.updateRegTokens(ret, crossChain);
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
