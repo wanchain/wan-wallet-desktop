@@ -1,6 +1,9 @@
 const zh_CN = {
     'Common.copy': '复制',
     'Common.QRCode': '二维码',
+    'Common.exportKey': '导出私钥',
+    'Common.privateKey': '备份私钥',
+    'Common.yourPrivateKey': '你的私钥',
     'Common.from': '发送方',
     'Common.days': ' 天',
     'Common.amount': '金额',

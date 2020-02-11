@@ -1,6 +1,9 @@
 const en_US = {
     'Common.copy': 'Copy',
     'Common.QRCode': 'QR Code',
+    'Common.exportKey': 'Export Private Key',
+    'Common.privateKey': 'Reveal Private Key',
+    'Common.yourPrivateKey': 'Your Private Key',
     'Common.from': 'From',
     'Common.days': ' days',
     'Common.amount': 'Amount',

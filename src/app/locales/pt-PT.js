@@ -1,6 +1,9 @@
 const pt_PT = {
     'Common.copy': 'Copiar',
     'Common.QRCode': 'Código QR',
+    'Common.exportKey': 'Export Private Key',
+    'Common.privateKey': 'Reveal Private Key',
+    'Common.yourPrivateKey': 'Your Private Key',
     'Common.from': 'De',
     'Common.days': ' dias',
     'Common.amount': 'Montante',

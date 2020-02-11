@@ -1,6 +1,9 @@
 const th_TH = {
     'Common.copy': 'คัดลอก',
     'Common.QRCode': 'QR Code',
+    'Common.exportKey': 'Export Private Key',
+    'Common.privateKey': 'Reveal Private Key',
+    'Common.yourPrivateKey': 'Your Private Key',
     'Common.from': 'ผู้ส่ง',
     'Common.days': ' วัน',
     'Common.amount': 'จำนวน',

@@ -1,6 +1,9 @@
 const ko_KR = {
     'Common.copy': '복사',
     'Common.QRCode': 'QR코드',
+    'Common.exportKey': 'Export Private Key',
+    'Common.privateKey': 'Reveal Private Key',
+    'Common.yourPrivateKey': 'Your Private Key',
     'Common.from': '발신자',
     'Common.days': ' 일',
     'Common.amount': '금액',
