@@ -73,7 +73,7 @@ class CopyAndQrcode extends Component {
   }
 
   exportPrivateKey = (path, wid, pwd) => {
-    wand.request('wallet_exportPrivateKey', { wid, path, password: '11aaAA!' }, (err, data) => {
+    wand.request('wallet_exportPrivateKey', { wid, path, password: pwd }, (err, data) => {
       if (err) {
         console.log('wallet_exportPrivateKey:', err)
       } else {
