@@ -1,26 +1,24 @@
 import fs from 'fs'
-import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
-import { ipcMain, app } from 'electron'
+import Web3 from 'web3';
+import keccak from 'keccak';
+import fsExtra from 'fs-extra'
+import wanUtil from 'wanchain-util';
+import Identicon from 'identicon.js';
+import BigNumber from 'bignumber.js';
+import { ipcMain as ipc, app } from 'electron'
 import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
+
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
-import Web3 from 'web3';
-import { dateFormat } from '../app/utils/support';
-import Identicon from 'identicon.js';
-import keccak from 'keccak';
-import BigNumber from 'bignumber.js';
-import wanUtil from 'wanchain-util';
-const ethUtil = require('ethereumjs-util');
-
-const web3 = new Web3();
+import { dateFormat } from '~/src/app/utils/support';
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
-import { settings } from 'cluster'
 
+const web3 = new Web3();
+const ethUtil = require('ethereumjs-util');
 const logger = Logger.getLogger('controllers')
-const ipc = ipcMain
 
 // route consts
 const ROUTE_PHRASE = 'phrase'
@@ -32,7 +30,6 @@ const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_SETTING = 'setting'
-
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -308,6 +305,18 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 logger.error('Reboot failed: ' + e.message || e.stack)
             }
             break
+
+        case 'exportPrivateKey':
+          let privateKey;
+          try {
+            privateKey = hdUtil.exportPrivateKey(payload.wid, payload.path, payload.password)
+          } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+          }
+
+          sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKey })
+          break
     }
 })
 
