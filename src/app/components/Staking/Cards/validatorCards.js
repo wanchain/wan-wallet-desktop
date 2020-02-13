@@ -38,6 +38,7 @@ class ValidatorCards extends Component {
               value={myValidatorCards.principal[0]}
               tail="WAN"
               bottom={stakeBottom}
+              infoReady={myValidatorCards.infoReady}
             />
           </Col>
           <Col span={6}>
@@ -46,6 +47,7 @@ class ValidatorCards extends Component {
               value={myValidatorCards.entrusted[0]}
               tail="WAN"
               bottom={delegationBottom}
+              infoReady={myValidatorCards.infoReady}
             />
 
           </Col>
@@ -55,6 +57,7 @@ class ValidatorCards extends Component {
               value={myValidatorCards.reward[0]}
               tail="WAN"
               bottom={intl.get('staking.startFrom1') + myValidatorCards.reward[1] + intl.get('staking.startFrom2')}
+              infoReady={myValidatorCards.infoReady}
             />
           </Col>
           <Col span={6}>
@@ -63,6 +66,7 @@ class ValidatorCards extends Component {
               value={myValidatorCards.withdrawal[0]}
               tail="WAN"
               bottom={timeFormat(Date.now() / 1000)}
+              infoReady={myValidatorCards.infoReady}
             />
           </Col>
         </Row>

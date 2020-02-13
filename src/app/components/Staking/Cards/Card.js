@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Icon } from 'antd';
 import style from './index.less';
 import mountain from 'static/image/mountain.png';
 
@@ -13,7 +13,11 @@ function Card (props) {
       </Row>
       <Row>
         <Col className={style['card-value-boarder']}>
-          <span className={style['card-value']}>{props.value}</span>
+          {
+            props.infoReady
+            ? <span className={style['card-value']}>{props.value}</span>
+            : <Icon type="loading" style={{ fontSize: 24 }} spin />
+          }
           <span className={style['card-tail']}>{props.tail}</span>
         </Col>
       </Row>
