@@ -46,7 +46,7 @@ class BtcAccount extends Component {
     },
     {
       dataIndex: 'address',
-      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'BTC'} path={record.path} wid={1} /></div>
     },
     {
       dataIndex: 'balance',
