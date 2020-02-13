@@ -5,7 +5,7 @@ const th_TH = {
     'Common.days': ' วัน',
     'Common.amount': 'จำนวน',
     'Common.send': 'ส่ง',
-    'Common.tokens': 'Tokens',
+    'Common.tokens': 'โทเค็น',
     'Common.erc20': 'ERC-20',
     'Common.wrc20': 'WRC-20',
     'Common.crossChain': 'Cross Chain',
@@ -77,9 +77,9 @@ const th_TH = {
     'Portfolio.value': 'มูลค่า',
     'Portfolio.portfolioUppercase': 'พอร์ตฟอลิโอ',
 
-    'Network.title': 'Network Diagnosis',
-    'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
-    'Network.startButton': 'Start',
+    'Network.title': 'ตรวจสอบการเชื่อมต่อ',
+    'Network.desc': 'คุณสามารถตรวจสอบการเชื่อมต่อระหว่างกระเป๋าและเครือข่ายของระบบได้ที่นี่',
+    'Network.startButton': 'เริ่มการตรวจสอบ',
 
     'Restore.restoreFromSeedPhrase': 'กู้กระเป๋าโดยใช้กลุ่มคำลับ',
     'Restore.warning': 'ระวัง',
@@ -169,7 +169,7 @@ const th_TH = {
     'EOSKeyPairList.publicKey': 'Public Key',
     'EOSKeyPairList.searchPublicKey': 'Public Key ที่ถูกค้นหา',
     'EOSKeyPairList.selectOneAccount': 'กรุณาเลือกบัญชีอย่างน้อยหนึ่งบัญชี',
-    'EOSKeyPairList.tipText': `If you have never associated EOS accounts to EOS key pairs created by Wan Wallet, you can use third party service to create account and associate it to key pairs. If you already have EOS accounts associated to key pairs, you can create new EOS accounts using existing ones.`,
+    'EOSKeyPairList.tipText': `หากคุณไม่เคยผูกบัญชี EOS กับ EOS Key Pair ที่สร้างจากกระเป๋า Wan คุณสามารถใช้บริการบุคคลที่สามเพื่อสร้างบัญชีและผูกกับ Key Pair ได้แต่ถ้าหากคุณเคยมีบัญชี EOS ที่ผู้กับ Key Pair แล้วคุณสามารถสร้างบัญชี EOS ใหม่โดยใช้ข้อมูลที่มีอยู่แล้วได้`,
     'EOSKeyPairList.getImportedAccountsFailed': 'ไม่สามารถดึงบัญชีที่ถูกนำเข้ามาได้',
 
     'EOSAccountList.manageResource': 'จัดการ',
@@ -193,7 +193,7 @@ const th_TH = {
     'EOSResourceManageForm.buy': 'ซื้อ',
     'EOSResourceManageForm.buyRAM': 'ซื้อ RAM',
     'EOSResourceManageForm.selectReceivingAccount': 'เลือกบัญชีผู้รับ',
-    'EOSResourceManageForm.selectHolderAccount': 'Select holder account',
+    'EOSResourceManageForm.selectHolderAccount': 'เลือกบัญชีเจ้าของ',
     'EOSResourceManageForm.enterRAMSize': 'กรอกขนาด RAM (KB)',
     'EOSResourceManageForm.oversizeCPU': 'เกินขนาดสูงสุดของ CPU',
     'EOSResourceManageForm.noSufficientEOSToStake': 'ยอด EOS คงเหลือไม่เพียงพอที่จะ Stake',
@@ -213,7 +213,7 @@ const th_TH = {
     'EOSResourceManageForm.account': 'บัญชี',
     'EOSResourceManageForm.amount': 'จำนวน',
     'EOSResourceManageForm.type': 'ประเภท',
-    'EOSResourceManageForm.accountName': 'Account Name',
+    'EOSResourceManageForm.accountName': 'ชื่อบัญชี',
 
     'EOSTransHistory.time': 'เวลา',
     'EOSTransHistory.from': 'จาก',
@@ -446,9 +446,9 @@ const th_TH = {
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 
-    'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
-    'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
-    'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
+    'dAppConfirm.sign': 'ต้องการอนุญาตให้ DApp เซ็นโดยใช้กระเป๋าของคุณหรือไม่?',
+    'dAppConfirm.send': 'ต้องการอนุญาตให้ DApp ส่งธุรกรรมโดยใช้กระเป๋าของคุณหรือไม่?',
+    'dAppConfirm.warn': 'การทำงานนี้อาจจะส่งผลต่อการเปลี่ยนแปลงของทรัพย์สินในกระเป๋าของคุณ',
 
     'utils.helper.getBalanceFailed': 'ไม่สามารถดึงยอดคงเหลือได้',
     'utils.helper.getNonceFailed': 'ไม่สามารถดึง nonce ได้',

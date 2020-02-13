@@ -212,14 +212,14 @@ class EOSAccountRAM extends Component {
                                             {getFieldDecorator('buySize', { rules: [{ required: true, message: intl.get('EOSResourceManageForm.invalidSize'), validator: this.checkBuySize }] })
                                                 (<InputNumber placeholder={intl.get('EOSResourceManageForm.enterRAMSize')} min={0} prefix={<Icon type="credit-card" className="colorInput" />} />)}
                                         </Form.Item>
-                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.accountName')}</div>
+                                        <div className={style.buyInfo}>{intl.get('EOSResourceManageForm.selectReceivingAccount')}</div>
                                         <Form.Item>
                                             {getFieldDecorator('account', {
                                                 rules: [{ required: true, validator: this.checkName }]
                                             })(
                                                 <AutoComplete
                                                     dataSource={getAccount.map(v => <Option value={v} key={v}><Tooltip placement="right" title={`${v}`}>{v}</Tooltip></Option>)}
-                                                    placeholder={'Input receiving account'}
+                                                    placeholder={intl.get('EOSResourceManageForm.selectReceivingAccount')}
                                                     allowClear={true}
                                                     optionLabelProp={'value'}
                                                     filterOption={(input, option) => {

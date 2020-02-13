@@ -42,7 +42,11 @@ class ETHNormalTransForm extends Component {
   constructor(props) {
     super(props);
     let { tokensList, tokenAddr } = props;
-    this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals || 18;
+    if (tokenAddr) {
+      this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals;
+    } else {
+      this.decimals = 18;
+    }
   }
 
   componentWillUnmount () {
@@ -153,23 +157,26 @@ class ETHNormalTransForm extends Component {
     let data = '0x';
     let { form, transType, from, tokenAddr } = this.props;
     let { to, amount } = form.getFieldsValue(['to', 'amount']);
-
-    if (transType === TRANSTYPE.tokenTransfer) {
-      if (to) {
-        data = encodeTransferInput(to, this.decimals, amount || 0);
-        this.props.updateTransParams(from, { data });
+    try {
+      if (transType === TRANSTYPE.tokenTransfer) {
+        if (to) {
+          data = encodeTransferInput(to, this.decimals, amount || 0);
+          this.props.updateTransParams(from, { data });
+        }
       }
+      let tx = { from, to: tokenAddr, data, value: '0x0' };
+      wand.request('transaction_estimateGas', { chainType: 'ETH', tx }, (err, gasLimit) => {
+        if (err) {
+          message.warn(intl.get('NormalTransForm.estimateGasFailed'));
+        } else {
+          console.log('Update Gas Limit:', gasLimit);
+          this.props.updateTransParams(from, { gasLimit });
+          this.props.updateGasLimit(gasLimit);
+        }
+      });
+    } catch (err) {
+      console.log('updateGasLimit failed', err);
     }
-    let tx = { from, to: tokenAddr, data, value: '0x0' };
-    wand.request('transaction_estimateGas', { chainType: 'ETH', tx }, (err, gasLimit) => {
-      if (err) {
-        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
-      } else {
-        console.log('Update Gas Limit:', gasLimit);
-        this.props.updateTransParams(from, { gasLimit });
-        this.props.updateGasLimit(gasLimit);
-      }
-    });
   }
 
   checkToETHAddr = (rule, value, callback) => {
@@ -263,7 +270,7 @@ class ETHNormalTransForm extends Component {
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+          <Spin spinning={this.props.spin} size="large" /* tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} */ className="loadingData">
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: from })

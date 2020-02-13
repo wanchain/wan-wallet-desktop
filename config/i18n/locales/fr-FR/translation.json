@@ -46,7 +46,7 @@
                 "mode": {
                     "label": "Mode",
                     "full": "Full Node",
-                    "light": "Light Wallet"
+                    "light": "Client Léger"
                 },
                 "lang": {
                     "label": "Langue",
@@ -77,10 +77,10 @@
             }
         },
         "exitDialog": {
-            "title": "Warning",
-            "message": "There are cross-chain transactions which are not finished yet, are you sure to exit?",
-            "ok": "OK",
-            "cancel": "Cancel"
+            "title": "Attention",
+            "message": "Il reste encore des transactions cross-chain qui sont en cours d'exécution, êtes-vous sûr de quitter maintenant ?",
+            "ok": "Confirmer",
+            "cancel": "Annuler"
         }
     }
 }

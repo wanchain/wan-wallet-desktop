@@ -48,7 +48,7 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from, btcPath } = this.props;
+    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, wanAddrInfo, balance, from, btcPath, smgList } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -73,7 +73,7 @@ class CrossBTCForm extends Component {
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
 
-        if (isExceedBalance(origAddrAmount, origAddrFee)) {
+        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(balance, sendAmount) || isExceedBalance(formatNumByDecimals(smgList[0].quota, 8), sendAmount)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
@@ -203,7 +203,7 @@ class CrossBTCForm extends Component {
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <Spin spinning={this.props.spin} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} className="loadingData">
+          <Spin spinning={this.props.spin} size="large" /* tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} */ className="loadingData">
             <div className="validator-bg">
               {
                 direction !== INBOUND &&

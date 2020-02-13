@@ -77,10 +77,10 @@
             }
         },
         "exitDialog": {
-            "title": "Warning",
-            "message": "There are cross-chain transactions which are not finished yet, are you sure to exit?",
+            "title": "Atenção",
+            "message": "Existem transações cross-chain que ainda não terminaram, tem certeza de que quer sair",
             "ok": "OK",
-            "cancel": "Cancel"
+            "cancel": "Cancelar"
         }
     }
 }

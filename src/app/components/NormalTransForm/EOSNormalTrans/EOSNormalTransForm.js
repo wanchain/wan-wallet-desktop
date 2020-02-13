@@ -113,7 +113,7 @@ class EOSNormalTransForm extends Component {
   }
 
   checkToAccount = (rule, value, callback) => {
-    let reg = new RegExp(/^[a-z][a-z1-5\.]+$/);
+    let reg = /^[a-z][1-5a-z\.]{11}$/g;
     if (reg.test(value)) {
       callback();
     } else {
@@ -151,7 +151,7 @@ class EOSNormalTransForm extends Component {
             <Button key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <Spin spinning={false} tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} />} className="loadingData">
+          <Spin spinning={false} size="large" /* tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} />} */ className="loadingData">
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('Common.from')}>
                 {getFieldDecorator('from', { initialValue: selectedAccount.account })
@@ -163,7 +163,7 @@ class EOSNormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
-                  (<InputNumber min={0} precision={4} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                  (<InputNumber min={0.0001} precision={4} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
               {
                 settings.reinput_pwd &&
