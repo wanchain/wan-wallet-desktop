@@ -92,6 +92,15 @@ const pt_PT = {
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restaurar',
     'Settings.network': 'Network',
+    'Settings.application': 'DApp Mange',
+
+    'DApp.title': 'Distribution Application Mangement',
+    'DApp.addButton': 'Add',
+    'DApp.delButton': 'Delete',
+    'DApp.enableCol': 'Enable',
+    'DApp.titleCol': 'Title',
+    'DApp.urlCol': 'URL',
+    'DApp.commitCol': 'Commit',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',

@@ -92,6 +92,15 @@ const es_ES = {
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restore',
     'Settings.network': 'Network',
+    'Settings.application': 'DApp Mange',
+
+    'DApp.title': 'Distribution Application Mangement',
+    'DApp.addButton': 'Add',
+    'DApp.delButton': 'Delete',
+    'DApp.enableCol': 'Enable',
+    'DApp.titleCol': 'Title',
+    'DApp.urlCol': 'URL',
+    'DApp.commitCol': 'Commit',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',

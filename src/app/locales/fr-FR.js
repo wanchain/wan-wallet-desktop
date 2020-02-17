@@ -92,6 +92,15 @@ const fr_FR = {
     'Settings.backup': 'Sauvegarde',
     'Settings.restore': 'Réinitialisation',
     'Settings.network': 'Réseau',
+    'Settings.application': 'DApp Mange',
+
+    'DApp.title': 'Distribution Application Mangement',
+    'DApp.addButton': 'Add',
+    'DApp.delButton': 'Delete',
+    'DApp.enableCol': 'Enable',
+    'DApp.titleCol': 'Title',
+    'DApp.urlCol': 'URL',
+    'DApp.commitCol': 'Commit',
 
     'Config.option': 'Options de sécurité',
     'Config.inputPwd': 'Confirmer une transaction en validant votre mot de passe',

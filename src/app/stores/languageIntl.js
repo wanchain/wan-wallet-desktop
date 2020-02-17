@@ -341,6 +341,9 @@ class LanguageIntl {
       }, {
         title: intl.get('Settings.network'),
         key: 'network',
+      }, {
+        title: intl.get('Settings.application'),
+        key: 'application',
       }
     ];
   }

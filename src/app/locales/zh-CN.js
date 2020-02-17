@@ -93,6 +93,15 @@ const zh_CN = {
     'Settings.backup': '备份',
     'Settings.restore': '恢复',
     'Settings.network': '网络',
+    'Settings.application': '应用管理',
+
+    'DApp.title': '第三方去中心化应用管理',
+    'DApp.addButton': '添加',
+    'DApp.delButton': '删除',
+    'DApp.enableCol': '启用',
+    'DApp.titleCol': '名称',
+    'DApp.urlCol': '网址',
+    'DApp.commitCol': '备注',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

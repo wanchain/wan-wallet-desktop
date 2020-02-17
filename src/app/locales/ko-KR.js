@@ -92,6 +92,15 @@ const ko_KR = {
     'Settings.backup': '백업',
     'Settings.restore': '복구',
     'Settings.network': '네트워크',
+    'Settings.application': 'DApp Mange',
+
+    'DApp.title': 'Distribution Application Mangement',
+    'DApp.addButton': 'Add',
+    'DApp.delButton': 'Delete',
+    'DApp.enableCol': 'Enable',
+    'DApp.titleCol': 'Title',
+    'DApp.urlCol': 'URL',
+    'DApp.commitCol': 'Commit',
 
     'Config.option': '보안 옵션',
     'Config.inputPwd': ' 트랜잭션을 보낼때 비밀번호를 다시 입력 바랍니다. ',
