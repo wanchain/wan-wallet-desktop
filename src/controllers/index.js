@@ -12,6 +12,7 @@ import Identicon from 'identicon.js';
 import keccak from 'keccak';
 import BigNumber from 'bignumber.js';
 import wanUtil from 'wanchain-util';
+import sleep from 'ko-sleep';
 
 const web3 = new Web3();
 import { Windows, walletBackend } from '~/src/modules'
@@ -762,20 +763,24 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 }
 
                 let stakeInfoArray = accounts.map(async account => {
-                    let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
-                    if (info && info.length && info.length > 0) {
-                        delegateInfo.push({ account: account, stake: info });
-                    }
+                    await retryRun(async (amount)=>{
+                        let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
+                        if (info && info.length && info.length > 0) {
+                            delegateInfo.push({ account: account, stake: info });
+                        }
+                    }, account);
                 });
 
                 let DelegateIncentiveArray = accounts.map(async account => {
-                    let inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    if (inc && inc.length && inc.length > 0) {
-                        incentive.push({ account: account, incentive: inc });
-                    }
+                    await retryRun(async (account)=>{
+                        let inc = await ccUtil.getDelegatorIncentive('wan', account.address);
+                        if (inc && inc.length && inc.length > 0) {
+                            incentive.push({ account: account, incentive: inc });
+                        }
+                    }, account);
                 });
 
-                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan'), ccUtil.getDelegatorSupStakeInfo('wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
+                let promiseArray = [retryRun(ccUtil.getEpochID, 'wan'), retryRun(ccUtil.getCurrentStakerInfo, 'wan'), retryRun(ccUtil.getDelegatorSupStakeInfo,'wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
@@ -783,7 +788,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 if (stakeInfo.length > 0) {
                     let prms = []
                     for (let i = 0; i < stakeInfo.length; i++) {
-                        prms.push(getNameAndIcon(stakeInfo[i].address));
+                        prms.push(retryRun(getNameAndIcon, stakeInfo[i].address));
                     }
 
                     let prmsRet = await Promise.all(prms);
@@ -1288,4 +1293,21 @@ async function getNameAndIcon(address) {
         ret = value;
     }
     return ret;
+}
+
+async function retryRun(func, ...params) {
+    const retryTime = 20;
+    let times = 0;
+    while (times < retryTime) {
+        try {
+            let ret = await func(...params);
+            return ret;
+        } catch (err) {
+            console.log(err);
+            console.log('retry after 3 second, last times:', retryTime - times);
+            await sleep(6000);
+            times++;
+        }
+    }
+    throw new Error('rpc get error 30 times reached');
 }
