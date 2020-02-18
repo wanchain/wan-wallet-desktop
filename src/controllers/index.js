@@ -759,11 +759,11 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let incentive = [];
 
                 if (!global.slotCount) {
-                    [global.slotCount, global.slotTime] = await Promise.all([ccUtil.getSlotCount('wan'), ccUtil.getSlotTime('wan')]);
+                    [global.slotCount, global.slotTime] = await Promise.all([retryRun(ccUtil.getSlotCount, 'wan'), retryRun(ccUtil.getSlotTime, 'wan')]);
                 }
 
                 let stakeInfoArray = accounts.map(async account => {
-                    await retryRun(async (amount)=>{
+                    await retryRun(async (account)=>{
                         let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                         if (info && info.length && info.length > 0) {
                             delegateInfo.push({ account: account, stake: info });
@@ -771,22 +771,23 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }, account);
                 });
 
+                // Get the rewards information for each local account, including the list of rewards received and which validator the rewards came from.
                 let DelegateIncentiveArray = accounts.map(async account => {
                     await retryRun(async (account)=>{
-                        let inc = await ccUtil.getDelegatorIncentive('wan', account.address);
+                        let inc = await ccUtil.getDelegatorTotalIncentive('wan', account.address);
                         if (inc && inc.length && inc.length > 0) {
                             incentive.push({ account: account, incentive: inc });
                         }
                     }, account);
                 });
 
-                let promiseArray = [retryRun(ccUtil.getEpochID, 'wan'), retryRun(ccUtil.getCurrentStakerInfo, 'wan'), retryRun(ccUtil.getDelegatorSupStakeInfo,'wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
+                let promiseArray = [retryRun(ccUtil.getEpochID, 'wan'), retryRun(ccUtil.getCurrentStakerInfo, 'wan'), retryRun(ccUtil.getDelegatorSupStakeInfo, 'wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
 
                 if (stakeInfo.length > 0) {
-                    let prms = []
+                    let prms = [];
                     for (let i = 0; i < stakeInfo.length; i++) {
                         prms.push(retryRun(getNameAndIcon, stakeInfo[i].address));
                     }
@@ -802,14 +803,14 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
                 }
 
-                ret = { base: {}, list: [] }
+                ret = { base: {}, list: [] };
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base, retArray[2]);
 
                 ret.stakeInfo = stakeInfo;
             } catch (e) {
-                logger.error(actionUni + (e.message || e.stack))
-                err = e
+                logger.error(actionUni + (e.message || e.stack));
+                err = e;
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
@@ -1149,6 +1150,7 @@ function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
         }
     }
 
+    // Calculate the total reward received by all user addresses
     for (let i = 0; i < incentive.length; i++) {
         const inc = incentive[i].incentive;
         for (let m = 0; m < inc.length; m++) {
@@ -1214,55 +1216,52 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
                     img: img,
                 },
                 validatorAddress: sk.address,
-                distributeRewards: { title: "50,000", bottom: "from 50 epochs" },
+                distributeRewards: { title: "50,000", bottom: "50 days ago" },
                 modifyStake: ["+", "-"],
                 quitEpoch: sk.quitEpoch
             })
         }
     }
 
+    // Calculate the reward each user address receives from each validator and the earliest reward time.
     let longestDays = 0;
     for (let i = 0; i < list.length; i++) {
         let validatorAddress = list[i].validatorAddress;
         let accountAddress = list[i].accountAddress;
         let distributeRewards = web3.utils.toBN(0);
-        let epochs = [];
+        let minEpochId = 0;
 
         for (let m = 0; m < incentive.length; m++) {
             const inc = incentive[m];
             if (accountAddress == inc.account.address) {
-
                 for (let n = 0; n < inc.incentive.length; n++) {
                     const obj = inc.incentive[n];
 
                     if (obj.address.toLowerCase() == validatorAddress.toLowerCase()) {
                         distributeRewards = web3.utils.toBN(obj.amount).add(distributeRewards);
-                        if (!epochs.includes(obj.epochId)) {
-                            epochs.push(obj.epochId);
-                        }
+                        minEpochId = obj.minEpochId;
                     }
                 }
             }
         }
 
-        if (epochs.length > 0) {
-            epochs.sort((a, b) => { return a - b })
-            let days = (epochID - epochs[0]) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 2 days.
-            if (days > longestDays) {
-                longestDays = days;
-            }
+        let days = (epochID - minEpochId) * (global.slotCount * global.slotTime) / (24 * 3600); // 1 epoch last 1 days.
+        
+        if (days > longestDays) {
+            longestDays = days;
         }
-        list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (epochs.length) };
+
+        if (minEpochId == 0) {
+            list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: 'N/A' };
+            list[i].myStake.bottom = 'N/A';
+        } else {
+            list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (days) };
+            list[i].myStake.bottom = days;
+        }
+        
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
-        delegatorSupStakeInfo.forEach(item => {
-            let index = list.findIndex(val => val.accountAddress.toLowerCase() === item.address && val.validatorAddress === item.vAddress);
-            if (index !== -1) {
-                list[index].myStake.bottom = item.delegateInTimestamp;
-            }
-        })
-
     }
 
     return list;
