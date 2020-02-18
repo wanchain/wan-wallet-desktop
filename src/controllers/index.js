@@ -12,6 +12,8 @@ import Identicon from 'identicon.js';
 import keccak from 'keccak';
 import BigNumber from 'bignumber.js';
 import wanUtil from 'wanchain-util';
+import sleep from 'ko-sleep';
+
 const ethUtil = require('ethereumjs-util');
 
 const web3 = new Web3();
@@ -1042,34 +1044,37 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let incentive = [];
 
                 if (!global.slotCount) {
-                    [global.slotCount, global.slotTime] = await Promise.all([ccUtil.getSlotCount('wan'), ccUtil.getSlotTime('wan')]);
+                    [global.slotCount, global.slotTime] = await Promise.all([retryRun(ccUtil.getSlotCount, 'wan'), retryRun(ccUtil.getSlotTime, 'wan')]);
                 }
 
                 let stakeInfoArray = accounts.map(async account => {
-                    let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
-                    if (info && info.length && info.length > 0) {
-                        delegateInfo.push({ account: account, stake: info });
-                    }
+                    await retryRun(async (account)=>{
+                        let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
+                        if (info && info.length && info.length > 0) {
+                            delegateInfo.push({ account: account, stake: info });
+                        }
+                    }, account);
                 });
 
                 // Get the rewards information for each local account, including the list of rewards received and which validator the rewards came from.
                 let DelegateIncentiveArray = accounts.map(async account => {
-                    // let inc = await ccUtil.getDelegatorIncentive('wan', account.address);
-                    let inc = await ccUtil.getDelegatorTotalIncentive('wan', account.address);
-                    if (inc && inc.length && inc.length > 0) {
-                        incentive.push({ account: account, incentive: inc });
-                    }
+                    await retryRun(async (account)=>{
+                        let inc = await ccUtil.getDelegatorTotalIncentive('wan', account.address);
+                        if (inc && inc.length && inc.length > 0) {
+                            incentive.push({ account: account, incentive: inc });
+                        }
+                    }, account);
                 });
 
-                let promiseArray = [ccUtil.getEpochID('wan'), ccUtil.getCurrentStakerInfo('wan'), ccUtil.getDelegatorSupStakeInfo('wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
+                let promiseArray = [retryRun(ccUtil.getEpochID, 'wan'), retryRun(ccUtil.getCurrentStakerInfo, 'wan'), retryRun(ccUtil.getDelegatorSupStakeInfo, 'wan', accounts.map(val => val.address))].concat(stakeInfoArray).concat(DelegateIncentiveArray);
                 let retArray = await Promise.all(promiseArray);
                 let epochID = retArray[0];
                 let stakeInfo = retArray[1];
 
                 if (stakeInfo.length > 0) {
-                    let prms = []
+                    let prms = [];
                     for (let i = 0; i < stakeInfo.length; i++) {
-                        prms.push(getNameAndIcon(stakeInfo[i].address));
+                        prms.push(retryRun(getNameAndIcon, stakeInfo[i].address));
                     }
 
                     let prmsRet = await Promise.all(prms);
@@ -1083,14 +1088,14 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                     }
                 }
 
-                ret = { base: {}, list: [] }
+                ret = { base: {}, list: [] };
                 ret.base = buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo);
                 ret.list = await buildStakingList(delegateInfo, incentive, epochID, ret.base, retArray[2]);
 
                 ret.stakeInfo = stakeInfo;
             } catch (e) {
-                logger.error(actionUni + (e.message || e.stack))
-                err = e
+                logger.error(actionUni + (e.message || e.stack));
+                err = e;
             }
             sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
@@ -2011,4 +2016,21 @@ async function getNameAndIcon(address) {
         ret = value;
     }
     return ret;
+}
+
+async function retryRun(func, ...params) {
+    const retryTime = 20;
+    let times = 0;
+    while (times < retryTime) {
+        try {
+            let ret = await func(...params);
+            return ret;
+        } catch (err) {
+            console.log(err);
+            console.log('retry after 3 second, last times:', retryTime - times);
+            await sleep(6000);
+            times++;
+        }
+    }
+    throw new Error('rpc get error 30 times reached');
 }
