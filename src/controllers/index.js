@@ -1981,8 +1981,15 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
         if (days > longestDays) {
             longestDays = days;
         }
-        list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (days) };
-        list[i].myStake.bottom = days;
+        
+        if (minEpochId == 0) {
+            list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: 'N/A' };
+            list[i].myStake.bottom = 'N/A';
+        } else {
+            list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (days) };
+            list[i].myStake.bottom = days;
+        }
+        
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);
