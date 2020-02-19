@@ -45,7 +45,9 @@ class DelegateList extends Component {
         dataIndex: 'myStake',
         key: 'myStake',
         render: stake => (
-          <Cell title={formatNum(stake.title)} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
+          <Cell title={formatNum(stake.title)}
+          // bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')}
+          />
         ),
       }, {
         title: this.props.validatorColumns[2].title,
