@@ -7,6 +7,7 @@ import fsExtra from 'fs-extra'
 import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
 import BigNumber from 'bignumber.js';
+import bs58check from 'bs58check';
 import { ipcMain as ipc, app } from 'electron'
 import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
 
@@ -125,6 +126,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             try {
                 hdUtil.deleteHDWallet()
                 hdUtil.deleteKeyStoreWallet()
+                hdUtil.deleteRawKeyWallet()
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true })
 
             } catch (e) {
@@ -142,6 +144,8 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 hdUtil.initializeHDWallet(phrase)
                 // create key file wallet
                 hdUtil.newKeyStoreWallet(payload.pwd)
+                // create raw key wallet
+                hdUtil.newRawKeyWallet(payload.pwd)
                 // if the user db is not the newest version, update user db
                 const dbVersion = hdUtil.getUserTableVersion();
                 const latestVersion = walletBackend.config.dbExtConf.userTblVersion;
@@ -316,6 +320,88 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
           }
 
           sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKey })
+          break
+
+        case 'importPrivateKey':
+          {
+            let ret;
+            try {
+                let { pk, type } = payload;
+                console.log('----------pk, chainType----------', pk, type);
+                let chainID;
+                switch(type) {
+                    case 'BTC':
+                        chainID = network === 'main' ? 0 : 1;
+                        break;
+                    case 'WAN':
+                        chainID = 5718350;
+                        break;
+                    case 'ETH':
+                        chainID = 60;
+                        break;
+                    /* case 'EOS':
+                        chainID = 194;
+                        break; */
+                }
+                let index = hdUtil.getRawKeyCount(chainID);
+                let pathForm = `m/44'/${chainID}'/0'/0/`;
+                let path = `${pathForm}${index}`;
+                console.log('path:', path);
+                let rawPriv = Buffer.from(pk, 'hex');
+                let idx = hdUtil.importPrivateKey(path, rawPriv);
+                console.log('idx:', idx);
+                /* let opt = {
+                    "password" : pwd,
+                    "chkfunc" : hdUtil.revealMnemonic
+                } */
+                let newpath = `${pathForm}${idx}`;
+                let wid = 6;
+                console.log('newpath:', newpath);
+                // let addr = await hdUtil.getAddress(wid, type, newpath, opt);
+                let addr = await hdUtil.getAddress(wid, type, newpath);
+                console.log("addr:", addr);// address path pubKey
+                let isValidAddress = false;
+                switch(type) {
+                    case 'BTC':
+                        try {
+                            bs58check.decode(addr.address);
+                            isValidAddress = true;
+                        } catch (e) {
+                            console.log('isValidAddress BTC:', e);
+                            isValidAddress = false;
+                        }
+                        break;
+                    case 'WAN':
+                        isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
+                        break;
+                    case 'ETH':
+                        isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
+                        break;
+                    /* case 'EOS':
+                        chainID = 194;
+                        break; */
+                }
+                console.log('isValidAddress:', isValidAddress);
+
+                hdUtil.createUserAccount(wid, newpath, { name: `RawKey${idx + 1}`, addr: `0x${addr.address}` });
+                // Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
+                // ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
+
+                /* hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr, waddr });
+                Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
+                ccUtil.scanOTA(5, `${WANBIP44Path}${path}`); */
+                
+                ret = `0x${addr.address}`;
+
+            } catch (e) {
+                console.log('importPrivateKey Error:');
+                console.log('e:', e);
+                logger.error(e.message || e.stack)
+                err = e
+            }
+    
+            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: ret })
+          }
           break
     }
 })

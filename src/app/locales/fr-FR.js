@@ -84,6 +84,15 @@ const fr_FR = {
     'Network.desc': 'Vous pouvez diagnostiquer la connexion entre votre portefeuille et le serveur à distance/les noeuds des blockchains.',
     'Network.startButton': 'Démarrer',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': 'Réinitialiser votre portefeuille à partir de la phrase mnénomique (seed) ',
     'Restore.warning': 'ATTENTION',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Si vous réinitialisez un nouveau portefeuille à partir d\'une phrase mnénomique (seed), toutes les données locales du portefeuille actuel seront supprimées et l\'application redémarrera automatiquement. Veuillez confirmer et continuer.',

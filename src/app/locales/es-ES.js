@@ -84,6 +84,15 @@ const es_ES = {
     'Network.desc': 'Here you can diagnose network status between your wallet and remote server/blockchain nodes',
     'Network.startButton': 'Start',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.warning': 'WARNING',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',

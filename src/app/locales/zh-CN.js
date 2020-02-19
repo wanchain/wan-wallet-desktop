@@ -85,6 +85,15 @@ const zh_CN = {
     'Network.desc': '您可在这里分析钱包到RPC服务器和各个区块链节点的网络状况',
     'Network.startButton': '开始',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': '恢复助记词',
     'Restore.warning': '告警',
     'Restore.restoreNewWalletWillDeleteAllLocalData': '如果你恢复助记词，所有本地数据会被删除，程序会重新启动。请确认是否继续。',

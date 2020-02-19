@@ -84,6 +84,15 @@ const ko_KR = {
     'Network.desc': '여기서 지갑과 원격 서버/블록체인 노드 사이의 네트워크 상태를 진단 할 수 있습니다',
     'Network.startButton': '시작',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': '복구 Mnemonic',
     'Restore.warning': '경고',
     'Restore.restoreNewWalletWillDeleteAllLocalData': ' Mnemonic을 복원하고 싶으시다면, 모든 로컬데이터가 삭제되고 프로그램이 다시 설치 됩니다. 계속 진행 하시겠습니까.',

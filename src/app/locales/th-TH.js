@@ -84,6 +84,15 @@ const th_TH = {
     'Network.desc': 'คุณสามารถตรวจสอบการเชื่อมต่อระหว่างกระเป๋าและเครือข่ายของระบบได้ที่นี่',
     'Network.startButton': 'เริ่มการตรวจสอบ',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': 'กู้กระเป๋าโดยใช้กลุ่มคำลับ',
     'Restore.warning': 'ระวัง',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'หากคุณกู้กระเป๋าโดยใช้ "กลุ่มคำลับ" ข้อมูลในปัจจุบันทั้งหมดจะถูกลบทิ้งและกระเป๋าจะทำการปิดและเปิดใหม่ กรุณายืนยันเพื่อดำเนินการต่อ',

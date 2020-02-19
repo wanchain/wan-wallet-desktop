@@ -84,6 +84,15 @@ const pt_PT = {
     'Network.desc': 'Aqui você pode diagnosticar o status da rede entre sua carteira e os servidores remotos/os nós da blockchain',
     'Network.startButton': 'Iniciar',
 
+    'ImportPrivateKey.title': 'Import Private Key',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Input private key to import account.',
+    'ImportPrivateKey.continue': 'Continue',
+    'ImportPrivateKey.pk': 'Private Key',
+    'ImportPrivateKey.warning': 'WARNING',
+    'ImportPrivateKey.doNotShare': 'DO NOT share this key with anybody. Otherwise all of your assets will be lost.',
+    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.enterPassword': 'Enter Password',
+
     'Restore.restoreFromSeedPhrase': 'Restaurar a partir da sua Seed Phrase',
     'Restore.warning': 'ATENÇÃO',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Se você restaurar uma nova carteira a partir da sua Seed phrase, todos os dados locais da carteira atual serão excluídos e o aplicativo será reiniciado. Confirme e continue.',

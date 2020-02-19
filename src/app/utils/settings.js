@@ -13,6 +13,7 @@ export const WALLETID = {
   LEDGER: 0x02,
   TREZOR: 0x03,
   KEYSTOREID: 0x05,
+  RAWKEY: 0x06,
 }
 
 export const TRANSTYPE = {
