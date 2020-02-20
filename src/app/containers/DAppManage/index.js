@@ -20,6 +20,25 @@ import imgRed from 'static/image/network_red.png';
 
 @observer
 class DAppManage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      config: [],
+      rows: this.getRowsData(),
+    }
+  }
+
+  getRowsData = () => {
+    return this.data;
+  }
+
+  onEnableChange = (index, text) => {
+    console.log('onEnableChange', index, text);
+    let rows = this.getRowsData();
+    rows[index].enable = !rows[index].enable;
+    this.setState({ rows });
+  }
+
   colums = [
     {
       title: intl.get('DApp.enableCol'),
@@ -28,7 +47,7 @@ class DAppManage extends Component {
       key: 'enable',
       render: (text, row, index) => {
         return <Checkbox checked={text}
-        // onChange={}
+          onChange={() => { this.onEnableChange(index, text); }}
         />
       },
     },
@@ -49,7 +68,7 @@ class DAppManage extends Component {
     },
   ]
 
-  data=[
+  data = [
     {
       key: '1',
       enable: true,
@@ -88,7 +107,7 @@ class DAppManage extends Component {
             className={style.startBtn}
             type="primary" >{intl.get('DApp.delButton')}
           </Button>
-          <Table rowSelection={this.rowSelection} columns={this.colums} dataSource={this.data}/>
+          <Table rowSelection={this.rowSelection} columns={this.colums} dataSource={this.data} />
         </Card>
       </div>
     );

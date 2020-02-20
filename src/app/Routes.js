@@ -20,7 +20,8 @@ import {
   CrossBTC,
   CrossEOS,
   Dex,
-  WanGame } from './containers';
+  WanGame,
+  DApps } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -47,8 +48,9 @@ export default () => {
             <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
             <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
             <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
-            <Route path="/dex" component={Dex} />
-            <Route path="/wanGame" component={WanGame} />
+            {/* <Route path="/dex" component={Dex} /> */}
+            {/* <Route path="/wanGame" component={WanGame} /> */}
+            <Route path="/dapp/:url" component={DApps} />
           </Switch>
         </Main>
       </HashRouter>

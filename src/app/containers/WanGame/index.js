@@ -4,7 +4,7 @@ import DApp from '../../components/DApp';
 class WanGame extends Component {
   render () {
     return (
-      <DApp dAppUrl={'http://localhost:8000/'}/>
+      <DApp dAppUrl={'https://dist.lolieatapple.now.sh/'}/>
     );
   }
 }

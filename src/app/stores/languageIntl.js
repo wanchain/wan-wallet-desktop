@@ -277,15 +277,23 @@ class LanguageIntl {
         key: '/thirdPartyDapps',
         icon: 'stock',
         children: [
+          // {
+          //   title: intl.get('menuConfig.dex'),
+          //   step: '1',
+          //   key: '/dex',
+          //   icon: 'stock',
+          // },
+          // {
+          //   title: intl.get('menuConfig.wanGame'),
+          //   step: '1',
+          //   key: '/wanGame',
+          //   icon: 'crown',
+          // },
           {
-            title: intl.get('menuConfig.dex'),
-            key: '/dex',
-            icon: 'stock',
-          },
-          {
-            title: intl.get('menuConfig.wanGame'),
-            key: '/wanGame',
-            icon: 'crown',
+            title: 'Add',
+            step: '1',
+            key: '/dappAdd',
+            icon: 'plus-circle',
           },
         ]
       });

@@ -144,7 +144,7 @@ class Layout extends Component {
 
   render () {
     const { hasMnemonicOrNot, auth, location } = this.props;
-    const showHeader = this.props.location.pathname !== '/dex';
+    const showHeader = !location.pathname.includes('dapp');
     if (this.state.loading) {
       return <Loading />
     } else {
