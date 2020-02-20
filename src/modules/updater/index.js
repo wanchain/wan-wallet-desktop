@@ -61,7 +61,11 @@ class WalletUpdater {
               alwaysOnTop: true
             })    
 
-            const releaseNote = info.releaseNotes[0].note.split('<table>')[0]
+            let releaseNoteObj = info.releaseNotes.find(obj => info.version === obj.version);
+            if (releaseNoteObj === undefined) {
+                return;
+            }
+            let releaseNote = releaseNoteObj.note.split('<table>')[0];
 
             const updateInfo = {
               currVersion: app.getVersion(),
