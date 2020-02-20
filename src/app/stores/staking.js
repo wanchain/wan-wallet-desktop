@@ -81,6 +81,7 @@ class Staking {
         console.log(err)
         return;
       }
+      Object.defineProperty(self.validatorsInfo, 'infoReady', { value: true, enumerable: false })
       ret.forEach(item => {
         self.validatorsInfo[item.address] = {
           minEpochId: item.minEpochId,
@@ -180,6 +181,7 @@ class Staking {
     let timestampArr = Object.values(self.validatorsInfo).map(item => item.timestamp);
     let minTimestampArr = timestampArr.length === 0 ? 0 : Math.min.apply(null, timestampArr);
 
+    cardsList.infoReady = self.validatorsInfo.infoReady;
     cardsList.principal[0] = formatNum(Number((self.myValidatorList.reduce((prev, curr) => prev.plus(curr.principal.value), new BigNumber(0))).toString(10)).toFixed(0));
     cardsList.principal[1] = self.myValidatorList.length;
     cardsList.reward[0] = formatNum(Number(Object.keys(self.validatorsInfo).reduce((prev, curr) => prev.plus(self.validatorsInfo[curr].reward), new BigNumber(0)).toString(10)).toFixed(2));
