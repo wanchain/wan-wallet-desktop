@@ -103,6 +103,9 @@ const th_TH = {
     'DApp.commitCol': 'Commit',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',
+    'DApp.commitPlaceholder': 'Custom description information can be added',
+    'DApp.namePlaceholder': 'Please input DApp\'s name',
+    'DApp.urlPlaceholder': 'Please input DApp\s URL with a https:// prefix',
 
     'Config.option': 'ตัวเลือกความปลอดภัย',
     'Config.inputPwd': 'กรอกรหัสผ่านทุกครั้งก่อนทำรายการต่างๆ',

@@ -104,6 +104,9 @@ const zh_CN = {
     'DApp.commitCol': '备注',
     'DApp.addTitle': '添加自定义应用',
     'DApp.addIcon': '图标',
+    'DApp.commitPlaceholder': '可添加自定义的描述信息',
+    'DApp.namePlaceholder': '请输入DApp名称',
+    'DApp.urlPlaceholder': '请输入DApp网址（以https://为前缀）',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

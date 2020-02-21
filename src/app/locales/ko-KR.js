@@ -103,6 +103,9 @@ const ko_KR = {
     'DApp.commitCol': 'Commit',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',
+    'DApp.commitPlaceholder': 'Custom description information can be added',
+    'DApp.namePlaceholder': 'Please input DApp\'s name',
+    'DApp.urlPlaceholder': 'Please input DApp\s URL with a https:// prefix',
 
     'Config.option': '보안 옵션',
     'Config.inputPwd': ' 트랜잭션을 보낼때 비밀번호를 다시 입력 바랍니다. ',

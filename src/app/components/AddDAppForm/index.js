@@ -18,6 +18,26 @@ class AddDAppForm extends Component {
     this.props.onOk();
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.props.addCustomDApp(values);
+        this.props.onOk();
+        console.log('add dapp success');
+      }
+    });
+  };
+
+  checkUrl = (rule, value, callback) => {
+    if (value.startsWith('https://')) {
+      callback();
+    } else {
+      callback(intl.get('DApp.urlPlaceholder'));
+    }
+  }
+
   render() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
@@ -32,25 +52,29 @@ class AddDAppForm extends Component {
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={false} key="submit" type="primary" onClick={this.onOk}>{intl.get('Common.ok')}</Button>,
+            <Button key="submit" disabled={false} type="primary" htmlType="submit" onClick={this.handleSubmit}>{intl.get('Common.ok')}</Button>,
           ]}
         >
-          <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
+          <Form
+            onSubmit={this.handleSubmit}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            className={style.transForm}>
             <Form.Item label={intl.get('DApp.titleCol')}>
-              {getFieldDecorator('name')
+              {getFieldDecorator('name', { rules: [{ required: true, message: intl.get('DApp.namePlaceholder') }] })
                 (<Input />)}
             </Form.Item>
             <Form.Item label={intl.get('DApp.urlCol')}>
-              {getFieldDecorator('url')
+              {getFieldDecorator('url', { rules: [{ required: true, message: intl.get('DApp.urlPlaceholder'), validator: this.checkUrl }] })
                 (<Input placeholder={'https://'} />)}
             </Form.Item>
-            <Form.Item label={intl.get('DApp.addIcon')}>
+            {/* <Form.Item label={intl.get('DApp.addIcon')}>
               {getFieldDecorator('icon')
                 (<Input />)}
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label={intl.get('DApp.commitCol')}>
               {getFieldDecorator('commit')
-                (<Input />)}
+                (<Input placeholder={intl.get('DApp.commitPlaceholder')} />)}
             </Form.Item>
           </Form>
         </Modal>

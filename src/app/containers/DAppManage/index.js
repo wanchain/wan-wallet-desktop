@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Tooltip, Table, Checkbox, Form } from 'antd';
+import { Button, Card, Table, Checkbox, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import AddDAppForm from 'components/AddDAppForm';
@@ -9,7 +9,9 @@ import style from './index.less';
 const DAppAddForm = Form.create({ name: 'AddDAppForm' })(AddDAppForm);
 
 @inject(stores => ({
-  language: stores.languageIntl.language,
+  getDappsInfo: stores.dapps.getDappsInfo,
+  switchDApp: stores.dapps.switchDApp,
+  delDApp: stores.dapps.delDApp,
 }))
 
 @observer
@@ -23,15 +25,30 @@ class DAppManage extends Component {
     }
   }
 
+  componentDidMount(props) {
+    this.setState({ rows: this.getRowsData() });
+  }
+
   getRowsData = () => {
-    return this.data;
+    let info = this.props.getDappsInfo().slice();
+    for (let i = 0; i < info.length; i++) {
+      info[i].key = i;
+    }
+    return info;
   }
 
   onEnableChange = (index, text) => {
-    console.log('onEnableChange', index, text);
     let rows = this.getRowsData();
-    rows[index].enable = !rows[index].enable;
-    this.setState({ rows });
+    this.props.switchDApp(rows[index].name, !rows[index].enable);
+    let newRows = this.getRowsData();
+    this.setState({ rows: newRows });
+  }
+
+  handleDelete = (key) => {
+    console.log('handleDelete', key);
+    this.props.delDApp(key);
+    let newRows = this.getRowsData();
+    this.setState({ rows: newRows });
   }
 
   colums = [
@@ -48,8 +65,8 @@ class DAppManage extends Component {
     },
     {
       title: intl.get('DApp.titleCol'),
-      dataIndex: 'title',
-      key: 'title',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: intl.get('DApp.urlCol'),
@@ -61,41 +78,23 @@ class DAppManage extends Component {
       dataIndex: 'commit',
       key: 'commit',
     },
-  ]
-
-  data = [
     {
-      key: '1',
-      enable: true,
-      title: 'WRDEX',
-      url: 'https://wrdex.io',
-      commit: 'A Dex site',
-    },
-    {
-      key: '2',
-      enable: false,
-      title: 'WanBet',
-      url: 'https://wanbet.wandevs.org/',
-      commit: 'A game.',
+      title: 'Operation',
+      dataIndex: 'operation',
+      render: (text, record) =>
+        this.state.rows.length >= 1 ? (
+          <a onClick={() => this.handleDelete(record.key)}>{intl.get('DApp.delButton')}</a>
+        ) : null,
     },
   ]
-
-  rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-      name: record.name,
-    }),
-  };
 
   onCancel = () => {
     this.setState({ addFromVisible: false });
   }
 
   onOk = () => {
-    this.setState({ addFromVisible: false });
+    let newRows = this.getRowsData();
+    this.setState({ addFromVisible: false, rows: newRows });
   }
 
   render() {
@@ -112,7 +111,7 @@ class DAppManage extends Component {
             className={style.startBtn}
             type="primary" >{intl.get('DApp.delButton')}
           </Button>
-          <Table rowSelection={this.rowSelection} columns={this.colums} dataSource={this.data} />
+          <Table columns={this.colums} dataSource={this.state.rows} />
           {this.state.addFromVisible && <DAppAddForm onCancel={this.onCancel} onOk={this.onOk} />}
         </Card>
       </div>

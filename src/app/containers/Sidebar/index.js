@@ -123,15 +123,17 @@ class Sidebar extends Component {
     } else {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
     }
-
     if (dAppsOnSideBar.length) {
       dAppsChildren.splice(1, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
+        let trimUrl = item.url.split('://')[1];
         return ({
           title: item.name,
-          key: `/dapp/${item.url}`,
+          key: `/dapp/${trimUrl}`,
           icon: item.icon ? item.icon : 'block'
         })
       }));
+    } else {
+      dAppsChildren.splice(1, crossChainChildren.length - 1);
     }
 
     return (

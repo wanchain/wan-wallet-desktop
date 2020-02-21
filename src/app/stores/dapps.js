@@ -28,7 +28,10 @@ class DApps {
   }
 
   @action addCustomDApp(dappInfo) {
-    self.dappList = this.getLocalDApps();
+    self.dappList = self.getLocalDApps();
+    if (!self.dappList) {
+      self.dappList = [];
+    }
     self.dappList.push({
       name: dappInfo.name,
       icon: dappInfo.icon,
@@ -36,21 +39,28 @@ class DApps {
       commit: dappInfo.commit,
       enable: true,
     });
-    this.setLocalDApps(self.dappList);
+    self.setLocalDApps(self.dappList);
+  }
+
+  @action delDApp(index) {
+    self.dappList = self.getLocalDApps();
+    self.dappList.splice(index, 1);
+    self.setLocalDApps(self.dappList);
   }
 
   @action getDappsInfo() {
+    self.dappList = self.getLocalDApps();
     return self.dappList;
   }
 
   @action switchDApp(name, enable) {
-    self.dappList = this.getLocalDApps();
+    self.dappList = self.getLocalDApps();
     for (let i = 0; i < self.dappList.length; i++) {
       if (name === self.dappList[i].name) {
         self.dappList[i].enable = enable;
       }
     }
-    this.setLocalDApps(self.dappList);
+    self.setLocalDApps(self.dappList);
   }
 
   getLocalDApps() {
@@ -65,7 +75,7 @@ class DApps {
   setLocalDApps(obj) {
     if (obj) {
       let str = JSON.stringify(obj);
-      window.localStorage.setItem('dapps');
+      window.localStorage.setItem('dapps', str);
     }
   }
 }

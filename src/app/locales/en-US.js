@@ -103,6 +103,9 @@ const en_US = {
     'DApp.commitCol': 'Commit',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',
+    'DApp.commitPlaceholder': 'Custom description information can be added',
+    'DApp.namePlaceholder': 'Please input DApp\'s name',
+    'DApp.urlPlaceholder': 'Please input DApp\s URL with a https:// prefix',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',

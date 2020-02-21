@@ -103,6 +103,9 @@ const fr_FR = {
     'DApp.commitCol': 'Commit',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',
+    'DApp.commitPlaceholder': 'Custom description information can be added',
+    'DApp.namePlaceholder': 'Please input DApp\'s name',
+    'DApp.urlPlaceholder': 'Please input DApp\s URL with a https:// prefix',
 
     'Config.option': 'Options de sécurité',
     'Config.inputPwd': 'Confirmer une transaction en validant votre mot de passe',
