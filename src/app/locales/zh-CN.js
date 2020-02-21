@@ -102,6 +102,8 @@ const zh_CN = {
     'DApp.titleCol': '名称',
     'DApp.urlCol': '网址',
     'DApp.commitCol': '备注',
+    'DApp.addTitle': '添加自定义应用',
+    'DApp.addIcon': '图标',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

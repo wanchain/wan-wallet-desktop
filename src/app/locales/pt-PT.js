@@ -101,6 +101,8 @@ const pt_PT = {
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.addIcon': 'ICON',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',

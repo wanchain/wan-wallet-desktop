@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Card, Tooltip, Table, Checkbox } from 'antd';
+import { Button, Card, Tooltip, Table, Checkbox, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import AddDAppForm from 'components/AddDAppForm';
 
 import style from './index.less';
-import imgBtc from 'static/image/btc.png';
-import imgEos from 'static/image/eos.png';
-import imgEth from 'static/image/eth.png';
-import imgLine1 from 'static/image/network_line1.png';
-import imgLine2 from 'static/image/network_line2.png';
-import imgServer from 'static/image/network_server.png';
-import imgWallet from 'static/image/network_wallet2.png';
-import imgWanchain from 'static/image/wan.png';
-import imgRed from 'static/image/network_red.png';
+
+const DAppAddForm = Form.create({ name: 'AddDAppForm' })(AddDAppForm);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -25,6 +19,7 @@ class DAppManage extends Component {
     this.state = {
       config: [],
       rows: this.getRowsData(),
+      addFromVisible: false,
     }
   }
 
@@ -95,19 +90,30 @@ class DAppManage extends Component {
     }),
   };
 
+  onCancel = () => {
+    this.setState({ addFromVisible: false });
+  }
+
+  onOk = () => {
+    this.setState({ addFromVisible: false });
+  }
+
   render() {
     return (
       <div className={style['settings_network']}>
         <Card title={intl.get('DApp.title')}>
           <Button
             className={style.startBtn}
-            type="primary" >{intl.get('DApp.addButton')}
+            type="primary"
+            onClick={() => { this.setState({ addFromVisible: true }) }}
+          >{intl.get('DApp.addButton')}
           </Button>
           <Button
             className={style.startBtn}
             type="primary" >{intl.get('DApp.delButton')}
           </Button>
           <Table rowSelection={this.rowSelection} columns={this.colums} dataSource={this.data} />
+          {this.state.addFromVisible && <DAppAddForm onCancel={this.onCancel} onOk={this.onOk} />}
         </Card>
       </div>
     );

@@ -101,6 +101,8 @@ const fr_FR = {
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.addIcon': 'ICON',
 
     'Config.option': 'Options de sécurité',
     'Config.inputPwd': 'Confirmer une transaction en validant votre mot de passe',

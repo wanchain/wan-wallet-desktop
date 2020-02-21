@@ -101,6 +101,8 @@ const th_TH = {
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.addIcon': 'ICON',
 
     'Config.option': 'ตัวเลือกความปลอดภัย',
     'Config.inputPwd': 'กรอกรหัสผ่านทุกครั้งก่อนทำรายการต่างๆ',

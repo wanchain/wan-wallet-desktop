@@ -101,6 +101,8 @@ const es_ES = {
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.addIcon': 'ICON',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',

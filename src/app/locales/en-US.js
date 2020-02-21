@@ -98,9 +98,11 @@ const en_US = {
     'DApp.addButton': 'Add',
     'DApp.delButton': 'Delete',
     'DApp.enableCol': 'Enable',
-    'DApp.titleCol': 'Title',
+    'DApp.titleCol': 'Name',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.addIcon': 'ICON',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',
