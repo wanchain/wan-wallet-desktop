@@ -5,6 +5,10 @@ import session from './session';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 
 class DApps {
+  constructor() {
+    this.dappList = this.getLocalDApps();
+  }
+
   @observable dappList = [];
 
   @computed get dAppsOnSideBar() {
