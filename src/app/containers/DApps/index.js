@@ -11,5 +11,5 @@ class DApps extends Component {
 }
 
 export default props => <DApps {...props}
-  key={props.match.params.dappName}
+  key={props.match.params.url}
   url={props.match.params.url} />;
