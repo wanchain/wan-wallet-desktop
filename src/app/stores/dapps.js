@@ -54,6 +54,9 @@ class DApps {
 
   @action getDappsInfo() {
     self.dappList = self.getLocalDApps();
+    if (!self.dappList) {
+      self.dappList = [];
+    }
     return self.dappList;
   }
 

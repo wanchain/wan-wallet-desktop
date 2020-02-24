@@ -292,7 +292,7 @@ class LanguageIntl {
           {
             title: 'ADD',
             step: '1',
-            key: '/dappAdd',
+            key: '/AddDApp',
             icon: 'plus-circle',
           },
         ]
