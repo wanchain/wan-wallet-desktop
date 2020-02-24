@@ -16,7 +16,8 @@ class CopyAndQrcode extends Component {
     url: '',
     visible: false,
     showPrivateKey: false,
-    privateKey: '',
+    privateKey1: '',
+    privateKey2: '',
     pwd: ''
   }
 
@@ -65,20 +66,21 @@ class CopyAndQrcode extends Component {
   }
 
   handleOk = (path, wid) => {
-    if (this.state.privateKey) {
+    if (this.state.privateKey1) {
       this.resetState();
     } else {
-      this.exportPrivateKey(path, wid, this.state.pwd);
+      this.exportPrivateKeys(path, this.props.type, wid);
     }
   }
 
-  exportPrivateKey = (path, wid, pwd) => {
-    wand.request('wallet_exportPrivateKey', { wid, path, password: pwd }, (err, data) => {
+  exportPrivateKeys = (path, chainType, wid) => {
+    wand.request('wallet_exportPrivateKeys', { wid, path, chainType }, (err, data) => {
       if (err) {
-        console.log('wallet_exportPrivateKey:', err)
+        console.log('wallet_exportPrivateKeys:', err)
       } else {
         this.setState({
-          privateKey: data,
+          privateKey1: data[0],
+          privateKey2: data[1],
           showPrivateKey: true
         });
       }
@@ -112,8 +114,10 @@ class CopyAndQrcode extends Component {
                 this.state.showPrivateKey ? (
                   <div>
                     <p className={style.textP2}> {intl.get('Common.yourPrivateKey')}:</p>
-                    <p className={style.textP3}>{this.state.privateKey}</p>
-                    <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                    <p className={style.textP3}>{this.state.privateKey1}</p>
+                    <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                    <p className={style.textP3}>{this.state.privateKey2}</p>
+                    <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey2)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
                   </div>
                 ) : (
                     <div>

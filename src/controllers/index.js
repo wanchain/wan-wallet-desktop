@@ -310,16 +310,19 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             }
             break
 
-        case 'exportPrivateKey':
-          let privateKey;
+        case 'exportPrivateKeys':
+          let privateKeys;
           try {
-            privateKey = hdUtil.exportPrivateKey(payload.wid, payload.path, payload.password)
+            privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
+            privateKeys.forEach((item, index) => {
+                privateKeys[index] = item.toString('hex');
+            })
           } catch (e) {
             logger.error(e.message || e.stack)
             err = e
           }
 
-          sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKey })
+          sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKeys })
           break
 
         case 'importPrivateKey':
