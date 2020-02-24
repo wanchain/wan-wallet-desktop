@@ -14,6 +14,7 @@ message.config({
 
 @inject(stores => ({
   auth: stores.session.auth,
+  btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   btcAddrInfo: stores.btcAddress.addrInfo,
@@ -57,7 +58,7 @@ class Login extends Component {
         openScanOTA(normalObj.concat(importObj));
 
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
-          createBTCAddr(BTCPATH_TEST, 0).then(addressInfo => {
+          createBTCAddr(this.props.btcPath, 0).then(addressInfo => {
             this.props.addAddress(addressInfo);
           }).catch(err => {
             console.log(err);
