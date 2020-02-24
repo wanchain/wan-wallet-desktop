@@ -36,6 +36,12 @@ class DApps {
     if (!self.dappList) {
       self.dappList = [];
     }
+
+    for (let i = 0; i < self.dappList.length; i++) {
+      if (self.dappList[i].name === dappInfo.name || self.dappList[i].url === dappInfo.url) {
+        return false;
+      }
+    }
     self.dappList.push({
       name: dappInfo.name,
       icon: dappInfo.icon,
@@ -44,6 +50,7 @@ class DApps {
       enable: true,
     });
     self.setLocalDApps(self.dappList);
+    return true;
   }
 
   @action delDApp(index) {

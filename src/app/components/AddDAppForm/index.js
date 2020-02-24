@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import style from './index.less';
@@ -23,9 +23,14 @@ class AddDAppForm extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        this.props.addCustomDApp(values);
-        this.props.onOk();
-        console.log('add dapp success');
+        let ret = this.props.addCustomDApp(values);
+        if (!ret) {
+          message.error(intl.get('DApp.addFailed'));
+        } else {
+          this.props.onOk();
+          console.log('add dapp success');
+          message.success(intl.get('DApp.addSuccess'));
+        }
       }
     });
   };

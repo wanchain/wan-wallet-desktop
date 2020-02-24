@@ -88,31 +88,11 @@ class DAppManage extends Component {
     },
   ]
 
-  onCancel = () => {
-    this.setState({ addFromVisible: false });
-  }
-
-  onOk = () => {
-    let newRows = this.getRowsData();
-    this.setState({ addFromVisible: false, rows: newRows });
-  }
-
   render() {
     return (
       <div className={style['settings_network']}>
         <Card title={intl.get('DApp.title')}>
-          <Button
-            className={style.startBtn}
-            type="primary"
-            onClick={() => { this.setState({ addFromVisible: true }) }}
-          >{intl.get('DApp.addButton')}
-          </Button>
-          <Button
-            className={style.startBtn}
-            type="primary" >{intl.get('DApp.delButton')}
-          </Button>
           <Table columns={this.colums} dataSource={this.state.rows} />
-          {this.state.addFromVisible && <DAppAddForm onCancel={this.onCancel} onOk={this.onOk} />}
         </Card>
       </div>
     );
