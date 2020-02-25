@@ -7,6 +7,7 @@ import Restore from 'containers/Restore';
 import Config from 'containers/Config';
 import Network from 'containers/Network';
 import ImportPrivateKey from 'containers/ImportPrivateKey';
+import DAppManage from 'containers/DAppManage';
 import style from './index.less';
 
 const { TabPane } = Tabs;
@@ -29,7 +30,7 @@ class Settings extends Component {
     restore: <Restore />,
     network: <Network />,
     importPrivateKey: <ImportPrivateKey />,
-
+    application: <DAppManage />,
   }
 
   renderTab = data => data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);

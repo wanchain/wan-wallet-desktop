@@ -12,6 +12,7 @@ import sendCrossChainParams from './sendCrossChainParams';
 import staking from './staking';
 import tokens from './tokens';
 import crossChain from './crossChain';
+import dapps from './dapps';
 
 export default {
   session,
@@ -26,5 +27,6 @@ export default {
   staking,
   languageIntl,
   tokens,
-  crossChain
+  crossChain,
+  dapps
 };

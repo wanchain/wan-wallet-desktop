@@ -20,6 +20,7 @@ const { SubMenu, Item } = Menu;
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
+  dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
 }))
 
 @observer
@@ -73,9 +74,12 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
+    let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
+
     let stakeChildren = sidebarColumns[stakeIndex].children;
+    let dAppsChildren = sidebarColumns[dAppsIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
     let walletChildren = sidebarColumns[walletIndex].children;
     let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
@@ -118,6 +122,18 @@ class Sidebar extends Component {
       }));
     } else {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
+    }
+    if (dAppsOnSideBar.length) {
+      dAppsChildren.splice(1, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
+        let trimUrl = item.url.split('://')[1];
+        return ({
+          title: item.name,
+          key: `/dapp/${trimUrl}`,
+          icon: item.icon ? item.icon : 'block'
+        })
+      }));
+    } else {
+      dAppsChildren.splice(1, crossChainChildren.length - 1);
     }
 
     return (

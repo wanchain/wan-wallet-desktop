@@ -8,9 +8,13 @@ This is a desktop wallet
 * BIP39/BIP44 support
 * WAN coin transaction support
 * WAN coin private transaction support
+* BTC/ETH/ERC-20/EOS transaction support
+* BTC/ETH/ERC-20/EOS cross-chain transaction support
+* EOS account management support
+* Network status check support
 * Ledger/Trezor support
 * Galaxy PoS delegation/validator support
-* English/Chinese/Thai/Korean/French support
+* English/Chinese/Thai/Korean/French/Portuguese support
 
 ## Development
 
