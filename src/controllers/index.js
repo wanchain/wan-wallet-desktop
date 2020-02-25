@@ -11,17 +11,13 @@ import bs58check from 'bs58check';
 import { ipcMain as ipc, app } from 'electron'
 import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
 import sleep from 'ko-sleep';
-
 const ethUtil = require('ethereumjs-util');
-
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import { dateFormat } from '~/src/app/utils/support';
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
-
 const web3 = new Web3();
-const ethUtil = require('ethereumjs-util');
 const logger = Logger.getLogger('controllers')
 
 // route consts
