@@ -34,7 +34,7 @@ class DelegateList extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  getColumns () {
+  getColumns() {
     let columns = [
       {
         title: this.props.validatorColumns[0].title,
@@ -44,9 +44,15 @@ class DelegateList extends Component {
         title: this.props.validatorColumns[1].title,
         dataIndex: 'myStake',
         key: 'myStake',
-        render: stake => (
-          <Cell title={formatNum(stake.title)} bottom={intl.get('staking.fromDaysAgo1') + stake.bottom + intl.get('staking.fromDaysAgo2')} />
-        ),
+        render: (stake) => {
+          let value = Number(stake.bottom);
+          if (value && value > 10000) {
+            value = 'N/A';
+          }
+          return (
+            <Cell title={formatNum(stake.title)} bottom={intl.get('staking.fromDaysAgo1') + value + intl.get('staking.fromDaysAgo2')} />
+          )
+        },
       }, {
         title: this.props.validatorColumns[2].title,
         dataIndex: 'arrow1',
@@ -59,7 +65,7 @@ class DelegateList extends Component {
         dataIndex: 'validator',
         key: 'validator',
         render: validator => (
-          <Validator img={validator.img} name={validator.name} title={validator.address}/>
+          <Validator img={validator.img} name={validator.name} title={validator.address} />
         ),
       }, {
         title: this.props.validatorColumns[4].title,
@@ -82,7 +88,7 @@ class DelegateList extends Component {
         align: 'center',
         render: (text, record) => {
           return (
-            <DelegateActionGroup record={record}/>
+            <DelegateActionGroup record={record} />
           )
         }
       }
@@ -91,7 +97,7 @@ class DelegateList extends Component {
     return columns
   }
 
-  render () {
+  render() {
     return (
       <div>
         <Table columns={this.getColumns()} dataSource={this.props.stakingList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
