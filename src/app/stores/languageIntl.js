@@ -278,7 +278,7 @@ class LanguageIntl {
         icon: 'stock',
         children: [
           {
-            title: 'ADD',
+            title: 'Add',
             step: '1',
             key: '/AddDApp',
             icon: 'plus-circle',
@@ -332,17 +332,17 @@ class LanguageIntl {
         title: intl.get('Settings.backup'),
         key: 'backup',
       }, {
+        title: intl.get('Settings.import'),
+        key: 'importPrivateKey',
+      }, {
+        title: intl.get('Settings.application'),
+        key: 'application',
+      }, {
         title: intl.get('Settings.restore'),
         key: 'restore',
       }, {
         title: intl.get('Settings.network'),
         key: 'network',
-      }, {
-        title: intl.get('Settings.importPrivateKey'),
-        key: 'importPrivateKey',
-      }, {
-        title: intl.get('Settings.application'),
-        key: 'application',
       }
     ];
   }

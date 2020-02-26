@@ -108,7 +108,7 @@ class Login extends Component {
           okText={intl.get('Common.ok')}
           cancelText={intl.get('Common.cancel')}
         >
-          <p className="textP">{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
+          <p className="textP">{intl.get('Common.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
         </Modal>
       </div>
     );

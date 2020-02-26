@@ -34,9 +34,9 @@ class Restore extends Component {
       <div className={style['settings_restore']}>
         <Card title={intl.get('Restore.restoreFromSeedPhrase')}>
           <p className={style.textP}>
-            {intl.get('Restore.warning')}: {intl.get('Restore.restoreNewWalletWillDeleteAllLocalData')}
+            {intl.get('Common.warning')}: {intl.get('Restore.restoreNewWalletWillDeleteAllLocalData')}
           </p>
-          <Button type="primary" onClick={this.showModal}>{intl.get('Restore.continue')}</Button>
+          <Button type="primary" onClick={this.showModal}>{intl.get('Common.continue')}</Button>
           <Modal
             destroyOnClose={true}
             title={intl.get('Restore.restoreFromSeedPhrase')}
@@ -47,7 +47,7 @@ class Restore extends Component {
             okText={intl.get('Common.ok')}
             cancelText={intl.get('Common.cancel')}
           >
-            <p className={style.textP}>{intl.get('Restore.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
+            <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('Restore.allLocalDataWillBeLost')}</p>
           </Modal>
         </Card>
       </div>

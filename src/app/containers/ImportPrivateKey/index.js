@@ -83,10 +83,10 @@ class ImportPrivateKey extends Component {
           <p className="com-gray">
             {intl.get('ImportPrivateKey.ImportPrivateKeyNotice')}
           </p>
-          <Button type="primary" onClick={this.showModal}>{intl.get('ImportPrivateKey.continue')}</Button>
+          <Button type="primary" onClick={this.showModal}>{intl.get('Common.continue')}</Button>
           <Modal
             destroyOnClose={true}
-            title={intl.get('ImportPrivateKey.pk')}
+            title={intl.get('ImportPrivateKey.title')}
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.resetStateVal}
@@ -95,10 +95,9 @@ class ImportPrivateKey extends Component {
             className={style['settings_importPrivateKey_modal']}
             cancelText={intl.get('Common.cancel')}
           >
-            <p className={style.textP}>{intl.get('ImportPrivateKey.warning')}: {intl.get('ImportPrivateKey.doNotShare')}</p>
+            <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('ImportPrivateKey.notify')}</p>
             <div>
-              <Input.Password placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} />
-              {/* <Input.Password placeholder={intl.get('ImportPrivateKey.enterPassword')} onChange={this.pwdChange} style={{ marginTop: '10px' }}/> */}
+              <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} />
               <Select defaultValue="WAN" onChange={this.typeChange}>
                 <Option value="WAN" selected="selected">WAN</Option>
                 <Option value="ETH">ETH</Option>
