@@ -123,8 +123,10 @@ class Sidebar extends Component {
     } else {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
     }
+
+    console.log('dAppsOnSideBar:', dAppsOnSideBar, 'dAppsChildren:', dAppsChildren);
     if (dAppsOnSideBar.length) {
-      dAppsChildren.splice(1, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
+      dAppsChildren.splice(0, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
         let trimUrl = item.url.split('://')[1];
         return ({
           title: item.name,
@@ -133,7 +135,7 @@ class Sidebar extends Component {
         })
       }));
     } else {
-      dAppsChildren.splice(1, crossChainChildren.length - 1);
+      dAppsChildren.splice(0, dAppsChildren.length - 1);
     }
 
     return (
