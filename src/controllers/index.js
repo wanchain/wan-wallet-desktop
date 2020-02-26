@@ -221,7 +221,6 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 if (hdWallet) {
                     try {
                         ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
-                        console.log('ret:', ret);
                     } catch (e) {
                         logger.error(e.message || e.stack);
                         console.log('hdWallet.signMessage error:', e);
@@ -246,11 +245,9 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
-                    console.log('ret:', ret);
                     sig.r = '0x' + ret.r.toString('hex');
                     sig.s = '0x' + ret.s.toString('hex');
                     sig.v = '0x' + ret.v.toString('hex');
-                    logger.info('Signature:' + JSON.stringify(sig));
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -1778,7 +1775,6 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             break
         
         case 'getDAppInjectFile':
-            console.log('getDAppInjectFile is called');
             let ret = "";
 
             if(setting.isDev) {
@@ -1786,7 +1782,6 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             } else {
                 ret = `file://${__dirname}/modals/dAppInject.js`
             }
-            console.log(setting.isDev, ret);
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
         case 'rpcDelay':
