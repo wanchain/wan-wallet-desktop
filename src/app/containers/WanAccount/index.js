@@ -142,7 +142,8 @@ class WanAccount extends Component {
   onSendNormalTransaction = (from) => {
     console.log('Normal:', from);
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let type = checkAddrType(from, this.props.addrInfo);
+    let walletID = type === 'normal' ? WALLETID.NATIVE : (type === 'import' ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,

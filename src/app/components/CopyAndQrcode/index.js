@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Modal, Icon, message, Tooltip, Input } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
@@ -44,6 +44,7 @@ class CopyAndQrcode extends Component {
   }
 
   copy2Clipboard = addr => {
+    console.log('copy:', addr);
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
@@ -78,6 +79,7 @@ class CopyAndQrcode extends Component {
       if (err) {
         console.log('wallet_exportPrivateKeys:', err)
       } else {
+        console.log('privateKey:', data);
         this.setState({
           privateKey1: data[0],
           privateKey2: data[1],
@@ -113,11 +115,19 @@ class CopyAndQrcode extends Component {
               {
                 this.state.showPrivateKey ? (
                   <div>
-                    <p className={style.textP2}> {intl.get('Common.yourPrivateKey')}:</p>
+                    <p className={style.textP2}> {intl.get('Common.yourPrivateKey')} {this.props.type === 'WAN' ? '1' : ''}:</p>
                     <p className={style.textP3}>{this.state.privateKey1}</p>
-                    <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
-                    <p className={style.textP3}>{this.state.privateKey2}</p>
-                    <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey2)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                    {
+                      this.props.type === 'WAN' ? (
+                        <Fragment>
+                          <p className={style.textP2}> {intl.get('Common.yourPrivateKey')} 2:</p>
+                          <p className={style.textP3}>{this.state.privateKey2}</p>
+                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${this.state.privateKey1}-${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                        </Fragment>
+                      ) : (
+                        <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                      )
+                    }
                   </div>
                 ) : (
                     <div>

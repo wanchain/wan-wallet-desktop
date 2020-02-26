@@ -20,6 +20,7 @@ class WanAddress {
     ledger: {},
     trezor: {},
     import: {},
+    rawKey: {}
   };
 
   @observable currentPage = [];
@@ -106,6 +107,7 @@ class WanAddress {
     let ledger = Object.keys(self.addrInfo['ledger']);
     let trezor = Object.keys(self.addrInfo['trezor']);
     let importArr = Object.keys(self.addrInfo['import']);
+    let rawKey = Object.keys(self.addrInfo['rawKey']);
 
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
@@ -119,6 +121,9 @@ class WanAddress {
       }
       if (importArr.includes(item) && self.addrInfo['import'][item].balance !== arr[item]) {
         self.addrInfo['import'][item].balance = arr[item];
+      }
+      if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
+        self.addrInfo['rawKey'][item].balance = arr[item];
       }
     });
 
@@ -181,10 +186,19 @@ class WanAddress {
         }
       }
       if (info && Object.keys(info).length) {
-        let typeFunc = id => id === '1' ? 'normal' : 'import';
+        let typeFunc = id => {
+          switch (id) {
+            case '1':
+              return 'normal';
+            case '5':
+              return 'import';
+            case '6':
+              return 'rawKey';
+          }
+        };
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
-            if (['1', '5'].includes(id)) {
+            if (['1', '5', '6'].includes(id)) {
               let address = wanUtil.toChecksumAddress(info[path][id]['addr']);
               if (checkExist(address)) {
                 // Delete the duplicate account info from DB file.
@@ -216,7 +230,17 @@ class WanAddress {
   @action async updateUserAccountDB(ver) {
     let normalInfo = self.addrInfo.normal;
     let importInfo = self.addrInfo.import;
-    let typeFunc = id => id === 1 ? 'normal' : 'import';
+    let rawKeyInfo = self.addrInfo.rawKey;
+    let typeFunc = id => {
+      switch (id) {
+        case '1':
+          return 'normal';
+        case '5':
+          return 'import';
+        case '6':
+          return 'rawKey';
+      }
+    };
     if (ver === undefined || ver === '') {
       ver = 'original';
     }
@@ -232,7 +256,7 @@ class WanAddress {
             Object.keys(data).forEach(item => {
               let waddress = data[item]['waddress'];
               let name = data[item]['name'];
-              let id = type === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+              let id = type === 'normal' ? WALLETID.NATIVE : (type === 'import' ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
               let path = WAN + data[item]['path'];
               // If can not get the waddress, call a request to 'address_getOne' to get the waddress
               if (typeof waddress === 'undefined') {
@@ -242,6 +266,7 @@ class WanAddress {
           }
           filterData(normalInfo, 'normal');
           filterData(importInfo, 'import');
+          filterData(rawKeyInfo, 'rawKey');
           // Insert none waddress account's waddress info into DB file.
           if (noWaddressArr.length !== 0) {
             await Promise.all(noWaddressArr.map(item => {
@@ -296,6 +321,17 @@ class WanAddress {
     };
   }
 
+  @action addRawKey({ path, addr, waddr }) {
+    self.addrInfo['rawKey'][addr] = {
+      name: `PrivateKey${path + 1}`,
+      balance: '0',
+      wbalance: '0',
+      path: path,
+      address: addr,
+      waddress: waddr
+    };
+  }
+
   @action setCurrPage(page) {
     self.currentPage = page;
   }
@@ -314,8 +350,9 @@ class WanAddress {
     let addrList = [];
     let normalArr = self.addrInfo['normal'];
     let importArr = self.addrInfo['import'];
-    [normalArr, importArr].forEach((obj, index) => {
-      const walletID = obj === normalArr ? 1 : 5;
+    let rawKeyArr = self.addrInfo['rawKey'];
+    [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
+      const walletID = obj === normalArr ? 1 : (obj === importArr ? 5 : 6);
       Object.keys(obj).forEach((item) => {
         addrList.push({
           key: `${WAN}${obj[item].path}-${item}`,

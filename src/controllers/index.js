@@ -312,6 +312,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
         case 'exportPrivateKeys':
           let privateKeys;
           try {
+            console.log('exportPrivateKeys wid:', payload.wid);
             privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
             privateKeys.forEach((item, index) => {
                 privateKeys[index] = item.toString('hex');
@@ -328,7 +329,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
           {
             let ret;
             try {
-                let { pk, type } = payload;
+                let { pk, pk2, type } = payload;
                 console.log('----------pk, chainType----------', pk, type);
                 let chainID;
                 switch(type) {
@@ -341,33 +342,30 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     case 'ETH':
                         chainID = 60;
                         break;
-                    /* case 'EOS':
+                    case 'EOS':
+                        let isEosPk = await ccUtil.isEosPrivateKey(pk);
+                        console.log('---------------isEosPk:', isEosPk);
+                        // if (!isEosPk) {  }
                         chainID = 194;
-                        break; */
+                        break;
                 }
                 let index = hdUtil.getRawKeyCount(chainID);
                 let pathForm = `m/44'/${chainID}'/0'/0/`;
-                let path = `${pathForm}${index}`;
-                console.log('path:', path);
                 let rawPriv = Buffer.from(pk, 'hex');
-                let idx = hdUtil.importPrivateKey(path, rawPriv);
-                console.log('idx:', idx);
-                /* let opt = {
-                    "password" : pwd,
-                    "chkfunc" : hdUtil.revealMnemonic
-                } */
-                let newpath = `${pathForm}${idx}`;
+                let path = hdUtil.importPrivateKey(`${pathForm}${index}`, rawPriv);
                 let wid = 6;
-                console.log('newpath:', newpath);
-                // let addr = await hdUtil.getAddress(wid, type, newpath, opt);
-                let addr = await hdUtil.getAddress(wid, type, newpath);
-                console.log("addr:", addr);// address path pubKey
+                console.log('index:', index);
+                console.log('path:', path);
+                let addr = await hdUtil.getAddress(wid, type, `${pathForm}${path}`);
+                console.log("addr:", addr);
                 let isValidAddress = false;
+                let accountAddress = '';
                 switch(type) {
                     case 'BTC':
                         try {
                             bs58check.decode(addr.address);
                             isValidAddress = true;
+                            accountAddress = addr.address;
                         } catch (e) {
                             console.log('isValidAddress BTC:', e);
                             isValidAddress = false;
@@ -375,26 +373,33 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         break;
                     case 'WAN':
                         isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
+                        if (wanUtil.toChecksumOTAddress(addr.waddress) === '') {
+                            isValidAddress = false;
+                        }
+                        accountAddress = `0x${addr.address}`;
                         break;
                     case 'ETH':
                         isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
+                        accountAddress = `0x${addr.address}`;
                         break;
                     /* case 'EOS':
-                        chainID = 194;
+                        isValidAddress = await ccUtil.isEosPrivateKey(`0x${addr.address}`);
                         break; */
                 }
-                console.log('isValidAddress:', isValidAddress);
+                if (isValidAddress) {
+                    if (type === 'WAN') {
+                        hdUtil.createUserAccount(wid, newpath, { name: `PrivateKey${path + 1}`, addr: accountAddress, waddr: `0x${addr.address}` });
+                        Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress, waddr: `0x${addr.address}` });
+                    } else {
+                        hdUtil.createUserAccount(wid, newpath, { name: `PrivateKey${path + 1}`, addr: accountAddress });
+                        Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress });
+                    }
+                    ccUtil.scanOTA(wid, newpath);
 
-                hdUtil.createUserAccount(wid, newpath, { name: `RawKey${idx + 1}`, addr: `0x${addr.address}` });
-                // Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
-                // ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
-
-                /* hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: `Imported${path + 1}`, addr, waddr });
-                Windows.broadcast('notification', 'keyfilepath', { path, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
-                ccUtil.scanOTA(5, `${WANBIP44Path}${path}`); */
-                
-                ret = `0x${addr.address}`;
-
+                    ret = accountAddress;
+                } else {
+                    ret = false;
+                }
             } catch (e) {
                 console.log('importPrivateKey Error:');
                 console.log('e:', e);
@@ -888,7 +893,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
-                logger.info('Transaction hash: ' + ret);
+                logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
                 logger.error('Send transaction failed: ' + e.message || e.stack)
                 err = e

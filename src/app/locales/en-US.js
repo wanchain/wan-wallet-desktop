@@ -90,6 +90,9 @@ const en_US = {
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
     'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.invalidParameter': 'Invalid parameter',
+    'ImportPrivateKey.importPKFailed': 'Import private key failed.',
+    'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
 
     'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',

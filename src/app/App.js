@@ -87,6 +87,24 @@ class App extends Component {
       stores.wanAddress.addKeyStoreAddr(data);
     })
 
+    regEmitterHandler('importPrivateKey', data => {
+      console.log('data:', data);
+      switch (data.type) {
+        case 'WAN':
+          stores.wanAddress.addRawKey(data);
+          break;
+        case 'ETH':
+          stores.ethAddress.addRawKey(data);
+          break;
+        case 'BTC':
+          stores.btcAddress.addRawKey(data);
+          break;
+        /* case 'EOS':
+            break; */
+    }
+      // stores.wanAddress.addKeyStoreAddr(data);
+    })
+
     this.timer = setInterval(() => {
       // Handle one step cross chain and undo cross chain trans
       if (!stores.session.isFirstLogin) {

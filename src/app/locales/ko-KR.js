@@ -90,6 +90,9 @@ const ko_KR = {
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
     'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.invalidParameter': 'Invalid parameter',
+    'ImportPrivateKey.importPKFailed': 'Import private key failed.',
+    'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
 
     'Restore.restoreFromSeedPhrase': '복구 Mnemonic',
     'Restore.restoreNewWalletWillDeleteAllLocalData': ' Mnemonic을 복원하고 싶으시다면, 모든 로컬데이터가 삭제되고 프로그램이 다시 설치 됩니다. 계속 진행 하시겠습니까.',

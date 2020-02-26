@@ -11,6 +11,7 @@ import session from './session';
 class BtcAddress {
     @observable addrInfo = {
       normal: {},
+      rawKey: {}
     };
 
     @observable utxos = {};
@@ -97,9 +98,13 @@ class BtcAddress {
     @action updateBTCBalance (arr) {
       let keys = Object.keys(arr);
       let normal = Object.keys(self.addrInfo.normal);
+      let rawKey = Object.keys(self.addrInfo['rawKey']);
       keys.forEach(item => {
         if (normal.includes(item) && self.addrInfo.normal[item].balance !== arr[item]) {
           self.addrInfo.normal[item].balance = formatNumByDecimals(arr[item], 8);
+        }
+        if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
+          self.addrInfo['rawKey'][item].balance = arr[item];
         }
       })
     }
@@ -111,6 +116,9 @@ class BtcAddress {
           if (Object.keys(self.addrInfo.normal).includes(arr.address)) {
             walletID = 1;
             type = 'normal';
+          } else if (Object.keys(self.addrInfo.rawKey).includes(arr.address)) {
+            walletID = WALLETID.RAWKEY;
+            type = 'rawKey';
           } else {
             walletID = WALLETID.KEYSTOREID;
             type = 'import';
@@ -128,32 +136,61 @@ class BtcAddress {
       let chainID = chainId === CHAINID.MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
       wand.request('account_getAll', { chainID }, (err, ret) => {
         if (err) console.log('Get user from DB failed ', err);
-        let info = ret.accounts;
         if (ret.accounts && Object.keys(ret.accounts).length) {
-          Object.keys(info).forEach(path => {
-            let address = info[path]['1'].addr;
-            self.addrInfo.normal[address] = {
-              name: info[path]['1'].name,
-              balance: 0,
-              path: path.substr(path.lastIndexOf('\/') + 1),
-              address: address
+          let info = ret.accounts;
+          let typeFunc = id => {
+            switch (id) {
+              case '1':
+                return 'normal';
+              case '5':
+                return 'import';
+              case '6':
+                return 'rawKey';
             }
+          };
+          Object.keys(info).forEach(path => {
+            Object.keys(info[path]).forEach(id => {
+              if (['1', '6'].includes(id)) {
+                let address = info[path][id].addr;
+                self.addrInfo[typeFunc(id)][address.toLowerCase()] = {
+                  name: info[path][id].name,
+                  balance: 0,
+                  path: path.substr(path.lastIndexOf('\/') + 1),
+                  address: address.toLowerCase()
+                }
+              }
+            })
           })
         }
       })
     }
 
+    @action addRawKey({ path, addr }) {
+      self.addrInfo['rawKey'][addr] = {
+        name: `PrivateKey${path + 1}`,
+        balance: '0',
+        path: path,
+        address: addr,
+      };
+    }
+
     @computed get getAddrList () {
       let addrList = [];
-      let normalArr = Object.keys(self.addrInfo.normal);
-      normalArr.forEach(item => {
-        addrList.push({
-          key: item,
-          name: self.addrInfo.normal[item].name,
-          address: item,
-          balance: formatNum(self.addrInfo.normal[item].balance, 8),
-          path: `${self.btcPath}${self.addrInfo.normal[item].path}`,
-          action: 'send'
+      let normalArr = self.addrInfo['normal'];
+      let rawKeyArr = self.addrInfo['rawKey'];
+
+      [normalArr, rawKeyArr].forEach((obj, index) => {
+        const walletID = obj === normalArr ? 1 : (obj === rawKeyArr ? 6 : 5);
+        Object.keys(obj).forEach((item) => {
+          addrList.push({
+            key: item,
+            name: obj[item].name,
+            address: item,
+            balance: formatNum(obj[item].balance, 8),
+            path: `${self.btcPath}${obj[item].path}`,
+            action: 'send',
+            wid: walletID
+          });
         });
       });
       return addrList;

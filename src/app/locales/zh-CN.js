@@ -91,6 +91,9 @@ const zh_CN = {
     'ImportPrivateKey.ImportPrivateKeyNotice': '使用私钥来导入账户',
     'ImportPrivateKey.notify': '导入的账户是单独管理的，跟助记词无关，请自行单独进行备份',
     'ImportPrivateKey.enterPrivateKey': '输入私钥',
+    'ImportPrivateKey.invalidParameter': '非法参数',
+    'ImportPrivateKey.importPKFailed': '导入私钥失败',
+    'ImportPrivateKey.importPKSuccess': '导入私钥成功',
 
     'Restore.restoreFromSeedPhrase': '恢复助记词',
     'Restore.restoreNewWalletWillDeleteAllLocalData': '如果你恢复助记词，所有本地数据会被删除，程序会重新启动。请确认是否继续。',

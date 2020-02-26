@@ -90,6 +90,9 @@ const th_TH = {
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
     'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
+    'ImportPrivateKey.invalidParameter': 'Invalid parameter',
+    'ImportPrivateKey.importPKFailed': 'Import private key failed.',
+    'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
 
     'Restore.restoreFromSeedPhrase': 'กู้กระเป๋าโดยใช้กลุ่มคำลับ',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'หากคุณกู้กระเป๋าโดยใช้ "กลุ่มคำลับ" ข้อมูลในปัจจุบันทั้งหมดจะถูกลบทิ้งและกระเป๋าจะทำการปิดและเปิดใหม่ กรุณายืนยันเพื่อดำเนินการต่อ',

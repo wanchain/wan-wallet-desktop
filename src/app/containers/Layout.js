@@ -83,7 +83,8 @@ class Layout extends Component {
     const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
     const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`, `${item.address}`]);
     const importObj = Object.values(addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`, `${item.address}`]);
-    let allPrivatePath = normalObj.concat(importObj);
+    const rawKeyObj = Object.values(addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`, `${item.address}`]);
+    let allPrivatePath = normalObj.concat(importObj).concat(rawKeyObj);
     allPrivatePath = allPrivatePath.length > 0 ? allPrivatePath : undefined;
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalanceWithPrivateBalance(allAddr, allPrivatePath).then(res => {
