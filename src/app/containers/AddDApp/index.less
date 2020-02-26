@@ -1,11 +1,7 @@
-.root {
-}
+.root {}
 
 .termOfService {
-    // height: 400px;
-    margin: 40px 80px 10px 80px;
-    background-color: #151624;
-    padding: 40px;
+    margin: 0px;
 }
 
 .title {
@@ -14,22 +10,34 @@
 }
 
 .section {
-    color: white;
+    // color: rgba(255, 255, 255, 0.7) !important;
+    color: #DA9E40;
     margin-bottom: 1em;
 }
 
 .checkBox {
-    margin-left: 85px;
-    padding-left: 40px;
+    margin-left: 0px;
+
+    :global {
+        .ant-checkbox-wrapper>span:last-child {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        .ant-checkbox-inner {
+            background-color: rgba(255, 255, 255, 0.88);
+        }
+        .ant-checkbox-checked .ant-checkbox-inner {
+            background-color:#1890ff;
+        }
+    }
 }
 
 .buttonParent {
-    text-align: center;
+    text-align: left;
 }
 
 .button {
     margin-top: 20px !important;
     min-width: 60px;
     color: white !important;
-    padding: 0px 32px;
+    padding: 0px 15px;
 }
