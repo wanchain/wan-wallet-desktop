@@ -7,8 +7,8 @@ import { observer, inject } from 'mobx-react';
 import {
   signPersonalMessage as trezorSignPersonalMessage,
   signTransaction as trezorSignTransaction
- } from 'componentUtils/trezor'
- import { toWei } from 'utils/support.js';
+} from 'componentUtils/trezor'
+import { toWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
 
@@ -23,7 +23,7 @@ const WAN_PATH = "m/44'/5718350'/0'";
 
 @observer
 class DApp extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = { loading: true, preload: null };
     if (!props.dAppUrl) {
@@ -34,7 +34,7 @@ class DApp extends Component {
     this.addresses = {};
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     this.setState({ loading: true });
     const preload = await this.getPreloadFile()
     console.log(preload);
@@ -53,12 +53,12 @@ class DApp extends Component {
       return;
     }
 
-    webview.addEventListener('dom-ready', function(e) {
+    webview.addEventListener('dom-ready', function (e) {
       this.setState({ loading: false });
       // webview.openDevTools();
     }.bind(this));
 
-    webview.addEventListener('ipc-message', function(event) {
+    webview.addEventListener('ipc-message', function (event) {
       const { args, channel } = event;
       if (channel === 'dapp-message') {
         this.handlerDexMessage(args[0]);
@@ -68,7 +68,7 @@ class DApp extends Component {
     this.webview = webview;
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
   }
 
   handlerDexMessage(args) {
@@ -145,9 +145,9 @@ class DApp extends Component {
     msg.err = null;
     msg.val = 3;
     wand.request('query_config', {
-        param: 'network'
-      },
-      function(err, val) {
+      param: 'network'
+    },
+      function (err, val) {
         if (err) {
           console.log('error printed inside callback: ', err);
           msg.err = err;
@@ -159,7 +159,7 @@ class DApp extends Component {
           }
           this.sendToDApp(msg);
         }
-    }.bind(this));
+      }.bind(this));
   }
 
   async getWalletFromAddress(address) {
@@ -253,20 +253,20 @@ class DApp extends Component {
     };
 
     console.log('trans:', trans);
-    wand.request('transaction_normal', trans, function(err, val) {
-        if (err) {
-          console.log('error printed inside callback: ', err)
-          msg.err = err;
+    wand.request('transaction_normal', trans, function (err, val) {
+      if (err) {
+        console.log('error printed inside callback: ', err)
+        msg.err = err;
+      } else {
+        console.log('result:', val);
+        if (val.code === false) {
+          msg.err = new Error(val.result);
         } else {
-          console.log('result:', val);
-          if (val.code === false) {
-            msg.err = new Error(val.result);
-          } else {
-            msg.val = val.result;
-          }
+          msg.val = val.result;
         }
-        this.sendToDApp(msg);
-      }.bind(this)
+      }
+      this.sendToDApp(msg);
+    }.bind(this)
     );
   }
 
@@ -357,32 +357,35 @@ class DApp extends Component {
   renderLoadTip = () => {
     return (
       <div>
-        Loading...
-        <br/>
-        <br/>
-        If you're using it for the first time, it might take a few minutes...
+        {/* Loading... */}
+        {/* <br />
+        <br />
+        If you're using it for the first time, it might take a few minutes... */}
       </div>
     );
   }
 
-  render () {
+  render() {
     const preload = this.state.preload;
     console.log('preload:', preload);
     if (preload) {
       return (
         <div className={style.myIframe}>
           {this.state.loading
-          ? <Spin
-          tip={this.renderLoadTip()} size="large"/> : null}
+            ? <Spin
+              style={{ margin: '60px 0px 0px 60px' }}
+              tip={this.renderLoadTip()}
+              size="large"
+            /> : null}
           <webview
-          id="dappView"
-          src={this.dAppUrl}
-          style={ { width: '100%', height: '100%' } }
-          nodeintegration="on"
-          preload={ preload }
-          allowpopups="on"
+            id="dappView"
+            src={this.dAppUrl}
+            style={{ width: '100%', height: '100%' }}
+            nodeintegration="on"
+            preload={preload}
+            allowpopups="on"
           >
-          Your electron doesn't support webview, please set webviewTag: true.
+            Your electron doesn't support webview, please set webviewTag: true.
           </webview>
         </div>
       );
