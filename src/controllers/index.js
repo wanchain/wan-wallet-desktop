@@ -312,7 +312,14 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             console.log('exportPrivateKeys wid:', payload.wid);
             privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
             privateKeys.forEach((item, index) => {
-                privateKeys[index] = item.toString('hex');
+              switch(payload.chainType) {
+                case 'EOS':
+                  privateKeys[index] = ccUtil.toPrivateAddress(Buffer.from(item, 'hex'));
+                  break;
+                default:
+                  privateKeys[index] = item.toString('hex');
+                  break;
+                }
             })
           } catch (e) {
             logger.error(e.message || e.stack)
