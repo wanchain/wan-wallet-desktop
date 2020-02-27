@@ -11,6 +11,7 @@ import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
 import { getAllUndoneCrossTrans } from 'utils/helper';
 import { CROSSCHAINTYPE, WALLET_CHAIN } from 'utils/settings';
+import AddDApp from 'containers/AddDApp';
 
 const { SubMenu, Item } = Menu;
 
@@ -26,7 +27,8 @@ const { SubMenu, Item } = Menu;
 @observer
 class Sidebar extends Component {
   state = {
-    collapsed: false
+    collapsed: false,
+    showAddDapp: false
   }
 
   // componentDidMount() {
@@ -53,6 +55,18 @@ class Sidebar extends Component {
     this.props.handleNav();
   }
 
+  onAddDapp = () => {
+    this.setState({
+      showAddDapp: true
+    })
+  }
+
+  onAddDappClose = () => {
+    this.setState({
+      showAddDapp: false
+    })
+  }
+
   renderMenu = data => {
     return data.map(item => {
       if (item.children) {
@@ -63,12 +77,18 @@ class Sidebar extends Component {
         );
       }
       return (
-        <Item key={item.key}>
-          <Link to={item.key}>
-            {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
+        item.key === '/AddDApp' ? (
+          <Item key={item.key} onClick={this.onAddDapp}>
             <span>{item.title}</span>
-          </Link>
-        </Item>
+          </Item>
+       ) : (
+          <Item key={item.key}>
+            <Link to={item.key}>
+              {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
+              <span>{item.title}</span>
+            </Link>
+          </Item>
+        )
       )
     });
   }
@@ -124,7 +144,6 @@ class Sidebar extends Component {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
     }
 
-    console.log('dAppsOnSideBar:', dAppsOnSideBar, 'dAppsChildren:', dAppsChildren);
     if (dAppsOnSideBar.length) {
       dAppsChildren.splice(0, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
         let trimUrl = item.url.split('://')[1];
@@ -151,6 +170,9 @@ class Sidebar extends Component {
         <div className={style.collapseItem + ' collapseItem'}>
           <img src={this.state.collapsed ? open : collapse} className={style.collapseButton} onClick={this.toggleMenu} />
         </div>
+        {
+          this.state.showAddDapp && <AddDApp onClose={this.onAddDappClose} />
+        }
       </div>
     );
   }
