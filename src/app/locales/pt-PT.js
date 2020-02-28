@@ -421,6 +421,7 @@ const pt_PT = {
     'CrossChainTransHistory.RedeemSendFailAfterRetries': 'Falha na solicitação de resgate',
     'CrossChainTransHistory.RedeemSent': 'Solicitação de resgate enviada',
     'CrossChainTransHistory.Redeemed': 'Resgatado',
+    'CrossChainTransHistory.RedeemFail': 'Falha na solicitação de resgate',
     'CrossChainTransHistory.RevokeSending': 'Enviando solicitação de revogação',
     'CrossChainTransHistory.RevokeSendFail': 'Reenviando solicitação de revogação',
     'CrossChainTransHistory.RevokeSendFailAfterRetries': 'Falha na solicitação de revogação',

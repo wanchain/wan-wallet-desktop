@@ -422,6 +422,7 @@ const fr_FR = {
     'CrossChainTransHistory.RedeemSendFailAfterRetries': 'Redemption Request Failed',
     'CrossChainTransHistory.RedeemSent': 'Redemption Request Sent',
     'CrossChainTransHistory.Redeemed': 'Redeemed',
+    'CrossChainTransHistory.RedeemFail': 'Redemption Request Failed',
     'CrossChainTransHistory.RevokeSending': 'Sending Revocation Request',
     'CrossChainTransHistory.RevokeSendFail': 'Resending Revocation Request',
     'CrossChainTransHistory.RevokeSendFailAfterRetries': 'Revocation Request Failed',

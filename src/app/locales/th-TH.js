@@ -422,6 +422,7 @@ const th_TH = {
     'CrossChainTransHistory.RedeemSendFailAfterRetries': 'คำร้องการถอนคืนล้มเหลว',
     'CrossChainTransHistory.RedeemSent': 'ส่งคำร้องการถอนคืนแล้ว',
     'CrossChainTransHistory.Redeemed': 'ถอนคืนแล้ว',
+    'CrossChainTransHistory.RedeemFail': 'คำร้องการถอนคืนล้มเหลว',
     'CrossChainTransHistory.RevokeSending': 'กำลังส่งคำร้องการขอคืน',
     'CrossChainTransHistory.RevokeSendFail': 'กำลังส่งคำร้องการขอคืนอีกครั้ง',
     'CrossChainTransHistory.RevokeSendFailAfterRetries': 'คำร้องการขอคืนล้มเหลว',
