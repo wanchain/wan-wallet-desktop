@@ -198,7 +198,6 @@ const OneStep = {
 
   handleRevoke: function() {
     this.pending.revoke.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
-
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'E20') {
         let input = {
