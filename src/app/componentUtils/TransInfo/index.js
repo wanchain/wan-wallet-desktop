@@ -23,7 +23,7 @@ class TransInfo extends Component {
     }
     let href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
     if (chain === 'EOS') {
-      href = `https://jungle.bloks.io/transaction/${hash}`
+      href = this.props.chainId === 1 ? `https://www.wanscan.org/tx/0x${hash}` : `https://testnet.wanscan.org/tx/0x${hash}`;
     }
     wand.shell.openExternal(href);
   }
