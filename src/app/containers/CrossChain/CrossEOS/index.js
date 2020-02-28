@@ -58,7 +58,6 @@ class CrossEOS extends Component {
           message.warn(intl.get('common.sendFailed'));
           return reject(err);
         } else {
-          console.log(ret.result.transaction_id);
           return resolve(ret)
         }
       });
