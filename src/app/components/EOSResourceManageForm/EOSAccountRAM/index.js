@@ -154,7 +154,6 @@ class EOSAccountRAM extends Component {
             loading: true
         });
         wand.request('transaction_EOSNormal', params, (err, res) => {
-            // console.log(err, res);
             if (!err) {
                 if (res.code) {
                     this.setState({

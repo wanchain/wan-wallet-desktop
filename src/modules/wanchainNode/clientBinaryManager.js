@@ -69,7 +69,6 @@ class Manager extends EventEmitter {
 
         try {
             skippedVersion = fs.readFileSync(path.join(setting.userDataPath, 'skippedNodeVersion.json')).toString()
-            console.log()
         } catch (err) {
 
         }
