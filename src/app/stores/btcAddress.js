@@ -152,11 +152,11 @@ class BtcAddress {
             Object.keys(info[path]).forEach(id => {
               if (['1', '6'].includes(id)) {
                 let address = info[path][id].addr;
-                self.addrInfo[typeFunc(id)][address.toLowerCase()] = {
+                self.addrInfo[typeFunc(id)][address] = {
                   name: info[path][id].name,
                   balance: 0,
                   path: path.substr(path.lastIndexOf('\/') + 1),
-                  address: address.toLowerCase()
+                  address: address
                 }
               }
             })
