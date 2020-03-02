@@ -302,6 +302,7 @@ const pt_PT = {
     'AdvancedOptionForm.inputDataIsIncorrect': 'Dados inseridos estão incorretos',
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
+    'CopyAndQrcode.privateKey': 'Private Key',
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',

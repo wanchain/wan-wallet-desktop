@@ -303,6 +303,7 @@ const th_TH = {
     'AdvancedOptionForm.inputDataIsIncorrect': 'ข้อมูลที่กรอกไม่ถูกต้อง',
 
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
+    'CopyAndQrcode.privateKey': 'Private Key',
 
     'HwWallet.Accounts.name': 'ชื่อ',
     'HwWallet.Accounts.address': 'แอดเดรส',

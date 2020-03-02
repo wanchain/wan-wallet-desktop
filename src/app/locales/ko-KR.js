@@ -303,6 +303,7 @@ const ko_KR = {
     'AdvancedOptionForm.inputDataIsIncorrect': '데이터 입력이 잘못 되었습니다.',
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
+    'CopyAndQrcode.privateKey': 'Private Key',
 
     'HwWallet.Accounts.name': '지갑명',
     'HwWallet.Accounts.address': '지갑 주소',

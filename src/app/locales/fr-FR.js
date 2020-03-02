@@ -303,6 +303,7 @@ const fr_FR = {
     'AdvancedOptionForm.inputDataIsIncorrect': 'Les données d\'entrée sont incorrectes',
 
     'CopyAndQrcode.copySuccessfully': 'Copier avec succès',
+    'CopyAndQrcode.privateKey': 'Private Key',
 
     'HwWallet.Accounts.name': 'NOM',
     'HwWallet.Accounts.address': 'ADRESSE',

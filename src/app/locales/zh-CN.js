@@ -305,6 +305,7 @@ const zh_CN = {
     'AdvancedOptionForm.inputDataIsIncorrect': '附加数据输入不正确',
 
     'CopyAndQrcode.copySuccessfully': '复制成功',
+    'CopyAndQrcode.privateKey': '私钥',
 
     'HwWallet.Accounts.name': '名称',
     'HwWallet.Accounts.address': '地址',
