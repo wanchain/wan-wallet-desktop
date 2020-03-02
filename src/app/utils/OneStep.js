@@ -42,7 +42,6 @@ const OneStep = {
 
   handleRedeem: function() {
     this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
-      console.log('handle_redeem_trans_data:', trans_data)
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'E20') {
         let input = {
@@ -62,8 +61,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              } else {
-                console.log('send_redeem_WETH:', ret);
               }
             });
           }).catch(() => {
@@ -79,8 +76,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              } else {
-                console.log('send_redeem_ETH:', ret);
               }
             })
           }).catch(() => {
@@ -107,8 +102,6 @@ const OneStep = {
                   this.sending.delete(trans_data.hashX);
                   this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                   increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-                } else {
-                  console.log('send_redeem_WETH:', ret);
                 }
               })
             }).catch(() => {
@@ -123,8 +116,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              } else {
-                console.log('send_redeem_ETH:', ret);
               }
             })
           }).catch(() => {
@@ -150,8 +141,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              } else {
-                console.log('send_redeem_WBTC:', ret);
               }
             })
           }).catch(() => {
@@ -163,8 +152,6 @@ const OneStep = {
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-            } else {
-              console.log('send_redeem_WBTC:', ret);
             }
           })
         }
@@ -188,8 +175,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              } else {
-                console.log('send_redeem_WEOS:', ret);
               }
             });
           }).catch(() => {
@@ -202,8 +187,6 @@ const OneStep = {
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-            } else {
-              console.log('send_redeem_EOS:', ret);
             }
           })
         }
@@ -215,8 +198,6 @@ const OneStep = {
 
   handleRevoke: function() {
     this.pending.revoke.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
-      console.log('handle_revoke_trans_data:', trans_data)
-
       this.sending.add(trans_data.hashX);
       if (trans_data.tokenStand === 'E20') {
         let input = {
@@ -232,8 +213,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_token:', ret);
               }
             });
           }).catch(e => {
@@ -252,8 +231,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_token:', ret);
               }
             })
           }).catch(e => {
@@ -275,12 +252,10 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_ETH:', ret);
               }
             });
           }).catch(e => {
-            console.log('revokr_eth:', e)
+            console.log('revoke_eth:', e)
             this.sending.delete(trans_data.hashX)
           });
         } else {
@@ -295,12 +270,10 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_WETH:', ret);
               }
             });
           }).catch(e => {
-            console.log('revokr_weth:', e)
+            console.log('revoke_weth:', e)
             this.sending.delete(trans_data.hashX)
           });
         }
@@ -318,8 +291,6 @@ const OneStep = {
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-            } else {
-              console.log('send_revoke_WBTC:', ret);
             }
           })
         } else {
@@ -334,8 +305,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_WBTC:', ret);
               }
             })
           }).catch(() => {
@@ -355,8 +324,6 @@ const OneStep = {
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-            } else {
-              console.log('send_revoke_EOS:', ret);
             }
           })
         } else {
@@ -372,8 +339,6 @@ const OneStep = {
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              } else {
-                console.log('send_revoke_WEOS:', ret);
               }
             });
           }).catch(() => {

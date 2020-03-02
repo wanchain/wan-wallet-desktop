@@ -459,6 +459,7 @@ const zh_CN = {
     'CrossChainTransHistory.RedeemSendFailAfterRetries': '赎回申请失败',
     'CrossChainTransHistory.RedeemSent': '赎回申请已发送',
     'CrossChainTransHistory.Redeemed': '已赎回',
+    'CrossChainTransHistory.RedeemFail': '赎回申请失败',
     'CrossChainTransHistory.RevokeSending': '发送撤销申请',
     'CrossChainTransHistory.RevokeSendFail': '重发撤销申请',
     'CrossChainTransHistory.RevokeSendFailAfterRetries': '撤销申请失败',

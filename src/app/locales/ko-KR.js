@@ -456,6 +456,7 @@ const ko_KR = {
     'CrossChainTransHistory.RedeemSendFailAfterRetries': '인출 요청 실패',
     'CrossChainTransHistory.RedeemSent': '인출 요청 전송 됨',
     'CrossChainTransHistory.Redeemed': '인출 됨',
+    'CrossChainTransHistory.RedeemFail': '인출 요청 실패',
     'CrossChainTransHistory.RevokeSending': '해지 요청 보내기',
     'CrossChainTransHistory.RevokeSendFail': '해지 요청 재전송',
     'CrossChainTransHistory.RevokeSendFailAfterRetries': '해지 요청 실패',

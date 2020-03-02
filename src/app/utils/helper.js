@@ -16,6 +16,19 @@ export const deserializeWanTx = data => {
   return { ...tx.toJSON(true), from: `0x${from.toString('hex')}` };
 }
 
+export const convertStatus = status => {
+  switch (status) {
+    case 'Revoked':
+      return 'Cancelled';
+    case 'BuddyLocked':
+      return 'StoremanLocked';
+    case 'Redeemed':
+      return 'Success';
+    default:
+      return status;
+  }
+}
+
 export const checkMaxFeeRate = function (rule, value, callback) {
   try {
     if (!isNumber(value)) {
