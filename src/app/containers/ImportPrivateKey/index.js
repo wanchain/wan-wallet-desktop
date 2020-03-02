@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button, Card, Modal, Input, Select, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import { isValidChecksumOTAddress } from 'wanchain-util';
 
 import style from './index.less';
 const { Option } = Select;
@@ -56,32 +55,18 @@ class ImportPrivateKey extends Component {
     });
   }
 
-  checkToWanPrivateAddr = (rule, value, callback) => {
-    if (/^0x[0-9a-f]{132}$/.test(value)) {
-      return true;
-    } else if (isValidChecksumOTAddress(value)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   handleOk = () => {
     let { pk, pk2, type } = this.state;
     console.log(pk, pk2, type);
     try {
-      if (typeof (pk) === 'string' && pk.trim().length && type.trim().length) {
+      if (typeof (pk) === 'string' && pk.length && type.length) {
         let param = {
           pk,
           type
         };
         if (this.state.type === 'WAN') {
-          if (typeof (pk2) === 'string' && pk2.trim().length) {
-            if (this.checkToWanPrivateAddr(`0x${pk2}`)) {
-              message.warn(intl.get('ImportPrivateKey.invalidParameter'));
-              return false;
-            }
-            param.pk2 = pk2.trim();
+          if (typeof (pk2) === 'string' && pk2.length) {
+            param.pk2 = pk2;
           } else {
             message.warn(intl.get('ImportPrivateKey.invalidParameter'));
             return;
