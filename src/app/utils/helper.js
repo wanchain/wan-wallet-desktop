@@ -730,3 +730,22 @@ export const checkEosNameExist = function (address) {
     })
   })
 };
+
+export const getWalletIdByAddr = function (type) {
+  let ID
+  switch (type) {
+    case 'normal':
+      ID = WALLETID.NATIVE;
+      break;
+    case 'ledger':
+      ID = WALLETID.LEDGER;
+      break;
+    case 'trezor':
+      ID = WALLETID.TREZOR;
+      break;
+    case 'import':
+      ID = WALLETID.KEYSTOREID;
+      break;
+  }
+  return ID;
+}

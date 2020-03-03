@@ -103,7 +103,10 @@ class Tokens {
   @action updateTokensBalance(tokenScAddr) {
     let normalArr = Object.keys(wanAddress.addrInfo.normal);
     let importArr = Object.keys(wanAddress.addrInfo.import);
-    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
+    let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
+    let trezorArr = Object.keys(wanAddress.addrInfo.trezor);
+
+    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -117,10 +120,15 @@ class Tokens {
     return new Promise((resolve, reject) => {
       let normalArr = [];
       let importArr = [];
+      let ledgerArr = [];
+      let trezorArr = [];
+
       switch (chain) {
         case 'WAN':
           normalArr = Object.keys(wanAddress.addrInfo['normal'] || []);
           importArr = Object.keys(wanAddress.addrInfo['import'] || []);
+          ledgerArr = Object.keys(wanAddress.addrInfo['ledger'] || []);
+          trezorArr = Object.keys(wanAddress.addrInfo['trezor'] || []);
           break;
         case 'ETH':
           normalArr = Object.keys(ethAddress.addrInfo['normal'] || []);
@@ -137,7 +145,7 @@ class Tokens {
         default:
           console.log('Default.....');
       }
-      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
+      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
         if (err) {
           console.log('stores_getTokensBalance:', err);
           reject(err);
@@ -303,31 +311,37 @@ class Tokens {
   }
 
   @computed get getTokensListInfo_2WanTypes() {
+    let addTypes = ['normal', 'ledger', 'trezor', 'import'];
     let addrList = [];
-    let normalArr = Object.keys(wanAddress.addrInfo.normal);
-    let importArr = Object.keys(wanAddress.addrInfo.import);
-    normalArr.concat(importArr).forEach((item, index) => {
-      let balance;
-      let type = normalArr.length - 1 < index ? 'import' : 'normal';
-      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-        if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
-        } else {
-          balance = 0
-        }
-      } else {
-        balance = 0;
+
+    Object.keys(wanAddress.addrInfo).forEach(type => {
+      if (!addTypes.includes(type)) {
+        return;
       }
-      addrList.push({
-        key: item,
-        name: wanAddress.addrInfo[type][item].name,
-        address: wanUtil.toChecksumAddress(item),
-        balance: formatNum(balance),
-        path: `${WANPATH}${wanAddress.addrInfo[type][item].path}`,
-        action: 'send',
-        amount: balance
-      });
-    });
+      Object.keys(wanAddress.addrInfo[type]).forEach(item => {
+        let balance;
+        if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
+          if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
+            balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
+          } else {
+            balance = 0
+          }
+        } else {
+          balance = 0;
+        }
+        let path = ['ledger'].includes(type) ? `${wanAddress.addrInfo[type][item].path}` : `${WANPATH}${wanAddress.addrInfo[type][item].path}`;
+        addrList.push({
+          path,
+          key: item,
+          name: wanAddress.addrInfo[type][item].name,
+          address: wanUtil.toChecksumAddress(item),
+          balance: formatNum(balance),
+          action: 'send',
+          amount: balance
+        });
+      })
+    })
+
     return addrList;
   }
 
@@ -385,11 +399,13 @@ class Tokens {
   @computed get getTokenAmount() {
     let amount = new BigNumber(0);
     let importArr = Object.keys(wanAddress.addrInfo.import);
+    let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
+    let trezorArr = Object.keys(wanAddress.addrInfo.trezor);
 
     self.getTokensListInfo.forEach(item => {
       amount = amount.plus(item.amount);
     });
-    importArr.forEach(item => {
+    importArr.concat(ledgerArr).concat(trezorArr).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
         if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {

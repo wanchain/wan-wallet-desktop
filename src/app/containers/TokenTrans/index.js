@@ -1,13 +1,15 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Avatar } from 'antd';
+import { Table, Row, Col, message } from 'antd';
 
 import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
-import { checkAddrType } from 'utils/helper';
+import { WanTx, WanRawTx } from 'utils/hardwareUtils'
+import { checkAddrType, getWalletIdByAddr } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
 
 const CHAINTYPE = 'WAN';
@@ -71,11 +73,41 @@ class TokenTrans extends Component {
     clearInterval(this.timer);
   }
 
+  sendLedgerTrans = (path, tx) => {
+    message.info(intl.get('Ledger.signTransactionInLedger'));
+    let rawTx = {
+      to: tx.to,
+      value: 0,
+      data: tx.data,
+      chainId: this.props.chainId,
+      nonce: '0x' + tx.nonce.toString(16),
+      gasLimit: tx.gasLimit,
+      gasPrice: '0x' + new BigNumber(tx.gasPrice).times(BigNumber(10).pow(9)).toString(16),
+      Txtype: 1
+    }
+    return new Promise((resolve, reject) => {
+      wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path, rawTx: new WanRawTx(rawTx).serialize() }, (err, sig) => {
+        if (err) {
+          message.warn(intl.get('Ledger.signTransactionFailed'));
+          reject(err);
+          console.log(`signLedgerTransaction: ${err}`);
+        } else {
+          console.log('Signature: ', sig)
+          rawTx.v = sig.v;
+          rawTx.r = sig.r;
+          rawTx.s = sig.s;
+          resolve('0x' + new WanTx(rawTx).serialize().toString('hex'));
+        }
+      });
+    })
+  }
+
   handleSend = from => {
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let type = checkAddrType(from, this.props.addrInfo);
+    let walletID = getWalletIdByAddr(type);
     let trans = {
-      walletID: walletID,
+      walletID,
       chainType: CHAINTYPE,
       symbol: CHAINTYPE,
       path: params.path,
@@ -91,17 +123,48 @@ class TokenTrans extends Component {
       }
     };
     return new Promise((resolve, reject) => {
-      wand.request('transaction_normal', trans, (err, txHash) => {
-        if (err) {
-          message.warn(intl.get('WanAccount.sendTransactionFailed'));
-          console.log('transaction_normal:', err);
-          reject(false); // eslint-disable-line prefer-promise-reject-errors
-        } else {
-          this.props.updateTransHistory();
-          console.log('Tx hash: ', txHash);
-          resolve(txHash)
-        }
-      });
+      switch (type) {
+        case 'ledger':
+          this.sendLedgerTrans(params.path, trans).then(raw => {
+            wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
+              if (err) {
+                message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
+                reject(false); // eslint-disable-line prefer-promise-reject-errors
+              } else {
+                wand.request('transaction_insertTransToDB', {
+                  rawTx: {
+                    txHash,
+                    value: trans.amount,
+                    from: from.toLowerCase(),
+                    srcSCAddrKey: 'WAN',
+                    srcChainType: 'WAN',
+                    tokenSymbol: 'WAN',
+                    ...trans
+                  },
+                  satellite: trans.satellite
+                  }, () => {
+                  this.props.updateTransHistory();
+                })
+                console.log('TxHash:', txHash);
+                resolve(txHash);
+              }
+            });
+          }).catch(() => { reject(false) }); // eslint-disable-line prefer-promise-reject-errors
+          break;
+        case 'normal':
+          wand.request('transaction_normal', trans, (err, txHash) => {
+            if (err) {
+              message.warn(intl.get('WanAccount.sendTransactionFailed'));
+              console.log('transaction_normal:', err);
+              reject(false); // eslint-disable-line prefer-promise-reject-errors
+            } else {
+              this.props.updateTransHistory();
+              console.log('Tx hash: ', txHash);
+              resolve(txHash)
+            }
+          });
+          break;
+      }
     })
   }
 
@@ -133,7 +196,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import']} transType={TRANSTYPE.tokenTransfer} />
+            <TransHistory name={['normal', 'import', 'ledger']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>
