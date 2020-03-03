@@ -1500,6 +1500,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                  err = ret;
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1518,6 +1521,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                  err = ret;
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1539,6 +1545,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                  err = ret;
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
