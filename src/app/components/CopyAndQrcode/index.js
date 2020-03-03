@@ -122,7 +122,7 @@ class CopyAndQrcode extends Component {
                         <Fragment>
                           <p className={style.textP2}> {intl.get('Common.yourPrivateKey')} 2:</p>
                           <p className={style.textP3}>{this.state.privateKey2}</p>
-                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${intl.get('CopyAndQrcode.privateKey')}1：${this.state.privateKey1}\n${intl.get('CopyAndQrcode.privateKey')}2：${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${intl.get('CopyAndQrcode.privateKey')}1: ${this.state.privateKey1}\n${intl.get('CopyAndQrcode.privateKey')}2: ${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
                         </Fragment>
                       ) : (
                         <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>

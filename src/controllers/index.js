@@ -42,9 +42,9 @@ const WANBIP44Path = "m/44'/5718350'/0'/0/"
 const WAN_ID = 5718350;
 const network = setting.get('network');
 
-const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
-const WALLET_ID_LEDGER   = 0x02;
-const WALLET_ID_TREZOR   = 0x03;
+const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
+const WALLET_ID_LEDGER = 0x02;
+const WALLET_ID_TREZOR = 0x03;
 
 const NETWORK_SLOW = 200;  // If network delay large than 200ms it shows Good.
 
@@ -214,10 +214,10 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let { walletID, path, rawTx } = payload;
 
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
-    
+
                 logger.info('Sign signPersonalMessage:');
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-    
+
                 if (hdWallet) {
                     try {
                         ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
@@ -230,7 +230,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     err = new Error('Can not found wallet.');
                     console.log('hdWallet is undefine');
                 }
-    
+
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
@@ -307,113 +307,118 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
             break
 
         case 'exportPrivateKeys':
-          let privateKeys;
-          try {
-            console.log('exportPrivateKeys wid:', payload.wid);
-            privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
-            privateKeys.forEach((item, index) => {
-              switch(payload.chainType) {
-                case 'EOS':
-                  privateKeys[index] = ccUtil.toPrivateAddress(Buffer.from(item, 'hex'));
-                  break;
-                default:
-                  privateKeys[index] = item.toString('hex');
-                  break;
-                }
-            })
-          } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-          }
-
-          sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKeys })
-          break
-
-        case 'importPrivateKey':
-          {
-            let ret;
+            let privateKeys;
             try {
-                let { pk, pk2, type } = payload;
-                console.log('----------pk, chainType----------', pk, type);
-                let chainID;
-                switch(type) {
-                    case 'BTC':
-                        chainID = network === 'main' ? 0 : 1;
-                        break;
-                    case 'WAN':
-                        chainID = 5718350;
-                        break;
-                    case 'ETH':
-                        chainID = 60;
-                        break;
-                    case 'EOS':
-                        let isEosPk = await ccUtil.isEosPrivateKey(pk);
-                        console.log('---------------isEosPk:', isEosPk);
-                        // if (!isEosPk) {  }
-                        chainID = 194;
-                        break;
-                }
-                let index = hdUtil.getRawKeyCount(chainID);
-                let pathForm = `m/44'/${chainID}'/0'/0/`;
-                let rawPriv = Buffer.from(pk, 'hex');
-                let path = hdUtil.importPrivateKey(`${pathForm}${index}`, rawPriv);
-                let wid = 6;
-                console.log('index:', index);
-                console.log('path:', path);
-                let addr = await hdUtil.getAddress(wid, type, `${pathForm}${path}`);
-                console.log("addr:", addr);
-                let isValidAddress = false;
-                let accountAddress = '';
-                switch(type) {
-                    case 'BTC':
-                        try {
-                            bs58check.decode(addr.address);
-                            isValidAddress = true;
-                            accountAddress = addr.address;
-                        } catch (e) {
-                            console.log('isValidAddress BTC:', e);
-                            isValidAddress = false;
-                        }
-                        break;
-                    case 'WAN':
-                        isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
-                        if (wanUtil.toChecksumOTAddress(addr.waddress) === '') {
-                            isValidAddress = false;
-                        }
-                        accountAddress = `0x${addr.address}`;
-                        break;
-                    case 'ETH':
-                        isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
-                        accountAddress = `0x${addr.address}`;
-                        break;
-                    /* case 'EOS':
-                        isValidAddress = await ccUtil.isEosPrivateKey(`0x${addr.address}`);
-                        break; */
-                }
-                if (isValidAddress) {
-                    if (type === 'WAN') {
-                        hdUtil.createUserAccount(wid, newpath, { name: `PrivateKey${path + 1}`, addr: accountAddress, waddr: `0x${addr.address}` });
-                        Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress, waddr: `0x${addr.address}` });
-                    } else {
-                        hdUtil.createUserAccount(wid, newpath, { name: `PrivateKey${path + 1}`, addr: accountAddress });
-                        Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress });
+                console.log('exportPrivateKeys wid:', payload.wid);
+                privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
+                privateKeys.forEach((item, index) => {
+                    switch (payload.chainType) {
+                        case 'EOS':
+                            privateKeys[index] = ccUtil.toPrivateAddress(Buffer.from(item, 'hex'));
+                            break;
+                        default:
+                            privateKeys[index] = item.toString('hex');
+                            break;
                     }
-                    ccUtil.scanOTA(wid, newpath);
-
-                    ret = accountAddress;
-                } else {
-                    ret = false;
-                }
+                })
             } catch (e) {
-                console.log('importPrivateKey Error:');
-                console.log('e:', e);
                 logger.error(e.message || e.stack)
                 err = e
             }
-    
-            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: ret })
-          }
-          break
+
+            sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: privateKeys })
+            break
+
+        case 'importPrivateKey':
+            {
+                let ret;
+                try {
+                    let { pk, pk2, type } = payload;
+                    console.log('----------pk, ,pk2, chainType----------', pk, pk2, type);
+                    let chainID;
+                    switch (type) {
+                        case 'BTC':
+                            chainID = network === 'main' ? 0 : 1;
+                            break;
+                        case 'WAN':
+                            chainID = 5718350;
+                            break;
+                        case 'ETH':
+                            chainID = 60;
+                            break;
+                        case 'EOS':
+                            let isEosPk = await ccUtil.isEosPrivateKey(pk);
+                            console.log('---------------isEosPk:', isEosPk);
+                            // if (!isEosPk) {  }
+                            chainID = 194;
+                            break;
+                    }
+                    let pathForm = `m/44'/${chainID}'/0'/0/`;
+                    let index = hdUtil.getRawKeyCount(chainID, pathForm);
+                    let rawPriv = Buffer.from(pk, 'hex');
+                    let newPath = `${pathForm}${index}`;
+                    hdUtil.importPrivateKey(newPath, rawPriv);
+
+                    if (pk2 !== undefined) {
+                        let pathForm2 = `m/44'/${chainID}'/0'/1/`;
+                        let rawPriv2 = Buffer.from(pk2, 'hex');
+                        hdUtil.importPrivateKey(`${pathForm2}${index}`, rawPriv2);
+                    }
+                    let wid = 6;
+                    let addr = await hdUtil.getAddress(wid, type, `${pathForm}${index}`);
+                    console.log("addr:", addr);
+                    let isValidAddress = false;
+                    let accountAddress = '';
+                    switch (type) {
+                        case 'BTC':
+                            try {
+                                bs58check.decode(addr.address);
+                                isValidAddress = true;
+                                accountAddress = addr.address;
+                            } catch (e) {
+                                console.log('isValidAddress BTC:', e);
+                                isValidAddress = false;
+                            }
+                            break;
+                        case 'WAN':
+                            isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
+                            if (wanUtil.toChecksumOTAddress(addr.waddress) === '') {
+                                isValidAddress = false;
+                            }
+                            accountAddress = `0x${addr.address}`;
+                            break;
+                        case 'ETH':
+                            isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
+                            accountAddress = `0x${addr.address}`;
+                            break;
+                        /* case 'EOS':
+                            isValidAddress = await ccUtil.isEosPrivateKey(`0x${addr.address}`);
+                            break; */
+                    }
+                    if (isValidAddress) {
+                        if (type === 'WAN') {
+                            hdUtil.createUserAccount(wid, newPath, { name: `PrivateKey${path + 1}`, addr: accountAddress, waddr: `0x${addr.address}` });
+                            Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress, waddr: `0x${addr.address}` });
+                        } else {
+                            hdUtil.createUserAccount(wid, newPath, { name: `PrivateKey${path + 1}`, addr: accountAddress });
+                            Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress });
+                        }
+                        ccUtil.scanOTA(wid, newPath);
+
+                        ret = accountAddress;
+                    } else {
+                        ret = false;
+                    }
+                } catch (e) {
+                    console.log('importPrivateKey Error:');
+                    console.log('e:', e);
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: ret })
+            }
+            break
     }
 })
 
@@ -805,7 +810,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-        
+
         case 'update':
             try {
                 ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta)
@@ -1152,7 +1157,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 }
 
                 let stakeInfoArray = accounts.map(async account => {
-                    await retryRun(async (account)=>{
+                    await retryRun(async (account) => {
                         let info = await ccUtil.getDelegatorStakeInfo('wan', account.address);
                         if (info && info.length && info.length > 0) {
                             delegateInfo.push({ account: account, stake: info });
@@ -1162,7 +1167,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
 
                 // Get the rewards information for each local account, including the list of rewards received and which validator the rewards came from.
                 let DelegateIncentiveArray = accounts.map(async account => {
-                    await retryRun(async (account)=>{
+                    await retryRun(async (account) => {
                         let inc = await ccUtil.getDelegatorTotalIncentive('wan', account.address);
                         if (inc && inc.length && inc.length > 0) {
                             incentive.push({ account: account, incentive: inc });
@@ -1420,8 +1425,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
     switch (action) {
         case 'getTokenInfo':
             try {
-              let { scAddr, chain } = payload;
-              ret = await ccUtil.getTokenInfo(scAddr, chain);
+                let { scAddr, chain } = payload;
+                ret = await ccUtil.getTokenInfo(scAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1491,8 +1496,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'addCustomToken':
             try {
-              let { tokenAddr, symbol, decimals, select, chain } = payload;
-              setting.addToken(tokenAddr, { select, symbol, decimals, chain });
+                let { tokenAddr, symbol, decimals, select, chain } = payload;
+                setting.addToken(tokenAddr, { select, symbol, decimals, chain });
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1514,8 +1519,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'updateTokensBalance':
             let { address, tokenScAddr, chain } = payload;
             try {
-              let { address, tokenScAddr, chain } = payload;
-              ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
+                let { address, tokenScAddr, chain } = payload;
+                ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1780,11 +1785,11 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
-        
+
         case 'getDAppInjectFile':
             let ret = "";
 
-            if(setting.isDev) {
+            if (setting.isDev) {
                 ret = `file://${__dirname}/../modals/dAppInject.js`;
             } else {
                 ret = `file://${__dirname}/modals/dAppInject.js`
@@ -2083,7 +2088,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
         if (days > longestDays) {
             longestDays = days;
         }
-        
+
         if (minEpochId == 0) {
             list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: 'N/A' };
             list[i].myStake.bottom = 'N/A';
@@ -2091,7 +2096,7 @@ async function buildStakingList(delegateInfo, incentive, epochID, base, delegato
             list[i].distributeRewards = { title: Number(web3.utils.fromWei(distributeRewards)).toFixed(2), bottom: (days) };
             list[i].myStake.bottom = days;
         }
-        
+
         let d = new Date()
         d.setDate(d.getDate() - longestDays);
         base.startFrom = dateFormat(d / 1000);

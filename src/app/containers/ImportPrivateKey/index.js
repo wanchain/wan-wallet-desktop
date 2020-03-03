@@ -121,9 +121,9 @@ class ImportPrivateKey extends Component {
                 <Option value="BTC">BTC</Option>
                 <Option value="EOS">EOS</Option>
               </Select>
-              <Input.Password placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />
+              <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />
               {
-                this.state.type === 'WAN' && <Input.Password placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />
+                this.state.type === 'WAN' && <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />
               }
             </div>
           </Modal>
