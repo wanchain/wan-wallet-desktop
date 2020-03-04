@@ -329,7 +329,7 @@ class Tokens {
         } else {
           balance = 0;
         }
-        let path = ['ledger'].includes(type) ? `${wanAddress.addrInfo[type][item].path}` : `${WANPATH}${wanAddress.addrInfo[type][item].path}`;
+        let path = ['ledger', 'trezor'].includes(type) ? `${wanAddress.addrInfo[type][item].path}` : `${WANPATH}${wanAddress.addrInfo[type][item].path}`;
         addrList.push({
           path,
           key: item,

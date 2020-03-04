@@ -11,6 +11,7 @@ import SendNormalTrans from 'components/SendNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByAddr } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
+import { signTransaction } from 'componentUtils/trezor'
 
 const CHAINTYPE = 'WAN';
 
@@ -151,6 +152,44 @@ class TokenTrans extends Component {
             });
           }).catch(() => { reject(false) }); // eslint-disable-line prefer-promise-reject-errors
           break;
+        case 'trezor':
+          signTransaction(params.path, {
+            Txtype: 1,
+            value: '0x',
+            chainId: this.props.chainId,
+            to: trans.to,
+            data: trans.data,
+            nonce: '0x' + trans.nonce.toString(16),
+            gasLimit: trans.gasLimit,
+            gasPrice: '0x' + new BigNumber(trans.gasPrice).times(BigNumber(10).pow(9)).toString(16),
+          }, (_err, raw) => {
+            if (_err) {
+              console.log('signTrezorTransaction:', _err)
+              return;
+            }
+            wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
+              if (err) {
+                message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
+                reject(err);
+              } else {
+                wand.request('transaction_insertTransToDB', { rawTx: {
+                  txHash,
+                  value: trans.amount,
+                  from: from.toLowerCase(),
+                  srcSCAddrKey: 'WAN',
+                  srcChainType: 'WAN',
+                  tokenSymbol: 'WAN',
+                  ...trans
+                },
+                satellite: trans.satellite
+              }, () => {
+                  this.props.updateTransHistory();
+                })
+                resolve(txHash);
+              }
+            });
+          });
+          break;
         case 'normal':
           wand.request('transaction_normal', trans, (err, txHash) => {
             if (err) {
@@ -196,7 +235,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import', 'ledger']} transType={TRANSTYPE.tokenTransfer} />
+            <TransHistory name={['normal', 'import', 'ledger', 'trezor']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>

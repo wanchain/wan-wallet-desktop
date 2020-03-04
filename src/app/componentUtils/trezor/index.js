@@ -33,7 +33,7 @@ export const signTransaction = (path, tx, callback) => {
     let signedTx = '0x' + eTx.serialize().toString('hex');
     console.log('Signed transaction: ', signedTx);
     callback(null, signedTx);
-  });
+  }).catch(err => callback(err));
 }
 
 export const getPublicKey = callback => {
