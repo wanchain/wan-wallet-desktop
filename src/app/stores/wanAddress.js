@@ -134,6 +134,9 @@ class WanAddress {
       if (importArr.includes(item) && self.addrInfo['import'][item].wbalance !== parr[item]) {
         self.addrInfo['import'][item].wbalance = parr[item];
       }
+      if (rawKey.includes(item) && self.addrInfo['rawKey'][item].wbalance !== parr[item]) {
+        self.addrInfo['rawKey'][item].wbalance = parr[item];
+      }
     });
   }
 
@@ -323,7 +326,7 @@ class WanAddress {
 
   @action addRawKey({ path, addr, waddr }) {
     self.addrInfo['rawKey'][addr] = {
-      name: `PrivateKey${path + 1}`,
+      name: `Imported${path + 1}`,
       balance: '0',
       wbalance: '0',
       path: path,

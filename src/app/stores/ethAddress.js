@@ -153,7 +153,7 @@ class EthAddress {
 
     @action addRawKey({ path, addr }) {
       self.addrInfo['rawKey'][addr] = {
-        name: `PrivateKey${path + 1}`,
+        name: `Imported${path + 1}`,
         balance: '0',
         path: path,
         address: addr,

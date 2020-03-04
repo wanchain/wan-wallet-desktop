@@ -378,7 +378,7 @@ export const getAddrInfoByTypes = function (info, type, addrInfo, needType) {
 }
 
 export const getPrivateBalanceByAddr = function (addr, addrInfo) {
-  let addrArr = { ...addrInfo.normal, ...addrInfo.import };
+  let addrArr = { ...addrInfo.normal, ...addrInfo.import, ...addrInfo.rawKey };
   return addrArr[addr] ? addrArr[addr].wbalance : '0';
 }
 
@@ -745,6 +745,9 @@ export const getWalletIdByAddr = function (type) {
       break;
     case 'import':
       ID = WALLETID.KEYSTOREID;
+      break;
+    case 'rawKey':
+      ID = WALLETID.RAWKEY;
       break;
   }
   return ID;
