@@ -191,6 +191,7 @@ class TokenTrans extends Component {
           });
           break;
         case 'normal':
+        case 'import':
           wand.request('transaction_normal', trans, (err, txHash) => {
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
