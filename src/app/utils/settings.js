@@ -30,15 +30,15 @@ export const defaultTimeout = '5';
 export const DEFAULT_GASPRICE = 180000000000;
 export const DEFAULT_GAS = 4700000;
 
-export const REDEEMWEOS_GAS = '150000';
-export const LOCKETH_GAS = '300000';
-export const REDEEMWETH_GAS = '150000';
-export const REVOKEETH_GAS = '150000';
+export const REDEEMWEOS_GAS = '250000';
+export const LOCKETH_GAS = '400000';
+export const REDEEMWETH_GAS = '250000';
+export const REVOKEETH_GAS = '250000';
 
-export const LOCKWEOS_GAS = '500000'
-export const LOCKWETH_GAS = '300000';
-export const REDEEMETH_GAS = '150000';
-export const REVOKEWETH_GAS = '150000';
+export const LOCKWEOS_GAS = '600000'
+export const LOCKWETH_GAS = '500000';
+export const REDEEMETH_GAS = '250000';
+export const REVOKEWETH_GAS = '250000';
 
 export const MAIN = 'https://www.wanscan.org';
 export const TESTNET = 'https://testnet.wanscan.org';
