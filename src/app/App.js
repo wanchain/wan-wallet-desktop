@@ -99,10 +99,10 @@ class App extends Component {
         case 'BTC':
           stores.btcAddress.addRawKey(data);
           break;
-        /* case 'EOS':
-            break; */
-    }
-      // stores.wanAddress.addKeyStoreAddr(data);
+        case 'EOS':
+          stores.eosAddress.addRawKey(data);
+            break;
+      }
     })
 
     this.timer = setInterval(() => {

@@ -8,6 +8,7 @@ import { BigNumber } from 'bignumber.js';
 class EosAddress {
   @observable keyInfo = {
     normal: {},
+    rawKey: {}
   };
 
   @observable accountInfo = {};
@@ -23,6 +24,13 @@ class EosAddress {
   @action addKey(newKey) {
     self.keyInfo['normal'][newKey.publicKey] = {
       name: `EOS-PublicKey${newKey.start + 1}`,
+      path: newKey.path,
+    };
+  }
+
+  @action addRawKey(newKey) {
+    self.keyInfo['rawKey'][newKey.publicKey] = {
+      name: `Imported${newKey.start + 1}`,
       path: newKey.path,
     };
   }
@@ -62,12 +70,16 @@ class EosAddress {
   @computed get getKeyList() {
     let keyList = [];
     let normal = self.keyInfo['normal'];
-    Object.keys(normal).forEach((key) => {
-      let item = normal[key];
-      keyList.push({
-        name: item.name,
-        path: item.path,
-        publicKey: key
+    let rawKey = self.keyInfo['rawKey'];
+
+    [normal, rawKey].forEach((obj, index) => {
+      const walletID = obj === normal ? 1 : (obj === rawKey ? 6 : 5);
+      Object.keys(obj).forEach((item) => {
+        keyList.push({
+          name: obj[item].name,
+          path: obj[item].path,
+          publicKey: item
+        });
       });
     });
     return keyList;
@@ -93,13 +105,25 @@ class EosAddress {
       }
       let info = ret.accounts;
       if (ret && info instanceof Object && Object.keys(info).length) {
-        Object.keys(info).forEach(path => {
-          let item = info[path]['1'];
-          self.keyInfo['normal'][item.publicKey] = {
-            name: item.name,
-            path: path
+        let typeFunc = id => {
+          switch (id) {
+            case '1':
+              return 'normal';
+            case '6':
+              return 'rawKey';
           }
-        });
+        };
+        Object.keys(info).forEach(path => {
+          Object.keys(info[path]).forEach(id => {
+            if (['1', '6'].includes(id)) {
+              let item = info[path][id];
+              self.keyInfo[typeFunc(id)][item.publicKey] = {
+                name: item.name,
+                path: path
+              }
+            }
+          })
+        })
       }
     });
 
