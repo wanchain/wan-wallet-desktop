@@ -55,7 +55,8 @@ class Login extends Component {
         // Open scanner to scan the smart contract to get private tx balance.
         const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
         const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
-        openScanOTA(normalObj.concat(importObj));
+        const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
+        openScanOTA(normalObj.concat(importObj).concat(rawKeyObj));
 
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
           createBTCAddr(this.props.btcPath, 0).then(addressInfo => {
