@@ -342,7 +342,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     switch (type) {
                         case 'BTC':
                             chainID = network === 'main' ? 0 : 1;
-                            rawPriv = btcUtil.getPrivateKeyHex(pk);
+                            rawPriv = btcUtil.getHexByPrivateKey(pk);
                             break;
                         case 'WAN':
                             chainID = 5718350;
@@ -354,8 +354,8 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             break;
                         case 'EOS':
                             let isEosPk = await ccUtil.isEosPrivateKey(pk);
-                            rawPriv = Buffer.from(pk, 'hex');
                             console.log('---------------isEosPk:', isEosPk);
+                            rawPriv = await ccUtil.getEosPubKey(pk);
                             // if (!isEosPk) {  }
                             chainID = 194;
                             break;
@@ -363,7 +363,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     let pathForm = `m/44'/${chainID}'/0'/0/`;
                     let index = hdUtil.getRawKeyCount(chainID, pathForm);
                     let newPath = `${pathForm}${index}`;
-                    // console.log("rawPriv:", rawPriv);
+                    console.log("rawPriv:", rawPriv);
                     hdUtil.importPrivateKey(newPath, rawPriv);
                     if (pk2 !== undefined) {
                         let pathForm2 = `m/44'/${chainID}'/0'/1/`;
@@ -421,7 +421,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err, data: ret })
             }
-            break
+            break;
     }
 })
 
