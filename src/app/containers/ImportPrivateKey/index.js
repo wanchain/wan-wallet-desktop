@@ -43,12 +43,6 @@ class ImportPrivateKey extends Component {
     });
   }
 
-  /* pwdChange = e => {
-    this.setState({
-      pwd: e.target.value
-    });
-  } */
-
   typeChange = (v) => {
     this.setState({
       type: v,

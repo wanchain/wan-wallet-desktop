@@ -334,20 +334,27 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let ret;
                 try {
                     let { pk, pk2, type } = payload;
-                    console.log('----------pk, ,pk2, chainType----------', pk, pk2, type);
+                    let rawPriv = '';
+                    let wid = 6;
+                    let isValidAddress = false;
+                    let accountAddress = '';
                     let chainID;
                     switch (type) {
                         case 'BTC':
                             chainID = network === 'main' ? 0 : 1;
+                            rawPriv = btcUtil.getPrivateKeyHex(pk);
                             break;
                         case 'WAN':
                             chainID = 5718350;
+                            rawPriv = Buffer.from(pk, 'hex');
                             break;
                         case 'ETH':
                             chainID = 60;
+                            rawPriv = Buffer.from(pk, 'hex');
                             break;
                         case 'EOS':
                             let isEosPk = await ccUtil.isEosPrivateKey(pk);
+                            rawPriv = Buffer.from(pk, 'hex');
                             console.log('---------------isEosPk:', isEosPk);
                             // if (!isEosPk) {  }
                             chainID = 194;
@@ -355,20 +362,16 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     }
                     let pathForm = `m/44'/${chainID}'/0'/0/`;
                     let index = hdUtil.getRawKeyCount(chainID, pathForm);
-                    let rawPriv = Buffer.from(pk, 'hex');
                     let newPath = `${pathForm}${index}`;
+                    // console.log("rawPriv:", rawPriv);
                     hdUtil.importPrivateKey(newPath, rawPriv);
-
                     if (pk2 !== undefined) {
                         let pathForm2 = `m/44'/${chainID}'/0'/1/`;
                         let rawPriv2 = Buffer.from(pk2, 'hex');
                         hdUtil.importPrivateKey(`${pathForm2}${index}`, rawPriv2);
                     }
-                    let wid = 6;
                     let addr = await hdUtil.getAddress(wid, type, `${pathForm}${index}`);
-                    console.log("addr:", addr);
-                    let isValidAddress = false;
-                    let accountAddress = '';
+                    // console.log("addr:", addr);
                     switch (type) {
                         case 'BTC':
                             try {
@@ -376,13 +379,12 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                                 isValidAddress = true;
                                 accountAddress = addr.address;
                             } catch (e) {
-                                console.log('isValidAddress BTC:', e);
                                 isValidAddress = false;
                             }
                             break;
                         case 'WAN':
                             isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
-                            if (wanUtil.toChecksumOTAddress(addr.waddress) === '') {
+                            if ( typeof(addr.waddress) !== 'string' || wanUtil.toChecksumOTAddress(addr.waddress) === '') {
                                 isValidAddress = false;
                             }
                             accountAddress = `0x${addr.address}`;
@@ -391,27 +393,28 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
                             accountAddress = `0x${addr.address}`;
                             break;
-                        /* case 'EOS':
+                        case 'EOS':
                             isValidAddress = await ccUtil.isEosPrivateKey(`0x${addr.address}`);
-                            break; */
+                            break;
                     }
+                    // console.log('accountAddress:', accountAddress);
+                    // console.log('isValidAddress:', isValidAddress);
                     if (isValidAddress) {
                         if (type === 'WAN') {
-                            hdUtil.createUserAccount(wid, newPath, { name: `PrivateKey${path + 1}`, addr: accountAddress, waddr: `0x${addr.address}` });
-                            Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress, waddr: `0x${addr.address}` });
+                            hdUtil.createUserAccount(wid, newPath, { name: `Imported${index + 1}`, addr: accountAddress, waddr: `0x${addr.waddress}` });
+                            Windows.broadcast('notification', 'importPrivateKey', { type, path: index, addr: accountAddress, waddr: `0x${addr.waddress}` });
+                            ccUtil.scanOTA(wid, newPath);
                         } else {
-                            hdUtil.createUserAccount(wid, newPath, { name: `PrivateKey${path + 1}`, addr: accountAddress });
-                            Windows.broadcast('notification', 'importPrivateKey', { type, path, addr: accountAddress });
+                            hdUtil.createUserAccount(wid, newPath, { name: `Imported${index + 1}`, addr: accountAddress });
+                            Windows.broadcast('notification', 'importPrivateKey', { type, path: index, addr: accountAddress });
                         }
-                        ccUtil.scanOTA(wid, newPath);
 
                         ret = accountAddress;
                     } else {
                         ret = false;
                     }
                 } catch (e) {
-                    console.log('importPrivateKey Error:');
-                    console.log('e:', e);
+                    console.log('importPrivateKey Error:', e);
                     logger.error(e.message || e.stack)
                     err = e
                 }

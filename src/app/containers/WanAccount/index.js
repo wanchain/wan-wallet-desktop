@@ -13,7 +13,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
-import { hasSameName, checkAddrType } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
@@ -140,10 +140,9 @@ class WanAccount extends Component {
   }
 
   onSendNormalTransaction = (from) => {
-    console.log('Normal:', from);
     let params = this.props.transParams[from];
     let type = checkAddrType(from, this.props.addrInfo);
-    let walletID = type === 'normal' ? WALLETID.NATIVE : (type === 'import' ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
+    let walletID = getWalletIdByAddr(type);
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
@@ -175,7 +174,8 @@ class WanAccount extends Component {
 
   onSendPrivateTransaction = (from, splitAmount = []) => {
     let params = this.props.transParams[from];
-    let walletID = checkAddrType(from, this.props.addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let type = checkAddrType(from, this.props.addrInfo);
+    let walletID = getWalletIdByAddr(type);
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,

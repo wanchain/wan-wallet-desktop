@@ -7,7 +7,7 @@ import style from './index.less';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType } from 'utils/helper';
+import { checkAddrType, getWalletIdByAddr } from 'utils/helper';
 import { WALLETID, TRANSTYPE, ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 const CHAINTYPE = 'ETH';
@@ -74,7 +74,7 @@ class E20TokenTrans extends Component {
   handleSend = from => {
     const { transParams, addrInfo, tokenAddr } = this.props;
     let params = transParams[from];
-    let walletID = checkAddrType(from, addrInfo) === 'normal' ? WALLETID.NATIVE : WALLETID.KEYSTOREID;
+    let walletID = getWalletIdByAddr(checkAddrType(from, addrInfo));
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
