@@ -139,7 +139,7 @@ class CopyAndQrcode extends Component {
           </React.Fragment>
         }
         { Object.keys(addrInfo['import']).includes(addr)
-            ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="info" /></Tooltip>
+            ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
             : ''
         }
       </div>
