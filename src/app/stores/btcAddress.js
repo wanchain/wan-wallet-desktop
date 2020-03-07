@@ -165,9 +165,9 @@ class BtcAddress {
       })
     }
 
-    @action addRawKey({ path, addr }) {
+    @action addRawKey({ path, index, addr }) {
       self.addrInfo['rawKey'][addr] = {
-        name: `Imported${path + 1}`,
+        name: `Imported${index + 1}`,
         balance: '0',
         path: path,
         address: addr,

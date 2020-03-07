@@ -340,6 +340,8 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(pk) : Buffer.from(pk, 'hex');
                     let pathForm = `m/44'/${chainID}'/0'/0/`;
                     let index = hdUtil.getRawKeyCount(chainID, pathForm);
+                    let keystoreIndex = hdUtil.getKeyStoreCount(chainID);
+                    
                     let newPath = `${pathForm}${index}`;
 
                     hdUtil.importPrivateKey(newPath, rawPriv);
@@ -358,8 +360,8 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             try {
                                 bs58check.decode(addr.address);
                                 isValidAddress = true;
-                                paramsObj1 = { name: `Imported${index + 1}`, addr: addr.address }
-                                paramsObj2 = { type, path: index, addr: addr.address }
+                                paramsObj1 = { name: `Imported${index + keystoreIndex + 1}`, addr: addr.address }
+                                paramsObj2 = { type, path: index, index: (index + keystoreIndex), addr: addr.address }
                             } catch (e) {
                                 isValidAddress = false;
                             }
@@ -369,18 +371,18 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             if ( typeof(addr.waddress) !== 'string' || wanUtil.toChecksumOTAddress(addr.waddress) === '') {
                                 isValidAddress = false;
                             }
-                            paramsObj1 = { name: `Imported${index + 1}`, addr: `0x${addr.address}`, waddr: `0x${addr.waddress}` }
-                            paramsObj2 = { type, path: index, addr: `0x${addr.address}`, waddr: `0x${addr.waddress}` }
+                            paramsObj1 = { name: `Imported${index + keystoreIndex + 1}`, addr: `0x${addr.address}`, waddr: `0x${addr.waddress}` }
+                            paramsObj2 = { type, path: index, index: (index + keystoreIndex), addr: `0x${addr.address}`, waddr: `0x${addr.waddress}` }
                             break;
                         case 'ETH':
                             isValidAddress = await ccUtil.isEthAddress(`0x${addr.address}`);
-                            paramsObj1 = { name: `Imported${index + 1}`, addr: `0x${addr.address}` }
-                            paramsObj2 = { type, path: index, addr: `0x${addr.address}` }
+                            paramsObj1 = { name: `Imported${index + keystoreIndex + 1}`, addr: `0x${addr.address}` }
+                            paramsObj2 = { type, path: index, index: (index + keystoreIndex), addr: `0x${addr.address}` }
                             break;
                         case 'EOS':
                             isValidAddress = await ccUtil.isEosPublicKey(addr.pubKey);
-                            paramsObj1 = { name: `Imported${index + 1}`, publicKey: addr.address }
-                            paramsObj2 = { type, path: newPath, start: index, publicKey: addr.address }
+                            paramsObj1 = { name: `Imported${index + keystoreIndex + 1}`, publicKey: addr.address }
+                            paramsObj2 = { type, path: newPath, start: (index + keystoreIndex), publicKey: addr.address }
                             break;
                     }
                     if (isValidAddress) {

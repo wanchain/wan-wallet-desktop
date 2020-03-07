@@ -28,10 +28,10 @@ class EosAddress {
     };
   }
 
-  @action addRawKey(newKey) {
-    self.keyInfo['rawKey'][newKey.publicKey] = {
-      name: `Imported${newKey.start + 1}`,
-      path: newKey.path,
+  @action addRawKey({ publicKey, start, path }) {
+    self.keyInfo['rawKey'][publicKey] = {
+      name: `Imported${start + 1}`,
+      path: path,
     };
   }
 
