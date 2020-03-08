@@ -79,7 +79,7 @@ class Sidebar extends Component {
       return (
         item.key === '/AddDApp' ? (
           <Item key={item.key} onClick={this.onAddDapp}>
-            <span>{item.title}</span>
+            <Icon type="plus-circle" style={{ fontSize: '32px', marginLeft: '32px', marginTop: '14px' }}/>
           </Item>
        ) : (
           <Item key={item.key}>
