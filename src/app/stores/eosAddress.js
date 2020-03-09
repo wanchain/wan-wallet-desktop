@@ -201,18 +201,23 @@ class EosAddress {
   @computed get normalHistoryList() {
     let historyList = [];
     Object.keys(self.transHistory).forEach(item => {
-      if (!self.transHistory[item].action) {
-        if (!self.historySelectedAccountName || self.historySelectedAccountName === self.transHistory[item]['from']) {
-          let status = self.transHistory[item].status;
+      let obj = self.transHistory[item];
+      if (!obj.action) {
+        if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
+          let status = obj.status;
+          let value = `0`;
+          if (obj['value']) {
+            value = new BigNumber(obj['value'].replace(/ EOS/, '')).toString();
+          }
           historyList.push({
             key: item,
-            time: timeFormat(self.transHistory[item]['sendTime']),
-            from: self.transHistory[item]['from'],
-            to: self.transHistory[item]['to'],
-            value: self.transHistory[item]['value'],
+            time: timeFormat(obj['sendTime']),
+            from: obj['from'],
+            to: obj['to'],
+            value: `${value} EOS`,
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]['sendTime'],
-            txHash: self.transHistory[item]['txHash']
+            sendTime: obj['sendTime'],
+            txHash: obj['txHash']
           });
         }
       }
@@ -223,50 +228,54 @@ class EosAddress {
   @computed get resourceHistoryList() {
     let historyList = [];
     Object.keys(self.transHistory).forEach(item => {
-      if (self.transHistory[item].action) {
-        if (!self.historySelectedAccountName || self.historySelectedAccountName === self.transHistory[item]['from']) {
-          let status = self.transHistory[item].status;
+      let obj = self.transHistory[item];
+      if (obj.action) {
+        if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
+          let status = obj.status;
           let value = '';
-          switch (self.transHistory[item]['action']) {
+          switch (obj['action']) {
             case 'buyrambytes':
-              value = `${self.transHistory[item]['ramBytes']} KB`;
+              value = `${obj['ramBytes']} KB`;
               break;
             case 'sellram':
-              value = `${self.transHistory[item]['ramBytes']} KB`;
+              value = `${obj['ramBytes']} KB`;
               break;
             case 'newaccount':
-              let ram = self.transHistory[item]['ramBytes'];
-              let cpu = self.transHistory[item]['cpuAmount'];
-              let net = self.transHistory[item]['netAmount'];
+              let ram = obj['ramBytes'];
+              let cpu = obj['cpuAmount'];
+              let net = obj['netAmount'];
               value = `${ram}KB/ ${Number(cpu.replace(/ EOS/, ''))}EOS/ ${Number(net.replace(/ EOS/, ''))}EOS`;
               break;
             case 'delegatebw':
-              if (self.transHistory[item]['cpuAmount'] === '0.0000 EOS') {
-                value = `${self.transHistory[item]['netAmount']}`;
+              if (obj['cpuAmount'] === '0.0000 EOS') {
+                value = `${obj['netAmount']}`;
               } else {
-                value = `${self.transHistory[item]['cpuAmount']}`;
+                value = `${obj['cpuAmount']}`;
               }
               break;
             case 'undelegatebw':
-              if (self.transHistory[item]['cpuAmount'] === '0.0000 EOS') {
-                value = `${self.transHistory[item]['netAmount']}`;
+              if (obj['cpuAmount'] === '0.0000 EOS') {
+                value = `${obj['netAmount']}`;
               } else {
-                value = `${self.transHistory[item]['cpuAmount']}`;
+                value = `${obj['cpuAmount']}`;
               }
               break;
             default:
-              value = self.transHistory[item]['value'];
+              value = obj['value'];
+          }
+          if (value.indexOf(' EOS') !== -1) {
+              value = `${new BigNumber(value.replace(/ EOS/, '')).toString()} EOS`
           }
           historyList.push({
             key: item,
-            time: timeFormat(self.transHistory[item]['sendTime']),
-            from: self.transHistory[item]['from'],
-            to: self.transHistory[item]['to'],
+            time: timeFormat(obj['sendTime']),
+            from: obj['from'],
+            to: obj['to'],
             value: value,
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: self.transHistory[item]['sendTime'],
-            action: self.transHistory[item]['action'],
-            txHash: self.transHistory[item]['txHash']
+            sendTime: obj['sendTime'],
+            action: obj['action'],
+            txHash: obj['txHash']
           });
         }
       }
