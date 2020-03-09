@@ -44,7 +44,6 @@ class CopyAndQrcode extends Component {
   }
 
   copy2Clipboard = addr => {
-    console.log('copy:', addr);
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
@@ -79,7 +78,6 @@ class CopyAndQrcode extends Component {
       if (err) {
         console.log('wallet_exportPrivateKeys:', err)
       } else {
-        console.log('privateKey:', data);
         this.setState({
           privateKey1: data[0],
           privateKey2: data[1],

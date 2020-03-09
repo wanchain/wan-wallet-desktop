@@ -26,48 +26,56 @@
     background-color: #151625;
   }
 
-  :global(.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title) {
-    height: 60px !important;
-    line-height: 60px !important;
-  }
-
-  :global(.ant-menu-dark.ant-menu-inline .ant-menu-item) {
-    font-size: 16px;
-  }
-
-  :global(.ant-menu-dark.ant-menu-inline .ant-menu-submenu-title) {
-    font-size: 16px;
-  }
-
-  :global(.ant-menu.ant-menu-dark .ant-menu-item-selected) {
-    background: @sidebar-right-bg;
-  }
-
-  :global(.ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected) {
-    background: @sidebar-right-bg;
-  }
-
-  :global(.ant-menu-item:hover) {
-    background: @sidebar-right-hover-bg;
-  }
-
-  :global(.ant-menu-item) {
-    height: 60px !important;
-    line-height: 60px !important;
-    border-radius: 6px !important;
-  }
-
-  :global(.ant-menu-inline-collapsed) {
-    width: 120px;
-
-    >li {
-      text-align: center;
+  :global {
+    .ant-menu-inline>.ant-menu-submenu>.ant-menu-submenu-title {
+      height: 60px !important;
+      line-height: 60px !important;
     }
-  }
 
-  :global(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
-    box-shadow: none;
-    background-color: @nav-left-bg;
+    .ant-menu-dark.ant-menu-inline {
+
+      .ant-menu-item,
+      .ant-menu-submenu-title {
+        font-size: 16px;
+      }
+    }
+
+    .ant-menu.ant-menu-dark .ant-menu-item-selected {
+      background: @sidebar-right-bg;
+    }
+
+    .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+      background: @sidebar-right-bg;
+    }
+
+    .ant-menu-item:hover {
+      background: @sidebar-right-hover-bg;
+    }
+
+    .ant-menu-item:not(.ant-menu-top-item) {
+      height: 36px !important;
+      line-height: 36px !important;
+      border-radius: 6px !important;
+    }
+
+    .ant-menu-inline-collapsed {
+      width: 120px;
+
+      >li {
+        text-align: center;
+      }
+    }
+
+    .ant-menu-top-item {
+      min-height: 60px;
+      line-height: 60px !important;
+      border-radius: 6px !important;
+    }
+
+    .ant-menu-dark .ant-menu-inline.ant-menu-sub {
+      box-shadow: none;
+      background-color: @nav-left-bg;
+    }
   }
 }
 
@@ -100,4 +108,12 @@
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px;
+}
+
+.addIcon {
+  font-size: 20px !important;
+  margin-left: 32px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }

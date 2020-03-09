@@ -279,7 +279,6 @@ class LanguageIntl {
         children: [
           {
             title: 'Add',
-            step: '1',
             key: '/AddDApp',
             icon: 'plus-circle',
           },
