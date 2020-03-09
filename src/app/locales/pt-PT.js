@@ -466,6 +466,9 @@ const pt_PT = {
     'CrossChainTransHistory.redeemFinished': 'Resgate terminado',
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando transação',
     'CrossChainTransHistory.waitingCross': 'Aguardando solicitação de bloqueio',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',

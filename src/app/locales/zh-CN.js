@@ -470,6 +470,9 @@ const zh_CN = {
     'CrossChainTransHistory.redeemFinished': '赎回成功',
     'CrossChainTransHistory.sentHashConfirming': '交易确认中',
     'CrossChainTransHistory.waitingCross': '等待锁定',
+    'CrossChainTransHistory.Cancelled': '已撤销',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman锁定',
+    'CrossChainTransHistory.Success': '成功',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

@@ -467,6 +467,9 @@ const th_TH = {
     'CrossChainTransHistory.redeemFinished': 'การถอนคืนเรียบร้อยแล้ว',
     'CrossChainTransHistory.sentHashConfirming': 'กำลังยืนยันธุรกรรม',
     'CrossChainTransHistory.waitingCross': 'กำลังรอคำสั่งล็อค',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',

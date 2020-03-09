@@ -467,6 +467,9 @@ const fr_FR = {
     'CrossChainTransHistory.redeemFinished': 'Redemption Finished',
     'CrossChainTransHistory.sentHashConfirming': 'Confirming Transaction',
     'CrossChainTransHistory.waitingCross': 'Waiting For Lock Request',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Portefeuille',
