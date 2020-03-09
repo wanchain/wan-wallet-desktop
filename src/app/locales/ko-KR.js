@@ -6,6 +6,7 @@ const ko_KR = {
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',
+    'Common.importedAccount': 'Imported account',
     'Common.from': '발신자',
     'Common.days': ' 일',
     'Common.amount': '금액',

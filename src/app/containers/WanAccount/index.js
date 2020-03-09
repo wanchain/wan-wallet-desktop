@@ -1,7 +1,7 @@
 /* eslint-disable prefer-promise-reject-errors */
 import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
@@ -13,7 +13,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
-import { hasSameName, checkAddrType, getWalletIdByAddr } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
@@ -33,7 +33,7 @@ const CHAINTYPE = 'WAN';
 
 @observer
 class WanAccount extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       bool: true,
@@ -49,6 +49,9 @@ class WanAccount extends Component {
     {
       dataIndex: 'name',
       editable: true,
+      render: (text, record) => {
+        return <Fragment>{[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(record.wid) && <Tooltip placement="top" title={intl.get('Common.importedAccount')}><Icon type="import" className="importedIcon"/></Tooltip>}{text}</Fragment>;
+      },
       width: '15%'
     },
     {
@@ -89,11 +92,11 @@ class WanAccount extends Component {
     };
   });
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -142,7 +145,7 @@ class WanAccount extends Component {
   onSendNormalTransaction = (from) => {
     let params = this.props.transParams[from];
     let type = checkAddrType(from, this.props.addrInfo);
-    let walletID = getWalletIdByAddr(type);
+    let walletID = getWalletIdByType(type);
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
@@ -175,7 +178,7 @@ class WanAccount extends Component {
   onSendPrivateTransaction = (from, splitAmount = []) => {
     let params = this.props.transParams[from];
     let type = checkAddrType(from, this.props.addrInfo);
-    let walletID = getWalletIdByAddr(type);
+    let walletID = getWalletIdByType(type);
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
@@ -238,12 +241,12 @@ class WanAccount extends Component {
                 <p className={style.privateAddress}>
                   <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>
                 </p>
-                { privateAddress && <CopyAndQrcode addr={privateAddress} /> }
-                { privateAddress && <Tooltip placement="bottom" title={intl.get('WanAccount.privateTxReceiverAddress')}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip> }
+                {privateAddress && <CopyAndQrcode addr={privateAddress} />}
+                {privateAddress && <Tooltip placement="bottom" title={intl.get('WanAccount.privateTxReceiverAddress')}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip>}
               </div>
             </td>
             <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
-            <td style={{ width: '13%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE}/></td>
+            <td style={{ width: '13%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE} /></td>
             <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>

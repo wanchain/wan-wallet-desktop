@@ -1,10 +1,11 @@
 import intl from 'react-intl-universal';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message } from 'antd';
+import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
 import './index.less';
 import { formatNum } from 'utils/support';
+import { WALLETID } from 'utils/settings';
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory/BTCTransHistory';
@@ -42,7 +43,10 @@ class BtcAccount extends Component {
   columns = [
     {
       dataIndex: 'name',
-      editable: true
+      editable: true,
+      render: (text, record) => {
+        return <Fragment>{[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(record.wid) && <Tooltip placement="top" title={intl.get('Common.importedAccount')}><Icon type="import" className="importedIcon"/></Tooltip>}{text}</Fragment>;
+      }
     },
     {
       dataIndex: 'address',

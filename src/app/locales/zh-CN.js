@@ -6,6 +6,7 @@ const zh_CN = {
     'Common.exportKey': '导出私钥',
     'Common.privateKey': '备份私钥',
     'Common.yourPrivateKey': '你的私钥',
+    'Common.importedAccount': '导入的账户',
     'Common.from': '发送方',
     'Common.days': ' 天',
     'Common.amount': '金额',
