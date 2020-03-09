@@ -111,7 +111,7 @@ class CopyAndQrcode extends Component {
               okText={intl.get('Common.ok')}
               cancelText={intl.get('Common.cancel')}
             >
-              <p className={style.textP}>{intl.get('Backup.warning')}: {intl.get('Backup.doNotShare')}</p>
+              <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('Private.doNotShare')}</p>
               {
                 this.state.showPrivateKey ? (
                   <div>

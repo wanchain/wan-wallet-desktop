@@ -60,11 +60,12 @@ const zh_CN = {
     'Backup.saveSeedPhraseNotice': '如果你新安装钱包软件，需要该助记词来恢复你的数字资产。把助记词安全秘密的保存下来。',
     'Backup.continue': '下一步',
     'Backup.seedPhrase': '备份助记词',
-    'Backup.warning': '告警',
     'Backup.doNotShare': '不要把助记词告诉任何人，否则你会丢失所有的数字资产。',
     'Backup.yourSeedPhrase': '你的助记词',
     'Backup.copyToClipboard': '复制到剪切板',
     'Backup.enterPassword': '输入密码',
+
+    'Private.doNotShare': '不要把私钥告诉任何人，否则你会丢失所有的数字资产。',
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': '请按照下面步骤连接你的Ledger',

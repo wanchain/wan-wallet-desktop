@@ -60,11 +60,12 @@ const ko_KR = {
     'Backup.saveSeedPhraseNotice': ' 새로운 지갑 소프트웨어를 설치하는 경우 자산을 복구하려면 Mnemonic이 필요합니다. Mnemonic와 관련된 암호 및 시큐리티 코드를 보관하세요.',
     'Backup.continue': '다음 단계',
     'Backup.seedPhrase': '백업 Mnemonic',
-    'Backup.warning': '경고',
     'Backup.doNotShare': ' 절대 Mnemonic에 대해서 누구에게도 공유 하시면 안됩니다. Mnemonic을 분실시에는 모든 디지털 자산을 복구 불가 하게 됩니다.',
     'Backup.yourSeedPhrase': '사용자의 Mnemonic',
     'Backup.copyToClipboard': '클립보드로 복사',
     'Backup.enterPassword': '비밀번호를 입력하세요',
+
+    'Private.doNotShare': 'DO NOT share the private key with anybody. Otherwise all of your assets will be lost.',
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'Ledger 지갑을 연결하려면 아래 지침을 따르십시오',
@@ -88,7 +89,7 @@ const ko_KR = {
 
     'ImportPrivateKey.title': 'Import Account',
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
-    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
+    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',

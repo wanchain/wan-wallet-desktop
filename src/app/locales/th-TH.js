@@ -60,11 +60,12 @@ const th_TH = {
     'Backup.saveSeedPhraseNotice': 'ถ้าคุณติดตั้งกระเป๋าใหม่ คุณจะต้องใช้ "กลุ่มคำลับ" เหล่านี้ในการที่จะเข้าถึงทรัพย์สินของคุณ ดังนั้นกรุณาเก็บรักษากลุ่มคำเหล่านี้',
     'Backup.continue': 'ไปต่อ',
     'Backup.seedPhrase': 'แสดงกลุ่มคำลับ',
-    'Backup.warning': 'ระวัง',
     'Backup.doNotShare': 'เก็บกลุ่มคำลับเหล่านี้ไว้เป็นความลับสำหรับท่านเท่านั้น อย่าแสดงหรือให้คนอื่นเห็น มิจฉะนั้นทรัพย์สินของคุณอาจจะสูญหายได้',
     'Backup.yourSeedPhrase': 'กลุ่มคำลับของท่าน',
     'Backup.copyToClipboard': 'คัดลอกไปยังคลิปบอร์ด',
     'Backup.enterPassword': 'กรอกรหัสผ่าน',
+
+    'Private.doNotShare': 'DO NOT share the private key with anybody. Otherwise all of your assets will be lost.',
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'กรุณาทำตามคำแนะนำเพื่อที่จะต่อกับกระเป๋า Ledger ของคุณ',
@@ -88,7 +89,7 @@ const th_TH = {
 
     'ImportPrivateKey.title': 'Import Account',
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
-    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
+    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',

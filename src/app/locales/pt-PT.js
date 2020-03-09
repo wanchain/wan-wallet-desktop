@@ -60,11 +60,12 @@ const pt_PT = {
     'Backup.saveSeedPhraseNotice': 'Se você instalar uma nova carteira, precisará dessa Seed Phrase para acessar seus ativos. Salve-a em algum lugar seguro e secreto.',
     'Backup.continue': 'Continuar',
     'Backup.seedPhrase': 'Mostrar Seed Phrase',
-    'Backup.warning': 'ATENÇÃo',
     'Backup.doNotShare': 'NÃO compartilhe esta Seed Phrase com ninguém. Caso contrário, todos os seus ativos serão perdidos.',
     'Backup.yourSeedPhrase': 'Sua Seed Phrase',
     'Backup.copyToClipboard': 'Copiar para área de transferência',
     'Backup.enterPassword': ' Insira Senha',
+
+    'Private.doNotShare': 'DO NOT share the private key with anybody. Otherwise all of your assets will be lost.',
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'Siga as instruções abaixo para conectar sua carteira Ledger',
@@ -88,7 +89,7 @@ const pt_PT = {
 
     'ImportPrivateKey.title': 'Import Account',
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
-    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase',
+    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',
