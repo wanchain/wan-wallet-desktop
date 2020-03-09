@@ -731,7 +731,7 @@ export const checkEosNameExist = function (address) {
   })
 };
 
-export const getWalletIdByAddr = function (type) {
+export const getWalletIdByType = function (type) {
   let ID
   switch (type) {
     case 'normal':

@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import languageIntl from './languageIntl';
-import { EOSPATH } from 'utils/settings';
+import { EOSPATH, WALLETID } from 'utils/settings';
 import { timeFormat, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
@@ -73,7 +73,7 @@ class EosAddress {
     let rawKey = self.keyInfo['rawKey'];
 
     [normal, rawKey].forEach((obj, index) => {
-      const walletID = obj === normal ? 1 : (obj === rawKey ? 6 : 5);
+      const walletID = obj === normal ? WALLETID.NATIVE : (obj === rawKey ? WALLETID.RAWKEY : WALLETID.KEYSTOREID);
       Object.keys(obj).forEach((item) => {
         keyList.push({
           name: obj[item].name,

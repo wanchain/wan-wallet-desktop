@@ -180,7 +180,7 @@ class BtcAddress {
       let rawKeyArr = self.addrInfo['rawKey'];
 
       [normalArr, rawKeyArr].forEach((obj, index) => {
-        const walletID = obj === normalArr ? 1 : (obj === rawKeyArr ? 6 : 5);
+        const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === rawKeyArr ? WALLETID.RAWKEY : WALLETID.KEYSTOREID);
         Object.keys(obj).forEach((item) => {
           addrList.push({
             key: item,

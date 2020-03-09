@@ -9,7 +9,7 @@ import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
-import { checkAddrType, getWalletIdByAddr } from 'utils/helper';
+import { checkAddrType, getWalletIdByType } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor'
 
@@ -106,7 +106,7 @@ class TokenTrans extends Component {
   handleSend = from => {
     let params = this.props.transParams[from];
     let type = checkAddrType(from, this.props.addrInfo);
-    let walletID = getWalletIdByAddr(type);
+    let walletID = getWalletIdByType(type);
     let trans = {
       walletID,
       chainType: CHAINTYPE,

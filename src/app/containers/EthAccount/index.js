@@ -8,7 +8,7 @@ import { ETHPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType, hasSameName, getWalletIdByAddr } from 'utils/helper';
+import { checkAddrType, hasSameName, getWalletIdByType } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 const CHAINTYPE = 'ETH';
@@ -82,7 +82,7 @@ class EthAccount extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    let walletID = getWalletIdByAddr(checkAddrType(from, this.props.addrInfo));
+    let walletID = getWalletIdByType(checkAddrType(from, this.props.addrInfo));
     let trans = {
       walletID: walletID,
       chainType: CHAINTYPE,
