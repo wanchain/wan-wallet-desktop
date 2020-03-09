@@ -53,8 +53,10 @@ class CopyAndQrcode extends Component {
     this.setState({
       visible: false,
       showMnemonic: false,
-      mnemonic: '',
-      pwd: ''
+      pwd: '',
+      showPrivateKey: false,
+      privateKey1: '',
+      privateKey2: ''
     });
   }
 
