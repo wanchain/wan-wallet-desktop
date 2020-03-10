@@ -307,6 +307,7 @@ const ko_KR = {
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
     'CopyAndQrcode.privateKey': 'Private Key',
+    'CopyAndQrcode.confirmText': 'Are you sure to delete',
 
     'HwWallet.Accounts.name': '지갑명',
     'HwWallet.Accounts.address': '지갑 주소',

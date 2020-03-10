@@ -45,6 +45,8 @@ const network = setting.get('network');
 const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
 const WALLET_ID_LEDGER = 0x02;
 const WALLET_ID_TREZOR = 0x03;
+const WALLET_ID_KEYSTORE = 0x05;
+const WALLET_ID_RAWKEY = 0x06;
 
 const NETWORK_SLOW = 200;  // If network delay large than 200ms it shows Good.
 
@@ -825,7 +827,19 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'delete':
             try {
-                ret = hdUtil.deleteUserAccount(payload.walletID, payload.path)
+                const { walletID, path } = payload;
+                hdUtil.deleteUserAccount(walletID, path);
+
+                if (walletID === WALLET_ID_RAWKEY) {
+                    hdUtil.deleteRawKey(path);
+                    if (path.startsWith(`m/44'/${WAN_ID}'/`)) { // Delete WAN private address's raw key
+                        let privatePath = path.split('');
+                        privatePath.splice(privatePath.lastIndexOf('/') -1, 1, '1');
+                        hdUtil.deleteRawKey(privatePath.join(''));
+                    }
+                }
+                
+                ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

@@ -306,6 +306,7 @@ const pt_PT = {
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
     'CopyAndQrcode.privateKey': 'Private Key',
+    'CopyAndQrcode.confirmText': 'Are you sure to delete',
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',

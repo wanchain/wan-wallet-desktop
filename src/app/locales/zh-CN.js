@@ -309,6 +309,7 @@ const zh_CN = {
 
     'CopyAndQrcode.copySuccessfully': '复制成功',
     'CopyAndQrcode.privateKey': '私钥',
+    'CopyAndQrcode.confirmText': '您确定要删除',
 
     'HwWallet.Accounts.name': '名称',
     'HwWallet.Accounts.address': '地址',
