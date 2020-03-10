@@ -1,7 +1,7 @@
 /* eslint-disable prefer-promise-reject-errors */
 import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
 
@@ -49,9 +49,6 @@ class WanAccount extends Component {
     {
       dataIndex: 'name',
       editable: true,
-      render: (text, record) => {
-        return <Fragment>{[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(record.wid) && <Tooltip placement="top" title={intl.get('Common.importedAccount')}><Icon type="import" className="importedIcon"/></Tooltip>}{text}</Fragment>;
-      },
       width: '15%'
     },
     {

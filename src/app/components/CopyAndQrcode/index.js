@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
 import style from './index.less';
+import { WALLETID } from 'utils/settings';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
@@ -23,29 +24,33 @@ class CopyAndQrcode extends Component {
 
   createQrCode = addr => {
     QRCode.toDataURL(addr)
-    .then(url => {
-      this.setState({
-        url: url
+      .then(url => {
+        this.setState({
+          url: url
+        })
+        Modal.info({
+          title: addr,
+          content: (
+            <div className="codeImg">
+              <img src={this.state.url} />
+            </div>
+          ),
+          maskClosable: true,
+          okText: intl.get('Common.ok')
+        });
       })
-      Modal.info({
-        title: addr,
-        content: (
-          <div className="codeImg">
-            <img src={this.state.url} />
-          </div>
-        ),
-        maskClosable: true,
-        okText: intl.get('Common.ok')
+      .catch(err => {
+        console.error(err)
       });
-    })
-    .catch(err => {
-      console.error(err)
-    });
   }
 
   copy2Clipboard = addr => {
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
+  }
+
+  deleteAccount = (...args) => {
+    console.log('deleteAccount:', args);
   }
 
   resetState = () => {
@@ -87,7 +92,7 @@ class CopyAndQrcode extends Component {
     })
   }
 
-  render () {
+  render() {
     const { addr, addrInfo, type, path, wid } = this.props;
 
     return (
@@ -123,8 +128,8 @@ class CopyAndQrcode extends Component {
                           <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${intl.get('CopyAndQrcode.privateKey')}1: ${this.state.privateKey1}\n${intl.get('CopyAndQrcode.privateKey')}2: ${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
                         </Fragment>
                       ) : (
-                        <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
-                      )
+                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                        )
                     }
                   </div>
                 ) : (
@@ -136,10 +141,11 @@ class CopyAndQrcode extends Component {
             </Modal>
           </React.Fragment>
         }
-        { Object.keys(addrInfo['import']).includes(addr)
-            ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
-            : ''
+        {[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(wid)
+          ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
+          : ''
         }
+        <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.deleteAccount(addr, type, path, wid)} /></Tooltip>
       </div>
     );
   }

@@ -1,10 +1,9 @@
 import intl from 'react-intl-universal';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Form, message, Tooltip, Icon } from 'antd';
+import { Button, Table, Form } from 'antd';
 import { getEosAccountInfo } from 'utils/helper';
 import style from './index.less';
-import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import EOSImportAccountForm from '../EOSImportAccountForm';
@@ -37,10 +36,7 @@ class EOSKeyPairList extends Component {
   columns = [
     {
       dataIndex: 'name',
-      editable: true,
-      render: (text, record) => {
-        return <Fragment>{[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(record.wid) && <Tooltip placement="top" title={intl.get('Common.importedAccount')}><Icon type="import" className="importedIcon"/></Tooltip>}{text}</Fragment>;
-      }
+      editable: true
     },
     {
       dataIndex: 'publicKey',
