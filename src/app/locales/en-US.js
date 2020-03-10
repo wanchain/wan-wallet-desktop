@@ -154,7 +154,7 @@ const en_US = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 Tokens',
     'Config.enableWrc20': 'Enable WRC-20 Tokens',
-    'Config.deleteConfirm': 'Deletion confirmation',
+    'Config.deleteConfirm': 'Deletion Confirmation',
     'Config.confirmText': 'Confirm to delete: ',
     'Config.enableEosToken': 'Enable EOS tokens',
 
@@ -309,6 +309,7 @@ const en_US = {
 
     'CopyAndQrcode.copySuccessfully': 'Copy successfully',
     'CopyAndQrcode.privateKey': 'Private Key',
+    'CopyAndQrcode.confirmText': 'Are you sure to delete',
 
     'HwWallet.Accounts.name': 'NAME',
     'HwWallet.Accounts.address': 'ADDRESS',

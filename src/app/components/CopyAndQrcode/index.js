@@ -131,7 +131,7 @@ class CopyAndQrcode extends Component {
   }
 
   render() {
-    const { addr, addrInfo, type, path, wid } = this.props;
+    const { addr, addrInfo, type, path, wid, name } = this.props;
     return (
       <div className="handleIco">
         <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
@@ -200,8 +200,8 @@ class CopyAndQrcode extends Component {
             bodyStyle={{ textAlign: 'center' }}
           >
             <div className={style.deleteMsg}>
-              <p>{intl.get('Config.confirmText')}</p>
-              <p className={style.symbolSty}>{addr}</p>
+              <span>{intl.get('CopyAndQrcode.confirmText')} : </span>
+              <span className={style.symbolSty}>{name}</span>
             </div>
           </Modal>
         }

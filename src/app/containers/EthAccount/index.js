@@ -44,7 +44,7 @@ class EthAccount extends Component {
     },
     {
       dataIndex: 'address',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>
     },
     {
       dataIndex: 'balance',

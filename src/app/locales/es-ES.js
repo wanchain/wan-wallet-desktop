@@ -154,7 +154,7 @@ const es_ES = {
     'Config.wallet': 'Wallet Options',
     'Config.enableErc20': 'Enable ERC-20 Tokens',
     'Config.enableWrc20': 'Enable WRC-20 Tokens',
-    'Config.deleteConfirm': 'Deletion confirmation',
+    'Config.deleteConfirm': 'Deletion Confirmation',
     'Config.confirmText': 'Confirm to delete: ',
     'Config.enableEosToken': 'Enable EOS tokens',
 
