@@ -316,6 +316,9 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         case 'EOS':
                             privateKeys[index] = ccUtil.toPrivateAddress(Buffer.from(item, 'hex'));
                             break;
+                        case 'BTC':
+                            privateKeys[index] = btcUtil.convertPrivateKey_Hex2WIFCompressed(item.toString('hex'));
+                            break;
                         default:
                             privateKeys[index] = item.toString('hex');
                             break;

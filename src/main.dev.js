@@ -57,7 +57,7 @@ async function createMain () {
       webPreferences: {
         nodeIntegration: setting.isDev ? true : false,
         nativeWindowOpen: false,
-        preload: setting.isDev ?  `${__dirname}/modules/preload` : `${__dirname}/preload.js`
+        preload: setting.isDev ?  path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
       }
     }
   }
@@ -65,7 +65,7 @@ async function createMain () {
   console.log('setting.isDev:', setting.isDev);
 
   if (process.platform === 'linux') {
-    opts.electronOptions.icon = path.join(__dirname, '/icons/icon-512x512.png')
+    opts.electronOptions.icon = path.join(__dirname, 'icons', 'icon-512x512.png')
   }
 
   mainWindow = Windows.create('main', opts)
