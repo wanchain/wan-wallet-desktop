@@ -178,12 +178,12 @@ class CopyAndQrcode extends Component {
             </Modal>
           </React.Fragment>
         }
+        {
+          Object.values(WALLETID).includes(wid) && <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.showDeleteModal()} /></Tooltip>
+        }
         {[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(wid)
           ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
           : ''
-        }
-        {
-          wid !== undefined && <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.showDeleteModal()} /></Tooltip>
         }
         {
           this.state.showDeleteModal &&

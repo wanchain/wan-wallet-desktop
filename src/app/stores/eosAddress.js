@@ -30,7 +30,7 @@ class EosAddress {
   }
 
   @action deleteKey(type, key) {
-    delete self.addrInfo[type][key];
+    delete self.keyInfo[type][key];
     this.updateTransHistory();
   }
 
