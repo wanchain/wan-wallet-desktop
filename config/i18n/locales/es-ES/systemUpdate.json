@@ -8,5 +8,6 @@
     "no": "No",
     "upgrade": "Update Now",
     "downloadingProgress": "Downloading...",
-    "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!"
+    "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!",
+    "downloading": "Downloading..."
 }

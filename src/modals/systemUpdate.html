@@ -70,7 +70,7 @@
                 <div id="loading-bar"></div>
             </div>
             &nbsp;&nbsp;<span id="percentage">0%</span>
-            <p id='downloading'>Downloading...</p>
+            <p id='downloading'><!-- Downloading... --></p>
         </div>
     </div>
 </body>
@@ -83,7 +83,8 @@
         'no',
         'upgrade',
         'downloadingProgress',
-        'downloadingComplete'
+        'downloadingComplete',
+        'downloading'
     ];
     const setLoadingPercentage = (perc) => {
         document.getElementById('percentage').innerText = perc + '%';

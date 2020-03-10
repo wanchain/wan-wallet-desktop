@@ -8,5 +8,6 @@
     "no": "Não",
     "upgrade": "Atualizar agora",
     "downloadingProgress": "Carregando...",
-    "downloadingComplete": "Download completo. Sairá da carteira Wan e instalará atualizações agora!"
+    "downloadingComplete": "Download completo. Sairá da carteira Wan e instalará atualizações agora!",
+    "downloading": "Carregando..."
 }
