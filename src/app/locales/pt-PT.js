@@ -6,6 +6,7 @@ const pt_PT = {
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',
+    'Common.importedAccount': 'Imported account',
     'Common.from': 'De',
     'Common.days': ' dias',
     'Common.amount': 'Montante',
@@ -466,6 +467,9 @@ const pt_PT = {
     'CrossChainTransHistory.redeemFinished': 'Resgate terminado',
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando transação',
     'CrossChainTransHistory.waitingCross': 'Aguardando solicitação de bloqueio',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',

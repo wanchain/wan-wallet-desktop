@@ -8,5 +8,6 @@
     "no": "暂不更新",
     "upgrade": "立即更新",
     "downloadingProgress": "下载中......",
-    "downloadingComplete": "下载完成，即将退出钱包并安装升级！"
+    "downloadingComplete": "下载完成，即将退出钱包并安装升级！",
+    "downloading": "下载中......"
 }

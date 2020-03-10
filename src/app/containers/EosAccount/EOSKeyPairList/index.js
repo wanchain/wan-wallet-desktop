@@ -1,10 +1,9 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Form, message } from 'antd';
+import { Button, Table, Form } from 'antd';
 import { getEosAccountInfo } from 'utils/helper';
 import style from './index.less';
-import { EOSPATH, WALLETID } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import EOSImportAccountForm from '../EOSImportAccountForm';

@@ -5,7 +5,7 @@ import { Button, Modal, Form, Input, Icon, InputNumber, message, Spin } from 'an
 import intl from 'react-intl-universal';
 import style from '../index.less';
 import EOSConfirmForm from './EOSConfirmForm';
-import { EOSPATH } from 'utils/settings';
+import { getWalletIdByType } from 'utils/helper';
 
 const { TextArea } = Input;
 const Confirm = Form.create({ name: 'EOSConfirmForm' })(EOSConfirmForm);
@@ -76,7 +76,7 @@ class EOSNormalTransForm extends Component {
       if (keyInfo[t][key]) {
         obj = {
           path: keyInfo[t][key].path,
-          walletID: key === 'normal' ? 1 : (key === 'import' ? 5 : 1)
+          walletID: getWalletIdByType(key)
         }
         return true;
       } else {

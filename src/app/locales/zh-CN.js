@@ -6,6 +6,7 @@ const zh_CN = {
     'Common.exportKey': '导出私钥',
     'Common.privateKey': '备份私钥',
     'Common.yourPrivateKey': '你的私钥',
+    'Common.importedAccount': '导入的账户',
     'Common.from': '发送方',
     'Common.days': ' 天',
     'Common.amount': '金额',
@@ -470,6 +471,9 @@ const zh_CN = {
     'CrossChainTransHistory.redeemFinished': '赎回成功',
     'CrossChainTransHistory.sentHashConfirming': '交易确认中',
     'CrossChainTransHistory.waitingCross': '等待锁定',
+    'CrossChainTransHistory.Cancelled': '已撤销',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman锁定',
+    'CrossChainTransHistory.Success': '成功',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

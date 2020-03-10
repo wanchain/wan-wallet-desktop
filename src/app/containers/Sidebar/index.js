@@ -71,7 +71,7 @@ class Sidebar extends Component {
     return data.map(item => {
       if (item.children) {
         return (
-          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
+          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
             {this.renderMenu(item.children)}
           </SubMenu>
         );
@@ -79,10 +79,10 @@ class Sidebar extends Component {
       return (
         item.key === '/AddDApp' ? (
           <Item key={item.key} onClick={this.onAddDapp}>
-            <Icon type="plus-circle" style={{ fontSize: '20px', marginLeft: '32px', marginTop: '14px' }}/>
+            <Icon type="plus-circle" className={style.addIcon} />
           </Item>
        ) : (
-          <Item key={item.key}>
+          <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
             <Link to={item.key}>
               {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
               <span>{item.title}</span>

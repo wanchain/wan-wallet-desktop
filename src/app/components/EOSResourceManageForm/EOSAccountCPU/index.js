@@ -5,7 +5,7 @@ import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import style from './index.less';
 import ConfirmForm from '../EOSResourceManageConfirmForm';
-import { WALLETID } from 'utils/settings';
+import { getWalletIdByType } from 'utils/helper';
 
 const { Option } = Select;
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
@@ -132,7 +132,7 @@ class EOSAccountCPU extends Component {
           if (keyInfo[t][key]) {
             obj = {
               path: keyInfo[t][key].path,
-              walletID: key === 'normal' ? WALLETID.NATIVE : (key === 'import' ? WALLETID.KEYSTOREID : WALLETID.NATIVE)
+              walletID: getWalletIdByType(key)
             }
             return true;
           } else {

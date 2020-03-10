@@ -6,6 +6,7 @@ const en_US = {
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',
+    'Common.importedAccount': 'Imported account',
     'Common.from': 'From',
     'Common.days': ' days',
     'Common.amount': 'Amount',
@@ -470,6 +471,9 @@ const en_US = {
     'CrossChainTransHistory.redeemFinished': 'Redemption Finished',
     'CrossChainTransHistory.sentHashConfirming': 'Confirming Transaction',
     'CrossChainTransHistory.waitingCross': 'Waiting For Lock Request',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',

@@ -7,7 +7,7 @@ import { observable, action, computed, toJS } from 'mobx';
 import tokens from './tokens';
 import staking from './staking';
 import languageIntl from './languageIntl';
-import { checkAddrType, getWalletIdByAddr } from 'utils/helper';
+import { checkAddrType, getWalletIdByType } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
@@ -259,7 +259,7 @@ class WanAddress {
             Object.keys(data).forEach(item => {
               let waddress = data[item]['waddress'];
               let name = data[item]['name'];
-              let id = getWalletIdByAddr(type);
+              let id = getWalletIdByType(type);
               let path = WAN + data[item]['path'];
               // If can not get the waddress, call a request to 'address_getOne' to get the waddress
               if (typeof waddress === 'undefined') {
@@ -355,7 +355,7 @@ class WanAddress {
     let importArr = self.addrInfo['import'];
     let rawKeyArr = self.addrInfo['rawKey'];
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
-      const walletID = obj === normalArr ? 1 : (obj === importArr ? 5 : 6);
+      const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
       Object.keys(obj).forEach((item) => {
         addrList.push({
           key: `${WAN}${obj[item].path}-${item}`,

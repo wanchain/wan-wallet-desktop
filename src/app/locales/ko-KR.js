@@ -6,6 +6,7 @@ const ko_KR = {
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',
+    'Common.importedAccount': 'Imported account',
     'Common.from': '발신자',
     'Common.days': ' 일',
     'Common.amount': '금액',
@@ -467,6 +468,9 @@ const ko_KR = {
     'CrossChainTransHistory.redeemFinished': '인출 완료',
     'CrossChainTransHistory.sentHashConfirming': '거래 확인중',
     'CrossChainTransHistory.waitingCross': '잠금 요청을 기다리는 중',
+    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',

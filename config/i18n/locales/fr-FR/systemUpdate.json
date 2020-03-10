@@ -8,5 +8,6 @@
     "no": "Non",
     "upgrade": "Mettre à jour maintenant",
     "downloadingProgress": "Téléchargement en cours...",
-    "downloadingComplete": "Téléchargement réussi. Wan Wallet se fermera et se mettra à jour maintenant!"
+    "downloadingComplete": "Téléchargement réussi. Wan Wallet se fermera et se mettra à jour maintenant!",
+    "downloading": "Téléchargement en cours..."
 }

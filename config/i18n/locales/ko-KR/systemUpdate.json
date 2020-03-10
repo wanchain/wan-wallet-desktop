@@ -8,5 +8,6 @@
     "no": "아직 업데이트 되지 않았습니다.",
     "upgrade": "지금 업데이트",
     "downloadingProgress": "다운로드 중…",
-    "downloadingComplete": "다운로드가 완료 되었습니다. 지갑을 종료 후에 업그레이드 설치 됩니다."
+    "downloadingComplete": "다운로드가 완료 되었습니다. 지갑을 종료 후에 업그레이드 설치 됩니다.",
+    "downloading": "다운로드 중…"
 }
