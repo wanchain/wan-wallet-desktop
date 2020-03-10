@@ -4,6 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import languageIntl from './languageIntl';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
+import { getTypeByWalletId } from 'utils/helper';
 import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
 
 import session from './session';
@@ -41,6 +42,11 @@ class BtcAddress {
         balance: '0',
         path: newAddr.start
       };
+    }
+
+    @action deleteAddress(type, addr) {
+      delete self.addrInfo[type][addr];
+      this.updateTransHistory();
     }
 
     @action updateAddress (type, newAddress = {}) {
@@ -109,23 +115,9 @@ class BtcAddress {
       })
     }
 
-    @action updateName (arr, chainType) {
-      let walletID, type;
-      switch (chainType) {
-        case 'normal':
-          if (Object.keys(self.addrInfo.normal).includes(arr.address)) {
-            walletID = 1;
-            type = 'normal';
-          } else if (Object.keys(self.addrInfo.rawKey).includes(arr.address)) {
-            walletID = WALLETID.RAWKEY;
-            type = 'rawKey';
-          } else {
-            walletID = WALLETID.KEYSTOREID;
-            type = 'import';
-          };
-          break;
-      }
-      wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
+    @action updateName (arr, wid) {
+      let type = getTypeByWalletId(wid);
+      wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
         if (!err && val) {
           self.addrInfo[type][arr.address].name = arr.name;
         }
@@ -180,7 +172,7 @@ class BtcAddress {
       let rawKeyArr = self.addrInfo['rawKey'];
 
       [normalArr, rawKeyArr].forEach((obj, index) => {
-        const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === rawKeyArr ? WALLETID.RAWKEY : WALLETID.KEYSTOREID);
+        const walletID = obj === normalArr ? WALLETID.NATIVE : WALLETID.RAWKEY;
         Object.keys(obj).forEach((item) => {
           addrList.push({
             key: item,

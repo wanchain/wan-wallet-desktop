@@ -3,6 +3,7 @@ const fr_FR = {
     'Common.warning': 'ATTENTION',
     'Common.copy': 'Copié',
     'Common.QRCode': 'Code QR',
+    'Common.delete': 'Delete',
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',

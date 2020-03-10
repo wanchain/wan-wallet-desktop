@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import languageIntl from './languageIntl';
 import { EOSPATH, WALLETID } from 'utils/settings';
+import { getTypeByWalletId } from 'utils/helper';
 import { timeFormat, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
@@ -28,6 +29,11 @@ class EosAddress {
     };
   }
 
+  @action deleteKey(type, key) {
+    delete self.addrInfo[type][key];
+    this.updateTransHistory();
+  }
+
   @action addRawKey({ publicKey, start, path }) {
     self.keyInfo['rawKey'][publicKey] = {
       name: `Imported${start + 1}`,
@@ -35,11 +41,11 @@ class EosAddress {
     };
   }
 
-  @action updateKeyName(row, chainType) {
-    let walletID = 1;
-    wand.request('account_update', { walletID, path: row.path, meta: { name: row.name, publicKey: row.publicKey } }, (err, res) => {
+  @action updateKeyName(row, wid) {
+    let type = getTypeByWalletId(wid);
+    wand.request('account_update', { walletID: wid, path: row.path, meta: { name: row.name, publicKey: row.publicKey } }, (err, res) => {
       if (!err && res) {
-        self.keyInfo[chainType][row['publicKey']]['name'] = row.name;
+        self.keyInfo[type][row['publicKey']]['name'] = row.name;
       } else {
         console.log('Update key name failed');
       }
@@ -73,12 +79,13 @@ class EosAddress {
     let rawKey = self.keyInfo['rawKey'];
 
     [normal, rawKey].forEach((obj, index) => {
-      const walletID = obj === normal ? WALLETID.NATIVE : (obj === rawKey ? WALLETID.RAWKEY : WALLETID.KEYSTOREID);
+      const walletID = obj === normal ? WALLETID.NATIVE : WALLETID.RAWKEY;
       Object.keys(obj).forEach((item) => {
         keyList.push({
           name: obj[item].name,
           path: obj[item].path,
-          publicKey: item
+          publicKey: item,
+          wid: walletID
         });
       });
     });

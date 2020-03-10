@@ -3,6 +3,7 @@ const zh_CN = {
     'Common.warning': '警示',
     'Common.copy': '复制',
     'Common.QRCode': '二维码',
+    'Common.delete': '删除',
     'Common.exportKey': '导出私钥',
     'Common.privateKey': '备份私钥',
     'Common.yourPrivateKey': '你的私钥',

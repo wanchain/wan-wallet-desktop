@@ -3,6 +3,7 @@ const es_ES = {
     'Common.warning': 'ALERTA',
     'Common.copy': 'Copia',
     'Common.QRCode': 'Codigo QR',
+    'Common.delete': 'Delete',
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',

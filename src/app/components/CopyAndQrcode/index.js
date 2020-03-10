@@ -5,10 +5,15 @@ import intl from 'react-intl-universal';
 import QRCode from 'qrcode';
 import style from './index.less';
 import { WALLETID } from 'utils/settings';
+import { getTypeByWalletId } from 'utils/helper';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  deleteWANAccount: (type, addr) => stores.wanAddress.deleteAddress(type, addr),
+  deleteBTCAccount: (type, addr) => stores.btcAddress.deleteAddress(type, addr),
+  deleteETHAccount: (type, addr) => stores.ethAddress.deleteAddress(type, addr),
+  deleteEOSAccount: (type, key) => stores.eosAddress.deleteKey(type, key),
 }))
 
 @observer
@@ -19,7 +24,8 @@ class CopyAndQrcode extends Component {
     showPrivateKey: false,
     privateKey1: '',
     privateKey2: '',
-    pwd: ''
+    pwd: '',
+    showDeleteModal: false
   }
 
   createQrCode = addr => {
@@ -47,10 +53,6 @@ class CopyAndQrcode extends Component {
   copy2Clipboard = addr => {
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
-  }
-
-  deleteAccount = (...args) => {
-    console.log('deleteAccount:', args);
   }
 
   resetState = () => {
@@ -94,9 +96,42 @@ class CopyAndQrcode extends Component {
     })
   }
 
+  showDeleteModal = () => {
+    this.setState({
+      showDeleteModal: true
+    });
+  }
+
+  handleDeleteCancel = () => {
+    this.setState({
+      showDeleteModal: false,
+    });
+  }
+
+  handleDeleteOk = () => {
+    this.deleteAccount();
+    this.handleDeleteCancel();
+  }
+
+  deleteAccount = () => {
+    const { addr, type, path, wid } = this.props;
+    wand.request('account_delete', { walletID: wid, path }, async (err, ret) => {
+      if (err) {
+        console.log('Delete user from DB failed ', err);
+        message.warn('Delete user from DB failed');
+      } else {
+        if (ret) {
+          message.success('Delete user from DB Success');
+          this.props[`delete${type}Account`](getTypeByWalletId(wid), addr); // Delete in view
+        } else {
+          message.warn('Delete user from DB failed');
+        }
+      }
+    });
+  }
+
   render() {
     const { addr, addrInfo, type, path, wid } = this.props;
-
     return (
       <div className="handleIco">
         <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
@@ -147,7 +182,29 @@ class CopyAndQrcode extends Component {
           ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
           : ''
         }
-        <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.deleteAccount(addr, type, path, wid)} /></Tooltip>
+        {
+          wid !== undefined && <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.showDeleteModal()} /></Tooltip>
+        }
+        {
+          this.state.showDeleteModal &&
+          <Modal
+            className='showPrivateKey'
+            destroyOnClose={true}
+            title={intl.get('Config.deleteConfirm')}
+            visible={true}
+            onOk={(addr, type, path, wid) => this.handleDeleteOk(addr, type, path, wid)}
+            onCancel={this.handleDeleteCancel}
+            closable={false}
+            okText={intl.get('Common.ok')}
+            cancelText={intl.get('Common.cancel')}
+            bodyStyle={{ textAlign: 'center' }}
+          >
+            <div className={style.deleteMsg}>
+              <p>{intl.get('Config.confirmText')}</p>
+              <p className={style.symbolSty}>{addr}</p>
+            </div>
+          </Modal>
+        }
       </div>
     );
   }

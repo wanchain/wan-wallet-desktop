@@ -3,6 +3,7 @@ const pt_PT = {
     'Common.warning': 'ATENÇÃO',
     'Common.copy': 'Copiar',
     'Common.QRCode': 'Código QR',
+    'Common.delete': 'Delete',
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',

@@ -51,7 +51,6 @@ class ImportPrivateKey extends Component {
 
   handleOk = () => {
     let { pk, pk2, type } = this.state;
-    console.log(pk, pk2, type);
     try {
       if (typeof (pk) === 'string' && pk.length && type.length) {
         let param = {
@@ -67,7 +66,6 @@ class ImportPrivateKey extends Component {
           }
         }
         wand.request('wallet_importPrivateKey', param, function (err, val) {
-          console.log('result:', err, val);
           if (err) {
             message.warn(intl.get('ImportPrivateKey.importPKFailed'));
             return

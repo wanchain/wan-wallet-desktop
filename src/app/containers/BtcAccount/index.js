@@ -46,7 +46,7 @@ class BtcAccount extends Component {
     },
     {
       dataIndex: 'address',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'BTC'} path={record.path} wid={1} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'BTC'} path={record.path} wid={record.wid} /></div>
     },
     {
       dataIndex: 'balance',
@@ -118,7 +118,7 @@ class BtcAccount extends Component {
     if (hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row, 'normal');
+      this.props.updateName(row, row.wid);
     }
   }
 

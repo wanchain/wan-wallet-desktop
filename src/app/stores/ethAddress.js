@@ -4,7 +4,7 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import tokens from './tokens';
 import languageIntl from './languageIntl';
-import { checkAddrType } from 'utils/helper';
+import { checkAddrType, getTypeByWalletId } from 'utils/helper';
 import { ETHPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 
@@ -27,6 +27,11 @@ class EthAddress {
         balance: '0',
         path: newAddr.start
       };
+    }
+
+    @action deleteAddress(type, addr) {
+      delete self.addrInfo[type][addr];
+      this.updateTransHistory();
     }
 
     @action updateAddress (type, newAddress = {}) {
@@ -96,23 +101,9 @@ class EthAddress {
       })
     }
 
-    @action updateName (arr, chainType) {
-      let walletID, type;
-      switch (chainType) {
-        case 'normal':
-          if (Object.keys(self.addrInfo.normal).includes(arr.address)) {
-            walletID = 1;
-            type = 'normal';
-          } else if (Object.keys(self.addrInfo.rawKey).includes(arr.address)) {
-            walletID = WALLETID.RAWKEY;
-            type = 'rawKey';
-          } else {
-            walletID = WALLETID.KEYSTOREID;
-            type = 'import';
-          };
-          break;
-      }
-      wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase() } }, (err, val) => {
+    @action updateName (arr, wid) {
+      let type = getTypeByWalletId(wid);
+      wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase() } }, (err, val) => {
         if (!err && val) {
           self.addrInfo[type][arr.address].name = arr.name;
         }
@@ -171,7 +162,7 @@ class EthAddress {
       let rawKeyArr = self.addrInfo['rawKey'];
 
       [normalArr, rawKeyArr].forEach((obj, index) => {
-        const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === rawKeyArr ? WALLETID.RAWKEY : WALLETID.KEYSTOREID);
+        const walletID = obj === normalArr ? WALLETID.NATIVE : WALLETID.RAWKEY;
         Object.keys(obj).forEach((item) => {
           addrList.push({
             key: item,

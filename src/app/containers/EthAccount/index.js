@@ -142,7 +142,7 @@ class EthAccount extends Component {
     if (hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row, 'normal');
+      this.props.updateName(row, row.wid);
     }
   }
 

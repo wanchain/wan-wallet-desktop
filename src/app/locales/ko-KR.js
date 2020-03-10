@@ -3,6 +3,7 @@ const ko_KR = {
     'Common.warning': '경고',
     'Common.copy': '복사',
     'Common.QRCode': 'QR코드',
+    'Common.delete': 'Delete',
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',

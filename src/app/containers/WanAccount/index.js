@@ -204,7 +204,7 @@ class WanAccount extends Component {
     if (hasSameName('normal', row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row, 'normal');
+      this.props.updateName(row, row.wid);
     }
   }
 
@@ -323,7 +323,7 @@ class WanAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <WANTransHistory name={['normal', 'import']} />
+            <WANTransHistory name={['normal', 'import', 'rawKey']} />
           </Col>
         </Row>
       </div>

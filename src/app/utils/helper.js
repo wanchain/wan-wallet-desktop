@@ -752,3 +752,25 @@ export const getWalletIdByType = function (type) {
   }
   return ID;
 }
+
+export const getTypeByWalletId = function (wid) {
+  let type
+  switch (wid) {
+    case WALLETID.NATIVE:
+      type = 'normal';
+      break;
+    case WALLETID.LEDGER:
+      type = 'ledger';
+      break;
+    case WALLETID.TREZOR:
+      type = 'trezor';
+      break;
+    case WALLETID.KEYSTOREID:
+      type = 'import';
+      break;
+    case WALLETID.RAWKEY:
+      type = 'rawKey';
+      break;
+  }
+  return type;
+}

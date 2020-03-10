@@ -7,7 +7,7 @@ import { observable, action, computed, toJS } from 'mobx';
 import tokens from './tokens';
 import staking from './staking';
 import languageIntl from './languageIntl';
-import { checkAddrType, getWalletIdByType } from 'utils/helper';
+import { checkAddrType, getWalletIdByType, getTypeByWalletId } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
@@ -38,6 +38,11 @@ class WanAddress {
       wbalance: '0',
       path: newAddr.start
     };
+  }
+
+  @action deleteAddress(type, addr) {
+    delete self.addrInfo[type][addr];
+    this.updateTransHistory();
   }
 
   @action updateAddress(type, newAddress = {}) {
@@ -140,36 +145,17 @@ class WanAddress {
     });
   }
 
-  @action updateName(arr, chainType) {
-    let walletID, type, index;
-    switch (chainType) {
-      case 'normal':
-        if (Object.keys(self.addrInfo['normal']).includes(arr.address)) {
-          walletID = 1;
-          type = 'normal';
-        } else {
-          walletID = WALLETID.KEYSTOREID;
-          type = 'import';
-        };
-        break;
-
-      case 'ledger':
-        walletID = 2;
-        type = 'ledger';
-        index = arr.path.lastIndexOf('\/') + 1
-        arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
-        break;
-
-      case 'trezor':
-        walletID = 3;
-        type = 'trezor';
-        break;
+  @action updateName(arr, wid) {
+    let type = getTypeByWalletId(wid);
+    if (type === 'ledger') {
+      let index = arr.path.lastIndexOf('\/') + 1
+      arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
     }
-    wand.request('account_update', { walletID, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' } }, (err, val) => {
+    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' } }, (err, val) => {
       if (!err && val) {
         self.addrInfo[type][arr['address']]['name'] = arr.name;
       }
-    })
+    });
   }
 
   @action getUserAccountFromDB() {

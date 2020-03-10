@@ -3,6 +3,7 @@ const th_TH = {
     'Common.warning': 'ระวัง',
     'Common.copy': 'คัดลอก',
     'Common.QRCode': 'QR Code',
+    'Common.delete': 'Delete',
     'Common.exportKey': 'Export Private Key',
     'Common.privateKey': 'Reveal Private Key',
     'Common.yourPrivateKey': 'Your Private Key',

@@ -40,7 +40,7 @@ class EOSKeyPairList extends Component {
     },
     {
       dataIndex: 'publicKey',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'EOS'} path={record.path} wid={1} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'EOS'} path={record.path} wid={record.wid} /></div>
     },
     {
       dataIndex: 'action',
@@ -104,7 +104,7 @@ class EOSKeyPairList extends Component {
   }
 
   handleSave = row => {
-    this.props.updateKeyName(row, 'normal');
+    this.props.updateKeyName(row, row.wid);
   }
 
   handleCancel = () => {
@@ -126,6 +126,7 @@ class EOSKeyPairList extends Component {
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`EosAccount.${col.dataIndex}`)
     })
+    console.log('getKeyList:', getKeyList);
 
     return (
       <div>

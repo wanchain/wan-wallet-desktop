@@ -88,7 +88,6 @@ class App extends Component {
     })
 
     regEmitterHandler('importPrivateKey', data => {
-      console.log('data:', data);
       switch (data.type) {
         case 'WAN':
           stores.wanAddress.addRawKey(data);
