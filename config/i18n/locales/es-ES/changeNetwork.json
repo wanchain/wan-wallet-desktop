@@ -1,6 +1,6 @@
 {
-    "title": "Switch Network",
-    "head": "Are you sure to switch network?",
+    "title": "Cambiar de red",
+    "head": "Cambiando red, estas seguro",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Si"
 }
