@@ -11,7 +11,7 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, PENALTYNUM, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossEOSConfirmForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
-import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr } from 'utils/helper';
+import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr, getValueByAddrInfo } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
 
@@ -146,14 +146,18 @@ class CrossEOSForm extends Component {
 
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance } = this.props;
-    let desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio;
+    let srcChain, desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio, fromAccount;
     if (direction === INBOUND) {
+      srcChain = 'EOS'
       desChain = 'WAN';
+      fromAccount = from;
       selectedList = Object.values(wanAddrInfo.normal).map(item => item.name);
       title = `${symbol} -> W${symbol}`;
       tokenSymbol = symbol;
     } else {
+      srcChain = 'WAN'
       desChain = 'EOS';
+      fromAccount = getValueByAddrInfo(from, 'name', wanAddrInfo);
       selectedList = Object.keys(addrInfo);
       title = `W${symbol} -> ${symbol}`;
       tokenSymbol = `W${symbol}`;
@@ -189,9 +193,9 @@ class CrossEOSForm extends Component {
                 colSpan={6}
                 formName='from'
                 disabled={true}
-                options={{ initialValue: from }}
+                options={{ initialValue: fromAccount }}
                 prefix={<Icon type="wallet" className="colorInput" />}
-                title={intl.get('Common.from') + ' (' + getFullChainName('EOS') + ')'}
+                title={intl.get('Common.from') + ' (' + getFullChainName(srcChain) + ')'}
               />
               <CommonFormItem
                 form={form}

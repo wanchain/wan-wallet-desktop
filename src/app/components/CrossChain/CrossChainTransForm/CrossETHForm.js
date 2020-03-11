@@ -11,7 +11,7 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import { ETHPATH, WANPATH, PENALTYNUM } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 
@@ -56,6 +56,8 @@ class CrossETHForm extends Component {
       };
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
+      to = getValueByNameInfo(to, 'address', chainType === 'ETH' ? wanAddrInfo : addrInfo);
+
       let origAddrAmount = getBalanceByAddr(from, chainType === 'ETH' ? addrInfo : wanAddrInfo);
       let destAddrAmount = getBalanceByAddr(to, chainType === 'ETH' ? wanAddrInfo : addrInfo);
       let path = chainType === 'ETH' ? WANPATH + wanAddrInfo.normal[to].path : ETHPATH + addrInfo.normal[to].path;
@@ -157,16 +159,20 @@ class CrossETHForm extends Component {
 
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol, fromAccount, toAccountList;
 
     if (chainType === 'ETH') {
       desChain = 'WAN';
+      toAccountList = wanAddrInfo;
+      fromAccount = getValueByAddrInfo(from, 'name', addrInfo);
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} -> W${symbol}` : 'ETH -> WETH';
       tokenSymbol = symbol || 'ETH';
       totalFeeTitle = `${estimateFee.original} ETH + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'ETH';
+      toAccountList = addrInfo;
+      fromAccount = getValueByAddrInfo(from, 'name', wanAddrInfo);
       selectedList = Object.keys(addrInfo.normal);
       title = symbol ? `W${symbol} -> ${symbol}` : 'WETH -> ETH';
       tokenSymbol = symbol ? `W${symbol}` : 'WETH';
@@ -208,7 +214,7 @@ class CrossETHForm extends Component {
                 colSpan={6}
                 formName='from'
                 disabled={true}
-                options={{ initialValue: from }}
+                options={{ initialValue: fromAccount }}
                 prefix={<Icon type="wallet" className="colorInput" />}
                 title={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}
               />
@@ -256,7 +262,8 @@ class CrossETHForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='to'
-                initialValue={selectedList[0]}
+                addrInfo={toAccountList}
+                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
                 selectedList={selectedList}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />

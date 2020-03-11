@@ -1,11 +1,13 @@
 import React from 'react';
 import { Form, Select, Row, Col } from 'antd';
 
+import { getValueByAddrInfo } from 'utils/helper';
+
 function SelectForm (props) {
-  const { form, selectedList, handleChange, formMessage, placeholder, formName, initialValue, getValByInfoList, colSpan, showBalance, dropdownStyle } = props;
+  const { form, selectedList, handleChange, formMessage, placeholder, formName, initialValue, getValByInfoList, colSpan, showBalance, dropdownStyle, addrInfo } = props;
   const { getFieldDecorator } = form;
   let width = colSpan || 8;
-  let filterItem = props.filterItem || (val => val);
+  let filterItem = props.filterItem || (val => addrInfo ? getValueByAddrInfo(val, 'name', addrInfo) : val);
 
   return (
     <div className="validator-line">

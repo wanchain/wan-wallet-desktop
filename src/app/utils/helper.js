@@ -157,6 +157,15 @@ export const getInfoByAddress = function (address, infos, addrInfo) {
   return value;
 }
 
+export const getValueByNameInfo = function (value, type, addrInfo, addrType = 'normal') {
+  let targetVal = Object.values(addrInfo[addrType]).find(val => val.name === value)
+  if (targetVal) {
+    return targetVal[type];
+  } else {
+    return undefined
+  }
+}
+
 export const getInfoByPath = function (pathInfo, addrInfo, addrType = 'normal') {
   let value = {};
   if (pathInfo) {

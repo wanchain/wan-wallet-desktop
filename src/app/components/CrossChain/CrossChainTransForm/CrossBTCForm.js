@@ -11,7 +11,7 @@ import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 
@@ -56,6 +56,7 @@ class CrossBTCForm extends Component {
       };
       let origAddrAmount, destAddrAmount, origAddrFee, destAddrFee;
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
+      to = getValueByNameInfo(to, 'address', direction === INBOUND ? wanAddrInfo : addrInfo);
 
       if (direction === INBOUND) {
         origAddrAmount = balance;
@@ -161,15 +162,17 @@ class CrossBTCForm extends Component {
 
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, direction, addrInfo, symbol, balance } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList;
 
     if (direction === INBOUND) {
       desChain = 'WAN';
+      toAccountList = wanAddrInfo;
       selectedList = Object.keys(wanAddrInfo.normal);
       title = symbol ? `${symbol} -> W${symbol}` : 'BTC -> WBTC';
       totalFeeTitle = `${this.state.fee} BTC + ${estimateFee.destination} WAN`;
     } else {
       desChain = 'BTC';
+      toAccountList = addrInfo;
       selectedList = Object.keys(addrInfo.normal);
       title = symbol ? `W${symbol} -> ${symbol}` : 'WBTC -> BTC';
       totalFeeTitle = `${estimateFee.original} WAN + ${this.state.fee} BTC`;
@@ -212,7 +215,7 @@ class CrossBTCForm extends Component {
                   colSpan={6}
                   formName='from'
                   disabled={true}
-                  options={{ initialValue: from }}
+                  options={{ initialValue: getValueByAddrInfo(from, 'name', wanAddrInfo) }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.from')}
                 />
@@ -261,7 +264,8 @@ class CrossBTCForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='to'
-                initialValue={selectedList[0]}
+                addrInfo={toAccountList}
+                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
                 selectedList={selectedList}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />
