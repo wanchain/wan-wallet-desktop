@@ -106,6 +106,9 @@ export function normalNum (num, type = 'string') {
 }
 
 export function isExceedBalance(balance, fee = 0, sendAmount = 0) {
+  if (typeof fee === 'string') {
+    fee = fee.split(' ')[0];
+  }
   return new BigNumber(balance).minus(new BigNumber(fee)).lt(new BigNumber(sendAmount));
 }
 
