@@ -31,7 +31,7 @@ class EOSCreateAccountForm extends Component {
         this.setState({
             spin: true
         });
-        form.validateFields(async (err) => {
+        form.validateFields((err) => {
             if (err) {
                 this.setState({
                     spin: false
@@ -75,7 +75,6 @@ class EOSCreateAccountForm extends Component {
                         this.props.handleCancel();
                         message.success(intl.get('EOSCreateAccountForm.createAccountSuccess'));
                     } else {
-                        // Duplicate name error info: { code: false, result: "Cannot create account named zxcvbnm12345, as that name is already taken" }
                         message.error(intl.get('EOSCreateAccountForm.createAccountFailed'));
                     }
                 } else {
@@ -97,57 +96,71 @@ class EOSCreateAccountForm extends Component {
     }
 
     checkNumber = (rule, value, callback) => {
-        if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 0.0001) {
-            let index = value.indexOf('.');
-            if (index !== -1) {
-                if (value.substring(index + 1).length > 4) {
-                    callback(intl.get('EOSCreateAccountForm.invalidValue'));
+        try {
+            if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 0.0001) {
+                value = value.toString();
+                let index = value.indexOf('.');
+                if (index !== -1) {
+                    if (value.substring(index + 1).length > 4) {
+                        callback(intl.get('EOSCreateAccountForm.invalidValue'));
+                    } else {
+                        callback();
+                    }
                 } else {
                     callback();
                 }
             } else {
-                callback();
+                callback(intl.get('EOSCreateAccountForm.invalidValue'));
             }
-        } else {
-            callback(intl.get('EOSCreateAccountForm.invalidValue'));
+        } catch (e) {
+            console.log('err:', e);
+            callback(intl.get('EOSCreateAccountForm.errorOccurred'));
         }
     }
 
     checkRAMNumber = (rule, value, callback) => {
-        if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 3) {
-            callback();
-        } else {
-            callback(intl.get('EOSCreateAccountForm.invalidValue'));
+        try {
+            if (!(/e/g.test(value)) && !Number.isNaN(Number(value)) && Number(value) >= 3) {
+                callback();
+            } else {
+                callback(intl.get('EOSCreateAccountForm.invalidValue'));
+            }
+        } catch (e) {
+            console.log('err:', e);
+            callback(intl.get('EOSCreateAccountForm.errorOccurred'));
         }
     }
 
     checkName = async (rule, value, callback) => {
-        let reg = /^[a-z][1-5a-z\.]{11}$/g;
-        if (reg.test(value)) {
-            try {
+        try {
+            let reg = /^[a-z][1-5a-z\.]{11}$/g;
+            if (reg.test(value)) {
                 let res = await checkEosNameExist(value);
                 if (res) {
-                    console.log('EOS name exist.');
                     callback(intl.get('EOSCreateAccountForm.isExistEosName'));
                 } else {
-                    console.log('valid name');
                     callback();
                 }
-            } catch (err) {
-                console.log('err:', err);
-                callback(intl.get('EOSCreateAccountForm.isExistEosName'));
+            } else {
+                callback(intl.get('EOSCreateAccountForm.invalidNameFormat'));
             }
-        } else {
-            callback(intl.get('EOSCreateAccountForm.invalidNameFormat'));
+        } catch (err) {
+            console.log('err:', err);
+            callback(intl.get('EOSCreateAccountForm.validateNameFailed'));
         }
     }
 
     checkEosPublicKey = async (rule, value, callback) => {
-        let result = await checkEosPublicKey(value);
-        if (result) {
-            callback();
-        } else {
-            callback(intl.get('EOSCreateAccountForm.invalidEosPublicKey'));
+        try {
+            let result = await checkEosPublicKey(value);
+            if (result) {
+                callback();
+            } else {
+                callback(intl.get('EOSCreateAccountForm.invalidEosPublicKey'));
+            }
+        } catch (err) {
+            console.log('err:', err);
+            callback(intl.get('EOSCreateAccountForm.errorOccurred'));
         }
     }
 

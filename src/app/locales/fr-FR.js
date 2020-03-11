@@ -248,6 +248,10 @@ const fr_FR = {
     'EOSCreateAccountForm.activePublicKey': 'Clé Publique "Active"',
     'EOSCreateAccountForm.activeKey': 'Sélectionner une clé publique',
     'EOSCreateAccountForm.atLeast3KB': 'Valeur invalide, minimum 3KB',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': 'L\'envoi de transaction échoué',
     'EOSNormalTransForm.sendTxSuccess': 'L\'envoi de transaction réussi',

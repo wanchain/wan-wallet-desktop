@@ -250,6 +250,8 @@ const zh_CN = {
     'EOSCreateAccountForm.atLeast3KB': '数值不正确，至少3KB',
     'EOSCreateAccountForm.isExistEosName': '账户名称已存在',
     'EOSCreateAccountForm.invalidEosPublicKey': '非法公钥',
+    'EOSCreateAccountForm.errorOccurred': '验证表单数据时发生错误',
+    'EOSCreateAccountForm.validateNameFailed': '验证账户名称失败',
 
     'EOSNormalTransForm.sendTxFailed': '交易失败',
     'EOSNormalTransForm.sendTxSuccess': '交易成功',

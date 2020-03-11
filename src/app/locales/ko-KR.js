@@ -248,6 +248,10 @@ const ko_KR = {
     'EOSCreateAccountForm.activePublicKey': '퍼블릭키 활성화',
     'EOSCreateAccountForm.activeKey': '퍼블릭키를 선택하십시오',
     'EOSCreateAccountForm.atLeast3KB': '유효하지 않은 값, 3KB 이상',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': '거래 전송 실패',
     'EOSNormalTransForm.sendTxSuccess': '거래 전송 성공',

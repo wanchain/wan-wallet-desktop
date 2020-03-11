@@ -250,6 +250,8 @@ const en_US = {
     'EOSCreateAccountForm.atLeast3KB': 'Invalid value, at least 3KB',
     'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
     'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': 'Send transaction failed',
     'EOSNormalTransForm.sendTxSuccess': 'Send transaction successfully',

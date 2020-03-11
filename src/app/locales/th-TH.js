@@ -248,6 +248,10 @@ const th_TH = {
     'EOSCreateAccountForm.activePublicKey': 'เปิดใช้งาน Public Key',
     'EOSCreateAccountForm.activeKey': 'เลือก Public Key',
     'EOSCreateAccountForm.atLeast3KB': 'ค่าไม่ถูกต้อง ต้องมีค่าอย่างน้อย 3KB',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': 'โอนธุรกรรมล้มเหลว',
     'EOSNormalTransForm.sendTxSuccess': 'โอนธุรกรรมสำเร็จ',

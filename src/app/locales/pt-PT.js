@@ -247,6 +247,10 @@ const pt_PT = {
     'EOSCreateAccountForm.activePublicKey': 'Ativar chave pública',
     'EOSCreateAccountForm.activeKey': 'Selecionar uma chave pública',
     'EOSCreateAccountForm.atLeast3KB': 'Valor inválido, pelo menos 3 KB',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': 'O envio da transação falhou',
     'EOSNormalTransForm.sendTxSuccess': 'Enviar transação com sucesso',
