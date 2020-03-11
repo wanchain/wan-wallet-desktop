@@ -31,6 +31,7 @@ const es_ES = {
     'Common.sendFailed': 'Network is not stable. Please try again',
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
+    'Common.convert': 'Convert',
 
     'Send.transSuccess': 'Transaccion enviada con exito',
     'Login.login': 'Iniciar sesion',

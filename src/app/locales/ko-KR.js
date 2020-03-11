@@ -31,6 +31,7 @@ const ko_KR = {
     'Common.sendFailed': '네트워크가 안정적이지 않습니다. 다시 시도해보십시오.',
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': 'EOS 토큰',
+    'Common.convert': 'Convert',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',

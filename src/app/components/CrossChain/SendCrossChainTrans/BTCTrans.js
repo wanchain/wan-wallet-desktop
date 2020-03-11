@@ -129,7 +129,7 @@ class BTCTrans extends Component {
 
     return (
       <div>
-        <Button type="primary" {...btnStyle} onClick={this.showModal}>{intl.get('Common.send')}</Button>
+        <Button type="primary" {...btnStyle} onClick={this.showModal}>{intl.get('Common.convert')}</Button>
         { visible &&
           <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} symbol={this.props.symbol} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }

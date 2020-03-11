@@ -31,6 +31,7 @@ const fr_FR = {
     'Common.sendFailed': 'Connexion internet instable. Veuillez réessayer',
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS Tokens',
+    'Common.convert': 'Convert',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',

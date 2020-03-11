@@ -31,6 +31,7 @@ const pt_PT = {
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS ',
+    'Common.convert': 'Convert',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',

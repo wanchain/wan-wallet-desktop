@@ -87,7 +87,7 @@ class EOSTrans extends Component {
 
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
+        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
         { visible &&
           <CollectionCreateForm symbol={symbol} balance={direction === INBOUND ? record.balance : record.amount} decimals={decimals} direction={direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
