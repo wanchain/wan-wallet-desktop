@@ -289,8 +289,8 @@ class Tokens {
     normalArr.forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-        if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
+        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
         } else {
           balance = 0
         }
