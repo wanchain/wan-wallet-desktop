@@ -827,16 +827,17 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'delete':
             try {
-                const { walletID, path } = payload;
+                const { walletID, path, chainType = false, address } = payload;
                 hdUtil.deleteUserAccount(walletID, path);
-
                 if (walletID === WALLET_ID_RAWKEY) {
                     hdUtil.deleteRawKey(path);
-                    if (path.startsWith(`m/44'/${WAN_ID}'/`)) { // Delete WAN private address's raw key
+                    if (chainType === 'WAN') { // Delete WAN private address's raw key
                         let privatePath = path.split('');
                         privatePath.splice(privatePath.lastIndexOf('/') -1, 1, '1');
                         hdUtil.deleteRawKey(privatePath.join(''));
                     }
+                } else if (walletID === WALLET_ID_KEYSTORE) {
+                    hdUtil.deleteKeyStore(path, address.toLowerCase());
                 }
                 
                 ret = true;

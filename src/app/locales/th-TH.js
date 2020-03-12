@@ -309,6 +309,8 @@ const th_TH = {
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
     'CopyAndQrcode.privateKey': 'Private Key',
     'CopyAndQrcode.confirmText': 'Are you sure to delete',
+    'CopyAndQrcode.deleteFailedText': 'Delete account failed',
+    'CopyAndQrcode.deleteSuccessfulText': 'Delete account completed',
 
     'HwWallet.Accounts.name': 'ชื่อ',
     'HwWallet.Accounts.address': 'แอดเดรส',

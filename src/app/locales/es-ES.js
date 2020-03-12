@@ -309,6 +309,8 @@ const es_ES = {
     'CopyAndQrcode.copySuccessfully': 'Copia exitosamente',
     'CopyAndQrcode.privateKey': 'Private Key',
     'CopyAndQrcode.confirmText': 'Are you sure to delete',
+    'CopyAndQrcode.deleteFailedText': 'Delete account failed',
+    'CopyAndQrcode.deleteSuccessfulText': 'Delete account completed',
 
     'HwWallet.Accounts.name': 'NOMBRE',
     'HwWallet.Accounts.address': 'DIRECCION',

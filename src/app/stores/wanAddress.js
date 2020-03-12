@@ -41,7 +41,7 @@ class WanAddress {
   }
 
   @action deleteAddress(type, addr) {
-    delete self.addrInfo[type][addr];
+    delete self.addrInfo[type][wanUtil.toChecksumAddress(addr)];
     this.updateTransHistory();
   }
 
@@ -311,13 +311,14 @@ class WanAddress {
   }
 
   @action addRawKey({ path, index, addr, waddr }) {
+    addr = wanUtil.toChecksumAddress(addr);
     self.addrInfo['rawKey'][addr] = {
       name: `Imported${index + 1}`,
       balance: '0',
       wbalance: '0',
       path: path,
       address: addr,
-      waddress: waddr
+      waddress: wanUtil.toChecksumOTAddress(waddr)
     };
   }
 

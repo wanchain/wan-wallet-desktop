@@ -126,7 +126,6 @@ class EOSKeyPairList extends Component {
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`EosAccount.${col.dataIndex}`)
     })
-    console.log('getKeyList:', getKeyList);
 
     return (
       <div>
