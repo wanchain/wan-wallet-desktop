@@ -213,7 +213,7 @@ class BtcAddress {
           historyList.push({
             key: item,
             time: timeFormat(self.transHistory[item].time / 1000),
-            to: self.transHistory[item].to.toLowerCase(),
+            to: self.transHistory[item].to,
             value: formatNum(self.transHistory[item].value),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item].time,
