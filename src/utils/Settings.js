@@ -20,6 +20,7 @@ const defaultConfig = {
   settings: {
     reinput_pwd: false,
     staking_advance: false,
+    offline_wallet: false,
     logout_timeout: '5',
     main: {
       tokens: {

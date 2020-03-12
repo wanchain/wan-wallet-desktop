@@ -97,6 +97,7 @@ class Sidebar extends Component {
     const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
+    let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
 
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let dAppsChildren = sidebarColumns[dAppsIndex].children;
@@ -106,6 +107,17 @@ class Sidebar extends Component {
     let crossChainChildren = sidebarColumns[crossChainIndex].children;
     let crossChainLen = CROSSCHAINTYPE.length;
     let walletChainLen = WALLET_CHAIN.length;
+
+    if (offlineIndex === -1 && settings.offline_wallet) {
+      sidebarColumns.push({
+        title: intl.get('menuConfig.offline'),
+        step: '1',
+        key: '/offline',
+        icon: 'bank'
+      })
+    } else if (offlineIndex !== -1 && !settings.offline_wallet) {
+      sidebarColumns.splice(offlineIndex, 1);
+    }
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
     if (index === -1 && settings.staking_advance) {

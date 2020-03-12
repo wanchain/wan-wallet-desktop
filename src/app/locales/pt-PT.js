@@ -557,6 +557,11 @@ const pt_PT = {
     'Config.staking': 'Opções da PoS Galaxy',
     'Config.enableValidator': 'Ativar validador',
     'Config.stakingAdvance': 'Mostrar validador na barra lateral',
+
+    'Config.others': 'Other Options',
+    'Config.enableOfflineWallet': 'Enable Offline Wallet',
+    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+
     'staking.validatorRegister': 'Registrar Validador',
     'staking.validatorUpdate': 'Atualização do validador',
 

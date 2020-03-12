@@ -558,6 +558,11 @@ const ko_KR = {
     'Config.staking': 'Galaxy Consensus 옵션',
     'Config.enableValidator': '검증자 활성화',
     'Config.stakingAdvance': 'Galaxy Consensus 고급 설정',
+
+    'Config.others': 'Other Options',
+    'Config.enableOfflineWallet': 'Enable Offline Wallet',
+    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+
     'staking.validatorRegister': '검증인 등록',
     'staking.validatorUpdate': '검증인 정보 업데이트',
 

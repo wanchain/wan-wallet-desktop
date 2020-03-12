@@ -560,8 +560,13 @@ const zh_CN = {
     'TransHistory.delegatein': '委托',
     'TransHistory.delegateout': '撤回',
     'Config.staking': '星系共识选项',
-    'Config.enableValidator': '使能验证人',
+    'Config.enableValidator': '开启验证人',
     'Config.stakingAdvance': '显示验证人菜单',
+
+    'Config.others': '其他选项',
+    'Config.enableOfflineWallet': '开启离线钱包',
+    'Config.offlineWallet': '显示离线钱包菜单',
+
     'staking.validatorRegister': '注册',
     'staking.validatorUpdate': '修改',
 

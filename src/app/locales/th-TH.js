@@ -558,6 +558,11 @@ const th_TH = {
     'Config.staking': 'ตัวเลือกของ Galaxy PoS',
     'Config.enableValidator': 'เปิดการใช้งาน Validator',
     'Config.stakingAdvance': 'แสดงเมนู Validator ในแถบเมนู',
+
+    'Config.others': 'Other Options',
+    'Config.enableOfflineWallet': 'Enable Offline Wallet',
+    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+
     'staking.validatorRegister': 'ลงทะเบียน Validator',
     'staking.validatorUpdate': 'อัพเดท Validator',
 

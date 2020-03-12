@@ -558,6 +558,11 @@ const fr_FR = {
     'Config.staking': 'Les options du Galaxy PoS',
     'Config.enableValidator': 'Activer le menu "validateur"',
     'Config.stakingAdvance': 'Afficher le menu "validateur" dans la barre latérale',
+
+    'Config.others': 'Other Options',
+    'Config.enableOfflineWallet': 'Enable Offline Wallet',
+    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+
     'staking.validatorRegister': 'Enregistrer un nouveau validateur',
     'staking.validatorUpdate': 'Mise a jour du validateur',
 

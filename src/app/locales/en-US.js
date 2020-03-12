@@ -561,6 +561,11 @@ const en_US = {
     'Config.staking': 'Galaxy PoS Options',
     'Config.enableValidator': 'Enable Validator',
     'Config.stakingAdvance': 'Show validator in the sidebar',
+
+    'Config.others': 'Other Options',
+    'Config.enableOfflineWallet': 'Enable Offline Wallet',
+    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',
 

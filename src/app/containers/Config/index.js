@@ -45,6 +45,10 @@ class Config extends Component {
     this.props.updateSettings({ staking_advance: e.target.checked });
   }
 
+  handleOffline = e => {
+    this.props.updateSettings({ offline_wallet: e.target.checked });
+  }
+
   handleTimeoutChange = e => {
     this.props.updateSettings({ logout_timeout: e });
   }
@@ -119,7 +123,7 @@ class Config extends Component {
 
   render() {
     const { getTokenList, crossChainTokensInfo } = this.props;
-    const { reinput_pwd, staking_advance, logout_timeout } = this.props.settings;
+    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet } = this.props.settings;
 
     const options = [{
       value: '0',
@@ -159,7 +163,7 @@ class Config extends Component {
         </Card>
 
         <Card title={intl.get('Config.wallet')}>
-          <div className={style.sub_title}>
+          <div className={style.set_title}>
             <p className={style['set_title']}>{intl.get('Config.enableWrc20')}</p>
             {
               getTokenList.map((item, index) => {
@@ -218,6 +222,10 @@ class Config extends Component {
         <Card title={intl.get('Config.staking')}>
           <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
+        </Card>
+        <Card title={intl.get('Config.others')}>
+          <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
+          <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
         </Card>
         {
           this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />
