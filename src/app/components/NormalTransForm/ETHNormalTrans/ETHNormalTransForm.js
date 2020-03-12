@@ -15,7 +15,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
 
 @inject(stores => ({
   settings: stores.session.settings,
-  tokensList: stores.tokens.formatTokensList,
+  tokensList: stores.tokens.tokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
@@ -43,7 +43,7 @@ class ETHNormalTransForm extends Component {
     super(props);
     let { tokensList, tokenAddr } = props;
     if (tokenAddr) {
-      this.decimals = (Object.values(tokensList).find(item => item.tokenOrigAddr === tokenAddr)).decimals;
+      this.decimals = (tokensList[tokenAddr] && tokensList[tokenAddr].decimals) || 18;
     } else {
       this.decimals = 18;
     }
