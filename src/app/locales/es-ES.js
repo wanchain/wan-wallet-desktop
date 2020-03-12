@@ -171,6 +171,7 @@ const es_ES = {
     'EOSKeyPairList.selectOneAccount': 'Please select at least one account',
     'EOSKeyPairList.tipText': `If you have never associated EOS accounts to EOS key pairs created by Wan Wallet, you can use third party service to create account and associate it to key pairs. If you already have EOS accounts associated to key pairs, you can create new EOS accounts using existing ones.`,
     'EOSKeyPairList.getImportedAccountsFailed': 'Get imported accounts failed',
+    'EOSKeyPairList.getAccountsFailed': 'Get accounts failed',
 
     'EOSAccountList.manageResource': 'Manage',
     'EOSAccountList.getResourcePriceFailed': 'Get resource price failed',

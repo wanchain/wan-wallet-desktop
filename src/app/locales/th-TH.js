@@ -171,6 +171,7 @@ const th_TH = {
     'EOSKeyPairList.selectOneAccount': 'กรุณาเลือกบัญชีอย่างน้อยหนึ่งบัญชี',
     'EOSKeyPairList.tipText': `หากคุณไม่เคยผูกบัญชี EOS กับ EOS Key Pair ที่สร้างจากกระเป๋า Wan คุณสามารถใช้บริการบุคคลที่สามเพื่อสร้างบัญชีและผูกกับ Key Pair ได้แต่ถ้าหากคุณเคยมีบัญชี EOS ที่ผู้กับ Key Pair แล้วคุณสามารถสร้างบัญชี EOS ใหม่โดยใช้ข้อมูลที่มีอยู่แล้วได้`,
     'EOSKeyPairList.getImportedAccountsFailed': 'ไม่สามารถดึงบัญชีที่ถูกนำเข้ามาได้',
+    'EOSKeyPairList.getAccountsFailed': 'Get accounts failed',
 
     'EOSAccountList.manageResource': 'จัดการ',
     'EOSAccountList.getResourcePriceFailed': 'ไม่สามารถดึงราคาทรัพยากรได้',
