@@ -186,6 +186,8 @@ const pt_PT = {
     'WanAccount.redeem': 'Resgatar',
     'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
     'WanAccount.publicKey': 'Chave Privada',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': 'NOME',
     'EosAccount.publicKey': 'CHAVE PÚBLICA',
@@ -197,6 +199,8 @@ const pt_PT = {
     'EosAccount.action': 'AÇÃO',
     'EosAccount.Accounts': 'Contas',
     'EosAccount.keyPair': 'Pares de chave',
+    'EosAccount.createKeyPairFailed': 'Create key pair failed',
+    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
 
     'EOSKeyPairList.import': 'Importar',
     'EOSKeyPairList.getAccountListFailed': 'Falha ao obter a lista de contas',

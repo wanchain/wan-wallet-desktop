@@ -186,6 +186,8 @@ const ko_KR = {
     'WanAccount.redeem': '인출',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
     'WanAccount.publicKey': '퍼블릭키',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': '이름',
     'EosAccount.publicKey': '퍼블릭키',
@@ -197,6 +199,8 @@ const ko_KR = {
     'EosAccount.action': '실행',
     'EosAccount.Accounts': '계정',
     'EosAccount.keyPair': '키 페어',
+    'EosAccount.createKeyPairFailed': 'Create key pair failed',
+    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
 
     'EOSKeyPairList.import': '가져오기',
     'EOSKeyPairList.getAccountListFailed': '계정 목록을 가져 오지 못했습니다',

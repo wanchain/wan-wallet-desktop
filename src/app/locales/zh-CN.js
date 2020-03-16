@@ -186,6 +186,8 @@ const zh_CN = {
     'WanAccount.redeem': '提币',
     'WanAccount.privateTxReceiverAddress': '隐私地址',
     'WanAccount.publicKey': '公钥',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': '名称',
     'EosAccount.publicKey': '公钥',
@@ -197,6 +199,8 @@ const zh_CN = {
     'EosAccount.action': '操作',
     'EosAccount.Accounts': '账户',
     'EosAccount.keyPair': '密钥对',
+    'EosAccount.createKeyPairFailed': '创建密钥对失败',
+    'EosAccount.createKeyPairSuccess': '创建密钥对成功',
 
     'EOSKeyPairList.import': '导入',
     'EOSKeyPairList.getAccountListFailed': '获取账户列表失败',

@@ -31,7 +31,7 @@ class WanAddress {
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
-      name: `Account${newAddr.start + 1}`,
+      name: newAddr.name ? newAddr.name : `Account${newAddr.start + 1}`,
       address: newAddr.address,
       waddress: newAddr.waddress,
       balance: '0',
@@ -299,9 +299,9 @@ class WanAddress {
     }
   }
 
-  @action addKeyStoreAddr({ path, addr, waddr }) {
+  @action addKeyStoreAddr({ path, name, addr, waddr }) {
     self.addrInfo['import'][addr] = {
-      name: `Imported${path + 1}`,
+      name: name,
       balance: '0',
       wbalance: '0',
       path: path,
@@ -310,10 +310,10 @@ class WanAddress {
     };
   }
 
-  @action addRawKey({ path, index, addr, waddr }) {
+  @action addRawKey({ path, name, addr, waddr }) {
     addr = wanUtil.toChecksumAddress(addr);
     self.addrInfo['rawKey'][addr] = {
-      name: `Imported${index + 1}`,
+      name: name,
       balance: '0',
       wbalance: '0',
       path: path,

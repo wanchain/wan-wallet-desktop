@@ -186,6 +186,8 @@ const th_TH = {
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',
     'WanAccount.publicKey': 'Public Key',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': 'ชื่อ',
     'EosAccount.publicKey': 'PUBLIC KEY',
@@ -197,6 +199,8 @@ const th_TH = {
     'EosAccount.action': 'คำสั่ง',
     'EosAccount.Accounts': 'บัญชี',
     'EosAccount.keyPair': 'Key Pairs',
+    'EosAccount.createKeyPairFailed': 'Create key pair failed',
+    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
 
     'EOSKeyPairList.import': 'นำเข้า',
     'EOSKeyPairList.getAccountListFailed': 'ไม่สามารถดึงรายการบัญชีได้',

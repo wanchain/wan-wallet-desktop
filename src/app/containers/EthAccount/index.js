@@ -4,11 +4,10 @@ import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message } from 'antd';
 
 import totalImg from 'static/image/eth.png';
-import { ETHPATH, WALLETID } from 'utils/settings';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
-import { checkAddrType, hasSameName, getWalletIdByType } from 'utils/helper';
+import { checkAddrType, hasSameName, getWalletIdByType, createETHAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 const CHAINTYPE = 'ETH';
@@ -27,7 +26,7 @@ const CHAINTYPE = 'ETH';
 
 @observer
 class EthAccount extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       bool: true,
@@ -52,7 +51,7 @@ class EthAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
     }
   ];
 
@@ -72,11 +71,11 @@ class EthAccount extends Component {
     };
   });
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -103,38 +102,30 @@ class EthAccount extends Component {
           reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
           this.props.updateTransHistory();
-          console.log('Tx hash: ', txHash);
           resolve(txHash)
         }
       }.bind(this));
     })
   }
 
-  creatAccount = () => {
-    const { addrInfo, addAddress } = this.props;
-    const addrLen = Object.keys(addrInfo['normal']).length;
+  createAccount = () => {
+    const { addAddress } = this.props;
     this.setState({
       bool: false
     });
-
     if (this.state.bool) {
-      let path = `${ETHPATH}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
-        if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `ETH-Account${addrLen + 1}`, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
-            if (!err && val_account_create) {
-              let addressInfo = {
-                start: addrLen,
-                address: `0x${val_address_get.address}`
-              }
-              addAddress(addressInfo);
-              this.setState({
-                bool: true
-              });
-            }
+      try {
+        createETHAddr().then(addressInfo => {
+          addAddress(addressInfo);
+          this.setState({
+            bool: true
           });
-        }
-      });
+          message.success(intl.get('WanAccount.createAccountSuccess'));
+        });
+      } catch (e) {
+        console.log('err:', e);
+        message.warn(intl.get('WanAccount.createAccountFailed'));
+      };
     }
   }
 
@@ -146,7 +137,7 @@ class EthAccount extends Component {
     }
   }
 
-  render () {
+  render() {
     const { getAmount, getAddrList } = this.props;
     const components = {
       body: {
@@ -164,7 +155,7 @@ class EthAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">ETH</span></Col>
           <Col span={12} className="col-right">
-          <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('Common.create')}</Button>
+            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

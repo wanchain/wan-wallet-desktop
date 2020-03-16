@@ -24,7 +24,7 @@ class EosAddress {
 
   @action addKey(newKey) {
     self.keyInfo['normal'][newKey.publicKey] = {
-      name: `EOS-PublicKey${newKey.start + 1}`,
+      name: newKey.name,
       path: newKey.path,
     };
   }
@@ -34,9 +34,9 @@ class EosAddress {
     this.updateTransHistory();
   }
 
-  @action addRawKey({ publicKey, start, path }) {
+  @action addRawKey({ publicKey, name, path }) {
     self.keyInfo['rawKey'][publicKey] = {
-      name: `Imported${start + 1}`,
+      name: name,
       path: path,
     };
   }

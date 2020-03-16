@@ -37,7 +37,7 @@ class BtcAddress {
 
     @action addAddress (newAddr) {
       self.addrInfo.normal[newAddr.address] = {
-        name: `BTC-Account${newAddr.start + 1}`,
+        name: newAddr.name ? newAddr.name : `BTC-Account${newAddr.start + 1}`,
         address: newAddr.address,
         balance: '0',
         path: newAddr.start
@@ -157,9 +157,9 @@ class BtcAddress {
       })
     }
 
-    @action addRawKey({ path, index, addr }) {
+    @action addRawKey({ path, name, addr }) {
       self.addrInfo['rawKey'][addr] = {
-        name: `Imported${index + 1}`,
+        name: name,
         balance: '0',
         path: path,
         address: addr,
