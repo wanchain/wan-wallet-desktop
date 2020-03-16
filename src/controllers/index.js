@@ -396,6 +396,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                         btcMultiBalances[item.address] = item.value
                     }
                 });
+                payload.addresses.forEach(item => {
+                  if (!btcMultiBalances[item]) {
+                    btcMultiBalances[item] = '0'
+                  }
+                });
                 ret = {
                     utxos,
                     btcMultiBalances
