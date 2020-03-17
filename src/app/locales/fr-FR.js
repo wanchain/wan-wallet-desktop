@@ -186,6 +186,8 @@ const fr_FR = {
     'WanAccount.redeem': 'Rembourser',
     'WanAccount.privateTxReceiverAddress': 'L\'adresse pour transaction privée',
     'WanAccount.publicKey': 'Clé Publique',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': 'NOM',
     'EosAccount.publicKey': 'CLE PUBLIQUE',
@@ -197,6 +199,8 @@ const fr_FR = {
     'EosAccount.action': 'ACTION',
     'EosAccount.Accounts': 'Comptes',
     'EosAccount.keyPair': 'Paire de Clés',
+    'EosAccount.createKeyPairFailed': 'Create key pair failed',
+    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
 
     'EOSKeyPairList.import': 'Importer',
     'EOSKeyPairList.getAccountListFailed': 'L\'obtention de la liste des comptes échouée.',

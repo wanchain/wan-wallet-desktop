@@ -186,6 +186,8 @@ const en_US = {
     'WanAccount.redeem': 'Redeem',
     'WanAccount.privateTxReceiverAddress': 'Private transaction receiver address',
     'WanAccount.publicKey': 'Public Key',
+    'WanAccount.createAccountFailed': 'Create account failed',
+    'WanAccount.createAccountSuccess': 'Create account successfully',
 
     'EosAccount.name': 'NAME',
     'EosAccount.publicKey': 'PUBLIC KEY',
@@ -197,6 +199,8 @@ const en_US = {
     'EosAccount.action': 'ACTION',
     'EosAccount.Accounts': 'Accounts',
     'EosAccount.keyPair': 'Key Pairs',
+    'EosAccount.createKeyPairFailed': 'Create key pair failed',
+    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
 
     'EOSKeyPairList.import': 'Import',
     'EOSKeyPairList.getAccountListFailed': 'Get account list failed',

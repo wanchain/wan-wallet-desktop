@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
 
@@ -636,17 +636,48 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
   })
 }
 
-export const createBTCAddr = function (btcPath, addrLen) {
-  let path = `${btcPath}${addrLen}`;
+export const createWANAddr = async function () {
+  let index = await getNewPathIndex(5718350, WANPATH, WALLETID.NATIVE);
+  let path = `${WANPATH}${index}`;
   return new Promise((resolve, reject) => {
-    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'BTC', path }, (err_getOne, val_address_get) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'WAN', path: path }, async (err, val_address_get) => {
+      if (!err) {
+        let name = await getNewAccountName(5718350, 'Account');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              start: index,
+              name,
+              path,
+              address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
+              waddress: wanUtil.toChecksumOTAddress(`0x${val_address_get.waddress}`),
+            }
+            resolve(addressInfo);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
+export const createBTCAddr = function (btcPath, index) {
+  let path = `${btcPath}${index}`;
+  const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'BTC', path }, async (err_getOne, val_address_get) => {
       if (!err_getOne) {
+        let name = await getNewAccountName(CHAINID, 'BTC-Account');
         wand.request('address_btcImportAddress', { address: val_address_get.address }, (err_btcImportAddress, data) => {
           if (!err_btcImportAddress) {
-            wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `BTC-Account${addrLen + 1}`, addr: val_address_get.address } }, (err, val_account_create) => {
+            wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, addr: val_address_get.address } }, (err, val_account_create) => {
               if (!err && val_account_create) {
                 return resolve({
-                  start: addrLen,
+                  start: index,
+                  name,
                   address: val_address_get.address
                 });
               } else {
@@ -659,6 +690,60 @@ export const createBTCAddr = function (btcPath, addrLen) {
         });
       } else {
         return reject(err_getOne);
+      }
+    });
+  })
+}
+
+export const createETHAddr = async function () {
+  let CHAINID = 60;
+  let index = await getNewPathIndex(CHAINID, ETHPATH, WALLETID.NATIVE);
+  let path = `${ETHPATH}${index}`;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'ETH', path }, async (err, val_address_get) => {
+      if (!err) {
+        let name = await getNewAccountName(CHAINID, 'ETH-Account');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              start: index,
+              name,
+              address: `0x${val_address_get.address}`
+            }
+            resolve(addressInfo);
+          } else {
+            return reject(err);
+          }
+        });
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
+export const createEOSAddr = async function () {
+  let CHAINID = 194;
+  let index = await getNewPathIndex(CHAINID, EOSPATH, WALLETID.NATIVE);
+  let path = `${EOSPATH}${index}`;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'EOS', path }, async (err, val_address_get) => {
+      if (!err) {
+        let name = await getNewAccountName(CHAINID, 'EOS-PublicKey');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, publicKey: val_address_get.address } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              publicKey: val_address_get.address,
+              path: val_address_get.path,
+              name
+            }
+            resolve(addressInfo);
+          } else {
+            return reject(err);
+          }
+        });
+      } else {
+        reject(err);
       }
     });
   })
@@ -782,4 +867,30 @@ export const getTypeByWalletId = function (wid) {
       break;
   }
   return type;
+}
+
+export const getNewPathIndex = function (chainID, pathForm, walletID) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getNewPathIndex', { chainID, pathForm, walletID }, (err, index) => {
+      if (err) {
+        console.log(`Get new path index failed`, err)
+        return reject(err)
+      } else {
+        return resolve(index);
+      }
+    })
+  })
+}
+
+export const getNewAccountName = function (chainID, prefix) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getNewNameForNativeAccount', { chainID, prefix }, (err, name) => {
+      if (err) {
+        console.log(`Get new name failed`, err)
+        return reject(err)
+      } else {
+        return resolve(name);
+      }
+    })
+  })
 }

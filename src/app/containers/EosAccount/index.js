@@ -1,17 +1,16 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Row, Col, Form } from 'antd';
+import { Button, Row, Col, Form, message } from 'antd';
 
 import style from './index.less';
 import totalImg from 'static/image/eos.png';
-import { EOSPATH, WALLETID } from 'utils/settings';
+import { createEOSAddr } from 'utils/helper';
 import EOSTransHistory from 'components/EOSTransHistory';
 import EOSKeyPairList from './EOSKeyPairList';
 import EOSAccountList from './EOSAccountList';
 import EOSCreateAccountForm from './EOSCreateAccountForm';
 
-const CHAINTYPE = 'EOS';
 const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAccountForm);
 
 @inject(stores => ({
@@ -44,30 +43,16 @@ class EosAccount extends Component {
   }
 
   generateKeyPair = () => {
-    const { keyInfo, addKey } = this.props;
-    const addrLen = Object.keys(keyInfo['normal']).length;
-    let path = `${EOSPATH}${addrLen}`;
-    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, res) => {
-      if (!err) {
-        let DBObject = {
-          name: `EOS-PublicKey${addrLen + 1}`,
-          publicKey: res.address,
-        };
-        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: DBObject }, (err, response) => {
-          if (!err && response) {
-            addKey({
-              start: addrLen,
-              publicKey: res.address,
-              path: res.path
-            });
-          } else {
-            console.log('error:', err);
-          }
-        });
-      } else {
-        console.log('error:', err);
-      }
-    });
+    const { addKey } = this.props;
+    try {
+      createEOSAddr().then(info => {
+        addKey(info);
+        message.success(intl.get('EosAccount.createKeyPairSuccess'));
+      });
+    } catch (e) {
+      console.log('err:', e);
+      message.warn(intl.get('EosAccount.createKeyPairFailed'));
+    };
   }
 
   createAccount = () => {

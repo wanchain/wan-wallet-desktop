@@ -9,7 +9,8 @@ import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import TransHistory from 'components/TransHistory/BTCTransHistory';
 import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
-import { hasSameName, createBTCAddr } from 'utils/helper';
+import { hasSameName, createBTCAddr, getNewPathIndex } from 'utils/helper';
+import { BTCPATH_MAIN, BTCCHAINID, WALLETID } from 'utils/settings';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 
 @inject(stores => ({
@@ -95,22 +96,27 @@ class BtcAccount extends Component {
     })
   }
 
-  creatAccount = () => {
-    const { addrInfo, addAddress, btcPath } = this.props;
-    const addrLen = Object.keys(addrInfo.normal).length;
+  createAccount = async () => {
+    const { addAddress, btcPath } = this.props;
     this.setState({
       bool: false
     });
 
     if (this.state.bool) {
-      createBTCAddr(btcPath, addrLen).then(addressInfo => {
-        addAddress(addressInfo);
-        this.setState({
-          bool: true
+      try {
+        const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
+        let index = await getNewPathIndex(CHAINID, btcPath, WALLETID.NATIVE);
+        createBTCAddr(btcPath, index).then(addressInfo => {
+          addAddress(addressInfo);
+          this.setState({
+            bool: true
+          });
+          message.success(intl.get('WanAccount.createAccountSuccess'));
         });
-      }).catch(err => {
-        console.log(err);
-      })
+      } catch (e) {
+        console.log('err:', e);
+        message.warn(intl.get('WanAccount.createAccountFailed'));
+      };
     }
   }
 
@@ -142,7 +148,7 @@ class BtcAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">BTC</span></Col>
           <Col span={12} className="col-right">
-            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.creatAccount}>{intl.get('Common.create')}</Button>
+            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
             <SendNormalTrans from={from} handleSend={this.handleSend} />
           </Col>
         </Row>

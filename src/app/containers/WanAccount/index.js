@@ -13,7 +13,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 
-import { hasSameName, checkAddrType, getWalletIdByType } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';
 
@@ -98,36 +98,28 @@ class WanAccount extends Component {
   }
 
   createAccount = () => {
-    const { addrInfo, addAddress } = this.props;
-    const addrLen = Object.keys(addrInfo['normal']).length;
+    const { addAddress } = this.props;
     this.setState({
       bool: false
     });
     if (this.state.bool) {
-      let path = `${WANPATH}${addrLen}`;
-      wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: CHAINTYPE, path: path }, (err, val_address_get) => {
-        if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name: `Account${addrLen + 1}`, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
-            if (!err && val_account_create) {
-              let addressInfo = {
-                start: addrLen,
-                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
-                waddress: wanUtil.toChecksumOTAddress(`0x${val_address_get.waddress}`),
-              }
-              addAddress(addressInfo);
-              this.setState({
-                bool: true
-              });
-              // Scan new account
-              wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, path]], function (err, res) {
-                if (err) {
-                  console.log('Open OTA scanner failed:', err);
-                }
-              });
+      try {
+        createWANAddr().then(addressInfo => {
+          addAddress(addressInfo);
+          this.setState({
+            bool: true
+          });
+          wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, addressInfo.path]], function (err, res) {
+            if (err) {
+              console.log('Open OTA scanner failed:', err);
             }
           });
-        }
-      });
+          message.success(intl.get('WanAccount.createAccountSuccess'));
+        });
+      } catch (e) {
+        console.log('err:', e);
+        message.warn(intl.get('WanAccount.createAccountFailed'));
+      };
     }
   }
 
@@ -155,7 +147,6 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data,
     };
-    console.log('trans:', trans);
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {

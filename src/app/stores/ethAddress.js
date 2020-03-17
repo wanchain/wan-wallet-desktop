@@ -22,7 +22,7 @@ class EthAddress {
 
     @action addAddress (newAddr) {
       self.addrInfo['normal'][newAddr.address] = {
-        name: `ETH-Account${newAddr.start + 1}`,
+        name: newAddr.name ? newAddr.name : `ETH-Account${newAddr.start + 1}`,
         address: newAddr.address,
         balance: '0',
         path: newAddr.start
@@ -142,9 +142,9 @@ class EthAddress {
       })
     }
 
-    @action addRawKey({ path, index, addr }) {
+    @action addRawKey({ path, name, addr }) {
       self.addrInfo['rawKey'][addr] = {
-        name: `Imported${index + 1}`,
+        name: name,
         balance: '0',
         path: path,
         address: addr,
