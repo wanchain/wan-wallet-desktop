@@ -110,7 +110,7 @@ class BtcAddress {
           self.addrInfo.normal[item].balance = formatNumByDecimals(arr[item], 8);
         }
         if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
-          self.addrInfo['rawKey'][item].balance = arr[item];
+          self.addrInfo['rawKey'][item].balance = formatNumByDecimals(arr[item], 8);
         }
       })
     }

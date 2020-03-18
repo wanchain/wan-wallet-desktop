@@ -18,7 +18,7 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
   btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAmount: stores.btcAddress.getNormalAmount,
+  getAmount: stores.btcAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   updateTransParams: paramsObj => stores.sendTransParams.updateBTCTransParams(paramsObj),
 }))
@@ -81,10 +81,10 @@ class BTCNormalTransForm extends Component {
   }
 
   checkToBase58 = (rule, value, callback) => {
-    const { normal } = this.props.addrInfo;
+    const { normal, rawKey } = this.props.addrInfo;
     try {
       bs58check.decode(value);
-      if (Object.keys(normal).filter(item => new BigNumber(normal[item].balance).gte('0')).includes(value)) {
+      if (Object.keys(normal).filter(item => new BigNumber(normal[item].balance).gte('0')).concat(Object.keys(rawKey).filter(item => new BigNumber(rawKey[item].balance).gte('0'))).includes(value)) {
         callback(intl.get('NormalTransForm.invalidAddress'));
       } else {
         callback();
@@ -97,7 +97,6 @@ class BTCNormalTransForm extends Component {
   checkAmount = (rule, value, callback) => {
     if (new BigNumber(value).gt(0) && checkAmountUnit(8, value)) {
       const { utxos, addrInfo, btcPath, updateTransParams } = this.props;
-
       btcCoinSelect(utxos, value).then(data => {
         updateTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
         this.setState({

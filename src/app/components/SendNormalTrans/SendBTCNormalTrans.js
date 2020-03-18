@@ -10,7 +10,7 @@ const CollectionCreateForm = Form.create({ name: 'BTCNormalTransForm' })(BTCNorm
 @inject(stores => ({
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAmount: stores.btcAddress.getNormalAmount,
+  getAmount: stores.btcAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   updateBTCTransParams: params => stores.sendTransParams.updateBTCTransParams(params)
 }))

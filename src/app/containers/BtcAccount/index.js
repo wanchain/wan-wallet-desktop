@@ -18,7 +18,7 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.btcAddress.getAddrList,
-  getAmount: stores.btcAddress.getNormalAmount,
+  getAmount: stores.btcAddress.getAllAmount,
   transParams: stores.sendTransParams.BTCTransParams,
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
@@ -159,7 +159,7 @@ class BtcAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal']} />
+            <TransHistory name={['normal', 'rawKey']} />
           </Col>
         </Row>
       </div>
