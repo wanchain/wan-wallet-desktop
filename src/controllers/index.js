@@ -392,6 +392,9 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     if (isValidAddress) {
                         hdUtil.createUserAccount(wid, newPath, paramsObj1);
                         Windows.broadcast('notification', 'importPrivateKey', paramsObj2);
+                        if (type === 'BTC') {
+                            ccUtil.btcImportAddress(addr.address);
+                        }
                         if (type === 'WAN') {
                             ccUtil.scanOTA(wid, newPath);
                         }
