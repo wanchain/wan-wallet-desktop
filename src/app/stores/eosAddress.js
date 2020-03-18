@@ -141,17 +141,21 @@ class EosAddress {
       }
       if (ret && ret instanceof Object && Object.keys(ret).length) {
         Object.keys(ret).forEach(name => {
-          let item = ret[name]['active']['keys']['1'];
+          let id = '1';
+          if (Object.prototype.hasOwnProperty.call(ret[name]['active']['keys'], '6')) {
+            id = '6';
+          }
+          let item = ret[name]['active']['keys'][id];
           const path = Object.keys(item)[0];
           if (name in self.accountInfo) {
             self.accountInfo[name].path = path;
             self.accountInfo[name].account = name;
-            self.accountInfo[name].id = '1';
+            self.accountInfo[name].id = id;
           } else {
             self.accountInfo[name] = {
               path: path,
               account: name,
-              id: '1'
+              id: id
             }
           }
         });

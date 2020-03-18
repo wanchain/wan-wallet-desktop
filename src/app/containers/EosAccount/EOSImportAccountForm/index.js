@@ -28,7 +28,7 @@ class EOSImportAccountForm extends Component {
             const accounts = form.getFieldValue('accounts');
             const path = selectedRow.path.includes(EOSPATH) ? `${selectedRow.path}` : `${EOSPATH}${selectedRow.path}`;
             const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
-            const wid = WALLETID.NATIVE;
+            const wid = selectedRow.wid;
             this.props.setImportedUserAccount(accounts, network, wid, path, selectedRow.publicKey).then(() => {
                 this.props.getUserKeyFromDB();
             }).catch(() => {
