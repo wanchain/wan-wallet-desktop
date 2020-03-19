@@ -571,6 +571,9 @@ const pt_PT = {
     'staking.validatorRegister': 'Registrar Validador',
     'staking.validatorUpdate': 'Atualização do validador',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': 'Observação: você deve selecionar a conta da qual a transação de registro do validador foi enviada.',
     'ValidatorUpdate.invalidValue': 'Valor inválido. Deve ser > 14 ou == 0 ',
     'ValidatorNode.nodeList': 'Lista de validadores',

@@ -575,6 +575,9 @@ const en_US = {
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': 'Note: You should select the account that the validator registration transaction was sent from.',
     'ValidatorUpdate.invalidValue': 'Invalid Value. Must > 14 or == 0',
     'ValidatorNode.nodeList': 'Validator List',

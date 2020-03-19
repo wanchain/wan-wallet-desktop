@@ -29,7 +29,7 @@ const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
 
 @observer
 class CrossEOS extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.setCurrSymbol(props.symbol);
     this.props.setCurrToken(null, props.symbol);
@@ -94,7 +94,7 @@ class CrossEOS extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.inboundHandleSend} direction={INBOUND}/></div>
+      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.inboundHandleSend} direction={INBOUND} /></div>
     }
   ];
 
@@ -118,11 +118,11 @@ class CrossEOS extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} path={record.path} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.outboundHandleSend} direction={OUTBOUND}/></div>
+      render: (text, record) => <div><EOSTrans symbol={this.props.symbol} tokenOrigAddr={this.props.tokenOrigAddr} record={record} from={record.address} path={record.path} decimals={this.props.tokensList[this.tokenAddr].decimals} handleSend={this.outboundHandleSend} direction={OUTBOUND} /></div>
     }
   ];
 
-  render () {
+  render() {
     const { getNormalAccountListWithBalance, getTokensListInfo, symbol } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
@@ -133,6 +133,14 @@ class CrossEOS extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
 
+    let data = getNormalAccountListWithBalance.map((v) => {
+      let obj = Object.assign({}, v);
+      if (obj.balance === undefined) {
+        obj.balance = 0;
+      }
+      return obj;
+    });
+
     return (
       <div className="account">
         <Row className="title">
@@ -140,7 +148,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} rowKey="account" columns={this.inboundColumns} dataSource={getNormalAccountListWithBalance} />
+            <Table className="content-wrap" pagination={false} rowKey="account" columns={this.inboundColumns} dataSource={data} />
           </Col>
         </Row>
         <Row className="title">

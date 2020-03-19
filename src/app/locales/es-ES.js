@@ -572,6 +572,9 @@ const es_ES = {
     'staking.validatorRegister': 'Registar Validador',
     'staking.validatorUpdate': 'Actualizacion Validador',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': 'Nota: Debe seleccionar la cuenta desde que se envio la transaccion de registro del validador.',
     'ValidatorUpdate.invalidValue': 'Valor invalido. Debe > 14 o == 0',
     'ValidatorNode.nodeList': 'Lista de Validador',

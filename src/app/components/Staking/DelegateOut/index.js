@@ -88,11 +88,15 @@ class DelegateOut extends Component {
 
     wand.request('staking_delegateOut', tx, (err, ret) => {
       if (err) {
-        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
+        message.warn(intl.get('DelegateOut.delegateOutFailed'));
       } else {
-        console.log('delegateOut ret:', ret);
         this.setState({ confirmLoading: false, visible: false });
-        this.props.handleDisableGroup();
+        if (ret.code === true) {
+          this.props.handleDisableGroup();
+          message.success(intl.get('DelegateOut.delegateOutSuccessfully'));
+        } else {
+          message.warn(intl.get('DelegateOut.delegateOutFailed'));
+        }
       }
     });
   }

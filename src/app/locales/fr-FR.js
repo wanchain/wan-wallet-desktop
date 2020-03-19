@@ -572,6 +572,9 @@ const fr_FR = {
     'staking.validatorRegister': 'Enregistrer un nouveau validateur',
     'staking.validatorUpdate': 'Mise a jour du validateur',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': 'Remarque: vous devez sélectionner le compte à partir duquel la transaction d\'enregistrement du validateur a été envoyée.',
     'ValidatorUpdate.invalidValue': 'Valeur invalide. Doit > 14 ou == 0',
     'ValidatorNode.nodeList': 'Liste des validateurs',

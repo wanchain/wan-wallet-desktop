@@ -572,6 +572,9 @@ const ko_KR = {
     'staking.validatorRegister': '검증인 등록',
     'staking.validatorUpdate': '검증인 정보 업데이트',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': '주의 : 반드시 등록된 검증자로부터 전송된 계정을 선택해야 합니다.',
     'ValidatorUpdate.invalidValue': '잘못된 값. 14보다 크거나 0 이어야 합니다',
     'ValidatorNode.nodeList': '검증인 리스트',

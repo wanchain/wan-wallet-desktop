@@ -576,6 +576,9 @@ const zh_CN = {
     'staking.validatorRegister': '注册',
     'staking.validatorUpdate': '修改',
 
+    'DelegateOut.delegateOutSuccessfully': '撤回成功',
+    'DelegateOut.delegateOutFailed': '撤回失败',
+
     'ValidatorUpdate.note': '注意：在选取本地账户时，必须选择与验证节点注册时相同的账户',
     'ValidatorUpdate.invalidValue': '参数有误，应当等于零或大于14.',
     'ValidatorNode.nodeList': '验证人列表',

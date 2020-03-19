@@ -37,9 +37,9 @@ class Staking {
 
   @action async updateStakeInfo () {
     let addrList = [];
-    addrList.push(...wanAddress.getAddrList.slice())
-    addrList.push(...wanAddress.ledgerAddrList.slice())
-    addrList.push(...wanAddress.trezorAddrList.slice())
+    addrList.push(...wanAddress.getNormalAddrList.slice());
+    addrList.push(...wanAddress.ledgerAddrList.slice());
+    addrList.push(...wanAddress.trezorAddrList.slice());
 
     try {
       let val = await pu.promisefy(wand.request, ['staking_info', addrList]);

@@ -572,6 +572,9 @@ const th_TH = {
     'staking.validatorRegister': 'ลงทะเบียน Validator',
     'staking.validatorUpdate': 'อัพเดท Validator',
 
+    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
+    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+
     'ValidatorUpdate.note': 'หมายเหตุ:  คุณจะต้องเลือกแอดเดรสให้ตรงกับที่คุณลงทะเบียน Validator ไว้',
     'ValidatorUpdate.invalidValue': 'ค่าไม่ถูกต้อง ต้องมากกว่า 14 หรือเท่ากับ 0',
     'ValidatorNode.nodeList': 'รายชื่อ Validator',
