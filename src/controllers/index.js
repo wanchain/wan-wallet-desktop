@@ -29,6 +29,7 @@ const ROUTE_TX = 'transaction'
 const ROUTE_QUERY = 'query'
 const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
+const ROUTE_DAPPSTORE = 'dappStore'
 const ROUTE_SETTING = 'setting'
 
 // db collection consts
@@ -1756,6 +1757,34 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
     }
+})
+
+ipc.on(ROUTE_DAPPSTORE, async (event, actionUni, payload) => {
+  let ret, err
+  const [action, id] = actionUni.split('#')
+
+  switch (action) {
+      case 'getRegisteredDapp':
+          try {
+            ret = await ccUtil.getRegisteredDapp(payload.options);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
+      case 'getRegisteredAds':
+          try {
+              ret = await ccUtil.getRegisteredAds(payload.options);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
+  }
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
