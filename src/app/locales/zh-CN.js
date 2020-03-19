@@ -445,6 +445,7 @@ const zh_CN = {
     'menuConfig.deployContract': 'Deploy Contract',
     'menuConfig.registerToken': 'Register Token',
     'menuConfig.registerStoremanGroup': 'Register Storeman Group',
+    'menuConfig.dexDeploy': 'Dex合约部署',
 
     'menuConfig.thirdPartyDapps': '第三方应用',
     'menuConfig.dex': '交易',
