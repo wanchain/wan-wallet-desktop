@@ -11,7 +11,7 @@ import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getNormalPathFromUtxos, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 
@@ -121,7 +121,7 @@ class CrossBTCForm extends Component {
               callback(intl.get('CrossChainTransForm.overQuota'));
               return;
             }
-            updateBTCTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+            updateBTCTransParams({ from: getNormalPathFromUtxos(data.inputs, addrInfo, btcPath) });
             callback();
           }).catch(() => {
             callback(intl.get('Common.invalidAmount'));

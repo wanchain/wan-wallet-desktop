@@ -100,6 +100,10 @@ class EosAddress {
     return Object.values(self.accountInfo);
   }
 
+  @computed get getNormalAccountListWithBalance() {
+    return Object.values(self.accountInfo).filter(obj => Number(obj.id) === WALLETID.NATIVE);
+  }
+
   @computed get getAccount() {
     return Object.keys(self.accountInfo);
   }

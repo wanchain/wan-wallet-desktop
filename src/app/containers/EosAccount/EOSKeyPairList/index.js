@@ -73,9 +73,9 @@ class EOSKeyPairList extends Component {
     this.showAddAccountForm(record);
     const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
     try {
-      let [importedList, accountList] = await Promise.all([pu.promisefy(wand.request, ['account_getImportedAccountsByPublicKey', { network: network, chainID: CHAINID, pubKey: record.publicKey }]), pu.promisefy(wand.request, ['account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }])]);
+      let [importedList, accountList] = await Promise.all([pu.promisefy(wand.request, ['account_getImportedAccountsByPublicKey', { network: network, chainID: CHAINID, pubKey: record.publicKey, wids: [1, 6] }]), pu.promisefy(wand.request, ['account_getAccountByPublicKey', { chainType: CHAINTYPE, pubkey: record.publicKey }])]);
       let importSelections = [];
-      let info = await getEosAccountInfo(accountList)
+      let info = await getEosAccountInfo(accountList);
       accountList.forEach(v => {
         if (!importedList.includes(v) && info[v] && info[v].activeKeys.includes(record.publicKey)) {
           importSelections.push({

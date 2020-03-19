@@ -767,9 +767,23 @@ export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
   let addresses = new Set(utxos.map(item => item.address));
   addresses.forEach(item => {
     fromArr.push({
-      walletID: 1,
-      path: `${btcPath}${addrInfo.normal[item].path}`
+      walletID: addrInfo.normal[item] ? 1 : 6,
+      path: `${btcPath}${addrInfo.normal[item] ? addrInfo.normal[item].path : addrInfo.rawKey[item].path}`
     });
+  });
+  return fromArr;
+}
+
+export const getNormalPathFromUtxos = function (utxos, addrInfo, btcPath) {
+  let fromArr = [];
+  let addresses = new Set(utxos.map(item => item.address));
+  addresses.forEach(item => {
+    if (addrInfo.normal[item]) {
+      fromArr.push({
+        walletID: 1,
+        path: `${btcPath}${addrInfo.normal[item].path}`
+      });
+    }
   });
   return fromArr;
 }

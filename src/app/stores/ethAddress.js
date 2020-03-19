@@ -189,7 +189,8 @@ class EthAddress {
           address: item,
           balance: self.addrInfo[type][item].balance,
           path: `${ETHPATH}${self.addrInfo[type][item].path}`,
-          action: 'send'
+          action: 'send',
+          wid: WALLETID.NATIVE
         });
       });
       return addrList;

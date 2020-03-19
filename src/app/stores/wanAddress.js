@@ -371,7 +371,8 @@ class WanAddress {
         address: wanUtil.toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: `${WANPATH}${self.addrInfo[type][item].path}`,
-        action: 'send'
+        action: 'send',
+        wid: WALLETID.NATIVE
       });
     });
     return addrList;

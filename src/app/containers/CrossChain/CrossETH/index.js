@@ -16,7 +16,7 @@ const WANCHAIN = 'WAN';
   tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAddrList: stores.ethAddress.getAddrList,
+  getNormalAddrList: stores.ethAddress.getNormalAddrList,
   getAmount: stores.ethAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
@@ -153,7 +153,7 @@ class CrossETH extends Component {
   ];
 
   render () {
-    const { getAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, getTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -170,7 +170,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getAddrList} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList} />
           </Col>
         </Row>
         <Row className="title">

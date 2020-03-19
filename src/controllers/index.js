@@ -822,9 +822,9 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
             break
 
         case 'getImportedAccountsByPublicKey':
-            const { network, chainID, pubKey } = payload;
+            const { network, chainID, pubKey, wids } = payload;
             try {
-                ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey)
+                ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey, wids)
             } catch (e) {
                 logger.error('Get all accounts failed: ' + e.message || e.stack)
                 err = e

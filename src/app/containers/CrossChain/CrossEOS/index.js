@@ -19,7 +19,7 @@ const EOSSYMBOL = '0x01800000c2656f73696f2e746f6b656e3a454f53'
   wanAddrInfo: stores.wanAddress.addrInfo,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
-  getAccountListWithBalance: stores.eosAddress.getAccountListWithBalance,
+  getNormalAccountListWithBalance: stores.eosAddress.getNormalAccountListWithBalance,
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -123,7 +123,7 @@ class CrossEOS extends Component {
   ];
 
   render () {
-    const { getAccountListWithBalance, getTokensListInfo, symbol } = this.props;
+    const { getNormalAccountListWithBalance, getTokensListInfo, symbol } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -140,7 +140,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} rowKey="account" columns={this.inboundColumns} dataSource={getAccountListWithBalance} />
+            <Table className="content-wrap" pagination={false} rowKey="account" columns={this.inboundColumns} dataSource={getNormalAccountListWithBalance} />
           </Col>
         </Row>
         <Row className="title">
