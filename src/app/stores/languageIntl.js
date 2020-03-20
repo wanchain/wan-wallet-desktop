@@ -272,7 +272,7 @@ class LanguageIntl {
         icon: 'stock',
         children: [
           {
-            title: 'Add',
+            title: 'More dApps',
             key: '/AddDApp',
             icon: 'plus-circle',
           },
