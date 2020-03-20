@@ -183,3 +183,27 @@ body {
     fill: white;
     animation: spin 1s infinite linear;
 }
+
+#confirmModal {
+    opacity: 0.95;
+    color: white;
+}
+
+#confirmModal .modal-dialog{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#confirmModal .modal-header, #confirmModal .modal-footer {
+    border: none;
+}
+
+#confirmModal .modal-content {
+    background: rgba(39, 40, 64, 1) !important;
+}
+
+#confirmModal .modal-body {
+    color: #DA9E40;
+}

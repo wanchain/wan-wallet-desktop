@@ -15,5 +15,10 @@
     "ERR_WRONG_PWD_WALLET": "WAN 지갑 비밀번호가 잘못 되었습니다.",
     "ERR_INVALID_KEYFILE": "키 파일 형식 오류",
     "TEXT_SUCCESS": "가져오기가 성공하였습니다. 5초 후에 창이 닫힙니다.",
-    "browse": "탐색"
+    "browse": "탐색",
+    "confirm_Title": "Notice",
+    "confirm_noticeText": "Be sure to make a backup of the Keystore file, this is the only way to restore your account assets, because the mnemonic on the light wallet is unable to help you restore the corresponding Keystore account address. \n e also recommend that you transfer all the assets of the Keystore account directly to the new address of the light wallet, and discard the Keystore and the corresponding account address.",
+    "confirm_close": "Close",
+    "confirm_submit": "Submit",
+    "confirm_counter": "${number} Seconds"
 }

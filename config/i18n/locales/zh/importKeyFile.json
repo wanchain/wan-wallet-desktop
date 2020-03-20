@@ -16,5 +16,10 @@
     "ERR_INVALID_KEYFILE": "密钥文件格式错误",
     "ERR_DUPLICATE_KEYFILE": "请勿重复导入相同文件",
     "TEXT_SUCCESS": "导入成功，窗口将在五秒后关闭。",
-    "browse": "浏览"
+    "browse": "浏览",
+    "confirm_Title": "注意",
+    "confirm_noticeText": "请务必做好Keystore文件的备份，这是恢复您账户资产的唯一方法，因为轻钱包上的助记词是无法帮您恢复Keystore对应的账户地址。\n我们更建议您把Keystore账户的全部资产直接转移到轻钱包新地址中，弃用Keystore及对应的账户地址。",
+    "confirm_close": "关闭",
+    "confirm_submit": "知道了",
+    "confirm_counter": "${number} 秒"
 }

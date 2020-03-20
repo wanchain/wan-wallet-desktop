@@ -16,5 +16,10 @@
     "ERR_INVALID_KEYFILE": "Formato de archivo keystore incorrecta",
     "ERR_DUPLICATE_KEYFILE": "No vuelva a importar el mismo archivo de clave",
     "TEXT_SUCCESS": "La importacion se realizo correctamente. Esta ventana cerrara en 5 segundos.",
-    "browse": "Navegar"
+    "browse": "Navegar",
+    "confirm_Title": "Notice",
+    "confirm_noticeText": "Be sure to make a backup of the Keystore file, this is the only way to restore your account assets, because the mnemonic on the light wallet is unable to help you restore the corresponding Keystore account address. \n e also recommend that you transfer all the assets of the Keystore account directly to the new address of the light wallet, and discard the Keystore and the corresponding account address.",
+    "confirm_close": "Close",
+    "confirm_submit": "Submit",
+    "confirm_counter": "${number} Seconds"
 }
