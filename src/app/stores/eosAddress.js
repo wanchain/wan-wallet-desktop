@@ -31,7 +31,7 @@ class EosAddress {
 
   @action deleteKey(type, key) {
     delete self.keyInfo[type][key];
-    this.updateTransHistory();
+    self.updateTransHistory();
   }
 
   @action addRawKey({ publicKey, name, path }) {
@@ -39,6 +39,17 @@ class EosAddress {
       name: name,
       path: path,
     };
+  }
+
+  @action resetKeyInfo() {
+    self.keyInfo = {
+      normal: {},
+      rawKey: {}
+    };
+  }
+
+  @action resetAccountInfo() {
+    self.accountInfo = {};
   }
 
   @action updateKeyName(row, wid) {
@@ -109,6 +120,9 @@ class EosAddress {
   }
 
   @action getUserKeyFromDB() {
+    self.resetKeyInfo();
+    self.resetAccountInfo();
+
     wand.request('account_getAll', { chainID: 194 }, (err, ret) => {
       if (err) {
         console.log('Get user from DB failed ', err);
@@ -134,7 +148,7 @@ class EosAddress {
               }
             }
           })
-        })
+        });
       }
     });
 

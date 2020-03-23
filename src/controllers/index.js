@@ -822,8 +822,8 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
             break
 
         case 'getImportedAccountsByPublicKey':
-            const { network, chainID, pubKey, wids } = payload;
             try {
+                const { network, chainID, pubKey, wids } = payload;
                 ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey, wids)
             } catch (e) {
                 logger.error('Get all accounts failed: ' + e.message || e.stack)
@@ -860,6 +860,9 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
             try {
                 const { walletID, path, chainType = false, address } = payload;
                 hdUtil.deleteUserAccount(walletID, path);
+                if (chainType === 'EOS') {
+                    hdUtil.deleteImportedUserAccount(network, walletID, path, address);
+                }
                 if (walletID === WALLET_ID_RAWKEY) {
                     hdUtil.deleteRawKey(path);
                     if (chainType === 'WAN') { // Delete WAN private address's raw key
