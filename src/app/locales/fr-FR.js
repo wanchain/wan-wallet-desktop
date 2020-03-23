@@ -649,6 +649,7 @@ const fr_FR = {
 
     'popup.search': 'Rechercher',
     'title.imported': 'Adresse importée',
+    'title.importedKey': 'Imported Key',
 
     'network.down': 'Requête de connexion échouée, veuillez réessayer plus tard'
 

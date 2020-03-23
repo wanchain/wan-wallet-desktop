@@ -649,6 +649,7 @@ const ko_KR = {
 
     'popup.search': '검색',
     'title.imported': '가져온 주소',
+    'title.importedKey': 'Imported Key',
 
     'network.down': '네트워크 요청이 실패했습니다. 나중에 다시 시도하십시오'
 

@@ -652,6 +652,7 @@ const en_US = {
 
     'popup.search': 'Search',
     'title.imported': 'Imported Address',
+    'title.importedKey': 'Imported Key',
 
     'network.down': 'The network request failed, Please try again later'
 

@@ -649,6 +649,7 @@ const th_TH = {
 
     'popup.search': 'ค้นหา',
     'title.imported': 'นำเข้าแอดเดรส',
+    'title.importedKey': 'Imported Key',
 
     'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง'
 

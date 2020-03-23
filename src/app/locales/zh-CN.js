@@ -652,6 +652,7 @@ const zh_CN = {
 
     'popup.search': '搜索',
     'title.imported': '已导入的地址',
+    'title.importedKey': '已导入的密钥',
 
     'network.down': '网络请求失败，请稍后再试'
 

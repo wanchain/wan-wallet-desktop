@@ -130,7 +130,7 @@ class CopyAndQrcode extends Component {
   }
 
   render() {
-    const { addr, addrInfo, type, path, wid, name } = this.props;
+    const { addr, addrInfo, type, path, wid, name, titles } = this.props;
     return (
       <div className="handleIco">
         <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
@@ -181,7 +181,7 @@ class CopyAndQrcode extends Component {
           Object.values(WALLETID).includes(wid) && <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.showDeleteModal()} /></Tooltip>
         }
         {[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(wid)
-          ? <Tooltip placement="bottom" title={intl.get('title.imported')}><Icon type="import" /></Tooltip>
+          ? <Tooltip placement="bottom" title={ (titles && titles.imported) || intl.get('title.imported')}><Icon type="import" /></Tooltip>
           : ''
         }
         {

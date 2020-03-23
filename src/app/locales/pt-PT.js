@@ -648,6 +648,7 @@ const pt_PT = {
 
     'popup.search': 'Pesquisa',
     'title.imported': 'Importar endereço',
+    'title.importedKey': 'Imported Key',
 
     'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde'
 

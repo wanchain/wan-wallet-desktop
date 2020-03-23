@@ -40,7 +40,7 @@ class EOSKeyPairList extends Component {
     },
     {
       dataIndex: 'publicKey',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'EOS'} path={record.path} wid={record.wid} name={record.name} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={'EOS'} path={record.path} wid={record.wid} name={record.name} titles={{ imported: intl.get('title.importedKey') }} /></div>
     },
     {
       dataIndex: 'action',
