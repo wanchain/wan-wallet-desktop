@@ -199,7 +199,7 @@ class CopyAndQrcode extends Component {
             bodyStyle={{ textAlign: 'center' }}
           >
             <div className={style.deleteMsg}>
-              <span>{intl.get('CopyAndQrcode.confirmText')} : </span>
+              <span className={style.deleteConfirmMsg}>{intl.get('CopyAndQrcode.confirmText')} : </span>
               <span className={style.symbolSty}>{name}</span>
             </div>
           </Modal>
