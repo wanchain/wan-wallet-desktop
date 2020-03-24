@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Input, Select, message } from 'antd';
+import { Button, Card, Modal, Input, Select, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
@@ -17,6 +17,7 @@ class ImportPrivateKey extends Component {
     pk: '',
     pk2: '',
     type: 'WAN',
+    spin: false
   }
 
   resetStateVal = () => {
@@ -24,6 +25,7 @@ class ImportPrivateKey extends Component {
       visible: false,
       pk: '',
       type: 'WAN',
+      spin: false
     });
   }
 
@@ -52,6 +54,7 @@ class ImportPrivateKey extends Component {
   handleOk = () => {
     let { pk, pk2, type } = this.state;
     try {
+      this.setState({ spin: true });
       if (typeof (pk) === 'string' && pk.length && type.length) {
         let param = {
           pk,
@@ -62,27 +65,32 @@ class ImportPrivateKey extends Component {
             param.pk2 = pk2;
           } else {
             message.warn(intl.get('ImportPrivateKey.invalidParameter'));
+            this.setState({ spin: false });
             return;
           }
         }
-        wand.request('wallet_importPrivateKey', param, function (err, val) {
+        wand.request('wallet_importPrivateKey', param, (err, val) => {
           if (err) {
             message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            this.setState({ spin: false });
             return
           }
           if (val) {
             message.success(intl.get('ImportPrivateKey.importPKSuccess'));
+            this.resetStateVal();
           } else {
             message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            this.setState({ spin: false });
           }
         });
       } else {
         message.warn(intl.get('ImportPrivateKey.invalidParameter'));
+        this.setState({ spin: false });
         return;
       }
-      this.resetStateVal();
     } catch (e) {
       message.error(e.toString());
+      this.setState({ spin: false });
     }
   }
 
@@ -94,31 +102,35 @@ class ImportPrivateKey extends Component {
             {intl.get('ImportPrivateKey.ImportPrivateKeyNotice')}
           </p>
           <Button type="primary" onClick={this.showModal}>{intl.get('Common.continue')}</Button>
-          <Modal
-            destroyOnClose={true}
-            title={intl.get('ImportPrivateKey.title')}
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.resetStateVal}
-            closable={false}
-            okText={intl.get('Common.ok')}
-            className={style['settings_importPrivateKey_modal']}
-            cancelText={intl.get('Common.cancel')}
-          >
-            <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('ImportPrivateKey.notify')}</p>
-            <div>
-              <Select defaultValue="WAN" onChange={this.typeChange}>
-                <Option value="WAN" selected="selected">WAN</Option>
-                <Option value="ETH">ETH</Option>
-                <Option value="BTC">BTC</Option>
-                <Option value="EOS">EOS</Option>
-              </Select>
-              <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />
-              {
-                this.state.type === 'WAN' && <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />
-              }
-            </div>
-          </Modal>
+          {
+            this.state.visible && <Modal
+              destroyOnClose={true}
+              title={intl.get('ImportPrivateKey.title')}
+              visible={true}
+              onOk={this.handleOk}
+              onCancel={this.resetStateVal}
+              closable={false}
+              okText={intl.get('Common.ok')}
+              className={style['settings_importPrivateKey_modal']}
+              cancelText={intl.get('Common.cancel')}
+            >
+              <Spin spinning={this.state.spin}>
+                <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('ImportPrivateKey.notify')}</p>
+                <div>
+                  <Select defaultValue="WAN" onChange={this.typeChange}>
+                    <Option value="WAN" selected="selected">WAN</Option>
+                    <Option value="ETH">ETH</Option>
+                    <Option value="BTC">BTC</Option>
+                    <Option value="EOS">EOS</Option>
+                  </Select>
+                  <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />
+                  {
+                    this.state.type === 'WAN' && <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />
+                  }
+                </div>
+              </Spin>
+            </Modal>
+          }
         </Card>
       </div>
     );
