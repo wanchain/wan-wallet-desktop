@@ -356,7 +356,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         let rawPriv2 = Buffer.from(pk2, 'hex');
                         hdUtil.importPrivateKey(`${pathForm2}${index}`, rawPriv2);
                     }
-                    
+
                     let addr = await hdUtil.getAddress(wid, type, newPath);
                     let paramsObj1 = {};
                     let paramsObj2 = {};
@@ -373,7 +373,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             break;
                         case 'WAN':
                             isValidAddress = await ccUtil.isWanAddress(`0x${addr.address}`);
-                            if ( typeof(addr.waddress) !== 'string' || wanUtil.toChecksumOTAddress(addr.waddress) === '') {
+                            if (typeof (addr.waddress) !== 'string' || wanUtil.toChecksumOTAddress(addr.waddress) === '') {
                                 isValidAddress = false;
                             }
                             paramsObj1 = { name: accountName, addr: `0x${addr.address}`, waddr: `0x${addr.waddress}` }
@@ -442,7 +442,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: address })
             break
-        
+
         case 'getNewPathIndex':
             let index;
             try {
@@ -823,8 +823,20 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'getImportedAccountsByPublicKey':
             try {
-                const { network, chainID, pubKey, wids } = payload;
-                ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey, wids)
+                const { chainID, pubKey, wids } = payload;
+                ret = hdUtil.getImportAccountsByPubKeyForChain(network, chainID, pubKey, wids);
+            } catch (e) {
+                logger.error('Get all accounts failed: ' + e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'deleteEOSImportedAccounts':
+            try {
+                const { accounts } = payload;
+                ret = hdUtil.deleteEOSImportedUserAccounts(accounts, network, 194)
             } catch (e) {
                 logger.error('Get all accounts failed: ' + e.message || e.stack)
                 err = e
@@ -860,20 +872,17 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
             try {
                 const { walletID, path, chainType = false, address } = payload;
                 hdUtil.deleteUserAccount(walletID, path);
-                if (chainType === 'EOS') {
-                    hdUtil.deleteImportedUserAccount(network, walletID, path, address);
-                }
                 if (walletID === WALLET_ID_RAWKEY) {
                     hdUtil.deleteRawKey(path);
                     if (chainType === 'WAN') { // Delete WAN private address's raw key
                         let privatePath = path.split('');
-                        privatePath.splice(privatePath.lastIndexOf('/') -1, 1, '1');
+                        privatePath.splice(privatePath.lastIndexOf('/') - 1, 1, '1');
                         hdUtil.deleteRawKey(privatePath.join(''));
                     }
                 } else if (walletID === WALLET_ID_KEYSTORE) {
                     hdUtil.deleteKeyStore(path, address.toLowerCase());
                 }
-                
+
                 ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1648,7 +1657,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1669,7 +1678,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1693,7 +1702,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1763,31 +1772,31 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_DAPPSTORE, async (event, actionUni, payload) => {
-  let ret, err
-  const [action, id] = actionUni.split('#')
+    let ret, err
+    const [action, id] = actionUni.split('#')
 
-  switch (action) {
-      case 'getRegisteredDapp':
-          try {
-            ret = await ccUtil.getRegisteredDapp(payload.options);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
+    switch (action) {
+        case 'getRegisteredDapp':
+            try {
+                ret = await ccUtil.getRegisteredDapp(payload.options);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
-          sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
+            sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
 
-      case 'getRegisteredAds':
-          try {
-              ret = await ccUtil.getRegisteredAds(payload.options);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
-  }
+        case 'getRegisteredAds':
+            try {
+                ret = await ccUtil.getRegisteredAds(payload.options);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+    }
 })
 
 ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
@@ -2224,22 +2233,22 @@ async function retryRun(func, ...params) {
     throw new Error('rpc get error 30 times reached');
 }
 
-const getChainIdByType = function(type, isTestNet = false) {
+const getChainIdByType = function (type, isTestNet = false) {
     console.log(type, isTestNet);
     let ID
     switch (type) {
-      case 'WAN':
-        ID = 5718350;
-        break;
-      case 'BTC':
-        ID = isTestNet ? 1 : 0;
-        break;
-      case 'ETH':
-        ID = 60;
-        break;
-      case 'EOS':
-        ID = 194;
-        break;
+        case 'WAN':
+            ID = 5718350;
+            break;
+        case 'BTC':
+            ID = isTestNet ? 1 : 0;
+            break;
+        case 'ETH':
+            ID = 60;
+            break;
+        case 'EOS':
+            ID = 194;
+            break;
     }
     return ID;
 }

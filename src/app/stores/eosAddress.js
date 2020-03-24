@@ -5,6 +5,7 @@ import { EOSPATH, WALLETID } from 'utils/settings';
 import { getTypeByWalletId } from 'utils/helper';
 import { timeFormat, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
+const pu = require('promisefy-util');
 
 class EosAddress {
   @observable keyInfo = {
@@ -29,8 +30,13 @@ class EosAddress {
     };
   }
 
-  @action deleteKey(type, key) {
+  @action async deleteKeyAndAccount(type, key) {
     delete self.keyInfo[type][key];
+    let importedList = await pu.promisefy(wand.request, ['account_getImportedAccountsByPublicKey', { chainID: 194, pubKey: key, wids: [1, 6] }]);
+    importedList.forEach(account => {
+      delete self.accountInfo[account];
+    });
+    await pu.promisefy(wand.request, ['account_deleteEOSImportedAccounts', { accounts: importedList }]);
     self.updateTransHistory();
   }
 
@@ -186,9 +192,10 @@ class EosAddress {
       self.transHistory = {};
     }
     wand.request('transaction_showRecords', (err, val) => {
+      let accounts = self.getAccount;
       if (!err && val.length !== 0) {
         let tmp = {};
-        val = val.filter(item => item.chainType === 'EOS');
+        val = val.filter(item => item.chainType === 'EOS' && accounts.includes(item.from));
         val.forEach(item => {
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
             tmp[item.txHash] = item;

@@ -13,7 +13,7 @@ import { getTypeByWalletId } from 'utils/helper';
   deleteWANAccount: (type, addr) => stores.wanAddress.deleteAddress(type, addr),
   deleteBTCAccount: (type, addr) => stores.btcAddress.deleteAddress(type, addr),
   deleteETHAccount: (type, addr) => stores.ethAddress.deleteAddress(type, addr),
-  deleteEOSAccount: () => stores.eosAddress.getUserKeyFromDB(),
+  deleteEOSAccount: (type, addr) => stores.eosAddress.deleteKeyAndAccount(type, addr),
 
 }))
 
