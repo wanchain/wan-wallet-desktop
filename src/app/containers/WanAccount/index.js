@@ -109,7 +109,7 @@ class WanAccount extends Component {
           this.setState({
             bool: true
           });
-          wand.request('address_scanMultiOTA', [[WALLETID.NATIVE, addressInfo.path]], function (err, res) {
+          wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
             if (err) {
               console.log('Open OTA scanner failed:', err);
             }

@@ -589,7 +589,7 @@ export const increaseFailedRetryCount = function (params) {
 
 export const openScanOTA = function (path) {
   return new Promise((resolve, reject) => {
-    wand.request('address_scanMultiOTA', path, function (err, res) {
+    wand.request('address_scanMultiOTA', { path }, function (err, res) {
       if (err) {
         console.log('Open OTA scanner failed:', err);
         return reject(err);
@@ -641,6 +641,7 @@ export const createWANAddr = async function () {
   let path = `${WANPATH}${index}`;
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'WAN', path: path }, async (err, val_address_get) => {
+      console.log('val_address_get:', val_address_get);
       if (!err) {
         let name = await getNewAccountName(5718350, 'Account');
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
@@ -669,6 +670,7 @@ export const createBTCAddr = function (btcPath, index) {
   const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'BTC', path }, async (err_getOne, val_address_get) => {
+      console.log('val_address_get:', val_address_get);
       if (!err_getOne) {
         let name = await getNewAccountName(CHAINID, 'BTC-Account');
         wand.request('address_btcImportAddress', { address: val_address_get.address }, (err_btcImportAddress, data) => {
@@ -699,8 +701,10 @@ export const createETHAddr = async function () {
   let CHAINID = 60;
   let index = await getNewPathIndex(CHAINID, ETHPATH, WALLETID.NATIVE);
   let path = `${ETHPATH}${index}`;
+  console.log('new Path:', path);
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'ETH', path }, async (err, val_address_get) => {
+      console.log('val_address_get:', val_address_get);
       if (!err) {
         let name = await getNewAccountName(CHAINID, 'ETH-Account');
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
@@ -728,6 +732,7 @@ export const createEOSAddr = async function () {
   let path = `${EOSPATH}${index}`;
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'EOS', path }, async (err, val_address_get) => {
+      console.log('val_address_get:', val_address_get);
       if (!err) {
         let name = await getNewAccountName(CHAINID, 'EOS-PublicKey');
         wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, publicKey: val_address_get.address } }, (err, val_account_create) => {

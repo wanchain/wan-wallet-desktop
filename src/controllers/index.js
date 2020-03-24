@@ -650,8 +650,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'scanMultiOTA':
             {
                 try {
-                    if (payload.length > 0) {
-                        payload.forEach((v) => {
+                    const { path } = payload;
+                    if (path.length > 0) {
+                        path.forEach((v) => {
                             ccUtil.scanOTA(v[0], v[1]);
                         });
                     }
