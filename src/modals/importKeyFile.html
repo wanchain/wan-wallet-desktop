@@ -131,12 +131,12 @@
                 'cancel',
                 'submit',
                 'confirm_Title',
-                'confirm_noticeText',
                 'confirm_close'
             ];
             ids.forEach((id) => {
                 setText(id);
             });
+            $(`#confirm_noticeText`).html($.i18n('warning'));
         }
         let setText = (id) => {
             $(`#${id}`).html($.i18n(id));

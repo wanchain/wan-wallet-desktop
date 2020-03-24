@@ -18,7 +18,6 @@
     "TEXT_SUCCESS": "Importé avec succès. Cette fenêtre se fermera dans 5 secondes.",
     "browse": "Parcourir",
     "confirm_Title": "Notice",
-    "confirm_noticeText": "Be sure to make a backup of the Keystore file, this is the only way to restore your account assets, because the mnemonic on the light wallet is unable to help you restore the corresponding Keystore account address. \n e also recommend that you transfer all the assets of the Keystore account directly to the new address of the light wallet, and discard the Keystore and the corresponding account address.",
     "confirm_close": "Close",
     "confirm_submit": "Submit",
     "confirm_counter": "${number} Seconds"

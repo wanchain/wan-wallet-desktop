@@ -56,7 +56,7 @@ class Login extends Component {
         const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
         const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
         const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
-        openScanOTA(normalObj.concat(importObj).concat(rawKeyObj));
+        openScanOTA([].concat(normalObj, importObj, rawKeyObj));
 
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
           createBTCAddr(this.props.btcPath, 0).then(addressInfo => {
