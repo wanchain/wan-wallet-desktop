@@ -34,11 +34,7 @@ class DApps {
   @action updateDApps(options) {
     wand.request('dappStore_getRegisteredDapp', { options }, (err, val) => {
       if (!err && val.length !== 0) {
-        let Obj = Object.assign({}, val[0])
-        Obj.type = 'Finance'
-        Obj.name = 'Zinance Game'
-        Obj.updatedAt = 1584607432212
-        self.allDapps = [val[0], val[0], val[0], val[0], Obj];
+        self.allDapps = val
       } else {
         console.log(`Get Registered Dapp failed`, err)
       }
