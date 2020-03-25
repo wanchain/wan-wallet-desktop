@@ -97,6 +97,12 @@ const ko_KR = {
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',
     'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
+    'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
+
+    'ImportPrivateKeyConfirmation.notice': 'Notice',
+    'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
+    'ImportPrivateKeyConfirmation.seconds': 'Seconds',
+    'ImportPrivateKeyConfirmation.second': 'Second',
 
     'Restore.restoreFromSeedPhrase': '복구 Mnemonic',
     'Restore.restoreNewWalletWillDeleteAllLocalData': ' Mnemonic을 복원하고 싶으시다면, 모든 로컬데이터가 삭제되고 프로그램이 다시 설치 됩니다. 계속 진행 하시겠습니까.',

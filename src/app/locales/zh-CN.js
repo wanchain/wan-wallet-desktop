@@ -98,6 +98,12 @@ const zh_CN = {
     'ImportPrivateKey.invalidParameter': '非法参数',
     'ImportPrivateKey.importPKFailed': '导入私钥失败',
     'ImportPrivateKey.importPKSuccess': '导入私钥成功',
+    'ImportPrivateKey.sameAddress': '请勿导入已存在的账户地址或密钥对',
+
+    'ImportPrivateKeyConfirmation.notice': '注意',
+    'ImportPrivateKeyConfirmation.noticeText': '告警：不推荐使用密钥文件账户，我们不提供密钥文件备份功能。请保存好原始的秘钥文件或者将资产转移到HD钱包账户或硬件钱包账户。',
+    'ImportPrivateKeyConfirmation.seconds': '秒',
+    'ImportPrivateKeyConfirmation.second': '秒',
 
     'Restore.restoreFromSeedPhrase': '恢复助记词',
     'Restore.restoreNewWalletWillDeleteAllLocalData': '如果你恢复助记词，所有本地数据会被删除，程序会重新启动。请确认是否继续。',

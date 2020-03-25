@@ -97,6 +97,12 @@ const th_TH = {
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',
     'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
+    'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
+
+    'ImportPrivateKeyConfirmation.notice': 'Notice',
+    'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
+    'ImportPrivateKeyConfirmation.seconds': 'Seconds',
+    'ImportPrivateKeyConfirmation.second': 'Second',
 
     'Restore.restoreFromSeedPhrase': 'กู้กระเป๋าโดยใช้กลุ่มคำลับ',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'หากคุณกู้กระเป๋าโดยใช้ "กลุ่มคำลับ" ข้อมูลในปัจจุบันทั้งหมดจะถูกลบทิ้งและกระเป๋าจะทำการปิดและเปิดใหม่ กรุณายืนยันเพื่อดำเนินการต่อ',

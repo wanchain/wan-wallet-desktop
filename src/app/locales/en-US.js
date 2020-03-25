@@ -97,6 +97,12 @@ const en_US = {
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',
     'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
+    'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
+
+    'ImportPrivateKeyConfirmation.notice': 'Notice',
+    'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
+    'ImportPrivateKeyConfirmation.seconds': 'Seconds',
+    'ImportPrivateKeyConfirmation.second': 'Second',
 
     'Restore.restoreFromSeedPhrase': 'Restore From Seed Phrase',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'If you restore a new wallet from your seed phrase, all local data of the current wallet will be deleted and the application will be rebooted. Please confirm and continue.',

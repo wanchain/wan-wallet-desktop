@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Card, Modal, Input, Select, message, Spin } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import ImportPrivateKeyConfirmation from './ImportPrivateKeyConfirmation';
 
 import style from './index.less';
 const { Option } = Select;
@@ -14,6 +15,7 @@ const { Option } = Select;
 class ImportPrivateKey extends Component {
   state = {
     visible: false,
+    confirmationVisible: false,
     pk: '',
     pk2: '',
     type: 'WAN',
@@ -52,9 +54,13 @@ class ImportPrivateKey extends Component {
   }
 
   handleOk = () => {
+    this.setState({ confirmationVisible: true });
+  }
+
+  handleSubmit = () => {
     let { pk, pk2, type } = this.state;
     try {
-      this.setState({ spin: true });
+      this.setState({ spin: true, confirmationVisible: false });
       if (typeof (pk) === 'string' && pk.length && type.length) {
         let param = {
           pk,
@@ -75,11 +81,15 @@ class ImportPrivateKey extends Component {
             this.setState({ spin: false });
             return
           }
-          if (val) {
+          if (val.status) {
             message.success(intl.get('ImportPrivateKey.importPKSuccess'));
             this.resetStateVal();
           } else {
-            message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            if (val.message && val.message === 'sameAddress') {
+              message.warn(intl.get('ImportPrivateKey.sameAddress'));
+            } else {
+              message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            }
             this.setState({ spin: false });
           }
         });
@@ -92,6 +102,10 @@ class ImportPrivateKey extends Component {
       message.error(e.toString());
       this.setState({ spin: false });
     }
+  }
+
+  handleCloseConfirmationDialog = () => {
+    this.setState({ confirmationVisible: false });
   }
 
   render() {
@@ -130,6 +144,9 @@ class ImportPrivateKey extends Component {
                 </div>
               </Spin>
             </Modal>
+          }
+          {
+            this.state.confirmationVisible && <ImportPrivateKeyConfirmation onOk={this.handleSubmit} onCancel={this.handleCloseConfirmationDialog}/>
           }
         </Card>
       </div>

@@ -97,6 +97,12 @@ const fr_FR = {
     'ImportPrivateKey.invalidParameter': 'Invalid parameter',
     'ImportPrivateKey.importPKFailed': 'Import private key failed.',
     'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
+    'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
+
+    'ImportPrivateKeyConfirmation.notice': 'Notice',
+    'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
+    'ImportPrivateKeyConfirmation.seconds': 'Seconds',
+    'ImportPrivateKeyConfirmation.second': 'Second',
 
     'Restore.restoreFromSeedPhrase': 'Réinitialiser votre portefeuille à partir de la phrase mnénomique (seed) ',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Si vous réinitialisez un nouveau portefeuille à partir d\'une phrase mnénomique (seed), toutes les données locales du portefeuille actuel seront supprimées et l\'application redémarrera automatiquement. Veuillez confirmer et continuer.',
