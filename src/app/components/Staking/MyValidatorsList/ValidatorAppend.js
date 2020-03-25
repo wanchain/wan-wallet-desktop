@@ -67,7 +67,7 @@ class InForm extends Component {
       if (!settings.reinput_pwd) {
         this.setState({ confirmVisible: true });
       } else {
-        wand.request('phrase_reveal', { pwd }, err => {
+        wand.request('phrase_checkPwd', { pwd }, err => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {

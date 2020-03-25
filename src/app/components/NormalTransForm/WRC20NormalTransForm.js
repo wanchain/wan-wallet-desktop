@@ -107,7 +107,7 @@ class WRC20NormalTransForm extends Component {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
-        wand.request('phrase_reveal', { pwd }, (err) => {
+        wand.request('phrase_checkPwd', { pwd }, (err) => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {

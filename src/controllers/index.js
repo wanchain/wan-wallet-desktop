@@ -91,6 +91,18 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
             sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: phrase })
 
             break
+        case 'checkPwd':
+            try {
+                hdUtil.revealMnemonic(payload.pwd)
+
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_PHRASE, [action, id].join('#')].join('_'), event, { err: err, data: null })
+
+            break
         case 'import':
             try {
                 ret = hdUtil.importMnemonic(payload.phrase, payload.pwd)

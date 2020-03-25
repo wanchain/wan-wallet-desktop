@@ -270,7 +270,7 @@ class DelegateInForm extends Component {
         }
 
         try {
-          await pu.promisefy(wand.request, ['phrase_reveal', { pwd: pwd }], this);
+          await pu.promisefy(wand.request, ['phrase_checkPwd', { pwd: pwd }], this);
         } catch (error) {
           message.warn(intl.get('Backup.invalidPassword'));
           this.setState({ loading: false });
