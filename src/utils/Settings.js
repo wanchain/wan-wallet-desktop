@@ -1,3 +1,4 @@
+import fs from 'fs'
 import low from 'lowdb'
 import FileSync from 'lowdb/adapters/FileSync'
 import { app } from 'electron'
@@ -135,9 +136,19 @@ class Settings {
   constructor() {
     this._logger = Logger.getLogger('settings')
     this._logger.info('setting initialized')
-    let path = app.getPath('userData');
-    this._logger.info('User data path: ' + path);
-    this._db = low(new FileSync(path + '/config.json'))
+    let ver = app.getVersion();
+    if (ver.indexOf('-') === -1) {
+      this.userPath = app.getPath('userData');
+    }
+    else {
+      this.userPath = app.getPath('userData') + '/test';
+    }
+    if (!fs.existsSync(this.userPath)) {
+      fs.mkdirSync(this.userPath);
+    }
+    this._logger.info('User data path: ' + this.userPath);
+    this._db = low(new FileSync(this.userPath + '/config.json'))
+    this._logger.info('low db done')
     this.updateSettingsByConfig()
   }
 
@@ -256,7 +267,7 @@ class Settings {
    * @return {string} application data path, platform dependent
    */
   get userDataPath() {
-    return app.getPath('userData')
+    return this.userPath;
   }
 
   get appLogPath() {
