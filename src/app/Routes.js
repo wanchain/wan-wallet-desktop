@@ -20,6 +20,7 @@ import {
   CrossBTC,
   CrossEOS,
   DApps,
+  DAppMarket,
   AddDApp } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
@@ -49,6 +50,7 @@ export default () => {
             <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
             <Route path="/AddDApp" component={AddDApp} />
             <Route path="/dapp/:url" component={DApps} />
+            <Route path="/dAppMarket" component={DAppMarket} />
           </Switch>
         </Main>
       </HashRouter>

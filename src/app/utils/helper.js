@@ -913,10 +913,10 @@ export const dAppSort = function (dapps, ordering, orderList) {
   let newList;
   switch (ordering) {
     case orderList[0]:
-      newList = dapps.sort((a, b) => a.name.localeCompare(b.name));
+      newList = dapps.slice().sort((a, b) => a.name.localeCompare(b.name));
       break;
     case orderList[1]:
-      newList = dapps.sort((a, b) => b.updatedAt - a.updatedAt);
+      newList = dapps.slice().sort((a, b) => b.updatedAt - a.updatedAt);
       break;
     default:
       newList = dapps;

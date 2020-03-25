@@ -9,6 +9,8 @@ import style from './index.less';
 const DAppAddForm = Form.create({ name: 'AddDAppForm' })(AddDAppForm);
 
 @inject(stores => ({
+  language: stores.languageIntl.language,
+  dappMangeColumns: stores.languageIntl.dappMangeColumns,
   getDappsInfo: stores.dapps.getDappsInfo,
   switchDApp: stores.dapps.switchDApp,
   delDApp: stores.dapps.delDApp,
@@ -79,7 +81,7 @@ class DAppManage extends Component {
       key: 'commit',
     },
     {
-      title: 'Operation',
+      title: intl.get('DApp.operation'),
       dataIndex: 'operation',
       render: (text, record) =>
         this.state.rows.length >= 1 ? (
@@ -89,6 +91,9 @@ class DAppManage extends Component {
   ]
 
   render() {
+    for (let i = 0; i < this.colums.length; i++) {
+      this.colums[i].title = this.props.dappMangeColumns[i].title;
+    }
     return (
       <div className={style['settings_network']}>
         <Card title={intl.get('DApp.title')}>

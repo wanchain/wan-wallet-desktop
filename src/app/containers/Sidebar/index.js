@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { Menu, Icon, message } from 'antd';
+import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
-import OneStep from 'utils/OneStep';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
-import { getAllUndoneCrossTrans } from 'utils/helper';
 import { CROSSCHAINTYPE, WALLET_CHAIN } from 'utils/settings';
 import AddDApp from 'containers/AddDApp';
 
@@ -28,43 +26,13 @@ const { SubMenu, Item } = Menu;
 class Sidebar extends Component {
   state = {
     collapsed: false,
-    showAddDapp: false
   }
-
-  // componentDidMount() {
-  //   this.timer = setInterval(() => {
-  //     // Handle one step cross chain and undo cross chain trans
-  //     getAllUndoneCrossTrans((err, ret) => {
-  //       if (!err) {
-  //         OneStep.initUndoTrans(ret).handleRedeem().handleRevoke();
-  //       } else {
-  //         message.warn(intl.get('network.down'));
-  //       }
-  //     })
-  //   }, 10000);
-  // }
-
-  // componentWillUnmount() {
-  //   clearInterval(this.timer);
-  // }
 
   toggleMenu = () => {
     this.setState({
       collapsed: !this.state.collapsed
     });
     this.props.handleNav();
-  }
-
-  onAddDapp = () => {
-    this.setState({
-      showAddDapp: true
-    })
-  }
-
-  onAddDappClose = () => {
-    this.setState({
-      showAddDapp: false
-    })
   }
 
   renderMenu = data => {
@@ -77,18 +45,12 @@ class Sidebar extends Component {
         );
       }
       return (
-        item.key === '/AddDApp' ? (
-          <Item key={item.key} onClick={this.onAddDapp}>
-            <Icon type="plus-circle" className={style.addIcon} />
-          </Item>
-       ) : (
-          <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
-            <Link to={item.key}>
-              {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
-              <span>{item.title}</span>
-            </Link>
-          </Item>
-        )
+        <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
+          <Link to={item.key}>
+            {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
+            <span>{item.title}</span>
+          </Link>
+        </Item>
       )
     });
   }
@@ -182,9 +144,6 @@ class Sidebar extends Component {
         <div className={style.collapseItem + ' collapseItem'}>
           <img src={this.state.collapsed ? open : collapse} className={style.collapseButton} onClick={this.toggleMenu} />
         </div>
-        {
-          this.state.showAddDapp && <AddDApp onClose={this.onAddDappClose} />
-        }
       </div>
     );
   }

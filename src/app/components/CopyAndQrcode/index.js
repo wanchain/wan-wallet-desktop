@@ -79,7 +79,13 @@ class CopyAndQrcode extends Component {
     if (this.state.privateKey1) {
       this.resetState();
     } else {
-      this.exportPrivateKeys(path, this.props.type, wid);
+      wand.request('phrase_checkPwd', { pwd: this.state.pwd }, (err) => {
+        if (err) {
+          message.warn(intl.get('Backup.invalidPassword'));
+        } else {
+          this.exportPrivateKeys(path, this.props.type, wid);
+        }
+      });
     }
   }
 
@@ -156,13 +162,14 @@ class CopyAndQrcode extends Component {
                 this.state.showPrivateKey ? (
                   <div>
                     <p className={style.textP2}> {intl.get('Common.yourPrivateKey')} {this.props.type === 'WAN' ? '1' : ''}:</p>
-                    <p className={style.textP3}>{this.state.privateKey1}</p>
+                    <p className={style.textP3}>{this.state.privateKey1.replace(/^(\S{8})\S+(\S{8})/, '$1' + '*'.repeat(this.state.privateKey1.length - 16) + '$2')}</p>
                     {
                       this.props.type === 'WAN' ? (
                         <Fragment>
                           <p className={style.textP2}> {intl.get('Common.yourPrivateKey')} 2:</p>
-                          <p className={style.textP3}>{this.state.privateKey2}</p>
-                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${intl.get('CopyAndQrcode.privateKey')}1: ${this.state.privateKey1}\n${intl.get('CopyAndQrcode.privateKey')}2: ${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
+                          <p className={style.textP3}>{this.state.privateKey2.replace(/^(\S{8})\S+(\S{8})/, '$1' + '*'.repeat(this.state.privateKey2.length - 16) + '$2')}</p>
+                          <p className={style.copyBtn} onClick={() => this.copy2Clipboard(`${intl.get('CopyAndQrcode.privateKey')}1: ${this.state.privateKey1}\n` +
+                            `${intl.get('CopyAndQrcode.privateKey')}2: ${this.state.privateKey2}`)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
                         </Fragment>
                       ) : (
                           <p className={style.copyBtn} onClick={() => this.copy2Clipboard(this.state.privateKey1)}>[ {intl.get('Backup.copyToClipboard')} ]</p>
@@ -182,7 +189,7 @@ class CopyAndQrcode extends Component {
           Object.values(WALLETID).includes(wid) && <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => this.showDeleteModal()} /></Tooltip>
         }
         {[WALLETID.KEYSTOREID, WALLETID.RAWKEY].includes(wid)
-          ? <Tooltip placement="bottom" title={ (titles && titles.imported) || intl.get('title.imported')}><Icon type="import" /></Tooltip>
+          ? <Tooltip placement="bottom" title={(titles && titles.imported) || intl.get('title.imported')}><Icon type="import" /></Tooltip>
           : ''
         }
         {

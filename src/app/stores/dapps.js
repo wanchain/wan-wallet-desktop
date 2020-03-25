@@ -1,15 +1,15 @@
 import { observable, action, computed, toJS } from 'mobx';
 
-import tokens from './tokens';
-import session from './session';
-import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
-
 class DApps {
   constructor() {
     this.dappList = this.getLocalDApps();
   }
 
   @observable dappList = [];
+
+  @observable allDapps = [];
+
+  @observable showDisclaimer = true;
 
   @computed get dAppsOnSideBar() {
     let list = [];
@@ -29,6 +29,26 @@ class DApps {
     });
     // return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return list;
+  }
+
+  @action updateDApps(options) {
+    wand.request('dappStore_getRegisteredDapp', { options }, (err, val) => {
+      if (!err && val.length !== 0) {
+        self.allDapps = val
+      } else {
+        console.log(`Get Registered Dapp failed`, err)
+      }
+    })
+  }
+
+  @computed get dAppTypes() {
+    let types = new Set();
+    self.allDapps.forEach(item => types.add(item.type));
+    return [...types, 'DApp.allCategories'];
+  }
+
+  @action setShowDisclaimer() {
+    self.showDisclaimer = false;
   }
 
   @action addCustomDApp(dappInfo) {

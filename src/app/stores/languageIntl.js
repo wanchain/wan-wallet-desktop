@@ -272,7 +272,7 @@ class LanguageIntl {
         icon: 'stock',
         children: [
           {
-            title: 'More dApps',
+            title: intl.get('DApp.moreDApp'),
             key: '/AddDApp',
             icon: 'plus-circle',
           },
@@ -336,6 +336,26 @@ class LanguageIntl {
       }, {
         title: intl.get('Settings.network'),
         key: 'network',
+      }
+    ];
+  }
+
+  @computed get dappMangeColumns() {
+    return self.language && [
+      {
+        title: intl.get('DApp.enableCol'),
+      },
+      {
+        title: intl.get('DApp.titleCol'),
+      },
+      {
+        title: intl.get('DApp.urlCol'),
+      },
+      {
+        title: intl.get('DApp.commitCol'),
+      },
+      {
+        title: intl.get('DApp.operation'),
       }
     ];
   }

@@ -123,7 +123,7 @@ class NormalTransForm extends Component {
           message.warn(intl.get('Backup.invalidPassword'));
           return;
         }
-        wand.request('phrase_reveal', { pwd: pwd }, (err) => {
+        wand.request('phrase_checkPwd', { pwd: pwd }, (err) => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {

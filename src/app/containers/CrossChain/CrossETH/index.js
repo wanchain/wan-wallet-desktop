@@ -68,7 +68,6 @@ class CrossETH extends Component {
           }
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
           return resolve(ret)
         }
       })
@@ -97,7 +96,6 @@ class CrossETH extends Component {
           }
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
           return resolve(ret)
         }
       })
