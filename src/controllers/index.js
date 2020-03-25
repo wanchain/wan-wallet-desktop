@@ -977,7 +977,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr('BTC', 'BTC');
                 let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
-                console.log(JSON.stringify(ret, null, 4));
             } catch (e) {
                 logger.error('Send transaction failed: ' + e.message || e.stack)
                 err = e

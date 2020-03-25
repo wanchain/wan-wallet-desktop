@@ -72,7 +72,6 @@ class CrossE20 extends Component {
           }
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
           return resolve(ret)
         }
       })
@@ -101,7 +100,6 @@ class CrossE20 extends Component {
           }
           return reject(err);
         } else {
-          console.log(JSON.stringify(ret, null, 4));
           return resolve(ret);
         }
       })
