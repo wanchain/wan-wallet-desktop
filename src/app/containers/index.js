@@ -19,3 +19,4 @@ export { default as AddDApp } from './AddDApp';
 export { default as DApps } from './DApps';
 export { default as CrossEOS } from './CrossChain/CrossEOS';
 export { default as EosAccount } from './EosAccount';
+export { default as DAppMarket } from './DAppMarket';

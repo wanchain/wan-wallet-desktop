@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DApp from '../../components/DApp';
+import DApp from 'components/DApp';
 
 class DApps extends Component {
   render() {
