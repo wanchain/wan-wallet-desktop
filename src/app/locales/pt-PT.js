@@ -130,7 +130,7 @@ const pt_PT = {
     'DApp.termOfServiceAgree': 'I understand and agree to the terms.',
     'DApp.addFailed': 'Please don\'t repeat add.',
     'DApp.addSuccess': 'DApp add success.',
-    'DApp.dAppMarket': 'dApp Market',
+    'DApp.dAppMarket': 'ÐApps Store',
     'DApp.allCategories': 'All Categories',
     'DApp.sortByName': 'Sort By Name',
     'DApp.sortByDate': 'Sort By Date',
@@ -139,6 +139,8 @@ const pt_PT = {
     'DApp.poweredBy': 'Powered by ',
     'DApp.infoClose': 'Close',
     'DApp.scAddress': 'Smart Contract Address: ',
+    'DApp.moreDApp': 'More ÐApps',
+    'DApp.DAppInfo': 'ÐApp Information',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',
@@ -500,7 +502,7 @@ const pt_PT = {
     'menuConfig.validator': 'Validador',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Configurações',
-    'menuConfig.thirdPartyDapps': 'DApps',
+    'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 

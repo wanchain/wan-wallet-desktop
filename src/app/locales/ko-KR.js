@@ -130,7 +130,7 @@ const ko_KR = {
     'DApp.termOfServiceAgree': 'I understand and agree to the terms.',
     'DApp.addFailed': 'Please don\'t repeat add.',
     'DApp.addSuccess': 'DApp add success.',
-    'DApp.dAppMarket': 'dApp Market',
+    'DApp.dAppMarket': 'ÐApps Store',
     'DApp.allCategories': 'All Categories',
     'DApp.sortByName': 'Sort By Name',
     'DApp.sortByDate': 'Sort By Date',
@@ -139,6 +139,8 @@ const ko_KR = {
     'DApp.poweredBy': 'Powered by ',
     'DApp.infoClose': 'Close',
     'DApp.scAddress': 'Smart Contract Address: ',
+    'DApp.moreDApp': 'More ÐApps',
+    'DApp.DAppInfo': 'ÐApp Information',
 
     'Config.option': '보안 옵션',
     'Config.inputPwd': ' 트랜잭션을 보낼때 비밀번호를 다시 입력 바랍니다. ',
@@ -501,7 +503,7 @@ const ko_KR = {
     'menuConfig.validator': '검증인',
     'menuConfig.staking': '스테이크',
     'menuConfig.settings': '설정',
-    'menuConfig.thirdPartyDapps': 'DApps',
+    'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 

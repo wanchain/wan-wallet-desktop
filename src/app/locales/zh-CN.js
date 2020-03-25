@@ -131,7 +131,7 @@ const zh_CN = {
     'DApp.termOfServiceAgree': 'I understand and agree to the terms.',
     'DApp.addFailed': 'Please don\'t repeat add.',
     'DApp.addSuccess': 'DApp add success.',
-    'DApp.dAppMarket': 'dApp Market',
+    'DApp.dAppMarket': 'ÐApps Store',
     'DApp.allCategories': '所有类型',
     'DApp.sortByName': '按姓名升序',
     'DApp.sortByDate': '按时间降序',
@@ -140,6 +140,8 @@ const zh_CN = {
     'DApp.poweredBy': 'Powered by ',
     'DApp.infoClose': '关闭',
     'DApp.scAddress': '合约地址： ',
+    'DApp.moreDApp': 'More ÐApps',
+    'DApp.DAppInfo': 'ÐApp Information',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

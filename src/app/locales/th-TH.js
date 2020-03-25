@@ -130,7 +130,7 @@ const th_TH = {
     'DApp.termOfServiceAgree': 'I understand and agree to the terms.',
     'DApp.addFailed': 'Please don\'t repeat add.',
     'DApp.addSuccess': 'DApp add success.',
-    'DApp.dAppMarket': 'dApp Market',
+    'DApp.dAppMarket': 'ÐApps Store',
     'DApp.allCategories': 'All Categories',
     'DApp.sortByName': 'Sort By Name',
     'DApp.sortByDate': 'Sort By Date',
@@ -139,6 +139,8 @@ const th_TH = {
     'DApp.poweredBy': 'Powered by ',
     'DApp.infoClose': 'Close',
     'DApp.scAddress': 'Smart Contract Address: ',
+    'DApp.moreDApp': 'More ÐApps',
+    'DApp.DAppInfo': 'ÐApp Information',
 
     'Config.option': 'ตัวเลือกความปลอดภัย',
     'Config.inputPwd': 'กรอกรหัสผ่านทุกครั้งก่อนทำรายการต่างๆ',
@@ -501,7 +503,7 @@ const th_TH = {
     'menuConfig.validator': 'Validator',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'การตั้งค่า',
-    'menuConfig.thirdPartyDapps': 'DApps จากบุคคลที่สาม',
+    'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
     'menuConfig.wanGame': 'WanGame',
 
