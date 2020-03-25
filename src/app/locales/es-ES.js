@@ -116,6 +116,7 @@ const es_ES = {
     'DApp.enableCol': 'Enable',
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
+    'DApp.operation': 'Operation',
     'DApp.commitCol': 'Commit',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',

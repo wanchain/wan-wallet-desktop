@@ -339,6 +339,26 @@ class LanguageIntl {
       }
     ];
   }
+
+  @computed get dappMangeColumns() {
+    return self.language && [
+      {
+        title: intl.get('DApp.enableCol'),
+      },
+      {
+        title: intl.get('DApp.titleCol'),
+      },
+      {
+        title: intl.get('DApp.urlCol'),
+      },
+      {
+        title: intl.get('DApp.commitCol'),
+      },
+      {
+        title: intl.get('DApp.operation'),
+      }
+    ];
+  }
 }
 
 const self = new LanguageIntl();

@@ -118,6 +118,7 @@ const zh_CN = {
     'DApp.titleCol': '名称',
     'DApp.urlCol': '网址',
     'DApp.commitCol': '备注',
+    'DApp.operation': '操作',
     'DApp.addTitle': '添加自定义应用',
     'DApp.addIcon': '图标',
     'DApp.commitPlaceholder': '可添加自定义的描述信息',

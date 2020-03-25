@@ -117,6 +117,7 @@ const fr_FR = {
     'DApp.titleCol': 'Title',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Commit',
+    'DApp.operation': 'Operation',
     'DApp.addTitle': 'Add Custom DApp',
     'DApp.addIcon': 'ICON',
     'DApp.commitPlaceholder': 'Custom description information can be added',
