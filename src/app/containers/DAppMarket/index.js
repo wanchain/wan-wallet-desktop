@@ -15,6 +15,7 @@ const pageNum = 6;
   language: stores.languageIntl.language,
   formatedDApp: stores.dapps.formatedDApp,
   showDisclaimer: stores.dapps.showDisclaimer,
+  dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
   addCustomDApp: obj => stores.dapps.addCustomDApp(obj),
   updateDApps: options => stores.dapps.updateDApps(options),
   setShowDisclaimer: () => stores.dapps.setShowDisclaimer(),
@@ -90,7 +91,7 @@ class DAppMarket extends Component {
 
   render() {
     const { currentPage } = this.state;
-    const { formatedDApp, dAppTypes } = this.props;
+    const { formatedDApp, dAppTypes, dAppsOnSideBar } = this.props;
     let dAppsList, dAppsListPagination;
     // Filter By Type
     dAppsList = ALLCATEGORIES === this.state.selectType ? formatedDApp : formatedDApp.filter(item => item.type === this.state.selectType.split('.')[1]);
@@ -144,15 +145,15 @@ class DAppMarket extends Component {
                     <Col span={12}><span className={style.dAppName}>{item.name}</span></Col>
                     <Col span={6} offset={4}><Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${item.type}`)}</Button></Col>
                   </Row>
-                  <Row className={style.dAppShortDescribe}>
+                  <Row className={style.dAppSummary}>
                     <Col><span>{item.summary}</span></Col>
                   </Row>
-                  <Row className={style.dAppShortDescribe}>
+                  <Row className={style.dAppUrl}>
                     <Col><a onClick={() => this.handleJumpToWebsite(item.url)}>{item.url}</a></Col>
                   </Row>
                   <Row>
                     <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
-                    <Col span={6}><Button onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
+                    <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
                     <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
                   </Row>
                 </Col>
