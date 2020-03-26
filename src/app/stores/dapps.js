@@ -1,4 +1,7 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, autorun, toJS } from 'mobx';
+
+import languageIntl from './languageIntl';
+import { ALLCATEGORIES } from 'utils/settings';
 
 class DApps {
   constructor() {
@@ -31,10 +34,23 @@ class DApps {
     return list;
   }
 
+  @computed get formatedDApp () {
+    let language = languageIntl.language.split('_')[0];
+    return languageIntl.language && self.allDapps.map(item => {
+      let info = item.langInfo.find(val => val.language === language);
+      if (!info) {
+        info = item.langInfo.find(val => val.language === 'en');
+      }
+      return Object.assign({}, item, info);
+    })
+  }
+
   @action updateDApps(options) {
+    let language = options.language.split('_')[0];
+    options.language = options.language !== 'en_US' ? [language, 'en'] : [language]
     wand.request('dappStore_getRegisteredDapp', { options }, (err, val) => {
-      if (!err && val.length !== 0) {
-        self.allDapps = val
+      if (!err) {
+        self.allDapps = val;
       } else {
         console.log(`Get Registered Dapp failed`, err)
       }
@@ -43,8 +59,8 @@ class DApps {
 
   @computed get dAppTypes() {
     let types = new Set();
-    self.allDapps.forEach(item => types.add(item.type));
-    return [...types, 'DApp.allCategories'];
+    self.allDapps.forEach(item => types.add(`DApp.${item.type}`));
+    return [...types, ALLCATEGORIES];
   }
 
   @action setShowDisclaimer() {
@@ -115,4 +131,9 @@ class DApps {
 }
 
 const self = new DApps();
+
+autorun(() => {
+  self.updateDApps({ chainTyps: 'WAN', language: languageIntl.language })
+});
+
 export default self;

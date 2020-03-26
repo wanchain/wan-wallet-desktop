@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
-import { Row, Button, Col, Input, Avatar, Select, message } from 'antd';
+import { Row, Button, Col, Input, Avatar, Select, Pagination, message, Spin } from 'antd';
 
 import style from './index.less';
 import { dAppSort } from 'utils/helper';
 import totalImg from 'static/image/wan.png';
-import { DAPPORDERING } from 'utils/settings';
+import { DAPPORDERING, ALLCATEGORIES } from 'utils/settings';
 import DAppInfo from 'components/DApp/DAppInfo';
 
-const ALL = 'DApp.allCategories';
-
+const pageNum = 6;
 @inject(stores => ({
-  allDapps: stores.dapps.allDapps,
   dAppTypes: stores.dapps.dAppTypes,
   language: stores.languageIntl.language,
+  formatedDApp: stores.dapps.formatedDApp,
   showDisclaimer: stores.dapps.showDisclaimer,
   addCustomDApp: obj => stores.dapps.addCustomDApp(obj),
   updateDApps: options => stores.dapps.updateDApps(options),
@@ -28,34 +27,32 @@ class DAppMarket extends Component {
     super(props);
     this.state = {
       sortBy: DAPPORDERING[0],
-      selectType: ALL,
+      selectType: ALLCATEGORIES,
       dAppDetail: null,
-      showDetail: false
+      showDetail: false,
+      currentPage: 1
     };
     this.props.changeTitle('DApp.dAppMarket');
   }
 
   componentWillReceiveProps(nextProps) {
-    const { language } = this.props
+    const { language } = this.props;
+    const { selectType } = this.state;
     if (language !== nextProps.language) {
-      if (this.state.selectType === ALL) {
-        this.setState({
-          selectType: ALL,
-        })
-      }
+      this.setState({ selectType });
     }
   }
 
   componentDidMount() {
-    this.props.updateDApps({ chainTyps: 'WAN' })
+    this.props.updateDApps({ chainTyps: 'WAN', language: this.props.language })
   }
 
   handleTypeChange = value => {
-    this.setState({ selectType: value })
+    this.setState({ selectType: value, currentPage: 1 })
   }
 
   handleSortChange = value => {
-    this.setState({ sortBy: value });
+    this.setState({ sortBy: value, currentPage: 1 });
   }
 
   handleJumpToWebsite = url => {
@@ -70,7 +67,7 @@ class DAppMarket extends Component {
     let ret = this.props.addCustomDApp({
       url: info.url,
       name: info.name,
-      commit: info.shortDescribe,
+      commit: info.summary,
       icon: `data:image/${info.iconType};base64,${info.iconData}`,
     });
     if (!ret) {
@@ -85,10 +82,22 @@ class DAppMarket extends Component {
     this.setState({ dAppDetail: null, showDetail: false })
   }
 
+  onPageChange = page => {
+    this.setState({
+      currentPage: page,
+    });
+  }
+
   render() {
-    const { allDapps, dAppTypes } = this.props;
-    let dAppsList = [ALL, intl.get(ALL)].includes(this.state.selectType) ? allDapps : allDapps.filter(item => item.type === this.state.selectType);
+    const { currentPage } = this.state;
+    const { formatedDApp, dAppTypes } = this.props;
+    let dAppsList, dAppsListPagination;
+    // Filter By Type
+    dAppsList = ALLCATEGORIES === this.state.selectType ? formatedDApp : formatedDApp.filter(item => item.type === this.state.selectType.split('.')[1]);
+    // Sort By Ordering
     dAppsList = dAppSort(dAppsList, this.state.sortBy, DAPPORDERING);
+    // Divided By Pagination
+    dAppsListPagination = dAppsList.filter((item, index) => index >= pageNum * (currentPage - 1) && index <= currentPage * pageNum - 1)
 
     return (
       <div className="account">
@@ -103,12 +112,11 @@ class DAppMarket extends Component {
             <Select
               className='category-style'
               onChange={this.handleTypeChange}
-              value={this.state.selectType === ALL ? intl.get(ALL) : this.state.selectType}
+              value={intl.get(this.state.selectType)}
               getPopupContainer = {() => document.getElementById('dAppType')}
             >
               {dAppTypes.map((item, index) => {
-                let val = index === dAppTypes.length - 1 ? intl.get(item) : item;
-                return <Select.Option value={item} key={index}>{val}</Select.Option>
+                return <Select.Option value={item} key={index}>{intl.get(item)}</Select.Option>
               })}
             </Select>
           </Col>
@@ -125,17 +133,19 @@ class DAppMarket extends Component {
         </Row>
         <Row className={style.Row2 + ' title'}>
           {
-            dAppsList.map((item, index) =>
-            <Col span={7} className={style.cardDApp + ' col-left'} key={index}>
+            dAppsList.length === 0
+            ? <Spin />
+            : dAppsListPagination.map((item, index) =>
+            <Col span={7} push={1} className={style.cardDApp + ' col-left'} key={index}>
               <Row type="flex" justify="center" align="middle">
-                <Col span={4} style={{ textAlign: 'center' }}><Avatar size="large" className={style.dappIcon} src={`data:image/${item.iconType};base64,${item.iconData}`} /></Col>
-                <Col span={19} push={1}>
+                <Col span={5} style={{ textAlign: 'center' }}><Avatar size="large" className={style.dappIcon} src={`data:image/${item.iconType};base64,${item.iconData}`} /></Col>
+                <Col span={19}>
                   <Row>
                     <Col span={12}><span className={style.dAppName}>{item.name}</span></Col>
-                    <Col span={6} offset={5}><Button className={style.createBtnType} shape="round" size="small">{item.type}</Button></Col>
+                    <Col span={6} offset={4}><Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${item.type}`)}</Button></Col>
                   </Row>
                   <Row className={style.dAppShortDescribe}>
-                    <Col><span>{item.shortDescribe}</span></Col>
+                    <Col><span>{item.summary}</span></Col>
                   </Row>
                   <Row className={style.dAppShortDescribe}>
                     <Col><a onClick={() => this.handleJumpToWebsite(item.url)}>{item.url}</a></Col>
@@ -143,7 +153,7 @@ class DAppMarket extends Component {
                   <Row>
                     <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
                     <Col span={6}><Button onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
-                    <Col span={10} offset={2}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
+                    <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
                   </Row>
                 </Col>
               </Row>
@@ -151,6 +161,7 @@ class DAppMarket extends Component {
             )
           }
         </Row>
+        <Pagination className={style.pagination} defaultPageSize={pageNum} current={this.state.currentPage} onChange={this.onPageChange} total={dAppsList.length || 1} />
         { this.state.showDetail && <DAppInfo info={this.state.dAppDetail} handleClose={this.closeDetail}/> }
       </div>
     );

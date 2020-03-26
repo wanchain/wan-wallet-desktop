@@ -43,16 +43,16 @@ class DAppInfo extends Component {
               <img className={style.dappIcon} src={`data:image/${info.iconType};base64,${info.iconData}`} />
             </Col>
             <Col span={16}>
-              <p>{info.name} <Button className={style.createBtnType} shape="round" size="small">{info.type}</Button></p>
+              <p>{info.name} <Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${info.type}`)}</Button></p>
               <p className={style.siteStyle}>
-                <p>Website: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.url)}>{info.url}</a></p>
-                <p>Creator: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.creatorWebsite)}>{info.creator} ({info.creatorWebsite})</a></p>
+                <p>{intl.get('DApp.Website')}: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.url)}>{info.url}</a></p>
+                <p>{intl.get('DApp.Creator')}: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.creatorWebsite)}>{info.creator} ({info.creatorWebsite})</a></p>
               </p>
               <p>{intl.get('DApp.scAddress')}</p>
               <p><a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.scAddress[0], true)}>{info.scAddress[0]}</a></p>
             </Col>
           </Row>
-          <Input.TextArea disabled autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className={style.stepText} value={info.longDescribe}></Input.TextArea>
+          <Input.TextArea disabled autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} className={style.stepText} value={info.detail}></Input.TextArea>
         </div>
       </Modal>
     );
