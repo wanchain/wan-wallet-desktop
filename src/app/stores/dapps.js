@@ -4,12 +4,6 @@ import languageIntl from './languageIntl';
 import { ALLCATEGORIES } from 'utils/settings';
 
 class DApps {
-  constructor() {
-    this.getLocalDApps((val) => {
-      this.dappList = val;
-    });
-  }
-
   @observable dappList = [];
 
   @observable allDapps = [];
@@ -18,6 +12,8 @@ class DApps {
 
   @computed get dAppsOnSideBar() {
     let list = [];
+    console.log('dAppsOnSideBar self.dappList', self.dappList);
+
     if (!(self.dappList instanceof Object)) {
       return [];
     }
@@ -37,7 +33,7 @@ class DApps {
     return list;
   }
 
-  @computed get formatedDApp () {
+  @computed get formatedDApp() {
     let language = languageIntl.language.split('_')[0];
     return languageIntl.language && self.allDapps.map(item => {
       let info = item.langInfo.find(val => val.language === language);
@@ -112,16 +108,16 @@ class DApps {
     self.setLocalDApps(self.dappList);
   }
 
-  getLocalDApps(callback) {
-    wand.request('setting_get', [{ keys: ['dapps'] }], function (err, val) {
-      if (err) {
-        callback(undefined);
+  @action updateLocalDApps() {
+    console.log('updateLocalDApps');
+    wand.request('setting_get', [{ keys: ['dapps'] }], (err, val) => {
+      console.log('updateLocalDApps', err, val);
+      if (!err && val && val[0]) {
+        self.dappList = val[0];
+      } else {
+        console.log(`Get Registered Dapp failed`, err)
       }
-
-      if (val && val[0]) {
-        callback(val[0]);
-      }
-    });
+    })
   }
 
   setLocalDApps(obj) {
@@ -138,7 +134,7 @@ class DApps {
 const self = new DApps();
 
 autorun(() => {
-  self.updateDApps({ chainTyps: 'WAN', language: languageIntl.language })
+  self.updateDApps({ chainTyps: 'WAN', language: languageIntl.language });
 });
 
 export default self;
