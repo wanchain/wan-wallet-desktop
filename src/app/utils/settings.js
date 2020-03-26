@@ -75,3 +75,4 @@ export const PENALTYNUM = 10000;
 export const PRIVATE_TX_AMOUNT_SELECTION = [50000, 5000, 1000, 500, 200, 100, 50, 20, 10];
 
 export const DAPPORDERING = ['DApp.sortByName', 'DApp.sortByDate'];
+export const ALLCATEGORIES = 'DApp.allCategories';
