@@ -61,7 +61,7 @@ class CrossETH extends Component {
       wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('ETH inbound lock:', err);
-          if (err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
             message.warn(intl.get('Common.sendFailed'));
@@ -89,7 +89,7 @@ class CrossETH extends Component {
       wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('ETH outbound lock:', err);
-          if (err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
             message.warn(intl.get('Common.sendFailed'));

@@ -63,7 +63,7 @@ class CrossBTC extends Component {
       wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('BTC inbound lock:', err);
-          if (err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
             message.warn(intl.get('Common.sendFailed'));
@@ -91,7 +91,7 @@ class CrossBTC extends Component {
       wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('BTC outbound lock:', err);
-          if (err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
             message.warn(intl.get('Common.sendFailed'));

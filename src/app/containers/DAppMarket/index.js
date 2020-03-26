@@ -15,6 +15,7 @@ const pageNum = 6;
   language: stores.languageIntl.language,
   formatedDApp: stores.dapps.formatedDApp,
   showDisclaimer: stores.dapps.showDisclaimer,
+  dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
   addCustomDApp: obj => stores.dapps.addCustomDApp(obj),
   updateDApps: options => stores.dapps.updateDApps(options),
   setShowDisclaimer: () => stores.dapps.setShowDisclaimer(),
@@ -30,7 +31,9 @@ class DAppMarket extends Component {
       selectType: ALLCATEGORIES,
       dAppDetail: null,
       showDetail: false,
-      currentPage: 1
+      currentPage: 1,
+      searchbarWords: '',
+      search: '',
     };
     this.props.changeTitle('DApp.dAppMarket');
   }
@@ -88,12 +91,34 @@ class DAppMarket extends Component {
     });
   }
 
+  handleSearch = e => {
+    if (e.target.value === '') {
+      this.setState({
+        search: e.target.value,
+        searchbarWords: e.target.value,
+      });
+    } else {
+      this.setState({
+        searchbarWords: e.target.value,
+      });
+    }
+  }
+
+  handleSearchDApp = () => {
+    const { searchbarWords } = this.state;
+    this.setState({
+      search: searchbarWords.trim(),
+    });
+  }
+
   render() {
-    const { currentPage } = this.state;
-    const { formatedDApp, dAppTypes } = this.props;
+    const { currentPage, searchbarWords } = this.state;
+    const { formatedDApp, dAppTypes, dAppsOnSideBar } = this.props;
     let dAppsList, dAppsListPagination;
+    // Filter By Search
+    dAppsList = this.state.search === '' ? formatedDApp : formatedDApp.filter(item => item.name.search(this.state.search) !== -1);
     // Filter By Type
-    dAppsList = ALLCATEGORIES === this.state.selectType ? formatedDApp : formatedDApp.filter(item => item.type === this.state.selectType.split('.')[1]);
+    dAppsList = ALLCATEGORIES === this.state.selectType ? dAppsList : dAppsList.filter(item => item.type === this.state.selectType.split('.')[1]);
     // Sort By Ordering
     dAppsList = dAppSort(dAppsList, this.state.sortBy, DAPPORDERING);
     // Divided By Pagination
@@ -105,8 +130,8 @@ class DAppMarket extends Component {
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} />
             <span className="wanTotal">ÐApps</span>
-            <Input placeholder={intl.get('DApp.dAppSearch')} className={style.colorInputAddr} onChange={this.handleAddrChange} />
-            <Button type="primary" onClick={this.handleGetInfo} shape="round" className={style.getInfoBtn}>{intl.get('popup.search')}</Button>
+            <Input allowClear placeholder={intl.get('DApp.dAppSearch')} value={searchbarWords} className={style.colorInputAddr} onChange={this.handleSearch} />
+            <Button type="primary" onClick={this.handleSearchDApp} shape="round" className={style.getInfoBtn}>{intl.get('popup.search')}</Button>
           </Col>
           <Col span={3} push={6} id="dAppType">
             <Select
@@ -144,15 +169,15 @@ class DAppMarket extends Component {
                     <Col span={12}><span className={style.dAppName}>{item.name}</span></Col>
                     <Col span={6} offset={4}><Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${item.type}`)}</Button></Col>
                   </Row>
-                  <Row className={style.dAppShortDescribe}>
+                  <Row className={style.dAppSummary}>
                     <Col><span>{item.summary}</span></Col>
                   </Row>
-                  <Row className={style.dAppShortDescribe}>
+                  <Row className={style.dAppUrl}>
                     <Col><a onClick={() => this.handleJumpToWebsite(item.url)}>{item.url}</a></Col>
                   </Row>
                   <Row>
                     <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
-                    <Col span={6}><Button onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
+                    <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
                     <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
                   </Row>
                 </Col>
