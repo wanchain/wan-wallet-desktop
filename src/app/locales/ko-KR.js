@@ -231,6 +231,7 @@ const ko_KR = {
     'EOSKeyPairList.selectOneAccount': '하나 이상의 계정을 선택하십시오',
     'EOSKeyPairList.tipText': `Wan 지갑으로 만든 EOS 키 페어에 EOS 계정을 연결 한 적이 없다면 타사 서비스를 사용하여 계정을 생성하고 키 페어에 연결할 수 있습니다. 이미 키 페어와 연결된 EOS 계정이있는 경우 기존 계정을 사용하여 새 EOS 계정을 만들 수 있습니다.`,
     'EOSKeyPairList.getImportedAccountsFailed': '가져온 계정 가져 오기 실패',
+    'EOSKeyPairList.getAccountsFailed': '계정 가져 오기 실패',
 
     'EOSAccountList.manageResource': '관리',
     'EOSAccountList.getResourcePriceFailed': '자원 가격을 얻지 못했습니다',
@@ -308,6 +309,10 @@ const ko_KR = {
     'EOSCreateAccountForm.activePublicKey': '퍼블릭키 활성화',
     'EOSCreateAccountForm.activeKey': '퍼블릭키를 선택하십시오',
     'EOSCreateAccountForm.atLeast3KB': '유효하지 않은 값, 3KB 이상',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': '거래 전송 실패',
     'EOSNormalTransForm.sendTxSuccess': '거래 전송 성공',

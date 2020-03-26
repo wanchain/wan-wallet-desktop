@@ -231,6 +231,7 @@ const fr_FR = {
     'EOSKeyPairList.selectOneAccount': 'Veuillez sélectionner au moins un compte',
     'EOSKeyPairList.tipText': 'Si vous n\'avez jamais associé les comptes EOS à des paires de clés EOS créées par Wan Wallet, vous pouvez utiliser un service tiers pour créer des comptes et les associer à des paires de clés. Si vous avez déjà des comptes EOS associés à des paires de clés, vous pouvez créer des nouveaux comptes EOS en utilisant ceux existants.',
     'EOSKeyPairList.getImportedAccountsFailed': 'L\'obtention des comptes associés échouée.',
+    'EOSKeyPairList.getAccountsFailed': 'Get accounts failed',
 
     'EOSAccountList.manageResource': 'Gérer',
     'EOSAccountList.getResourcePriceFailed': 'L\'obtention des prix des ressources échouée.',
@@ -308,6 +309,10 @@ const fr_FR = {
     'EOSCreateAccountForm.activePublicKey': 'Clé Publique "Active"',
     'EOSCreateAccountForm.activeKey': 'Sélectionner une clé publique',
     'EOSCreateAccountForm.atLeast3KB': 'Valeur invalide, minimum 3KB',
+    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
+    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
+    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
     'EOSNormalTransForm.sendTxFailed': 'L\'envoi de transaction échoué',
     'EOSNormalTransForm.sendTxSuccess': 'L\'envoi de transaction réussi',

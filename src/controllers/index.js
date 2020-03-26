@@ -554,6 +554,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                         btcMultiBalances[item.address] = item.value
                     }
                 });
+                payload.addresses.forEach(item => {
+                  if (!btcMultiBalances[item]) {
+                    btcMultiBalances[item] = '0'
+                  }
+                });
                 ret = {
                     utxos,
                     btcMultiBalances
@@ -1688,7 +1693,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                    err = ret;
+                  err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1709,7 +1714,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                    err = ret;
+                  err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1733,7 +1738,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                    err = ret;
+                  err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)

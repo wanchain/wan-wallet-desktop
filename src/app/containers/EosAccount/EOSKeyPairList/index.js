@@ -88,6 +88,7 @@ class EOSKeyPairList extends Component {
       });
     } catch (e) {
       console.log('error:', e);
+      message.warn(intl.get('EOSKeyPairList.getAccountsFailed'));
       this.setState({
         accountList: [],
         spin: false

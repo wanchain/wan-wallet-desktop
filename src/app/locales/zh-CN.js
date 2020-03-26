@@ -231,6 +231,7 @@ const zh_CN = {
     'EOSKeyPairList.selectOneAccount': '请选择至少一条账户',
     'EOSKeyPairList.tipText': `如果本地公私钥对没有账户关联，可到第三方创建并关联；如果已有关联账户，可直接通过该账户进行新账户创建；`,
     'EOSKeyPairList.getImportedAccountsFailed': '获取已导入账户信息失败',
+    'EOSKeyPairList.getAccountsFailed': '获取账户信息失败',
 
     'EOSAccountList.manageResource': '资源管理',
     'EOSAccountList.getResourcePriceFailed': '获取资源价格失败',
@@ -310,6 +311,8 @@ const zh_CN = {
     'EOSCreateAccountForm.atLeast3KB': '数值不正确，至少3KB',
     'EOSCreateAccountForm.isExistEosName': '账户名称已存在',
     'EOSCreateAccountForm.invalidEosPublicKey': '非法公钥',
+    'EOSCreateAccountForm.errorOccurred': '验证表单数据时发生错误',
+    'EOSCreateAccountForm.validateNameFailed': '验证账户名称失败',
 
     'EOSNormalTransForm.sendTxFailed': '交易失败',
     'EOSNormalTransForm.sendTxSuccess': '交易成功',
