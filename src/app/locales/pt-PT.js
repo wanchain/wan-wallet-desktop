@@ -160,6 +160,8 @@ const pt_PT = {
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
     'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',

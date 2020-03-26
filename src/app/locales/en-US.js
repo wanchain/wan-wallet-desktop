@@ -159,7 +159,8 @@ const en_US = {
     'DApp.Social': 'Social',
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
-    'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': 'Security Options',
     'Config.inputPwd': 'Input password again while sending transaction',

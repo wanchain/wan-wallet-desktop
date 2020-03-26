@@ -160,6 +160,8 @@ const th_TH = {
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
     'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': 'ตัวเลือกความปลอดภัย',
     'Config.inputPwd': 'กรอกรหัสผ่านทุกครั้งก่อนทำรายการต่างๆ',

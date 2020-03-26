@@ -160,6 +160,8 @@ const ko_KR = {
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
     'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': '보안 옵션',
     'Config.inputPwd': ' 트랜잭션을 보낼때 비밀번호를 다시 입력 바랍니다. ',

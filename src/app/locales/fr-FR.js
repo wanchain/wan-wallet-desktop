@@ -160,6 +160,8 @@ const fr_FR = {
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
     'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': 'Options de sécurité',
     'Config.inputPwd': 'Confirmer une transaction en validant votre mot de passe',

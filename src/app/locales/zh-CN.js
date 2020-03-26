@@ -161,6 +161,8 @@ const zh_CN = {
     'DApp.Art': '艺术',
     'DApp.Tools': '工具',
     'DApp.Others': '其他',
+    'DApp.Website': '网址',
+    'DApp.Creator': '创建者',
 
     'Config.option': '安全选项',
     'Config.inputPwd': '发送交易的时候再次输入密码',

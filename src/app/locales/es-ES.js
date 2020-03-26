@@ -160,6 +160,8 @@ const es_ES = {
     'DApp.Art': 'Art',
     'DApp.Tools': 'Tools',
     'DApp.Others': 'Others',
+    'DApp.Website': 'Website',
+    'DApp.Creator': 'Creator',
 
     'Config.option': 'Opciones de Seguridad',
     'Config.inputPwd': 'Ingrese la contraseña nuevamente mientras envia la transaccion.',
