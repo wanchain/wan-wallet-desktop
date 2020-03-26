@@ -44,10 +44,10 @@ class DAppInfo extends Component {
             </Col>
             <Col span={16}>
               <p>{info.name} <Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${info.type}`)}</Button></p>
-              <p className={style.siteStyle}>
+              <div className={style.siteStyle}>
                 <p>{intl.get('DApp.Website')}: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.url)}>{info.url}</a></p>
                 <p>{intl.get('DApp.Creator')}: <a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.creatorWebsite)}>{info.creator} ({info.creatorWebsite})</a></p>
-              </p>
+              </div>
               <p>{intl.get('DApp.scAddress')}</p>
               <p><a className={style.linkStyle} onClick={() => this.handleJumpToWebsite(info.scAddress[0], true)}>{info.scAddress[0]}</a></p>
             </Col>
