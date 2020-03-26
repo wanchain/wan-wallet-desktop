@@ -435,7 +435,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         };
                     }
                 } catch (e) {
-                    console.log('importPrivateKey Error:', e);
+                    // console.log('importPrivateKey Error:', e);
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -807,6 +807,46 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: count })
             break
+
+        case 'isValidPrivateKey':
+            {
+                let ret;
+                try {
+                    let { key, type } = payload;
+                    let wid = WALLET_ID_RAWKEY;
+                    let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(key) : Buffer.from(key, 'hex');
+                    let address = await hdUtil.getAddressByPrivateKey(wid, type.toUpperCase(), rawPriv);
+                    // console.log('address:', address);
+                    let isValid = false;
+
+                    switch (type) {
+                        case 'BTC':
+                            try {
+                                bs58check.decode(address);
+                                isValid = key.length === 52;
+                            } catch (e) {
+                                isValid = false;
+                            }
+                            break;
+                        case 'WAN':
+                            isValid = key.length === 64 && await ccUtil.isWanAddress(`0x${address}`);
+                            break;
+                        case 'ETH':
+                            isValid = key.length === 64 && await ccUtil.isEthAddress(`0x${address}`);
+                            break;
+                        case 'EOS':
+                            isValid = key.length === 51 && await ccUtil.isEosPublicKey(addr.pubKey);
+                            break;
+                    }
+                    ret = isValid;
+                } catch (e) {
+                    // console.log('isValidPrivateKey Error:', e);
+                    logger.error(e.message || e.stack);
+                    err = e;
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: ret });
+            }
+            break;
 
     }
 })

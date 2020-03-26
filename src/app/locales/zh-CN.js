@@ -100,6 +100,9 @@ const zh_CN = {
     'ImportPrivateKey.importPKSuccess': '导入私钥成功',
     'ImportPrivateKey.sameAddress': '请勿导入已存在的账户地址或密钥对',
 
+    'ImportPrivateKeyForm.isInvalid': '非法私钥',
+    'ImportPrivateKeyForm.invalidFormData': '非法表单数据',
+
     'ImportPrivateKeyConfirmation.notice': '注意',
     'ImportPrivateKeyConfirmation.noticeText': '告警：不推荐使用密钥文件账户，我们不提供密钥文件备份功能。请保存好原始的秘钥文件或者将资产转移到HD钱包账户或硬件钱包账户。',
     'ImportPrivateKeyConfirmation.seconds': '秒',

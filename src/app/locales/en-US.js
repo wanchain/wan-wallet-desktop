@@ -99,6 +99,9 @@ const en_US = {
     'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
     'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
 
+    'ImportPrivateKeyForm.isInvalid': 'Invalid private key',
+    'ImportPrivateKeyForm.invalidFormData': 'Invalid form data',
+
     'ImportPrivateKeyConfirmation.notice': 'Notice',
     'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
     'ImportPrivateKeyConfirmation.seconds': 'Seconds',

@@ -924,3 +924,15 @@ export const dAppSort = function (dapps, ordering, orderList) {
   }
   return newList;
 }
+
+export const isValidPrivateKey = function (key, type) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isValidPrivateKey', { key, type }, (err, res) => {
+      if (err) {
+        return resolve(false);
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}

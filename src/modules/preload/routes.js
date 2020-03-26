@@ -1,7 +1,7 @@
 module.exports = {
     phrase: [ 'generate', 'reveal', 'checkPwd', 'has', 'import', 'reset'],
     wallet: [ 'lock', 'unlock', 'getPubKey', 'connectToLedger', 'deleteLedger', 'isConnected', 'getPubKeyChainId', 'signPersonalMessage', 'signTransaction', 'setUserTblVersion', 'reboot', 'exportPrivateKeys', 'importPrivateKey' ],
-    address: [ 'get', 'getOne', 'getNonce', 'balance', 'balances', 'getPrivateTxInfo', 'scanMultiOTA', 'isWanAddress', 'fromKeyFile', 'getKeyStoreCount', 'isValidatorAddress', 'ethBalance', 'isEthAddress', 'btcImportAddress', 'getBtcMultiBalances', 'btcCoinSelect', 'getEosAccountInfo', 'getEOSResourcePrice', 'getRamPrice', 'isEosPublicKey', 'isEosNameExist', 'getNewPathIndex', 'getNewNameForNativeAccount' ],
+    address: [ 'get', 'getOne', 'getNonce', 'balance', 'balances', 'getPrivateTxInfo', 'scanMultiOTA', 'isWanAddress', 'fromKeyFile', 'getKeyStoreCount', 'isValidatorAddress', 'ethBalance', 'isEthAddress', 'btcImportAddress', 'getBtcMultiBalances', 'btcCoinSelect', 'getEosAccountInfo', 'getEOSResourcePrice', 'getRamPrice', 'isEosPublicKey', 'isEosNameExist', 'getNewPathIndex', 'getNewNameForNativeAccount', 'isValidPrivateKey' ],
     account: [ 'create', 'get', 'getAllAccounts', 'getAll', 'update', 'delete', 'getAccountByPublicKey', 'setImportedUserAccounts', 'getImportedAccountsByPublicKey', 'getAccountStakeInfo', 'deleteEOSImportedAccounts' ],
     transaction: [ 'normal', 'private', 'refund', 'raw', 'estimateGas', 'showRecords', 'insertTransToDB', 'BTCNormal', 'showBTCRecords', 'EOSNormal' ],
     query: [ 'config', 'getGasPrice' ],

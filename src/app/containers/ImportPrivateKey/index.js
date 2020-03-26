@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Input, Select, message, Spin } from 'antd';
+import { Button, Card, message, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import ImportPrivateKeyForm from './ImportPrivateKeyForm';
 import ImportPrivateKeyConfirmation from './ImportPrivateKeyConfirmation';
 
 import style from './index.less';
-const { Option } = Select;
-
+const ImportForm = Form.create({ name: 'ImportPrivateKeyForm' })(ImportPrivateKeyForm);
 @inject(stores => ({
   language: stores.languageIntl.language,
 }))
@@ -16,18 +16,20 @@ class ImportPrivateKey extends Component {
   state = {
     visible: false,
     confirmationVisible: false,
+    spin: false,
     pk: '',
     pk2: '',
     type: 'WAN',
-    spin: false
   }
 
   resetStateVal = () => {
     this.setState({
       visible: false,
+      confirmationVisible: false,
+      spin: false,
       pk: '',
+      pk2: '',
       type: 'WAN',
-      spin: false
     });
   }
 
@@ -35,26 +37,17 @@ class ImportPrivateKey extends Component {
     this.setState({ visible: true, })
   }
 
-  pkChange = e => {
+  handleOk = (data) => {
     this.setState({
-      pk: e.target.value
+      confirmationVisible: true,
+      pk: data.pk,
+      pk2: data.pk2,
+      type: data.type,
     });
   }
 
-  pkChange2 = e => {
-    this.setState({
-      pk2: e.target.value
-    });
-  }
-
-  typeChange = (v) => {
-    this.setState({
-      type: v,
-    });
-  }
-
-  handleOk = () => {
-    this.setState({ confirmationVisible: true });
+  handleCancelForm = () => {
+    this.resetStateVal();
   }
 
   handleSubmit = () => {
@@ -81,7 +74,7 @@ class ImportPrivateKey extends Component {
             this.setState({ spin: false });
             return
           }
-          if (val.status) {
+          if (val && val.status) {
             message.success(intl.get('ImportPrivateKey.importPKSuccess'));
             this.resetStateVal();
           } else {
@@ -117,33 +110,7 @@ class ImportPrivateKey extends Component {
           </p>
           <Button type="primary" onClick={this.showModal}>{intl.get('Common.continue')}</Button>
           {
-            this.state.visible && <Modal
-              destroyOnClose={true}
-              title={intl.get('ImportPrivateKey.title')}
-              visible={true}
-              onOk={this.handleOk}
-              onCancel={this.resetStateVal}
-              closable={false}
-              okText={intl.get('Common.ok')}
-              className={style['settings_importPrivateKey_modal']}
-              cancelText={intl.get('Common.cancel')}
-            >
-              <Spin spinning={this.state.spin}>
-                <p className={style.textP}>{intl.get('Common.warning')}: {intl.get('ImportPrivateKey.notify')}</p>
-                <div>
-                  <Select defaultValue="WAN" onChange={this.typeChange}>
-                    <Option value="WAN" selected="selected">WAN</Option>
-                    <Option value="ETH">ETH</Option>
-                    <Option value="BTC">BTC</Option>
-                    <Option value="EOS">EOS</Option>
-                  </Select>
-                  <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />
-                  {
-                    this.state.type === 'WAN' && <Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />
-                  }
-                </div>
-              </Spin>
-            </Modal>
+            this.state.visible && <ImportForm handleCancel={this.handleCancelForm} handleOk={this.handleOk} spin={this.state.spin}/>
           }
           {
             this.state.confirmationVisible && <ImportPrivateKeyConfirmation onOk={this.handleSubmit} onCancel={this.handleCloseConfirmationDialog}/>
