@@ -357,10 +357,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(pk) : Buffer.from(pk, 'hex');
                     let address = await hdUtil.getAddressByPrivateKey(wid, type.toUpperCase(), rawPriv);
                     // console.log('address:', address);
-                    if (type === 'ETH' || type === 'WAN') {
-                        address = `0x${address}`;
-                    }
-                    let existAddress = await hdUtil.checkIsExist(address, chainID);
+                    let existAddress = await hdUtil.checkIsExist(((type === 'ETH' || type === 'WAN') ? `0x${address}` : address), chainID);
                     // console.log('existAddress:', existAddress);
                     if (!existAddress) {
                         let pathForm = `m/44'/${chainID}'/0'/0/`;
@@ -823,19 +820,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                         case 'BTC':
                             try {
                                 bs58check.decode(address);
-                                isValid = key.length === 52;
+                                isValid = /^[0-9a-zA-Z]{52}$/.test(key);
                             } catch (e) {
                                 isValid = false;
                             }
                             break;
                         case 'WAN':
-                            isValid = key.length === 64 && await ccUtil.isWanAddress(`0x${address}`);
+                            isValid = /^[0-9a-f]{64}$/.test(key) && await ccUtil.isWanAddress(`0x${address}`);
                             break;
                         case 'ETH':
-                            isValid = key.length === 64 && await ccUtil.isEthAddress(`0x${address}`);
+                            isValid = /^[0-9a-f]{64}$/.test(key) && await ccUtil.isEthAddress(`0x${address}`);
                             break;
                         case 'EOS':
-                            isValid = key.length === 51 && await ccUtil.isEosPublicKey(addr.pubKey);
+                            isValid = /^[0-9a-zA-Z]{51}$/.test(key) && await ccUtil.isEosPublicKey(address);
                             break;
                     }
                     ret = isValid;
