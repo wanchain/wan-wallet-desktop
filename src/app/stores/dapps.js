@@ -5,7 +5,9 @@ import { ALLCATEGORIES } from 'utils/settings';
 
 class DApps {
   constructor() {
-    this.dappList = this.getLocalDApps();
+    this.getLocalDApps((val) => {
+      this.dappList = val;
+    });
   }
 
   @observable dappList = [];
@@ -31,6 +33,7 @@ class DApps {
       }
     });
     // return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    console.log('dAppsOnSideBar', list);
     return list;
   }
 
@@ -68,7 +71,6 @@ class DApps {
   }
 
   @action addCustomDApp(dappInfo) {
-    self.dappList = self.getLocalDApps();
     if (!self.dappList) {
       self.dappList = [];
     }
@@ -80,7 +82,7 @@ class DApps {
     }
     self.dappList.push({
       name: dappInfo.name,
-      icon: dappInfo.icon,
+      // icon: dappInfo.icon,
       url: dappInfo.url,
       commit: dappInfo.commit,
       enable: true,
@@ -90,13 +92,11 @@ class DApps {
   }
 
   @action delDApp(index) {
-    self.dappList = self.getLocalDApps();
     self.dappList.splice(index, 1);
     self.setLocalDApps(self.dappList);
   }
 
   @action getDappsInfo() {
-    self.dappList = self.getLocalDApps();
     if (!self.dappList) {
       self.dappList = [];
     }
@@ -104,7 +104,6 @@ class DApps {
   }
 
   @action switchDApp(name, enable) {
-    self.dappList = self.getLocalDApps();
     for (let i = 0; i < self.dappList.length; i++) {
       if (name === self.dappList[i].name) {
         self.dappList[i].enable = enable;
@@ -113,19 +112,25 @@ class DApps {
     self.setLocalDApps(self.dappList);
   }
 
-  getLocalDApps() {
-    let ret = window.localStorage.getItem('dapps');
-    if (ret) {
-      let obj = JSON.parse(ret);
-      return obj;
-    }
-    return undefined;
+  getLocalDApps(callback) {
+    wand.request('setting_get', [{ keys: ['dapps'] }], function (err, val) {
+      if (err) {
+        callback(undefined);
+      }
+
+      if (val && val[0]) {
+        callback(val[0]);
+      }
+    });
   }
 
   setLocalDApps(obj) {
     if (obj) {
-      let str = JSON.stringify(obj);
-      window.localStorage.setItem('dapps', str);
+      wand.request('setting_set', { dapps: obj }, function (err, val) {
+        if (err) {
+          console.log('setLocalDApps', err);
+        }
+      });
     }
   }
 }

@@ -69,7 +69,6 @@ class Sidebar extends Component {
     let crossChainChildren = sidebarColumns[crossChainIndex].children;
     let crossChainLen = CROSSCHAINTYPE.length;
     let walletChainLen = WALLET_CHAIN.length;
-
     if (offlineIndex === -1 && settings.offline_wallet) {
       sidebarColumns.push({
         title: intl.get('menuConfig.offline'),

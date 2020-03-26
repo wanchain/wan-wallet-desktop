@@ -1912,6 +1912,8 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             keys = Object.keys(payload)
             vals = Object.values(payload)
 
+            console.log('set', keys, vals);
+
             try {
                 keys.forEach((key, index) => {
                     let newValue = key === 'settings' ? Object.assign(setting.get('settings'), vals[index]) : vals[index]
@@ -1930,7 +1932,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
         case 'get':
             let { keys } = payload
-
+            console.log('get payload', payload, keys);
             try {
                 keys.forEach((key, index) => {
                     vals[index] = setting.get(key)
@@ -1941,6 +1943,21 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
 
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
+            break
+        
+        case 'remove':
+            keys = Object.keys(payload)
+
+            try {
+                keys.forEach((key, index) => {
+                    setting.remove(key)
+                })
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: 'finish' })
             break
 
         case 'getDAppInjectFile':
