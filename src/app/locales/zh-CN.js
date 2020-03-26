@@ -533,9 +533,9 @@ const zh_CN = {
     'menuConfig.dex': '交易',
     'menuConfig.wanGame': 'WanGame',
 
-    'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
-    'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
-    'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
+    'dAppConfirm.sign': '你是否同意授权应用使用你的钱包地址进行签名?',
+    'dAppConfirm.send': '你是否同意授权应用使用你的钱包发送交易?',
+    'dAppConfirm.warn': '请小心谨慎，此操作可能会带来你钱包资产的损失.',
 
     'utils.helper.getBalanceFailed': '获取余额失败',
     'utils.helper.getNonceFailed': '获取nonce失败',
