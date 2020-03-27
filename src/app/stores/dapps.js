@@ -14,7 +14,6 @@ class DApps {
 
   @computed get dAppsOnSideBar() {
     let list = [];
-    console.log('dAppsOnSideBar self.dappList', self.dappList);
 
     if (!self.currentDappInfo) {
       return [];
@@ -30,8 +29,6 @@ class DApps {
         })
       }
     });
-    // return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    console.log('dAppsOnSideBar', list);
     return list;
   }
 
@@ -114,9 +111,7 @@ class DApps {
   }
 
   @action updateLocalDApps() {
-    console.log('updateLocalDApps');
     wand.request('setting_getDapps', {}, (err, val) => {
-      console.log('updateLocalDApps', err, val);
       if (!err && val) {
         self.dappList = val;
         if (val.length > 0) {
