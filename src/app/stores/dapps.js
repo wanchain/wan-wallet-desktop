@@ -10,11 +10,13 @@ class DApps {
 
   @observable showDisclaimer = true;
 
+  @observable currentDappInfo;
+
   @computed get dAppsOnSideBar() {
     let list = [];
     console.log('dAppsOnSideBar self.dappList', self.dappList);
 
-    if (!(self.dappList instanceof Object)) {
+    if (!self.currentDappInfo) {
       return [];
     }
     Object.keys(self.dappList).forEach(item => {
@@ -67,6 +69,8 @@ class DApps {
   }
 
   @action addCustomDApp(dappInfo) {
+    console.log('addCustomDApp', dappInfo);
+    self.currentDappInfo = dappInfo;
     if (!self.dappList) {
       self.dappList = [];
     }
@@ -84,6 +88,7 @@ class DApps {
       enable: true,
     });
     self.setLocalDApps(self.dappList);
+    console.log('addCustomDApp', self.dappList);
     return true;
   }
 
@@ -114,6 +119,9 @@ class DApps {
       console.log('updateLocalDApps', err, val);
       if (!err && val) {
         self.dappList = val;
+        if (val.length > 0) {
+          self.currentDappInfo = val[0];
+        }
       } else {
         console.log(`Get Registered Dapp failed`, err)
       }
