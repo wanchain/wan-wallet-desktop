@@ -110,10 +110,10 @@ class DApps {
 
   @action updateLocalDApps() {
     console.log('updateLocalDApps');
-    wand.request('setting_get', [{ keys: ['dapps'] }], (err, val) => {
+    wand.request('setting_getDapps', {}, (err, val) => {
       console.log('updateLocalDApps', err, val);
-      if (!err && val && val[0]) {
-        self.dappList = val[0];
+      if (!err && val) {
+        self.dappList = val;
       } else {
         console.log(`Get Registered Dapp failed`, err)
       }
@@ -122,7 +122,7 @@ class DApps {
 
   setLocalDApps(obj) {
     if (obj) {
-      wand.request('setting_set', { dapps: obj }, function (err, val) {
+      wand.request('setting_updateDapps', obj, function (err, val) {
         if (err) {
           console.log('setLocalDApps', err);
         }

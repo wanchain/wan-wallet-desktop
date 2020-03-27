@@ -1940,6 +1940,26 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
+        case 'updateDapps':
+            try {
+                let dapp = payload;
+                setting.updateDapps(dapp);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
+            break;
+        case 'getDapps':
+            let val;
+            try {
+                val = setting.getDapps();
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: val })
+            break;
         case 'getDAppInjectFile':
             let ret = "";
 

@@ -176,6 +176,16 @@ class Settings {
     this.set(`settings.${network}.tokens["${addr}"]`, obj);
   }
 
+  updateDapps(obj) {
+    let network = this.get('network');
+    this.set(`settings.${network}.dapps`, obj);
+  }
+
+  getDapps() {
+    let network = this.get('network');
+    return this.get(`settings.${network}.dapps`);
+  }
+
   updateRegTokens(regTokens, crossChain) {
     let network = this.get('network');
     let tokens = this.tokens;
