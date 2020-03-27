@@ -56,11 +56,8 @@ class ETHNormalTransForm extends Component {
   }
 
   onAdvanced = () => {
-    this.props.form.validateFields(['to', 'amount'], err => {
-      if (err) return;
-      this.setState({
-        advancedVisible: true,
-      });
+    this.setState({
+      advancedVisible: true,
     });
   }
 

@@ -53,14 +53,8 @@ class NormalTransForm extends Component {
   }
 
   onAdvanced = () => {
-    let { form, updateTransParams } = this.props;
-    let from = form.getFieldValue('from');
-    form.validateFields(['from', 'to'], err => {
-      if (err) return;
-      updateTransParams(from, { to: form.getFieldValue('to') });
-      this.setState({
-        advancedVisible: true,
-      });
+    this.setState({
+      advancedVisible: true,
     });
   }
 
