@@ -62,7 +62,7 @@ class ImportPrivateKeyForm extends Component {
     let { pk, pk2, type } = this.state;
     let isValid = false;
     if (type === 'WAN') {
-      isValid = await isValidPrivateKey(pk, type) && await isValidPrivateKey(pk2, type);
+      isValid = await isValidPrivateKey(pk, type) && (pk2.length === 0 || await isValidPrivateKey(pk2, type));
     } else {
       isValid = await isValidPrivateKey(pk, type);
     }
@@ -104,12 +104,12 @@ class ImportPrivateKeyForm extends Component {
                 <Option value="EOS">EOS</Option>
               </Select>
               <Form.Item>
-                {getFieldDecorator('pribateKey1', { rules: [{ required: true, message: intl.get('ImportPrivateKeyForm.isInvalid'), validator: this.checkPrivateKey }] })
+                {getFieldDecorator('privateKey1', { rules: [{ required: true, message: intl.get('ImportPrivateKeyForm.isInvalid'), validator: this.checkPrivateKey }] })
                   (<Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey')} onChange={this.pkChange} style={{ marginTop: '10px' }} />)}
               </Form.Item>
               {
                 this.state.type === 'WAN' && <Form.Item>
-                  {getFieldDecorator('pribateKey2', { rules: [{ required: true, message: intl.get('ImportPrivateKeyForm.isInvalid'), validator: this.checkPrivateKey }] })
+                  {getFieldDecorator('privateKey2', { rules: [{ required: true, message: intl.get('ImportPrivateKeyForm.isInvalid'), validator: this.checkPrivateKey }] })
                     (<Input placeholder={intl.get('ImportPrivateKey.enterPrivateKey') + '2'} onChange={this.pkChange2} style={{ marginTop: '10px' }} />)}
                 </Form.Item>
               }

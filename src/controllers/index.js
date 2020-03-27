@@ -369,11 +369,16 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         hdUtil.importPrivateKey(newPath, rawPriv);
     
                         if (pk2 !== undefined) {
+                            let rawPriv2;
+                            if (pk2.length === 0) {
+                                rawPriv2 = ccUtil.createPrivateKey();
+                            } else {
+                                rawPriv2 = Buffer.from(pk2, 'hex');
+                            }
                             let pathForm2 = `m/44'/${chainID}'/0'/1/`;
-                            let rawPriv2 = Buffer.from(pk2, 'hex');
                             hdUtil.importPrivateKey(`${pathForm2}${index}`, rawPriv2);
                         }
-    
+
                         let addr = await hdUtil.getAddress(wid, type, newPath);
                         let paramsObj1 = {};
                         let paramsObj2 = {};

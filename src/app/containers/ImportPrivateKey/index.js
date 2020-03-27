@@ -60,13 +60,7 @@ class ImportPrivateKey extends Component {
           type
         };
         if (this.state.type === 'WAN') {
-          if (typeof (pk2) === 'string' && pk2.length) {
-            param.pk2 = pk2;
-          } else {
-            message.warn(intl.get('ImportPrivateKey.invalidParameter'));
-            this.setState({ spin: false });
-            return;
-          }
+          param.pk2 = pk2;
         }
         wand.request('wallet_importPrivateKey', param, (err, val) => {
           if (err) {
