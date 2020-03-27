@@ -938,6 +938,9 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
                 } else if (walletID === WALLET_ID_KEYSTORE) {
                     hdUtil.deleteKeyStore(path, address.toLowerCase());
                 }
+                if (chainType === 'WAN') {
+                    ccUtil.stopScanOTA(walletID, path);
+                }
 
                 ret = true;
             } catch (e) {
