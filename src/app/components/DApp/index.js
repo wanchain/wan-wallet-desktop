@@ -37,7 +37,6 @@ class DApp extends Component {
   async componentDidMount() {
     this.setState({ loading: true });
     const preload = await this.getPreloadFile()
-    console.log(preload);
     this.setState({ preload: preload });
     this.addEventListeners();
   }
@@ -112,11 +111,11 @@ class DApp extends Component {
     try {
       let chainID = 5718350;
       let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
-      console.log(val);
       let addrs = [];
       for (var account in val.accounts) {
-        console.log(account);
-        addrs.push(val.accounts[account]['1'].addr);
+        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
+          addrs.push(val.accounts[account]['1'].addr);
+        }
       }
       let addrAll = this.props.addrSelectedList.slice();
       for (var i = 0, len = addrAll.length; i < len; i++) {
@@ -169,7 +168,6 @@ class DApp extends Component {
       }
       const { addrInfo } = this.props;
 
-      console.log('addresses:', this.addresses);
       let addrType = '';
       switch (this.addresses[address].walletID) {
         case WALLETID.NATIVE:
@@ -182,15 +180,12 @@ class DApp extends Component {
           addrType = 'trezor';
           break;
       }
-      console.log('addrInfo:', addrInfo[addrType]);
       let index = Object.keys(addrInfo[addrType]).findIndex(val => val.toLowerCase() === address);
       let addr = '';
       if (index !== -1) {
         addr = Object.keys(addrInfo[addrType])[index];
-        console.log('index:', index, addr);
       }
       let path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
-      console.log('new path:', path, address);
       if (path.indexOf('m') === -1) {
         path = WAN_PATH + '/0/' + path;
       }
@@ -209,7 +204,6 @@ class DApp extends Component {
       msg.val = null;
 
       const wallet = await this.getWalletFromAddress(msg.address);
-      console.log('ready to sign message with:', wallet);
 
       if (wallet.id === WALLETID.TREZOR) {
         try {
@@ -226,7 +220,6 @@ class DApp extends Component {
             msg.err = err;
             console.log(`Sign Failed:`, JSON.stringify(err));
           } else {
-            console.log('Signature: ', sig)
             msg.val = sig;
           }
           this.sendToDApp(msg);
@@ -252,13 +245,11 @@ class DApp extends Component {
       data: msg.message.data
     };
 
-    console.log('trans:', trans);
     wand.request('transaction_normal', trans, function (err, val) {
       if (err) {
         console.log('error printed inside callback: ', err)
         msg.err = err;
       } else {
-        console.log('result:', val);
         if (val.code === false) {
           msg.err = new Error(val.result);
         } else {
@@ -287,10 +278,8 @@ class DApp extends Component {
       rawTx.gasPrice = toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
-      console.log('rawTx:', rawTx);
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }]);
-      console.log('Transaction hash:', txHash);
       msg.val = txHash;
     } catch (error) {
       console.log(error)
@@ -304,8 +293,6 @@ class DApp extends Component {
     await this.showConfirm('send', msg, async (msg) => {
       msg.err = null;
       msg.val = null;
-      console.log('msg:', msg);
-      console.log('ready to sendTx:', msg.message);
       if (!msg.message || !msg.message.from) {
         msg.err = 'can not find from address.';
         this.sendToDApp(msg);
@@ -313,7 +300,6 @@ class DApp extends Component {
       }
 
       const wallet = await this.getWalletFromAddress(msg.message.from);
-      console.log('ready to send tx with:', wallet);
 
       if (wallet.id === WALLETID.TREZOR) {
         await this.trezorSendTransaction(msg, wallet);
@@ -344,11 +330,9 @@ class DApp extends Component {
       okText: intl.get('ValidatorRegister.acceptAgency'),
       cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
       async onOk() {
-        console.log('OK');
         await onOk(msg);
       },
       async onCancel() {
-        console.log('Cancel');
         await onCancel(msg);
       },
     });
@@ -367,7 +351,6 @@ class DApp extends Component {
 
   render() {
     const preload = this.state.preload;
-    console.log('preload:', preload);
     if (preload) {
       return (
         <div className={style.myIframe}>
