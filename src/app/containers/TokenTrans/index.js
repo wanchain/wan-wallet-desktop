@@ -192,6 +192,7 @@ class TokenTrans extends Component {
           break;
         case 'normal':
         case 'import':
+        case 'rawKey':
           wand.request('transaction_normal', trans, (err, txHash) => {
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
@@ -236,7 +237,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import', 'ledger', 'trezor']} transType={TRANSTYPE.tokenTransfer} />
+            <TransHistory name={['normal', 'import', 'ledger', 'trezor', 'rawKey']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>

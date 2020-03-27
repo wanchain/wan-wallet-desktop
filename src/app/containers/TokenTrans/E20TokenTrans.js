@@ -134,7 +134,7 @@ class E20TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal']} transType={TRANSTYPE.tokenTransfer} />
+            <TransHistory name={['normal', 'rawKey']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>

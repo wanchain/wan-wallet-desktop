@@ -105,8 +105,9 @@ class Tokens {
     let importArr = Object.keys(wanAddress.addrInfo.import);
     let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
     let trezorArr = Object.keys(wanAddress.addrInfo.trezor);
+    let rawKeyArr = Object.keys(wanAddress.addrInfo.rawKey);
 
-    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
+    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -158,7 +159,8 @@ class Tokens {
 
   @action updateE20TokensBalance(tokenScAddr) {
     let normalArr = Object.keys(ethAddress.addrInfo.normal);
-    wand.request('crossChain_updateTokensBalance', { address: normalArr, tokenScAddr, chain: 'ETH' }, (err, data) => {
+    let rawKeyArr = Object.keys(ethAddress.addrInfo.rawKey);
+    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(rawKeyArr), tokenScAddr, chain: 'ETH' }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -311,7 +313,7 @@ class Tokens {
   }
 
   @computed get getTokensListInfo_2WanTypes() {
-    let addTypes = ['normal', 'ledger', 'trezor', 'import'];
+    let addTypes = ['normal', 'ledger', 'trezor', 'import', 'rawKey'];
     let addrList = [];
 
     Object.keys(wanAddress.addrInfo).forEach(type => {
@@ -377,22 +379,25 @@ class Tokens {
 
   @computed get getE20TokensInfo() {
     let addrList = [];
-    let normalArr = Object.keys(ethAddress.addrInfo.normal);
-    normalArr.forEach(item => {
-      let balance;
-      if (self.E20TokensBalance && self.E20TokensBalance[self.currTokenAddr]) {
-        balance = formatNumByDecimals(self.E20TokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
-      } else {
-        balance = 0
-      }
-      addrList.push({
-        key: item,
-        name: ethAddress.addrInfo.normal[item].name,
-        address: item,
-        balance: formatNum(balance),
-        path: `${ETHPATH}${ethAddress.addrInfo.normal[item].path}`,
-        action: 'send',
-        amount: balance
+    let normal = ethAddress.addrInfo.normal;
+    let rawKey = ethAddress.addrInfo.rawKey;
+    [normal, rawKey].forEach(obj => {
+      Object.keys(obj).forEach(item => {
+        let balance;
+        if (self.E20TokensBalance && self.E20TokensBalance[self.currTokenAddr]) {
+          balance = formatNumByDecimals(self.E20TokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        } else {
+          balance = 0
+        }
+        addrList.push({
+          key: item,
+          name: obj[item].name,
+          address: item,
+          balance: formatNum(balance),
+          path: `${ETHPATH}${obj[item].path}`,
+          action: 'send',
+          amount: balance
+        });
       });
     });
     return addrList;
