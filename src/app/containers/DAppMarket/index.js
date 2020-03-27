@@ -132,7 +132,7 @@ class DAppMarket extends Component {
             <Input allowClear placeholder={intl.get('DApp.dAppSearch')} value={searchbarWords} className={style.colorInputAddr} onChange={this.handleSearch} />
             <Button type="primary" onClick={this.handleSearchDApp} shape="round" className={style.getInfoBtn}>{intl.get('popup.search')}</Button>
           </Col>
-          <Col span={3} push={6} id="dAppType">
+          <Col className={style.textRight} span={3} push={6} id="dAppType">
             <Select
               className='category-style'
               onChange={this.handleTypeChange}
@@ -144,7 +144,7 @@ class DAppMarket extends Component {
               })}
             </Select>
           </Col>
-          <Col span={3} push={6} id="dAppSort">
+          <Col className={style.textRight} span={3} push={6} id="dAppSort">
             <Select
               className='category-style'
               onChange={this.handleSortChange}
