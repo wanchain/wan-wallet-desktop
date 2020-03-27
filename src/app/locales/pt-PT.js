@@ -103,7 +103,7 @@ const pt_PT = {
     'ImportPrivateKeyForm.invalidFormData': 'Invalid form data',
 
     'ImportPrivateKeyConfirmation.notice': 'Notice',
-    'ImportPrivateKeyConfirmation.noticeText': `WARNING: Keystore account is not recommended. We don't support keystore file backup functionality. Please safe guard your original keystore file or transfer your assets to HD accounts or hardware accounts.`,
+    'ImportPrivateKeyConfirmation.noticeText': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKeyConfirmation.seconds': 'Seconds',
     'ImportPrivateKeyConfirmation.second': 'Second',
 

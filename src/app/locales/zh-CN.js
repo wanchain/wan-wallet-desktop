@@ -104,7 +104,7 @@ const zh_CN = {
     'ImportPrivateKeyForm.invalidFormData': '非法表单数据',
 
     'ImportPrivateKeyConfirmation.notice': '注意',
-    'ImportPrivateKeyConfirmation.noticeText': '告警：不推荐使用密钥文件账户，我们不提供密钥文件备份功能。请保存好原始的秘钥文件或者将资产转移到HD钱包账户或硬件钱包账户。',
+    'ImportPrivateKeyConfirmation.noticeText': '导入的账户是单独管理的，跟助记词无关，请自行单独进行备份',
     'ImportPrivateKeyConfirmation.seconds': '秒',
     'ImportPrivateKeyConfirmation.second': '秒',
 
