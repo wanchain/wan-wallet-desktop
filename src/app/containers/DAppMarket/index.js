@@ -76,7 +76,6 @@ class DAppMarket extends Component {
     if (!ret) {
       message.error(intl.get('DApp.addFailed'));
     } else {
-      console.log('add dapp success');
       message.success(intl.get('DApp.addSuccess'));
     }
   }
