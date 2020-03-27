@@ -66,7 +66,6 @@ class DApps {
   }
 
   @action addCustomDApp(dappInfo) {
-    console.log('addCustomDApp', dappInfo);
     self.currentDappInfo = dappInfo;
     if (!self.dappList) {
       self.dappList = [];
@@ -85,7 +84,6 @@ class DApps {
       enable: true,
     });
     self.setLocalDApps(self.dappList);
-    console.log('addCustomDApp', self.dappList);
     return true;
   }
 
