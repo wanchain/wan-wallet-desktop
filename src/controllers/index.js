@@ -810,36 +810,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 let ret;
                 try {
                     let { key, type } = payload;
-                    let wid = WALLET_ID_RAWKEY;
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(key) : Buffer.from(key, 'hex');
-                    let address = await hdUtil.getAddressByPrivateKey(wid, type.toUpperCase(), rawPriv);
-                    // console.log('address:', address);
-                    let isValid = false;
-
-                    switch (type) {
-                        case 'BTC':
-                            try {
-                                bs58check.decode(address);
-                                isValid = /^[0-9a-zA-Z]{52}$/.test(key);
-                            } catch (e) {
-                                isValid = false;
-                            }
-                            break;
-                        case 'WAN':
-                            isValid = /^[0-9a-f]{64}$/.test(key) && await ccUtil.isWanAddress(`0x${address}`);
-                            break;
-                        case 'ETH':
-                            isValid = /^[0-9a-f]{64}$/.test(key) && await ccUtil.isEthAddress(`0x${address}`);
-                            break;
-                        case 'EOS':
-                            isValid = /^[0-9a-zA-Z]{51}$/.test(key) && await ccUtil.isEosPublicKey(address);
-                            break;
-                    }
-                    ret = isValid;
+                    ret = ethUtil.isValidPrivate(rawPriv);
                 } catch (e) {
-                    // console.log('isValidPrivateKey Error:', e);
+                    console.log('isValidPrivateKey Error:', e);
                     logger.error(e.message || e.stack);
-                    err = e;
+                    // err = e;
+                    ret = false;
                 }
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: ret });
             }
