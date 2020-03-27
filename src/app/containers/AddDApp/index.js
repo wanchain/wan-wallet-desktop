@@ -58,7 +58,7 @@ class AddDApp extends Component {
     return (
       showDisclaimer
       ? <Modal
-          title={intl.get('DApp.addTitle')}
+          title={intl.get('DApp.termOfServiceTitle')}
           visible
           bodyStyle={{ width: '100%', padding: '0px' }}
           centered={true}
@@ -71,7 +71,7 @@ class AddDApp extends Component {
           ]}
         >
           <div className={style.root}>
-          <Card title={intl.get('DApp.termOfServiceTitle')} bordered={false}>
+          <Card bordered={false}>
             <div className={style.termOfService}>
               <h3 className={style.section}>{intl.get('DApp.termOfService1')}</h3>
               <h3 className={style.section}>{intl.get('DApp.termOfService2')}</h3>
