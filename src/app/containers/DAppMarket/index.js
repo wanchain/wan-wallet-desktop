@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
-import { Row, Button, Col, Input, Avatar, Select, Pagination, message, Spin } from 'antd';
+import { Row, Button, Col, Input, Avatar, Select, Pagination, message, Spin, Empty } from 'antd';
 
 import style from './index.less';
 import { dAppSort } from 'utils/helper';
@@ -124,7 +124,7 @@ class DAppMarket extends Component {
     dAppsListPagination = dAppsList.filter((item, index) => index >= pageNum * (currentPage - 1) && index <= currentPage * pageNum - 1)
 
     return (
-      <div className="account">
+      <div className="account dappStyle">
         <Row className={style.Row1 + ' title'}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} />
@@ -155,36 +155,40 @@ class DAppMarket extends Component {
             </Select>
           </Col>
         </Row>
-        <Row className={style.Row2 + ' title'}>
+        <Spin spinning={!this.props.formatedDApp.length} size="large">
           {
             dAppsList.length === 0
-            ? <Spin />
-            : dAppsListPagination.map((item, index) =>
-            <Col span={7} push={1} className={style.cardDApp + ' col-left'} key={index}>
-              <Row type="flex" justify="center" align="middle">
-                <Col span={5} style={{ textAlign: 'center' }}><Avatar size="large" className={style.dappIcon} src={`data:image/${item.iconType};base64,${item.iconData}`} /></Col>
-                <Col span={19}>
-                  <Row>
-                    <Col span={12}><span className={style.dAppName}>{item.name}</span></Col>
-                    <Col span={6} offset={4}><Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${item.type}`)}</Button></Col>
-                  </Row>
-                  <Row className={style.dAppSummary}>
-                    <Col><span>{item.summary}</span></Col>
-                  </Row>
-                  <Row className={style.dAppUrl}>
-                    <Col><a onClick={() => this.handleJumpToWebsite(item.url)}>{item.url}</a></Col>
-                  </Row>
-                  <Row>
-                    <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
-                    <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
-                    <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
-                  </Row>
-                </Col>
+            ? <Empty className={style.emptyStyle} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            : <Row className={style.Row2 + ' title'}>
+                {
+                  dAppsListPagination.map((item, index) =>
+                    <Col span={7} push={1} className={style.cardDApp + ' col-left'} key={index}>
+                      <Row type="flex" justify="center" align="middle">
+                        <Col span={5} style={{ textAlign: 'center' }}><Avatar size="large" className={style.dappIcon} src={`data:image/${item.iconType};base64,${item.iconData}`} /></Col>
+                        <Col span={19}>
+                          <Row>
+                            <Col span={12}><span className={style.dAppName}>{item.name}</span></Col>
+                            <Col span={6} offset={4}><Button className={style.createBtnType} shape="round" size="small">{intl.get(`DApp.${item.type}`)}</Button></Col>
+                          </Row>
+                          <Row className={style.dAppSummary}>
+                            <Col><span>{item.summary}</span></Col>
+                          </Row>
+                          <Row className={style.dAppUrl}>
+                            <Col><a onClick={() => this.handleJumpToWebsite(item.url)}>{item.url}</a></Col>
+                          </Row>
+                          <Row>
+                            <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
+                            <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
+                            <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Col>
+                  )
+                }
               </Row>
-            </Col>
-            )
           }
-        </Row>
+        </Spin>
         <Pagination className={style.pagination} defaultPageSize={pageNum} current={this.state.currentPage} onChange={this.onPageChange} total={dAppsList.length || 1} />
         { this.state.showDetail && <DAppInfo info={this.state.dAppDetail} handleClose={this.closeDetail}/> }
       </div>
