@@ -155,7 +155,7 @@ const zh_CN = {
     'DApp.High-risk': '高风险',
     'DApp.Game': '游戏',
     'DApp.Gambling': '赌博',
-    'DApp.Exchange': '兑换',
+    'DApp.Exchange': '交易所',
     'DApp.Finance': '金融',
     'DApp.Social': '社交',
     'DApp.Art': '艺术',

@@ -50,7 +50,7 @@ class DApps {
       if (!err) {
         self.allDapps = val;
       } else {
-        console.log(`Get Registered Dapp failed`, err)
+        console.log(`Get Registered DApps failed`, err)
       }
     })
   }
@@ -110,13 +110,13 @@ class DApps {
 
   @action updateLocalDApps() {
     wand.request('setting_getDapps', {}, (err, val) => {
-      if (!err && val) {
+      if (err) {
+        console.log(`Get Registered DApps failed`, err);
+      } else if (val) {
         self.dappList = val;
         if (val.length > 0) {
           self.currentDappInfo = val[0];
         }
-      } else {
-        console.log(`Get Registered Dapp failed`, err)
       }
     })
   }
