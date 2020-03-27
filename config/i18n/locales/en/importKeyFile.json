@@ -19,6 +19,6 @@
     "browse": "Browse",
     "confirm_Title": "Notice",
     "confirm_close": "Close",
-    "confirm_submit": "Submit",
-    "confirm_counter": "${number} Seconds"
+    "confirm_ok": "OK",
+    "confirm_counter": "${n} Seconds"
 }

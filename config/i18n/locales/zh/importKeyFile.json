@@ -19,6 +19,6 @@
     "browse": "浏览",
     "confirm_Title": "注意",
     "confirm_close": "关闭",
-    "confirm_submit": "知道了",
-    "confirm_counter": "${number} 秒"
+    "confirm_ok": "知道了",
+    "confirm_counter": "${n} 秒"
 }

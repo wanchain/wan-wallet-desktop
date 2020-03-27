@@ -54,7 +54,7 @@ class ImportPrivateKeyConfirmation extends Component {
     return (
       <Modal
         destroyOnClose={true}
-        title={intl.get('ImportPrivateKeyConfirmation.notice')}
+        title={intl.get('ImportPrivateKeyConfirmation.warning')}
         visible={true}
         closable={false}
         onOk={this.onOk}
@@ -63,7 +63,7 @@ class ImportPrivateKeyConfirmation extends Component {
         cancelText={intl.get('Common.cancel')}
         okButtonProps={{ disabled: okDisabled, className: okDisabled ? style.disabledButton : '' }}
       >
-        <p className={style.noticeText}>{intl.get('ImportPrivateKeyConfirmation.noticeText')}</p>
+        <p className={style.noticeText}>{intl.get('ImportPrivateKeyConfirmation.warningText')}</p>
       </Modal>
     );
   }

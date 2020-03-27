@@ -16,7 +16,6 @@ class ImportPrivateKey extends Component {
   state = {
     visible: false,
     confirmationVisible: false,
-    spin: false,
     pk: '',
     pk2: '',
     type: 'WAN',
@@ -26,7 +25,6 @@ class ImportPrivateKey extends Component {
     this.setState({
       visible: false,
       confirmationVisible: false,
-      spin: false,
       pk: '',
       pk2: '',
       type: 'WAN',
@@ -34,65 +32,22 @@ class ImportPrivateKey extends Component {
   }
 
   showModal = () => {
-    this.setState({ visible: true, })
+    this.setState({ confirmationVisible: true, })
   }
 
   handleOk = (data) => {
     this.setState({
-      confirmationVisible: true,
-      pk: data.pk,
-      pk2: data.pk2,
-      type: data.type,
+      confirmationVisible: false,
+      visible: true,
     });
-  }
-
-  handleCancelForm = () => {
-    this.resetStateVal();
-  }
-
-  handleSubmit = () => {
-    let { pk, pk2, type } = this.state;
-    try {
-      this.setState({ spin: true, confirmationVisible: false });
-      if (typeof (pk) === 'string' && pk.length && type.length) {
-        let param = {
-          pk,
-          type
-        };
-        if (this.state.type === 'WAN') {
-          param.pk2 = pk2;
-        }
-        wand.request('wallet_importPrivateKey', param, (err, val) => {
-          if (err) {
-            message.warn(intl.get('ImportPrivateKey.importPKFailed'));
-            this.setState({ spin: false });
-            return
-          }
-          if (val && val.status) {
-            message.success(intl.get('ImportPrivateKey.importPKSuccess'));
-            this.resetStateVal();
-          } else {
-            if (val.message && val.message === 'sameAddress') {
-              message.warn(intl.get('ImportPrivateKey.sameAddress'));
-            } else {
-              message.warn(intl.get('ImportPrivateKey.importPKFailed'));
-            }
-            this.setState({ spin: false });
-          }
-        });
-      } else {
-        message.warn(intl.get('ImportPrivateKey.invalidParameter'));
-        this.setState({ spin: false });
-        return;
-      }
-    } catch (e) {
-      message.error(e.toString());
-      this.setState({ spin: false });
-    }
   }
 
   handleCloseConfirmationDialog = () => {
     this.setState({ confirmationVisible: false });
+  }
+
+  handleCancelForm = () => {
+    this.resetStateVal();
   }
 
   render() {
@@ -104,10 +59,10 @@ class ImportPrivateKey extends Component {
           </p>
           <Button type="primary" onClick={this.showModal}>{intl.get('Common.continue')}</Button>
           {
-            this.state.visible && <ImportForm handleCancel={this.handleCancelForm} handleOk={this.handleOk} spin={this.state.spin}/>
+            this.state.confirmationVisible && <ImportPrivateKeyConfirmation onOk={this.handleOk} onCancel={this.handleCloseConfirmationDialog} />
           }
           {
-            this.state.confirmationVisible && <ImportPrivateKeyConfirmation onOk={this.handleSubmit} onCancel={this.handleCloseConfirmationDialog}/>
+            this.state.visible && <ImportForm handleCancel={this.handleCancelForm} />
           }
         </Card>
       </div>

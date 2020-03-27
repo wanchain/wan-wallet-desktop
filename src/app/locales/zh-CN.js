@@ -103,8 +103,8 @@ const zh_CN = {
     'ImportPrivateKeyForm.isInvalid': '非法私钥',
     'ImportPrivateKeyForm.invalidFormData': '非法表单数据',
 
-    'ImportPrivateKeyConfirmation.notice': '注意',
-    'ImportPrivateKeyConfirmation.noticeText': '导入的账户是单独管理的，跟助记词无关，请自行单独进行备份',
+    'ImportPrivateKeyConfirmation.warning': '注意',
+    'ImportPrivateKeyConfirmation.warningText': '导入的账户是单独管理的，跟助记词无关，请自行单独进行备份',
     'ImportPrivateKeyConfirmation.seconds': '秒',
     'ImportPrivateKeyConfirmation.second': '秒',
 

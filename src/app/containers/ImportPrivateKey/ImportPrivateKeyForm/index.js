@@ -17,6 +17,7 @@ class ImportPrivateKeyForm extends Component {
     pk: '',
     pk2: '',
     type: 'WAN',
+    spin: false
   }
 
   resetStateVal = () => {
@@ -24,6 +25,7 @@ class ImportPrivateKeyForm extends Component {
       pk: '',
       pk2: '',
       type: 'WAN',
+      spin: false
     });
   }
 
@@ -69,7 +71,7 @@ class ImportPrivateKeyForm extends Component {
     if (!isValid) {
       message.warn(intl.get('ImportPrivateKeyForm.invalidFormData'));
     } else {
-      this.props.handleOk({ pk, pk2, type });
+      this.handleSubmit();
     }
   }
 
@@ -78,8 +80,50 @@ class ImportPrivateKeyForm extends Component {
     this.props.handleCancel();
   }
 
+  handleSubmit = () => {
+    let { pk, pk2, type } = this.state;
+    try {
+      this.setState({ spin: true });
+      if (typeof (pk) === 'string' && pk.length && type.length) {
+        let param = {
+          pk,
+          type
+        };
+        if (type === 'WAN') {
+          param.pk2 = pk2;
+        }
+        wand.request('wallet_importPrivateKey', param, (err, val) => {
+          if (err) {
+            message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            this.setState({ spin: false });
+            return
+          }
+          if (val && val.status) {
+            message.success(intl.get('ImportPrivateKey.importPKSuccess'));
+            this.handleCancel();
+          } else {
+            if (val.message && val.message === 'sameAddress') {
+              message.warn(intl.get('ImportPrivateKey.sameAddress'));
+            } else {
+              message.warn(intl.get('ImportPrivateKey.importPKFailed'));
+            }
+            this.setState({ spin: false });
+          }
+        });
+      } else {
+        message.warn(intl.get('ImportPrivateKey.invalidParameter'));
+        this.setState({ spin: false });
+        return;
+      }
+    } catch (e) {
+      message.error(e.toString());
+      this.setState({ spin: false });
+    }
+  }
+
   render() {
-    const { form, spin } = this.props;
+    const { form } = this.props;
+    const { spin } = this.state;
     const { getFieldDecorator } = form;
     return (
       <Modal

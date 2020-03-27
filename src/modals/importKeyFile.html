@@ -94,7 +94,7 @@
         </i>
     </div>
 
-    <!-- Modal -->
+    <!-- Warning Modal -->
     <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirm_Title"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -107,8 +107,10 @@
                 </div>
                 <div class="modal-body" id="confirm_noticeText"></div>
                 <div class="modal-footer">
-                    <button type="button" id="confirm_close" class="btn btn-secondary" data-dismiss="modal"><!-- Close --></button>
-                    <button type="button" id="confirm_submit" class="btn btn-primary" disabled="disabled"><!-- Wait --></button>
+                    <button type="button" id="confirm_close" class="btn btn-secondary" data-dismiss="modal">
+                        <!-- Close --></button>
+                    <button type="button" id="confirm_ok" class="btn btn-primary" disabled="disabled">
+                        <!-- Wait --></button>
                 </div>
             </div>
         </div>
@@ -144,8 +146,8 @@
 
         window.addEventListener('load', function () {
             const fileSelector = document.querySelector('#keyfile');
-            const cancelBtn = document.querySelector('#cancel');
             const subBtn = document.querySelector('#submit');
+            const cancelBtn = document.querySelector('#cancel');
             const alertError = document.querySelector('.alert-danger');
             const alertSuccess = document.querySelector('.alert-success');
             const form = document.getElementById('KeyFileForm');
@@ -155,10 +157,12 @@
             const kFBtn = document.querySelector('#kFButton');
 
             //Confirm modal
+            const confirm_ok = $('#confirm_ok');
             const confirm_close = document.querySelector('#confirm_close');
-            const confirm_submit = $('#confirm_submit');
             let timer_confirmButton;
 
+            //Show confirmation modal
+            $('#confirmModal').show();
 
             form.addEventListener('keypress', (e) => {
                 if (e.key === "Enter") {
@@ -174,6 +178,23 @@
                     }
                 }
             });
+
+            let counter = () => {
+                clearInterval(timer_confirmButton);
+                let i = 5;
+                confirm_ok.attr('disabled', true);
+                confirm_ok.html($.i18n('confirm_counter').replace('${n}', i));
+                timer_confirmButton = setInterval(() => {
+                    i--;
+                    if (i === 0) {
+                        confirm_ok.attr('disabled', false);
+                        clearInterval(timer_confirmButton);
+                        confirm_ok.html($.i18n('confirm_ok'));
+                    } else {
+                        confirm_ok.html($.i18n('confirm_counter').replace('${n}', i));
+                    }
+                }, 1000);
+            }
 
             new Promise((resolve, reject) => {
                 wand.request('query_config', {
@@ -196,6 +217,7 @@
                 }).then((res) => {
                     setLanguage();
                     kFBtn.setAttribute('data-content', $.i18n('browse'));
+                    counter();// Start counter
                 }).catch((err) => {
                     console.log(err);
                 });
@@ -217,51 +239,21 @@
                 document.querySelector('.custom-file-label').innerHTML = value.name;
             });
 
-            subBtn.addEventListener('click', e => {
-                const formData = new FormData(form);
-                const keyFilePwd = formData.get('oldpwd');
-                const hdWalletPwd = formData.get('newpwd');
-                const fileDesc = formData.get('keyfile');
-                form.classList.add('was-validated');
-                if (keyFilePwd && hdWalletPwd && fileDesc.path) {
-                    clearInterval(timer_confirmButton);
-                    let i = 5;
-                    $('#mask').show();
-                    $('#confirmModal').show();
-                    $('#confirmModal').addClass('show');
-                    confirm_submit.attr('disabled', true);
-                    confirm_submit.html($.i18n('confirm_counter').replace('${number}', i));
-                    timer_confirmButton = setInterval(() => {
-                        i--;
-                        if (i === 0) {
-                            confirm_submit.attr('disabled', false);
-                            clearInterval(timer_confirmButton);
-                            confirm_submit.html($.i18n('confirm_submit'));
-                        } else {
-                            confirm_submit.html($.i18n('confirm_counter').replace('${number}', i));
-                        }
-                    }, 1000);
-                } else {
-                    $('#mask').hide();
-                    $('#confirmModal').hide();
-                    $('#confirmModal').removeClass('show');
-                }
-
-
+            //OK button in confirmation dialog
+            confirm_ok.click(e => {
+                $('#confirmModal').hide();
+                // $('#confirmModal').removeClass('show');
             });
 
-            cancelBtn.addEventListener('click', e => {
-                e.preventDefault();
-                e.stopPropagation();
+            //Close button in confirmation dialog
+            confirm_close.addEventListener('click', e => {
                 window.close();
             });
 
-            //submit button in confirmation dialog
-            confirm_submit.click(e => {
+            //Submit button
+            subBtn.addEventListener('click', e => {
                 e.preventDefault();
                 e.stopPropagation();
-
-                $(confirm_close).click();
 
                 errText.innerHTML = '';
                 successText.innerHTML = '';
@@ -294,11 +286,15 @@
                             errText.innerHTML = $.i18n('ERR_INVALID_KEYFILE');
                         }
                         alertError.classList.add('show');
+                        let timer = setTimeout(() => {
+                            alertError.classList.remove('show');
+                            clearTimeout(timer);
+                        }, 3000);
                         return
                     }
                     if (val) {
-                        successText.innerHTML = $.i18n('TEXT_SUCCESS');
                         alertSuccess.classList.add('show');
+                        successText.innerHTML = $.i18n('TEXT_SUCCESS');
                         setTimeout(() => {
                             window.close();
                         }, 5000);
@@ -306,10 +302,10 @@
                 })
             });
 
-            confirm_close.addEventListener('click', e => {
-                $('#mask').hide();
-                $('#confirmModal').hide();
-                $('#confirmModal').removeClass('show');
+            cancelBtn.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.close();
             });
         }, false);
     })()

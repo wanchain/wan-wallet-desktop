@@ -102,8 +102,8 @@ const pt_PT = {
     'ImportPrivateKeyForm.isInvalid': 'Invalid private key',
     'ImportPrivateKeyForm.invalidFormData': 'Invalid form data',
 
-    'ImportPrivateKeyConfirmation.notice': 'Notice',
-    'ImportPrivateKeyConfirmation.noticeText': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
+    'ImportPrivateKeyConfirmation.warning': 'WARNING',
+    'ImportPrivateKeyConfirmation.warningText': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKeyConfirmation.seconds': 'Seconds',
     'ImportPrivateKeyConfirmation.second': 'Second',
 
