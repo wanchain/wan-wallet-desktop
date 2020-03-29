@@ -183,7 +183,7 @@
                 clearInterval(timer_confirmButton);
                 let i = 5;
                 confirm_ok.attr('disabled', true);
-                confirm_ok.html($.i18n('confirm_counter').replace('${n}', i));
+                confirm_ok.html(`${i} ${$.i18n('confirm_counter')}`);
                 timer_confirmButton = setInterval(() => {
                     i--;
                     if (i === 0) {
@@ -191,7 +191,7 @@
                         clearInterval(timer_confirmButton);
                         confirm_ok.html($.i18n('confirm_ok'));
                     } else {
-                        confirm_ok.html($.i18n('confirm_counter').replace('${n}', i));
+                        confirm_ok.html(`${i} ${$.i18n('confirm_counter')}`);
                     }
                 }, 1000);
             }

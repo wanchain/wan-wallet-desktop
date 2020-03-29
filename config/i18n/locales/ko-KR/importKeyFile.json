@@ -16,8 +16,8 @@
     "ERR_INVALID_KEYFILE": "키 파일 형식 오류",
     "TEXT_SUCCESS": "가져오기가 성공하였습니다. 5초 후에 창이 닫힙니다.",
     "browse": "탐색",
-    "confirm_Title": "Notice",
-    "confirm_close": "Close",
-    "confirm_ok": "OK",
-    "confirm_counter": "${n} Seconds"
+    "confirm_Title": "경고",
+    "confirm_close": "취소",
+    "confirm_ok": "확인",
+    "confirm_counter": "seconds"
 }

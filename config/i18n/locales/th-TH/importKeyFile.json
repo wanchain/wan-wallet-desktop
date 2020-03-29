@@ -16,8 +16,8 @@
     "ERR_INVALID_KEYFILE": "ฟอร์แมตในไฟล์คีย์สโตร์ไม่ถูกต้อง",
     "TEXT_SUCCESS": "การนำเข้าเสร็จจสมบูรณ์  หน้าต่างนี้จะปิดอัตโนมัติภายใน 5 นาที",
     "browse": "เลือกดู",
-    "confirm_Title": "Notice",
-    "confirm_close": "Close",
-    "confirm_ok": "OK",
-    "confirm_counter": "${n} Seconds"
+    "confirm_Title": "ระวัง",
+    "confirm_close": "ยกเลิก",
+    "confirm_ok": "ตกลง",
+    "confirm_counter": "seconds"
 }

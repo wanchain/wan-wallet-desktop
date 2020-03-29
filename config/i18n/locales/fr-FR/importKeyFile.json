@@ -17,8 +17,8 @@
     "ERR_DUPLICATE_KEYFILE": "Veuillez ne pas réimporter le même fichier Keystore déjà existant.",
     "TEXT_SUCCESS": "Importé avec succès. Cette fenêtre se fermera dans 5 secondes.",
     "browse": "Parcourir",
-    "confirm_Title": "Notice",
-    "confirm_close": "Close",
+    "confirm_Title": "ATTENTION",
+    "confirm_close": "Annuler",
     "confirm_ok": "OK",
-    "confirm_counter": "${n} Seconds"
+    "confirm_counter": "seconds"
 }

@@ -17,8 +17,8 @@
     "ERR_DUPLICATE_KEYFILE": "Don not import the same key file again.",
     "TEXT_SUCCESS": "Import is successful. This window will close in 5 seconds",
     "browse": "Browse",
-    "confirm_Title": "Notice",
-    "confirm_close": "Close",
+    "confirm_Title": "WARNING",
+    "confirm_close": "Cancel",
     "confirm_ok": "OK",
-    "confirm_counter": "${n} Seconds"
+    "confirm_counter": "seconds"
 }

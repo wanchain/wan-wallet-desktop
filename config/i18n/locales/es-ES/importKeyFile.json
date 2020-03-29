@@ -17,8 +17,8 @@
     "ERR_DUPLICATE_KEYFILE": "No vuelva a importar el mismo archivo de clave",
     "TEXT_SUCCESS": "La importacion se realizo correctamente. Esta ventana cerrara en 5 segundos.",
     "browse": "Navegar",
-    "confirm_Title": "Notice",
-    "confirm_close": "Close",
+    "confirm_Title": "ALERTA",
+    "confirm_close": "Cancelar",
     "confirm_ok": "OK",
-    "confirm_counter": "${n} Seconds"
+    "confirm_counter": "seconds"
 }

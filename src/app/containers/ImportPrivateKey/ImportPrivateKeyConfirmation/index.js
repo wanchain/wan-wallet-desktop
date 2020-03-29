@@ -54,7 +54,7 @@ class ImportPrivateKeyConfirmation extends Component {
     return (
       <Modal
         destroyOnClose={true}
-        title={intl.get('ImportPrivateKeyConfirmation.warning')}
+        title={intl.get('Common.warning')}
         visible={true}
         closable={false}
         onOk={this.onOk}

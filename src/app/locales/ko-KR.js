@@ -102,7 +102,6 @@ const ko_KR = {
     'ImportPrivateKeyForm.isInvalid': 'Invalid private key',
     'ImportPrivateKeyForm.invalidFormData': 'Invalid form data',
 
-    'ImportPrivateKeyConfirmation.warning': 'WARNING',
     'ImportPrivateKeyConfirmation.warningText': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
     'ImportPrivateKeyConfirmation.seconds': 'Seconds',
     'ImportPrivateKeyConfirmation.second': 'Second',

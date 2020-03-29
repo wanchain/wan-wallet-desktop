@@ -102,7 +102,6 @@ const th_TH = {
     'ImportPrivateKeyForm.isInvalid': 'Private Key ไม่ถูกต้อง',
     'ImportPrivateKeyForm.invalidFormData': 'ข้อมูลจากฟอร์มไม่ถูกต้อง',
 
-    'ImportPrivateKeyConfirmation.warning': 'ระวัง',
     'ImportPrivateKeyConfirmation.warningText': 'บัญชีที่นำเข้ามานั้นจะไม่เกี่ยวข้องใดๆกับข้อมูลที่ถูกสร้างจากกลุ่มคำลับ กรุณาสำรองข้อมูลต่างหาก',
     'ImportPrivateKeyConfirmation.seconds': 'วินาที',
     'ImportPrivateKeyConfirmation.second': 'วินาที',
