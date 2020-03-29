@@ -2,9 +2,9 @@
     "title": "นำเข้าไฟล์คีย์สโตร์ Wanchain",
     "head": "นำเข้าไฟล์คีย์สโตร์ Wanchain",
     "warning": "โปรดระวัง: ไม่แนะนำให้ใช้งานคีย์สโตร์เป็นหลักเนื่องจากระบบจะไม่สามารถสำรองข้อมูลกลับไปเป็นคีย์โสตร์ได้ กรุณาเก็บคีย์สโตร์ไว้ในที่ปลอดภัยหรือโอนทรัพย์สินของคุณไปที่บัญชีแบบ HD (HD Wallet) หรือบัญชีกระเป๋าแบบฮาร์ตแวร์ (Hardware Wallet)",
-    "enterKfPw": "Input Keystore Password (This is your old wallet password)",
+    "enterKfPw": "กรอกรหัสผ่านของ Keystore (รหัสผ่านของกระเป๋าเก่า)",
     "kfFeedback": "รหัสผ่านคีย์สโตร์ไม่ถูกต้อง",
-    "enterWwPw": "Input WAN Wallet Password (This is your new wallet password)",
+    "enterWwPw": "กรอกรหัสผ่านของ Keystore  (รหัสผ่านของกระเป๋าใหม่)",
     "wWPwInvalid": "รหัสผ่านกระเป๋า WAN ไม่ถูกต้อง",
     "chooseKf": "เลือกไฟล์คีย์สโตร์",
     "kFInvalid": "คีย์สโตร์ไม่ถูกต้อง",
@@ -19,5 +19,5 @@
     "confirm_Title": "ระวัง",
     "confirm_close": "ยกเลิก",
     "confirm_ok": "ตกลง",
-    "confirm_counter": "seconds"
+    "confirm_counter": "วินาที"
 }
