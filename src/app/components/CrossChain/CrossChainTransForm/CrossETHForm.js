@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
 
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -157,6 +157,19 @@ class CrossETHForm extends Component {
     }
   }
 
+  sendAllAmount = e => {
+    let { form, balance } = this.props;
+    if (e.target.checked) {
+        form.setFieldsValue({
+          amount: new BigNumber(balance).toString(10)
+        });
+    } else {
+      form.setFieldsValue({
+        amount: 0
+      });
+    }
+  }
+
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol, fromAccount, toAccountList;
@@ -285,6 +298,9 @@ class CrossETHForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + ` (${tokenSymbol})`}
               />
+              {
+                symbol !== 'ETH' && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
+              }
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
           </Spin>
