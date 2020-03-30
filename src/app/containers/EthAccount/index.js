@@ -165,7 +165,7 @@ class EthAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal']} />
+            <TransHistory name={['normal', 'rawKey']} />
           </Col>
         </Row>
       </div>
