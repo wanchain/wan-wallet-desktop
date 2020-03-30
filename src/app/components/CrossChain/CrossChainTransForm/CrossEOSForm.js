@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
 
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
@@ -144,6 +144,19 @@ class CrossEOSForm extends Component {
     updateTransParams(from, { storeman, txFeeRatio: smgList[option.key].txFeeRatio });
   }
 
+  sendAllAmount = e => {
+    let { form, balance } = this.props;
+    if (e.target.checked) {
+        form.setFieldsValue({
+          amount: new BigNumber(balance).toString(10)
+        });
+    } else {
+      form.setFieldsValue({
+        amount: 0
+      });
+    }
+  }
+
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance } = this.props;
     let srcChain, desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio, fromAccount;
@@ -260,6 +273,7 @@ class CrossEOSForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + ` (${tokenSymbol})`}
               />
+              <Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
           </Spin>
