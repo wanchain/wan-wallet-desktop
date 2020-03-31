@@ -388,7 +388,8 @@ class WanAddress {
         address: wanUtil.toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: self.addrInfo[type][item].path,
-        action: 'send'
+        action: 'send',
+        wid: WALLETID.LEDGER
       });
     });
     return addrList;
@@ -404,7 +405,8 @@ class WanAddress {
         address: wanUtil.toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: self.addrInfo[type][item].path,
-        action: 'send'
+        action: 'send',
+        wid: WALLETID.TREZOR
       });
     });
     return addrList;
