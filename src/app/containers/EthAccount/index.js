@@ -16,7 +16,7 @@ const CHAINTYPE = 'ETH';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.ethAddress.getAddrList,
-  getAmount: stores.ethAddress.getNormalAmount,
+  getAmount: stores.ethAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),

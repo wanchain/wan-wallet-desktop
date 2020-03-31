@@ -408,11 +408,12 @@ class Tokens {
     let importArr = Object.keys(wanAddress.addrInfo.import);
     let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
     let trezorArr = Object.keys(wanAddress.addrInfo.trezor);
+    let rawKeyArr = Object.keys(wanAddress.addrInfo.rawKey);
 
     self.getTokensListInfo.forEach(item => {
       amount = amount.plus(item.amount);
     });
-    importArr.concat(ledgerArr).concat(trezorArr).forEach(item => {
+    importArr.concat(ledgerArr, trezorArr, rawKeyArr).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
         if (self.tokensList && self.tokensList[self.currTokenAddr]) {
