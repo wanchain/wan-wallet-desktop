@@ -50,7 +50,7 @@ class CrossBTCHistory extends Component {
 
     transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainAddr)}</span></div>;
     transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainAddr)}</span></div>;
-    transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${text}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
+    transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
 
     return (
       <div>
