@@ -332,7 +332,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             privateKeys[index] = ccUtil.toPrivateAddress(Buffer.from(item, 'hex'));
                             break;
                         case 'BTC':
-                            privateKeys[index] = btcUtil.convertPrivateKey_Hex2WIFCompressed(item.toString('hex'));
+                            privateKeys[index] = btcUtil.convertPrivateKey_Hex2WIFCompressed(item.toString('hex'), network !== 'main');
                             break;
                         default:
                             privateKeys[index] = item.toString('hex');
