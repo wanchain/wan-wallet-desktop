@@ -2,9 +2,9 @@
     "title": "Importar o Arquivo Keystore da Wanchain",
     "head": "Importar arquivo Keystore da Wanchain",
     "warning": "ATENÇÃO: A conta do keystore não é recomendada como forma de acesso. Não suportamos a funcionalidade de backup do arquivo keystore. Proteja seu arquivo keystore original com segurança ou transfira seus ativos para contas HD ou contas de hardware.",
-    "enterKfPw": "Input Keystore Password (This is your old wallet password)",
+    "enterKfPw": "Insira a senha do keystore (esta é sua antiga senha da carteira GUI)",
     "kfFeedback": "Senha do Keystore inválida",
-    "enterWwPw": "Input WAN Wallet Password (This is your new wallet password)",
+    "enterWwPw": "Digite a senha da carteira WAN (esta é sua nova senha da carteira light wallet)",
     "wWPwInvalid": "Senha da carteira WAN inválida.",
     "chooseKf": "Escolha o arquivo Keystore",
     "kFInvalid": "Arquivo Keystore inválido",
@@ -20,5 +20,5 @@
     "confirm_Title": "ATENÇÃO",
     "confirm_close": "Cancelar",
     "confirm_ok": "OK",
-    "confirm_counter": "seconds"
+    "confirm_counter": "segundos"
 }
