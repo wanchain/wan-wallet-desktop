@@ -80,8 +80,8 @@ class WalletUpdater {
         this.updater.on('error', (err) => {
             this._logger.error(`updater error: ${err.stack}`)
         })
-
-        if (process.platform === 'darwin') {
+        this._logger.info(`platform:  ${process.platform}`);
+        if (process.platform === 'darwin' || process.platform === 'win32') {
           this.updater.on('download-progress', (progressObj) => {
             let logMsg = 'Download speed: ' + Math.ceil(progressObj.bytesPerSecond / 1024) + ' kbps'
             logMsg = logMsg + ' - Download ' + parseFloat(progressObj.percent).toFixed(2) + '%'
