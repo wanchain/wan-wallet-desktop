@@ -3,11 +3,11 @@ const pt_PT = {
     'Common.warning': 'ATENÇÃO',
     'Common.copy': 'Copiar',
     'Common.QRCode': 'Código QR',
-    'Common.delete': 'Delete',
-    'Common.exportKey': 'Export Private Key',
-    'Common.privateKey': 'Reveal Private Key',
-    'Common.yourPrivateKey': 'Your Private Key',
-    'Common.importedAccount': 'Imported Account',
+    'Common.delete': 'Deletar',
+    'Common.exportKey': 'Exportar chave privada',
+    'Common.privateKey': 'Revelar Chave privada',
+    'Common.yourPrivateKey': 'Sua chave privada',
+    'Common.importedAccount': 'Conta Importada',
     'Common.from': 'De',
     'Common.days': ' dias',
     'Common.amount': 'Montante',
@@ -31,7 +31,7 @@ const pt_PT = {
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS ',
-    'Common.convert': 'Convert',
+    'Common.convert': 'Converter;
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
@@ -90,21 +90,21 @@ const pt_PT = {
     'Network.desc': 'Aqui você pode diagnosticar o status da rede entre sua carteira e os servidores remotos/os nós da blockchain',
     'Network.startButton': 'Iniciar',
 
-    'ImportPrivateKey.title': 'Import Account',
-    'ImportPrivateKey.ImportPrivateKeyNotice': 'Import account using private key',
-    'ImportPrivateKey.notify': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
-    'ImportPrivateKey.enterPrivateKey': 'Enter Private Key',
-    'ImportPrivateKey.invalidParameter': 'Invalid parameter',
-    'ImportPrivateKey.importPKFailed': 'Import private key failed.',
-    'ImportPrivateKey.importPKSuccess': 'Import private key successfully.',
-    'ImportPrivateKey.sameAddress': 'Do not import the exist address or key pair again.',
+    'ImportPrivateKey.title': 'Importar conta',
+    'ImportPrivateKey.ImportPrivateKeyNotice': 'Importar conta usando chave privada',
+    'ImportPrivateKey.notify':'Contas importadas não serão associadas à sua Seedphrase da conta criada originalmente nesta carteira Wanchain. Faça backup individualmente.',
+    'ImportPrivateKey.enterPrivateKey': 'Entre sua chave privada', 
+    'ImportPrivateKey.invalidParameter': 'Parâmentro inválido', 
+    'ImportPrivateKey.importPKFailed': 'Falha na importação da chave privada.',
+    'ImportPrivateKey.importPKSuccess': 'Chave privada importada com sucesso.',
+    'ImportPrivateKey.sameAddress': 'Não importe endereço existente ou par de chaves novamente.',
 
-    'ImportPrivateKeyForm.isInvalid': 'Invalid private key',
-    'ImportPrivateKeyForm.invalidFormData': 'Invalid form data',
+    'ImportPrivateKeyForm.isInvalid': 'Chave privada inválida.',
+    'ImportPrivateKeyForm.invalidFormData': 'Dados do formulário inválidos.',
 
-    'ImportPrivateKeyConfirmation.warningText': 'Imported accounts will not be associated with your originally created Wanchain Wallet account seed phrase. Please backup it individually.',
-    'ImportPrivateKeyConfirmation.seconds': 'Seconds',
-    'ImportPrivateKeyConfirmation.second': 'Second',
+    'ImportPrivateKeyConfirmation.warningText': 'Contas importadas não serão associadas à sua Seedphrase da conta criada originalmente nesta carteira da Wanchain. Faça backup individualmente.',
+    'ImportPrivateKeyConfirmation.seconds': 'Segundos', 
+    'ImportPrivateKeyConfirmation.second': 'Segundo',
 
     'Restore.restoreFromSeedPhrase': 'Restaurar a partir da sua Seed Phrase',
     'Restore.restoreNewWalletWillDeleteAllLocalData': 'Se você restaurar uma nova carteira a partir da sua Seed phrase, todos os dados locais da carteira atual serão excluídos e o aplicativo será reiniciado. Confirme e continue.',
@@ -114,53 +114,53 @@ const pt_PT = {
     'Settings.config': 'Configurações',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restaurar',
-    'Settings.network': 'Network',
-    'Settings.import': 'Import',
-    'Settings.application': 'DApps',
+    'Settings.network': 'Rede', 
+    'Settings.import': 'importar', 
+    'Settings.application': 'Aplicativos descentralizados', 
 
-    'DApp.title': 'DApp Management',
-    'DApp.addButton': 'Add',
-    'DApp.delButton': 'Delete',
-    'DApp.enableCol': 'Enable',
-    'DApp.titleCol': 'Title',
+    'DApp.title': 'Gerenciamento de aplicativos descentralizados',
+    'DApp.addButton': 'Adicionar',
+    'DApp.delButton': 'Deletar',
+    'DApp.enableCol': 'Habilitar',
+    'DApp.titleCol': 'Título',
     'DApp.urlCol': 'URL',
-    'DApp.commitCol': 'Commit',
-    'DApp.operation': 'Operation',
-    'DApp.addTitle': 'Add Custom DApp',
+    'DApp.commitCol': 'Confirmar',
+    'DApp.operation': 'Operação',
+    'DApp.addTitle': 'Adicionar Aplicativo descentralizados (DApp)',
     'DApp.addIcon': 'ICON',
-    'DApp.commitPlaceholder': 'Custom description information can be added',
-    'DApp.namePlaceholder': 'Please input DApp\'s name',
-    'DApp.urlPlaceholder': 'Please input DApp\s URL with a https:// prefix',
-    'DApp.termOfServiceTitle': 'Term of Service',
-    'DApp.termOfService1': '1) Wanchain Wallet DApp Store ("we") provides an interface to Smart Contracts on the Wanchain blockchain, which accepts WAN tokens or WRC-20 tokens and transfers varying amounts of WAN or WRC-20 tokens in return, depending on external factors.',
-    'DApp.termOfService2': '2) We are not able to verify the legality of this service in each jurisdiction and provide you with any legal advice. It is your sole responsibility to comply with any relevant laws, policies and regulations of your jurisdiction regarding the use of WAN and WRC-20 tokens in the way described above.',
-    'DApp.termOfService3': '3) Using Wanchain Wallet DApps can lead to gain or loss of WAN or WRC-20 tokens. We do not hold any responsibility for the results of the games we provide.',
-    'DApp.termOfService4': '4) We reserve the right to modify the Wanchain Wallet and its services and these terms without any prior notice. We advise you to check for updates on a regular basis. ',
-    'DApp.termOfServiceAgree': 'I understand and agree to the terms',
-    'DApp.addFailed': 'Do not add twice',
-    'DApp.addSuccess': 'Add DApp successfully',
-    'DApp.dAppMarket': 'ÐApps Store',
-    'DApp.allCategories': 'All Categories',
-    'DApp.sortByName': 'Sort By Name',
-    'DApp.sortByDate': 'Sort By Date',
-    'DApp.dAppSearch': 'Type a name',
-    'DApp.dAppDetail': 'Detail',
-    'DApp.poweredBy': 'Powered by ',
-    'DApp.infoClose': 'Close',
-    'DApp.scAddress': 'Smart Contract Address: ',
-    'DApp.moreDApp': 'More DApps',
-    'DApp.DAppInfo': 'ÐApp Information',
-    'DApp.High-risk': 'High-risk',
-    'DApp.Game': 'Game',
-    'DApp.Gambling': 'Gambling',
+    'DApp.commitPlaceholder':'É possível adicionar informações de descrição personalizada',
+    'DApp.namePlaceholder': 'Insira o nome do DApp \',
+    'DApp.urlPlaceholder':  'Insira o localizador (URL) do DApp com um https: // prefixo',
+    'DApp.termOfServiceTitle':'Termo de Serviço',
+    'DApp.termOfService1': '1) A loja de aplicativos descentralizados (DApps) da Carteira da Wanchain  fornece uma interface para contratos inteligentes na blockchain Wanchain, o qual aceita tokens WAN ou tokens WRC-20 e transfere quantidades variáveis de tokens WAN ou WRC-20 em retorno, dependendo de fatores externos.; 
+    'DApp.termOfService2': '2) Não podemos verificar a legalidade deste serviço em cada jurisdição e fornecer consultoria jurídica. É de sua exclusiva responsabilidade cumprir todas as leis, políticas e regulamentos relevantes de sua jurisdição em relação ao uso de tokens WAN e WRC-20 da forma descrita acima.',
+    'DApp.termOfService3': '3) O uso de aplicativos descentralizados (DApps) da Carteira Wanchain pode levar a ganho ou perda de tokens WAN ou WRC-20. Não nos responsabilizamos pelos resultados dos jogos que oferecemos.',
+    'DApp.termOfService4': '4) Reservamo-nos o direito de modificar a Carteira Wanchain e seus serviços e estes termos sem aviso prévio. Aconselhamos que você verifique atualizações regularmente.', 
+    'DApp.termOfServiceAgree': 'Eu entendo e concordo com os termos',
+    'DApp.addFailed': 'Não adicione duas vezes',
+    'DApp.addSuccess': 'Adicionar aplicativo descentralizado (DApp) com sucesso',
+    'DApp.dAppMarket': 'Loja de aplicativos descentralizados (ÐApps)',
+    'DApp.allCategories': 'Todas as categorias',
+    'DApp.sortByName': 'Classificar por nome',
+    'DApp.sortByDate': 'Classificar por data',
+    'DApp.dAppSearch': 'Digite um nome',
+    'DApp.dAppDetail': 'Detalhe',
+    'DApp.poweredBy': 'Alimentado por
+    'DApp.infoClose': 'Fechar
+    'DApp.scAddress': 'Endereço do contrato inteligente:;
+    'DApp.moreDApp': 'Mais Aplicativos descentralizados (DApps);
+    'DApp.DAppInfo': 'Informações sobre o aplicativo descentralizado (DApp);
+    'DApp.High-risk': 'Alto-risco;
+    'DApp.Game': 'Jogo',
+    'DApp.Gambling': 'Jogo de azar;
     'DApp.Exchange': 'Exchange',
-    'DApp.Finance': 'Finance',
+    'DApp.Finance': 'Finanças;
     'DApp.Social': 'Social',
-    'DApp.Art': 'Art',
-    'DApp.Tools': 'Tools',
-    'DApp.Others': 'Others',
+    'DApp.Art': 'Arte,
+    'DApp.Tools': 'Ferramentas
+    'DApp.Others': 'Outros;
     'DApp.Website': 'Website',
-    'DApp.Creator': 'Creator',
+    'DApp.Creator': 'Criador;
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',
@@ -217,8 +217,8 @@ const pt_PT = {
     'WanAccount.redeem': 'Resgatar',
     'WanAccount.privateTxReceiverAddress': 'Endereço do destinatário da transação privada',
     'WanAccount.publicKey': 'Chave Privada',
-    'WanAccount.createAccountFailed': 'Create account failed',
-    'WanAccount.createAccountSuccess': 'Create account successfully',
+    'WanAccount.createAccountFailed': 'Falha na criação da conta ',
+    'WanAccount.createAccountSuccess': 'Criar conta com sucesso',
 
     'EosAccount.name': 'NOME',
     'EosAccount.publicKey': 'CHAVE PÚBLICA',
@@ -230,8 +230,8 @@ const pt_PT = {
     'EosAccount.action': 'AÇÃO',
     'EosAccount.Accounts': 'Contas',
     'EosAccount.keyPair': 'Pares de chave',
-    'EosAccount.createKeyPairFailed': 'Create key pair failed',
-    'EosAccount.createKeyPairSuccess': 'Create key pair successfully',
+    'EosAccount.createKeyPairFailed': 'Falha na criação do par de chaves ',
+    'EosAccount.createKeyPairSuccess': 'Criar par de chaves com êxito',
 
     'EOSKeyPairList.import': 'Importar',
     'EOSKeyPairList.getAccountListFailed': 'Falha ao obter a lista de contas',
@@ -321,11 +321,10 @@ const pt_PT = {
     'EOSCreateAccountForm.activePublicKey': 'Ativar chave pública',
     'EOSCreateAccountForm.activeKey': 'Selecionar uma chave pública',
     'EOSCreateAccountForm.atLeast3KB': 'Valor inválido, pelo menos 3 KB',
-    'EOSCreateAccountForm.isExistEosName': 'EOS account name already exists',
-    'EOSCreateAccountForm.invalidEosPublicKey': 'Invalid EOS public key',
-    'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
-    'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
-
+    'EOSCreateAccountForm.isExistEosName': 'O nome da conta EOS já existe',
+    'EOSCreateAccountForm.invalidEosPublicKey': 'Chave pública da EOS inválida',
+    'EOSCreateAccountForm.errorOccurred': 'Ocorreu um erro ao validar os dados do formulário',
+    'EOSCreateAccountForm.validateNameFailed': 'Falha na validação do nome da conta',
     'EOSNormalTransForm.sendTxFailed': 'O envio da transação falhou',
     'EOSNormalTransForm.sendTxSuccess': 'Enviar transação com sucesso',
     'EOSNormalTransForm.invalidAccountName': 'Nome de conta inválido',
@@ -346,10 +345,10 @@ const pt_PT = {
     'AdvancedOptionForm.inputDataIsIncorrect': 'Dados inseridos estão incorretos',
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
-    'CopyAndQrcode.privateKey': 'Private Key',
-    'CopyAndQrcode.confirmText': 'Are you sure to delete',
-    'CopyAndQrcode.deleteFailedText': 'Delete account failed',
-    'CopyAndQrcode.deleteSuccessfulText': 'Delete account completed',
+    'CopyAndQrcode.privateKey': 'Chave privada;
+    'CopyAndQrcode.confirmText': 'Você tem certeza que deseja excluir;
+    'CopyAndQrcode.deleteFailedText': 'Falha na exclusão da conta',
+    'CopyAndQrcode.deleteSuccessfulText': 'Excluir conta concluída;
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',
@@ -512,9 +511,9 @@ const pt_PT = {
     'CrossChainTransHistory.redeemFinished': 'Resgate terminado',
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando transação',
     'CrossChainTransHistory.waitingCross': 'Aguardando solicitação de bloqueio',
-    'CrossChainTransHistory.Cancelled': 'Cancelled',
-    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
-    'CrossChainTransHistory.Success': 'Success',
+    'CrossChainTransHistory.Cancelled': 'Cancelado;
+    'CrossChainTransHistory.StoremanLocked': 'Storemanbloqueado
+    'CrossChainTransHistory.Success': 'Sucesso
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',
@@ -527,9 +526,9 @@ const pt_PT = {
     'menuConfig.validator': 'Validador',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Configurações',
-    'menuConfig.thirdPartyDapps': 'ÐApp Store',
+    'menuConfig.thirdPartyDapps': 'Loja de aplicativos descentralizados (DApps);
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'WanGame',
+    'menuConfig.wanGame': 'JogoWAN
 
     'dAppConfirm.sign': 'Você permite que o DApp assine com sua carteira?',
     'dAppConfirm.send': 'Você permite que o DApp envie transação com sua carteira?',
@@ -600,15 +599,14 @@ const pt_PT = {
     'Config.enableValidator': 'Ativar validador',
     'Config.stakingAdvance': 'Mostrar validador na barra lateral',
 
-    'Config.others': 'Other Options',
-    'Config.enableOfflineWallet': 'Enable Offline Wallet',
-    'Config.offlineWallet': 'Show offline wallet in the sidebar',
-
+    'Config.others': 'Outras opções',
+    'Config.enableOfflineWallet': 'Ativar carteira offline',
+    'Config.offlineWallet': 'Mostrar carteira offline na barra lateral',
     'staking.validatorRegister': 'Registrar Validador',
     'staking.validatorUpdate': 'Atualização do validador',
 
-    'DelegateOut.delegateOutSuccessfully': 'Delegate out successfully',
-    'DelegateOut.delegateOutFailed': 'Delegate out failed',
+    'DelegateOut.delegateOutSuccessfully': 'Retirada do stake com sucesso;
+    'DelegateOut.delegateOutFailed': 'Falha na retirada do stake;
 
     'ValidatorUpdate.note': 'Observação: você deve selecionar a conta da qual a transação de registro do validador foi enviada.',
     'ValidatorUpdate.invalidValue': 'Valor inválido. Deve ser > 14 ou == 0 ',
@@ -684,7 +682,7 @@ const pt_PT = {
 
     'popup.search': 'Pesquisa',
     'title.imported': 'Importar endereço',
-    'title.importedKey': 'Imported Key',
+    'title.importedKey': 'Chave importada;
 
     'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde'
 
