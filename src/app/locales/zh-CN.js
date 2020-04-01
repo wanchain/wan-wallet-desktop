@@ -532,7 +532,6 @@ const zh_CN = {
 
     'menuConfig.thirdPartyDapps': '应用市场',
     'menuConfig.dex': '交易',
-    'menuConfig.wanGame': 'WanGame',
 
     'dAppConfirm.sign': '你是否同意授权应用使用你的钱包地址进行签名?',
     'dAppConfirm.send': '你是否同意授权应用使用你的钱包发送交易?',

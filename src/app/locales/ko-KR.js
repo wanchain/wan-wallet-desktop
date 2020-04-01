@@ -130,7 +130,7 @@ const ko_KR = {
     'DApp.addIcon': '아이콘',
     'DApp.commitPlaceholder': '사용자 정의 설명 정보를 추가 할 수 있습니다',
     'DApp.namePlaceholder': 'DApp의 이름을 입력하십시오',
-    'DApp.urlPlaceholder': 'https : // 접두사와 함께 DApp의 URL을 입력하십시오',
+    'DApp.urlPlaceholder': 'https://접두사와 함께 DApp의 URL을 입력하십시오',
     'DApp.termOfServiceTitle': '서비스 약관',
     'DApp.termOfService1': '1) Wanchain Wallet DApp Store ( "당사")는 Wanchain 블록체인의 스마트 컨트랙트에 대한 인터페이스를 제공합니다.이 체인은 WAN토큰 또는 WRC-20토큰을 허용하고 외부 요인에 따라 다양한 수량의 WAN 또는 WRC-20 토큰을 전송합니다.',
     'DApp.termOfService2': '2) 당사는 각 관할 지역에서이 서비스의 적법성을 확인할 수 없으며 법률 자문을 제공 할 수 없습니다. 위에서 설명한 방식으로 WAN 및 WRC-20 토큰 사용과 관련하여 관할권의 관련 법률, 정책 및 규정을 준수하는 것은 전적으로 귀하의 책임입니다.',
@@ -530,7 +530,6 @@ const ko_KR = {
     'menuConfig.settings': '설정',
     'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'WanGame',
 
     'dAppConfirm.sign': 'DApp이 지갑에 서명하도록 허용합니까?',
     'dAppConfirm.send': 'DApp이 지갑으로 거래를 보내도록 허용합니까?',

@@ -530,7 +530,6 @@ const th_TH = {
     'menuConfig.settings': 'การตั้งค่า',
     'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'WanGame',
 
     'dAppConfirm.sign': 'ต้องการอนุญาตให้ DApp เซ็นโดยใช้กระเป๋าของคุณหรือไม่?',
     'dAppConfirm.send': 'ต้องการอนุญาตให้ DApp ส่งธุรกรรมโดยใช้กระเป๋าของคุณหรือไม่?',

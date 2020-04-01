@@ -530,7 +530,6 @@ const en_US = {
     'menuConfig.settings': 'Settings',
     'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'WanGame',
 
     'dAppConfirm.sign': 'Do you allow DApp to sign with your wallet?',
     'dAppConfirm.send': 'Do you allow DApp to sendTransaction with your wallet?',
