@@ -16,7 +16,7 @@ const CHAINTYPE = 'ETH';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.ethAddress.getAddrList,
-  getAmount: stores.ethAddress.getNormalAmount,
+  getAmount: stores.ethAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
@@ -165,7 +165,7 @@ class EthAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal']} />
+            <TransHistory name={['normal', 'rawKey']} />
           </Col>
         </Row>
       </div>

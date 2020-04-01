@@ -62,7 +62,7 @@ class Accounts extends Component {
     if (hasSameName(type, row, this.props.addrInfo)) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row, type);
+      this.props.updateName(row, row.wid);
     }
   }
 

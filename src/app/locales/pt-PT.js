@@ -30,8 +30,8 @@ const pt_PT = {
     'Common.balance': 'Saldo',
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
-    'Common.eosTokens': 'Tokens EOS ',
-    'Common.convert': 'Converter;
+    'Common.eosTokens': 'Tokens EOS',
+    'Common.convert': 'Converter',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
@@ -92,9 +92,9 @@ const pt_PT = {
 
     'ImportPrivateKey.title': 'Importar conta',
     'ImportPrivateKey.ImportPrivateKeyNotice': 'Importar conta usando chave privada',
-    'ImportPrivateKey.notify':'Contas importadas não serão associadas à sua Seedphrase da conta criada originalmente nesta carteira Wanchain. Faça backup individualmente.',
-    'ImportPrivateKey.enterPrivateKey': 'Entre sua chave privada', 
-    'ImportPrivateKey.invalidParameter': 'Parâmentro inválido', 
+    'ImportPrivateKey.notify': 'Contas importadas não serão associadas à sua Seedphrase da conta criada originalmente nesta carteira Wanchain. Faça backup individualmente.',
+    'ImportPrivateKey.enterPrivateKey': 'Entre sua chave privada',
+    'ImportPrivateKey.invalidParameter': 'Parâmentro inválido',
     'ImportPrivateKey.importPKFailed': 'Falha na importação da chave privada.',
     'ImportPrivateKey.importPKSuccess': 'Chave privada importada com sucesso.',
     'ImportPrivateKey.sameAddress': 'Não importe endereço existente ou par de chaves novamente.',
@@ -103,7 +103,7 @@ const pt_PT = {
     'ImportPrivateKeyForm.invalidFormData': 'Dados do formulário inválidos.',
 
     'ImportPrivateKeyConfirmation.warningText': 'Contas importadas não serão associadas à sua Seedphrase da conta criada originalmente nesta carteira da Wanchain. Faça backup individualmente.',
-    'ImportPrivateKeyConfirmation.seconds': 'Segundos', 
+    'ImportPrivateKeyConfirmation.seconds': 'Segundos',
     'ImportPrivateKeyConfirmation.second': 'Segundo',
 
     'Restore.restoreFromSeedPhrase': 'Restaurar a partir da sua Seed Phrase',
@@ -114,9 +114,9 @@ const pt_PT = {
     'Settings.config': 'Configurações',
     'Settings.backup': 'Backup',
     'Settings.restore': 'Restaurar',
-    'Settings.network': 'Rede', 
-    'Settings.import': 'importar', 
-    'Settings.application': 'Aplicativos descentralizados', 
+    'Settings.network': 'Rede',
+    'Settings.import': 'importar',
+    'Settings.application': 'Aplicativos descentralizados',
 
     'DApp.title': 'Gerenciamento de aplicativos descentralizados',
     'DApp.addButton': 'Adicionar',
@@ -128,14 +128,14 @@ const pt_PT = {
     'DApp.operation': 'Operação',
     'DApp.addTitle': 'Adicionar Aplicativo descentralizados (DApp)',
     'DApp.addIcon': 'ICON',
-    'DApp.commitPlaceholder':'É possível adicionar informações de descrição personalizada',
-    'DApp.namePlaceholder': 'Insira o nome do DApp \',
-    'DApp.urlPlaceholder':  'Insira o localizador (URL) do DApp com um https: // prefixo',
-    'DApp.termOfServiceTitle':'Termo de Serviço',
-    'DApp.termOfService1': '1) A loja de aplicativos descentralizados (DApps) da Carteira da Wanchain  fornece uma interface para contratos inteligentes na blockchain Wanchain, o qual aceita tokens WAN ou tokens WRC-20 e transfere quantidades variáveis de tokens WAN ou WRC-20 em retorno, dependendo de fatores externos.; 
+    'DApp.commitPlaceholder': 'É possível adicionar informações de descrição personalizada',
+    'DApp.namePlaceholder': 'Insira o nome do DApp',
+    'DApp.urlPlaceholder': 'Insira o localizador (URL) do DApp com um https://prefixo',
+    'DApp.termOfServiceTitle': 'Termo de Serviço',
+    'DApp.termOfService1': '1) A loja de aplicativos descentralizados (DApps) da Carteira da Wanchain  fornece uma interface para contratos inteligentes na blockchain Wanchain, o qual aceita tokens WAN ou tokens WRC-20 e transfere quantidades variáveis de tokens WAN ou WRC-20 em retorno, dependendo de fatores externos.',
     'DApp.termOfService2': '2) Não podemos verificar a legalidade deste serviço em cada jurisdição e fornecer consultoria jurídica. É de sua exclusiva responsabilidade cumprir todas as leis, políticas e regulamentos relevantes de sua jurisdição em relação ao uso de tokens WAN e WRC-20 da forma descrita acima.',
     'DApp.termOfService3': '3) O uso de aplicativos descentralizados (DApps) da Carteira Wanchain pode levar a ganho ou perda de tokens WAN ou WRC-20. Não nos responsabilizamos pelos resultados dos jogos que oferecemos.',
-    'DApp.termOfService4': '4) Reservamo-nos o direito de modificar a Carteira Wanchain e seus serviços e estes termos sem aviso prévio. Aconselhamos que você verifique atualizações regularmente.', 
+    'DApp.termOfService4': '4) Reservamo-nos o direito de modificar a Carteira Wanchain e seus serviços e estes termos sem aviso prévio. Aconselhamos que você verifique atualizações regularmente.',
     'DApp.termOfServiceAgree': 'Eu entendo e concordo com os termos',
     'DApp.addFailed': 'Não adicione duas vezes',
     'DApp.addSuccess': 'Adicionar aplicativo descentralizado (DApp) com sucesso',
@@ -145,22 +145,22 @@ const pt_PT = {
     'DApp.sortByDate': 'Classificar por data',
     'DApp.dAppSearch': 'Digite um nome',
     'DApp.dAppDetail': 'Detalhe',
-    'DApp.poweredBy': 'Alimentado por
-    'DApp.infoClose': 'Fechar
-    'DApp.scAddress': 'Endereço do contrato inteligente:;
-    'DApp.moreDApp': 'Mais Aplicativos descentralizados (DApps);
-    'DApp.DAppInfo': 'Informações sobre o aplicativo descentralizado (DApp);
-    'DApp.High-risk': 'Alto-risco;
+    'DApp.poweredBy': 'Alimentado por ',
+    'DApp.infoClose': 'Fechar',
+    'DApp.scAddress': 'Endereço do contrato inteligente: ',
+    'DApp.moreDApp': 'Mais Aplicativos descentralizados (DApps)',
+    'DApp.DAppInfo': 'Informações sobre o aplicativo descentralizado (DApp)',
+    'DApp.High-risk': 'Alto-risco',
     'DApp.Game': 'Jogo',
-    'DApp.Gambling': 'Jogo de azar;
+    'DApp.Gambling': 'Jogo de azar',
     'DApp.Exchange': 'Exchange',
-    'DApp.Finance': 'Finanças;
+    'DApp.Finance': 'Finanças',
     'DApp.Social': 'Social',
-    'DApp.Art': 'Arte,
-    'DApp.Tools': 'Ferramentas
-    'DApp.Others': 'Outros;
+    'DApp.Art': 'Arte',
+    'DApp.Tools': 'Ferramentas',
+    'DApp.Others': 'Outros',
     'DApp.Website': 'Website',
-    'DApp.Creator': 'Criador;
+    'DApp.Creator': 'Criador',
 
     'Config.option': 'Opções de segurança',
     'Config.inputPwd': 'Insira a senha novamente ao enviar a transação',
@@ -345,10 +345,10 @@ const pt_PT = {
     'AdvancedOptionForm.inputDataIsIncorrect': 'Dados inseridos estão incorretos',
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
-    'CopyAndQrcode.privateKey': 'Chave privada;
-    'CopyAndQrcode.confirmText': 'Você tem certeza que deseja excluir;
+    'CopyAndQrcode.privateKey': 'Chave privada',
+    'CopyAndQrcode.confirmText': 'Você tem certeza que deseja excluir',
     'CopyAndQrcode.deleteFailedText': 'Falha na exclusão da conta',
-    'CopyAndQrcode.deleteSuccessfulText': 'Excluir conta concluída;
+    'CopyAndQrcode.deleteSuccessfulText': 'Excluir conta concluída',
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',
@@ -511,9 +511,9 @@ const pt_PT = {
     'CrossChainTransHistory.redeemFinished': 'Resgate terminado',
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando transação',
     'CrossChainTransHistory.waitingCross': 'Aguardando solicitação de bloqueio',
-    'CrossChainTransHistory.Cancelled': 'Cancelado;
-    'CrossChainTransHistory.StoremanLocked': 'Storemanbloqueado
-    'CrossChainTransHistory.Success': 'Sucesso
+    'CrossChainTransHistory.Cancelled': 'Cancelado',
+    'CrossChainTransHistory.StoremanLocked': 'Storemanbloqueado',
+    'CrossChainTransHistory.Success': 'Sucesso',
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',
@@ -526,9 +526,9 @@ const pt_PT = {
     'menuConfig.validator': 'Validador',
     'menuConfig.staking': 'Staking',
     'menuConfig.settings': 'Configurações',
-    'menuConfig.thirdPartyDapps': 'Loja de aplicativos descentralizados (DApps);
+    'menuConfig.thirdPartyDapps': 'Loja de aplicativos descentralizados (DApps)',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'JogoWAN
+    'menuConfig.wanGame': 'JogoWAN',
 
     'dAppConfirm.sign': 'Você permite que o DApp assine com sua carteira?',
     'dAppConfirm.send': 'Você permite que o DApp envie transação com sua carteira?',
@@ -605,8 +605,8 @@ const pt_PT = {
     'staking.validatorRegister': 'Registrar Validador',
     'staking.validatorUpdate': 'Atualização do validador',
 
-    'DelegateOut.delegateOutSuccessfully': 'Retirada do stake com sucesso;
-    'DelegateOut.delegateOutFailed': 'Falha na retirada do stake;
+    'DelegateOut.delegateOutSuccessfully': 'Retirada do stake com sucesso',
+    'DelegateOut.delegateOutFailed': 'Falha na retirada do stake',
 
     'ValidatorUpdate.note': 'Observação: você deve selecionar a conta da qual a transação de registro do validador foi enviada.',
     'ValidatorUpdate.invalidValue': 'Valor inválido. Deve ser > 14 ou == 0 ',
@@ -682,7 +682,7 @@ const pt_PT = {
 
     'popup.search': 'Pesquisa',
     'title.imported': 'Importar endereço',
-    'title.importedKey': 'Chave importada;
+    'title.importedKey': 'Chave importada',
 
     'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde'
 

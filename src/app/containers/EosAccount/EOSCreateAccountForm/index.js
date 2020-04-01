@@ -63,7 +63,7 @@ class EOSCreateAccountForm extends Component {
                 cpuAmount: values.CPU,
                 netAmount: values.NET,
                 BIP44Path: accountInfo[values.creator].path,
-                walletID: WALLETID.NATIVE,
+                walletID: accountInfo[values.creator].id,
             };
             wand.request('transaction_EOSNormal', params, (err, res) => {
                 console.log('create:', err, res);

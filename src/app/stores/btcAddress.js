@@ -1,6 +1,7 @@
 
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
+import { BigNumber } from 'bignumber.js';
 
 import languageIntl from './languageIntl';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
@@ -234,14 +235,14 @@ class BtcAddress {
 
     @computed get getNormalAmount () {
       let sum = 0;
-      Object.values({ normal: self.addrInfo.normal }).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-      return sum;
+      Object.values({ normal: self.addrInfo.normal }).forEach(value => { sum = new BigNumber(sum).plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(curr.balance), 0)) });
+      return sum.toString();
     }
 
     @computed get getAllAmount () {
       let sum = 0;
-      Object.values(self.addrInfo).forEach(value => { sum += Object.values(value).reduce((prev, curr) => prev + parseFloat(curr.balance), 0) });
-      return sum;
+      Object.values(self.addrInfo).forEach(value => { sum = new BigNumber(sum).plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(curr.balance), 0)) });
+      return sum.toString();
     }
 }
 

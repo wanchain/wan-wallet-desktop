@@ -2,9 +2,9 @@
     "title": "Wanchain 키파일을 임포트 해주세요.",
     "head": " Wanchain 키파일을 임포트 해주세요.",
     "warning": " 주의 : 키 파일 공용PC 계정에 보관하는 것을 권장하지 않습니다. 키 파일 백업 기능은 제공하지 않습니다. 원본 키 파일을 저장하거나 자산을 하드웨어 월렛 계정으로 전송하여 보관하는 것을 권장합니다.",
-    "enterKfPw": "Input Keystore Password (This is your old wallet password)",
+    "enterKfPw": "키스토어 비밀번호를 입력하세요. (예전 비밀번호)",
     "kfFeedback": "키 파일 비밀번호가 틀렸습니다.",
-    "enterWwPw": "Input WAN Wallet Password (This is your new wallet password)",
+    "enterWwPw": "WAN 월렛의 비밀번호를 입력하세요. (새로운 비밀번호)",
     "wWPwInvalid": "WAN 지갑 비밀번호가 틀렸습니다.",
     "chooseKf": "키 파일을 선택하세요.",
     "kFInvalid": "키 파일이 잘못 되었습니다.",
@@ -19,5 +19,5 @@
     "confirm_Title": "경고",
     "confirm_close": "취소",
     "confirm_ok": "확인",
-    "confirm_counter": "seconds"
+    "confirm_counter": "초"
 }

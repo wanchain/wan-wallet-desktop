@@ -160,7 +160,7 @@ class DAppMarket extends Component {
             dAppsList.length === 0
             ? <Empty className={style.emptyStyle} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             : <div className={style.rowContent}>
-                <Row className={style.Row2 + ' title'} type="flex" justify="space-between">
+                <Row className={style.Row2 + ' title'} type="flex">
                   {
                     dAppsListPagination.map((item, index) =>
                       <Col span={7} className={style.cardDApp + ' col-left'} key={index}>
