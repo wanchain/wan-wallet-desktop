@@ -68,7 +68,7 @@ const pt_PT = {
     'Backup.copyToClipboard': 'Copiar para área de transferência',
     'Backup.enterPassword': ' Insira Senha',
 
-    'Private.doNotShare': 'DO NOT share the private key with anybody. Otherwise all of your assets will be lost.',
+    'Private.doNotShare': 'Não compartilhe a chave privada com ninguém. Senão todos os seus ativos serão perdidos.',
 
     'Ledger.ledger': 'Ledger',
     'Ledger.followInstructionsToConnectLedgerWallet': 'Siga as instruções abaixo para conectar sua carteira Ledger',
@@ -145,7 +145,7 @@ const pt_PT = {
     'DApp.sortByDate': 'Classificar por data',
     'DApp.dAppSearch': 'Digite um nome',
     'DApp.dAppDetail': 'Detalhe',
-    'DApp.poweredBy': 'Alimentado por ',
+    'DApp.poweredBy': 'Movido por ',
     'DApp.infoClose': 'Fechar',
     'DApp.scAddress': 'Endereço do contrato inteligente: ',
     'DApp.moreDApp': 'Mais Aplicativos descentralizados (DApps)',
@@ -528,7 +528,6 @@ const pt_PT = {
     'menuConfig.settings': 'Configurações',
     'menuConfig.thirdPartyDapps': 'Loja de aplicativos descentralizados (DApps)',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'JogoWAN',
 
     'dAppConfirm.sign': 'Você permite que o DApp assine com sua carteira?',
     'dAppConfirm.send': 'Você permite que o DApp envie transação com sua carteira?',

@@ -530,7 +530,6 @@ const fr_FR = {
     'menuConfig.settings': 'Paramètres',
     'menuConfig.thirdPartyDapps': 'ÐApp Store',
     'menuConfig.dex': 'DEX',
-    'menuConfig.wanGame': 'WanGame',
 
     'dAppConfirm.sign': 'Autorisez-vous le DApp à signer avec votre portefeuille ?',
     'dAppConfirm.send': 'Autorisez-vous le DApp à envoyer la transaction avec votre portefeuille ?',
