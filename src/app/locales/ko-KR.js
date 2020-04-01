@@ -3,7 +3,7 @@ const ko_KR = {
     'Common.warning': '경고',
     'Common.copy': '복사',
     'Common.QRCode': 'QR코드',
-    'Common.delete': 'Delete',
+    'Common.delete': '삭제',
     'Common.exportKey': '익스포트 프라이빗 키',
     'Common.privateKey': '프라이빗키 보기',
     'Common.yourPrivateKey': '사용자의 프라이빗 키',
@@ -179,7 +179,7 @@ const ko_KR = {
     'Config.addTokenWAN': 'WRC-20 토큰 추가',
     'Config.checkTokenAddr': '유효하지 않은 토큰 주소',
     'Config.addTokenAddrErr': '토큰 추가에 실패 하셨습니다. 재시도 바랍니다.',
-    'Config.deleteTokenAddrErr': '토큰 삭제에 실패 하셨습니다.Failed to delete token',
+    'Config.deleteTokenAddrErr': '토큰 삭제에 실패 하셨습니다.',
     'Config.existedTokenAddr': '이미 존재하는 토큰 주소',
     'Config.invalidPassword': '패스워드 오류, 재확인 바랍니다.',
     'Config.crossChain': '크로스 체인 옵션',
@@ -513,9 +513,9 @@ const ko_KR = {
     'CrossChainTransHistory.redeemFinished': '인출 완료',
     'CrossChainTransHistory.sentHashConfirming': '거래 확인중',
     'CrossChainTransHistory.waitingCross': '잠금 요청을 기다리는 중',
-    'CrossChainTransHistory.Cancelled': 'Cancelled',
+    'CrossChainTransHistory.Cancelled': '취소 되었습니다',
     'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
-    'CrossChainTransHistory.Success': 'Success',
+    'CrossChainTransHistory.Success': '성공',
 
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',
@@ -601,9 +601,9 @@ const ko_KR = {
     'Config.enableValidator': '검증자 활성화',
     'Config.stakingAdvance': 'Galaxy Consensus 고급 설정',
 
-    'Config.others': 'Other Options',
-    'Config.enableOfflineWallet': 'Enable Offline Wallet',
-    'Config.offlineWallet': 'Show offline wallet in the sidebar',
+    'Config.others': '다른 옵션',
+    'Config.enableOfflineWallet': '오프라인 지갑 활성화',
+    'Config.offlineWallet': '사이드바의 오프라인 지갑 확인',
 
     'staking.validatorRegister': '검증인 등록',
     'staking.validatorUpdate': '검증인 정보 업데이트',
@@ -685,7 +685,7 @@ const ko_KR = {
 
     'popup.search': '검색',
     'title.imported': '가져온 주소',
-    'title.importedKey': 'Imported Key',
+    'title.importedKey': '키 가져오기',
 
     'network.down': '네트워크 요청이 실패했습니다. 나중에 다시 시도하십시오'
 
