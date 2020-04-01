@@ -90,6 +90,9 @@
         document.getElementById('percentage').innerText = perc + '%';
         document.getElementById('loading-bar').style.width = perc.toString() + '%';
     }
+    const setWindowsLoadingPercentage = (perc) => {
+        document.getElementById('perc').innerText = perc + '%';
+    }
     const setLanguage = (currVersion, releaseVersion, releaseNotes) => {
         ids.forEach((id) => {
             setText(id);
@@ -152,8 +155,12 @@
                             break
 
                         case 'downloadPercentage':
-                            const progressObj = JSON.parse(val)                        
-                            setLoadingPercentage(parseInt(progressObj.percent))
+                            const progressObj = JSON.parse(val)                  
+                            if (releasePlatform === 'win32') {
+                                setWindowsLoadingPercentage(parseInt(progressObj.percent));
+                            } else {
+                                setLoadingPercentage(parseInt(progressObj.percent));
+                            }
 
                             break
                     }
@@ -186,16 +193,6 @@
                 document.getElementById('downloading-mask').style.display = 'block'
             } else {
                 document.getElementById('mask').style.display = 'block'
-                width = 1
-                percentage.innerHTML = width + '%'
-                walker = setInterval(function() {
-                    if (width == 100) {
-                        clearInterval(walker)
-                    } else {
-                        width = width >= 99 ? 99 : width + 1;
-                        percentage.innerHTML = width + '%'
-                    }
-                }, 12000)
             }
         })
 
