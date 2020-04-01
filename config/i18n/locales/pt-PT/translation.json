@@ -2,9 +2,9 @@
     "main": {
         "applicationMenu": {
             "app": {
-                "label": "{{aplicativo}}",
-                "about": "Sobre o {{aplicativo}}",
-                "version": " Versão da Carteira Wan {{versão}}",
+                "label": "{{app}}",
+                "about": "Sobre o {{app}}",
+                "version": " Versão da Carteira Wan {{version}}",
                 "developer": {
                     "label": "Desenvolvedor",
                     "assets": {
@@ -22,10 +22,10 @@
                 },
                 "services": "Serviços",
                 "checkForUpdate": "Verificar atualizações...",
-                "hide": "Ocultar {{ aplicativo }}",
+                "hide": "Ocultar {{ app }}",
                 "hideOthers": "Ocultar outros",
                 "showAll": "Mostrar tudo",
-                "quit": "Sair do {{ aplicativo }}"
+                "quit": "Sair do {{ app }}"
             },
             "edit": {
                 "label": "Editar",
@@ -66,7 +66,7 @@
                 "fullscreen": " Tela inteira",
                 "minimize": "Minimizar",
                 "close": "Fechar",
-                "front": "Trazer tudo para a frente",
+                "front": "Trazer tudo para a frente"
             },
             "help": {
                 "label": "Ajuda",
