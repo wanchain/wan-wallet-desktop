@@ -126,7 +126,7 @@ const pt_PT = {
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Confirmar',
     'DApp.operation': 'Operação',
-    'DApp.addTitle': 'Adicionar Aplicativo descentralizados (DApp)',
+    'DApp.addTitle': 'Adicionar Aplicativos Descentralizados(DApp)',
     'DApp.addIcon': 'ICON',
     'DApp.commitPlaceholder': 'É possível adicionar informações de descrição personalizada',
     'DApp.namePlaceholder': 'Insira o nome do DApp',
@@ -348,7 +348,7 @@ const pt_PT = {
     'CopyAndQrcode.privateKey': 'Chave privada',
     'CopyAndQrcode.confirmText': 'Você tem certeza que deseja excluir',
     'CopyAndQrcode.deleteFailedText': 'Falha na exclusão da conta',
-    'CopyAndQrcode.deleteSuccessfulText': 'Excluir conta concluída',
+    'CopyAndQrcode.deleteSuccessfulText': 'Exclusão da conta feita com sucesso',
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',
