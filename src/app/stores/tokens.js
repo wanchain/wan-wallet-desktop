@@ -123,6 +123,7 @@ class Tokens {
       let importArr = [];
       let ledgerArr = [];
       let trezorArr = [];
+      let rawKeyArr = [];
 
       switch (chain) {
         case 'WAN':
@@ -130,14 +131,17 @@ class Tokens {
           importArr = Object.keys(wanAddress.addrInfo['import'] || []);
           ledgerArr = Object.keys(wanAddress.addrInfo['ledger'] || []);
           trezorArr = Object.keys(wanAddress.addrInfo['trezor'] || []);
+          rawKeyArr = Object.keys(wanAddress.addrInfo['rawKey'] || []);
           break;
         case 'ETH':
           normalArr = Object.keys(ethAddress.addrInfo['normal'] || []);
           importArr = Object.keys(ethAddress.addrInfo['import'] || []);
+          rawKeyArr = Object.keys(ethAddress.addrInfo['rawKey'] || []);
           break;
         case 'BTC':
           normalArr = Object.keys(btcAddress.addrInfo['normal'] || []);
           importArr = Object.keys(btcAddress.addrInfo['import'] || []);
+          rawKeyArr = Object.keys(btcAddress.addrInfo['rawKey'] || []);
           break;
         case 'EOS':
           /* normalArr = Object.keys(eosAddress.keyInfo['normal']);
@@ -146,7 +150,7 @@ class Tokens {
         default:
           console.log('Default.....');
       }
-      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
+      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
         if (err) {
           console.log('stores_getTokensBalance:', err);
           reject(err);
