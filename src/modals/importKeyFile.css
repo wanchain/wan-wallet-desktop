@@ -89,12 +89,12 @@ body {
 }
 
 .custom-file-label::after {
-    width: 100px;
     height: 42px;
     line-height: 42px;
     color: #fff;
     margin: 1px;
     padding: 0;
+    padding-right: 20px;
     border-radius: 20px;
     background: linear-gradient(90deg, #414EDD 0%, #29307C 100%);
 }
