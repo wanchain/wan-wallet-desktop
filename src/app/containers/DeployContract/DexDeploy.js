@@ -9,7 +9,10 @@ import TableShowing from 'componentUtils/TableShowing';
 
 import { getInfoByAddress } from 'utils/helper';
 
-const btnStyle = { marginLeft: '10px' }
+const btnStyle = { marginLeft: '10px', width: '330px' }
+const btnStyle2 = { marginLeft: '10px', marginTop: '20px', width: '330px' }
+const btnStyle3 = { marginLeft: '10px', width: '120px' }
+
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
@@ -173,10 +176,10 @@ class DexDeploy extends Component {
     return (
       <React.Fragment>
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>1_Offline</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Data Preparation / WWAN, Proxy, Discount Contract Data build</h3>
+          <Button type="primary" className={style.stepOne}>Step 1_Offline</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Prepare Contract / WWAN, Proxy, Discount</h3>
           <div style={{ margin: '20px 0px 20px 0px' }}>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Address:</h5>
+            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Admin Address:</h5>
             <Select
               autoFocus
               className="colorInput"
@@ -199,26 +202,25 @@ class DexDeploy extends Component {
             <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
           </div>
           <div>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Build Contract Data:</h5>
-            <Button type="primary" style={btnStyle} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
-            {<Button disabled={true} type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
+            <Button type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+            {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>2_Online</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy WWAN, Proxy, Discount Contract</h3>
-          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import prepare_contracts(step1).dat file</Button>
-          {<Button disabled={true} type="primary" style={btnStyle} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button>}
-          {<Button disabled={true} type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button>}
-          {deployContractFileShowing && <TableShowing type="deployContract" data={deployContractContent} />}
+          <Button type="primary" className={style.stepOne}>Step 2_Online</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy Prepare Contract / WWAN, Proxy, Discount</h3>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import buildPrepareContract(step1).json file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button>}
+          {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>3_Offline</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Data Preparation / Exchange Contract Data Build</h3>
+          <Button type="primary" className={style.stepOne}>Step 3_Offline</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Exchange Contract</h3>
           <div style={{ margin: '20px 0px 20px 0px' }}>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Address:</h5>
+            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Admin Address:</h5>
             <Select
               autoFocus
               className="colorInput"
@@ -241,27 +243,26 @@ class DexDeploy extends Component {
             <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
           </div>
           <div>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Build Contract Data:</h5>
-            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import prepare_addresses(step2).json file</Button>
-            <Button type="primary" style={btnStyle} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
-            {<Button disabled={true} type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
+            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import deployPrepareContract(step2).json file</Button>
+            <Button disabled={true} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+            {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>4_Online</Button>
+          <Button type="primary" className={style.stepOne}>Step 4_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy Exchange Contract</h3>
-          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import exchange_contracts(step3).dat file</Button>
-          {<Button disabled={true} type="primary" style={btnStyle} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button>}
-          {<Button disabled={true} type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button>}
-          {deployContractFileShowing && <TableShowing type="deployContract" data={deployContractContent} />}
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import exchange_contracts(step3).dat file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Deploy</Button>}
+          {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['contractAddress(step3).json'])}>Download</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>5_Offline</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Add Exchange Address to Proxy White List And Release Owner</h3>
+          <Button type="primary" className={style.stepOne}>Step 5_Offline</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Proxy Config</h3>
           <div style={{ margin: '20px 0px 20px 0px' }}>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Address:</h5>
+            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Admin Address:</h5>
             <Select
               autoFocus
               className="colorInput"
@@ -284,21 +285,122 @@ class DexDeploy extends Component {
             <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
           </div>
           <div>
-            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Build Contract Data:</h5>
-            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import exchange_address(step4).json file</Button>
-            <Button type="primary" style={btnStyle} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
-            {<Button disabled={true} type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
+            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import deployPrepareContract(step2).json file</Button>
+            <br />
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import deployExchangeContract(step4).json file</Button>
+            <Button disabled={true} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+            {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
-          <Button type="primary" className={style.stepOne}>6_Online</Button>
-          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Config TX to blockchain</h3>
-          <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import exchange_contracts(step5).dat file</Button>
-          {<Button disabled={true} type="primary" style={btnStyle} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Send</Button>}
-          {deployContractFileShowing && <TableShowing type="deployContract" data={deployContractContent} />}
+          <Button type="primary" className={style.stepOne}>Step 6_Online</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Proxy Config</h3>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import buildProxyConfig(step5).json file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Send</Button>}
         </div>
         <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>Step 7_Offline</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Proxy Config</h3>
+          <div style={{ margin: '20px 0px 20px 0px' }}>
+            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Relayer Address:</h5>
+            <Select
+              autoFocus
+              className="colorInput"
+              optionLabelProp="value"
+              optionFilterProp="children"
+              defaultValue={contractOwnerPath.addr}
+              onChange={value => this.handleSelectAddr(value, 'contractOwner')}
+              placeholder="Select contract owner"
+              dropdownMatchSelectWidth={false}
+            >
+              {
+                addr.map((item, index) =>
+                  <Select.Option value={item} key={index}>
+                    <Row className="ant-row-flex">
+                      <Col>{item}</Col>&nbsp;
+                    </Row>
+                  </Select.Option>)
+              }
+            </Select>
+            <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
+          </div>
+          <div>
+            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import deployExchangeContract(step4).json file</Button>
+            <br />
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import delegate_address(engineer).json file </Button>
+            <Button disabled={true} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+            {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
+          </div>
+        </div>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>Step 8_Online</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Approve Relayer Delegate</h3>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import buildRelayerDelegate(step7).json file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Send</Button>}
+        </div>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>Step 9_Offline</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Build Relayer Approve</h3>
+          <div style={{ margin: '20px 0px 20px 0px' }}>
+            <h5 className={style.fontText + ' ' + style.inlineBlock} style={{ width: '150px' }}>Select Relayer Address:</h5>
+            <Select
+              autoFocus
+              className="colorInput"
+              optionLabelProp="value"
+              optionFilterProp="children"
+              defaultValue={contractOwnerPath.addr}
+              onChange={value => this.handleSelectAddr(value, 'contractOwner')}
+              placeholder="Select contract owner"
+              dropdownMatchSelectWidth={false}
+            >
+              {
+                addr.map((item, index) =>
+                  <Select.Option value={item} key={index}>
+                    <Row className="ant-row-flex">
+                      <Col>{item}</Col>&nbsp;
+                    </Row>
+                  </Select.Option>)
+              }
+            </Select>
+            <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
+          </div>
+          <div>
+            <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('deployContract')}>Import token_address(engineer).json file</Button>
+            <br />
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import deployPrepareContract(step2).json file</Button>
+            <Button disabled={true} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleBuildContract('buildDeployContract')}>Build</Button>
+            {<Button disabled={true} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['txData', 'deployContract(step2).dat'])}>Download</Button>}
+          </div>
+        </div>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>Step 10_Online</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Relayer Approve</h3>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import buildRelayerApprove(step9).json file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Send</Button>}
+        </div>
+        <Divider className={style.borderSty} />
+        <div className={style.offlineStep}>
+          <Button type="primary" className={style.stepOne}>Step 11_Online</Button>
+          <h3 className={style.stepOne + ' ' + style.inlineBlock}>Verify Smart Contracts</h3>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import token_address(engineer).json file</Button>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import deployPrepareContract(step2).json file</Button>
+          <br />
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleGetInfo('deployContract')}>Import deployExchangeContract(step4).json file</Button>
+          {<Button disabled={true} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.deployContractAction('deployContract')}>Verify</Button>}
+          {false && <Icon type="check-circle" className={style.goodIcon}/>}
+          {true && <Icon type="question-circle" className={style.unknownIcon}/>}
+          {false && <Icon type="close-circle" className={style.badIcon}/>}
+        </div>
       </React.Fragment>
     );
   }
