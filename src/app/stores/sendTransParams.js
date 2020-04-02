@@ -52,7 +52,7 @@ class SendTransParams {
 
     @action updateGasPrice (gasPrice, chainType = 'WAN') {
         self.currentGasPrice = gasPrice;
-        self.minGasPrice = chainType === 'ETH' ? 1 : 180;
+        self.minGasPrice = chainType === 'ETH' ? 1 : 10;
     }
 
     @action updateGasLimit (gasLimit) {
