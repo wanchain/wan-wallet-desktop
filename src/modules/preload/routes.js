@@ -9,5 +9,5 @@ module.exports = {
     setting: ['switchNetwork', 'set', 'get', 'getDexInjectFile', 'rpcDelay', 'wanNodeDelay', 'ethNodeDelay', 'btcNodeDelay', 'eosNodeDelay'],
     crossChain: ['initRegTokens', 'getTokensInfo', 'getCcTokensInfo', 'updateTokensInfo', 'updateCcTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'deleteCustomToken', 'getSmgList', 'getHtmlAddr', 'crossBTC', 'crossETH', 'crossEOS', 'crossErc20', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans'],
     upgrade: ['start'],
-    offline: ['openFile', 'updateNonce', 'buildContract', 'downloadFile', 'deployContractAction', 'upgradeComponents']
+    offline: ['openFile', 'updateNonce', 'buildContract', 'downloadFile', 'deployContractAction', 'upgradeComponents', 'dexAction', 'dexDownloadFile', 'dexOpenFile', 'dexUpdateNonce']
 }

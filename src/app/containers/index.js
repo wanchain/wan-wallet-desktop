@@ -22,3 +22,4 @@ export { default as DeployContract } from './DeployContract';
 export { default as RegisterToken } from './DeployContract/RegisterToken';
 export { default as UpgradeContract } from './DeployContract/UpgradeContract';
 export { default as RegisterStoremanGroup } from './DeployContract/RegisterStoremanGroup';
+export { default as DexDeploy } from './DeployContract/DexDeploy';

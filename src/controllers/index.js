@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app, dialog } from 'electron'
-import { hdUtil, ccUtil, btcUtil, wanDeployer } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil, btcUtil, wanDeployer, wanDexDeployer } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -46,9 +46,9 @@ const WANBIP44Path = "m/44'/5718350'/0'/0/"
 const WAN_ID = 5718350;
 const network = setting.get('network');
 
-const WALLET_ID_NATIVE   = 0x01;   // Native WAN HD wallet
-const WALLET_ID_LEDGER   = 0x02;
-const WALLET_ID_TREZOR   = 0x03;
+const WALLET_ID_NATIVE = 0x01;   // Native WAN HD wallet
+const WALLET_ID_LEDGER = 0x02;
+const WALLET_ID_TREZOR = 0x03;
 
 const NETWORK_SLOW = 200;  // If network delay large than 200ms it shows Good.
 
@@ -215,10 +215,10 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 let { walletID, path, rawTx } = payload;
 
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
-    
+
                 logger.info('Sign signPersonalMessage:');
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-    
+
                 if (hdWallet) {
                     try {
                         ret = await hdWallet.signMessage(path, ethUtil.toBuffer(rawTx));
@@ -232,7 +232,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     err = new Error('Can not found wallet.');
                     console.log('hdWallet is undefine');
                 }
-    
+
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
@@ -661,7 +661,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_ACCOUNT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-        
+
         case 'update':
             try {
                 ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta)
@@ -920,9 +920,9 @@ ipc.on(ROUTE_QUERY, async (event, actionUni, payload) => {
             try {
                 let conf
                 if (param === 'sdkStatus') {
-                  conf = global.chainManager ? 'ready' : 'init'
+                    conf = global.chainManager ? 'ready' : 'init'
                 } else if (param === 'netStatus') {
-                  conf = !global.offlineMode
+                    conf = !global.offlineMode
                 } else {
                     conf = setting[`${param}`]
                 }
@@ -1260,8 +1260,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
     switch (action) {
         case 'getTokenInfo':
             try {
-              let { scAddr, chain } = payload;
-              ret = await ccUtil.getTokenInfo(scAddr, chain);
+                let { scAddr, chain } = payload;
+                ret = await ccUtil.getTokenInfo(scAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1329,8 +1329,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'addCustomToken':
             try {
-              let { tokenAddr, symbol, decimals, select, chain } = payload;
-              setting.addToken(tokenAddr, { select, symbol, decimals, chain });
+                let { tokenAddr, symbol, decimals, select, chain } = payload;
+                setting.addToken(tokenAddr, { select, symbol, decimals, chain });
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1352,8 +1352,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'updateTokensBalance':
             let { address, tokenScAddr, chain } = payload;
             try {
-              let { address, tokenScAddr, chain } = payload;
-              ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
+                let { address, tokenScAddr, chain } = payload;
+                ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1618,12 +1618,12 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
-        
+
         case 'getDexInjectFile':
             console.log('getDexInjectFile is called');
             let ret = "";
 
-            if(setting.isDev) {
+            if (setting.isDev) {
                 ret = `file://${__dirname}/../modals/dexInject.js`;
             } else {
                 ret = `file://${__dirname}/modals/dexInject.js`
@@ -1763,163 +1763,268 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
-  let err, ret
-  const [action, id] = actionUni.split('#')
+    let err, ret
+    const [action, id] = actionUni.split('#')
 
-  switch (action) {
-    case 'openFile':
-      let openFileContent;
-      try {
-        ret = await dialog.showOpenDialog({ properties: ['openFile'] })
-        if (ret) {
-          wanDeployer.setFilePath(payload.type, ret[0]);
-          switch(payload.type) {
-            case 'token':
-            case 'smg':
-              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
-              break;
-            case 'deployContract':
-            case 'registerToken':
-            case 'setDependency':
-            case 'upgradeContract':
-            case 'upgradeDependency':
-              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
-              openFileContent.forEach(item => {item.from = deserializeWanTx(item.data).from; delete(item.data)})
-              break;
-            case 'contractAddress':
-            case 'upgradeContractAddress':
-              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
-              openFileContent = openFileContent.map(item => ({ name: item[0], address: item[1] }))
-              break;
-            case 'registerSmg':
-              openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
-              openFileContent.forEach(item => {
-                let { from, value } = deserializeWanTx(item.data);
-                item.from = from;
-                item.amount = new BigNumber(value).dividedBy(10 ** 18).toString(10) + ' WAN';
-                delete(item.data)
-              })
-              break;
-          }
-        }
-      } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-      }
-
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, openFileContent } })
-      break;
-    
-    case 'updateNonce':
-      try {
-        Object.keys(payload).forEach(item => wanDeployer.updateNonce(item, payload[item]))
-      } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-      }
-
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
-      break;
-    
-    case 'upgradeComponents':
-      try {
-        wanDeployer.setUpgradeComponents(payload.components)
-      } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-      }
-
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
-      break;
-
-    case 'buildContract':
-      let fileContent
-      try {
-        let { type, data } = payload
-        ret = await wanDeployer[type](data.walletId, data.path)
-        if (ret) {
-          let fileName;
-          switch(type) {
-            case 'buildDeployContract':
-              fileName = 'deployContract(step2).dat';
-              break;
-            case 'buildSetDependency':
-              fileName = 'setDependency(step4).dat';
-              break;
-            case 'buildRegisterToken':
-              fileName = 'registerToken.dat';
-              break;
-            case 'buildRegisterSmg':
-              fileName = 'registerSmg.dat';
-              break;
-            case 'buildUpgradeContract':
-              fileName = 'upgradeContract(step2).dat';
-              break;
-            case 'buildUpgradeDependency':
-              fileName = 'upgradeDependency(step4).dat'
-          }
-          let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
-          fileContent = JSON.parse(fs.readFileSync(filePath));
-          fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
-        }
-      } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-      }
-
-      sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, fileContent } })
-      break;
-
-      case 'downloadFile':  
-        try {
-          let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...payload.type)
-          let extension = path.extname(filePath).substr(1)
-          ret = await dialog.showSaveDialog({ title : '文件另存为', defaultPath: filePath, filters: [
-            { name: extension.toUpperCase(), extensions: [extension] }
-          ] })
-          fs.createReadStream(filePath).pipe(fs.createWriteStream(ret));
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-  
-        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break;
-      
-      case 'deployContractAction':
-        let content;
-        try {
-          ret = await wanDeployer[payload.type]();
-          if (ret) {
-            let files;
-            switch(payload.type) {
-              case 'deployContract':
-              case 'registerToken':
-              case 'registerSmg':
-                files = ['contractAddress(step3).json'];
-                break;
-              case 'registerToken':
-                files = ['txData', 'registerToken.dat'];
-                break;
-              case 'registerSmg':
-                files = ['txData', 'registerSmg.dat'];
-                break;
+    switch (action) {
+        case 'openFile':
+            let openFileContent;
+            try {
+                ret = await dialog.showOpenDialog({ properties: ['openFile'] })
+                if (ret) {
+                    wanDeployer.setFilePath(payload.type, ret[0]);
+                    switch (payload.type) {
+                        case 'token':
+                        case 'smg':
+                            openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+                            break;
+                        case 'deployContract':
+                        case 'registerToken':
+                        case 'setDependency':
+                        case 'upgradeContract':
+                        case 'upgradeDependency':
+                            openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+                            openFileContent.forEach(item => { item.from = deserializeWanTx(item.data).from; delete (item.data) })
+                            break;
+                        case 'contractAddress':
+                        case 'upgradeContractAddress':
+                            openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+                            openFileContent = openFileContent.map(item => ({ name: item[0], address: item[1] }))
+                            break;
+                        case 'registerSmg':
+                            openFileContent = JSON.parse(fs.readFileSync(path.join(ret[0])));
+                            openFileContent.forEach(item => {
+                                let { from, value } = deserializeWanTx(item.data);
+                                item.from = from;
+                                item.amount = new BigNumber(value).dividedBy(10 ** 18).toString(10) + ' WAN';
+                                delete (item.data)
+                            })
+                            break;
+                    }
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-            if (files) {
-              let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...files);
-              content = JSON.parse(fs.readFileSync(filePath));
-              console.log('content', content)
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, openFileContent } })
+            break;
+
+        case 'updateNonce':
+            try {
+                Object.keys(payload).forEach(item => wanDeployer.updateNonce(item, payload[item]))
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
             }
-          }
-        } catch (e) {
-          logger.error(e.message || e.stack)
-          err = e
-        }
-  
-        sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err, data: { ret, content } })
-        break;
-  }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break;
+
+        case 'upgradeComponents':
+            try {
+                wanDeployer.setUpgradeComponents(payload.components)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break;
+
+        case 'buildContract':
+            let fileContent
+            try {
+                let { type, data } = payload
+                ret = await wanDeployer[type](data.walletId, data.path)
+                if (ret) {
+                    let fileName;
+                    switch (type) {
+                        case 'buildDeployContract':
+                            fileName = 'deployContract(step2).dat';
+                            break;
+                        case 'buildSetDependency':
+                            fileName = 'setDependency(step4).dat';
+                            break;
+                        case 'buildRegisterToken':
+                            fileName = 'registerToken.dat';
+                            break;
+                        case 'buildRegisterSmg':
+                            fileName = 'registerSmg.dat';
+                            break;
+                        case 'buildUpgradeContract':
+                            fileName = 'upgradeContract(step2).dat';
+                            break;
+                        case 'buildUpgradeDependency':
+                            fileName = 'upgradeDependency(step4).dat'
+                    }
+                    let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', 'txData', fileName);
+                    fileContent = JSON.parse(fs.readFileSync(filePath));
+                    fileContent.forEach(obj => obj.data = deserializeWanTx(obj.data).from);
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { ret, fileContent } })
+            break;
+
+        case 'downloadFile':
+            try {
+                let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...payload.type)
+                let extension = path.extname(filePath).substr(1)
+                ret = await dialog.showSaveDialog({
+                    title: '文件另存为', defaultPath: filePath, filters: [
+                        { name: extension.toUpperCase(), extensions: [extension] }
+                    ]
+                })
+                fs.createReadStream(filePath).pipe(fs.createWriteStream(ret));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'deployContractAction':
+            let content;
+            try {
+                ret = await wanDeployer[payload.type]();
+                if (ret) {
+                    let files;
+                    switch (payload.type) {
+                        case 'deployContract':
+                        case 'registerToken':
+                        case 'registerSmg':
+                            files = ['contractAddress(step3).json'];
+                            break;
+                        case 'registerToken':
+                            files = ['txData', 'registerToken.dat'];
+                            break;
+                        case 'registerSmg':
+                            files = ['txData', 'registerSmg.dat'];
+                            break;
+                    }
+                    if (files) {
+                        let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDeployer', ...files);
+                        content = JSON.parse(fs.readFileSync(filePath));
+                        console.log('content', content)
+                    }
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err, data: { ret, content } })
+            break;
+        case 'dexOpenFile':
+            let success = true;
+            try {
+                ret = await dialog.showOpenDialog({ properties: ['openFile'] })
+                console.log('payload', payload, 'ret', ret);
+                if (ret && ret.length == 1 && ret[0].includes(payload.type)) {
+                    switch (payload.type) {
+                        case 'buildPrepareContract(step1).json': wanDexDeployer.setFilePath('deployPrepareContract', ret[0]); break;
+                        case 'deployPrepareContract(step2).json': wanDexDeployer.setFilePath('buildExchangeContract', ret[0]); break;
+                        case 'buildExchangeContract(step3).json': wanDexDeployer.setFilePath('deployExchangeContract', ret[0]); break;
+                        case 'deployExchangeContract(step4).json': wanDexDeployer.setFilePath('buildProxyConfig', ret[0]); break;
+                        case 'buildProxyConfig(step5).json': wanDexDeployer.setFilePath('sendProxyConfig', ret[0]); break;
+                        case 'sendProxyConfig(step6).json': wanDexDeployer.setFilePath('buildRelayerDelegate', ret[0]); break;
+                        case 'buildRelayerDelegate(step7).json': wanDexDeployer.setFilePath('sendRelayerDelegate', ret[0]); break;
+                        case 'sendRelayerDelegate(step8).json': wanDexDeployer.setFilePath('buildRelayerApprove', ret[0]); break;
+                        case 'buildRelayerApprove(step9).json': wanDexDeployer.setFilePath('sendRelayerApprove', ret[0]); break;
+                        case 'token_address(engineer).json': wanDexDeployer.setFilePath('token_address', ret[0]); break;
+                        case 'delegate_address(engineer).json': wanDexDeployer.setFilePath('delegate_address', ret[0]); break;
+                        default:
+                            console.log('unknown file!', payload.type);
+                            success = false;
+                            break;
+                    }
+                } else {
+                    success = false;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack);
+                err = e;
+                success = false;
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { success } })
+            break;
+        case 'dexDownloadFile':
+            try {
+                let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanDexDeployer', ...payload.type)
+                console.log('filePath:', filePath);
+                if (!fsExistsSync(filePath)) {
+                    throw new Error("File not exist!");
+                }
+                let extension = path.extname(filePath).substr(1)
+                ret = await dialog.showSaveDialog({
+                    title: '文件另存为', defaultPath: filePath, filters: [
+                        { name: extension.toUpperCase(), extensions: [extension] }
+                    ]
+                })
+                fs.createReadStream(filePath).pipe(fs.createWriteStream(ret));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'dexAction':
+            console.log('dexAction', payload);
+
+            try {
+                let { type, data } = payload
+                switch (type) {
+                    case 'buildPrepareContract': ret = await wanDexDeployer.buildPrepareContract(data.walletId, data.path); break;
+                    case 'deployPrepareContract': ret = await wanDexDeployer.deployPrepareContract(); break;
+                    case 'buildExchangeContract': ret = await wanDexDeployer.buildExchangeContract(data.walletId, data.path); break;
+                    case 'deployExchangeContract': ret = await wanDexDeployer.deployExchangeContract(); break;
+                    case 'buildProxyConfig': ret = await wanDexDeployer.buildProxyConfig(data.walletId, data.path); break;
+                    case 'sendProxyConfig': ret = await wanDexDeployer.sendProxyConfig(); break;
+                    case 'buildRelayerDelegate': ret = await wanDexDeployer.buildRelayerDelegate(data.walletId, data.path); break;
+                    case 'sendRelayerDelegate': ret = await wanDexDeployer.sendRelayerDelegate(); break;
+                    case 'buildRelayerApprove': ret = await wanDexDeployer.buildRelayerApprove(data.walletId, data.path); break;
+                    case 'sendRelayerApprove': ret = await wanDexDeployer.sendRelayerApprove(); break;
+                    case 'verifySmartContract': ret = await wanDexDeployer.verifySmartContract(); break;
+                    default:
+                        console.log("unknown type of dexAction.");
+                        break;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            console.log('dexAction ret', ret);
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'dexUpdateNonce':
+            console.log('dexUpdateNonce', payload);
+            try {
+                Object.keys(payload).forEach(item => wanDexDeployer.updateNonce(item, payload[item]))
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break;
+    }
 })
+
+function fsExistsSync(path) {
+    try {
+        fs.accessSync(path, fs.F_OK);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
 
 function sendResponse(endpoint, e, payload) {
     const id = e.sender.id
@@ -1938,11 +2043,11 @@ function sendResponse(endpoint, e, payload) {
 }
 
 function errorWrapper(err) {
-  if (typeof err === 'string') {
-    return { desc: err, code: 1, cat: 'ERROR' }
-  } else {
-    return { desc: err.message, code: err.errno, cat: err.name }
-  }
+    if (typeof err === 'string') {
+        return { desc: err, code: 1, cat: 'ERROR' }
+    } else {
+        return { desc: err.message, code: err.errno, cat: err.name }
+    }
 }
 
 function buildStakingBaseInfo(delegateInfo, incentive, epochID, stakeInfo) {
@@ -2129,7 +2234,7 @@ async function getNameAndIcon(address) {
 }
 
 function deserializeWanTx(data) {
-  let tx = new wanUtil.wanchainTx(data) // eslint-disable-line
-  let from = tx.getSenderAddress();
-  return { ...tx.toJSON(true), from: `0x${from.toString('hex')}` };
+    let tx = new wanUtil.wanchainTx(data) // eslint-disable-line
+    let from = tx.getSenderAddress();
+    return { ...tx.toJSON(true), from: `0x${from.toString('hex')}` };
 }

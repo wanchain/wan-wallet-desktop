@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, withRouter, Switch, Route } from 'react-router-dom';
-import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, UpgradeContract, RegisterStoremanGroup, RegisterToken, E20TokenTrans, EthAccount, BtcAccount, EosAccount, CrossETH, CrossE20, CrossBTC, CrossEOS, Dex, DeployContract } from './containers';
+import { Layout, Portfolio, WanAccount, Settings, Trezor, Ledger, Delegation, Validator, Offline, TokenTrans, UpgradeContract, RegisterStoremanGroup, DexDeploy, RegisterToken, E20TokenTrans, EthAccount, BtcAccount, EosAccount, CrossETH, CrossE20, CrossBTC, CrossEOS, Dex, DeployContract } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -27,6 +27,7 @@ export default () => {
             <Route path="/registerStoremanGroup" component={RegisterStoremanGroup} />
             <Route path="/upgradeContract" component={UpgradeContract} />
             <Route path="/registerToken" component={RegisterToken} />
+            <Route path="/dexDeploy" component={DexDeploy} />
             <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
             <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
             <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
