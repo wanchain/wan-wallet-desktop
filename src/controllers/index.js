@@ -1976,14 +1976,51 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
             sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
         case 'dexAction':
+            console.log('dexAction', payload);
+
+            try {
+                let { type, data } = payload
+                switch (type) {
+                    case 'buildPrepareContract': ret = await wanDexDeployer.buildPrepareContract(data.walletId, data.path); break;
+                    case 'deployPrepareContract': ret = await wanDexDeployer.deployPrepareContract(); break;
+                    case 'buildExchangeContract': ret = await wanDexDeployer.buildExchangeContract(data.walletId, data.path); break;
+                    case 'deployExchangeContract': ret = await wanDexDeployer.deployExchangeContract(); break;
+                    case 'buildProxyConfig': ret = await wanDexDeployer.buildProxyConfig(data.walletId, data.path); break;
+                    case 'sendProxyConfig': ret = await wanDexDeployer.sendProxyConfig(); break;
+                    case 'buildRelayerDelegate': ret = await wanDexDeployer.buildRelayerDelegate(data.walletId, data.path); break;
+                    case 'sendRelayerDelegate': ret = await wanDexDeployer.sendRelayerDelegate(); break;
+                    case 'buildRelayerApprove': ret = await wanDexDeployer.buildRelayerApprove(data.walletId, data.path); break;
+                    case 'sendRelayerApprove': ret = await wanDexDeployer.sendRelayerApprove(); break;
+                    case 'verifySmartContract': ret = await wanDexDeployer.verifySmartContract(); break;
+                    default:
+                        console.log("unknown type of dexAction.");
+                        break;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            console.log('dexAction ret', ret);
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'dexUpdateNonce':
+            console.log('dexUpdateNonce', payload);
+            try {
+                Object.keys(payload).forEach(item => wanDexDeployer.updateNonce(item, payload[item]))
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
             break;
     }
 })
 
 function fsExistsSync(path) {
-    try{
-        fs.accessSync(path,fs.F_OK);
-    }catch(e){
+    try {
+        fs.accessSync(path, fs.F_OK);
+    } catch (e) {
         return false;
     }
     return true;

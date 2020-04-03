@@ -28,23 +28,46 @@ class DexDeploy extends Component {
     deployStatus: false,
     contractOwner: this.props.contractOwnerPath.addr,
     contractOwnerNonce: '',
-    deployContractStatus: false,
-    libAddressStatus: false,
-    deployContractLoading: false,
-    setDependencyImportStatus: false,
-    deployContractFile: false,
-    setDependencyStatus: false,
-    setDependencyLoading: false,
-    buildSetDependencyStatus: false,
-    buildSetDependencyLoading: false,
-    buildDeployContractStatus: false,
-    buildDeployContractLoading: false,
-    deployContractFileShowing: false,
-    deployContractContent: [],
-    setDependencyFileShowing: false,
-    setDependencyContent: [],
-    setDependencyImportFileShowing: false,
-    setDependencyImportContent: []
+    loading: {
+      buildPrepareContract: false,
+      deployPrepareContract: false,
+      buildExchangeContract: false,
+      deployExchangeContract: false,
+      buildProxyConfig: false,
+      sendProxyConfig: false,
+      buildRelayerDelegate: false,
+      sendRelayerDelegate: false,
+      buildRelayerApprove: false,
+      sendRelayerApprove: false,
+      verifySmartContract: false,
+    },
+    disableAction: {
+      buildPrepareContract: false,
+      deployPrepareContract: true,
+      buildExchangeContract: true,
+      deployExchangeContract: true,
+      buildProxyConfig: true,
+      sendProxyConfig: true,
+      buildRelayerDelegate: true,
+      sendRelayerDelegate: true,
+      buildRelayerApprove: true,
+      sendRelayerApprove: true,
+      verifySmartContract: true,
+    },
+    disableDownload: {
+      buildPrepareContract: true,
+      deployPrepareContract: true,
+      buildExchangeContract: true,
+      deployExchangeContract: true,
+      buildProxyConfig: true,
+      sendProxyConfig: true,
+      buildRelayerDelegate: true,
+      sendRelayerDelegate: true,
+      buildRelayerApprove: true,
+      sendRelayerApprove: true,
+      verifySmartContract: true,
+    },
+    verifyState: 0,
   }
 
   constructor(props) {
@@ -52,18 +75,15 @@ class DexDeploy extends Component {
     this.props.changeTitle('menuConfig.dexDeploy');
   }
 
-  handleImportFile = type => {
+  handleImportFile = (type, step = 0) => {
     wand.request('offline_dexOpenFile', { type }, (err, data) => {
       if (err || !data.success) {
         message.warn('Import File Error, Please insert it again')
         return;
       }
       if (data.success) {
-        message.success('Success')
-        // this.setState({ [`${type}Status`]: true });
-        // if (data.openFileContent && data.openFileContent.length !== 0) {
-        //   this.setState({ [`${type}FileShowing`]: true, [`${type}Content`]: data.openFileContent })
-        // }
+        message.success('Success');
+        this.enableButton(type, 0, step);
       }
     })
   }
@@ -141,38 +161,105 @@ class DexDeploy extends Component {
     })
   }
 
-  deployContractAction = type => {
-    this.setState({ [`${type}Loading`]: true });
-    wand.request('offline_deployContractAction', { type }, (err, data) => {
-      if (err || !data.ret) {
-        let content = err ? err.desc : 'Error occurred. Please restart!';
-        Modal.error({ content });
-        this.setState({ [`${type}Loading`]: false });
-        return;
+  enableButton = (type, id, step) => {
+    console.log(type, id, step);
+    let disableAction = Object.assign({}, this.state.disableAction);
+    let disableDownload = Object.assign({}, this.state.disableDownload);
+    let target = '';
+    if (type.includes('.json')) {
+      switch (step) {
+        case 2: target = 'deployPrepareContract'; break;
+        case 3: target = 'buildExchangeContract'; break;
+        case 4: target = 'deployExchangeContract'; break;
+        case 5: target = 'buildProxyConfig'; break;
+        case 6: target = 'sendProxyConfig'; break;
+        case 7: target = 'buildRelayerDelegate'; break;
+        case 8: target = 'sendRelayerDelegate'; break;
+        case 9: target = 'buildRelayerApprove'; break;
+        case 10: target = 'sendRelayerApprove'; break;
+        case 11: target = 'verifySmartContract'; break;
       }
-      message.success('Success!');
-      if (!['setDependency'].includes(type)) {
-        this.setState({ [`${type}File`]: true, [`${type}Loading`]: false });
-      } else {
-        this.setState({ deployStatus: true, [`${type}Loading`]: false });
-      }
-    })
+    } else {
+      target = type;
+    }
+
+    if (id === 0) {
+      disableAction[target] = false;
+      this.setState({ disableAction });
+    } else {
+      disableDownload[target] = false;
+      this.setState({ disableDownload });
+    }
   }
 
   handleAction = type => {
-    wand.request('offline_dexAction', { type }, (err, data) => {
-      if (err) {
-        message.warn('Download failed. Please try again!')
-        return;
+    const { wanAddrInfo, setContractOwnerPath, contractOwnerPath } = this.props;
+    const { contractOwner, contractOwnerNonce } = this.state;
+    let loading = Object.assign({}, this.state.loading);
+    loading[type] = true;
+    this.setState({ loading });
+
+    if (type.includes('build')) {
+      if (![contractOwner, contractOwnerNonce].includes('')) {
+        let obj = {
+          [contractOwner]: contractOwnerNonce
+        };
+        let contractOwnerInfo = getInfoByAddress(contractOwner, ['path'], wanAddrInfo);
+        wand.request('offline_dexUpdateNonce', obj, (err, data) => {
+          if (err) {
+            loading[type] = false;
+            this.setState({ loading });
+            return;
+          };
+          let path = { walletId: contractOwnerInfo.type === 'normal' ? 1 : 5, path: `${WANPATH}${contractOwnerInfo.path}`, addr: contractOwnerInfo.addr };
+          setContractOwnerPath(path);
+          wand.request('offline_dexAction', { type, data: path }, (err, data) => {
+            console.log(err, data);
+            if (err || !data) {
+              message.warn('Failed!', 5);
+              loading[type] = false;
+              this.setState({ loading: loading });
+              return;
+            }
+            message.success('Success!', 5);
+            loading[type] = false;
+            this.setState({ loading });
+            this.enableButton(type, 1);
+          })
+        })
+      } else {
+        message.warn('Please insert correct data or select Address.');
+        loading[type] = false;
+        this.setState({ loading });
       }
-      message.success('Download Success!')
-    })
+    } else {
+      wand.request('offline_dexAction', { type, data: '' }, (err, data) => {
+        console.log(err, data);
+        if (err || !data) {
+          message.warn('Failed!', 5);
+          loading[type] = false;
+          this.setState({ loading: loading });
+          if (type.includes('verify')) {
+            this.setState({ verifyState: 2 });
+          }
+          return;
+        }
+        message.success('Success!', 5);
+        loading[type] = false;
+        this.setState({ loading });
+        this.enableButton(type, 1);
+        if (type.includes('verify')) {
+          this.setState({ verifyState: 1 });
+        }
+      })
+    }
   }
 
   render() {
-    const { deployStatus, setDependencyImportContent, setDependencyImportFileShowing, setDependencyFileShowing, setDependencyContent, deployContractFileShowing, deployContractContent, setDependencyLoading, setDependencyStatus, buildSetDependencyStatus, buildSetDependencyLoading, setDependencyImportStatus, libAddressStatus, buildDeployContractLoading, buildDeployContractStatus, deployContractStatus, deployContractFile, deployContractLoading, setDependencyImportFile } = this.state;
     const { wanAddrInfo, contractOwnerPath } = this.props;
     let addr = Object.keys(wanAddrInfo.normal).concat(Object.keys(wanAddrInfo.import));
+
+    const { loading, disableAction, disableDownload } = this.state;
 
     return (
       <React.Fragment>
@@ -203,8 +290,8 @@ class DexDeploy extends Component {
             <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
           </div>
           <div>
-            <Button type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleAction('buildPrepareContract')}>Build</Button>
-            {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildPrepareContract(step1).json'])}>Download</Button>}
+            <Button type="primary" style={btnStyle3} loading={loading['buildPrepareContract']} onClick={() => this.handleAction('buildPrepareContract')}>Build</Button>
+            {<Button disabled={disableDownload['buildPrepareContract']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildPrepareContract(step1).json'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
@@ -212,9 +299,9 @@ class DexDeploy extends Component {
           <Button type="primary" className={style.stepOne}>Step 2_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy Prepare Contract / WWAN, Proxy, Discount</h3>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildPrepareContract(step1).json')}>Import buildPrepareContract(step1).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.handleAction('deployPrepareContract')}>Deploy</Button>}
-          {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['deployPrepareContract(step2).json'])}>Download</Button>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildPrepareContract(step1).json', 2)}>Import buildPrepareContract(step1).json file</Button>
+          {<Button disabled={disableAction['deployPrepareContract']} type="primary" style={btnStyle3} loading={loading['deployPrepareContract']} onClick={() => this.handleAction('deployPrepareContract')}>Deploy</Button>}
+          {<Button disabled={disableDownload['deployPrepareContract']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['deployPrepareContract(step2).json'])}>Download</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -244,9 +331,9 @@ class DexDeploy extends Component {
             <Input style={{ marginLeft: '20px', textAlign: 'center' }} onChange={e => this.handleSelectAddr(e.target.value, 'contractOwnerNonce')} className={style.nonceInput} placeholder="Input Nonce" size="small" />
           </div>
           <div>
-            <Button type="primary" style={btnStyle} onClick={() => this.handleImportFile('deployPrepareContract(step2).json')}>Import deployPrepareContract(step2).json file</Button>
-            <Button disabled={false} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleAction('buildExchangeContract')}>Build</Button>
-            {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildExchangeContract(step3).json'])}>Download</Button>}
+            <Button type="primary" style={btnStyle} onClick={() => this.handleImportFile('deployPrepareContract(step2).json', 3)}>Import deployPrepareContract(step2).json file</Button>
+            <Button disabled={disableAction['buildExchangeContract']} type="primary" style={btnStyle3} loading={loading['buildExchangeContract']} onClick={() => this.handleAction('buildExchangeContract')}>Build</Button>
+            {<Button disabled={disableDownload['buildExchangeContract']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildExchangeContract(step3).json'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
@@ -254,9 +341,9 @@ class DexDeploy extends Component {
           <Button type="primary" className={style.stepOne}>Step 4_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Deploy Exchange Contract</h3>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildExchangeContract(step3).json')}>Import buildExchangeContract(step3).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.handleAction('deployExchangeContract')}>Deploy</Button>}
-          {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['deployExchangeContract(step4).json'])}>Download</Button>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildExchangeContract(step3).json', 4)}>Import buildExchangeContract(step3).json file</Button>
+          {<Button disabled={disableAction['deployExchangeContract']} type="primary" style={btnStyle3} loading={loading['deployExchangeContract']} onClick={() => this.handleAction('deployExchangeContract')}>Deploy</Button>}
+          {<Button disabled={disableDownload['deployExchangeContract']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['deployExchangeContract(step4).json'])}>Download</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -288,9 +375,9 @@ class DexDeploy extends Component {
           <div>
             <Button type="primary" style={btnStyle} onClick={() => this.handleImportFile('deployPrepareContract(step2).json')}>Import deployPrepareContract(step2).json file</Button>
             <br />
-            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployExchangeContract(step4).json')}>Import deployExchangeContract(step4).json file</Button>
-            <Button disabled={false} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleAction('buildProxyConfig')}>Build</Button>
-            {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildProxyConfig(step5).json'])}>Download</Button>}
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployExchangeContract(step4).json', 5)}>Import deployExchangeContract(step4).json file</Button>
+            <Button disabled={disableAction['buildProxyConfig']} type="primary" style={btnStyle3} loading={loading['buildProxyConfig']} onClick={() => this.handleAction('buildProxyConfig')}>Build</Button>
+            {<Button disabled={disableDownload['buildProxyConfig']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildProxyConfig(step5).json'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
@@ -298,8 +385,8 @@ class DexDeploy extends Component {
           <Button type="primary" className={style.stepOne}>Step 6_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Proxy Config</h3>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildProxyConfig(step5).json')}>Import buildProxyConfig(step5).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.handleAction('sendProxyConfig')}>Send</Button>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildProxyConfig(step5).json', 6)}>Import buildProxyConfig(step5).json file</Button>
+          {<Button disabled={disableAction['sendProxyConfig']} type="primary" style={btnStyle3} loading={loading['sendProxyConfig']} onClick={() => this.handleAction('sendProxyConfig')}>Send</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -331,9 +418,9 @@ class DexDeploy extends Component {
           <div>
             <Button type="primary" style={btnStyle} onClick={() => this.handleImportFile('deployExchangeContract(step4).json')}>Import deployExchangeContract(step4).json file</Button>
             <br />
-            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('delegate_address(engineer).json')}>Import delegate_address(engineer).json file </Button>
-            <Button disabled={false} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleAction('buildRelayerDelegate')}>Build</Button>
-            {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildRelayerDelegate(step7).json'])}>Download</Button>}
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('delegate_address(engineer).json', 7)}>Import delegate_address(engineer).json file </Button>
+            <Button disabled={disableAction['buildRelayerDelegate']} type="primary" style={btnStyle3} loading={loading['buildRelayerDelegate']} onClick={() => this.handleAction('buildRelayerDelegate')}>Build</Button>
+            {<Button disabled={disableDownload['buildRelayerDelegate']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildRelayerDelegate(step7).json'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
@@ -341,8 +428,8 @@ class DexDeploy extends Component {
           <Button type="primary" className={style.stepOne}>Step 8_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Approve Relayer Delegate</h3>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildRelayerDelegate(step7).json')}>Import buildRelayerDelegate(step7).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.handleAction('sendRelayerDelegate')}>Send</Button>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildRelayerDelegate(step7).json', 8)}>Import buildRelayerDelegate(step7).json file</Button>
+          {<Button disabled={disableAction['sendRelayerDelegate']} type="primary" style={btnStyle3} loading={loading['sendRelayerDelegate']} onClick={() => this.handleAction('sendRelayerDelegate')}>Send</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -374,9 +461,9 @@ class DexDeploy extends Component {
           <div>
             <Button type="primary" style={btnStyle} onClick={() => this.handleImportFile('token_address(engineer).json')}>Import token_address(engineer).json file</Button>
             <br />
-            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployPrepareContract(step2).json')}>Import deployPrepareContract(step2).json file</Button>
-            <Button disabled={false} type="primary" style={btnStyle3} loading={buildDeployContractLoading} onClick={() => this.handleAction('buildRelayerApprove')}>Build</Button>
-            {<Button disabled={false} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildRelayerApprove(step9).json'])}>Download</Button>}
+            <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployPrepareContract(step2).json', 9)}>Import deployPrepareContract(step2).json file</Button>
+            <Button disabled={disableAction['buildRelayerApprove']} type="primary" style={btnStyle3} loading={loading['buildRelayerApprove']} onClick={() => this.handleAction('buildRelayerApprove')}>Build</Button>
+            {<Button disabled={disableDownload['buildRelayerApprove']} type="primary" style={btnStyle3} onClick={() => this.handleDownloadFile(['buildRelayerApprove(step9).json'])}>Download</Button>}
           </div>
         </div>
         <Divider className={style.borderSty} />
@@ -384,8 +471,8 @@ class DexDeploy extends Component {
           <Button type="primary" className={style.stepOne}>Step 10_Online</Button>
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Send Relayer Approve</h3>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildRelayerApprove(step9).json')}>Import buildRelayerApprove(step9).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.handleAction('sendRelayerApprove')}>Send</Button>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('buildRelayerApprove(step9).json', 10)}>Import buildRelayerApprove(step9).json file</Button>
+          {<Button disabled={disableAction['sendRelayerApprove']} type="primary" style={btnStyle3} loading={loading['sendRelayerApprove']} onClick={() => this.handleAction('sendRelayerApprove')}>Send</Button>}
         </div>
         <Divider className={style.borderSty} />
         <div className={style.offlineStep}>
@@ -396,11 +483,11 @@ class DexDeploy extends Component {
           <br />
           <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployPrepareContract(step2).json')}>Import deployPrepareContract(step2).json file</Button>
           <br />
-          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployExchangeContract(step4).json')}>Import deployExchangeContract(step4).json file</Button>
-          {<Button disabled={false} type="primary" style={btnStyle3} loading={deployContractLoading} onClick={() => this.verifySmartContract('verifySmartContract')}>Verify</Button>}
-          {false && <Icon type="check-circle" className={style.goodIcon}/>}
-          {true && <Icon type="question-circle" className={style.unknownIcon}/>}
-          {false && <Icon type="close-circle" className={style.badIcon}/>}
+          <Button type="primary" style={btnStyle2} onClick={() => this.handleImportFile('deployExchangeContract(step4).json', 11)}>Import deployExchangeContract(step4).json file</Button>
+          {<Button disabled={disableAction['verifySmartContract']} type="primary" style={btnStyle3} loading={loading['verifySmartContract']} onClick={() => this.handleAction('verifySmartContract')}>Verify</Button>}
+          {this.state.verifyState === 1 && <Icon type="check-circle" className={style.goodIcon} />}
+          {this.state.verifyState === 0 && <Icon type="question-circle" className={style.unknownIcon} />}
+          {this.state.verifyState === 2 && <Icon type="close-circle" className={style.badIcon} />}
         </div>
       </React.Fragment>
     );
