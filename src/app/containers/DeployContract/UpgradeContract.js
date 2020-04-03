@@ -250,7 +250,7 @@ class UpgradeContract extends Component {
           <h3 className={style.stepOne + ' ' + style.inlineBlock}>Upgrade TokenManager/HTLC/StoremanGroupAdmin Contracts</h3>
           <Button type="primary" style={btnStyle} onClick={() => this.handleGetInfo('upgradeContract')}>Import upgradeContract(step2) File</Button>
           { upgradeContractStatus && <Button type="primary" style={btnStyle} loading={upgradeContractLoading} onClick={() => this.deployContractAction('upgradeContract')}>Deploy</Button> }
-          { upgradeContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['upgradeContractAddress(step3).dat'])}>Download</Button> }
+          { upgradeContractFile && <Button type="primary" style={btnStyle} onClick={() => this.handleDownloadFile(['upgradeContractAddress(step3).json'])}>Download</Button> }
           { upgradeContractFileShowing && <TableShowing type="deployContract" data={upgradeContractContent}/> }
         </div>
         <Divider className={style.borderSty} />
