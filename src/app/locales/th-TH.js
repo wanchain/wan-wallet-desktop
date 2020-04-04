@@ -120,6 +120,7 @@ const th_TH = {
 
     'DApp.title': 'การจัดการ DApp',
     'DApp.addButton': 'เพิ่ม',
+    'DApp.addedButton': 'เพิ่ม',
     'DApp.delButton': 'ลบ',
     'DApp.enableCol': 'เปิดใช้งาน',
     'DApp.titleCol': 'ชื่อ',

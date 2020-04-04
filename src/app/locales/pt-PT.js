@@ -120,6 +120,7 @@ const pt_PT = {
 
     'DApp.title': 'Gerenciamento de aplicativos descentralizados',
     'DApp.addButton': 'Adicionar',
+    'DApp.addedButton': 'Adicionar',
     'DApp.delButton': 'Deletar',
     'DApp.enableCol': 'Habilitar',
     'DApp.titleCol': 'Título',

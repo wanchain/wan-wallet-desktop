@@ -120,6 +120,7 @@ const es_ES = {
 
     'DApp.title': 'Administración de App',
     'DApp.addButton': 'Añadir',
+    'DApp.addedButton': 'Añadir',
     'DApp.delButton': 'Borrar',
     'DApp.enableCol': 'Autorizar',
     'DApp.titleCol': 'Titulo',

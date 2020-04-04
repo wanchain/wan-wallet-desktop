@@ -120,6 +120,7 @@ const fr_FR = {
 
     'DApp.title': 'Gestion des DApps',
     'DApp.addButton': 'Ajouter',
+    'DApp.addedButton': 'Ajouter',
     'DApp.delButton': 'Supprimer',
     'DApp.enableCol': 'Activer',
     'DApp.titleCol': 'Titre',

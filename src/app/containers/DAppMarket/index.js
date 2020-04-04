@@ -114,6 +114,7 @@ class DAppMarket extends Component {
     const { currentPage, searchbarWords } = this.state;
     const { formatedDApp, dAppTypes, dAppsOnSideBar } = this.props;
     let dAppsList, dAppsListPagination;
+
     // Filter By Search
     dAppsList = this.state.search === '' ? formatedDApp : formatedDApp.filter(item => item.name.search(this.state.search) !== -1);
     // Filter By Type
@@ -137,7 +138,7 @@ class DAppMarket extends Component {
               className='category-style'
               onChange={this.handleTypeChange}
               value={intl.get(this.state.selectType)}
-              getPopupContainer = {() => document.getElementById('dAppType')}
+              getPopupContainer={() => document.getElementById('dAppType')}
             >
               {dAppTypes.map((item, index) => {
                 return <Select.Option value={item} key={index}>{intl.get(item)}</Select.Option>
@@ -149,7 +150,7 @@ class DAppMarket extends Component {
               className='category-style'
               onChange={this.handleSortChange}
               value={intl.get(this.state.sortBy)}
-              getPopupContainer = {() => document.getElementById('dAppSort')}
+              getPopupContainer={() => document.getElementById('dAppSort')}
             >
               {DAPPORDERING.map((item, index) => <Select.Option value={item} key={index}>{intl.get(item)}</Select.Option>)}
             </Select>
@@ -158,8 +159,8 @@ class DAppMarket extends Component {
         <Spin spinning={!this.props.formatedDApp.length} size="large">
           {
             dAppsList.length === 0
-            ? <Empty className={style.emptyStyle} image={Empty.PRESENTED_IMAGE_SIMPLE} />
-            : <div className={style.rowContent}>
+              ? <Empty className={style.emptyStyle} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              : <div className={style.rowContent}>
                 <Row className={style.Row2 + ' title'} type="flex">
                   {
                     dAppsListPagination.map((item, index) =>
@@ -179,7 +180,8 @@ class DAppMarket extends Component {
                             </Row>
                             <Row>
                               <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
-                              <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.addButton')}</Button></Col>
+                              <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">
+                                {dAppsOnSideBar.find(v => v.url === item.url) ? intl.get('DApp.addedButton') : intl.get('DApp.addButton')}</Button></Col>
                               <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
                             </Row>
                           </Col>
@@ -192,7 +194,7 @@ class DAppMarket extends Component {
           }
         </Spin>
         <Pagination className={style.pagination} defaultPageSize={pageNum} current={this.state.currentPage} onChange={this.onPageChange} total={dAppsList.length || 1} />
-        { this.state.showDetail && <DAppInfo info={this.state.dAppDetail} handleClose={this.closeDetail}/> }
+        {this.state.showDetail && <DAppInfo info={this.state.dAppDetail} handleClose={this.closeDetail} />}
       </div>
     );
   }
