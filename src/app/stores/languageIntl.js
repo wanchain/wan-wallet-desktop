@@ -372,6 +372,11 @@ class LanguageIntl {
             title: intl.get('menuConfig.upgradeContract'),
             key: '/upgradeContract',
             icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.dexDeploy'),
+            key: '/dexDeploy',
+            icon: 'block'
           }
         ]
       },
