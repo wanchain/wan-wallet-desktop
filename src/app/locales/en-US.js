@@ -139,7 +139,7 @@ const en_US = {
     'DApp.termOfService4': '4) We reserve the right to modify the Wanchain Wallet and its services and these terms without any prior notice. We advise you to check for updates on a regular basis. ',
     'DApp.termOfServiceAgree': 'I understand and agree to the terms',
     'DApp.addFailed': 'Do not add twice',
-    'DApp.addSuccess': 'Add DApp successfully',
+    'DApp.addSuccess': 'Added DApp successfully',
     'DApp.dAppMarket': 'ÐApp Store',
     'DApp.allCategories': 'All Categories',
     'DApp.sortByName': 'Sort By Name',
