@@ -18,6 +18,7 @@ const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.eosAddress.accountInfo,
+  getNormalAccountListWithBalance: stores.eosAddress.getNormalAccountListWithBalance,
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
@@ -158,7 +159,7 @@ class CrossEOSForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance } = this.props;
+    const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance, getNormalAccountListWithBalance } = this.props;
     let srcChain, desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio, fromAccount;
     if (direction === INBOUND) {
       srcChain = 'EOS'
@@ -171,11 +172,12 @@ class CrossEOSForm extends Component {
       srcChain = 'WAN'
       desChain = 'EOS';
       fromAccount = getValueByAddrInfo(from, 'name', wanAddrInfo);
-      selectedList = Object.keys(addrInfo);
+      selectedList = Object.values(getNormalAccountListWithBalance).map(v => {
+        return v.account;
+      });
       title = `W${symbol} -> ${symbol}`;
       tokenSymbol = `W${symbol}`;
     }
-
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
       quota = 0;
