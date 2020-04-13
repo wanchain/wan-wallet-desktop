@@ -106,7 +106,7 @@ class NormalTransForm extends Component {
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
       let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
-      let to = form.getFieldValue('mode') === 'private' ? 'toPrivate' : 'to';
+      let to = 'to';
 
       if (new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
         message.warn(intl.get('NormalTransForm.overBalance'));
@@ -182,11 +182,7 @@ class NormalTransForm extends Component {
       data: transParams[from].data,
       gas: DEFAULT_GAS
     };
-    if (mode === 'private') {
-      tx.to = form.getFieldValue('toPrivate');
-    } else {
-      tx.to = form.getFieldValue('to');
-    }
+    tx.to = form.getFieldValue('to');
     let { chainType } = transParams[from];
     wand.request('transaction_estimateGas', { chainType, tx }, (err, gasLimit) => {
       if (err) {
@@ -198,34 +194,65 @@ class NormalTransForm extends Component {
     });
   }
 
-  checkToWanAddr = (rule, value, callback) => {
-    let { transType, form, tokenAddr } = this.props;
-    if (transType === TRANSTYPE.tokenTransfer) {
-      if (form.getFieldValue('transferTo').toLowerCase() === tokenAddr.toLowerCase()) {
-        callback(intl.get('NormalTransForm.invalidAddress'));
-      }
-    }
-    checkWanAddr(value).then(ret => {
-      if (ret) {
-        if (!this.state.advanced) {
-          this.updateGasLimit();
+  checkAddr = async (rule, value, callback) => {
+    let isNormalAddress = await this.checkToWanAddr(value);
+    let isPrivate = this.state.isPrivate;
+    if (isNormalAddress) {
+      this.setState({
+        isPrivate: false
+      }, () => {
+        if (isPrivate) {
+          this.props.form.validateFields(['amount']);
         }
+      });
+      callback();
+    } else if (this.props.disablePrivateTx) {
+      callback(intl.get('NormalTransForm.invalidAddress'));
+    } else {
+      let isPrivateAddress = this.checkToWanPrivateAddr(value);
+      if (isPrivateAddress) {
+        this.setState({
+          isPrivate: true
+        }, () => {
+          if (!isPrivate) {
+            this.props.form.validateFields(['amount']);
+          }
+        });
         callback();
       } else {
         callback(intl.get('NormalTransForm.invalidAddress'));
       }
-    }).catch((err) => {
-      callback(err);
-    })
+    }
   }
 
-  checkToWanPrivateAddr = (rule, value, callback) => {
-    if (/^0x[0-9a-f]{132}$/.test(value)) {
-      callback();
-    } else if (isValidChecksumOTAddress(value)) {
-      callback();
+  checkToWanAddr = (value) => {
+    return new Promise((resolve, reject) => {
+      let { transType, form, tokenAddr } = this.props;
+      if (transType === TRANSTYPE.tokenTransfer) {
+        if (form.getFieldValue('transferTo').toLowerCase() === tokenAddr.toLowerCase()) {
+          resolve(false);
+        }
+      }
+      checkWanAddr(value).then(ret => {
+        if (ret) {
+          if (!this.state.advanced) {
+            this.updateGasLimit();
+          }
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      }).catch(() => {
+        resolve(false);
+      })
+    });
+  }
+
+  checkToWanPrivateAddr = (value) => {
+    if (isValidChecksumOTAddress(value)) {
+      return true;
     } else {
-      callback(intl.get('NormalTransForm.invalidPrivateAddress'));
+      return false;
     }
   }
 
@@ -295,12 +322,6 @@ class NormalTransForm extends Component {
     }
   }
 
-  modeChange = (v) => {
-    this.setState({
-      isPrivate: v !== 'normal',
-    });
-  }
-
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
@@ -333,29 +354,19 @@ class NormalTransForm extends Component {
                 {getFieldDecorator('balance', { initialValue: balance })
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-              <Form.Item label={intl.get('NormalTransForm.mode')}>
-                {getFieldDecorator('mode', { initialValue: isPrivate ? 'private' : 'normal' })
-                  (<Select onChange={this.modeChange} disabled={this.props.disablePrivateTx}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
+              <Form.Item label={intl.get('NormalTransForm.to')}>
+                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkAddr }] })
+                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
-
-              {
-                isPrivate
-                  ? <Form.Item label={intl.get('NormalTransForm.to')}>
-                    {getFieldDecorator('toPrivate', { rules: [{ required: true, message: intl.get('NormalTransForm.privateAddressIsIncorrect'), validator: this.checkToWanPrivateAddr }] })
-                      (<Input placeholder={intl.get('NormalTransForm.recipientPrivateAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                  </Form.Item>
-                  : <Form.Item label={intl.get('NormalTransForm.to')}>
-                    {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWanAddr }] })
-                      (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
-                  </Form.Item>
-              }
-
+              <Form.Item label={intl.get('NormalTransForm.mode')}>
+                {getFieldDecorator('mode', { initialValue: !this.props.disablePrivateTx && isPrivate ? 'private' : 'normal' })
+                  (<Select disabled={true} showArrow={false} className={style.modeSelection}><Option value="normal">{intl.get('NormalTransForm.normalTransaction')}</Option><Option value="private">{intl.get('NormalTransForm.privateTransaction')}</Option></Select>)}
+              </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
                   (<Input disabled={disabledAmount} />)}
                 {!isPrivate && (<Checkbox onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               </Form.Item>
-
               {
                 settings.reinput_pwd && <Form.Item label={intl.get('NormalTransForm.password')}>
                   {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
