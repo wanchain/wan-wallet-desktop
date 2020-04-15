@@ -2,9 +2,9 @@
     "title": "Importer fichier Keystore de Wanchain",
     "head": "Importer fichier Keystore de Wanchain",
     "warning": "ATTENTION: Il n'est pas recommendé de gérer les comptes avec fichier Keystore. Nous ne supportons plus la sauvegarde des fichiers Keystore. Veuillez garder bien votre fichier Keystore original ou transférer le fond à votre 'HD wallet' ou portefeuille matériel.",
-    "enterKfPw": "Input Keystore Password (This is your old wallet password)",
+    "enterKfPw": "Saisissez le mot de passe Keystore (il s'agit de votre ancien mot de passe de portefeuille)",
     "kfFeedback": "Mot de passe de Keystore invalide",
-    "enterWwPw": "Input WAN Wallet Password (This is your new wallet password)",
+    "enterWwPw": "Saisissez le mot de passe du portefeuille WAN (il s'agit de votre nouveau mot de passe de portefeuille)",
     "wWPwInvalid": "Mot de passe de WAN wallet invalide",
     "chooseKf": "Choisir un fichier Keystore",
     "kFInvalid": "Fichier Keystore invalide",
@@ -20,5 +20,5 @@
     "confirm_Title": "ATTENTION",
     "confirm_close": "Annuler",
     "confirm_ok": "OK",
-    "confirm_counter": "seconds"
+    "confirm_counter": "Secondes"
 }

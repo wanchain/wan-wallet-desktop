@@ -120,6 +120,7 @@ const ko_KR = {
 
     'DApp.title': 'DApp 매니지먼트',
     'DApp.addButton': '추가',
+    'DApp.addedButton': '추가',
     'DApp.delButton': '삭제',
     'DApp.enableCol': '활성화',
     'DApp.titleCol': '제목',

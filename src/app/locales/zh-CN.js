@@ -121,6 +121,7 @@ const zh_CN = {
 
     'DApp.title': '应用管理',
     'DApp.addButton': '添加',
+    'DApp.addedButton': '添加',
     'DApp.delButton': '删除',
     'DApp.enableCol': '启用',
     'DApp.titleCol': '名称',

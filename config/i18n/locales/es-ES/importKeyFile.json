@@ -2,9 +2,9 @@
     "title": "Importar keystore de Wanchain",
     "head": "Importar keystore de Wanchain",
     "warning": "ALERTA: Cuenta de keystore no recomendado como acceso. No se admite backup del keystore. Protege su keystore original o transfiere sus activos a la cuenta HD o hardware (ej. Trezor, Ledger).",
-    "enterKfPw": "Input Keystore Password (This is your old wallet password)",
+    "enterKfPw": "Ingrese la contraseña del almacén de claves (Esta es tu contraseña anterior)",
     "kfFeedback": "Contraseña de keystore incorrecta",
-    "enterWwPw": "Input WAN Wallet Password (This is your new wallet password)",
+    "enterWwPw": "Ingrese la contraseña de WAN Wallet (Esta es tu nueva contraseña)",
     "wWPwInvalid": "Contraseña de WAN wallet incorrecta.",
     "chooseKf": "Elije un archivo de keystore",
     "kFInvalid": "Archivo de keystore incorrecta.",
@@ -19,6 +19,6 @@
     "browse": "Navegar",
     "confirm_Title": "ALERTA",
     "confirm_close": "Cancelar",
-    "confirm_ok": "OK",
-    "confirm_counter": "seconds"
+    "confirm_ok": "Ok",
+    "confirm_counter": "Contador"
 }

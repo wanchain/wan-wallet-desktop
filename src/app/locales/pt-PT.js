@@ -120,13 +120,14 @@ const pt_PT = {
 
     'DApp.title': 'Gerenciamento de aplicativos descentralizados',
     'DApp.addButton': 'Adicionar',
+    'DApp.addedButton': 'Adicionar',
     'DApp.delButton': 'Deletar',
     'DApp.enableCol': 'Habilitar',
     'DApp.titleCol': 'Título',
     'DApp.urlCol': 'URL',
     'DApp.commitCol': 'Confirmar',
     'DApp.operation': 'Operação',
-    'DApp.addTitle': 'Adicionar Aplicativo descentralizados (DApp)',
+    'DApp.addTitle': 'Adicionar Aplicativos Descentralizados(DApp)',
     'DApp.addIcon': 'ICON',
     'DApp.commitPlaceholder': 'É possível adicionar informações de descrição personalizada',
     'DApp.namePlaceholder': 'Insira o nome do DApp',
@@ -244,7 +245,7 @@ const pt_PT = {
     'EOSKeyPairList.selectOneAccount': 'Selecione pelo menos uma conta',
     'EOSKeyPairList.tipText': 'Se você nunca associou contas EOS a pares de chaves EOS criados por Wan Wallet, pode usar um serviço de terceiros para criar uma conta e associá-la a pares de chaves. Se você já possui contas EOS associadas a pares de chaves, pode criar novas contas EOS usando as existentes.',
     'EOSKeyPairList.getImportedAccountsFailed': 'Falha ao importar contas',
-    'EOSKeyPairList.getAccountsFailed': 'Get accounts failed',
+    'EOSKeyPairList.getAccountsFailed': 'Falha na obtenção de contas',
 
     'EOSAccountList.manageResource': 'Gerenciar',
     'EOSAccountList.getResourcePriceFailed': 'Falha ao obter o preço do recurso',
@@ -348,7 +349,7 @@ const pt_PT = {
     'CopyAndQrcode.privateKey': 'Chave privada',
     'CopyAndQrcode.confirmText': 'Você tem certeza que deseja excluir',
     'CopyAndQrcode.deleteFailedText': 'Falha na exclusão da conta',
-    'CopyAndQrcode.deleteSuccessfulText': 'Excluir conta concluída',
+    'CopyAndQrcode.deleteSuccessfulText': 'Exclusão da conta feita com sucesso',
 
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',

@@ -8,7 +8,7 @@ import {
   signPersonalMessage as trezorSignPersonalMessage,
   signTransaction as trezorSignTransaction
 } from 'componentUtils/trezor'
-import { toWei } from 'utils/support.js';
+import { toWei, fromWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
 
@@ -231,7 +231,16 @@ class DApp extends Component {
     });
   }
 
+  toHexString(value) {
+    if (typeof value === 'string') {
+      return value.startsWith('0x') ? value : `0x${Number(value).toString(16)}`;
+    } else {
+      return `0x${value.toString(16)}`;
+    }
+  }
+
   async nativeSendTransaction(msg, wallet) {
+    let gasPrice = await getGasPrice('wan');
     let amountInWei = new BigNumber(msg.message.value)
     let trans = {
       walletID: wallet.id,
@@ -240,8 +249,8 @@ class DApp extends Component {
       path: wallet.path,
       to: msg.message.to,
       amount: amountInWei.div(1e18),
-      gasLimit: `0x${(2000000).toString(16)}`,
-      gasPrice: 200,
+      gasLimit: msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`,
+      gasPrice: msg.message.gasPrice ? fromWei(msg.message.gasPrice, 'Gwei') : gasPrice,
       data: msg.message.data
     };
 
@@ -274,8 +283,8 @@ class DApp extends Component {
       rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(800000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, 'gwei');
+      rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+      rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
