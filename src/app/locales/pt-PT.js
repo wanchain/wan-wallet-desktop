@@ -7,7 +7,6 @@ const pt_PT = {
     'Common.exportKey': 'Exportar chave privada',
     'Common.privateKey': 'Revelar Chave privada',
     'Common.yourPrivateKey': 'Sua chave privada',
-    'Common.importedAccount': 'Conta Importada',
     'Common.from': 'De',
     'Common.days': ' dias',
     'Common.amount': 'Montante',

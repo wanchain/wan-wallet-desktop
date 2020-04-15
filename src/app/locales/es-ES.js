@@ -7,7 +7,6 @@ const es_ES = {
     'Common.exportKey': 'Exportar Clave Privado',
     'Common.privateKey': 'Revelar Clave Privado',
     'Common.yourPrivateKey': 'Tu Clave Privado',
-    'Common.importedAccount': 'Cuenta importada',
     'Common.from': 'Desde',
     'Common.days': ' dias',
     'Common.amount': 'Cantidad',

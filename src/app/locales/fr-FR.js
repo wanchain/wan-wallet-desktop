@@ -7,7 +7,6 @@ const fr_FR = {
     'Common.exportKey': 'Exporter clef privée',
     'Common.privateKey': 'Reveler clef privée',
     'Common.yourPrivateKey': 'Votre clef privée',
-    'Common.importedAccount': 'Compte importé',
     'Common.from': 'De',
     'Common.days': ' jours',
     'Common.amount': 'Montant',

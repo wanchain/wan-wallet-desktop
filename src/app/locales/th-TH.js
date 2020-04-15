@@ -7,7 +7,6 @@ const th_TH = {
     'Common.exportKey': 'ส่งออก Private Key',
     'Common.privateKey': 'แสดง Private Key',
     'Common.yourPrivateKey': 'Private Key ของคุณ',
-    'Common.importedAccount': 'บัญชีที่นำเข้า',
     'Common.from': 'ผู้ส่ง',
     'Common.days': ' วัน',
     'Common.amount': 'จำนวน',

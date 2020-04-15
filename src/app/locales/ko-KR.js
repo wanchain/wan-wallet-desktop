@@ -7,7 +7,6 @@ const ko_KR = {
     'Common.exportKey': '익스포트 프라이빗 키',
     'Common.privateKey': '프라이빗키 보기',
     'Common.yourPrivateKey': '사용자의 프라이빗 키',
-    'Common.importedAccount': '입력된 프라이빗 키',
     'Common.from': '발신자',
     'Common.days': ' 일',
     'Common.amount': '금액',
