@@ -32,6 +32,12 @@ const en_US = {
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Wrong Password',
@@ -686,7 +692,7 @@ const en_US = {
     'title.imported': 'Imported Address',
     'title.importedKey': 'Imported Key',
 
-    'network.down': 'The network request failed, Please try again later'
+    'network.down': 'The network request failed, Please try again later',
 
 }
 

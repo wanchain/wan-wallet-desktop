@@ -32,6 +32,12 @@ const es_ES = {
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': 'Transaccion enviada con exito',
     'Login.login': 'Iniciar sesion',
     'Login.wrongPassword': 'Contraseña incorrecta',

@@ -34,10 +34,11 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
 class Layout extends Component {
   state = {
     loading: true,
-    collapsed: false
+    collapsed: false,
+    initializeStep: ''
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.wanTimer = setInterval(() => {
       this.updateWANBalanceForInter();
       this.updateETHBalanceForInter();
@@ -47,19 +48,32 @@ class Layout extends Component {
     this.waitUntilSdkReady();
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (this.props.location !== prevProps.location) {
       document.getElementById('main-content').scrollTo(0, 0);
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.wanTimer);
   }
 
-  waitUntilSdkReady () {
+  waitUntilSdkReady() {
+    this.setState({
+      initializeStep: 'Layout.waitingForSDK'
+    });
     let id = setInterval(async () => {
-      let ready = await isSdkReady();
+      let ready = false;
+      try {
+        ready = await isSdkReady();
+        this.setState({
+          initializeStep: 'Layout.SDKIsReady'
+        });
+      } catch (e) {
+        this.setState({
+          initializeStep: 'Layout.initSDKFailed'
+        });
+      }
       if (ready) {
         try {
           await initRegTokens('ETH');
@@ -68,11 +82,14 @@ class Layout extends Component {
           await this.props.getCcTokensInfo();
           await this.props.getMnemonic();
           this.setState({
+            initializeStep: 'Layout.initSuccess',
             loading: false
           });
           clearInterval(id);
         } catch (err) {
-          console.log('Init failed');
+          this.setState({
+            initializeStep: 'Layout.initFailed',
+          });
         }
       }
     }, 3000);
@@ -143,11 +160,11 @@ class Layout extends Component {
     });
   }
 
-  render () {
+  render() {
     const { hasMnemonicOrNot, auth, location } = this.props;
     const showHeader = !(location.pathname.includes('dapp') || location.pathname.includes('AddDApp'));
     if (this.state.loading) {
-      return <Loading />
+      return <Loading step={this.state.initializeStep} />
     } else {
       if (!hasMnemonicOrNot) {
         return <Suspense fallback={<div>Loading...</div>}><Register /></Suspense>;
@@ -157,7 +174,7 @@ class Layout extends Component {
         return (
           <Row className="container">
             <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
-              <SideBar handleNav={this.toggleNav} path={location.pathname}/>
+              <SideBar handleNav={this.toggleNav} path={location.pathname} />
             </Col>
             <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               {showHeader ? <MHeader /> : null}

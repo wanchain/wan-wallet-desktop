@@ -32,6 +32,12 @@ const fr_FR = {
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
     'Login.wrongPassword': 'Mot de passe erroné',

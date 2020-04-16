@@ -32,6 +32,12 @@ const th_TH = {
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
     'Login.wrongPassword': 'รหัสผ่านผิด',

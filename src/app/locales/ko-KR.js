@@ -32,6 +32,12 @@ const ko_KR = {
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
     'Login.wrongPassword': '암호가 틀렸습니다.',

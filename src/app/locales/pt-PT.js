@@ -32,6 +32,12 @@ const pt_PT = {
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
 
+    'Layout.waitingForSDK': 'Waiting for SDK...',
+    'Layout.SDKIsReady': 'SDK is ready',
+    'Layout.initSDKFailed': 'Initialize SDK failed',
+    'Layout.initSuccess': 'Successful initialization',
+    'Layout.initFailed': 'Initialize failed',
+
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
     'Login.wrongPassword': 'Senha Errada',

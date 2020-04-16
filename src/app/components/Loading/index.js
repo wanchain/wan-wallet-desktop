@@ -14,7 +14,7 @@ class Loading extends Component {
     percent: 0
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => {
       let currePercent = this.state.percent;
       let tmp = 10 + parseFloat(currePercent);
@@ -28,16 +28,19 @@ class Loading extends Component {
     }, 2000)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
-  render () {
+  render() {
+    let { step } = this.props;
     return (
       <div className={style.loadingBg}>
         <div className={style.loadingCont}>
           <Progress className={style.progressSty} strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
-          <p>{intl.get('Loading.tips')}</p>
+          <div className={style.tipContainer}>
+            <p className={style.tip}>{intl.get('Loading.tips')} ({step ? intl.get(step) : ''})</p>
+          </div>
         </div>
       </div>
     );

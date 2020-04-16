@@ -32,6 +32,12 @@ const zh_CN = {
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
 
+    'Layout.waitingForSDK': '等待SDK......',
+    'Layout.SDKIsReady': 'SDK已就绪',
+    'Layout.initSDKFailed': '初始化SDK失败',
+    'Layout.initSuccess': '初始化成功',
+    'Layout.initFailed': '初始化失败',
+
     'Send.transSuccess': '交易发送成',
     'Login.login': '登陆',
     'Login.wrongPassword': '密码错误',

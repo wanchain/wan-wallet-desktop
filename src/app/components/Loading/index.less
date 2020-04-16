@@ -3,17 +3,29 @@
   min-height: 100vh;
   text-align: center;
   color: #8D8D96;
-  line-height: 50%;
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
+
   .loadingCont {
     width: 50%
   }
+
   :global(.ant-progress-text) {
     color: white;
   }
-  .progressSty {
-    margin: 20px 0;
+
+  .tipContainer {
+    height: 10px;
+    overflow: visible;
+
+    .progressSty {
+      margin: 20px 0;
+    }
+
+    .tip {
+      line-height: 100%;
+      margin: 10px 0px;
+    }
   }
 }
