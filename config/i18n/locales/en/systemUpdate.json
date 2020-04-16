@@ -7,6 +7,7 @@
     "info": "$1",
     "no": "No",
     "upgrade": "Update Now",
+    "skip": "Skip this version",
     "downloadingProgress": "Downloading...",
     "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!",
     "downloading": "Downloading..."

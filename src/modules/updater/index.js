@@ -1,6 +1,7 @@
 import { app, ipcMain as ipc } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import Logger from '~/src/utils/Logger'
+import Settings from '~/src/utils/Settings'
 import Windows from '~/src/modules/windows'
 
 class WalletUpdater {
@@ -35,13 +36,20 @@ class WalletUpdater {
                 let choice = parseInt(payload.choice)
                 this._logger.info(`user update choice ${choice}`)
 
-                if (choice === 1) {
+                if (choice === 1) { // update
                       this.updater
                         .downloadUpdate()
                         .catch(err => this._logger.error(err.message || err.stack))
-                } else if (choice === 0) {
+                } else if (choice === 0) { // No
                   try {
                     updateModal.close()
+                  } catch (e) {
+                    this._logger.error(`error inside updater: ${err.stack}`)
+                  }
+                } else if (choice === 2) { // skip this version
+                  try {
+                    Settings.skipUpdateVersion(payload.version);
+                    updateModal.close();
                   } catch (e) {
                     this._logger.error(`error inside updater: ${err.stack}`)
                   }
@@ -56,6 +64,11 @@ class WalletUpdater {
         })
 
         this.updater.on('update-available', (info) => {
+            this._logger.info(`New version: ${info.version}`);
+            this._logger.info(`skipped version: ${Settings.skippedUpdateVersion}`);
+            if (Settings.skippedUpdateVersion === info.version) {
+              return false;
+            }
             updateModal = Windows.createModal('systemUpdate', {
               width: 1024 + 208, 
               height: 720, 

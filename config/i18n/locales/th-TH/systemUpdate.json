@@ -7,6 +7,7 @@
     "info": "$1",
     "no": "ไม่",
     "upgrade": "อัพเดทเลย",
+    "skip": "Skip this version",
     "downloadingProgress": "กำลังดาวน์โหลด...",
     "downloadingComplete": "ดาวน์โหลดเรียบร้อยแล้ว กระเป๋าจะทำการปิดตัวและติดตั้งอัพเดทใหม่ทันที!",
     "downloading": "กำลังดาวน์โหลด..."

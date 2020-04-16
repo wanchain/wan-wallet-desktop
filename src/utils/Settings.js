@@ -18,6 +18,7 @@ const defaultConfig = {
   mode: 'light',
   network: 'main',
   lang: 'en',
+  skippedUpdateVersion: null,
   settings: {
     reinput_pwd: false,
     staking_advance: false,
@@ -346,6 +347,10 @@ class Settings {
     return 1 * 60 * 1000
   }
 
+  get skippedUpdateVersion() {
+    return this._get('skippedUpdateVersion') || defaultConfig.skippedUpdateVersion
+  }
+
   get(key) {
     return this._get(key)
   }
@@ -393,6 +398,10 @@ class Settings {
     this._set('lang', langCode)
 
     _lang = langCode
+  }
+
+  skipUpdateVersion(ver) {
+    this._set('skippedUpdateVersion', ver);
   }
 }
 

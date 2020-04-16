@@ -7,6 +7,7 @@
     "info": "$1",
     "no": "Não",
     "upgrade": "Atualizar agora",
+    "skip": "Skip this version",
     "downloadingProgress": "Carregando...",
     "downloadingComplete": "Download completo. Sairá da carteira Wan e instalará atualizações agora!",
     "downloading": "Carregando..."

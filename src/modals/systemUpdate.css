@@ -91,6 +91,12 @@ p {
     margin-right: 10px;
 }
 
+#skip {
+    background: linear-gradient(90deg, rgba(74, 76, 114, 1) 0%, rgba(61, 62, 95, 1) 100%);
+    opacity: 0.95;
+    margin-right: 10px;
+}
+
 #upgrade {
     background: linear-gradient(90deg, rgba(65, 78, 221, 1) 0%, rgba(41, 48, 124, 1) 100%);
 }

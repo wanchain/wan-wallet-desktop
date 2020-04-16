@@ -7,6 +7,7 @@
     "info": "$1",
     "no": "No",
     "upgrade": "Actualizar ahora",
+    "skip": "Skip this version",
     "downloadingProgress": "Descargando...",
     "downloadingComplete": "Descarga completa. Saldra de WAN Wallet y se instalara las actualizaciones ahora.",
     "downloading": "Descargando..."
