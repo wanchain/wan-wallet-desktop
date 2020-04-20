@@ -5,7 +5,7 @@
     "version": "WAN钱包版本$1可用, 你的当前版本是$2，<br>是否更新？",
     "release": "新版本更新说明：",
     "info": "$1",
-    "no": "暂不更新",
+    "no": "稍后提醒我",
     "upgrade": "立即更新",
     "skip": "跳过此版本",
     "downloadingProgress": "下载中......",

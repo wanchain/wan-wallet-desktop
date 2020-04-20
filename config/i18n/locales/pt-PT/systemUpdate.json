@@ -5,9 +5,9 @@
     "version": "A versão da carteira WAN $ 1 já está disponível, sua versão atual é $ 2. <br> Você gostaria de atualizá-la agora?",
     "release": "Notas de lançamento:",
     "info": "$1",
-    "no": "Não",
+    "no": "Remind me later",
     "upgrade": "Atualizar agora",
-    "skip": "Skip this version",
+    "skip": "Skip the version",
     "downloadingProgress": "Carregando...",
     "downloadingComplete": "Download completo. Sairá da carteira Wan e instalará atualizações agora!",
     "downloading": "Carregando..."
