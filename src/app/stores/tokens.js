@@ -343,7 +343,7 @@ class Tokens {
           key: item,
           name: wanAddress.addrInfo[type][item].name,
           address: wanUtil.toChecksumAddress(item),
-          balance: formatNum(balance),
+          balance: balance,
           action: 'send',
           amount: balance
         });
