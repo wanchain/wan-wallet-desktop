@@ -6,8 +6,8 @@
     "release": "Release notes:",
     "info": "$1",
     "no": "Remind me later",
-    "upgrade": "Update Now",
-    "skip": "Skip the version",
+    "upgrade": "Update now",
+    "skip": "Skip this version",
     "downloadingProgress": "Downloading...",
     "downloadingComplete": "Download Complete. Will Quit Wan Wallet and Install Updates Now!",
     "downloading": "Downloading..."
