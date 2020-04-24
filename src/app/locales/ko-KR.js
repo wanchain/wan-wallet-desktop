@@ -32,11 +32,11 @@ const ko_KR = {
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
 
-    'Layout.waitingForSDK': 'Waiting for SDK...',
-    'Layout.SDKIsReady': 'SDK is ready',
-    'Layout.initSDKFailed': 'Initialize SDK failed',
-    'Layout.initSuccess': 'Successful initialization',
-    'Layout.initFailed': 'Initialize failed',
+    'Layout.connecting': 'connecting to the server',
+    'Layout.connected': 'the server is connected',
+    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.initSuccess': 'succeeded',
+    'Layout.initFailed': 'failed',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -44,7 +44,7 @@ const ko_KR = {
     'Login.inputPassword': '비밀번호를 입력하세요',
     'Login.restore': '비밀번호를 잃어버리셨습니까? Mnemonic을 임포트 하여 비밀번호를 초기화 하세요',
 
-    'Loading.tips': '지갑을 로딩중입니다. 잠시만 기다려주세요.',
+    'Loading.tips': '지갑을 로딩중입니다. 잠시만 기다려주세요',
     'Loading.transData': '로딩중..',
 
     'Register.createPassword': '생성',

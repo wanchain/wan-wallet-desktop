@@ -32,11 +32,11 @@ const pt_PT = {
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
 
-    'Layout.waitingForSDK': 'Waiting for SDK...',
-    'Layout.SDKIsReady': 'SDK is ready',
-    'Layout.initSDKFailed': 'Initialize SDK failed',
-    'Layout.initSuccess': 'Successful initialization',
-    'Layout.initFailed': 'Initialize failed',
+    'Layout.connecting': 'connecting to the server',
+    'Layout.connected': 'the server is connected',
+    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.initSuccess': 'succeeded',
+    'Layout.initFailed': 'failed',
 
     'Send.transSuccess': 'Transação enviada com sucesso',
     'Login.login': 'LOG IN',
@@ -44,7 +44,7 @@ const pt_PT = {
     'Login.inputPassword': 'Insira Senha',
     'Login.restore': 'Esqueceu Senha？ Restaure a Seed Phrase inicial (Palavras de recuperação de carteira) para redefini-la',
 
-    'Loading.tips': 'Por favor, aguarde enquanto a carteira está carregando ...',
+    'Loading.tips': 'Por favor, aguarde enquanto a carteira está carregando',
     'Loading.transData': 'Carregando...',
 
     'Register.createPassword': 'Criar Senha',

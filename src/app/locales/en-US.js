@@ -32,11 +32,11 @@ const en_US = {
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
 
-    'Layout.waitingForSDK': 'Waiting for SDK...',
-    'Layout.SDKIsReady': 'SDK is ready',
-    'Layout.initSDKFailed': 'Initialize SDK failed',
-    'Layout.initSuccess': 'Successful initialization',
-    'Layout.initFailed': 'Initialize failed',
+    'Layout.connecting': 'connecting to the server',
+    'Layout.connected': 'the server is connected',
+    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.initSuccess': 'succeeded',
+    'Layout.initFailed': 'failed',
 
     'Send.transSuccess': 'Transaction sent successfully',
     'Login.login': 'LOG IN',
@@ -44,7 +44,7 @@ const en_US = {
     'Login.inputPassword': 'Input Password',
     'Login.restore': 'Forgot your password? Restore from seed phrase to reset it',
 
-    'Loading.tips': 'Please wait while the wallet loads...',
+    'Loading.tips': 'Please wait while the wallet loads',
     'Loading.transData': 'Loading',
 
     'Register.createPassword': 'Create Password',

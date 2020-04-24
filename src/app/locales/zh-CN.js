@@ -32,9 +32,9 @@ const zh_CN = {
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
 
-    'Layout.waitingForSDK': '等待SDK......',
-    'Layout.SDKIsReady': 'SDK已就绪',
-    'Layout.initSDKFailed': '初始化SDK失败',
+    'Layout.connecting': '正在连接服务器',
+    'Layout.connected': '连接服务器成功',
+    'Layout.initSDKFailed': '连接服务器失败',
     'Layout.initSuccess': '初始化成功',
     'Layout.initFailed': '初始化失败',
 
@@ -44,7 +44,7 @@ const zh_CN = {
     'Login.inputPassword': '请输入密码',
     'Login.restore': '忘记密码？导入助记词重置密码',
 
-    'Loading.tips': '钱包正在加载，请耐心等待......',
+    'Loading.tips': '钱包正在加载',
     'Loading.transData': '加载中...',
 
     'Register.createPassword': '创建',

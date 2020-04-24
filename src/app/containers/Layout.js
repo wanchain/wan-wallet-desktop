@@ -60,14 +60,14 @@ class Layout extends Component {
 
   waitUntilSdkReady() {
     this.setState({
-      initializeStep: 'Layout.waitingForSDK'
+      initializeStep: 'Layout.connecting'
     });
     let id = setInterval(async () => {
       let ready = false;
       try {
         ready = await isSdkReady();
         this.setState({
-          initializeStep: 'Layout.SDKIsReady'
+          initializeStep: 'Layout.connected'
         });
       } catch (e) {
         this.setState({

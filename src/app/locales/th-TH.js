@@ -32,11 +32,11 @@ const th_TH = {
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
 
-    'Layout.waitingForSDK': 'Waiting for SDK...',
-    'Layout.SDKIsReady': 'SDK is ready',
-    'Layout.initSDKFailed': 'Initialize SDK failed',
-    'Layout.initSuccess': 'Successful initialization',
-    'Layout.initFailed': 'Initialize failed',
+    'Layout.connecting': 'connecting to the server',
+    'Layout.connected': 'the server is connected',
+    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.initSuccess': 'succeeded',
+    'Layout.initFailed': 'failed',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -44,7 +44,7 @@ const th_TH = {
     'Login.inputPassword': 'กรุณากรอกรหัสผ่าน',
     'Login.restore': 'ลืมรหัสผ่านหรือเปล่า? คุณสามารถกู้รหัสผ่านโดยใช้ "กลุ่มคำลับ" เพื่อรีเซ็ตรหัส',
 
-    'Loading.tips': 'กรุณารอซักครู่กำลังโหลดกระเป๋าของท่าน...',
+    'Loading.tips': 'กรุณารอซักครู่กำลังโหลดกระเป๋าของท่าน',
     'Loading.transData': 'กำลังโหลด',
 
     'Register.createPassword': 'สร้างรหัสผ่านกระเป๋า',

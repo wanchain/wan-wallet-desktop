@@ -32,11 +32,11 @@ const fr_FR = {
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
 
-    'Layout.waitingForSDK': 'Waiting for SDK...',
-    'Layout.SDKIsReady': 'SDK is ready',
-    'Layout.initSDKFailed': 'Initialize SDK failed',
-    'Layout.initSuccess': 'Successful initialization',
-    'Layout.initFailed': 'Initialize failed',
+    'Layout.connecting': 'connecting to the server',
+    'Layout.connected': 'the server is connected',
+    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.initSuccess': 'succeeded',
+    'Layout.initFailed': 'failed',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -44,7 +44,7 @@ const fr_FR = {
     'Login.inputPassword': 'Saisir le mot de passe',
     'Login.restore': 'Mot de passe oublié？ Restaurer la phrase mnémonique (seed) pour réinitialiser',
 
-    'Loading.tips': 'Veuillez patienter pendant le chargement du portefeuille...',
+    'Loading.tips': 'Veuillez patienter pendant le chargement du portefeuille',
     'Loading.transData': 'Chargement',
 
     'Register.createPassword': 'Créer un mot de passe',

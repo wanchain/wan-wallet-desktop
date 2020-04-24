@@ -39,7 +39,7 @@ class Loading extends Component {
         <div className={style.loadingCont}>
           <Progress className={style.progressSty} strokeColor={{ '0%': '#108ee9', '100%': '#87d068', }} percent={parseFloat(this.state.percent)} />
           <div className={style.tipContainer}>
-            <p className={style.tip}>{intl.get('Loading.tips')} ({step ? intl.get(step) : ''})</p>
+            <p className={style.tip}>{intl.get('Loading.tips')}: {step ? intl.get(step) : ''}</p>
           </div>
         </div>
       </div>
