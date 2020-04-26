@@ -2,14 +2,14 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
 
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { WANPATH, INBOUND } from 'utils/settings';
+import { WANPATH, INBOUND, OUTBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getNormalPathFromUtxos, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
 
@@ -160,6 +160,19 @@ class CrossBTCForm extends Component {
     return item[this.props.direction === INBOUND ? 'btcAddress' : 'wanAddress'];
   }
 
+  sendAllAmount = e => {
+    let { form, balance } = this.props;
+    if (e.target.checked) {
+        form.setFieldsValue({
+          amount: new BigNumber(balance).toString(10)
+        });
+    } else {
+      form.setFieldsValue({
+        amount: 0
+      });
+    }
+  }
+
   render () {
     const { loading, form, from, settings, smgList, wanAddrInfo, estimateFee, direction, addrInfo, symbol, balance } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList;
@@ -287,6 +300,9 @@ class CrossBTCForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + (direction === INBOUND ? ' (BTC)' : ' (WBTC)')}
               />
+              {
+                direction === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
+              }
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
             </div>
           </Spin>
