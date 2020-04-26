@@ -82,6 +82,10 @@
             "message": "ยังมีธุรกรรมประเภท Cross-chain ที่ยังดำเนินการอยู่ คุณแน่ใจที่จะออกหรือไม่?",
             "ok": "ฉันแน่ใจ",
             "cancel": "ยกเลิก"
+        },
+        "checkUpdatesDialog": {
+            "title": "Warning",
+            "message": "Check for updates failed"
         }
     }
 }

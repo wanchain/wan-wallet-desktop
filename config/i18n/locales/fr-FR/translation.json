@@ -82,6 +82,10 @@
             "message": "Il reste encore des transactions cross-chain qui sont en cours d'exécution, êtes-vous sûr de quitter maintenant ?",
             "ok": "Confirmer",
             "cancel": "Annuler"
+        },
+        "checkUpdatesDialog": {
+            "title": "Warning",
+            "message": "Check for updates failed"
         }
     }
 }

@@ -82,6 +82,10 @@
             "message": "Existem transações cross-chain que ainda não terminaram, tem certeza de que quer sair",
             "ok": "OK",
             "cancel": "Cancelar"
+        },
+        "checkUpdatesDialog": {
+            "title": "Warning",
+            "message": "Check for updates failed"
         }
     }
 }

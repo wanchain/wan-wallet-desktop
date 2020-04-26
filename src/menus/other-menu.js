@@ -1,12 +1,14 @@
 import path from 'path'
 import { APP_NAME, LANGUAGES } from '../../config/common'
 import setting from '../utils/Settings'
-import { app, shell } from 'electron'
-import { walletBackend, Windows } from '~/src/modules'
+import { app, shell, dialog } from 'electron'
+import { walletBackend, Windows, updater } from '~/src/modules'
 import i18n from '~/config/i18n'
 import menuFactoryService from '~/src/services/menuFactory'
+import Logger from '~/src/utils/Logger'
 
 let sdkInitialized = false
+let logger = Logger.getLogger('other-menu');
 
 walletBackend.on('initiationDone', () => {
     if (!sdkInitialized) {
@@ -166,6 +168,23 @@ export default (i18n) => {
         submenu: [
             {
                 label: i18n.t('main.applicationMenu.app.version', { version: app.getVersion() }),
+            },
+            {
+                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+                enabled: sdkInitialized,
+                click: () => {
+                    logger.info('Checking updates buttun clicked');
+                    updater.updater.checkForUpdates()
+                        .catch(err => {
+                            logger.info('check updates failed');
+                            logger.info(err);
+                            dialog .showMessageBox({
+                                title: i18n.t('main.checkUpdatesDialog.title'),
+                                type: 'info',
+                                message: i18n.t('main.checkUpdatesDialog.message')
+                            });
+                        })
+                }
             },
             { type: 'separator' },
             {

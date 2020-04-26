@@ -82,6 +82,10 @@
             "message": "아직 완료되지 않은 크로스체인 거래가 있습니다. 종료 하시겠습니까?",
             "ok": "예",
             "cancel": "취소"
+        },
+        "checkUpdatesDialog": {
+            "title": "Warning",
+            "message": "Check for updates failed"
         }
     }
 }

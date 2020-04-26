@@ -82,6 +82,10 @@
             "message": "有跨链交易尚未完成，确定要退出吗",
             "ok": "确定",
             "cancel": "取消"
+        },
+        "checkUpdatesDialog": {
+            "title": "警告",
+            "message": "检测更新失败"
         }
     }
 }
