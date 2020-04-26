@@ -32,9 +32,9 @@ const th_TH = {
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
 
-    'Layout.connecting': 'connecting to the server',
-    'Layout.connected': 'the server is connected',
-    'Layout.initSDKFailed': 'failed to connect to the server',
+    'Layout.connecting': 'connecting to server',
+    'Layout.connected': 'connected to server',
+    'Layout.initSDKFailed': 'failed to connect to server',
     'Layout.initSuccess': 'succeeded',
     'Layout.initFailed': 'failed',
 
