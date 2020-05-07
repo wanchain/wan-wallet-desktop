@@ -498,7 +498,7 @@ class DelegateInForm extends Component {
             </div>
             <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
                 <Col span={RIGHT}>
                   <Form layout="inline">
                     <Form.Item >

@@ -64,7 +64,7 @@ class StakeConfirmForm extends Component {
             </div>
             <div className="withdraw-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={10}><span className="withdraw-name">{intl.get('StakeInForm.commission')}</span></Col>
+                <Col span={10}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
                 <Col span={14}><span className="withdraw-addr">{this.props.record.validator.commission}</span></Col>
               </Row>
             </div>
