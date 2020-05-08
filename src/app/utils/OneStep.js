@@ -2,7 +2,7 @@ import { getGasPrice, increaseFailedRetryCount } from 'utils/helper';
 import { REDEEMWETH_GAS, REVOKEETH_GAS, REDEEMETH_GAS, REVOKEWETH_GAS, REDEEMWEOS_GAS } from 'utils/settings'
 
 const MAXTRY = 4;
-const DEFAULT_GASPRICE = 180;
+const DEFAULT_GASPRICE = 1;
 
 const OneStep = {
   pending: {

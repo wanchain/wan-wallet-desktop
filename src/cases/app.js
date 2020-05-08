@@ -222,7 +222,7 @@ class App extends React.Component {
             // from: '0xa1e7f6c21b7441626e0b37d40d352475b17c425a', 
             to: '0xe8adbf32deb5899763c57e45f8edc70b218bd904', 
             amount: 0.02, 
-            gasPrice: 200, 
+            gasPrice: 10,
             gasLimit: 200000 
         }, function(err, val) {
             if (err) { 

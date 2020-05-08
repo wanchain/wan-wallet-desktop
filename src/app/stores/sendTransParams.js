@@ -18,11 +18,11 @@ class SendTransParams {
 
     @observable gasLimit = GASLIMIT;
 
-    @observable defaultGasPrice = 200;
+    @observable defaultGasPrice = 10;
 
-    @observable minGasPrice = 180;
+    @observable minGasPrice = 1;
 
-    @observable currentGasPrice = 200;
+    @observable currentGasPrice = 10;
 
     @action addTransTemplate (addr, params = {}) {
       let objKey = { writable: true, enumerable: true };
@@ -52,7 +52,7 @@ class SendTransParams {
 
     @action updateGasPrice (gasPrice, chainType = 'WAN') {
         self.currentGasPrice = gasPrice;
-        self.minGasPrice = chainType === 'ETH' ? 1 : 180;
+        self.minGasPrice = 1;
     }
 
     @action updateGasLimit (gasLimit) {
