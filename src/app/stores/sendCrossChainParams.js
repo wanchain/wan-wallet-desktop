@@ -29,14 +29,14 @@ class SendCrossChainParams {
 
     @observable gasLimit = GASLIMIT;
 
-    @observable defaultGasPrice = 200;
+    @observable defaultGasPrice = 10;
 
-    @observable minGasPrice = 180;
+    @observable minGasPrice = 1;
 
-    @observable currentGasPrice = 200;
+    @observable currentGasPrice = 10;
 
     @action addCrossTransTemplate (addr, params = {}) {
-      let gasPrice = params.chainType === 'ETH' ? 1 : 200;
+      let gasPrice = 1;
       self.currentFrom = addr;
       self.transParams[addr] = {
         gasPrice,
