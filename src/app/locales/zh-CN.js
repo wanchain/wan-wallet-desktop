@@ -87,9 +87,9 @@ const zh_CN = {
 
     'Portfolio.portfolio': '我的资产',
     'Portfolio.name': '名称',
-    'Portfolio.price': '价格',
+    'Portfolio.price': '单价',
     'Portfolio.balance': '余额',
-    'Portfolio.value': '价值',
+    'Portfolio.value': '估值',
     'Portfolio.portfolioUppercase': '比例',
 
     'Network.title': '网络分析',
