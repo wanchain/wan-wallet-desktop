@@ -147,9 +147,18 @@ class Settings {
       fs.mkdirSync(this.userPath);
     }
     this._logger.info('User data path: ' + this.userPath);
-    this._db = low(new FileSync(this.userPath + '/config.json'))
-    this._logger.info('low db done')
-    this.updateSettingsByConfig()
+
+    try {
+      this._db = low(new FileSync(this.userPath + '/config.json'));
+    } catch (err) {
+      let path = this.userPath + '/config.json';
+      fs.copyFileSync(path, this.userPath + '/config-copy.json');
+      fs.writeFileSync(path, '{}');
+      this._db = low(new FileSync(path));
+    } finally {
+      this._logger.info('low db done');
+      this.updateSettingsByConfig();
+    }
   }
 
   updateSettingsByConfig() {
