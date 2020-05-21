@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { ipcMain, app, dialog } from 'electron'
-import { hdUtil, ccUtil, btcUtil, wanDeployer, wanDexDeployer } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil, btcUtil, wanDeployer, wanDexDeployer, wanJackPotDeployer } from 'wanchain-js-sdk'
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import Web3 from 'web3';
@@ -2014,6 +2014,88 @@ ipc.on(ROUTE_OFFLINE, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
             break;
+        case 'jackpotOpenFile':
+            success = true;
+            try {
+                ret = await dialog.showOpenDialog({ properties: ['openFile'] })
+                console.log('payload', payload, 'ret', ret);
+                if (ret && ret.length == 1 && ret[0].includes(payload.type)) {
+                    switch (payload.type) {
+                        case 'buildJackPotContract(step1).json': wanJackPotDeployer.setFilePath('deployJackPotContract', ret[0]); break;
+                        case 'deployJackPotContract(step2).json': wanJackPotDeployer.setFilePath('buildJackPotConfig', ret[0]); break;
+                        case 'buildJackPotConfig(step3).json': wanJackPotDeployer.setFilePath('sendJackPotConfig', ret[0]); break;
+                        case 'jackpot-offline-config.json': wanJackPotDeployer.setFilePath('jackpotConfig', ret[0]); break;
+                        default:
+                            console.log('unknown file!', payload.type);
+                            success = false;
+                            break;
+                    }
+                } else {
+                    success = false;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack);
+                err = e;
+                success = false;
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: { success } })
+            break;
+        case 'jackpotDownloadFile':
+            try {
+                let filePath = path.join((configService.getConfig()).databasePathPrex, 'wanJackPotDeployer', ...payload.type)
+                console.log('filePath:', filePath);
+                if (!fsExistsSync(filePath)) {
+                    throw new Error("File not exist!");
+                }
+                let extension = path.extname(filePath).substr(1)
+                ret = await dialog.showSaveDialog({
+                    title: '文件另存为', defaultPath: filePath, filters: [
+                        { name: extension.toUpperCase(), extensions: [extension] }
+                    ]
+                })
+                fs.createReadStream(filePath).pipe(fs.createWriteStream(ret));
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'jackpotAction':
+            console.log('jackpotAction', payload);
+
+            try {
+                let { type, data } = payload
+                switch (type) {
+                    case 'buildJackPotContract': ret = await wanJackPotDeployer.buildJackPotContract(data.walletId, data.path); break;
+                    case 'deployJackPotContract': ret = await wanJackPotDeployer.deployJackPotContract(); break;
+                    case 'buildJackPotConfig': ret = await wanJackPotDeployer.buildJackPotConfig(data.walletId, data.path); break;
+                    case 'sendJackPotConfig': ret = await wanJackPotDeployer.sendJackPotConfig(); break;
+                    
+                    default:
+                        console.log("unknown type of dexAction.");
+                        break;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            console.log('dexAction ret', ret);
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'jackpotUpdateNonce':
+            console.log('jackpotUpdateNonce', payload);
+            try {
+                Object.keys(payload).forEach(item => wanJackPotDeployer.updateNonce(item, payload[item]))
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_OFFLINE, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break;
+
     }
 })
 

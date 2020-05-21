@@ -73,7 +73,7 @@
     "react-router-dom": "^5.0.0",
     "trezor-connect": "8.0.12",
     "uuid": "^3.3.2",
-    "wanchain-js-sdk": "git+https://github.com/wanchain/wanchain-js-sdk.git#offline",
+    "wanchain-js-sdk": "git+https://github.com/lolieatapple/wanchain-js-sdk.git#offline",
     "wanchain-util": "git+https://github.com/wanchain/wanchain-util.git#v1.2.1",
     "wanchainjs-tx": "^1.5.0",
     "wanchainjs-util": "^5.2.1",

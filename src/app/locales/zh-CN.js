@@ -446,6 +446,7 @@ const zh_CN = {
     'menuConfig.registerToken': 'Register Token',
     'menuConfig.registerStoremanGroup': 'Register Storeman Group',
     'menuConfig.dexDeploy': 'Dex合约部署',
+    'menuConfig.jackpotDeploy': 'Jackpot合约部署',
 
     'menuConfig.thirdPartyDapps': '第三方应用',
     'menuConfig.dex': '交易',

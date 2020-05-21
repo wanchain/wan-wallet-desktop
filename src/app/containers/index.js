@@ -23,3 +23,4 @@ export { default as RegisterToken } from './DeployContract/RegisterToken';
 export { default as UpgradeContract } from './DeployContract/UpgradeContract';
 export { default as RegisterStoremanGroup } from './DeployContract/RegisterStoremanGroup';
 export { default as DexDeploy } from './DeployContract/DexDeploy';
+export { default as JackpotDeploy } from './DeployContract/JackpotDeploy';

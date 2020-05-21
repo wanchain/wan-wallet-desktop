@@ -279,6 +279,11 @@ class LanguageIntl {
             title: intl.get('menuConfig.dexDeploy'),
             key: '/dexDeploy',
             icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.jackpotDeploy'),
+            key: '/jackpotDeploy',
+            icon: 'block'
           }
         ]
       },
@@ -376,6 +381,11 @@ class LanguageIntl {
           {
             title: intl.get('menuConfig.dexDeploy'),
             key: '/dexDeploy',
+            icon: 'block'
+          },
+          {
+            title: intl.get('menuConfig.jackpotDeploy'),
+            key: '/jackpotDeploy',
             icon: 'block'
           }
         ]

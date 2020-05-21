@@ -449,6 +449,7 @@ const en_US = {
     'menuConfig.registerToken': 'Register Token',
     'menuConfig.registerStoremanGroup': 'Register Storeman Group',
     'menuConfig.dexDeploy': 'Dex Deploy',
+    'menuConfig.jackpotDeploy': 'Jackpot Deploy',
 
     'utils.helper.getBalanceFailed': 'Get balance failed',
     'utils.helper.getNonceFailed': 'Get nonce failed',
