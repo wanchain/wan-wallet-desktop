@@ -5,7 +5,7 @@ import { Button, Input, message, Modal } from 'antd';
 
 import style from './index.less';
 import { BTCPATH_TEST, WANPATH } from 'utils/settings';
-import { openScanOTA, createBTCAddr } from 'utils/helper';
+import { openScanOTA, createBTCAddr, createETHAddr } from 'utils/helper';
 
 message.config({
   duration: 2,
@@ -18,10 +18,12 @@ message.config({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   btcAddrInfo: stores.btcAddress.addrInfo,
+  ethAddrInfo: stores.ethAddress.addrInfo,
   isFirstLogin: stores.session.isFirstLogin,
   setAuth: val => stores.session.setAuth(val),
   setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
+  addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB()
 }))
 
@@ -37,6 +39,7 @@ class Login extends Component {
   }
 
   login = () => {
+    console.log('Do login');
     const pwd = this.state.pwd;
     wand.request('wallet_lock', () => {
       wand.request('wallet_unlock', { pwd: pwd }, async (err, val) => {
@@ -61,6 +64,14 @@ class Login extends Component {
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
           createBTCAddr(this.props.btcPath, 0).then(addressInfo => {
             this.props.addAddress(addressInfo);
+          }).catch(err => {
+            console.log(err);
+          })
+        }
+
+        if (!Object.keys(this.props.ethAddrInfo.normal).length) {
+          createETHAddr().then(addressInfo => {
+            this.props.addETHAddress(addressInfo);
           }).catch(err => {
             console.log(err);
           })
