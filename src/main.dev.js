@@ -134,8 +134,6 @@ async function onReady() {
   if (process.env.NODE_ENV === 'production') {
     updater.start()
   }
-
-  updater.start()
 }
 
 // This method will be called when Electron has done everything 
