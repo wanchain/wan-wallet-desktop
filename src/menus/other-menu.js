@@ -174,6 +174,7 @@ export default (i18n) => {
                 enabled: sdkInitialized,
                 click: () => {
                     logger.info('Checking updates buttun clicked');
+                    updater.updater.isManualCheckUpdates = true;
                     updater.updater.checkForUpdates()
                         .catch(err => {
                             logger.info('check updates failed');

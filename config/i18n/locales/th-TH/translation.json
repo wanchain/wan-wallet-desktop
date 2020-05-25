@@ -86,6 +86,10 @@
         "checkUpdatesDialog": {
             "title": "Warning",
             "message": "Check for updates failed"
+        },
+        "updatesUnavailableDialog": {
+            "title": "Warning",
+            "message": "Your program is the latest version."
         }
     }
 }

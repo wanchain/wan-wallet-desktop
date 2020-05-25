@@ -6,7 +6,7 @@
 
 import env from 'dotenv'
 import path from 'path'
-import { app } from 'electron'
+import { app, dialog } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
@@ -37,7 +37,7 @@ i18n.init(i18nOptions, (err) => {
 
 let mainWindow
 
-async function createMain () {
+async function createMain() {
   logger.info('creating main window...')
 
   const mainWindowState = windowStateKeeper({
@@ -47,8 +47,8 @@ async function createMain () {
 
   const opts = {
     primary: true,
-    electronOptions: { 
-      minWidth:1440,
+    electronOptions: {
+      minWidth: 1440,
       minHeight: 768,
       width: mainWindowState.width,
       height: mainWindowState.height,
@@ -57,7 +57,7 @@ async function createMain () {
       webPreferences: {
         nodeIntegration: setting.isDev ? true : false,
         nativeWindowOpen: false,
-        preload: setting.isDev ?  path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
+        preload: setting.isDev ? path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
       }
     }
   }
@@ -71,13 +71,13 @@ async function createMain () {
   mainWindow = Windows.create('main', opts)
 
   mainWindowState.manage(mainWindow.window)
- 
+
   if (setting.isDev) {
     mainWindow.load('http://localhost:7000/dist/index.html')
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }
-  
+
   // Open the DevTools under development.
   if (setting.isDev) {
     mainWindow.webContents.openDevTools()
@@ -126,7 +126,7 @@ async function onReady() {
 
   // 3. create main window for frontend renderering, hide this window in the first place
   await createMain()
-  
+
   // 4. init wallet sdk
   await walletBackend.init()
 
@@ -134,6 +134,8 @@ async function onReady() {
   if (process.env.NODE_ENV === 'production') {
     updater.start()
   }
+
+  updater.start()
 }
 
 // This method will be called when Electron has done everything 

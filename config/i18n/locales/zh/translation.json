@@ -86,6 +86,10 @@
         "checkUpdatesDialog": {
             "title": "警告",
             "message": "检测更新失败"
+        },
+        "updatesUnavailableDialog": {
+            "title": "警告",
+            "message": "目前已经是最新版本"
         }
     }
 }

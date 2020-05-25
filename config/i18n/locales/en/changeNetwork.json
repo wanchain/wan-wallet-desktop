@@ -1,6 +1,6 @@
 {
     "title": "Switch Network",
-    "head": "Are you sure to switch network?",
+    "head": "Are you sure you want to switch networks?",
     "no": "No",
     "yes": "Yes"
 }
