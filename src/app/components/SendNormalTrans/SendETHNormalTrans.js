@@ -31,12 +31,12 @@ class SendETHNormalTrans extends Component {
   showModal = async () => {
     const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, E20TokensBalance, tokenAddr } = this.props;
     if (getBalanceByAddr(from, addrInfo) === '0') {
-      message.warn(intl.get('SendNormalTrans.hasBalance'));
+      message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
       return;
     }
     if (transType === TRANSTYPE.tokenTransfer) {
       if (!E20TokensBalance[tokenAddr] || E20TokensBalance[tokenAddr][from] === '0') {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
     }

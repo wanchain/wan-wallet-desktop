@@ -37,12 +37,12 @@ class SendNormalTrans extends Component {
 
     // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
-      message.warn(intl.get('SendNormalTrans.hasBalance'));
+      message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
       return;
     }
     if (transType === TRANSTYPE.tokenTransfer) {
       if (!tokensBalance[tokenAddr] || tokensBalance[tokenAddr][from] === '0') {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
     }

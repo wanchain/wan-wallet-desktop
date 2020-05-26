@@ -474,6 +474,9 @@ const ko_KR = {
     'Rename.edit': '수정',
 
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
+    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
+    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
+    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
 
     'TransHistory.time': '트랜잭션 시간',
     'TransHistory.from': '트랜잭션 발신자',

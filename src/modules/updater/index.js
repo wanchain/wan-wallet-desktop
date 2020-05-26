@@ -91,6 +91,10 @@ class WalletUpdater {
     })
 
     this.updater.on('update-not-available', (info) => {
+      this._logger.info(`Is manual checking for updates: ${this.updater.isManualCheckUpdates}`);
+      if (!this.updater.isManualCheckUpdates) {
+        return;
+      }
       dialog.showMessageBox({
         title: i18n.t('main.updatesUnavailableDialog.title'),
         type: 'info',

@@ -472,6 +472,9 @@ const pt_PT = {
     'Rename.edit': 'Editar',
 
     'SendNormalTrans.hasBalance': 'Verifique se você tem saldo suficiente',
+    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
+    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
+    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
 
     'TransHistory.time': 'Tempo',
     'TransHistory.from': 'DE',

@@ -133,7 +133,7 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
     let err
     const [action, id] = actionUni.split('#')
-    console.log(actionUni);
+    // console.log(actionUni);
 
     switch (action) {
         case 'lock':
@@ -1035,7 +1035,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.info('Normal transaction: ' + JSON.stringify(payload));
 
                 const EOSSYMBOL = ccUtil.encodeAccount('EOS', 'eosio.token:EOS');
-                console.log('EOSSYMBOL', EOSSYMBOL)
+                // console.log('EOSSYMBOL', EOSSYMBOL)
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
@@ -1640,7 +1640,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 if (tokenAddr && tokenAddr.startsWith('0x')) {
                     ret = await ccUtil.syncTokenStoremanGroups(crossChain, tokenAddr);
                     coin2WanRatio = ccUtil.getRegTokenInfo(crossChain, tokenAddr).ratio;
-                    console.log(ccUtil.getRegTokenInfo(crossChain, tokenAddr))
+                    // console.log(ccUtil.getRegTokenInfo(crossChain, tokenAddr))
                 } else {
                     [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(crossChain), ccUtil.getC2WRatio(crossChain)]);
                 }
@@ -2045,7 +2045,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (cost < 0) {
                     cost = cost * -1;
                 }
-                console.log('btcNodeDelay result:', result);
+                // console.log('btcNodeDelay result:', result);
                 if (!result) {
                     ret = 'Time out';
                 } else {
@@ -2073,7 +2073,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (cost < 0) {
                     cost = cost * -1;
                 }
-                console.log('eosNodeDelay result:', result);
+                // console.log('eosNodeDelay result:', result);
                 if (!result) {
                     ret = 'Time out';
                 } else {
@@ -2309,7 +2309,7 @@ async function retryRun(func, ...params) {
 }
 
 const getChainIdByType = function (type, isTestNet = false) {
-    console.log(type, isTestNet);
+    // console.log(type, isTestNet);
     let ID
     switch (type) {
         case 'WAN':

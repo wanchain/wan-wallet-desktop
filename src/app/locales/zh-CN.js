@@ -475,6 +475,9 @@ const zh_CN = {
     'Rename.edit': '修改',
 
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
+    'SendNormalTrans.hasNoWANBalance': '请确保您有足够的WAN',
+    'SendNormalTrans.hasNoTokenBalance': '请确保您有足够的token',
+    'SendNormalTrans.hasNoETHBalance': '请确保您有足够的ETH',
 
     'TransHistory.time': '时间',
     'TransHistory.from': '发送方',

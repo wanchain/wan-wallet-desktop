@@ -43,7 +43,7 @@ class BTCTrans extends Component {
         return;
       }
     } else {
-      if ((getTokensListInfo.find(item => item.address === from)).amount === 0) {
+      if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }

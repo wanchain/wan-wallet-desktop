@@ -474,6 +474,9 @@ const en_US = {
     'Rename.edit': 'Edit',
 
     'SendNormalTrans.hasBalance': 'Please make sure you have sufficient balance',
+    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
+    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
+    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
 
     'TransHistory.time': 'TIME',
     'TransHistory.from': 'FROM',

@@ -125,6 +125,9 @@ export const getBalanceWithPrivateBalance = function (arr, path) {
 };
 
 export const getValueByAddrInfo = function (value, type, addrInfo) {
+  if (value === undefined) {
+    return undefined;
+  }
   if (value.indexOf(':') !== -1) {
     let addrArr = value.split(':');
     let addrType = addrArr[0].toLowerCase();
@@ -712,7 +715,7 @@ export const createETHAddr = async function () {
             }
             resolve(addressInfo);
           } else {
-            return reject(err);
+            reject(err);
           }
         });
       } else {

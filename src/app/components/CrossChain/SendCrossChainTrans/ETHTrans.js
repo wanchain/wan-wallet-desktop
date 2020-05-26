@@ -42,11 +42,12 @@ class ETHTrans extends Component {
 
     if (type === INBOUND) {
       if (getBalanceByAddr(from, addrInfo) === '0') {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
         return;
       }
-      if (this.props.tokenAddr && (getE20TokensListInfo.find(item => item.address === from)).amount === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+
+      if (this.props.tokenAddr && (new BigNumber(getE20TokensListInfo.find(item => item.address === from).amount)).isEqualTo(0)) {
+        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
 
@@ -55,7 +56,7 @@ class ETHTrans extends Component {
       destGas = REDEEMWETH_GAS;
     } else {
       if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
 
@@ -105,14 +106,14 @@ class ETHTrans extends Component {
     });
   }
 
-  render () {
+  render() {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
 
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
-        { visible &&
-          <CollectionCreateForm balance={this.props.balance} decimals={this.props.decimals} tokenAddr={this.props.tokenAddr} symbol={this.props.symbol} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+        {visible &&
+          <CollectionCreateForm balance={this.props.balance} decimals={this.props.decimals} tokenAddr={this.props.tokenAddr} symbol={this.props.symbol} chainType={this.props.chainType} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );

@@ -474,6 +474,9 @@ const th_TH = {
     'Rename.edit': 'แก้ไข',
 
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
+    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
+    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
+    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
 
     'TransHistory.time': 'เวลา',
     'TransHistory.from': 'ผู้ส่ง',

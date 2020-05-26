@@ -10,7 +10,7 @@ import { toWei } from 'utils/support';
 import { DEFAULT_GAS, TRANSTYPE, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
-import { checkWanAddr, getBalanceByAddr, checkAmountUnit, formatAmount, encodeTransferInput } from 'utils/helper';
+import { checkWanAddr, checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, encodeTransferInput } from 'utils/helper';
 import { isValidChecksumOTAddress } from 'wanchain-util';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
@@ -233,8 +233,8 @@ class NormalTransForm extends Component {
           resolve(false);
         }
       }
-      checkWanAddr(value).then(ret => {
-        if (ret) {
+      Promise.all([checkWanAddr(value), checkETHAddr(value)]).then(results => {
+        if (results[0] || results[1]) {
           if (!this.state.advanced) {
             this.updateGasLimit();
           }
@@ -244,7 +244,7 @@ class NormalTransForm extends Component {
         }
       }).catch(() => {
         resolve(false);
-      })
+      });
     });
   }
 
