@@ -203,7 +203,7 @@ class WRC20NormalTransForm extends Component {
     let { form, balance } = this.props;
     if (e.target.checked) {
       form.setFieldsValue({
-        amount: balance
+        amount: balance.toString().replace(/,/g, '')
       });
       this.setState({
         disabledAmount: true,
