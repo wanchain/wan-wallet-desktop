@@ -32,11 +32,11 @@ const th_TH = {
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
 
-    'Layout.connecting': 'connecting to server',
-    'Layout.connected': 'connected to server',
-    'Layout.initSDKFailed': 'failed to connect to server',
-    'Layout.initSuccess': 'succeeded',
-    'Layout.initFailed': 'failed',
+    'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
+    'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
+    'Layout.initSDKFailed': 'การเชื่อมต่อกับเซิฟเวอร์ล้มเหลว',
+    'Layout.initSuccess': 'สำเร็จ',
+    'Layout.initFailed': 'ล้มเหลว',
 
     'Send.transSuccess': 'การส่งธุรกรรมเสร็จสมบูรณ์',
     'Login.login': 'เข้าสู่กระเป๋า',
@@ -474,9 +474,9 @@ const th_TH = {
     'Rename.edit': 'แก้ไข',
 
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
-    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
-    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
-    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.hasNoWANBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ WAN เพียงพอ',
+    'SendNormalTrans.hasNoTokenBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของโทเค็นเพียงพอ',
+    'SendNormalTrans.hasNoETHBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ ETH เพียงพอ',
 
     'TransHistory.time': 'เวลา',
     'TransHistory.from': 'ผู้ส่ง',
@@ -522,9 +522,9 @@ const th_TH = {
     'CrossChainTransHistory.redeemFinished': 'การถอนคืนเรียบร้อยแล้ว',
     'CrossChainTransHistory.sentHashConfirming': 'กำลังยืนยันธุรกรรม',
     'CrossChainTransHistory.waitingCross': 'กำลังรอคำสั่งล็อค',
-    'CrossChainTransHistory.Cancelled': 'Cancelled',
-    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
-    'CrossChainTransHistory.Success': 'Success',
+    'CrossChainTransHistory.Cancelled': 'ยกเลิก',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman ทำการล็อคแล้ว',
+    'CrossChainTransHistory.Success': 'สำเร็จ',
 
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',
