@@ -85,11 +85,11 @@
         },
         "checkUpdatesDialog": {
             "title": "Warning",
-            "message": "Check for updates failed"
+            "message": "Failed to check for updates"
         },
         "updatesUnavailableDialog": {
             "title": "Warning",
-            "message": "Your program is the latest version."
+            "message": "No updates available"
         }
     }
 }
