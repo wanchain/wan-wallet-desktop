@@ -84,12 +84,12 @@
             "cancel": "ยกเลิก"
         },
         "checkUpdatesDialog": {
-            "title": "Warning",
-            "message": "Failed to check for updates"
+            "title": "คำเตือน",
+            "message": "ไม่สามารถตรวจสอบการอัพเดทได้"
         },
         "updatesUnavailableDialog": {
-            "title": "Warning",
-            "message": "No updates available"
+            "title": "คำเตือน",
+            "message": "ไม่พบการอัพเดทใหม่"
         }
     }
 }
