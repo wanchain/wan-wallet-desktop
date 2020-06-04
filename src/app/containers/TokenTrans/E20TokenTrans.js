@@ -24,6 +24,7 @@ message.config({
   getAmount: stores.tokens.getE20TokenAmount,
   transParams: stores.sendTransParams.transParams,
   getE20TokensListInfo: stores.tokens.getE20TokensInfo,
+  tokenIconList: stores.tokens.tokenIconList,
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -54,7 +55,10 @@ class E20TokenTrans extends Component {
 
   constructor(props) {
     super(props);
-    this.img = this.props.getTokenIcon(this.props.tokenAddr);
+    if (!this.props.tokenIconList[this.props.tokenAddr]) {
+      this.props.getTokenIcon(this.props.tokenAddr);
+    }
+    this.img = this.props.tokenIconList[this.props.tokenAddr];
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();

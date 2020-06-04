@@ -1826,6 +1826,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getRegisteredOrigToken':
+            try {
+                let { chainType, options } = payload;
+                ret = await ccUtil.getRegisteredOrigToken(payload.chainType, payload.options);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

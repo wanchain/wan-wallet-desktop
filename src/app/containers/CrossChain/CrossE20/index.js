@@ -17,6 +17,7 @@ const WANCHAIN = 'WAN';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.ethAddress.getNormalAmount,
+  tokenIconList: stores.tokens.tokenIconList,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
@@ -35,7 +36,10 @@ class CrossE20 extends Component {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(this.props.symbol);
     this.props.setCurrToken(this.props.tokenAddr);
-    this.img = this.props.getTokenIcon(this.props.tokenAddr);
+    if (!this.props.tokenIconList[this.props.tokenAddr]) {
+      this.props.getTokenIcon(this.props.tokenAddr);
+    }
+    this.img = this.props.tokenIconList[this.props.tokenAddr];
   }
 
   componentDidMount() {

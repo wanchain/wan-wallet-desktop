@@ -24,6 +24,8 @@ class Tokens {
 
   @observable E20TokensBalance = {};
 
+  @observable tokenIconList = {}
+
   @action setCurrToken(addr, symbol) {
     if (symbol) {
       addr = Object.keys(self.formatTokensList).find(item => self.formatTokensList[item].symbol === symbol)
@@ -40,17 +42,36 @@ class Tokens {
     return token;
   }
 
-  @action getTokenIcon(scAddr) {
-    let token = self.getToken(scAddr);
+  @action async getTokenIcon(scAddr) {
+    const token = self.getToken(scAddr);
+    // console.log('token:', token);
     switch (token.symbol) {
       case 'WBTC':
-        return btcImg;
+        self.tokenIconList[scAddr] = btcImg;
+        break;
       case 'WETH':
-        return ethImg;
+        self.tokenIconList[scAddr] = ethImg;
+        break;
       case 'WEOS':
-        return eosImg;
+        self.tokenIconList[scAddr] = eosImg;
+        break;
       default:
-        return token && token.iconData ? `data:image/${token.iconType};base64,` + token.iconData : 'data:image/png;base64,' + new Identicon(scAddr).toString();
+        if (token && token.iconData) {
+          self.tokenIconList[scAddr] = `data:image/${token.iconType};base64,${token.iconData}`;
+        } else {
+          wand.request('crossChain_getRegisteredOrigToken', {
+            chainType: token.chain,
+            options: {
+              tokenScAddr: scAddr
+            }
+          }, (err, data) => {
+            if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
+              self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
+            } else {
+              self.tokenIconList[scAddr] = `data:image/${data[0].iconType};base64,${data[0].iconData}`;
+            }
+          });
+        }
     }
   }
 

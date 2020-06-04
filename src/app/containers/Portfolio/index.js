@@ -10,6 +10,7 @@ import eosLogo from 'static/image/eos.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
+  tokenIconList: stores.tokens.tokenIconList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
   setCoin: (coins) => stores.portfolio.setCoin(coins),
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
@@ -20,12 +21,18 @@ import eosLogo from 'static/image/eos.png';
 
 @observer
 class Portfolio extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.changeTitle('Portfolio.portfolio');
   }
 
-  componentDidMount () {
+  componentWillMount() {
+    const { portfolioColumns } = this.props;
+    this.columns = [...portfolioColumns];
+    this.columns[0]['render'] = this.TokenImgRender;
+  }
+
+  componentDidMount() {
     this.props.setCoin();
     this.props.updateCoinPrice();
     this.props.updateTokenBalance();
@@ -35,11 +42,11 @@ class Portfolio extends Component {
     }, 60000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
-  TokenImg = (text, record) => {
+  TokenImgRender = (text, record) => {
     let img;
     switch (text) {
       case 'WAN':
@@ -55,22 +62,20 @@ class Portfolio extends Component {
         img = eosLogo;
         break;
       default:
-        img = this.props.getTokenIcon(record.scAddr);
+        if (!this.props.tokenIconList[record.scAddr]) {
+          this.props.getTokenIcon(record.scAddr);
+        }
+        img = this.props.tokenIconList[record.scAddr];
     }
-    return (
-      <div><img className={style.nameIco} src={img} /><span>{text}</span></div>
-    );
+    return <div><img className={style.nameIco} src={img} /><span>{text}</span></div>;
   }
 
-  render () {
-    const { portfolioColumns, portfolioList } = this.props;
-    const columns = [...portfolioColumns];
-    columns[0]['render'] = this.TokenImg;
-
+  render() {
+    const { portfolioList } = this.props;
     return (
-        <div>
-          <Table columns={columns} dataSource={portfolioList} pagination={false}/>
-        </div>
+      <div>
+        <Table columns={this.columns} dataSource={portfolioList} pagination={false} />
+      </div>
     );
   }
 }

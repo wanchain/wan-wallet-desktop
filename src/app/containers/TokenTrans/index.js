@@ -26,6 +26,7 @@ message.config({
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
   transParams: stores.sendTransParams.transParams,
+  tokenIconList: stores.tokens.tokenIconList,
   getTokensListInfo: stores.tokens.getTokensListInfo_2WanTypes,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
@@ -57,7 +58,10 @@ class TokenTrans extends Component {
 
   constructor (props) {
     super(props);
-    this.img = this.props.getTokenIcon(this.props.tokenAddr);
+    if (!this.props.tokenIconList[this.props.tokenAddr]) {
+      this.props.getTokenIcon(this.props.tokenAddr);
+    }
+    this.img = this.props.tokenIconList[this.props.tokenAddr];
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
