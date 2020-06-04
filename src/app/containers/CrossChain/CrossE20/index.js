@@ -39,7 +39,6 @@ class CrossE20 extends Component {
     if (!this.props.tokenIconList[this.props.tokenAddr]) {
       this.props.getTokenIcon(this.props.tokenAddr);
     }
-    this.img = this.props.tokenIconList[this.props.tokenAddr];
   }
 
   componentDidMount() {
@@ -171,7 +170,7 @@ class CrossE20 extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{symbol} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} /><span className="wanTotal">{symbol} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -179,7 +178,7 @@ class CrossE20 extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{`W${symbol}`} </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} /><span className="wanTotal">{`W${symbol}`} </span></Col>
         </Row>
         <Row className="mainBody">
           <Col>

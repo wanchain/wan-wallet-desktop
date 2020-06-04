@@ -58,7 +58,6 @@ class E20TokenTrans extends Component {
     if (!this.props.tokenIconList[this.props.tokenAddr]) {
       this.props.getTokenIcon(this.props.tokenAddr);
     }
-    this.img = this.props.tokenIconList[this.props.tokenAddr];
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
@@ -126,7 +125,7 @@ class E20TokenTrans extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
           <Col span={12} className="col-right">
             <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>

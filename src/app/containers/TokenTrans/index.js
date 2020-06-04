@@ -52,29 +52,28 @@ class TokenTrans extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer}/></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer} /></div>
     }
   ];
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-    if (!this.props.tokenIconList[this.props.tokenAddr]) {
-      this.props.getTokenIcon(this.props.tokenAddr);
-    }
-    this.img = this.props.tokenIconList[this.props.tokenAddr];
     this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
     this.props.updateTransHistory();
+    if (!this.props.tokenIconList[this.props.tokenAddr]) {
+      this.props.getTokenIcon(this.props.tokenAddr);
+    }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.updateTokensBalance(this.props.tokenAddr);
     }, 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -147,7 +146,7 @@ class TokenTrans extends Component {
                     ...trans
                   },
                   satellite: trans.satellite
-                  }, () => {
+                }, () => {
                   this.props.updateTransHistory();
                 })
                 console.log('TxHash:', txHash);
@@ -176,17 +175,18 @@ class TokenTrans extends Component {
                 message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
                 reject(err);
               } else {
-                wand.request('transaction_insertTransToDB', { rawTx: {
-                  txHash,
-                  value: trans.amount,
-                  from: from.toLowerCase(),
-                  srcSCAddrKey: 'WAN',
-                  srcChainType: 'WAN',
-                  tokenSymbol: 'WAN',
-                  ...trans
-                },
-                satellite: trans.satellite
-              }, () => {
+                wand.request('transaction_insertTransToDB', {
+                  rawTx: {
+                    txHash,
+                    value: trans.amount,
+                    from: from.toLowerCase(),
+                    srcSCAddrKey: 'WAN',
+                    srcChainType: 'WAN',
+                    tokenSymbol: 'WAN',
+                    ...trans
+                  },
+                  satellite: trans.satellite
+                }, () => {
                   this.props.updateTransHistory();
                 })
                 resolve(txHash);
@@ -219,7 +219,7 @@ class TokenTrans extends Component {
     wand.shell.openExternal(href);
   }
 
-  render () {
+  render() {
     const { getAmount, getTokensListInfo, symbol, tokenAddr } = this.props;
 
     this.props.language && this.columns.forEach(col => {
@@ -229,7 +229,7 @@ class TokenTrans extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={this.img} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
           <Col span={12} className="col-right">
             <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>
