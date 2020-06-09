@@ -32,11 +32,11 @@ const ko_KR = {
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
 
-    'Layout.connecting': 'connecting to server',
-    'Layout.connected': 'connected to server',
-    'Layout.initSDKFailed': 'failed to connect to server',
-    'Layout.initSuccess': 'succeeded',
-    'Layout.initFailed': 'failed',
+    'Layout.connecting': '서버 접속중',
+    'Layout.connected': '서버 접속완료',
+    'Layout.initSDKFailed': '서버 접속 실패',
+    'Layout.initSuccess': '성공',
+    'Layout.initFailed': '실패',
 
     'Send.transSuccess': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'Login.login': '로그인',
@@ -474,9 +474,9 @@ const ko_KR = {
     'Rename.edit': '수정',
 
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
-    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
-    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
-    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.hasNoWANBalance': '충분한 WAN 잔액이 있는지 확인 바랍니다',
+    'SendNormalTrans.hasNoTokenBalance': '충분한 토큰 잔액이 있는지 확인 바랍니다',
+    'SendNormalTrans.hasNoETHBalance': '충분한 ETH 잔액이 있는지 확인 바랍니다',
 
     'TransHistory.time': '트랜잭션 시간',
     'TransHistory.from': '트랜잭션 발신자',

@@ -84,12 +84,12 @@
             "cancel": "취소"
         },
         "checkUpdatesDialog": {
-            "title": "Warning",
-            "message": "Failed to check for updates"
+            "title": "경고",
+            "message": "업데이트 체크를 실패하였습니다"
         },
         "updatesUnavailableDialog": {
-            "title": "Warning",
-            "message": "No updates available"
+            "title": "경고",
+            "message": "사용 가능한 업데이트가 없습니다"
         }
     }
 }

@@ -5,9 +5,9 @@
     "version": "Version $1 de WAN wallet est maintenant disponible, version installée actuellement est $2. <br>Voulez-vous le mettre à jour maintenant ?",
     "release": "Notes de version :",
     "info": "$1",
-    "no": "Remind me later",
+    "no": "Rappelez moi plus tard",
     "upgrade": "Mettre à jour maintenant",
-    "skip": "Skip this version",
+    "skip": "Sauter cette version",
     "downloadingProgress": "Téléchargement en cours...",
     "downloadingComplete": "Téléchargement réussi. Wan Wallet se fermera et se mettra à jour maintenant!",
     "downloading": "Téléchargement en cours..."

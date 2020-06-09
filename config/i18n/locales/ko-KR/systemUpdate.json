@@ -5,9 +5,9 @@
     "version": " WAN 지갑 버젼 $1이 사용 가능합니다. 현재 사용중이신 버젼은 $2 입니다., <br> 업데이트 하시겠습니까?",
     "release": "새로운 버젼 업데이트 관련사항",
     "info": "$1",
-    "no": "Remind me later",
+    "no": "다음에 안내 바랍니다.",
     "upgrade": "지금 업데이트",
-    "skip": "Skip this version",
+    "skip": "이 버전을 스킵하세요",
     "downloadingProgress": "다운로드 중…",
     "downloadingComplete": "다운로드가 완료 되었습니다. 지갑을 종료 후에 업그레이드 설치 됩니다.",
     "downloading": "다운로드 중…"

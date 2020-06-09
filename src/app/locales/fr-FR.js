@@ -32,11 +32,11 @@ const fr_FR = {
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
 
-    'Layout.connecting': 'connecting to server',
-    'Layout.connected': 'connected to server',
-    'Layout.initSDKFailed': 'failed to connect to server',
-    'Layout.initSuccess': 'succeeded',
-    'Layout.initFailed': 'failed',
+    'Layout.connecting': 'connexion au serveur',
+    'Layout.connected': 'serveur connecté',
+    'Layout.initSDKFailed': 'Echec de connexion au serveur',
+    'Layout.initSuccess': 'réussi',
+    'Layout.initFailed': 'échoué',
 
     'Send.transSuccess': 'Transaction envoyée avec succès',
     'Login.login': 'S\'IDENTIFIER',
@@ -474,9 +474,9 @@ const fr_FR = {
     'Rename.edit': 'Modifier',
 
     'SendNormalTrans.hasBalance': 'Assurez-vous d\'avoir un solde suffisant',
-    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
-    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
-    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.hasNoWANBalance': 'Veuillez vous assurer d\'avoir un solde WAN suffisant',
+    'SendNormalTrans.hasNoTokenBalance': 'Veuillez vous assurer d\'avoir un solde en token suffisant',
+    'SendNormalTrans.hasNoETHBalance': 'Veuillez vous assurer d\'avoir un solde ETH suffisant',
 
     'TransHistory.time': 'Temps',
     'TransHistory.from': 'De',
