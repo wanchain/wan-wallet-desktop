@@ -32,11 +32,11 @@ const es_ES = {
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
 
-    'Layout.connecting': 'connecting to server',
-    'Layout.connected': 'connected to server',
-    'Layout.initSDKFailed': 'failed to connect to server',
-    'Layout.initSuccess': 'succeeded',
-    'Layout.initFailed': 'failed',
+    'Layout.connecting': 'conectando al servidor',
+    'Layout.connected': 'conectado al servidor',
+    'Layout.initSDKFailed': 'Error al conectar con el servidor',
+    'Layout.initSuccess': 'exitoso',
+    'Layout.initFailed': 'fallido',
 
     'Send.transSuccess': 'Transaccion enviada con exito',
     'Login.login': 'Iniciar sesion',
@@ -474,9 +474,9 @@ const es_ES = {
     'Rename.edit': 'Editar',
 
     'SendNormalTrans.hasBalance': 'Asegurate de tener saldo suficiente',
-    'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
-    'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
-    'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.hasNoWANBalance': 'Asegúrese de tener suficiente saldo WAN',
+    'SendNormalTrans.hasNoTokenBalance': 'Asegúrate de tener suficiente saldo de tokens',
+    'SendNormalTrans.hasNoETHBalance': 'Asegúrese de tener suficiente saldo ETH',
 
     'TransHistory.time': 'HORA',
     'TransHistory.from': 'DESDE',
