@@ -84,12 +84,12 @@
             "cancel": "Cancelar"
         },
         "checkUpdatesDialog": {
-            "title": "Warning",
-            "message": "Failed to check for updates"
+            "title": "Atenção",
+            "message": "Falha ao verificar se há atualizações"
         },
         "updatesUnavailableDialog": {
-            "title": "Warning",
-            "message": "No updates available"
+            "title": "Atenção",
+            "message": "Não há atualização disponível"
         }
     }
 }
