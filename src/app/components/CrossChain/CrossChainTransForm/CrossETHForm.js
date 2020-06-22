@@ -31,7 +31,7 @@ class CrossETHForm extends Component {
     confirmVisible: false
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
@@ -160,9 +160,10 @@ class CrossETHForm extends Component {
   sendAllAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
-        form.setFieldsValue({
-          amount: new BigNumber(balance).toString(10)
-        });
+      balance = typeof (balance) === 'string' ? balance.replace(/,/g, '') : balance;
+      form.setFieldsValue({
+        amount: new BigNumber(balance).toString(10)
+      });
     } else {
       form.setFieldsValue({
         amount: 0
@@ -170,7 +171,7 @@ class CrossETHForm extends Component {
     }
   }
 
-  render () {
+  render() {
     const { loading, form, from, settings, smgList, wanAddrInfo, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance } = this.props;
     // console.log('chainType:', chainType);
     // console.log('symbol:', symbol);
@@ -302,11 +303,11 @@ class CrossETHForm extends Component {
               {
                 !(chainType === 'ETH' && symbol === undefined) && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
               }
-              {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
+              {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
       </div>
     );
   }
