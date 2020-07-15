@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Red Packet</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover"
+    />
+    <script>
+      function getExplorer() {
+        var explorer = window.navigator.userAgent;
+        var ie11 = "ActiveXObject" in window;
+        function compare(s) {
+          return explorer.indexOf(s) >= 0;
+        }
+        if (ie11 || compare("MSIE") || compare("Edge")) {
+          return "ie";
+        } else if (compare("Firefox")) {
+          return "Firefox";
+        } else if (compare("Chrome")) {
+          return "Chrome";
+        } else if (compare("Opera")) {
+          return "Opera";
+        } else if (compare("Safari")) {
+          return "Safari";
+        } else {
+          return "Unknown";
+        }
+      }
+
+      if (getExplorer() === "ie") {
+        alert(
+          "To ensure your asset security, Chrome, Firefox or Safari is recommended."
+        );
+      }
+    </script>
+
+    <link rel="stylesheet" href="./umi.css" />
+    <script>
+      window.routerBase = "./";
+    </script>
+    <script>
+      //! umi version: 3.1.2
+    </script>
+  </head>
+
+  <body>
+    <script>
+      try {
+        let local = window.wanExt.getLocale();
+        window.localStorage.setItem("umi_locale", local);
+
+        if (local === "zh-CN") {
+          document.title = "红包";
+        }
+      } catch (e) {
+        console.log("ensureJsInjected() error: ", e);
+      }
+    </script>
+
+    <div id="root"></div>
+
+    <script src="./umi.js"></script>
+  </body>
+</html>

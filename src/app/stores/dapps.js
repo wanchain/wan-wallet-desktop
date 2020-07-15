@@ -1,7 +1,9 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
 
+import session from './session';
 import languageIntl from './languageIntl';
 import { ALLCATEGORIES } from 'utils/settings';
+import localDapps from 'localDapps';
 
 class DApps {
   @observable dappList = [];
@@ -48,7 +50,11 @@ class DApps {
     options.language = options.language !== 'en_US' ? [language, 'en'] : [language]
     wand.request('dappStore_getRegisteredDapp', { options }, (err, val) => {
       if (!err) {
-        self.allDapps = val;
+        if (session.chainId === 1) {
+          self.allDapps = val.concat(localDapps);
+        } else {
+          self.allDapps = val;
+        }
       } else {
         console.log(`Get Registered DApps failed`, err)
       }
@@ -82,6 +88,7 @@ class DApps {
       url: dappInfo.url,
       commit: dappInfo.commit,
       enable: true,
+      local: dappInfo.local
     });
     self.setLocalDApps(self.dappList);
     return true;

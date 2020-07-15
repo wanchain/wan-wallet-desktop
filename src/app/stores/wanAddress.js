@@ -580,6 +580,37 @@ class WanAddress {
     return addrList;
   }
 
+  @computed get addrInfoForDapps() {
+    let addrList = []
+    Object.keys(self.addrInfo['normal']).forEach(addr => {
+      let tmp = self.addrInfo.normal[addr]
+      addrList.push({
+        address: addr,
+        balance: tmp.balance,
+        name: tmp.name,
+        type: 'normal'
+      });
+    });
+
+    self.ledgerAddrList.forEach(item => {
+      addrList.push({
+        address: item.address,
+        balance: item.balance,
+        name: item.name,
+        type: 'Ledger'
+      })
+    });
+    self.trezorAddrList.forEach(item => {
+      addrList.push({
+        address: item.address,
+        balance: item.balance,
+        name: item.name,
+        type: 'Trezor'
+      })
+    });
+    return addrList;
+  }
+
   @computed get getNormalAmount() {
     let sum = new BigNumber(0);
     Object.values({ normal: self.addrInfo.normal, import: self.addrInfo.import }).forEach(value => { sum = sum.plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(new BigNumber(curr.balance)), 0)) });

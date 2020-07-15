@@ -71,6 +71,7 @@ class DAppMarket extends Component {
       url: info.url,
       name: info.name,
       commit: info.summary,
+      local: !!info.localDapp,
       icon: `data:image/${info.iconType};base64,${info.iconData}`,
     });
     if (!ret) {
@@ -180,8 +181,11 @@ class DAppMarket extends Component {
                             </Row>
                             <Row>
                               <Col span={6}><Button onClick={() => this.showDetail(item)} className={style.createBtn} type="primary" size="small">{intl.get('DApp.dAppDetail')}</Button></Col>
-                              <Col span={6}><Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">
-                                {dAppsOnSideBar.find(v => v.url === item.url) ? intl.get('DApp.addedButton') : intl.get('DApp.addButton')}</Button></Col>
+                              <Col span={6}>
+                                <Button disabled={dAppsOnSideBar.find(v => v.url === item.url)} onClick={() => this.addDApp(item)} className={style.createBtn} type="primary" size="small">
+                                  {dAppsOnSideBar.find(v => v.url === item.url) ? intl.get('DApp.addedButton') : intl.get('DApp.addButton')}
+                                </Button>
+                              </Col>
                               <Col span={12} style={{ textAlign: 'right' }}><span className={style.dAppCreator}>{intl.get('DApp.poweredBy')}{item.creator}</span></Col>
                             </Row>
                           </Col>

@@ -5,7 +5,7 @@ import merge from 'webpack-merge';
 import common from './webpack.config.renderer.common.babel'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-const publicPath = `http://localhost:${WDS_PORT}/dist/`;
+const publicPath = `http://localhost:${WDS_PORT}/`;
 
 common.entry.unshift('react-hot-loader/patch');
 
@@ -36,16 +36,16 @@ export default merge(common, {
       headers: { 'Access-Control-Allow-Origin': '*' },
       disableHostCheck: true,
       /** TODO */
-      after: function() {
-          if (process.env.NODE_ENV === 'development') {
-              spawn('npm', ['run', 'dev:main'], {
-                  shell: true,
-                  env: process.env,
-                  stdio: 'inherit'
-                })
-                .on('close', code => process.exit(code))
-                .on('error', spawnError => console.error(spawnError));
-          }
-      }
+      // after: function() {
+      //     if (process.env.NODE_ENV === 'development') {
+      //         spawn('npm', ['run', 'dev:main'], {
+      //             shell: true,
+      //             env: process.env,
+      //             stdio: 'inherit'
+      //           })
+      //           .on('close', code => process.exit(code))
+      //           .on('error', spawnError => console.error(spawnError));
+      //     }
+      // }
     }
 });

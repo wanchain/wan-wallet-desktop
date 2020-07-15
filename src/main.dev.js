@@ -73,7 +73,7 @@ async function createMain() {
   mainWindowState.manage(mainWindow.window)
 
   if (setting.isDev) {
-    mainWindow.load('http://localhost:7000/dist/index.html')
+    mainWindow.load('http://localhost:7000/index.html')
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }

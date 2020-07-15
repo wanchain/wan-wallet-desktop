@@ -49,6 +49,7 @@ export default () => {
             <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
             <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
             <Route path="/AddDApp" component={AddDApp} />
+            <Route path="/dapp/:url/:dappname" component={DApps} />
             <Route path="/dapp/:url" component={DApps} />
             <Route path="/dAppMarket" component={DAppMarket} />
           </Switch>

@@ -1,5 +1,6 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 function resolve (dir) {
@@ -177,6 +178,7 @@ export default {
       componentUtils: resolve('src/app/componentUtils/'),
       containers: resolve('src/app/containers/'),
       utils: resolve('src/app/utils/'),
+      localDapps: resolve('src/app/localDapps/'),
       "react-dom": "@hot-loader/react-dom"
     }
   },
@@ -193,6 +195,9 @@ export default {
         filename: '[name].css',
         chunkFilename: '[name].css',
         ignoreOrder: false,
+      }),
+      new CopyWebpackPlugin({
+        patterns: [{ from: resolve('src/app/localDapps'), to: 'localDapps' }]
       })
   ],
   node: {

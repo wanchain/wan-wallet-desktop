@@ -121,7 +121,7 @@ class Tokens {
     delete self.tokensList[tokenAddr.toLowerCase()];
   }
 
-  @action updateTokensBalance(tokenScAddr) {
+  @action updateTokensBalance(tokenScAddr, cb) {
     let normalArr = Object.keys(wanAddress.addrInfo.normal);
     let importArr = Object.keys(wanAddress.addrInfo.import);
     let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
@@ -130,9 +130,11 @@ class Tokens {
 
     wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
       if (err) {
+        if (cb) cb(err)
         console.log('stores_getTokensBalance:', err);
         return;
       }
+      if (cb) cb(null, data)
       self.tokensBalance[tokenScAddr] = data;
     })
   }

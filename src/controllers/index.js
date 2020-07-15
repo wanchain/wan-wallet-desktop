@@ -210,6 +210,20 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 break
             }
 
+        case 'getMnemHash':
+          {
+              let hash;
+              try {
+                  hash = await hdUtil.getMnemHash();
+              } catch (e) {
+                  logger.error(e.message || e.stack);
+                  err = e;
+              }
+
+              sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: hash })
+              break
+          }
+
         case 'isConnected':
             {
                 let ret = false;
@@ -1837,6 +1851,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getRegisteredToken':
+          try {
+              let { tokenOrigAccount } = payload;
+              ret = await ccUtil.getRegisteredToken(tokenOrigAccount);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
     }
 })
 
@@ -1865,6 +1890,17 @@ ipc.on(ROUTE_DAPPSTORE, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'fetchService':
+          try {
+              let { srvType, funcName, type, options } = payload
+              ret = await ccUtil.fetchService(srvType, funcName, type, options);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
     }
 })
 

@@ -7,6 +7,14 @@ export function fromWei (data, unit = 'ether') {
   return web3.utils.fromWei(data.toString(), unit);
 }
 
+export function toHexString (value) {
+  if (typeof value === 'string') {
+    return value.startsWith('0x') ? value : `0x${Number(value).toString(16)}`;
+  } else {
+    return `0x${value.toString(16)}`;
+  }
+}
+
 export function formatNumByDecimals (value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
@@ -162,4 +170,28 @@ export function promiseTimeout (ms, p, desc) {
 
 export function upperFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+// helper function for creating a series of promises
+export function accumulator(promise, func) {
+  return promise.then(result => {
+    return func().then(Array.prototype.concat.bind(result));
+  });
+};
+
+export function promisefy(func, paras = [], obj = null) {
+  return new Promise((resolve, reject) => {
+    let msg = {};
+    let _cb = (err, result) => {
+        if (err) {
+          msg.err = err
+          reject(msg);
+        } else {
+          msg.data = result
+          resolve(msg);
+        }
+    }
+    paras.push(_cb);
+    func.apply(obj, paras);
+  });
 }

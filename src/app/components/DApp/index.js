@@ -1,24 +1,28 @@
-import React, { Component } from 'react';
 import { Spin, Modal } from 'antd';
-import style from './index.less';
-import { WALLETID } from 'utils/settings'
+import intl from 'react-intl-universal';
+import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import {
-  signPersonalMessage as trezorSignPersonalMessage,
-  signTransaction as trezorSignTransaction
-} from 'componentUtils/trezor'
-import { toWei, fromWei } from 'utils/support.js';
+
+import style from './index.less';
+import { WALLETID } from 'utils/settings'
+import { toWei, fromWei, toHexString, promisefy } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
-import intl from 'react-intl-universal';
+import {
+  signTransaction as trezorSignTransaction,
+  signPersonalMessage as trezorSignPersonalMessage,
+} from 'componentUtils/trezor'
 
 const { confirm } = Modal;
-
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
 @inject(stores => ({
-  addrSelectedList: stores.wanAddress.addrSelectedList,
   addrInfo: stores.wanAddress.addrInfo,
+  tokensList: stores.tokens.tokensList,
+  getTokenList: stores.tokens.getTokenList,
+  addrInfoForDapps: stores.wanAddress.addrInfoForDapps,
+  addrSelectedList: stores.wanAddress.addrSelectedList,
+  updateTokensBalance: (tokenScAddr, cb) => stores.tokens.updateTokensBalance(tokenScAddr, cb),
 }))
 
 @observer
@@ -26,19 +30,20 @@ class DApp extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: true, preload: null };
+    this.addresses = {};
+
     if (!props.dAppUrl) {
       this.dAppUrl = 'https://demodex.wandevs.org/';
     } else {
       this.dAppUrl = props.dAppUrl;
+      if (props.dAppUrl.startsWith('/localDapps')) {
+        this.addresses.localDapp = true;
+      }
     }
-    this.addresses = {};
-  }
-
-  async componentDidMount() {
-    this.setState({ loading: true });
-    const preload = await this.getPreloadFile()
-    this.setState({ preload: preload });
-    this.addEventListeners();
+    this.getPreloadFile().then(preload => {
+      this.setState({ preload });
+      this.addEventListeners();
+    })
   }
 
   addEventListeners = () => {
@@ -46,28 +51,28 @@ class DApp extends Component {
       return;
     }
 
-    var webview = document.getElementById('dappView');
+    let webview = document.getElementById('dappView');
 
     if (!webview) {
       return;
     }
 
-    webview.addEventListener('dom-ready', function (e) {
+    webview.addEventListener('dom-ready', e => {
       this.setState({ loading: false });
       // webview.openDevTools();
-    }.bind(this));
+    });
 
-    webview.addEventListener('ipc-message', function (event) {
-      const { args, channel } = event;
+    webview.addEventListener('ipc-message', e => {
+      const { args, channel } = e;
       if (channel === 'dapp-message') {
         this.handlerDexMessage(args[0]);
       }
-    }.bind(this));
+      if (channel === 'iwan-message') {
+        this.handlerIwanMessage(args[0]);
+      }
+    });
 
     this.webview = webview;
-  }
-
-  componentWillUnmount() {
   }
 
   handlerDexMessage(args) {
@@ -78,6 +83,23 @@ class DApp extends Component {
     switch (msg.method) {
       case 'getAddresses':
         this.getAddresses(msg);
+        break;
+      case 'getAllAccountBalance':
+        msg.err = null;
+        msg.val = this.props.addrInfoForDapps;
+        this.updateAddresses();
+        this.sendToDAppFromWeb3(msg);
+        break;
+      case 'getAllAccountTokenBalance':
+        msg.chainType = args[2];
+        msg.tokenScAddr = args[3];
+        msg.symbol = args[4];
+        this.getAllAccountTokenBalance(msg);
+        break;
+      case 'getRegisteredMultiTokenInfo':
+        msg.chainType = args[2];
+        msg.scAddr = args[3];
+        this.getRegisteredMultiTokenInfo(msg);
         break;
       case 'loadNetworkId':
         this.loadNetworkId(msg);
@@ -97,26 +119,89 @@ class DApp extends Component {
     }
   }
 
-  sendToDApp(msg) {
+  handlerIwanMessage(args) {
+    const msg = {
+      method: args[0],
+      id: args[1]
+    }
+    switch (msg.method) {
+      case 'fetchService':
+        msg.srvType = args[2];
+        msg.funcName = args[3];
+        msg.type = args[4];
+        msg.options = args[5];
+        this.fetchService(msg);
+        break;
+      default:
+        console.log('unknown method.');
+        break;
+    }
+  }
+
+  async fetchService(msg) {
+    msg.err = null;
+    if (msg.funcName === 'claimRP') {
+      let ret = await promisefy(wand.request, ['wallet_getMnemHash', {}])
+      msg.options.walletID = ret.data;
+    }
+    try {
+      let ret = await promisefy(wand.request, ['dappStore_fetchService', { srvType: msg.srvType, funcName: msg.funcName, type: msg.type, options: msg.options }]);
+
+      if (!ret.err) {
+        msg.val = ret.data;
+      } else {
+        msg.err = ret.err;
+      }
+    } catch (err) {
+      msg.err = err;
+    }
+    this.sendToDAppfromIwan(msg);
+  }
+
+  sendToDAppFromWeb3(msg) {
     if (!this.webview) {
       this.webview = document.getElementById('dappView');
     }
     this.webview.send('dapp-message', msg);
   }
 
-  async getAddresses(msg) {
+  sendToDAppfromIwan(msg) {
+    if (!this.webview) {
+      this.webview = document.getElementById('dappView');
+    }
+    this.webview.send('iwan-message', msg);
+  }
+
+  updateAddresses() {
+    let addrAll = this.props.addrSelectedList.slice();
+    for (var i = 0, len = addrAll.length; i < len; i++) {
+      const addr = addrAll[i];
+      addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
+      addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
+
+      this.addresses[addrAll[i]] = {};
+      if (addr.indexOf('Ledger') !== -1) {
+        this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
+      } else if (addr.indexOf('Trezor') !== -1) {
+        this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
+      } else {
+        this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
+      }
+    }
+  }
+
+  getAddresses(msg) {
     msg.err = null;
     msg.val = [];
-
     try {
-      let chainID = 5718350;
-      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
-      let addrs = [];
-      for (var account in val.accounts) {
-        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
-          addrs.push(val.accounts[account]['1'].addr);
-        }
-      }
+      // let chainID = 5718350;
+      // let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
+      // let addrs = [];
+      // for (var account in val.accounts) {
+      //   if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
+      //     addrs.push(val.accounts[account]['1'].addr);
+      //   }
+      // }
       let addrAll = this.props.addrSelectedList.slice();
       for (var i = 0, len = addrAll.length; i < len; i++) {
         const addr = addrAll[i];
@@ -137,32 +222,100 @@ class DApp extends Component {
       console.log(error);
       msg.err = error;
     }
-    this.sendToDApp(msg);
+    this.sendToDAppFromWeb3(msg);
+  }
+
+  getAllAccountTokenBalance(msg) {
+    msg.val = {};
+    let token = this.props.getTokenList.find(item => item.addr === msg.tokenScAddr)
+    if (token && token.select) {
+      this.props.updateTokensBalance(msg.tokenScAddr, (err, data) => {
+        if (err) {
+          this.props.addrInfoForDapps.forEach(item => { msg.val[item.address] = '0' })
+          this.getAllAccountTokenBalance(msg);
+        } else {
+          this.props.addrInfoForDapps.forEach(item => {
+            if (data[item.address]) {
+              msg.val[item.address] = data[item.address]
+            } else {
+              msg.val[item.address] = '0'
+            }
+          })
+          this.sendToDAppFromWeb3(msg);
+        }
+      })
+    } else {
+      this.props.addrInfoForDapps.forEach(item => { msg.val[item.address] = '0' })
+      this.sendToDAppFromWeb3(msg);
+    }
+  }
+
+  getRegisteredMultiTokenInfo(msg) {
+    msg.val = {};
+    try {
+      let len = msg.scAddr.length;
+      msg.scAddr.forEach(async item => {
+        let ret1 = await promisefy(wand.request, ['crossChain_getTokenInfo', { scAddr: item, chain: msg.chainType }]);
+        if (!ret1.err) {
+          msg.val[item] = {
+            scAddr: item,
+            symbol: ret1.data.symbol,
+            decimals: ret1.data.decimals
+          }
+        }
+
+        if (this.props.getTokenList[item] && this.props.getTokenList[item].buddy) {
+          let ret2 = await promisefy(wand.request, ['crossChain_getRegisteredToken', { tokenOrigAccount: item }]);
+          if (!ret2.err && ret2.data.length !== 0) {
+            msg.val[item].iconData = ret2.data[0].iconData;
+            msg.val[item].iconType = ret2.data[0].iconType;
+            len = len - 1;
+            if (len === 0) {
+              msg.val = Object.values(msg.val)
+              this.sendToDAppFromWeb3(msg);
+            }
+          }
+        } else {
+          let ret3 = await promisefy(wand.request, ['crossChain_getRegisteredOrigToken', { tokenScAddr: item, chain: msg.chainType }]);
+          if (!ret3.err && ret3.data.length !== 0) {
+            msg.val[item].iconData = ret3.data[0].iconData;
+            msg.val[item].iconType = ret3.data[0].iconType;
+            len = len - 1;
+            if (len === 0) {
+              msg.val = Object.values(msg.val)
+              this.sendToDAppFromWeb3(msg);
+            }
+          }
+        }
+      })
+    } catch (err) {
+      msg.err = err;
+      this.sendToDAppFromWeb3(msg);
+      console.log('getRegisteredMultiTokenInfo:', err)
+    }
   }
 
   loadNetworkId(msg) {
     msg.err = null;
     msg.val = 3;
-    wand.request('query_config', {
-      param: 'network'
-    },
-      function (err, val) {
-        if (err) {
-          console.log('error printed inside callback: ', err);
-          msg.err = err;
+    wand.request('query_config', { param: 'network' }, (err, val) => {
+      if (err) {
+        console.log('error printed inside callback: ', err);
+        msg.err = err;
+      } else {
+        if (val.network === 'testnet') {
+          msg.val = 3;
         } else {
-          if (val.network === 'testnet') {
-            msg.val = 3;
-          } else {
-            msg.val = 1;
-          }
-          this.sendToDApp(msg);
+          msg.val = 1;
         }
-      }.bind(this));
+        this.sendToDAppFromWeb3(msg);
+      }
+    });
   }
 
   async getWalletFromAddress(address) {
     try {
+      address = address.toLowerCase();
       if (!this.addresses[address]) {
         return '';
       }
@@ -213,7 +366,7 @@ class DApp extends Component {
           console.log(error);
           msg.err = error;
         }
-        this.sendToDApp(msg);
+        this.sendToDAppFromWeb3(msg);
       } else {
         wand.request('wallet_signPersonalMessage', { walletID: wallet.id, path: wallet.path, rawTx: msg.message }, (err, sig) => {
           if (err) {
@@ -222,21 +375,13 @@ class DApp extends Component {
           } else {
             msg.val = sig;
           }
-          this.sendToDApp(msg);
+          this.sendToDAppFromWeb3(msg);
         });
       }
     }, async (msg) => {
       msg.err = 'The user rejects in the wallet.';
-      this.sendToDApp(msg);
+      this.sendToDAppFromWeb3(msg);
     });
-  }
-
-  toHexString(value) {
-    if (typeof value === 'string') {
-      return value.startsWith('0x') ? value : `0x${Number(value).toString(16)}`;
-    } else {
-      return `0x${value.toString(16)}`;
-    }
   }
 
   async nativeSendTransaction(msg, wallet) {
@@ -249,7 +394,7 @@ class DApp extends Component {
       path: wallet.path,
       to: msg.message.to,
       amount: amountInWei.div(1e18),
-      gasLimit: msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`,
+      gasLimit: msg.message.gasLimit ? toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`,
       gasPrice: msg.message.gasPrice ? fromWei(msg.message.gasPrice, 'Gwei') : gasPrice,
       data: msg.message.data
     };
@@ -265,7 +410,7 @@ class DApp extends Component {
           msg.val = val.result;
         }
       }
-      this.sendToDApp(msg);
+      this.sendToDAppFromWeb3(msg);
     }.bind(this)
     );
   }
@@ -283,7 +428,7 @@ class DApp extends Component {
       rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+      rawTx.gasLimit = msg.message.gasLimit ? toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
       rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
@@ -295,7 +440,7 @@ class DApp extends Component {
       msg.err = error;
     }
 
-    this.sendToDApp(msg);
+    this.sendToDAppFromWeb3(msg);
   }
 
   async sendTransaction(msg) {
@@ -304,12 +449,11 @@ class DApp extends Component {
       msg.val = null;
       if (!msg.message || !msg.message.from) {
         msg.err = 'can not find from address.';
-        this.sendToDApp(msg);
+        this.sendToDAppFromWeb3(msg);
         return;
       }
 
       const wallet = await this.getWalletFromAddress(msg.message.from);
-
       if (wallet.id === WALLETID.TREZOR) {
         await this.trezorSendTransaction(msg, wallet);
       } else {
@@ -317,11 +461,11 @@ class DApp extends Component {
       }
     }, async (msg) => {
       msg.err = 'The user rejects in the wallet.';
-      this.sendToDApp(msg);
+      this.sendToDAppFromWeb3(msg);
     });
   }
 
-  async getPreloadFile() {
+  getPreloadFile() {
     return pu.promisefy(wand.request, ['setting_getDAppInjectFile']);
   }
 
@@ -360,22 +504,25 @@ class DApp extends Component {
 
   render() {
     const preload = this.state.preload;
+
     if (preload) {
       return (
         <div className={style.myIframe}>
-          {this.state.loading
-            ? <Spin
-              style={{ margin: '60px 0px 0px 60px' }}
-              tip={this.renderLoadTip()}
-              size="large"
-            /> : null}
+        {this.state.loading
+          ? <Spin
+            style={{ margin: '60px 0px 0px 60px' }}
+            tip={this.renderLoadTip()}
+            size="large"
+          /> : null}
+
           <webview
             id="dappView"
-            src={this.dAppUrl}
+            src={this.props.dAppUrl}
             style={{ width: '100%', height: '100%' }}
             nodeintegration="on"
             preload={preload}
             allowpopups="on"
+            // disablewebsecurity={true}
           >
             Your electron doesn't support webview, please set webviewTag: true.
           </webview>
