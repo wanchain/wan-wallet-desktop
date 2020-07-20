@@ -6,7 +6,6 @@ import { getFullChainName, convertStatus } from 'utils/helper';
 
 import style from 'components/TransHistory/index.less';
 import TransInfo from 'componentUtils/TransInfo';
-
 import history from 'static/image/history.png';
 
 @inject(stores => ({

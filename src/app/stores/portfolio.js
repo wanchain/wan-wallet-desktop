@@ -13,8 +13,6 @@ import { BigNumber } from 'bignumber.js';
 class Portfolio {
   @observable coinPriceArr;
 
-  // @observable defaultCoinList = ['WAN', 'ETH', 'BTC', 'EOS'];
-
   @observable defaultCoinList = {
     WAN: {
       buddy: false,

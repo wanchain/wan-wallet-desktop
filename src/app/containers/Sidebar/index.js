@@ -3,13 +3,11 @@ import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
 import style from './index.less';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
 import { CROSSCHAINTYPE, WALLET_CHAIN } from 'utils/settings';
-import AddDApp from 'containers/AddDApp';
 
 const { SubMenu, Item } = Menu;
 
@@ -19,6 +17,7 @@ const { SubMenu, Item } = Menu;
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
+  twoWayBridgeOnSideBar: stores.crossChain.twoWayBridgeOnSideBar,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
 }))
 
@@ -35,19 +34,37 @@ class Sidebar extends Component {
     this.props.handleNav();
   }
 
+  /* onMouseEnter = (e) => {
+    console.log('onMouseEnter:', e);
+    let target = e.domEvent.target;
+    console.log('target:', target);
+    let event = document.createEvent('MouseEvents');
+    event.initEvent('click', true, true);
+    target.dispatchEvent(event);
+  } */
+
   renderMenu = data => {
     return data.map(item => {
       if (item.children) {
-        return (
-          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
-            {this.renderMenu(item.children)}
-          </SubMenu>
-        );
+        if (item.mode) {
+          return (
+            <SubMenu key={item.key} mode={item.mode} /* onTitleMouseEnter={this.onMouseEnter} onTitleMouseLeave={this.onMouseEnter} */ title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
+              {this.renderMenu(item.children)}
+            </SubMenu>
+          );
+        } else {
+          return (
+            <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
+              {this.renderMenu(item.children)}
+            </SubMenu>
+          );
+        }
       }
+      // console.log('key:::::::::::::::', item.key);
       return (
         <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
           <Link to={item.key}>
-            {item.step === '1' ? <Icon type={item.icon} /> : <em className={style['com-circle']}></em>}
+            {item.step === '1' ? <Icon type={item.icon} /> : !item.noCircle && <em className={style['com-circle']}></em>}
             <span>{item.title}</span>
           </Link>
         </Item>
@@ -56,11 +73,10 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, twoWayBridgeOnSideBar, dAppsOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
-
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let dAppsChildren = sidebarColumns[dAppsIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
@@ -91,7 +107,7 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
 
-    if (tokensOnSideBar.length) {
+    /* if (tokensOnSideBar.length) {
       walletChildren.splice(
         walletChainLen,
         walletChildren.length - walletChainLen,
@@ -103,9 +119,95 @@ class Sidebar extends Component {
       );
     } else {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
+    } */
+
+    if (tokensOnSideBar.length) {
+      walletChildren.splice(
+        walletChainLen,
+        walletChildren.length - walletChainLen,
+        ...tokensOnSideBar.map(item => ({
+          title: item.symbol,
+          key: `/tokens/${item.symbol}`,
+          icon: 'block',
+          mode: 'vertical',
+          children: [{
+            title: 'ETHEREUM',
+            // key: `/${'eth'}Account/${'ETH'}`,
+            key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}/eth`,
+            noCircle: true,
+          }, {
+            title: 'WANCHAIN',
+            key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}/wan`,
+            noCircle: true,
+          }]
+        })),
+      );
+    } else {
+      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     }
 
-    if (crossChainOnSideBar.length) {
+    walletChildren.splice(walletChildren.length, 0, /* {
+      title: 'BTC',
+      key: `Account_${'BTC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'BITCOIN',
+        key: `/${'btc'}Account/${'btc'}`,
+        noCircle: true,
+      }, {
+        title: 'WANCHAIN',
+        key: `/${'btc'}Account/${'wan'}`,
+        noCircle: true,
+      }]
+    },  */{
+        title: 'ETH',
+        key: `Account_${'ETH'}`,
+        icon: 'block',
+        mode: 'vertical',
+        children: [{
+          title: 'ETHEREUM',
+          key: `/${'eth'}Account/${'ETH'}`,
+          noCircle: true,
+        }, {
+          title: 'WANCHAIN',
+          key: `/${'eth'}Account/${'WAN'}`,
+          noCircle: true,
+        }/* , {
+        title: 'CVC',
+        key: `/${'eth'}Account/${'CVC'}`,
+        noCircle: true,
+      }, {
+        title: 'EURS',
+        key: `/${'eth'}Account/${'EURS'}`,
+        noCircle: true,
+      }, {
+        title: 'GUSD',
+        key: `/${'eth'}Account/${'GUSD'}`,
+        noCircle: true,
+      }, {
+        title: 'LINK',
+        key: `/${'eth'}Account/${'LINK'}`,
+        noCircle: true,
+      }, {
+        title: 'LRC',
+        key: `/${'eth'}Account/${'LRC'}`,
+        noCircle: true,
+      }, {
+        title: 'MKR',
+        key: `/${'eth'}Account/${'MKR'}`,
+        noCircle: true,
+      } */]
+      });
+
+    // Add token.
+    walletChildren.push({
+      title: intl.get('Sidebar.moreTokens'),
+      key: `/MoreAccount`,
+      icon: 'block'
+    });
+
+    /* if (crossChainOnSideBar.length) {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
         return ({
           title: item.symbol,
@@ -115,7 +217,42 @@ class Sidebar extends Component {
       }));
     } else {
       crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
-    }
+    } */
+    /* if (twoWayBridgeOnSideBar.length) {
+      crossChainChildren.splice(crossChainChildren.length, 0, ...twoWayBridgeOnSideBar.map(item => ({
+        title: item.symbol,
+        key: `/crosschain/${item.key}/${item.first_address ? item.first_address : ''}-${item.second_address ? item.second_address : ''}`,
+        icon: 'block'
+      })));
+    } */
+
+    crossChainChildren.splice(0, crossChainChildren.length);
+    crossChainChildren.splice(crossChainChildren.length, 0, {
+      title: 'BTC',
+      key: `${'CrossChain_BTC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'Bitcoin <-> Wanchain',
+        key: `/crosschain/Bitcoin-Wanchain/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        noCircle: true,
+      }, {
+        title: 'Ethereum <-> Wanchain',
+        key: `/crosschain/Ethereum-Wanchain/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        noCircle: true,
+      }, {
+        title: 'Wanchain <-> Ethereum',
+        key: `/crosschain/Wanchain-Ethereum/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        noCircle: true,
+      }]
+    });
+
+    // Add cross chain.
+    crossChainChildren.push({
+      title: intl.get('MoreCrossChain.more'),
+      key: `/moreCrossChain`,
+      icon: 'block'
+    });
 
     if (dAppsOnSideBar.length) {
       dAppsChildren.splice(0, dAppsChildren.length - 1, ...dAppsOnSideBar.map(item => {
@@ -136,7 +273,7 @@ class Sidebar extends Component {
           <div className={style.logo}>
             <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
-          <Menu theme="dark" mode="inline" /* inlineCollapsed={this.state.collapsed} */ defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
         </div>

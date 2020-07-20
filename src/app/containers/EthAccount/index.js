@@ -9,6 +9,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType, hasSameName, getWalletIdByType, createETHAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
+import style from './index.less';
 
 const CHAINTYPE = 'ETH';
 
@@ -70,6 +71,11 @@ class EthAccount extends Component {
       }),
     };
   });
+
+  /* componentDidUpdate() {
+    console.log('--------------------ETH Account componentDidUpdate----------------------');
+    console.log(this.props.match.params);
+  } */
 
   componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
@@ -138,7 +144,7 @@ class EthAccount extends Component {
   }
 
   render() {
-    const { getAmount, getAddrList } = this.props;
+    const { getAmount, getAddrList, match } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -153,7 +159,12 @@ class EthAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{getAmount}</span><span className="wanTex">ETH</span></Col>
+          <Col span={12} className="col-left">
+            <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
+            <span className={style.symbol}>{match.params.symbol.toUpperCase()}</span>
+            <span className="wanTotal">- {getAmount}</span>
+            <span className="wanTex">ETH</span>
+          </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>

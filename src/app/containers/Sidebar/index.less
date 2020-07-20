@@ -6,7 +6,6 @@
 .sidebar {
   width: @sidebar-width;
   height: 100vh;
-  // overflow-y: scroll;
   overflow: auto;
 
   .logo {
@@ -39,6 +38,9 @@
       .ant-menu-submenu-title {
         font-size: 16px;
       }
+    }
+    .ant-menu-submenu.ant-menu-submenu-vertical {
+      padding-left: 32px;
     }
 
     .ant-menu.ant-menu-dark .ant-menu-item-selected {
@@ -76,8 +78,6 @@
     .ant-menu-dark .ant-menu-inline.ant-menu-sub {
       box-shadow: none;
       background-color: @nav-left-bg;
-      position: relative;
-      top: -2px;
     }
   }
 }

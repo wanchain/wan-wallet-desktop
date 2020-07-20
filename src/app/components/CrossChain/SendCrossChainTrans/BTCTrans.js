@@ -120,7 +120,7 @@ class BTCTrans extends Component {
     let balance, btnStyle;
 
     if (direction === INBOUND) {
-      btnStyle = { className: 'createBtn', shape: 'round', size: 'large' };
+      btnStyle = {};
       balance = getAmount;
     } else {
       btnStyle = {};

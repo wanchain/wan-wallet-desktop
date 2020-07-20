@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Checkbox, Card, Select, Form, message, Icon } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
 import style from './index.less';
 import { defaultTimeout } from 'utils/settings';
 import AddToken from 'componentUtils/AddToken';
@@ -147,7 +146,6 @@ class Config extends Component {
       value: '120',
       text: intl.get('Config.twoHours'),
     }];
-
     return (
       <div className={style['settings_config']}>
         <Card title={intl.get('Config.option')}>
@@ -219,10 +217,12 @@ class Config extends Component {
             </div>
           */}
         </Card>
+
         <Card title={intl.get('Config.staking')}>
           <p className={style['set_title']}>{intl.get('Config.enableValidator')}</p>
           <Checkbox checked={staking_advance} onChange={this.handleStaking}>{intl.get('Config.stakingAdvance')}</Checkbox>
         </Card>
+
         <Card title={intl.get('Config.others')}>
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>

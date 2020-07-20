@@ -200,6 +200,7 @@ const en_US = {
     'PasswordConfirmForm.pwdMessage': 'Please input your Password!',
 
     'Sidebar.wanchain': 'Wanchain',
+    'Sidebar.moreTokens': 'More Tokens',
 
     'Trezor.trezor': 'Trezor',
     'Trezor.installBridge': 'Install Trezor Bridge from trezor.io',
@@ -525,6 +526,8 @@ const en_US = {
     'CrossChainTransHistory.Cancelled': 'Cancelled',
     'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
     'CrossChainTransHistory.Success': 'Success',
+
+    'MoreCrossChain.more': 'More Tokens',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',

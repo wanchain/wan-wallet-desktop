@@ -53,7 +53,7 @@ class Trezor extends Component {
     // Declare trezor event
     TrezorConnect.on(DEVICE_EVENT, (event) => {
       if (event.type === DEVICE.CONNECT) {
-        console.log('Trezor onnected');
+        console.log('Trezor connected');
       } else if (event.type === DEVICE.DISCONNECT) {
         console.log('Trezor disconnected');
         // clear trezor list
