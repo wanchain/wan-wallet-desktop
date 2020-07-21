@@ -119,13 +119,14 @@ class CrossChain extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
     let pairs = this.props.match.params.key.split('-');
+    let symbols = this.props.match.params.symbol.split('-');
     // console.log('pairs:', pairs);
     // console.log('params:', this.props.match.params);
 
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(pairs[0])}<span className="wanTotal">{pairs[0]}</span><span className={style.chain}>{pairs[0]}</span></Col>
+          <Col span={12} className="col-left">{this.getCoinImage(pairs[0])}<span className="wanTotal">{symbols[0]}</span><span className={style.chain}>{pairs[0]}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -133,7 +134,7 @@ class CrossChain extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(pairs[0])/* this.getCoinImage(pairs[1]) */}<span className="wanTotal">{pairs[1]}</span><span className={style.chain}>{pairs[1]}</span></Col>
+          <Col span={12} className="col-left">{this.getCoinImage(pairs[0])/* this.getCoinImage(pairs[1]) */}<span className="wanTotal">{symbols[1]}</span><span className={style.chain}>{pairs[1]}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>

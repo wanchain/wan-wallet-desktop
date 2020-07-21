@@ -171,7 +171,7 @@ class Sidebar extends Component {
           noCircle: true,
         }, {
           title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'WAN'}/WANCHAIN`,
+          key: `/${'eth'}Account/${'ETH'}/WANCHAIN`,
           noCircle: true,
         }]
       }, {
@@ -209,11 +209,11 @@ class Sidebar extends Component {
         mode: 'vertical',
         children: [{
           title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'CVC'}/WANCHAIN`,
+          key: `/${'eth'}Account/${'GUSD'}/WANCHAIN`,
           noCircle: true,
         }, {
           title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'CVC'}/ETHEREUM`,
+          key: `/${'eth'}Account/${'GUSD'}/ETHEREUM`,
           noCircle: true,
         }]
       }, {
@@ -294,15 +294,15 @@ class Sidebar extends Component {
       mode: 'vertical',
       children: [{
         title: 'Bitcoin <-> Wanchain',
-        key: `/crosschain/Bitcoin-Wanchain/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crosschain/Bitcoin-Wanchain/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
         noCircle: true,
       }, {
         title: 'Bitcoin <-> Ethereum',
-        key: `/crosschain/Wanchain-Ethereum/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crosschain/Wanchain-Ethereum/BTC-ethBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
         noCircle: true,
       }, {
         title: 'Ethereum <-> Wanchain',
-        key: `/crosschain/Ethereum-Wanchain/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crosschain/Ethereum-Wanchain/ethBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
         noCircle: true,
       }]
     });
