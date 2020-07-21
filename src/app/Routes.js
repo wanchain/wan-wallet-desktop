@@ -42,7 +42,7 @@ export default () => {
           <Route path="/ethAccount" component={EthAccount} />
           <Route path="/btcAccount" component={BtcAccount} />
           <Route path="/eosAccount" component={EosAccount} /> */}
-          <Route path="/crosschain/:key/:address" component={CrossChain} />
+          <Route path="/crosschain/:key/:symbol/:address" component={CrossChain} />
           <Route path="/crossETH" component={CrossETH} />
           <Route path="/crossBTC" component={CrossBTC} />
           <Route path="/crossEOS" component={CrossEOS} />

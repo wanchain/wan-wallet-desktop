@@ -161,6 +161,7 @@ class EthAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
+            <span className="wanTotal">{120}</span>
             <span className="wanTex">{match.params.symbol.toUpperCase()}</span>
             <Tag className={style.symbol}>{match.params.chain.toUpperCase()}</Tag>
             {/* <Tag className={style.symbol} color="#108ee9">ETHEREUM</Tag> */}
