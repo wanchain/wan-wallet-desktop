@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Icon, Input, Checkbox, List } from 'antd';
+import { Table, Row, Col, message, Icon, Input, Checkbox, List, Tag } from 'antd';
 
 import totalImg from 'static/image/btc.png';
 import style from './index.less';
@@ -62,7 +62,7 @@ class MoreAccount extends Component {
                 {
                   record.list.map((d, i) =>
                     <tr key={i}>
-                      <td style={{ textAlign: 'right', width: '50%' }}>{d.symbol}</td>
+                      <td style={{ textAlign: 'right', width: '70%' }}>{d.symbol} <Tag className={style.symbolTag}>{d.tag}</Tag></td>
                       <td style={{ textAlign: 'left' }}>
                         <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => this.setCrossChainPairSelection(record, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => this.setCrossChainPairSelection(record, true)} />}</span>
                       </td>
@@ -110,20 +110,28 @@ class MoreAccount extends Component {
     key: 'BTC',
     list: [{
       selected: true,
-      symbol: 'BITCOIN',
+      symbol: 'BTC',
+      tag: 'BITCOIN',
     }, {
       selected: true,
-      symbol: 'WANCHAIN',
+      symbol: 'WANCHAIN BTC',
+      tag: 'WANCHAIN',
+    }, {
+      selected: true,
+      symbol: 'ETHEREUM BTC',
+      tag: 'ETHEREUM',
     }]
   }, {
     chain: 'ETH',
     key: 'ETH',
     list: [{
       selected: true,
-      symbol: 'ETHEREUM',
+      symbol: 'ETH',
+      tag: 'ETHEREUM',
     }, {
       selected: true,
-      symbol: 'WANCHAIN',
+      symbol: 'WANCHAIN ETH',
+      tag: 'WANCHAIN',
     }]
   }, {
     chain: 'EOS',
@@ -131,14 +139,16 @@ class MoreAccount extends Component {
     list: [{
       selected: false,
       symbol: 'EOS',
+      tag: 'EOS',
     }, {
       selected: false,
-      symbol: 'WANCHAIN',
+      symbol: 'WANCHAIN EOS',
+      tag: 'WANCHAIN',
     }]
   }]
 
   render() {
-    let { tokensOnSideBar } = this.props;
+    /* let { tokensOnSideBar } = this.props;
     this.data.splice(3, this.data.length - 3, ...tokensOnSideBar.map(item => ({
       chain: item.symbol,
       key: item.symbol,
@@ -149,7 +159,7 @@ class MoreAccount extends Component {
         selected: false,
         symbol: 'WANCHAIN',
       }]
-    })));
+    }))); */
 
     return (
       <div className={style['moreCrossChain']}>
@@ -158,7 +168,7 @@ class MoreAccount extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" mode={'horizontal'} rowKey={'chain'} pagination={false} columns={this.columns} dataSource={this.data} />
+            <Table className="content-wrap" mode={'horizontal'} showHeader={false} rowKey={'chain'} pagination={false} columns={this.columns} dataSource={this.data} />
           </Col>
         </Row>
       </div>

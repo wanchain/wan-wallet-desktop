@@ -114,16 +114,16 @@ class MoreCrossChain extends Component {
       symbol: 'Bitcoin <-> Wanchain',
     }, {
       selected: true,
-      symbol: 'Ethereum <-> Wanchain',
+      symbol: 'Bitcoin <-> Ethereum',
     }, {
       selected: true,
-      symbol: 'Wanchain <-> Ethereum',
+      symbol: 'Ethereum <-> Wanchain',
     }]
   }, {
     chain: 'ETH',
     key: 'ETH',
     list: [{
-      selected: true,
+      selected: false,
       symbol: 'Wanchain <-> Ethereum',
     }]
   }, {

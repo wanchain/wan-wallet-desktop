@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message } from 'antd';
+import { Button, Table, Row, Col, message, Tag } from 'antd';
 
 import totalImg from 'static/image/eth.png';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
@@ -161,9 +161,9 @@ class EthAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
-            <span className={style.symbol}>{match.params.symbol.toUpperCase()}</span>
-            <span className="wanTotal">- {getAmount}</span>
-            <span className="wanTex">ETH</span>
+            <span className="wanTex">{match.params.symbol.toUpperCase()}</span>
+            <Tag className={style.symbol}>{match.params.chain.toUpperCase()}</Tag>
+            {/* <Tag className={style.symbol} color="#108ee9">ETHEREUM</Tag> */}
           </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>

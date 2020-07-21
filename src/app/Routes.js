@@ -36,7 +36,7 @@ export default () => {
         <Switch>
           <Route exact path="/" component={Portfolio} />
           <Route path="/btcAccount/:symbol" component={BtcAccount} />
-          <Route path="/ethAccount/:symbol" component={EthAccount} />
+          <Route path="/ethAccount/:symbol/:chain" component={EthAccount} />
           <Route path="/MoreAccount" component={MoreAccount} />
           {/* <Route path="/wanAccount" component={WanAccount} />
           <Route path="/ethAccount" component={EthAccount} />
