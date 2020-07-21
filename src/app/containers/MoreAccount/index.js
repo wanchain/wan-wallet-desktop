@@ -114,11 +114,11 @@ class MoreAccount extends Component {
       tag: 'BITCOIN',
     }, {
       selected: true,
-      symbol: 'WANCHAIN BTC',
+      symbol: 'wanBTC',
       tag: 'WANCHAIN',
     }, {
       selected: true,
-      symbol: 'ETHEREUM BTC',
+      symbol: 'wanBTC',
       tag: 'ETHEREUM',
     }]
   }, {
@@ -130,7 +130,7 @@ class MoreAccount extends Component {
       tag: 'ETHEREUM',
     }, {
       selected: true,
-      symbol: 'WANCHAIN ETH',
+      symbol: 'wanETH',
       tag: 'WANCHAIN',
     }]
   }, {
@@ -142,7 +142,7 @@ class MoreAccount extends Component {
       tag: 'EOS',
     }, {
       selected: false,
-      symbol: 'WANCHAIN EOS',
+      symbol: 'wanEOS',
       tag: 'WANCHAIN',
     }]
   }]
@@ -164,7 +164,7 @@ class MoreAccount extends Component {
     return (
       <div className={style['moreCrossChain']}>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">More Account</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">Token List</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
