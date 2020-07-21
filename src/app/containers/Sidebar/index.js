@@ -209,11 +209,11 @@ class Sidebar extends Component {
         mode: 'vertical',
         children: [{
           title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'CVC'}/WANCHAIN`,
+          key: `/${'eth'}Account/${'GUSD'}/WANCHAIN`,
           noCircle: true,
         }, {
           title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'CVC'}/ETHEREUM`,
+          key: `/${'eth'}Account/${'GUSD'}/ETHEREUM`,
           noCircle: true,
         }]
       }, {
