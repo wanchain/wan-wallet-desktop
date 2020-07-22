@@ -21,25 +21,12 @@
 
   .menuTreeNode {
     color: #A1A2A8;
-    padding: 0px 15px;
+    padding: 0px 0px 0px 16px;
     background-color: #151625;
-  }
 
-  .sideBarSubMenu {
-    color: #A1A2A8;
-    border: none;
-    background-color: transparent !important;
-    height: 36px;
-
-    &>:global(.ant-menu-submenu-vertical) {
-      padding: 0px !important;
-
-      &>:global(.ant-menu-submenu-title) {
-        height: 36px;
-        line-height: 36px;
-        padding: 0px;
-        margin: 0px;
-      }
+    &:global(.ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title) {
+      height: 60px;
+      line-height: 60px;
     }
   }
 
@@ -56,10 +43,6 @@
       .ant-menu-submenu-title {
         font-size: 16px;
       }
-    }
-
-    .ant-menu-submenu.ant-menu-submenu-vertical {
-      padding-left: 32px;
     }
 
     .ant-menu.ant-menu-dark .ant-menu-item-selected {

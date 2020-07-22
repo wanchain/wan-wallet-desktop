@@ -34,27 +34,14 @@ class Sidebar extends Component {
     this.props.handleNav();
   }
 
-  /* onMouseEnter = (e) => {
-    console.log('onMouseEnter:', e);
-    let target = e.domEvent.target;
-    console.log('target:', target);
-    let event = document.createEvent('MouseEvents');
-    event.initEvent('click', true, true);
-    target.dispatchEvent(event);
-  } */
-
   renderMenu = data => {
     return data.map(item => {
       if (item.children) {
         if (item.mode) {
           return (
-            <Item key={item.key}>
-              <Menu theme="dark" mode={item.mode} className={style.sideBarSubMenu}>
-                <SubMenu title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
-                  {this.renderMenu(item.children)}
-                </SubMenu>
-              </Menu>
-            </Item>
+            <SubMenu key={item.key} title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
+              {this.renderMenu(item.children)}
+            </SubMenu>
           );
         } else {
           return (
@@ -179,48 +166,48 @@ class Sidebar extends Component {
           noCircle: true,
         }]
       }, {
-        title: 'ETH',
-        key: `Account_${'ETH'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'Ethereum',
-          key: `/${'eth'}Account/${'ETH'}/Ethereum`,
-          noCircle: true,
-        }, {
-          title: 'Wanchain',
-          key: `/${'eth'}Account/${'ETH'}/Wanchain`,
-          noCircle: true,
-        }]
+      title: 'ETH',
+      key: `Account_${'ETH'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'Ethereum',
+        key: `/${'eth'}Account/${'ETH'}/Ethereum`,
+        noCircle: true,
       }, {
-        title: 'BTC',
-        key: `Account_${'BTC'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'Wanchain',
-          key: `/${'eth'}Account/${'BTC'}/Wanchain`,
-          noCircle: true,
-        }, {
-          title: 'Ethereum',
-          key: `/${'eth'}Account/${'BTC'}/Ethereum`,
-          noCircle: true,
-        }]
+        title: 'Wanchain',
+        key: `/${'eth'}Account/${'ETH'}/Wanchain`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'BTC',
+      key: `Account_${'BTC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'Wanchain',
+        key: `/${'eth'}Account/${'BTC'}/Wanchain`,
+        noCircle: true,
       }, {
-        title: 'MKR',
-        key: `Account_${'MKR'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'Wanchain',
-          key: `/${'eth'}Account/${'MKR'}/Wanchain`,
-          noCircle: true,
-        }, {
-          title: 'Ethereum',
-          key: `/${'eth'}Account/${'MKR'}/Ethereum`,
-          noCircle: true,
-        }]
-      });
+        title: 'Ethereum',
+        key: `/${'eth'}Account/${'BTC'}/Ethereum`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'MKR',
+      key: `Account_${'MKR'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'Wanchain',
+        key: `/${'eth'}Account/${'MKR'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'Ethereum',
+        key: `/${'eth'}Account/${'MKR'}/Ethereum`,
+        noCircle: true,
+      }]
+    });
 
     // Add token.
     walletChildren.push({
@@ -295,7 +282,7 @@ class Sidebar extends Component {
           <div className={style.logo}>
             <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
-          <Menu theme="dark" mode="inline" selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
+          <Menu theme="dark" mode="vertical" selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
         </div>
