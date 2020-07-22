@@ -141,9 +141,9 @@ class MoreCrossChain extends Component {
   render() {
     return (
       <div className={style['moreCrossChain']}>
-        <Row className="title">
+        {/* <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">Token List</span></Col>
-        </Row>
+        </Row> */}
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" mode={'horizontal'} rowKey={'chain'} pagination={false} columns={this.columns} dataSource={this.data} />
