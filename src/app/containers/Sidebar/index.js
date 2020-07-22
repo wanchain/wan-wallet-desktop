@@ -163,105 +163,64 @@ class Sidebar extends Component {
         key: `/${'btc'}Account/${'wan'}`,
         noCircle: true,
       }]
-    },  */{
+    },  */
+      {
+        title: 'WAN',
+        key: `Account_${'WAN'}`,
+        icon: 'block',
+        mode: 'vertical',
+        children: [{
+          title: 'Wanchain',
+          key: `/${'eth'}Account/${'WAN'}/Wanchain`,
+          noCircle: true,
+        }, {
+          title: 'Ethereum',
+          key: `/${'eth'}Account/${'WAN'}/Ethereum`,
+          noCircle: true,
+        }]
+      }, {
         title: 'ETH',
         key: `Account_${'ETH'}`,
         icon: 'block',
         mode: 'vertical',
         children: [{
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'ETH'}/ETHEREUM`,
+          title: 'Ethereum',
+          key: `/${'eth'}Account/${'ETH'}/Ethereum`,
           noCircle: true,
         }, {
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'ETH'}/WANCHAIN`,
+          title: 'Wanchain',
+          key: `/${'eth'}Account/${'ETH'}/Wanchain`,
           noCircle: true,
         }]
       }, {
-      title: 'CVC',
-      key: `Account_${'CVC'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'CVC'}/WANCHAIN`,
-        noCircle: true,
+        title: 'BTC',
+        key: `Account_${'BTC'}`,
+        icon: 'block',
+        mode: 'vertical',
+        children: [{
+          title: 'Wanchain',
+          key: `/${'eth'}Account/${'BTC'}/Wanchain`,
+          noCircle: true,
+        }, {
+          title: 'Ethereum',
+          key: `/${'eth'}Account/${'BTC'}/Ethereum`,
+          noCircle: true,
+        }]
       }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'CVC'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'EURS',
-      key: `Account_${'EURS'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'EURS'}/WANCHAIN`,
-        noCircle: true,
-      }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'EURS'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'GUSD',
-      key: `Account_${'GUSD'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'GUSD'}/WANCHAIN`,
-        noCircle: true,
-      }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'GUSD'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'LINK',
-      key: `Account_${'LINK'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'LINK'}/WANCHAIN`,
-        noCircle: true,
-      }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'LINK'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'LRC',
-      key: `Account_${'LRC'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'LRC'}/WANCHAIN`,
-        noCircle: true,
-      }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'LRC'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'MKR',
-      key: `Account_${'MKR'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'WANCHAIN',
-        key: `/${'eth'}Account/${'MKR'}/WANCHAIN`,
-        noCircle: true,
-      }, {
-        title: 'ETHEREUM',
-        key: `/${'eth'}Account/${'MKR'}/ETHEREUM`,
-        noCircle: true,
-      }]
-    });
+        title: 'MKR',
+        key: `Account_${'MKR'}`,
+        icon: 'block',
+        mode: 'vertical',
+        children: [{
+          title: 'Wanchain',
+          key: `/${'eth'}Account/${'MKR'}/Wanchain`,
+          noCircle: true,
+        }, {
+          title: 'Ethereum',
+          key: `/${'eth'}Account/${'MKR'}/Ethereum`,
+          noCircle: true,
+        }]
+      });
 
     // Add token.
     walletChildren.push({
