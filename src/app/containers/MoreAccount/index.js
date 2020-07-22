@@ -36,6 +36,7 @@ class MoreAccount extends Component {
       pairFilter: false,
       selectedOnly: false,
     }
+    this.props.changeTitle('MoreTokens.tokenList');
   }
 
   setCrossChainPairSelection = (record, selected) => { }
@@ -62,7 +63,8 @@ class MoreAccount extends Component {
                 {
                   record.list.map((d, i) =>
                     <tr key={i}>
-                      <td style={{ textAlign: 'right', width: '70%' }}>{d.symbol} <Tag className={style.symbolTag}>{d.tag}</Tag></td>
+                    <td style={{ textAlign: 'left', width: '40%', paddingLeft: '28%' }}>{d.symbol}</td>
+                      <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>{d.tag}</Tag></td>
                       <td style={{ textAlign: 'left' }}>
                         <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => this.setCrossChainPairSelection(record, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => this.setCrossChainPairSelection(record, true)} />}</span>
                       </td>
@@ -163,9 +165,9 @@ class MoreAccount extends Component {
 
     return (
       <div className={style['moreCrossChain']}>
-        <Row className="title">
+        {/* <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">Token List</span></Col>
-        </Row>
+        </Row> */}
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" mode={'horizontal'} showHeader={false} rowKey={'chain'} pagination={false} columns={this.columns} dataSource={this.data} />

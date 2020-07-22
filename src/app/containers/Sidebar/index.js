@@ -298,11 +298,11 @@ class Sidebar extends Component {
         noCircle: true,
       }, {
         title: 'Bitcoin <-> Ethereum',
-        key: `/crosschain/Wanchain-Ethereum/BTC-ethBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
         noCircle: true,
       }, {
         title: 'Ethereum <-> Wanchain',
-        key: `/crosschain/Ethereum-Wanchain/ethBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
         noCircle: true,
       }]
     });

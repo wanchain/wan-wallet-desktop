@@ -358,6 +358,8 @@ const en_US = {
     'CopyAndQrcode.deleteFailedText': 'Account deletion failed',
     'CopyAndQrcode.deleteSuccessfulText': 'Account deleted',
 
+    'MoreTokens.tokenList': 'Token List',
+
     'HwWallet.Accounts.name': 'NAME',
     'HwWallet.Accounts.address': 'ADDRESS',
     'HwWallet.Accounts.balance': 'BALANCE',
