@@ -48,9 +48,13 @@ class Sidebar extends Component {
       if (item.children) {
         if (item.mode) {
           return (
-            <SubMenu key={item.key} mode={item.mode} /* onTitleMouseEnter={this.onMouseEnter} onTitleMouseLeave={this.onMouseEnter} */ title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
-              {this.renderMenu(item.children)}
-            </SubMenu>
+            <Item key={item.key}>
+              <Menu theme="dark" mode={item.mode} className={style.sideBarSubMenu}>
+                <SubMenu title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
+                  {this.renderMenu(item.children)}
+                </SubMenu>
+              </Menu>
+            </Item>
           );
         } else {
           return (
@@ -60,7 +64,6 @@ class Sidebar extends Component {
           );
         }
       }
-      // console.log('key:::::::::::::::', item.key);
       return (
         <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
           <Link to={item.key}>
@@ -175,90 +178,90 @@ class Sidebar extends Component {
           noCircle: true,
         }]
       }, {
-        title: 'CVC',
-        key: `Account_${'CVC'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'CVC'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'CVC'}/ETHEREUM`,
-          noCircle: true,
-        }]
+      title: 'CVC',
+      key: `Account_${'CVC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'CVC'}/WANCHAIN`,
+        noCircle: true,
       }, {
-        title: 'EURS',
-        key: `Account_${'EURS'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'EURS'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'EURS'}/ETHEREUM`,
-          noCircle: true,
-        }]
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'CVC'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'EURS',
+      key: `Account_${'EURS'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'EURS'}/WANCHAIN`,
+        noCircle: true,
       }, {
-        title: 'GUSD',
-        key: `Account_${'GUSD'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'GUSD'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'GUSD'}/ETHEREUM`,
-          noCircle: true,
-        }]
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'EURS'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'GUSD',
+      key: `Account_${'GUSD'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'GUSD'}/WANCHAIN`,
+        noCircle: true,
       }, {
-        title: 'LINK',
-        key: `Account_${'LINK'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'LINK'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'LINK'}/ETHEREUM`,
-          noCircle: true,
-        }]
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'GUSD'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'LINK',
+      key: `Account_${'LINK'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'LINK'}/WANCHAIN`,
+        noCircle: true,
       }, {
-        title: 'LRC',
-        key: `Account_${'LRC'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'LRC'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'LRC'}/ETHEREUM`,
-          noCircle: true,
-        }]
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'LINK'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'LRC',
+      key: `Account_${'LRC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'LRC'}/WANCHAIN`,
+        noCircle: true,
       }, {
-        title: 'MKR',
-        key: `Account_${'MKR'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: 'WANCHAIN',
-          key: `/${'eth'}Account/${'MKR'}/WANCHAIN`,
-          noCircle: true,
-        }, {
-          title: 'ETHEREUM',
-          key: `/${'eth'}Account/${'MKR'}/ETHEREUM`,
-          noCircle: true,
-        }]
-      });
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'LRC'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'MKR',
+      key: `Account_${'MKR'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WANCHAIN',
+        key: `/${'eth'}Account/${'MKR'}/WANCHAIN`,
+        noCircle: true,
+      }, {
+        title: 'ETHEREUM',
+        key: `/${'eth'}Account/${'MKR'}/ETHEREUM`,
+        noCircle: true,
+      }]
+    });
 
     // Add token.
     walletChildren.push({
@@ -333,7 +336,7 @@ class Sidebar extends Component {
           <div className={style.logo}>
             <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
+          <Menu theme="dark" mode="inline" selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
         </div>
