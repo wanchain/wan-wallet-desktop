@@ -24,6 +24,8 @@ import {
   MoreCrossChain,
   DApps,
   DAppMarket,
+  OsmDelegation,
+  OsmValidator,
   AddDApp
 } from './containers';
 
@@ -60,6 +62,8 @@ export default () => {
           <Route path="/AddDApp" component={AddDApp} />
           <Route path="/dapp/:url" component={DApps} />
           <Route path="/dAppMarket" component={DAppMarket} />
+          <Route path="/osm_delegation" component={OsmDelegation} />
+          <Route path="/osm_validator" component={OsmValidator} />
         </Switch>
       </Main>
     </HashRouter>

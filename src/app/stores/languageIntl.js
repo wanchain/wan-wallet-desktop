@@ -195,6 +195,116 @@ class LanguageIntl {
     ]
   }
 
+  @computed get osmGroupListColumns() {
+    return self.language && [
+      {
+        key: 'groupId',
+        dataIndex: 'groupId',
+        title: 'Group Id',
+      },
+      {
+        key: 'startTime',
+        dataIndex: 'startTime',
+        title: 'Start Time',
+      },
+      {
+        key: 'endTime',
+        dataIndex: 'endTime',
+        title: 'End Time',
+      },
+      {
+        key: 'chain',
+        dataIndex: 'chain',
+        title: 'Chain',
+      },
+      {
+        key: 'currDeposit',
+        dataIndex: 'currDeposit',
+        title: 'Current Deposit',
+      },
+      {
+        key: 'status',
+        dataIndex: 'status',
+        title: 'Status',
+      },
+      {
+        key: 'action',
+        dataIndex: 'action',
+        title: 'Action',
+      }
+    ]
+  }
+
+  @computed get osmValidatorListColumns() {
+    return self.language && [
+      {
+        key: 'account',
+        dataIndex: 'account',
+        title: 'Account',
+      },
+      {
+        key: 'deposit',
+        dataIndex: 'deposit',
+        title: 'Deposit',
+      },
+      {
+        key: 'groupId',
+        dataIndex: 'groupId',
+        title: 'GroupId',
+      },
+      {
+        key: 'chain',
+        dataIndex: 'chain',
+        title: 'Chain',
+      },
+      {
+        key: 'validator',
+        dataIndex: 'validator',
+        title: 'Validator',
+      },
+      {
+        key: 'reward',
+        dataIndex: 'reward',
+        title: 'Reward',
+      },
+      {
+        key: 'action',
+        dataIndex: 'action',
+        title: 'Action',
+      }
+    ]
+  }
+
+  @computed get osmDelegateListColumns() {
+    return self.language && [
+      {
+        key: 'myAccount',
+        dataIndex: 'myAccount',
+        title: 'MyAccount',
+      },
+      {
+        key: 'deposit',
+        dataIndex: 'deposit',
+        title: 'Deposit',
+      },
+      {
+        key: 'validator',
+        dataIndex: 'validator',
+        title: 'Validator',
+      },
+      {
+        key: 'reward',
+        dataIndex: 'reward',
+        title: 'Reward',
+      },
+      {
+        key: 'action',
+        dataIndex: 'action',
+        title: 'Action',
+      }
+    ]
+  }
+
   @computed get sidebarColumns () {
     let sidebar = self.language && [
       {
@@ -252,6 +362,24 @@ class LanguageIntl {
           {
             title: intl.get('menuConfig.delegation'),
             key: '/delegation',
+            icon: 'block'
+          }
+        ]
+      },
+      {
+        title: 'Open Storeman',
+        step: '1',
+        key: '/openstoreman',
+        icon: 'pie-chart',
+        children: [
+          {
+            title: 'delegation',
+            key: '/osm_delegation',
+            icon: 'block'
+          },
+          {
+            title: 'validator',
+            key: '/osm_validator',
             icon: 'block'
           }
         ]
