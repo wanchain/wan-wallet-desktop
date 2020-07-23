@@ -17,7 +17,7 @@ class LanguageIntl {
   }
 
   @computed get pageTitle() {
-    return self.language && intl.get(self.title);
+    return self.language && (intl.get(self.title) || self.title);
   }
 
   @computed get transColumns() {

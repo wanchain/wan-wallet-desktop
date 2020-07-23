@@ -62,6 +62,10 @@ class Sidebar extends Component {
     });
   }
 
+  onOpenChange = (openKeys) => {
+    this.props.toggleMask(openKeys.length !== 0);
+  }
+
   render() {
     const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, twoWayBridgeOnSideBar, dAppsOnSideBar } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
@@ -122,7 +126,6 @@ class Sidebar extends Component {
           mode: 'vertical',
           children: [{
             title: 'ETHEREUM',
-            // key: `/${'eth'}Account/${'ETH'}`,
             key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}/eth`,
             noCircle: true,
           }, {
@@ -136,22 +139,8 @@ class Sidebar extends Component {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     } */
 
-    walletChildren.splice(0, walletChildren.length, /* {
-      title: 'BTC',
-      key: `Account_${'BTC'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'BITCOIN',
-        key: `/${'btc'}Account/${'btc'}`,
-        noCircle: true,
-      }, {
-        title: 'WANCHAIN',
-        key: `/${'btc'}Account/${'wan'}`,
-        noCircle: true,
-      }]
-    },  */
-      {
+    // walletChildren.splice(walletChildren.length, 0, {
+    walletChildren.splice(0, walletChildren.length, {
         title: 'WAN',
         key: `Account_${'WAN'}`,
         icon: 'block',
@@ -186,11 +175,21 @@ class Sidebar extends Component {
       mode: 'vertical',
       children: [{
         title: '@Wanchain',
-        key: `/${'eth'}Account/${'BTC'}/Wanchain`,
+        key: `/${'btc'}Account/${'BTC'}/Wanchain`,
         noCircle: true,
       }, {
         title: '@Ethereum',
         key: `/${'eth'}Account/${'BTC'}/Ethereum`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'EOS',
+      key: `Account_${'EOS'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: '@Wanchain',
+        key: `/${'eos'}Account/${'EOS'}/Wanchain`,
         noCircle: true,
       }]
     }, {
@@ -243,7 +242,8 @@ class Sidebar extends Component {
       mode: 'vertical',
       children: [{
         title: 'Bitcoin <-> Wanchain',
-        key: `/crosschain/Bitcoin-Wanchain/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        // key: `/crosschain/Bitcoin-Wanchain/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+        key: `/crossBTC`,
         noCircle: true,
       }, {
         title: 'Bitcoin <-> Ethereum',
@@ -282,7 +282,7 @@ class Sidebar extends Component {
           <div className={style.logo}>
             <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
-          <Menu theme="dark" mode="vertical" selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
+          <Menu theme="dark" mode="vertical" /* subMenuCloseDelay={0.05} */ onOpenChange={this.onOpenChange} selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}
           </Menu>
         </div>

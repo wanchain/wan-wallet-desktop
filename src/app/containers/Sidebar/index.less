@@ -1,5 +1,6 @@
 @sidebar-right-bg: linear-gradient(90deg, #4e5cf4 0%, #272d68 100%) !important;
-@sidebar-right-hover-bg: #2E3657;
+@sidebar-right-submenu-bg: linear-gradient(90deg, rgba(46, 54, 87, 1) 1%, rgba(29, 32, 53, 1) 99%) !important;
+@sidebar-right-hover-bg: linear-gradient(90deg, rgba(46, 54, 87, 1) 1%, rgba(29, 32, 53, 1) 99%);
 @sidebar-width: 230px;
 @nav-left-bg: #151625 !important;
 
@@ -27,34 +28,26 @@
     &:global(.ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title) {
       height: 60px;
       line-height: 60px;
+      margin: 0px;
     }
   }
 
   :global {
-    .ant-menu-inline>.ant-menu-submenu>.ant-menu-submenu-title {
+    /* .ant-menu-inline>.ant-menu-submenu>.ant-menu-submenu-title {
       height: 60px !important;
       line-height: 60px !important;
       margin: 0px;
+    } */
+
+    .ant-menu-vertical .ant-menu-item {
+      margin: 0px !important;
     }
 
     .ant-menu-dark.ant-menu-inline {
-
       .ant-menu-item,
       .ant-menu-submenu-title {
         font-size: 16px;
       }
-    }
-
-    .ant-menu.ant-menu-dark .ant-menu-item-selected {
-      background: @sidebar-right-bg;
-    }
-
-    .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
-      background: @sidebar-right-bg;
-    }
-
-    .ant-menu-item:hover {
-      background: @sidebar-right-hover-bg;
     }
 
     .ant-menu-item:not(.ant-menu-top-item) {
@@ -90,18 +83,32 @@
   }
 
   .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
-    background: @sidebar-right-bg;
-    border-radius: 6px;
+    background: @sidebar-right-submenu-bg;
     margin: 0px;
   }
 
   .ant-menu-item:hover {
-    background: @sidebar-right-hover-bg !important;
-    border-radius: 6px;
+    background: @sidebar-right-hover-bg  !important;
   }
 
   .ant-menu-submenu.ant-menu-submenu-popup {
-    border: 1px solid #2e2e2e;
+    border: none;
+  }
+
+  .ant-menu-submenu-popup .ant-menu-submenu-title, .ant-menu-submenu-popup .ant-menu-item {
+      margin: 0px !important;
+  }
+
+  .ant-menu-submenu-active {
+    background: @sidebar-right-hover-bg  !important;
+    color: white !important;
+  }
+
+  .ant-menu-submenu-popup>.ant-menu-sub {
+    background: rgba(31, 32, 52, 1) !important;
+    border: 1px solid rgba(44, 45, 75, 1);
+    box-shadow: 0px 10px 25px 0px rgba(2, 3, 15, 0.3);
+    border-radius: 6px;
   }
 }
 

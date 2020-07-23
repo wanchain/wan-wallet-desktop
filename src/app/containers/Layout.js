@@ -160,6 +160,15 @@ class Layout extends Component {
     });
   }
 
+  toggleMask = show => {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.setState({
+        maskMainContent: show
+      })
+    }, show ? 0 : 50);
+  }
+
   render() {
     const { hasMnemonicOrNot, auth, location } = this.props;
     const showHeader = !(location.pathname.includes('dapp') || location.pathname.includes('AddDApp'));
@@ -174,9 +183,9 @@ class Layout extends Component {
         return (
           <Row className="container">
             <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
-              <SideBar handleNav={this.toggleNav} path={location.pathname} />
+              <SideBar handleNav={this.toggleNav} path={location.pathname} toggleMask={this.toggleMask} />
             </Col>
-            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
+            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '') + (this.state.maskMainContent ? 'maskContent' : '')}>
               {showHeader ? <MHeader /> : null}
               <Row className="content">
                 {this.props.children}

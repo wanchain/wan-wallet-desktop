@@ -34,7 +34,7 @@ class EthAccount extends Component {
       isUnlock: false,
     }
     this.props.updateTransHistory();
-    // this.props.changeTitle('WanAccount.wallet');
+    this.props.changeTitle(this.props.match.params.symbol);
   }
 
   columns = [
@@ -73,7 +73,6 @@ class EthAccount extends Component {
   });
 
   componentDidUpdate() {
-    // console.log('--------------------ETH Account componentDidUpdate----------------------');
     this.props.changeTitle(this.props.match.params.symbol);
   }
 
