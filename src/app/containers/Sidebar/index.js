@@ -39,13 +39,13 @@ class Sidebar extends Component {
       if (item.children) {
         if (item.mode) {
           return (
-            <SubMenu key={item.key} title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
+            <SubMenu className={'sideBarSubMenu'} key={item.key} title={<span><em className={style['com-circle']}></em><span>{item.title}</span></span>}>
               {this.renderMenu(item.children)}
             </SubMenu>
           );
         } else {
           return (
-            <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
+            <SubMenu className={'sideBarSubMenu'} key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
               {this.renderMenu(item.children)}
             </SubMenu>
           );
