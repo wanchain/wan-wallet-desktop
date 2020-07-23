@@ -702,6 +702,7 @@ const en_US = {
 
     'network.down': 'The network request failed, Please try again later',
 
+    'stormen.title': 'Storeman'
 }
 
 export default en_US;

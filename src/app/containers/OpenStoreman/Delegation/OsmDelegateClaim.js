@@ -204,6 +204,10 @@ class InForm extends Component {
               options={{ initialValue: '0xca44f3edb4c8619cdc1cc99cab4e92851ff36b91', rules: [{ required: true }] }}
               title='From'
             />
+            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
+              options={{ initialValue: '100', rules: [{ required: true }] }}
+              title='Withdrawable Amount'
+            />
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>

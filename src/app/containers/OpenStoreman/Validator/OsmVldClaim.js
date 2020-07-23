@@ -204,6 +204,10 @@ class InForm extends Component {
               options={{ initialValue: '0x7a815428f49f8fcf182fbd4bff102373f60ab70b', rules: [{ required: true }] }}
               title='Account'
             />
+            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
+              options={{ initialValue: '100', rules: [{ required: true }] }}
+              title='Withdrawable Amount'
+            />
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
@@ -216,11 +220,6 @@ class InForm extends Component {
               options={{ initialValue: '0' }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
-            />
-            <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: 100, rules: [{ required: true, validator: this.checkAmount }] }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('Common.amount')}
             />
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>

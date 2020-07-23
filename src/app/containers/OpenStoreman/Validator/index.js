@@ -31,7 +31,7 @@ class Validator extends Component {
   constructor(props) {
     super(props);
     this.props.updateTransHistory();
-    this.props.changeTitle('validator.title');
+    this.props.changeTitle('stormen.title');
   }
 
   componentDidMount() {
@@ -65,7 +65,7 @@ class Validator extends Component {
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span>{intl.get('ValidatorNode.nodeList')}</span>
+              <img src={total} /><span>Storeman List</span>
             </Col>
           </div>
         </Row>

@@ -69,14 +69,20 @@ class MyValidatorsList extends Component {
       },
       {
         ...osmValidatorListColumns[6],
+      },
+      {
+        ...osmValidatorListColumns[7],
         render: (text, record) =>
         <div>
           <Row>
             <Col span={8} align="center"><OsmStakeOut record={record} modifyType={record.modifyStake[1]}/></Col>
             <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
+            <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
+
           </Row>
           <Row>
-            <Col span={8} className={style.modifyBtnText} align="center">stakeOut</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Append</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Exit</Col>
             <Col span={8} className={style.modifyBtnText} align="center">Claim</Col>
           </Row>
         </div>
@@ -91,10 +97,11 @@ class MyValidatorsList extends Component {
         account: 'Test',
         deposit: '213122.2222424',
         groupId: '112',
-        validator: '13',
+        storeman: '13',
         reward: '55%',
         chain: 'WAN / BTC',
-        modifyStake: ['StakeOut', 'Claim']
+        status: 'Processing',
+        modifyStake: ['Append', 'Exit', 'Claim']
       }
     ]
     return (

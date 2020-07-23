@@ -696,8 +696,9 @@ const zh_CN = {
     'title.imported': '已导入的地址',
     'title.importedKey': '已导入的密钥',
 
-    'network.down': '网络请求失败，请稍后再试'
+    'network.down': '网络请求失败，请稍后再试',
 
+    'stormen.title': 'Storeman'
 }
 
 export default zh_CN;

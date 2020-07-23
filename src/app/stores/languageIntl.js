@@ -223,9 +223,9 @@ class LanguageIntl {
         title: 'Current Deposit',
       },
       {
-        key: 'status',
-        dataIndex: 'status',
-        title: 'Status',
+        key: 'fee',
+        dataIndex: 'fee',
+        title: 'Fee',
       },
       {
         key: 'action',
@@ -258,14 +258,19 @@ class LanguageIntl {
         title: 'Chain',
       },
       {
-        key: 'validator',
-        dataIndex: 'validator',
-        title: 'Validator',
+        key: 'storeman',
+        dataIndex: 'storeman',
+        title: 'Storeman',
       },
       {
         key: 'reward',
         dataIndex: 'reward',
         title: 'Reward',
+      },
+      {
+        key: 'status',
+        dataIndex: 'status',
+        title: 'Status',
       },
       {
         key: 'action',
@@ -278,19 +283,24 @@ class LanguageIntl {
   @computed get osmDelegateListColumns() {
     return self.language && [
       {
-        key: 'myAccount',
-        dataIndex: 'myAccount',
-        title: 'MyAccount',
+        key: 'account',
+        dataIndex: 'account',
+        title: 'Account',
       },
       {
-        key: 'deposit',
-        dataIndex: 'deposit',
-        title: 'Deposit',
+        key: 'stake',
+        dataIndex: 'stake',
+        title: 'Stake',
       },
       {
-        key: 'validator',
-        dataIndex: 'validator',
-        title: 'Validator',
+        key: 'storeman',
+        dataIndex: 'storeman',
+        title: 'Storeman',
+      },
+      {
+        key: 'crosschain',
+        dataIndex: 'crosschain',
+        title: 'Cross Chain',
       },
       {
         key: 'reward',
@@ -373,12 +383,12 @@ class LanguageIntl {
         icon: 'pie-chart',
         children: [
           {
-            title: 'delegation',
+            title: 'Delegation',
             key: '/osm_delegation',
             icon: 'block'
           },
           {
-            title: 'validator',
+            title: 'Storeman',
             key: '/osm_validator',
             icon: 'block'
           }

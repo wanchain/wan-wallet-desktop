@@ -95,7 +95,7 @@ class GroupList extends Component {
         endTime: '2020/8/9',
         chain: 'WAN / BTC',
         currDeposit: '41325235.4544',
-        status: 'Finished',
+        fee: '0.1%',
         action: 'Register',
       }
     ]

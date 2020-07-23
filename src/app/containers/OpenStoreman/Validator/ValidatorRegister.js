@@ -274,16 +274,6 @@ class ValidatorRegister extends Component {
               prefix={<Icon type="credit-card" className="colorInput" />}
               title='Group Id'
             />
-            {
-              this.state.isAgency &&
-              <div>
-                <CommonFormItem form={form} formName='feeRate'
-                  options={{ rules: [{ required: true, validator: this.checkFeeRate }] }}
-                  title={intl.get('ValidatorRegister.feeRate')}
-                  placeholder={intl.get('ValidatorRegister.feeRateLimit')}
-                />
-              </div>
-            }
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>

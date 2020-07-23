@@ -427,7 +427,7 @@ class OsmDelegateInForm extends Component {
             <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
             <div className={style['stakein-line']}>
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={5} className={style['col-stakein-name']}><span className="stakein-name">Group Id</span></Col>
+                <Col span={5} className={style['col-stakein-name']}><span className="stakein-name">Storeman</span></Col>
                 <Col span={14}>
                   <Form layout="inline" id="posNameSelect">
                     <Form.Item>
@@ -454,35 +454,6 @@ class OsmDelegateInForm extends Component {
                 </Col>
                 <Col span={3} align="right" className={style['col-stakein-info']}>
                   <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
-                </Col>
-              </Row>
-            </div>
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">Validator</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline" id="posNameSelect">
-                    <Form.Item>
-                      {getFieldDecorator('validator', {
-                        rules: [{ required: false }],
-                      })(
-                        <Select
-                          disabled={disabled}
-                          showArrow={!disabled}
-                          showSearch
-                          allowClear
-                          style={{ width: 355 }}
-                          placeholder={intl.get('StakeInForm.selectName')}
-                          optionFilterProp="children"
-                          onChange={this.onValidatorChange}
-                          getPopupContainer={() => document.getElementById('posNameSelect')}
-                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        >
-                          {validatorListSelect.map((item, index) => <Option value={item.props.name} key={index}>{item}</Option>)}
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Form>
                 </Col>
               </Row>
             </div>

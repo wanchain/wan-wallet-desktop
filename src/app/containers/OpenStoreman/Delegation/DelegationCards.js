@@ -32,7 +32,7 @@ class Cards extends Component {
             <Card infoReady={infoReady} className={style.card2} title={intl.get('staking.totalReward')} value={formatNum(stakeInfo.totalDistributedRewards)} tail="WAN" bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')} />
           </Col>
           <Col span={8}>
-            <Card infoReady={infoReady} className={style.card3} title={intl.get('staking.rewardRate')} value={stakeInfo.currentRewardRate} bottom={stakeInfo.epochEndTime} />
+            <Card infoReady={infoReady} className={style.card3} title='Withdrawable Amount' value={stakeInfo.currentRewardRate} bottom={stakeInfo.epochEndTime} />
           </Col>
         </Row>
       </div>

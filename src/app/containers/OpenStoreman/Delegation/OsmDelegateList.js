@@ -51,15 +51,20 @@ class OsmDelegateList extends Component {
       },
       {
         ...osmDelegateListColumns[4],
+      },
+      {
+        ...osmDelegateListColumns[5],
         render: (text, record) =>
         <div>
           <Row>
             <Col span={8} align="center"><OsmDelegateOut record={record} modifyType={record.modifyStake[1]}/></Col>
+            <Col span={8} align="center"><OsmDelegateOut record={record} modifyType={record.modifyStake[1]}/></Col>
             <Col span={8} align="center"><OsmDelegateClaim record={record} /></Col>
           </Row>
           <Row>
-            <Col span={8} className={style.modifyBtnText} align="center">delegateOut</Col>
-            <Col span={8} className={style.modifyBtnText} align="center">delegateClaim</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Top-up</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Exit</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Claim</Col>
           </Row>
         </div>
       }
@@ -70,11 +75,12 @@ class OsmDelegateList extends Component {
     const fakeData = [
       {
         key: 1,
-        myAccount: 'Test',
-        deposit: '213122.2222424',
-        validator: '13',
+        account: 'Test',
+        stake: '213122.2222424',
+        storeman: '13',
         reward: '55%',
-        modifyStake: ['delegateOut', 'delegateClaim']
+        crosschain: 'BTC/WAN',
+        modifyStake: ['top-up', 'exit', 'Claim']
       }
     ]
     return (
