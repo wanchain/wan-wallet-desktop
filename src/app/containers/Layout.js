@@ -8,6 +8,7 @@ import SideBar from './Sidebar';
 import MHeader from 'components/MHeader';
 import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
+import Mask from 'components/Mask';
 import { WANPATH } from 'utils/settings';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
@@ -35,7 +36,8 @@ class Layout extends Component {
   state = {
     loading: true,
     collapsed: false,
-    initializeStep: ''
+    initializeStep: '',
+    maskMainContent: false,
   }
 
   componentDidMount() {
@@ -185,13 +187,16 @@ class Layout extends Component {
             <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               <SideBar handleNav={this.toggleNav} path={location.pathname} toggleMask={this.toggleMask} />
             </Col>
-            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '') + (this.state.maskMainContent ? 'maskContent' : '')}>
+            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
               {showHeader ? <MHeader /> : null}
               <Row className="content">
                 {this.props.children}
               </Row>
               {showHeader ? <MFooter /> : null}
             </Col>
+            {
+              this.state.maskMainContent && <Mask />
+            }
           </Row>
         )
       }

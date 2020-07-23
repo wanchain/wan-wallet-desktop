@@ -17,6 +17,7 @@
   height: 100vh;
   float: left;
   background-color: @nav-left-bg !important;
+  z-index: 100;
 }
 
 :global(.nav-collapsed) {
@@ -38,6 +39,7 @@
     margin-left: @nav-width;
     height: 100vh;
     overflow: auto;
+    z-index: 1;
   }
 
   :global(.main.nav-collapsed) {
