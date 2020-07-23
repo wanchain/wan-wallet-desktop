@@ -157,11 +157,11 @@ class Sidebar extends Component {
         icon: 'block',
         mode: 'vertical',
         children: [{
-          title: 'Wanchain',
+          title: '@Wanchain',
           key: `/${'eth'}Account/${'WAN'}/Wanchain`,
           noCircle: true,
         }, {
-          title: 'Ethereum',
+          title: '@Ethereum',
           key: `/${'eth'}Account/${'WAN'}/Ethereum`,
           noCircle: true,
         }]
@@ -171,11 +171,11 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
-        title: 'Ethereum',
+        title: '@Ethereum',
         key: `/${'eth'}Account/${'ETH'}/Ethereum`,
         noCircle: true,
       }, {
-        title: 'Wanchain',
+        title: '@Wanchain',
         key: `/${'eth'}Account/${'ETH'}/Wanchain`,
         noCircle: true,
       }]
@@ -185,11 +185,11 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
-        title: 'Wanchain',
+        title: '@Wanchain',
         key: `/${'eth'}Account/${'BTC'}/Wanchain`,
         noCircle: true,
       }, {
-        title: 'Ethereum',
+        title: '@Ethereum',
         key: `/${'eth'}Account/${'BTC'}/Ethereum`,
         noCircle: true,
       }]
@@ -199,11 +199,11 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
-        title: 'Wanchain',
+        title: '@Wanchain',
         key: `/${'eth'}Account/${'MKR'}/Wanchain`,
         noCircle: true,
       }, {
-        title: 'Ethereum',
+        title: '@Ethereum',
         key: `/${'eth'}Account/${'MKR'}/Ethereum`,
         noCircle: true,
       }]
