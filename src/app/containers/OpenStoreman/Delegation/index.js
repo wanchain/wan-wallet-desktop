@@ -4,7 +4,7 @@ import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
 
 import style from './index.less';
-import styleComm from 'containers/OpenStoreman/Validator/index.less';
+import styleComm from 'containers/OpenStoreman/Storeman/index.less';
 
 import DelegationCards from './DelegationCards';
 import OsmDelegateList from './OsmDelegateList';
