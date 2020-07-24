@@ -45,14 +45,14 @@ class Sidebar extends Component {
           );
         } else {
           return (
-            <SubMenu className={'sideBarSubMenu'} key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
+            <SubMenu className={'sideBarSubMenu'} key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>} className={item.step === '1' ? 'ant-menu-top-item' : 'sideBarSubMenuItem'}>
               {this.renderMenu(item.children)}
             </SubMenu>
           );
         }
       }
       return (
-        <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : ''}>
+        <Item key={item.key} className={item.step === '1' ? 'ant-menu-top-item' : 'sideBarSubMenuItem'}>
           <Link to={item.key}>
             {item.step === '1' ? <Icon type={item.icon} /> : !item.noCircle && <em className={style['com-circle']}></em>}
             <span>{item.title}</span>
