@@ -200,37 +200,37 @@ class LanguageIntl {
       {
         key: 'groupId',
         dataIndex: 'groupId',
-        title: 'Group Id',
+        title: 'GROUP ID',
       },
       {
         key: 'startTime',
         dataIndex: 'startTime',
-        title: 'Start Time',
+        title: 'START TIME',
       },
       {
         key: 'endTime',
         dataIndex: 'endTime',
-        title: 'End Time',
+        title: 'END TIME',
       },
       {
         key: 'chain',
         dataIndex: 'chain',
-        title: 'Chain',
+        title: 'CROSS CHAIN',
       },
       {
         key: 'currDeposit',
         dataIndex: 'currDeposit',
-        title: 'Current Deposit',
+        title: 'STAKE',
       },
       {
         key: 'fee',
         dataIndex: 'fee',
-        title: 'Fee',
+        title: 'FEE',
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'Action',
+        title: 'ACTION',
       }
     ]
   }
@@ -240,42 +240,42 @@ class LanguageIntl {
       {
         key: 'account',
         dataIndex: 'account',
-        title: 'Account',
+        title: 'ACCOUNT',
       },
       {
         key: 'deposit',
         dataIndex: 'deposit',
-        title: 'Deposit',
+        title: 'STAKE',
       },
       {
         key: 'groupId',
         dataIndex: 'groupId',
-        title: 'GroupId',
+        title: 'GROUP ID',
       },
       {
         key: 'chain',
         dataIndex: 'chain',
-        title: 'Chain',
+        title: 'CROSS CHAIN',
       },
       {
         key: 'storeman',
         dataIndex: 'storeman',
-        title: 'Storeman',
+        title: 'STOREMAN',
       },
       {
         key: 'reward',
         dataIndex: 'reward',
-        title: 'Reward',
+        title: 'REWARD',
       },
       {
         key: 'status',
         dataIndex: 'status',
-        title: 'Status',
+        title: 'STATUS',
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'Action',
+        title: 'ACTION',
       }
     ]
   }
@@ -285,32 +285,32 @@ class LanguageIntl {
       {
         key: 'account',
         dataIndex: 'account',
-        title: 'Account',
+        title: 'ACCOUNT',
       },
       {
         key: 'stake',
         dataIndex: 'stake',
-        title: 'Stake',
+        title: 'STAKE',
       },
       {
         key: 'storeman',
         dataIndex: 'storeman',
-        title: 'Storeman',
+        title: 'STOREMAN',
       },
       {
         key: 'crosschain',
         dataIndex: 'crosschain',
-        title: 'Cross Chain',
+        title: 'CROSS CHAIN',
       },
       {
         key: 'reward',
         dataIndex: 'reward',
-        title: 'Reward',
+        title: 'REWARD',
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'Action',
+        title: 'ACTION',
       }
     ]
   }
@@ -335,17 +335,6 @@ class LanguageIntl {
         }))
       },
       {
-        title: intl.get('Common.crossChain'),
-        step: '1',
-        key: '/crossChain',
-        icon: 'wallet',
-        children: CROSSCHAINTYPE.map(item => ({
-          title: item,
-          key: `/cross${item}`,
-          icon: 'block'
-        }))
-      },
-      {
         title: intl.get('menuConfig.hardwareWallet'),
         step: '1',
         key: '/hardwareWallet',
@@ -362,6 +351,17 @@ class LanguageIntl {
             icon: 'block'
           }
         ]
+      },
+      {
+        title: intl.get('Common.crossChain'),
+        step: '1',
+        key: '/crossChain',
+        icon: 'wallet',
+        children: CROSSCHAINTYPE.map(item => ({
+          title: item,
+          key: `/cross${item}`,
+          icon: 'block'
+        }))
       },
       {
         title: intl.get('menuConfig.galaxyPos'),

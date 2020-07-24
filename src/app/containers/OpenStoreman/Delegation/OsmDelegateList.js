@@ -79,7 +79,7 @@ class OsmDelegateList extends Component {
         stake: '213122.2222424',
         storeman: '13',
         reward: '55%',
-        crosschain: 'BTC/WAN',
+        crosschain: 'Wanchain <-> Ethereum',
         modifyStake: ['top-up', 'exit', 'Claim']
       }
     ]

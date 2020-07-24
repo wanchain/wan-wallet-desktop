@@ -272,7 +272,7 @@ class ValidatorRegister extends Component {
             <CommonFormItem form={form} formName='groupId' disabled={true}
               options={{ initialValue: this.state.balance }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title='Group Id'
+              title='Group ID'
             />
           </div>
           <div className="validator-bg">
