@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import style from './index.less';
-import OsmVldClaim from './OsmVldClaim';
-import OsmStakeOut from './OsmVldStakeOut';
+import OsmVldClaim from './OsmClaim';
+import OsmStakeOut from './OsmStakeOut';
 import Cell from 'components/Staking/Common/Cell';
 import Validator from 'components/Staking/Common/Validator';
 import { formatNum } from 'utils/support';

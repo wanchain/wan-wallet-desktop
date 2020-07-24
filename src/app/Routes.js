@@ -25,7 +25,7 @@ import {
   DApps,
   DAppMarket,
   OsmDelegation,
-  OsmValidator,
+  OsmStoreman,
   AddDApp
 } from './containers';
 
@@ -64,7 +64,7 @@ export default () => {
           <Route path="/dapp/:url" component={DApps} />
           <Route path="/dAppMarket" component={DAppMarket} />
           <Route path="/osm_delegation" component={OsmDelegation} />
-          <Route path="/osm_validator" component={OsmValidator} />
+          <Route path="/osm_storeman" component={OsmStoreman} />
         </Switch>
       </Main>
     </HashRouter>

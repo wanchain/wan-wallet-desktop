@@ -4,12 +4,12 @@ import { observer, inject } from 'mobx-react';
 import { Row, Col, Table, Button, Form } from 'antd';
 
 import style from './index.less';
-import ValidatorRegister from './ValidatorRegister';
+import StoremanRegister from './StoremanRegister';
 import Cell from 'components/Staking/Common/Cell';
 import Validator from 'components/Staking/Common/Validator';
 import { formatNum } from 'utils/support';
 
-const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(ValidatorRegister);
+const StoremanRegisterForm = Form.create({ name: 'StoremanRegister' })(StoremanRegister);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -80,8 +80,15 @@ class GroupList extends Component {
       },
       {
         ...osmGroupListColumns[6],
-        render: (text, record) => <Button className={style.newValidatorBtn} type="primary" shape="round" size="large" onClick={this.handleStateToggle}>Register</Button>,
-
+        render: (text, record) =>
+          <div>
+            <Row>
+              <Col span={8} align="center"><Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} /></Col>
+            </Row>
+            <Row>
+              <Col span={8} className={style.modifyBtnText} align="center">Register</Col>
+            </Row>
+          </div>
       }
     ];
   }
@@ -102,7 +109,7 @@ class GroupList extends Component {
     return (
       <div className="validators">
         <Table columns={this.getColumns()} dataSource={fakeData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
-        {this.state.validatorRegister && <ValidatorRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
+        {this.state.validatorRegister && <StoremanRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
       </div>
     );
   }

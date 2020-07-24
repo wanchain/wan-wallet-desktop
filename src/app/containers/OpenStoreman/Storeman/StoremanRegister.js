@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { isNumber } from 'utils/support';
-import { Button, Modal, Form, Icon, message, Row, Col, Slider, Radio } from 'antd';
+import { Button, Modal, Form, Icon, message } from 'antd';
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
 

@@ -1,18 +1,15 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Row, Col, Form } from 'antd';
+import { Row, Col } from 'antd';
 
 import GroupList from './GroupList';
-import MyValidatorsList from './MyValidatorsList';
-import ValidatorCards from './ValidatorCards';
-import ValidatorRegister from 'components/Staking/ValidatorRegister';
+import MyStoremanList from './MyStoremanList';
+import StoremanCards from './StoremanCards';
 import RegisterValidatorHistory from 'components/Staking/RegisterValidatorHistory';
 
 import style from './index.less';
 import total from 'static/image/total.png';
-
-const ValidatorRegisterForm = Form.create({ name: 'ValidatorRegister' })(ValidatorRegister);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -50,12 +47,12 @@ class Validator extends Component {
     return (
       <div className="staking">
         <Row>
-          <ValidatorCards />
+          <StoremanCards />
         </Row>
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span>Group List</span>
+              <img src={total} /><span className={style.itemTitle}>Group List</span>
             </Col>
           </div>
         </Row>
@@ -65,12 +62,12 @@ class Validator extends Component {
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span>Storeman List</span>
+              <img src={total} /><span className={style.itemTitle}>Storeman List</span>
             </Col>
           </div>
         </Row>
         <Row>
-          <MyValidatorsList />
+          <MyStoremanList />
         </Row>
         <Row>
           <RegisterValidatorHistory name="normal" />

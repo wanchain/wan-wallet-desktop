@@ -389,7 +389,7 @@ class LanguageIntl {
           },
           {
             title: 'Storeman',
-            key: '/osm_validator',
+            key: '/osm_storeman',
             icon: 'block'
           }
         ]

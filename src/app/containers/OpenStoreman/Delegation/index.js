@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Button, Row, Col, Form } from 'antd';
 import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
+
 import style from './index.less';
+import styleComm from 'containers/OpenStoreman/Validator/index.less';
+
 import DelegationCards from './DelegationCards';
 import OsmDelegateList from './OsmDelegateList';
 import DelegationHistory from 'components/Staking/DelegationHistory';
@@ -59,7 +62,7 @@ class Delegation extends Component {
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span>{intl.get('staking.delegateList')}</span>
+              <img src={total} /><span className={styleComm.itemTitle}>{intl.get('staking.delegateList')}</span>
             </Col>
             <Col span={12} className="col-right">
               <Button className={style.newValidatorBtn} type="primary" shape="round" size="large" onClick={this.handleStateToggle}>{intl.get('staking.newDelegate')}</Button>
