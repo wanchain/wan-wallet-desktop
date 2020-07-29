@@ -223,9 +223,9 @@ class LanguageIntl {
         title: 'STAKE',
       },
       {
-        key: 'fee',
-        dataIndex: 'fee',
-        title: 'FEE',
+        key: 'delegationFee',
+        dataIndex: 'delegationFee',
+        title: 'DELEGATION FEE',
       },
       {
         key: 'action',
@@ -235,7 +235,7 @@ class LanguageIntl {
     ]
   }
 
-  @computed get osmValidatorListColumns() {
+  @computed get osmStoremanListColumns() {
     return self.language && [
       {
         key: 'account',
@@ -248,19 +248,24 @@ class LanguageIntl {
         title: 'STAKE',
       },
       {
-        key: 'groupId',
-        dataIndex: 'groupId',
-        title: 'GROUP ID',
-      },
-      {
         key: 'chain',
         dataIndex: 'chain',
         title: 'CROSS CHAIN',
       },
       {
-        key: 'storeman',
-        dataIndex: 'storeman',
-        title: 'STOREMAN',
+        key: 'rank',
+        dataIndex: 'rank',
+        title: 'RANK',
+      },
+      {
+        key: 'slash',
+        dataIndex: 'slash',
+        title: 'SLASH',
+      },
+      {
+        key: 'activity',
+        dataIndex: 'activity',
+        title: 'ACTIVITY',
       },
       {
         key: 'reward',

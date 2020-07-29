@@ -13,7 +13,7 @@ import { formatNum } from 'utils/support';
 @inject(stores => ({
   language: stores.languageIntl.language,
   myValidatorList: stores.staking.myValidatorList,
-  osmValidatorListColumns: stores.languageIntl.osmValidatorListColumns,
+  osmStoremanListColumns: stores.languageIntl.osmStoremanListColumns,
   getValidatorsInfo: () => stores.staking.getValidatorsInfo()
 }))
 
@@ -47,41 +47,45 @@ class MyValidatorsList extends Component {
   }
 
   getColumns () {
-    const { osmValidatorListColumns } = this.props;
+    const { osmStoremanListColumns } = this.props;
     return [
       {
-        ...osmValidatorListColumns[0]
+        ...osmStoremanListColumns[0]
       },
       {
-        ...osmValidatorListColumns[1],
+        ...osmStoremanListColumns[1],
       },
       {
-        ...osmValidatorListColumns[2],
+        ...osmStoremanListColumns[2],
       },
       {
-        ...osmValidatorListColumns[3],
+        ...osmStoremanListColumns[3],
+        render: rank => <div><span>{rank[0]}</span>/<span>{rank[1]}</span></div>
       },
       {
-        ...osmValidatorListColumns[4],
+        ...osmStoremanListColumns[4],
       },
       {
-        ...osmValidatorListColumns[5],
+        ...osmStoremanListColumns[5],
       },
       {
-        ...osmValidatorListColumns[6],
+        ...osmStoremanListColumns[6],
       },
       {
-        ...osmValidatorListColumns[7],
+        ...osmStoremanListColumns[7],
+      },
+      {
+        ...osmStoremanListColumns[8],
         render: (text, record) =>
         <div>
           <Row>
-            <Col span={8} align="center"><OsmStakeOut record={record} modifyType={record.modifyStake[1]}/></Col>
-            <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
+            <Col span={8} align="center"><OsmVldClaim record={record} modifyType={record.modifyStake[1]}/></Col>
+            <Col span={8} align="center"><OsmStakeOut record={record} /></Col>
             <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
 
           </Row>
           <Row>
-            <Col span={8} className={style.modifyBtnText} align="center">Append</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">Top-up</Col>
             <Col span={8} className={style.modifyBtnText} align="center">Exit</Col>
             <Col span={8} className={style.modifyBtnText} align="center">Claim</Col>
           </Row>
@@ -95,10 +99,12 @@ class MyValidatorsList extends Component {
       {
         key: 1,
         account: 'Test',
-        deposit: '213122.2222424',
+        deposit: '20000',
         groupId: '112',
-        storeman: '13',
-        reward: '55%',
+        rank: ['11', '21'],
+        slash: '1',
+        activity: '2',
+        reward: '55',
         chain: 'WAN / BTC',
         status: 'Processing',
         modifyStake: ['Append', 'Exit', 'Claim']

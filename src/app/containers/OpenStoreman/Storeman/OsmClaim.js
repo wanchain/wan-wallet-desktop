@@ -184,7 +184,7 @@ class InForm extends Component {
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.topup')} className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title='Storeman Top-up' className="validator-register-modal"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,

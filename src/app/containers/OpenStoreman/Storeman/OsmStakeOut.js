@@ -253,7 +253,7 @@ class ModifyForm extends Component {
     const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate'), maxFeeRate: getFieldValue('maxFeeRate') };
-    let title = modifyType === 'exit' ? intl.get('ValidatorRegister.exit') : intl.get('ValidatorRegister.verifyModification');
+    let title = modifyType === 'exit' ? 'Storeman Exit' : 'Storeman Exit';
     let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
 
     return (
@@ -267,7 +267,7 @@ class ModifyForm extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
             <CommonFormItem form={form} formName='validatorAccount' disabled={true}
-              options={{ initialValue: record.validator.address, rules: [{ required: true }] }}
+              options={{ initialValue: '0x7a815428f49f8fcf182fbd4bff102373f60ab70b', rules: [{ required: true }] }}
               title={intl.get('ValidatorRegister.validatorAccount')}
             />
           </div>

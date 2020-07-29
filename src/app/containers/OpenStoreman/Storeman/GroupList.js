@@ -24,6 +24,7 @@ class GroupList extends Component {
     withdrawVisible: false,
     stakeInVisible: false,
     validatorRegister: false,
+    selectGroup: null,
   }
 
   componentDidMount () {
@@ -48,8 +49,8 @@ class GroupList extends Component {
     this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
-  handleStateToggle = () => {
-    this.setState(state => ({ validatorRegister: !state.validatorRegister }));
+  handleStateToggle = selectGroup => {
+    this.setState(state => ({ validatorRegister: !state.validatorRegister, selectGroup }));
   }
 
   getColumns () {
@@ -83,10 +84,10 @@ class GroupList extends Component {
         render: (text, record) =>
           <div>
             <Row>
-              <Col span={8} align="center"><Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} /></Col>
+              <Col span={8} align="center"><Button className={style.modifyTopUpBtn} onClick={() => this.handleStateToggle(record)} /></Col>
             </Row>
             <Row>
-              <Col span={8} className={style.modifyBtnText} align="center">Register</Col>
+              <Col span={8} className={style.modifyBtnText} align="center">{intl.get('ValidatorNode.registerValidatorNode')}</Col>
             </Row>
           </div>
       }
@@ -101,15 +102,15 @@ class GroupList extends Component {
         startTime: '2020/7/9',
         endTime: '2020/8/9',
         chain: 'WAN / BTC',
-        currDeposit: '41325235.4544',
-        fee: '0.1%',
+        currDeposit: '20000',
+        delegationFee: '0.1%',
         action: 'Register',
       }
     ]
     return (
       <div className="validators">
         <Table columns={this.getColumns()} dataSource={fakeData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
-        {this.state.validatorRegister && <StoremanRegisterForm onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
+        {this.state.validatorRegister && <StoremanRegisterForm group={this.state.selectGroup} onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
       </div>
     );
   }

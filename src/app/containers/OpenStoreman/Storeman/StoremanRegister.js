@@ -2,8 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, checkMaxFeeRate, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
-import { isNumber } from 'utils/support';
+import { checkAmountUnit, getValueByAddrInfo, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
 import { Button, Modal, Form, Icon, message } from 'antd';
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
@@ -27,7 +26,7 @@ const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmFo
 }))
 
 @observer
-class ValidatorRegister extends Component {
+class StoremanRegister extends Component {
   state = {
     balance: 0,
     confirmVisible: false,
@@ -43,13 +42,6 @@ class ValidatorRegister extends Component {
     };
   }
 
-  handleSelectAgency = e => {
-    this.setState({
-      isAgency: e.target.value,
-      initAmount: e.target.value ? 50000 : 10000
-    });
-  }
-
   getValueByAddrInfoArgs = (...args) => {
     return getValueByAddrInfo(...args, this.props.addrInfo);
   }
@@ -61,7 +53,7 @@ class ValidatorRegister extends Component {
     })
   }
 
-  checkPublicKey1 = (rule, value, callback) => {
+  checkPublicKey = (rule, value, callback) => {
     if (value === undefined) {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
@@ -73,7 +65,7 @@ class ValidatorRegister extends Component {
     }
   }
 
-  checkPublicKey2 = (rule, value, callback) => {
+  checkEnodeId = (rule, value, callback) => {
     if (value === undefined) {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
@@ -224,53 +216,37 @@ class ValidatorRegister extends Component {
     }
   }
 
-  checkFeeRate = (rule, value, callback) => {
-    let { form } = this.props;
-    let maxFee = form.getFieldValue('maxFeeRate') || 0;
-    try {
-      if (!isNumber(value) || Number(value) > Number(maxFee)) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-      }
-      checkMaxFeeRate(rule, value, callback);
-    } catch (err) {
-      callback(intl.get('NormalTransForm.invalidFeeRate'));
-    }
-  }
-
-  onSliderChange = value => {
-    this.setState({ lockTime: value })
-  }
-
   render() {
-    const { form, settings, addrSelectedList, onCancel } = this.props;
+    const { form, settings, addrSelectedList, onCancel, group } = this.props;
+    console.log(group, 'bbb')
     const { getFieldDecorator } = form;
     let record = form.getFieldsValue(['publicKey1', 'publicKey2', 'lockTime', 'maxFeeRate', 'feeRate', 'myAddr', 'amount']);
     let showConfirmItem = { publicKey1: true, publicKey2: true, validatorAccount: true, lockTime: true, feeRate: this.state.isAgency, myAddr: true, amount: true, acceptDelegation: true };
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title={intl.get('ValidatorRegister.verifyRegistration')} className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title="Storeman Registration" className="validator-register-modal"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
+            <div className="stakein-title">Storeman Account</div>
             <CommonFormItem form={form} formName='publicKey'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey1 }] }}
+              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title='Public Key'
               placeholder='Enter Public Key'
             />
             <CommonFormItem form={form} formName='enodeID'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey2 }] }}
+              options={{ rules: [{ required: true, validator: this.checkEnodeId }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title='Enode ID'
               placeholder='Enter Enode ID'
             />
             <CommonFormItem form={form} formName='groupId' disabled={true}
-              options={{ initialValue: this.state.balance }}
+              options={{ initialValue: group.groupId }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title='Group ID'
             />
@@ -299,4 +275,4 @@ class ValidatorRegister extends Component {
   }
 }
 
-export default ValidatorRegister;
+export default StoremanRegister;
