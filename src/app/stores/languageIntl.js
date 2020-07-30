@@ -248,8 +248,8 @@ class LanguageIntl {
         title: 'STAKE',
       },
       {
-        key: 'chain',
-        dataIndex: 'chain',
+        key: 'crosschain',
+        dataIndex: 'crosschain',
         title: 'CROSS CHAIN',
       },
       {

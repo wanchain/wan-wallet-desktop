@@ -471,6 +471,19 @@ export const getContractData = function (func, ...params) {
   })
 };
 
+export const getStoremanContractData = function (func, ...params) {
+  return new Promise((resolve, reject) => {
+    wand.request('storeman_getContractData', { func, params }, (err, val) => {
+      if (err) {
+        err = 'storeman_getContractData failed: ' + err;
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+};
+
 export const encodeTransferInput = function (addr, decimal, value = 0) {
   const TRANSFER = '0xa9059cbb';
   value = new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString(10);

@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, getNonce, getGasPrice, getChainId, getContractAddr, getContractData } from 'utils/helper';
+import { checkAmountUnit, getValueByAddrInfo, getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContractData } from 'utils/helper';
 import { Button, Modal, Form, Icon, message } from 'antd';
 import { signTransaction } from 'componentUtils/trezor';
 import { toWei } from 'utils/support.js';
@@ -134,7 +134,7 @@ class StoremanRegister extends Component {
       amount: amount.toString(),
       BIP44Path: path,
       walletID: walletID,
-      wPk: form.getFieldValue('publicKey1'),
+      wPk: form.getFieldValue('publicKey'),
       groupId: group.groupId,
       enodeID: group.enodeID,
       delegateFee: group.delegateFee,
@@ -147,7 +147,7 @@ class StoremanRegister extends Component {
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
-      wand.request('staking_registerValidator', { tx }, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, action: 'stakeIn' }, (err, ret) => {
         if (err) {
           message.warn(intl.get('ValidatorRegister.registerFailed'));
         }
@@ -157,26 +157,28 @@ class StoremanRegister extends Component {
     }
   }
 
-  trezorRegisterValidator = async (path, from, value, secPk, bn256Pk, feeRate, maxFeeRate) => {
+  trezorRegisterValidator = async (path, from, value, wPk, enodeID, feeRate) => {
     let chainId = await getChainId();
     let func = 'stakeRegister';// abi function
     try {
       let nonce = await getNonce(from, 'wan');
       let gasPrice = await getGasPrice('wan');
-      let data = await getContractData(func, secPk, bn256Pk, feeRate, maxFeeRate);
+      let data = await getStoremanContractData(func, wPk, enodeID, feeRate);
 
       let amountWei = toWei(value);
       const cscContractAddr = await getContractAddr();
-      let rawTx = {};
-      rawTx.from = from;
-      rawTx.to = cscContractAddr;
-      rawTx.value = amountWei;
-      rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, 'gwei');
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
+      let rawTx = {
+        data,
+        from,
+        chainId,
+        value: amountWei,
+        to: cscContractAddr,
+        nonce: '0x' + nonce.toString(16),
+        gasLimit: '0x' + Number(200000).toString(16),
+        gasPrice: toWei(gasPrice, 'gwei'),
+        Txtype: Number(1),
+      };
+
       let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
 
       // Send register validator
@@ -195,8 +197,8 @@ class StoremanRegister extends Component {
         status: 'Sent',
       };
       let satellite = {
-        secPk,
-        bn256Pk,
+        wPk,
+        enodeID,
         annotate: 'StakeRegister'
       }
       // save register validator history into DB
@@ -212,7 +214,7 @@ class StoremanRegister extends Component {
   render() {
     const { form, settings, addrSelectedList, onCancel, group } = this.props;
     let record = form.getFieldsValue(['publicKey', 'enodeID', 'myAddr', 'amount', 'crosschain']);
-    let showConfirmItem = { groupId: true, publicKey: true, enodeID: true, crosschain: true, myAddr: true, amount: true };
+    let showConfirmItem = { groupId: true, publicKey: true, enodeID: true, crosschain: true, account: true, amount: true };
 
     return (
       <div>
@@ -265,7 +267,7 @@ class StoremanRegister extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupId: group.groupId })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupId: group.groupId, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }

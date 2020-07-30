@@ -17,7 +17,7 @@ const RIGHT = 16;
 class StoremanConfirmForm extends Component {
   render () {
     const { onCancel, record, onSend, title, showConfirmItem, confirmLoading } = this.props;
-    const { publicKey, enodeID, crosschain, groupId, myAddr, amount } = showConfirmItem;
+    const { publicKey, enodeID, crosschain, groupId, account, amount } = showConfirmItem;
 
     return (
       <div className="withdraw">
@@ -69,11 +69,11 @@ class StoremanConfirmForm extends Component {
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('ValidatorRegister.myAccount')}</div>
             {
-              myAddr &&
+              account &&
               <div className="withdraw-line">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.address')}</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.myAddr}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.account}</span></Col>
                 </Row>
               </div>
             }

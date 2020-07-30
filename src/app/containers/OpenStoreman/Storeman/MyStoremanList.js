@@ -6,9 +6,6 @@ import { observer, inject } from 'mobx-react';
 import style from './index.less';
 import OsmVldClaim from './OsmClaim';
 import OsmStakeOut from './OsmStakeOut';
-import Cell from 'components/Staking/Common/Cell';
-import Validator from 'components/Staking/Common/Validator';
-import { formatNum } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -79,8 +76,8 @@ class MyValidatorsList extends Component {
         render: (text, record) =>
         <div>
           <Row>
-            <Col span={8} align="center"><OsmVldClaim record={record} modifyType={record.modifyStake[1]}/></Col>
-            <Col span={8} align="center"><OsmStakeOut record={record} /></Col>
+            <Col span={8} align="center"><OsmStakeOut record={record} modifyType='top-up' /></Col>
+            <Col span={8} align="center"><OsmStakeOut record={record} modifyType='exit' /></Col>
             <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
 
           </Row>
@@ -98,14 +95,14 @@ class MyValidatorsList extends Component {
     const fakeData = [
       {
         key: 1,
-        account: 'Test',
+        account: 'Account1',
         deposit: '20000',
         groupId: '112',
         rank: ['11', '21'],
         slash: '1',
         activity: '2',
         reward: '55',
-        chain: 'WAN / BTC',
+        crosschain: 'WAN / BTC',
         status: 'Processing',
         modifyStake: ['Append', 'Exit', 'Claim']
       }

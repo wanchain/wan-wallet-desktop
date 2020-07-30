@@ -1,24 +1,21 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
-import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId } from 'utils/helper';
-import { signTransaction } from 'componentUtils/trezor';
+
 import { toWei } from 'utils/support.js';
-
-import style from 'components/Staking/MyValidatorsList/index.less';
 import PwdForm from 'componentUtils/PwdForm';
+import { WANPATH, WALLETID } from 'utils/settings';
+import { signTransaction } from 'componentUtils/trezor';
+import StoremanConfirmForm from './StoremanConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
-import { isNumber } from 'utils/support';
-import { WANPATH, WALLETID } from 'utils/settings'
+import style from 'components/Staking/MyValidatorsList/index.less';
+import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit } from 'utils/helper';
 
+const MINAMOUNT = 100;
 const pu = require('promisefy-util');
-const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
-const modifyTypes = {
-  lockTime: 'ValidatorRegister.lockTime',
-  feeRate: 'ValidatorRegister.feeRate'
-}
+const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -30,15 +27,10 @@ const modifyTypes = {
 
 @observer
 class ModifyForm extends Component {
-  constructor (props) {
-    super(props);
-    this.state = {
-      selectType: '',
-      confirmVisible: false,
-      confirmLoading: false,
-      lockTime: props.record.lockTime,
-      showConfirmItem: {},
-    }
+  state = {
+    selectType: '',
+    confirmVisible: false,
+    confirmLoading: false,
   }
 
   componentWillUnmount () {
@@ -48,12 +40,9 @@ class ModifyForm extends Component {
   }
 
   showConfirmForm = () => {
-    let { form, settings, modifyType } = this.props;
+    let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
-      if (modifyType === 'exit') {
-        this.setState({ showConfirmItem: { validatorAccount: true, myAddr: true } })
-      }
       let pwd = form.getFieldValue('pwd');
       if (!settings.reinput_pwd) {
         this.setState({ confirmVisible: true });
@@ -70,9 +59,7 @@ class ModifyForm extends Component {
   }
 
   onSend = async () => {
-    this.setState({
-      confirmLoading: true
-    });
+    this.setState({ confirmLoading: true });
     let { form, record, addrInfo, modifyType } = this.props;
     let from = record.myAddress.addr;
     let type = record.myAddress.type;
@@ -90,13 +77,10 @@ class ModifyForm extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
 
-    if (modifyType === 'exit' || this.handleShowSelectType('lockTime')) {
-      let lockTime = modifyType === 'exit' ? 0 : form.getFieldValue('lockTime');
+    if (modifyType === 'exit') {
       let type = 'stakeUpdate';
-      Object.assign(tx, { lockTime });
-
       if (WALLETID.TREZOR === walletID) {
-        await this.trezorValidatorUpdate(path, from, type, lockTime);
+        await this.trezorValidatorUpdate(path, from, type);
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } else {
@@ -109,39 +93,6 @@ class ModifyForm extends Component {
           this.setState({ confirmVisible: false, confirmLoading: false });
           this.props.onSend();
         });
-      }
-    }
-    if (this.handleShowSelectType('feeRate')) {
-      Object.assign(tx, {
-        feeRate: Math.round(form.getFieldValue('feeRate') * 100),
-      })
-
-      if (WALLETID.TREZOR === walletID) {
-        let type = 'stakeUpdateFeeRate';
-        await this.trezorValidatorUpdate(path, from, type, tx.feeRate);
-        this.setState({ confirmVisible: false });
-        this.props.onSend(walletID);
-      } else {
-        wand.request('staking_getCurrentEpochInfo', null, (err, ret) => {
-          if (err) {
-            message.warn(intl.get('ValidatorRegister.updateFailed'));
-          } else {
-            if (ret.epochId === record.feeRateChangedEpoch) {
-              message.warn(intl.get('ValidatorRegister.modifyFeeRateWarning'))
-              return;
-            }
-            wand.request('staking_PosStakeUpdateFeeRate', { tx }, (err, ret) => {
-              if (err) {
-                // message.warn(err.message);
-                message.warn(intl.get('ValidatorRegister.updateFailed'));
-              } else {
-                console.log('PosStakeUpdateFeeRate ret:', ret);
-              }
-              this.setState({ confirmVisible: false, confirmLoading: false });
-              this.props.onSend();
-            });
-          }
-        })
       }
     }
   }
@@ -186,7 +137,6 @@ class ModifyForm extends Component {
       };
       let satellite = {
         secPk: record.publicKey1,
-        lockTime: record.lockTime,
         annotate: func === 'stakeUpdate' ? 'StakeUpdate' : 'StakeUpdateFeeRate'
       }
 
@@ -201,60 +151,32 @@ class ModifyForm extends Component {
     }
   }
 
-  onChangeModifyTypeSelect = (value, option) => {
-    let showConfirmItem;
-    if (Object.keys(modifyTypes)[option.key] === 'lockTime') {
-      showConfirmItem = { validatorAccount: true, myAddr: true, lockTime: true }
-    }
-    if (Object.keys(modifyTypes)[option.key] === 'feeRate') {
-      showConfirmItem = { validatorAccount: true, myAddr: true, feeRate: true }
-    }
-    this.setState(() => ({ selectType: option.key, showConfirmItem }));
-  }
-
-  onSliderChange = value => {
-    this.setState({ lockTime: value })
-  }
-
   onConfirmCancel = () => {
     this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
-  checkMaxFeeRate = (rule, value, callback) => {
-    let { feeRate, maxFeeRate } = this.props.record;
-    try {
-      if (!isNumber(value)) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      if (value < 0 || value > maxFeeRate) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      if (value.toString().split('.')[1] && value.toString().split('.')[1].length > 2) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      if (value > feeRate && value > feeRate + 1) {
-        callback(intl.get('NormalTransForm.invalidFeeRate'));
-        return;
-      }
-      callback();
-    } catch (err) {
-      callback(intl.get('NormalTransForm.invalidFeeRate'));
+  checkAmount = (rule, value, callback) => {
+    let { form } = this.props;
+    let balance = form.getFieldValue('balance');
+    if (value === undefined || !checkAmountUnit(18, value)) {
+      callback(intl.get('Common.invalidAmount'));
     }
-  }
-
-  handleShowSelectType (type) {
-    return this.state.selectType === Object.keys(modifyTypes).findIndex(val => val === type).toString();
+    if (new BigNumber(value).minus(MINAMOUNT).lt(0)) {
+      callback(intl.get('ValidatorRegister.stakeTooLow'));
+      return;
+    }
+    if (new BigNumber(value).minus(balance).gte(0)) {
+      callback(intl.get('SendNormalTrans.hasBalance'));
+      return;
+    }
+    callback();
   }
 
   render () {
-    const { onCancel, form, settings, record, addrInfo, modifyType } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
-    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, lockTime: getFieldValue('lockTime'), feeRate: getFieldValue('feeRate'), maxFeeRate: getFieldValue('maxFeeRate') };
-    let title = modifyType === 'exit' ? 'Storeman Exit' : 'Storeman Exit';
-    let selectTypes = record.maxFeeRate === 100 ? [intl.get(`${modifyTypes.lockTime}`)] : [intl.get(`${modifyTypes.lockTime}`), intl.get(`${modifyTypes.feeRate}`)];
+    const { onCancel, form, settings, record, modifyType, addrInfo } = this.props;
+    let title = modifyType === 'exit' ? 'Storeman Exit' : 'Storeman Top-up';
+    let balance = getValueByAddrInfo(record.account, 'balance', addrInfo)
+    let showConfirmItem = { groupId: true, crosschain: true, account: true, amount: modifyType !== 'exit' };
 
     return (
       <div>
@@ -265,35 +187,47 @@ class ModifyForm extends Component {
           ]}
         >
           <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
-            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
-              options={{ initialValue: '0x7a815428f49f8fcf182fbd4bff102373f60ab70b', rules: [{ required: true }] }}
-              title={intl.get('ValidatorRegister.validatorAccount')}
+            <div className="stakein-title">Storeman Account</div>
+            <CommonFormItem form={form} formName='crosschain' disabled={true}
+              options={{ initialValue: record.crosschain, rules: [{ required: true }] }}
+              title='Cross Chain'
+            />
+            <CommonFormItem form={form} formName='groupId' disabled={true}
+              options={{ initialValue: record.groupId, rules: [{ required: true }] }}
+              title='Group ID'
             />
           </div>
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <CommonFormItem form={form} formName='myAccount' disabled={true}
-              options={{ initialValue: record.myAccount }}
+              options={{ initialValue: record.account }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.address')}
             />
             <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: '0' }}
+              options={{ initialValue: balance }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
             />
+            {
+              modifyType !== 'exit' &&
+              <CommonFormItem form={form} formName='amount'
+                options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('ValidatorRegister.balance')}
+              />
+            }
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={this.state.showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign({}, record, { amount: form.getFieldValue('amount') })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
 }
 
-const ValidatorModifyForm = Form.create({ name: 'ModifyForm' })(ModifyForm);
-class OsmVldStakeOut extends Component {
+const StoremanModifyForm = Form.create({ name: 'ModifyForm' })(ModifyForm);
+class OsmStakeOut extends Component {
   state = {
     visible: false
   }
@@ -309,11 +243,13 @@ class OsmVldStakeOut extends Component {
   render () {
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
-        {this.state.visible && <ValidatorModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />}
+        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
+        { this.state.visible &&
+          <StoremanModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />
+        }
       </div>
     );
   }
 }
 
-export default OsmVldStakeOut;
+export default OsmStakeOut;
