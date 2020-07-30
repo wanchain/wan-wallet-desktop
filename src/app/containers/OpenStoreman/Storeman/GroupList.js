@@ -101,7 +101,7 @@ class GroupList extends Component {
         groupId: '1',
         startTime: '2020/7/9',
         endTime: '2020/8/9',
-        chain: 'WAN / BTC',
+        crosschain: 'WAN / BTC',
         currDeposit: '20000',
         delegationFee: '0.1%',
         action: 'Register',

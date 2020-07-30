@@ -9,5 +9,6 @@ module.exports = {
     setting: ['switchNetwork', 'set', 'get', 'updateDapps', 'getDapps', 'getDAppInjectFile', 'rpcDelay', 'wanNodeDelay', 'ethNodeDelay', 'btcNodeDelay', 'eosNodeDelay'],
     crossChain: ['initRegTokens', 'getTokensInfo', 'getCcTokensInfo', 'updateTokensInfo', 'updateCcTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'deleteCustomToken', 'getSmgList', 'getHtmlAddr', 'crossBTC', 'crossETH', 'crossEOS', 'crossErc20', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans', 'getRegisteredOrigToken'],
     dappStore: ['getRegisteredDapp', 'getRegisteredAds'],
-    upgrade: ['start']
+    upgrade: ['start'],
+    storeman: ['openStoremanAction'],
 }

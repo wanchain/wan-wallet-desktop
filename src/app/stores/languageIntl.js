@@ -213,8 +213,8 @@ class LanguageIntl {
         title: 'END TIME',
       },
       {
-        key: 'chain',
-        dataIndex: 'chain',
+        key: 'crosschain',
+        dataIndex: 'crosschain',
         title: 'CROSS CHAIN',
       },
       {

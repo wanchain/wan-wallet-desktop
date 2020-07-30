@@ -11,13 +11,14 @@ import bs58check from 'bs58check';
 import { ipcMain as ipc, app } from 'electron'
 import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
 import sleep from 'ko-sleep';
-const ethUtil = require('ethereumjs-util');
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
 import { dateFormat } from '~/src/app/utils/support';
 import { Windows, walletBackend } from '~/src/modules'
 import menuFactoryService from '~/src/services/menuFactory'
+
 const web3 = new Web3();
+const ethUtil = require('ethereumjs-util');
 const logger = Logger.getLogger('controllers')
 
 // route consts
@@ -31,6 +32,7 @@ const ROUTE_STAKING = 'staking'
 const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_DAPPSTORE = 'dappStore'
 const ROUTE_SETTING = 'setting'
+const ROUTE_STOREMAN = 'storeman'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -2100,6 +2102,30 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
     }
+})
+
+ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
+  let ret, err
+  const [action, id] = actionUni.split('#')
+
+  switch (action) {
+
+      case 'openStoremanAction':
+          try {
+              let { tx, action } = payload;
+              let gasPrice = await ccUtil.getGasPrice('wan');
+              tx.gasLimit = 200000;
+              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+              logger.info(`Open Storeman ${action}` + JSON.stringify(tx));
+              ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
+  }
 })
 
 function sendResponse(endpoint, e, payload) {

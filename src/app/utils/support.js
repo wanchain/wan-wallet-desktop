@@ -163,3 +163,11 @@ export function promiseTimeout (ms, p, desc) {
 export function upperFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+export function formatLongText(data, len = '8') {
+  if (data.length > (len * 2)) {
+    return data.substr(0, len) + '....' + data.substr(-len)
+  } else {
+    return data;
+  }
+}
