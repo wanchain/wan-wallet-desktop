@@ -22,6 +22,7 @@ class App extends Component {
       if (ready) {
         stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
         stores.session.initSettings();
+        stores.portfolio.updateCoinsList_from_CoinGeckoAPI();
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();

@@ -11,7 +11,7 @@ import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
 class Portfolio {
-  @observable coinPriceArr;
+  @observable coinPriceObj;
 
   @observable defaultCoinList = {
     WAN: {
@@ -32,11 +32,13 @@ class Portfolio {
     }
   };
 
-  @observable coinList = Object.assign({}, this.defaultCoinList);
+  @observable specificTokenId_from_CoinGeckoAPI = {
+    FNX: 'finnexus',
+  }
 
-  /* @computed get coinList() {
-    return Object.assign({}, self.getToken, self.defaultCoinList);
-  } */
+  @observable tokenIds_from_CoinGeckoAPI = {}
+
+  @observable coinList = Object.assign({}, this.defaultCoinList);
 
   @action setCoin() {
     self.coinList = Object.assign({}, self.defaultCoinList, self.getToken);
@@ -57,6 +59,23 @@ class Portfolio {
     return obj;
   }
 
+  @action updateCoinsList_from_CoinGeckoAPI() {
+    axios({
+      method: 'GET',
+      url: 'https://api.coingecko.com/api/v3/coins/list'
+    }).then(res => {
+      if (res.status === 200) {
+        runInAction(() => {
+          for (let obj of res.data) {
+            self.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
+          }
+        })
+      } else {
+        console.log('Get coins list failed.');
+      }
+    });
+  }
+
   @action updateCoinPrice() {
     let param = Object.keys(self.coinList).map(key => {
       let item = self.coinList[key];
@@ -66,21 +85,33 @@ class Portfolio {
         return item.buddy ? item.symbol.substring(1) : item.symbol;
       }
     });
+    let reconvertIds = {};
+    for (let v of param) {
+      if (v in self.specificTokenId_from_CoinGeckoAPI) {
+        reconvertIds[self.specificTokenId_from_CoinGeckoAPI[v]] = v;
+      } else if (v.toLowerCase() in self.tokenIds_from_CoinGeckoAPI) {
+        reconvertIds[self.tokenIds_from_CoinGeckoAPI[v.toLowerCase()]] = v;
+      }
+    }
+    let convertedParam = Object.keys(reconvertIds);
+    if (convertedParam.length === 0) return;
     axios({
       method: 'GET',
-      url: 'https://min-api.cryptocompare.com/data/pricemulti',
+      url: 'https://api.coingecko.com/api/v3/simple/price',
       params: {
-        fsyms: param.join(),
-        tsyms: 'USD',
-        // api_key: '0e0983552fbfd1f4c8d166a3151bb956f0858554e395fb2c40f45206ce75e750',
+        ids: convertedParam.join(),
+        vs_currencies: 'usd',
       }
     }).then((res) => {
-      if (res.status === 200 && res.data.Response !== 'Error') {
+      if (res.status === 200) {
         runInAction(() => {
-          self.coinPriceArr = res.data;
+          self.coinPriceObj = {};
+          for (let i in res.data) {
+            self.coinPriceObj[reconvertIds[i]] = res.data[i].usd;
+          }
         })
       } else {
-        console.log('Get prices failed.', res.data);
+        console.log('Get prices failed.', res);
       }
     })
   }
@@ -109,7 +140,6 @@ class Portfolio {
           return new BigNumber(total).plus(cur).toString(10);
         });
         val.balance = formatNumByDecimals(val.balance, val.decimals);
-        // val.balance = formatNumByDecimals(new BigNumber(Math.random()).times(1E21).toString(), val.decimals);// To delete
       }
     });
   }
@@ -124,15 +154,15 @@ class Portfolio {
       portfolio: { value: '0%', writable: true },
       scAddr: { value: self.coinList[key].scAddr, writable: true },
     }));
-    if (self.coinPriceArr) {
+    if (self.coinPriceObj) {
       let amountValue = 0;
       Object.keys(self.coinList).forEach((key, index) => {
         let val = list[index];
         if (!(key in self.defaultCoinList)) {
           key = self.coinList[key].buddy ? self.coinList[key].symbol.substring(1) : self.coinList[key].symbol;
         }
-        if (self.coinPriceArr[key]) {
-          val.price = `$${self.coinPriceArr[key]['USD']}`;
+        if (key in self.coinPriceObj) {
+          val.price = `$${self.coinPriceObj[key]}`;
           val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
           amountValue = new BigNumber(amountValue).plus(new BigNumber(val.value.substr(1))).toString(10);
         }
@@ -145,7 +175,6 @@ class Portfolio {
             let num = new BigNumber(val.value.substr(1)).div(new BigNumber(amountValue)).times(100);
             val.portfolio = num.lt(0.01) ? '0%' : `${num.toFixed(2).toString(10)}%`;
           }
-          // val.portfolio = val.value.substr(1) === '0' ? '0%' : `${(new BigNumber(val.value.substr(1)).div(new BigNumber(amountValue)).times(100)).toFixed(2).toString(10)}%`;
         });
       }
     }
