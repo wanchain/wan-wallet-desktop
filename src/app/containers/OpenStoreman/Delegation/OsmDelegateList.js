@@ -1,18 +1,16 @@
+import { Table, Row, Col } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col } from 'antd';
 
 import style from './index.less';
 import OsmDelegateOut from './OsmDelegateOut';
 import OsmDelegateClaim from './OsmDelegateClaim'
-import Cell from 'components/Staking/Common/Cell';
-import Validator from 'components/Staking/Common/Validator';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  osmDelegateListColumns: stores.languageIntl.osmDelegateListColumns,
   stakingList: stores.staking.stakingList,
+  osmDelegateListColumns: stores.languageIntl.osmDelegateListColumns,
 }))
 
 @observer

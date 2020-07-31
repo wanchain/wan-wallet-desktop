@@ -3,6 +3,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
+import style from './index.less';
 import history from 'static/image/history.png';
 import { MAIN, TESTNET } from 'utils/settings'
 
@@ -32,7 +33,7 @@ class OsmStakeHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span>Storeman History</span>
+          <img src={history} /><span className={style.itemTitle}>Storeman History</span>
         </div>
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />

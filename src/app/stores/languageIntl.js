@@ -281,6 +281,7 @@ class LanguageIntl {
         key: 'action',
         dataIndex: 'action',
         title: 'ACTION',
+        align: 'center',
       }
     ]
   }
@@ -316,6 +317,7 @@ class LanguageIntl {
         key: 'action',
         dataIndex: 'action',
         title: 'ACTION',
+        align: 'center',
       }
     ]
   }

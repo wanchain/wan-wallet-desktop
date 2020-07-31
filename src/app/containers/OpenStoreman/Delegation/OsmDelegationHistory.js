@@ -3,6 +3,7 @@ import { Table, Avatar } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
+import style from './index.less';
 import history from 'static/image/history.png';
 import { MAIN, TESTNET } from 'utils/settings'
 
@@ -37,7 +38,7 @@ class OsmDelegationHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span>{intl.get('staking.delegateHistory')}</span>
+          <img src={history} /><span className={style.itemTitle}>{intl.get('staking.delegateHistory')}</span>
         </div>
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
