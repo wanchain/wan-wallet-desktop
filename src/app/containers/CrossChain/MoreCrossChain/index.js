@@ -81,31 +81,6 @@ class MoreCrossChain extends Component {
     }
   ];
 
-  listColumns = [
-    {
-      dataIndex: 'symbol',
-      // width: 460,
-      title: 'SYMBOL',
-      align: 'center',
-      ellipsis: true,
-    },
-    {
-      dataIndex: 'action',
-      // flex: 1,
-      width: 100,
-      title: 'ACTION',
-      align: 'center',
-      ellipsis: true,
-      render: (text, record) => {
-        return (
-          <Fragment>
-            {record.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => this.setCrossChainPairSelection(record, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => this.setCrossChainPairSelection(record, true)} />}
-          </Fragment>
-        );
-      }
-    }
-  ];
-
   data = [{
     chain: 'BTC',
     key: 'BTC',

@@ -1,11 +1,10 @@
 import wanUtil from 'wanchain-util';
 import BigNumber from 'bignumber.js';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, autorun } from 'mobx';
 import Identicon from 'identicon.js';
 import btcImg from 'static/image/btc.png';
 import ethImg from 'static/image/eth.png';
 import eosImg from 'static/image/eos.png';
-
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
@@ -20,11 +19,163 @@ class Tokens {
 
   @observable ccTokensList = {};
 
+  @observable twoWayBridgeTokensInfoTokensList = {};
+
   @observable tokensBalance = {};
 
   @observable E20TokensBalance = {};
 
-  @observable tokenIconList = {}
+  @observable tokenIconList = {};
+
+  @observable walletTokensList = [{
+    chain: 'WAN',
+    key: `Account_${'WAN'}`,
+    children: [{
+      title: '@Wanchain',
+      symbol: 'WAN',
+      key: `/${'wan'}Account/${'WAN'}/Wanchain`,
+      selected: false,
+    }, {
+      title: '@Ethereum',
+      symbol: 'WAN',
+      key: `/${'eth'}Account/${'WAN'}/Ethereum`,
+      selected: false,
+    }]
+  }, {
+    chain: 'ETH',
+    key: `Account_${'ETH'}`,
+    children: [{
+      title: '@Ethereum',
+      symbol: 'ETH',
+      key: `/${'eth'}Account/${'ETH'}/Ethereum`,
+      selected: false,
+    }, {
+      title: '@Wanchain',
+      symbol: 'wanETH',
+      key: `/${'eth'}Account/${'ETH'}/Wanchain`,
+      selected: false,
+    }]
+  }, {
+    chain: 'BTC',
+    key: `Account_${'BTC'}`,
+    children: [{
+      title: '@Bitcoin',
+      symbol: 'BTC',
+      key: `/${'btc'}Account/${'BTC'}/Bitcoin`,
+      selected: false,
+    }, {
+      title: '@Wanchain',
+      symbol: 'wanBTC',
+      key: `/tokens/WAN/0x89a3e1494bc3db81dadc893ded7476d33d47dcbd/WBTC`,
+      selected: false,
+    }, {
+      title: '@Ethereum',
+      symbol: 'BTC',
+      key: `/${'eth'}Account/${'BTC'}/Ethereum`,
+      selected: false,
+    }]
+  }, {
+    chain: 'EOS',
+    key: `Account_${'EOS'}`,
+    children: [{
+      title: '@EOS',
+      symbol: 'EOS',
+      key: `/${'eos'}Account/${'EOS'}/EOS`,
+      selected: false,
+    }]
+  }, {
+    chain: 'MKR',
+    key: `Account_${'MKR'}`,
+    children: [{
+      title: '@Wanchain',
+      symbol: 'wanMKR',
+      key: `/${'eth'}Account/${'MKR'}/Wanchain`,
+      selected: false,
+    }, {
+      title: '@Ethereum',
+      symbol: 'MKR',
+      key: `/${'eth'}Account/${'MKR'}/Ethereum`,
+      selected: false,
+    }]
+  }, {
+    chain: 'USDT',
+    key: `Account_${'USDT'}`,
+    children: [{
+      title: '@Wanchain',
+      symbol: 'wanUSDT',
+      key: `/tokens/WAN/0x56948c162aaa6cce3f196b93903318502989f573/WUSDT`,
+      selected: false,
+    }, {
+      title: '@Ethereum',
+      symbol: 'USDT',
+      key: `/tokens/ETH/0x28c96b26f6df3cf57a0a4e8fef02e9295e9ca458/USDT`,
+      selected: false,
+    }]
+  }];
+
+  @observable twoWayBridgeTokenList = [{
+    select: true,
+    key: 'BTC-WBTC',
+    from: 'BTC',
+    to: 'WBTC',
+    fromChain: 'Bitcoin',
+    toChain: 'Wanchain',
+    fromAddress: '',
+    toAddress: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
+    detail: 'From BTC to WBTC',
+  }, {
+    select: false,
+    key: 'ETH-WETH',
+    from: 'ETH',
+    to: 'WETH',
+    fromChain: 'Ethereum',
+    toChain: 'Wanchain',
+    fromAddress: '',
+    toAddress: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
+    detail: 'From ETH to WETH',
+  }, {
+    select: false,
+    key: 'BTC-EBTC',
+    from: 'BTC',
+    to: 'EBTC',
+    fromChain: 'Bitcoin',
+    toChain: 'Ethereum',
+    fromAddress: '',
+    toAddress: '',
+    detail: 'From BTC to EBTC',
+  }, {
+    select: false,
+    key: 'EOS-WEOS',
+    from: 'EOS',
+    to: 'WEOS',
+    fromChain: 'EOS',
+    toChain: 'Wanchain',
+    fromAddress: '',
+    toAddress: '0x57195b9d12421e963b720020483f97bb7ff2e2a6',
+    detail: 'From EOS to WEOS',
+  }];
+
+  @action updateTwoWayBridgeTokenList(data) {
+    console.log('updateTwoWayBridgeTokenList');
+    self.twoWayBridgeTokenList = data;
+  }
+
+  @action toggleTwoWayBridgeTokenSelection(obj) {
+    let index = self.twoWayBridgeTokenList.findIndex(v => v.key === obj.key);
+    self.twoWayBridgeTokenList[index].select = obj.select;
+  }
+
+  @action updateWalletTokenSelectedStatus(key, selected) {
+    this.walletTokensList.forEach((v) => {
+      v.children.forEach((child) => {
+        if (child.key === key) {
+          child.selected = selected;
+        }
+      })
+    });
+    // this.walletTokensList = [...this.walletTokensList];
+    // console.log('this.walletTokensList:', self.walletTokensList);
+  }
 
   @action setCurrToken(addr, symbol) {
     if (symbol) {
@@ -44,7 +195,6 @@ class Tokens {
 
   @action async getTokenIcon(scAddr) {
     const token = self.getToken(scAddr);
-    // console.log('token:', token);
     switch (token.symbol) {
       case 'WBTC':
         self.tokenIconList[scAddr] = btcImg;
@@ -98,6 +248,22 @@ class Tokens {
           return;
         }
         self.ccTokensList = data;
+        // console.log('getCcTokensInfo:', data);
+        resolve()
+      })
+    })
+  }
+
+  @action getTwoWayBridgeTokensInfo() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getTwoWayBridgeTokensInfo', {}, (err, data) => {
+        // console.log('getTwoWayBridgeTokensInfo:', data, err);
+        if (err) {
+          console.log('getTwoWayBridgeTokensInfo: ', err);
+          reject(err)
+          return;
+        }
+        self.twoWayBridgeTokensInfoTokensList = data;
         resolve()
       })
     })
@@ -240,6 +406,16 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
+  @computed({ equals: 'comparer.structural' }) get getWalletTokenList() {
+    /* let list = [];
+    Object.keys(this.walletTokensList).forEach(item => {
+      // list.push(Object.assign({}, this.walletTokensList[item]));
+      list.push(this.walletTokensList[item]);
+    });
+    return list; */
+    return this.walletTokensList.slice();
+  }
+
   @computed get ccTokens() {
     let excludedList = CROSSCHAINTYPE;
     let list = [];
@@ -265,6 +441,20 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
+  @computed get twoWayBridgeTokensInfoTokens() {
+    let list = [];
+    if (!(self.twoWayBridgeTokensInfoTokensList instanceof Object)) {
+      return [];
+    }
+    Object.keys(self.twoWayBridgeTokensInfoTokensList).forEach(item => {
+      try {
+        console.log('item:', item);
+      } catch (err) {
+        console.log(`Get cross chain ${item} failed`, err);
+      }
+    })
+  }
+
   @computed get ccTokensSiderbar() {
     let list = [];
     if (!(self.ccTokensList instanceof Object)) {
@@ -288,6 +478,31 @@ class Tokens {
       }
     })
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
+  }
+
+  @computed get twoWayBridgeTokensSiderbar() {
+    let list = [];
+    if (!(self.twoWayBridgeTokensInfoTokensList instanceof Object)) {
+      return [];
+    }
+    Object.keys(self.twoWayBridgeTokensInfoTokensList).forEach(item => {
+      try {
+        let val = self.twoWayBridgeTokensInfoTokensList[item];
+        list.push({
+          key: item,
+          symbol: item,
+          first_address: val.first_address ? val.second_address : '',
+          second_address: val.second_address ? val.second_address : '',
+          select: val.select,
+          detail: val.detail,
+        })
+      } catch (err) {
+        console.log(`Get cross chain ${item} failed`, err);
+      }
+    });
+    // console.log('list-------------:', list);
+    // return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    return list;
   }
 
   @computed get tokensOnSideBar() {

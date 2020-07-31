@@ -15,9 +15,10 @@ const { SubMenu, Item } = Menu;
   chainId: stores.session.chainId,
   settings: stores.session.settings,
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
+  getWalletTokenList: stores.tokens.getWalletTokenList,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
-  twoWayBridgeOnSideBar: stores.crossChain.twoWayBridgeOnSideBar,
+  // twoWayBridgeOnSideBar: stores.crossChain.twoWayBridgeOnSideBar,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
 }))
 
@@ -67,7 +68,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, twoWayBridgeOnSideBar, dAppsOnSideBar } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar, getWalletTokenList } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -139,22 +140,52 @@ class Sidebar extends Component {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     } */
 
+    // console.log('tokensOnSideBar:', tokensOnSideBar);
+
+    // console.log('getWalletTokenList:::::::::::::', getWalletTokenList);
+    let walletList = [];
+    getWalletTokenList.forEach(v => {
+      if (v.children.length === 0) {
+        return false;
+      }
+      if (v.children.find(c => c.selected === true)) {
+        let children = [];
+        v.children.forEach(c => {
+          if (c.selected === true) {
+            children.push({
+              title: c.title,
+              key: c.key,
+              noCircle: true,
+            });
+          }
+        });
+        walletList.push({
+          title: v.chain,
+          key: v.key,
+          icon: 'block',
+          mode: 'vertical',
+          children: children
+        });
+      }
+    });
+    // console.log('--------walletList---------', walletList);
+    walletChildren.splice(0, walletChildren.length, ...walletList);
     // walletChildren.splice(walletChildren.length, 0, {
-    walletChildren.splice(0, walletChildren.length, {
-        title: 'WAN',
-        key: `Account_${'WAN'}`,
-        icon: 'block',
-        mode: 'vertical',
-        children: [{
-          title: '@Wanchain',
-          key: `/${'eth'}Account/${'WAN'}/Wanchain`,
-          noCircle: true,
-        }, {
-          title: '@Ethereum',
-          key: `/${'eth'}Account/${'WAN'}/Ethereum`,
-          noCircle: true,
-        }]
+    /* walletChildren.splice(0, walletChildren.length, {
+      title: 'WAN',
+      key: `Account_${'WAN'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: '@Wanchain',
+        key: `/${'wan'}Account/${'WAN'}/Wanchain`,
+        noCircle: true,
       }, {
+        title: '@Ethereum',
+        key: `/${'eth'}Account/${'WAN'}/Ethereum`,
+        noCircle: true,
+      }]
+    }, {
       title: 'ETH',
       key: `Account_${'ETH'}`,
       icon: 'block',
@@ -174,8 +205,12 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
+        title: '@Bitcoin',
+        key: `/${'btc'}Account/${'BTC'}/Bitcoin`,
+        noCircle: true,
+      }, {
         title: '@Wanchain',
-        key: `/${'btc'}Account/${'BTC'}/Wanchain`,
+        key: `/tokens/WAN/0x89a3e1494bc3db81dadc893ded7476d33d47dcbd/WBTC`,
         noCircle: true,
       }, {
         title: '@Ethereum',
@@ -188,8 +223,8 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
-        title: '@Wanchain',
-        key: `/${'eos'}Account/${'EOS'}/Wanchain`,
+        title: '@EOS',
+        key: `/${'eos'}Account/${'EOS'}/EOS`,
         noCircle: true,
       }]
     }, {
@@ -206,7 +241,21 @@ class Sidebar extends Component {
         key: `/${'eth'}Account/${'MKR'}/Ethereum`,
         noCircle: true,
       }]
-    });
+    }, {
+      title: 'USDT',
+      key: `Account_${'USDT'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: '@Wanchain',
+        key: `/tokens/WAN/0x56948c162aaa6cce3f196b93903318502989f573/WUSDT`,
+        noCircle: true,
+      }, {
+        title: '@Ethereum',
+        key: `/tokens/ETH/0x28c96b26f6df3cf57a0a4e8fef02e9295e9ca458/USDT`,
+        noCircle: true,
+      }]
+    }); */
 
     // Add token.
     walletChildren.push({
