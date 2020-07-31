@@ -3,15 +3,15 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
-import { checkAmountUnit, getContractData, getContractAddr, getNonce, getGasPrice, getChainId } from 'utils/helper';
-import { signTransaction } from 'componentUtils/trezor';
-import { toWei } from 'utils/support.js';
 
-import style from 'components/Staking/MyValidatorsList/index.less';
+import { toWei } from 'utils/support.js';
+import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
+import { signTransaction } from 'componentUtils/trezor';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+import style from 'components/Staking/MyValidatorsList/index.less';
 import ValidatorConfirmForm from 'components/Staking/ValidatorConfirmForm';
-import { WANPATH, WALLETID } from 'utils/settings';
+import { checkAmountUnit, getStoremanContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'ValidatorConfirmForm' })(ValidatorConfirmForm);
@@ -79,35 +79,28 @@ class InForm extends Component {
   }
 
   onSend = async () => {
-    this.setState({
-      confirmLoading: true
-    });
-    let { form, record, addrInfo } = this.props;
-    let from = record.myAddress.addr;
-    let type = record.myAddress.type;
-    let lockTime = record.lockTime;
-    let publicKey1 = record.publicKey1;
+    this.setState({ confirmLoading: true });
+    let { record, form } = this.props;
+    let { type, path, addr: from } = record.myAddress;
     let amount = form.getFieldValue('amount');
-    let path = type === 'normal' ? WANPATH + addrInfo[type][from].path : addrInfo[type][from].path;
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
-
     let tx = {
-      from: from,
-      amount: amount.toString(),
-      BIP44Path: path,
-      walletID: walletID,
-      minerAddr: record.validator.address
-    }
+      from,
+      amount,
+      walletID,
+      wAddr: record.wAddr,
+      BIP44Path: record.myAddress.path,
+    };
 
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorValidatorAppend(path, from.toLowerCase(), (amount || 0).toString(), lockTime, publicKey1);
+      await this.trezorValidatorAppend(path, from.toLowerCase(), amount);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
       if (walletID === WALLETID.LEDGER) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
       }
-      wand.request('staking_validatorAppend', { tx }, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, action: 'stakeClaim' }, (err, ret) => {
         if (err) {
           message.warn(intl.get('ValidatorRegister.topUpFailed'));
         } else {
@@ -119,26 +112,21 @@ class InForm extends Component {
     }
   }
 
-  trezorValidatorAppend = async (path, from, value, lockTime, publicKey1) => {
-    let chainId = await getChainId();
-    let func = 'stakeAppend';// abi function
+  trezorValidatorAppend = async (path, from, value) => {
+    let { record } = this.props;
     try {
-      let nonce = await getNonce(from, 'wan');
-      let gasPrice = await getGasPrice('wan');
-      let address = this.props.record.validator.address;
-      let data = await getContractData(func, address);
-      let amountWei = toWei(value);
-      const cscContractAddr = await getContractAddr();
-      let rawTx = {};
-      rawTx.from = from;
-      rawTx.to = cscContractAddr;
-      rawTx.value = amountWei;
-      rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, 'gwei');
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData('stakeClaim', record.wAddr, value), getContractAddr()]);
+      let rawTx = {
+        to,
+        from,
+        data,
+        chainId,
+        Txtype: 1,
+        value: toWei(value),
+        nonce: '0x' + nonce.toString(16),
+        gasLimit: '0x' + Number(200000).toString(16),
+        gasPrice: toWei(gasPrice, 'gwei'),
+      };
       let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
 
       // Send register validator
@@ -154,16 +142,15 @@ class InForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        status: 'Sent',
+        status: 'Sending',
       };
       let satellite = {
-        secPk: publicKey1,
-        lockTime,
-        annotate: 'StakeAppend'
+        wAddr: record.wAddr,
+        annotate: 'StoremanStakeClaim',
       }
 
       // save register validator history into DB
-      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
+      await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
@@ -179,32 +166,36 @@ class InForm extends Component {
 
   render () {
     const { onCancel, form, settings, record, addrInfo } = this.props;
+    let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo);
     let showConfirmItem = { validatorAccount: true, myAddr: true, amount: true };
-    let formValues = { publicKey1: record.publicKey1, myAddr: record.myAccount, amount: form.getFieldValue('amount') };
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title='Storeman Top-up' className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title='Storeman Claim' className="validator-register-modal"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
-            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
-              options={{ initialValue: '400000', rules: [{ required: true }] }}
-              title='Deposit'
+            <div className="stakein-title">Storeman Account</div>
+            <CommonFormItem form={form} formName='crosschain' disabled={true}
+              options={{ initialValue: record.crosschain, rules: [{ required: true }] }}
+              title='Cross Chain'
             />
-            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
-              options={{ initialValue: '10000', rules: [{ required: true }] }}
+            <CommonFormItem form={form} formName='stake' disabled={true}
+              options={{ initialValue: record.stake, rules: [{ required: true }] }}
+              title='Stake'
+            />
+            <CommonFormItem form={form} formName='reward' disabled={true}
+              options={{ initialValue: record.reward, rules: [{ required: true }] }}
               title='Reward'
             />
-            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
-              options={{ initialValue: '0x7a815428f49f8fcf182fbd4bff102373f60ab70b', rules: [{ required: true }] }}
+            <CommonFormItem form={form} formName='account' disabled={true}
+              options={{ initialValue: record.wAddr, rules: [{ required: true }] }}
               title='Account'
             />
-            <CommonFormItem form={form} formName='validatorAccount' disabled={true}
+            <CommonFormItem form={form} formName='withdrawableAmount' disabled={true}
               options={{ initialValue: '100', rules: [{ required: true }] }}
               title='Withdrawable Amount'
             />
@@ -212,26 +203,26 @@ class InForm extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <CommonFormItem form={form} formName='myAccount' disabled={true}
-              options={{ initialValue: 0x7a815428f49f8fcf182fbd4bff102373f60ab70b }}
+              options={{ initialValue: record.account }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.address')}
             />
             <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: '0' }}
+              options={{ initialValue: balance }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
             />
             { settings.reinput_pwd && <PwdForm form={form}/> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={formValues} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        { this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
       </div>
     );
   }
 }
 
-const ValidatorInForm = Form.create({ name: 'InForm' })(InForm);
-class OsmVldClaim extends Component {
+const StoremanInForm = Form.create({ name: 'InForm' })(InForm);
+class OsmClaim extends Component {
   state = {
     visible: false
   }
@@ -247,11 +238,11 @@ class OsmVldClaim extends Component {
   render () {
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} disabled={this.props.record.nextLockTime === 0}/>
-        {this.state.visible && <ValidatorInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
+        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
+        {this.state.visible && <StoremanInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
       </div>
     );
   }
 }
 
-export default OsmVldClaim;
+export default OsmClaim;

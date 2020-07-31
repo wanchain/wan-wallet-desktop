@@ -6,7 +6,7 @@ import { Row, Col } from 'antd';
 import GroupList from './GroupList';
 import MyStoremanList from './MyStoremanList';
 import StoremanCards from './StoremanCards';
-import RegisterValidatorHistory from 'components/Staking/RegisterValidatorHistory';
+import OsmStakeHistory from './OsmStakeHistory';
 
 import style from './index.less';
 import total from 'static/image/total.png';
@@ -70,7 +70,7 @@ class Validator extends Component {
           <MyStoremanList />
         </Row>
         <Row>
-          <RegisterValidatorHistory name="normal" />
+          <OsmStakeHistory name="normal" />
         </Row>
       </div>
     );

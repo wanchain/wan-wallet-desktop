@@ -6,12 +6,12 @@ import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { toWei } from 'utils/support.js';
 import PwdForm from 'componentUtils/PwdForm';
-import { WANPATH, WALLETID } from 'utils/settings';
+import { WALLETID } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor';
 import StoremanConfirmForm from './StoremanConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import style from 'components/Staking/MyValidatorsList/index.less';
-import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit } from 'utils/helper';
+import { getStoremanContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit } from 'utils/helper';
 
 const MINAMOUNT = 100;
 const pu = require('promisefy-util');
@@ -27,10 +27,14 @@ const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm
 
 @observer
 class ModifyForm extends Component {
-  state = {
-    selectType: '',
-    confirmVisible: false,
-    confirmLoading: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      selectType: '',
+      confirmVisible: false,
+      confirmLoading: false,
+      isExit: props.modifyType === 'exit',
+    }
   }
 
   componentWillUnmount () {
@@ -60,65 +64,57 @@ class ModifyForm extends Component {
 
   onSend = async () => {
     this.setState({ confirmLoading: true });
-    let { form, record, addrInfo, modifyType } = this.props;
-    let from = record.myAddress.addr;
-    let type = record.myAddress.type;
+    let { record, form } = this.props;
+    let { type, path, addr: from } = record.myAddress;
+    let action = this.state.isExit ? 'stakeOut' : 'stakeAppend';
+    let amount = this.state.isExit ? '0' : form.getFieldValue('amount');
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
-    let path = type !== 'normal' ? addrInfo[type][from].path : WANPATH + addrInfo[type][from].path;
     let tx = {
-      from: from,
-      amount: 0,
-      BIP44Path: path,
-      walletID: walletID,
-      minerAddr: record.validator.address
+      from,
+      amount,
+      walletID,
+      wAddr: record.wAddr,
+      BIP44Path: record.myAddress.path,
     };
 
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
 
-    if (modifyType === 'exit') {
-      let type = 'stakeUpdate';
-      if (WALLETID.TREZOR === walletID) {
-        await this.trezorValidatorUpdate(path, from, type);
-        this.setState({ confirmVisible: false });
-        this.props.onSend(walletID);
-      } else {
-        wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
-          if (err) {
-            message.warn(intl.get('ValidatorRegister.updateFailed'));
-          } else {
-            console.log('validatorModify ret:', ret);
-          }
-          this.setState({ confirmVisible: false, confirmLoading: false });
-          this.props.onSend();
-        });
-      }
+    if (WALLETID.TREZOR === walletID) {
+      await this.trezorValidatorUpdate(path, from, action, amount);
+      this.setState({ confirmVisible: false });
+      this.props.onSend(walletID);
+    } else {
+      wand.request('storeman_openStoremanAction', { tx, action }, (err, ret) => {
+        if (err) {
+          message.warn(intl.get('ValidatorRegister.updateFailed'));
+        } else {
+          console.log('validatorModify ret:', ret);
+        }
+        this.setState({ confirmVisible: false, confirmLoading: false });
+        this.props.onSend();
+      });
     }
   }
 
-  trezorValidatorUpdate = async (path, from, func, value) => {
+  trezorValidatorUpdate = async (path, from, action, value) => {
     let { record } = this.props;
-    let chainId = await getChainId();
     try {
-      let nonce = await getNonce(from, 'wan');
-      let gasPrice = await getGasPrice('wan');
-      let address = record.validator.address;
-      let data = await getContractData(func, address, value);
-      let amountWei = toWei('0');
-      const cscContractAddr = await getContractAddr();
-      let rawTx = {};
-      rawTx.from = from;
-      rawTx.to = cscContractAddr;
-      rawTx.value = amountWei;
-      rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, 'gwei');
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, record.wAddr, value), getContractAddr()])
+      let rawTx = {
+        to,
+        from,
+        data,
+        chainId,
+        Txtype: 1,
+        value: toWei(value),
+        nonce: '0x' + nonce.toString(16),
+        gasLimit: '0x' + Number(200000).toString(16),
+        gasPrice: toWei(gasPrice, 'gwei'),
+      };
 
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
       // Send modify validator info
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
 
@@ -133,15 +129,15 @@ class ModifyForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        status: 'Sent',
+        status: 'Sending',
       };
       let satellite = {
-        secPk: record.publicKey1,
-        annotate: func === 'stakeUpdate' ? 'StakeUpdate' : 'StakeUpdateFeeRate'
+        wAddr: record.wAddr,
+        annotate: action === 'stakeAppend' ? 'StoremanStakeAppend' : 'StoremanStakeOut'
       }
 
       // save register validator history into DB
-      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
+      await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       // Update stake info & history
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
@@ -173,10 +169,11 @@ class ModifyForm extends Component {
   }
 
   render () {
-    const { onCancel, form, settings, record, modifyType, addrInfo } = this.props;
-    let title = modifyType === 'exit' ? 'Storeman Exit' : 'Storeman Top-up';
-    let balance = getValueByAddrInfo(record.account, 'balance', addrInfo)
-    let showConfirmItem = { groupId: true, crosschain: true, account: true, amount: modifyType !== 'exit' };
+    const { isExit } = this.state;
+    const { onCancel, form, settings, record, addrInfo } = this.props;
+    let title = isExit ? 'Storeman Exit' : 'Storeman Top-up';
+    let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
+    let showConfirmItem = { groupId: true, crosschain: true, account: true, amount: !isExit };
 
     return (
       <div>
@@ -210,7 +207,7 @@ class ModifyForm extends Component {
               title={intl.get('ValidatorRegister.balance')}
             />
             {
-              modifyType !== 'exit' &&
+              !isExit &&
               <CommonFormItem form={form} formName='amount'
                 options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
@@ -227,7 +224,7 @@ class ModifyForm extends Component {
 }
 
 const StoremanModifyForm = Form.create({ name: 'ModifyForm' })(ModifyForm);
-class OsmStakeOut extends Component {
+class OsmAppendAndExit extends Component {
   state = {
     visible: false
   }
@@ -252,4 +249,4 @@ class OsmStakeOut extends Component {
   }
 }
 
-export default OsmStakeOut;
+export default OsmAppendAndExit;

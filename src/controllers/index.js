@@ -2141,7 +2141,19 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             logger.error(e.message || e.stack)
             err = e
         }
-        sendResponse([ROUTE_STAKING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+        break;
+
+      case 'insertStoremanTransToDB':
+        try {
+            logger.info('insertStoremanTransToDB:' + payload);
+            let { tx, satellite } = payload;
+            await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
+        } catch (e) {
+            logger.error(e.message || e.stack)
+            err = e
+        }
+        sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
         break;
 
   }

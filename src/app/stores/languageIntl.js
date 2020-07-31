@@ -243,8 +243,8 @@ class LanguageIntl {
         title: 'ACCOUNT',
       },
       {
-        key: 'deposit',
-        dataIndex: 'deposit',
+        key: 'stake',
+        dataIndex: 'stake',
         title: 'STAKE',
       },
       {
@@ -319,6 +319,36 @@ class LanguageIntl {
       }
     ]
   }
+
+  @computed get osmStakingColumns() {
+    return self.language && [
+      {
+        title: intl.get('TransHistory.time'),
+        dataIndex: 'time',
+        key: 'time',
+      }, {
+        title: intl.get('staking.table.type'),
+        dataIndex: 'annotate',
+        key: 'annotate',
+      }, {
+        title: intl.get('TransHistory.from'),
+        dataIndex: 'from',
+        key: 'from',
+      }, {
+        title: 'STOREMAN',
+        dataIndex: 'storeman',
+        key: 'storeman'
+      }, {
+        title: intl.get('TransHistory.value'),
+        dataIndex: 'stakeAmount',
+        key: 'stakeAmount'
+      }, {
+        title: intl.get('TransHistory.status'),
+        dataIndex: 'status',
+        key: 'status'
+      }
+    ]
+  };
 
   @computed get sidebarColumns () {
     let sidebar = self.language && [
