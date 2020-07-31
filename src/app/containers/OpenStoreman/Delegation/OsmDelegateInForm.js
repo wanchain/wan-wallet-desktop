@@ -1,28 +1,29 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
-
-import style from 'components/Staking/DelegateInForm/index.less';
-import { MAIN, TESTNET, WALLETID } from 'utils/settings'
-import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
-import { toWei } from 'utils/support.js';
 import { BigNumber } from 'bignumber.js';
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, checkWanValidatorAddr } from 'utils/helper';
-import { signTransaction } from 'componentUtils/trezor'
+import { observer, inject } from 'mobx-react';
+import { Button, Modal, Form, Icon, Select, message, Row, Col, Avatar } from 'antd';
 
-const Option = Select.Option;
+import { toWei } from 'utils/support.js';
+import PwdForm from 'componentUtils/PwdForm';
+import { signTransaction } from 'componentUtils/trezor';
+import { MAIN, TESTNET, WALLETID } from 'utils/settings';
+import style from 'components/Staking/DelegateInForm/index.less';
+import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
+import CommonFormItem from 'componentUtils/CommonFormItem';
+import AddrSelectForm from 'componentUtils/AddrSelectForm';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, getValueByAddrInfo } from 'utils/helper';
+
+const colSpan = 6;
+const MINAMOUNT = 100
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
-const LEFT = 6;
-const RIGHT = 18;
 
 @inject(stores => ({
   settings: stores.session.settings,
   chainId: stores.session.chainId,
-  getNormalAddrList: stores.wanAddress.getNormalAddrList,
-  ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  trezorAddrList: stores.wanAddress.trezorAddrList,
+  addrInfo: stores.wanAddress.addrInfo,
+  addrSelectedList: stores.wanAddress.addrSelectedList,
   onlineValidatorList: stores.staking.onlineValidatorList,
   updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
@@ -34,7 +35,7 @@ class OsmDelegateInForm extends Component {
     super(props)
     this.state = {
       balance: '0',
-      addrList: [],
+      initAmount: MINAMOUNT,
       confirmVisible: false,
       confirmLoading: false,
       loading: false,
@@ -46,64 +47,15 @@ class OsmDelegateInForm extends Component {
     }
   }
 
-  componentWillMount () {
-    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrList = []
-    getNormalAddrList.forEach(addr => {
-      addrList.push(
-        addr.address
-      )
-    });
-
-    ledgerAddrList.forEach(addr => {
-      addrList.push(
-        'Ledger: ' + addr.address
-      )
-    });
-
-    trezorAddrList.forEach(addr => {
-      addrList.push(
-        'Trezor: ' + addr.address
-      )
-    });
-
-    this.setState({ addrList: addrList })
+  getValueByAddrInfoArgs = (...args) => {
+    return getValueByAddrInfo(...args, this.props.addrInfo);
   }
 
-  componentDidMount () {
-    const { form, record, ledgerAddrList, trezorAddrList } = this.props;
-
-    if (record) {
-      let name = record.validator.name;
-      let quota = this.getDataFromValidatorList(record.validator.address, 'quota');
-      let from = record.accountAddress;
-
-      form.setFieldsValue({
-        to: record.validator.address,
-        groupId: name,
-        quota: quota,
-        commission: this.getDataFromValidatorList(record.validator.address, 'feeRate'),
-        maxFeeRate: this.getDataFromValidatorList(record.validator.address, 'maxFeeRate')
-      });
-
-      for (let i = 0; i < ledgerAddrList.length; i++) {
-        const hdAddr = ledgerAddrList[i].address;
-        if (hdAddr.toLowerCase() === from.toLowerCase()) {
-          from = 'Ledger: ' + from;
-          break;
-        }
-      }
-      for (let i = 0; i < trezorAddrList.length; i++) {
-        const hdAddr = trezorAddrList[i].address;
-        if (hdAddr.toLowerCase() === from.toLowerCase()) {
-          from = 'Trezor: ' + from;
-          break;
-        }
-      }
-
-      form.setFieldsValue({ from: from });
-      this.onChange(from);
-    }
+  onChangePosAddrSelect = value => {
+    this.setState(() => {
+      let balance = value ? this.getValueByAddrInfoArgs(value, 'balance') : 0;
+      return { balance }
+    })
   }
 
   onValidatorChange = value => {
@@ -117,63 +69,6 @@ class OsmDelegateInForm extends Component {
       maxFeeRate: this.getDataFromValidatorList(addr, 'maxFeeRate'),
     });
     this.validator = value;
-  }
-
-  getBalance = (value) => {
-    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    if (!value) {
-      return
-    }
-
-    if (value.includes('Ledger')) {
-      for (let i = 0; i < ledgerAddrList.length; i++) {
-        const element = ledgerAddrList[i];
-        value = value.replace('Ledger: ', '')
-        if (element.address === value) {
-          return element.balance;
-        }
-      }
-      return;
-    }
-
-    if (value.includes('Trezor')) {
-      for (let i = 0; i < trezorAddrList.length; i++) {
-        const element = trezorAddrList[i];
-        value = value.replace('Trezor: ', '')
-        if (element.address === value) {
-          return element.balance;
-        }
-      }
-      return;
-    }
-
-    for (let i = 0; i < getNormalAddrList.length; i++) {
-      const element = getNormalAddrList[i];
-      if (element.address === value) {
-        return element.balance;
-      }
-    }
-  }
-
-  onChange = value => {
-    if (!value) {
-      return
-    }
-    this.setState({
-      balance: this.getBalance(value),
-    })
-  }
-
-  checkToWanAddr = (rule, value, callback) => {
-    checkWanValidatorAddr(value).then(ret => {
-      if (ret) {
-        callback();
-      } else {
-        callback(intl.get('NormalTransForm.invalidAddress'));
-      }
-    }).catch((err) => {
-        callback(err);
-    })
   }
 
   checkAmount = (rule, value, callback) => {
@@ -202,29 +97,6 @@ class OsmDelegateInForm extends Component {
     }
 
     callback();
-  }
-
-  getPath = (from) => {
-    const { getNormalAddrList, ledgerAddrList, trezorAddrList } = this.props;
-    let addrs = getNormalAddrList
-    let fromAddr = from
-
-    if (from.includes('Ledger')) {
-      fromAddr = from.replace('Ledger: ', '')
-      addrs = ledgerAddrList
-    }
-
-    if (from.includes('Trezor')) {
-      fromAddr = from.replace('Trezor: ', '')
-      addrs = trezorAddrList
-    }
-
-    for (let i = 0; i < addrs.length; i++) {
-      const addr = addrs[i];
-      if (addr.address === fromAddr) {
-        return addr.path;
-      }
-    }
   }
 
   getDataFromValidatorList = (addr, type) => {
@@ -304,9 +176,7 @@ class OsmDelegateInForm extends Component {
   }
 
   onSend = async () => {
-    this.setState({
-      confirmLoading: true
-    });
+    this.setState({ confirmLoading: true });
     let { form } = this.props;
     let from = form.getFieldValue('from');
     let to = form.getFieldValue('to');
@@ -411,7 +281,7 @@ class OsmDelegateInForm extends Component {
   }
 
   render () {
-    const { onlineValidatorList, form, settings, disabled, onCancel } = this.props;
+    const { onlineValidatorList, form, settings, disabled, onCancel, addrSelectedList } = this.props;
     const { getFieldDecorator } = form;
     let validatorListSelect = onlineValidatorList.map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
 
@@ -423,15 +293,15 @@ class OsmDelegateInForm extends Component {
             <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <div className={style['stakein-bg']}>
-            <div className="stakein-title">{intl.get('StakeInForm.validatorAccount')}</div>
-            <div className={style['stakein-line']}>
+          <div className="validator-bg">
+            <div className="stakein-title">Storeman's Account</div>
+            <div className="validator-line">
               <Row type="flex" justify="space-around" align="middle">
-                <Col span={5} className={style['col-stakein-name']}><span className="stakein-name">Storeman</span></Col>
-                <Col span={14}>
-                  <Form layout="inline" id="posNameSelect">
+                <Col span={6}><span className="stakein-name">Cross Chain</span></Col>
+                <Col span={18}>
+                  <Form layout="inline" id="osmChainSelect">
                     <Form.Item>
-                      {getFieldDecorator('groupId', {
+                      {getFieldDecorator('crosschain', {
                         rules: [{ required: false }],
                       })(
                         <Select
@@ -439,14 +309,43 @@ class OsmDelegateInForm extends Component {
                           showArrow={!disabled}
                           showSearch
                           allowClear
-                          style={{ width: 355 }}
-                          placeholder={intl.get('StakeInForm.selectName')}
+                          style={{ width: 400 }}
+                          placeholder="Select Cross Chain"
                           optionFilterProp="children"
                           onChange={this.onValidatorChange}
-                          getPopupContainer={() => document.getElementById('posNameSelect')}
+                          getPopupContainer={() => document.getElementById('osmChainSelect')}
                           filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
-                          {validatorListSelect.map((item, index) => <Option value={item.props.name} key={index}>{item}</Option>)}
+                          {validatorListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+            <div className="validator-line">
+              <Row type="flex" justify="space-around" align="middle" className="storeman">
+                <Col span={6}><span className="stakein-name">Storeman</span></Col>
+                <Col span={15}>
+                  <Form layout="inline" id="osmNameSelect">
+                    <Form.Item>
+                      {getFieldDecorator('storeman', {
+                        rules: [{ required: false }],
+                      })(
+                        <Select
+                          disabled={disabled}
+                          showArrow={!disabled}
+                          showSearch
+                          allowClear
+                          style={{ width: 400 }}
+                          placeholder="Select Storeman Account"
+                          optionFilterProp="children"
+                          onChange={this.onValidatorChange}
+                          getPopupContainer={() => document.getElementById('osmNameSelect')}
+                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        >
+                          {validatorListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -457,124 +356,45 @@ class OsmDelegateInForm extends Component {
                 </Col>
               </Row>
             </div>
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.quota')}</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline">
-                    <Form.Item >
-                      {getFieldDecorator('quota')
-                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">Fee</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline">
-                    <Form.Item >
-                      {getFieldDecorator('maxFeeRate')
-                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
+            <CommonFormItem form={form} formName='quota' disabled={true}
+              options={{ initialValue: 'WAN' }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title='Quota'
+              colSpan={colSpan}
+            />
+            <CommonFormItem form={form} formName='delegationFee' disabled={true}
+              options={{ initialValue: 'WAN' }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title='Delegation Fee'
+              colSpan={colSpan}
+            />
           </div>
-          <div className={style['stakein-bg']}>
-            <div className="stakein-title">{intl.get('StakeInForm.myAccount')}</div>
-
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.address')}</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline" id="posAddrSelect">
-                    <Form.Item>
-                      {getFieldDecorator('from', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })
-                        (
-                          <Select
-                            autoFocus
-                            showSearch
-                            allowClear
-                            optionLabelProp="value"
-                            disabled={this.props.topUp}
-                            dropdownMatchSelectWidth={false}
-                            dropdownStyle={{ width: '420px' }}
-                            placeholder={intl.get('StakeInForm.selectAddress')}
-                            optionFilterProp="children"
-                            onSelect={this.onChange}
-                            getPopupContainer={() => document.getElementById('posAddrSelect')}
-                            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                            className="colorInput"
-                          >
-                            {this.state.addrList.map((item, index) =>
-                              <Option value={item} key={index}>
-                                <Row className="ant-row-flex">
-                                  <Col>{item}</Col>&nbsp;
-                                  <Col className="stakein-selection-balance">- {Number(this.getBalance(item)).toFixed(1)}</Col>
-                                </Row>
-                              </Option>)}
-                          </Select>
-                        )}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
+          <div className="validator-bg">
+            <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
+            <div className="validator-line">
+              <AddrSelectForm form={form} colSpan={6} addrSelectedList={addrSelectedList} handleChange={this.onChangePosAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
             </div>
-
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around" align="top">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.balance')}</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline">
-                    <Form.Item >
-                      {getFieldDecorator('balance', { initialValue: this.state.balance })
-                        (<Input disabled={true} prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-
-            <div className={style['stakein-line']}>
-              <Row type="flex" justify="space-around">
-                <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('StakeInForm.stake')}</span></Col>
-                <Col span={RIGHT}>
-                  <Form layout="inline">
-                    <Form.Item>
-                      {getFieldDecorator('amount', { initialValue: (this.props.topUp ? 0 : 100), rules: [{ required: true, validator: this.checkAmount }] })
-                        (<Input prefix={<Icon type="credit-card" className="colorInput" />} />)}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            </div>
-
-            {settings.reinput_pwd &&
-              <div className={style['stakein-line']}>
-                <Row type="flex" justify="space-around" align="top">
-                  <Col span={LEFT} className={style['col-stakein-name']}><span className="stakein-name">{intl.get('NormalTransForm.password')}</span></Col>
-                  <Col span={RIGHT}>
-                    <Form layout="inline">
-                      <Form.Item>
-                        {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
-                          (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
-                      </Form.Item>
-                    </Form>
-                  </Col>
-                </Row>
-              </div>
-            }
+            <CommonFormItem form={form} formName='balance' disabled={true}
+              options={{ initialValue: this.state.balance }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title={intl.get('ValidatorRegister.balance')}
+              colSpan={colSpan}
+            />
+            <CommonFormItem form={form} formName='amount'
+              options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title={intl.get('Common.amount')}
+              colSpan={colSpan}
+            />
+            {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
         { this.state.confirmVisible &&
           <Confirm
             confirmLoading={this.state.confirmLoading}
             visible={this.state.confirmVisible}
-            onCancel={this.onConfirmCancel} onSend={this.onSend}
+            onCancel={this.onConfirmCancel}
+            onSend={this.onSend}
             record={this.state.record}
             title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
             note={''}

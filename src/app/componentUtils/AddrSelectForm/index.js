@@ -3,14 +3,15 @@ import intl from 'react-intl-universal';
 import { Form, Select, Row, Col } from 'antd';
 
 function AddrSelectForm (props) {
-  const { form, addrSelectedList, handleChange, getValueByAddrInfoArgs } = props;
+  const { form, addrSelectedList, handleChange, getValueByAddrInfoArgs, colSpan } = props;
   const { getFieldDecorator } = form;
+  const width = colSpan || 8;
 
   return (
     <React.Fragment>
       <Row type="flex" justify="space-around" align="top">
-        <Col span={8}><span className="stakein-name">{intl.get('ValidatorRegister.address')}</span></Col>
-        <Col span={16}>
+        <Col span={width}><span className="stakein-name">{intl.get('ValidatorRegister.address')}</span></Col>
+        <Col span={24 - width}>
           <Form layout="inline" id="posAddrSelect">
             <Form.Item>
               {getFieldDecorator('myAddr', { rules: [{ required: true, message: intl.get('NormalTransForm.invalidAddress') }] })

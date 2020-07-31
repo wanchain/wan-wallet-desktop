@@ -1,16 +1,15 @@
+import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { Button, Row, Col, Form } from 'antd';
-import intl from 'react-intl-universal';
 import { observer, inject } from 'mobx-react';
 
 import style from './index.less';
-import styleComm from 'containers/OpenStoreman/Storeman/index.less';
-
+import total from 'static/image/total.png';
 import DelegationCards from './DelegationCards';
 import OsmDelegateList from './OsmDelegateList';
-import DelegationHistory from 'components/Staking/DelegationHistory';
 import OsmDelegateInForm from './OsmDelegateInForm';
-import total from 'static/image/total.png';
+import OsmDelegationHistory from './OsmDelegationHistory';
+import styleComm from 'containers/OpenStoreman/Storeman/index.less';
 
 const InForm = Form.create({ name: 'OsmDelegateInForm' })(OsmDelegateInForm);
 
@@ -79,7 +78,7 @@ class Delegation extends Component {
         </Row>
         <Row>
           <Col>
-            <DelegationHistory name="normal" />
+            <OsmDelegationHistory name="normal" />
           </Col>
         </Row>
       </div>
