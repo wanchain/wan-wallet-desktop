@@ -44,7 +44,7 @@ class StoremanRegister extends Component {
     return getValueByAddrInfo(...args, this.props.addrInfo);
   }
 
-  onChangePosAddrSelect = value => {
+  onChangeAddrSelect = value => {
     this.setState(() => {
       let balance = value ? this.getValueByAddrInfoArgs(value, 'balance') : 0;
       return { balance }
@@ -123,7 +123,7 @@ class StoremanRegister extends Component {
   onSend = async () => {
     this.setState({ confirmLoading: true });
     let { form, group } = this.props;
-    let { from, amount } = form.getFieldsValue(['myAddr', 'amount']);
+    let { myAddr: from, amount } = form.getFieldsValue(['myAddr', 'amount']);
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
@@ -131,9 +131,9 @@ class StoremanRegister extends Component {
 
     let tx = {
       from,
+      walletID,
       amount: amount.toString(),
       BIP44Path: path,
-      walletID: walletID,
       wPk: form.getFieldValue('publicKey'),
       groupId: group.groupId,
       enodeID: group.enodeID,
@@ -252,7 +252,7 @@ class StoremanRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <div className="validator-line">
-              <AddrSelectForm form={form} addrSelectedList={addrSelectedList} handleChange={this.onChangePosAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+              <AddrSelectForm form={form} addrSelectedList={addrSelectedList} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
             </div>
             <CommonFormItem form={form} formName='balance' disabled={true}
               options={{ initialValue: this.state.balance }}

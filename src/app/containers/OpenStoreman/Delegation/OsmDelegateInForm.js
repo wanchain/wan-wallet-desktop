@@ -8,16 +8,17 @@ import { toWei } from 'utils/support.js';
 import PwdForm from 'componentUtils/PwdForm';
 import { signTransaction } from 'componentUtils/trezor';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings';
-import style from 'components/Staking/DelegateInForm/index.less';
-import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getContractData, getValueByAddrInfo } from 'utils/helper';
+import DelegationConfirmForm from './DelegationConfirmForm';
+import style from 'components/Staking/DelegateInForm/index.less';
+import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getStoremanContractData, getValueByAddrInfo } from 'utils/helper';
 
 const colSpan = 6;
-const MINAMOUNT = 100
+const MINAMOUNT = 100;
+const ACTION = 'delegateIn';
 const pu = require('promisefy-util');
-const Confirm = Form.create({ name: 'StakeConfirmForm' })(StakeConfirmForm);
+const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -34,16 +35,12 @@ class OsmDelegateInForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      balance: '0',
-      initAmount: MINAMOUNT,
       confirmVisible: false,
       confirmLoading: false,
       loading: false,
-      record: {
-        validator: {},
-        accountAddress: '',
-        myStake: { title: '' },
-      }
+      record: undefined,
+      selectedChain: undefined,
+      storemanInfo: undefined,
     }
   }
 
@@ -51,47 +48,46 @@ class OsmDelegateInForm extends Component {
     return getValueByAddrInfo(...args, this.props.addrInfo);
   }
 
-  onChangePosAddrSelect = value => {
-    this.setState(() => {
-      let balance = value ? this.getValueByAddrInfoArgs(value, 'balance') : 0;
-      return { balance }
+  onChangeAddrSelect = value => {
+    this.props.form.setFieldsValue({
+      balance: value ? this.getValueByAddrInfoArgs(value, 'balance') : 0
     })
   }
 
-  onValidatorChange = value => {
-    let { form } = this.props;
-    let addr = this.getDataFromValidatorList(value, 'address');
+  onStoremanChange = storeman => {
+    let { form, onlineValidatorList } = this.props;
+    let storemanInfo = onlineValidatorList.find(i => i.name === storeman);
+    let crosschain = storemanInfo ? storemanInfo.crosschain : undefined;
     form.setFieldsValue({
-      to: addr,
-      groupId: value,
-      quota: this.getDataFromValidatorList(addr, 'quota'),
-      commission: this.getDataFromValidatorList(addr, 'feeRate'),
-      maxFeeRate: this.getDataFromValidatorList(addr, 'maxFeeRate'),
+      storeman,
+      crosschain,
+      quota: storemanInfo ? storemanInfo.quota : '0',
+      delegationFee: storemanInfo ? storemanInfo.feeRate : '0',
     });
-    this.validator = value;
+    this.setState({ storemanInfo });
+  }
+
+  onCrossChainChange = crosschain => {
+    this.props.form.setFieldsValue({ crosschain });
+    this.setState({ crosschain });
   }
 
   checkAmount = (rule, value, callback) => {
-    let { form } = this.props;
-    let quota = form.getFieldValue('quota');
-    let balance = form.getFieldValue('balance');
+    let valueStringPre = value.toString().slice(0, 4);
+    let { quota, balance } = this.props.form.getFieldsValue(['quota', 'balance']);
 
     if (!checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-
-    let valueStringPre = value.toString().slice(0, 4)
-    if (Number(value) < 0.0001 || (!this.props.topUp && Math.floor(valueStringPre) < 100)) {
+    if (new BigNumber(value).lt('0.0001') || Math.floor(valueStringPre) < 100) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
-
-    if (Number(value) > Number(balance)) {
-      callback(intl.get('SendNormalTrans.hasBalance'));
+    if (new BigNumber(value).gt(balance)) {
+      callback(intl.get('SendNormalTrans.overBalance'));
       return;
     }
-
-    if (Number(value) > Number(quota)) {
+    if (new BigNumber(value).gt(quota)) {
       callback(intl.get('StakeInForm.stakeExceed'));
       return;
     }
@@ -99,17 +95,8 @@ class OsmDelegateInForm extends Component {
     callback();
   }
 
-  getDataFromValidatorList = (addr, type) => {
-    if (!addr) return ' ';
-    let { onlineValidatorList } = this.props;
-    let value = type === 'address' ? onlineValidatorList.find(item => addr.toLowerCase() === item.name.toLowerCase()) : onlineValidatorList.find(item => addr.toLowerCase() === item.address.toLowerCase());
-    return value ? value[type] : ' '
-  }
-
   showConfirmForm = () => {
-    this.setState({
-      loading: true
-    })
+    this.setState({ loading: true })
     let { form, settings } = this.props;
     form.validateFields(async (err) => {
       if (err) {
@@ -117,23 +104,7 @@ class OsmDelegateInForm extends Component {
         return;
       };
 
-      let from = form.getFieldValue('from');
-      let to = form.getFieldValue('to');
-      let pwd = form.getFieldValue('pwd');
-      let amount = form.getFieldValue('amount');
-
-      if (!amount || (!this.props.topUp && amount < 100)) {
-        message.error(intl.get('NormalTransForm.amountIsIncorrect'));
-        this.setState({ loading: false });
-        return;
-      }
-
-      if (Number(this.state.balance) <= amount) {
-        message.error(intl.get('NormalTransForm.overBalance'))
-        this.setState({ loading: false });
-        return;
-      }
-
+      let { myAddr: account, amount, pwd, delegationFee, crosschain, storeman } = form.getFieldsValue(['myAddr', 'amount', 'pwd', 'delegationFee', 'crosschain', 'storeman']);
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -150,23 +121,10 @@ class OsmDelegateInForm extends Component {
         }
       }
 
-      let validator = {}
-      let { onlineValidatorList } = this.props;
-      for (let i = 0; i < onlineValidatorList.length; i++) {
-        const v = onlineValidatorList[i];
-        if (to === v.address) {
-          validator = v;
-          break;
-        }
-      }
       this.setState({
         loading: false,
         confirmVisible: true,
-        record: {
-          accountAddress: from,
-          validator: { name: validator.name, img: validator.icon, address: validator.address, commission: validator.feeRate, maxFeeRate: validator.maxFeeRate },
-          myStake: { title: amount },
-        }
+        record: { amount, account, storeman, crosschain, delegationFee, }
       });
     })
   }
@@ -178,55 +136,37 @@ class OsmDelegateInForm extends Component {
   onSend = async () => {
     this.setState({ confirmLoading: true });
     let { form } = this.props;
-    let from = form.getFieldValue('from');
-    let to = form.getFieldValue('to');
-
-    let path = this.getPath(from);
-
-    let amount = form.getFieldValue('amount');
-    if (!amount || (!this.props.topUp && amount < 100)) {
-      message.error('Please input a valid amount.');
-      return;
-    }
-    let walletID = WALLETID.NATIVE;
-
-    if (from.includes('Ledger')) {
-      from = from.replace('Ledger: ', '')
-      walletID = WALLETID.LEDGER;
-    }
-
-    if (from.includes('Trezor')) {
-      from = from.replace('Trezor: ', '')
-      walletID = WALLETID.TREZOR;
-    }
+    let { myAddr: from, amount } = form.getFieldsValue(['myAddr', 'amount']);
+    let path = this.getValueByAddrInfoArgs(from, 'path');
+    let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
     let tx = {
-      from: from,
-      validatorAddr: to,
-      amount: new BigNumber(amount || 0).toString(),
-      gasPrice: 0,
-      gasLimit: 0,
+      from,
+      walletID,
       BIP44Path: path,
-      walletID: walletID,
-      stakeAmount: new BigNumber(amount || 0).toString(),
+      amount: amount.toString(),
+      wAddr: this.state.storemanInfo.wAddr,
     }
+
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
+
     if (walletID === WALLETID.TREZOR) {
-      await this.trezorDelegateIn(path, from, to, new BigNumber(amount || 0).toString());
+      await this.trezorDelegateIn(path, from, amount);
+      this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
-      wand.request('staking_delegateIn', tx, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, ACTION }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('StakeInForm.delegateInFailed'));
+          message.warn(intl.get('ValidatorRegister.updateFailed'));
+        } else {
+          console.log('validatorModify ret:', ret);
         }
-        this.setState({ confirmVisible: false });
+        this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
     }
-    this.props.updateStakeInfo();
-    this.props.updateTransHistory();
   }
 
   onClick = () => {
@@ -234,57 +174,73 @@ class OsmDelegateInForm extends Component {
     wand.shell.openExternal(href);
   }
 
-  trezorDelegateIn = async (path, from, validator, value) => {
-    let chainId = await getChainId();
-    let func = 'delegateIn';
+  trezorDelegateIn = async (path, from, value) => {
+    let { record } = this.state;
     try {
-      let nonce = await getNonce(from, 'wan');
-      let gasPrice = await getGasPrice('wan');
-      let data = await getContractData(func, validator);
-      let amountWei = toWei(value);
-      const cscContractAddr = await getContractAddr();
-      let rawTx = {};
-      rawTx.from = from;
-      rawTx.to = cscContractAddr;
-      rawTx.value = amountWei;
-      rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
-      rawTx.gasLimit = '0x' + Number(200000).toString(16);
-      rawTx.gasPrice = toWei(gasPrice, 'gwei');
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(ACTION, record.wAddr, value), getContractAddr()])
+      let rawTx = {
+        to,
+        from,
+        data,
+        chainId,
+        Txtype: 1,
+        value: toWei(value),
+        nonce: '0x' + nonce.toString(16),
+        gasPrice: toWei(gasPrice, 'gwei'),
+        gasLimit: '0x' + Number(200000).toString(16),
+      };
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
 
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('Transaction hash:', txHash);
+
+      console.log('Transaction Hash:', txHash);
       let params = {
+        txHash,
+        from: from.toLowerCase(),
+        to: rawTx.to,
+        value: rawTx.value,
+        gasPrice: rawTx.gasPrice,
+        gasLimit: rawTx.gasLimit,
+        nonce: rawTx.nonce,
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        // hashX: txHash,
-        txHash,
-        from: from.toLowerCase(),
-        validator: validator,
-        annotate: 'DelegateIn',
-        status: 'Sent',
-        source: 'external',
-        stakeAmount: value.toString(),
-        ...rawTx
+        status: 'Sending',
       }
+      let satellite = {
+        wAddr: record.wAddr,
+        annotate: 'StoremanDelegateIn'
+      };
 
-      await pu.promisefy(wand.request, ['staking_insertTransToDB', { rawTx: params }], this);
+      await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      message.error(error)
+      console.log('Trezor validator append failed', error);
+      message.error(intl.get('ValidatorRegister.topUpFailed'));
     }
   }
 
   render () {
     const { onlineValidatorList, form, settings, disabled, onCancel, addrSelectedList } = this.props;
     const { getFieldDecorator } = form;
-    let validatorListSelect = onlineValidatorList.map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
+    let showConfirmItem = { storeman: true, delegationFee: true, crosschain: true, account: true, amount: true };
 
+    // TODO delete it
+    let crosschainData = ['wan-btc', 'eth-wan', 'wan-eos']
+    this.props.onlineValidatorList.forEach((i, index) => {
+      index % 2 ? i.crosschain = 'wan-btc' : i.crosschain = 'eth-wan'
+    })
+
+    let storemanListSelect = onlineValidatorList.filter(i => {
+      let crosschain = this.state.crosschain;
+      return !crosschain || crosschain === i.crosschain;
+    }).map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
+
+    let crosschainListSelect = crosschainData.filter(i => {
+      let storemanInfo = this.state.storemanInfo;
+      return !storemanInfo || storemanInfo.crosschain === i;
+    })
     return (
       <div>
         <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal']}
@@ -312,11 +268,10 @@ class OsmDelegateInForm extends Component {
                           style={{ width: 400 }}
                           placeholder="Select Cross Chain"
                           optionFilterProp="children"
-                          onChange={this.onValidatorChange}
+                          onChange={this.onCrossChainChange}
                           getPopupContainer={() => document.getElementById('osmChainSelect')}
-                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
-                          {validatorListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
+                          {crosschainListSelect.map((item, index) => <Select.Option value={item} key={index}>{item}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -341,11 +296,10 @@ class OsmDelegateInForm extends Component {
                           style={{ width: 400 }}
                           placeholder="Select Storeman Account"
                           optionFilterProp="children"
-                          onChange={this.onValidatorChange}
+                          onChange={this.onStoremanChange}
                           getPopupContainer={() => document.getElementById('osmNameSelect')}
-                          filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
-                          {validatorListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
+                          {storemanListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -357,13 +311,13 @@ class OsmDelegateInForm extends Component {
               </Row>
             </div>
             <CommonFormItem form={form} formName='quota' disabled={true}
-              options={{ initialValue: 'WAN' }}
+              options={{ initialValue: '0' }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title='Quota'
               colSpan={colSpan}
             />
             <CommonFormItem form={form} formName='delegationFee' disabled={true}
-              options={{ initialValue: 'WAN' }}
+              options={{ initialValue: '0' }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title='Delegation Fee'
               colSpan={colSpan}
@@ -372,16 +326,16 @@ class OsmDelegateInForm extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <div className="validator-line">
-              <AddrSelectForm form={form} colSpan={6} addrSelectedList={addrSelectedList} handleChange={this.onChangePosAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+              <AddrSelectForm form={form} colSpan={6} addrSelectedList={addrSelectedList} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
             </div>
             <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: this.state.balance }}
+              options={{ initialValue: '0' }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
               colSpan={colSpan}
             />
             <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
+              options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('Common.amount')}
               colSpan={colSpan}
@@ -389,15 +343,16 @@ class OsmDelegateInForm extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        { this.state.confirmVisible &&
+        {
+          this.state.confirmVisible &&
           <Confirm
-            confirmLoading={this.state.confirmLoading}
-            visible={this.state.confirmVisible}
-            onCancel={this.onConfirmCancel}
             onSend={this.onSend}
             record={this.state.record}
+            onCancel={this.onConfirmCancel}
+            showConfirmItem={showConfirmItem}
+            visible={this.state.confirmVisible}
+            confirmLoading={this.state.confirmLoading}
             title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')}
-            note={''}
           />
         }
       </div>
