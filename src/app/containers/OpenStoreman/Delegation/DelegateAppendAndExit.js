@@ -1,34 +1,41 @@
-import BigNumber from 'bignumber.js';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
+import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 
-import { toWei } from 'utils/support.js';
-import { WALLETID } from 'utils/settings';
+import { toWei } from 'utils/support';
 import PwdForm from 'componentUtils/PwdForm';
-import StoremanConfirmForm from './StoremanConfirmForm';
+import { WANPATH, WALLETID } from 'utils/settings'
 import { signTransaction } from 'componentUtils/trezor';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+import DelegationConfirmForm from './DelegationConfirmForm';
 import style from 'components/Staking/MyValidatorsList/index.less';
-import { checkAmountUnit, getStoremanContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo } from 'utils/helper';
+import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit, getStoremanContractData } from 'utils/helper';
 
+const MINAMOUNT = 100;
 const pu = require('promisefy-util');
-const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm);
+const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
+  language: stores.languageIntl.language,
   updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
-class InForm extends Component {
-  state = {
-    confirmVisible: false,
-    confirmLoading: false,
-  };
+class ModifyForm extends Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      selectType: '',
+      confirmVisible: false,
+      confirmLoading: false,
+      isExit: props.modifyType === 'exit',
+    }
+  }
 
   componentWillUnmount () {
     this.setState = (state, callback) => {
@@ -36,33 +43,10 @@ class InForm extends Component {
     };
   }
 
-  checkAmount = (rule, value, callback) => {
-    let { form } = this.props;
-    let balance = form.getFieldValue('balance');
-    if (value === undefined || !checkAmountUnit(18, value)) {
-      callback(intl.get('Common.invalidAmount'));
-    }
-    if (new BigNumber(value).lt(0)) {
-      callback(intl.get('StakeInForm.stakeTooLow'));
-      return;
-    }
-    if (new BigNumber(value).minus(balance).gte(0)) {
-      callback(intl.get('SendNormalTrans.hasBalance'));
-      return;
-    }
-    callback();
-  }
-
   showConfirmForm = () => {
-    let { form, settings, record, addrInfo } = this.props;
-    let balance = addrInfo[record.myAddress.type][record.myAddress.addr].balance;
+    let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
-      if (new BigNumber(balance).minus(form.getFieldValue('amount')).lte(0)) {
-        message.error(intl.get('NormalTransForm.overBalance'));
-        return;
-      }
-
       let pwd = form.getFieldValue('pwd');
       if (!settings.reinput_pwd) {
         this.setState({ confirmVisible: true });
@@ -82,7 +66,8 @@ class InForm extends Component {
     this.setState({ confirmLoading: true });
     let { record, form } = this.props;
     let { type, path, addr: from } = record.myAddress;
-    let amount = form.getFieldValue('amount');
+    let action = this.state.isExit ? 'delegateOut' : 'delegateIn';
+    let amount = this.state.isExit ? '0' : form.getFieldValue('amount');
     let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
     let tx = {
       from,
@@ -92,30 +77,31 @@ class InForm extends Component {
       BIP44Path: record.myAddress.path,
     };
 
+    if (walletID === WALLETID.LEDGER) {
+      message.info(intl.get('Ledger.signTransactionInLedger'));
+    }
+
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorStoremanAppend(path, from.toLowerCase(), amount);
+      await this.trezorValidatorUpdate(path, from, action, amount);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
-      if (walletID === WALLETID.LEDGER) {
-        message.info(intl.get('Ledger.signTransactionInLedger'))
-      }
-      wand.request('storeman_openStoremanAction', { tx, action: 'stakeClaim' }, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, action }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.topUpFailed'));
+          message.warn(intl.get('ValidatorRegister.updateFailed'));
         } else {
-          console.log('validatorIn ret:', ret);
+          console.log('validatorModify ret:', ret);
         }
-        this.setState({ confirmVisible: false });
+        this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
     }
   }
 
-  trezorStoremanAppend = async (path, from, value) => {
+  trezorValidatorUpdate = async (path, from, action, value) => {
     let { record } = this.props;
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData('stakeClaim', record.wAddr, value), getContractAddr()]);
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, record.wAddr, value), getContractAddr()])
       let rawTx = {
         to,
         from,
@@ -127,10 +113,11 @@ class InForm extends Component {
         gasLimit: '0x' + Number(200000).toString(16),
         gasPrice: toWei(gasPrice, 'gwei'),
       };
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
 
-      // Send register validator
+      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+      // Send modify validator info
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+
       let params = {
         txHash,
         from: from.toLowerCase(),
@@ -146,16 +133,17 @@ class InForm extends Component {
       };
       let satellite = {
         wAddr: record.wAddr,
-        annotate: 'StoremanStakeClaim',
+        annotate: action === 'delegateIn' ? 'StoremanDelegateIn' : 'StoremanDelegateOut'
       }
 
       // save register validator history into DB
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
+      // Update stake info & history
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
-      console.log('Trezor validator append failed:', error);
-      message.error(intl.get('ValidatorRegister.topUpFailed'));
+      console.log(error);
+      message.error(intl.get('ValidatorRegister.updateFailed'));
     }
   }
 
@@ -163,40 +151,43 @@ class InForm extends Component {
     this.setState({ confirmVisible: false, confirmLoading: false });
   }
 
+  checkAmount = (rule, value, callback) => {
+    let { form } = this.props;
+    let balance = form.getFieldValue('balance');
+    if (value === undefined || !checkAmountUnit(18, value)) {
+      callback(intl.get('Common.invalidAmount'));
+    }
+    if (new BigNumber(value).minus(MINAMOUNT).lt(0)) {
+      callback(intl.get('ValidatorRegister.stakeTooLow'));
+      return;
+    }
+    if (new BigNumber(value).minus(balance).gte(0)) {
+      callback(intl.get('SendNormalTrans.hasBalance'));
+      return;
+    }
+    callback();
+  }
+
   render () {
+    const { isExit } = this.state;
     const { onCancel, form, settings, record, addrInfo } = this.props;
-    let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo);
-    let showConfirmItem = { storeman: true, withdrawable: true, account: true };
+    let title = isExit ? 'Storeman Exit' : 'Storeman Top-up';
+    let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
+    let showConfirmItem = { storeman: true, groupId: true, crosschain: true, account: true, amount: !isExit };
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title='Storeman Claim' className="validator-register-modal"
-        footer={[
+        <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal"
+          footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className="validator-bg">
             <div className="stakein-title">Storeman Account</div>
-            <CommonFormItem form={form} formName='crosschain' disabled={true}
-              options={{ initialValue: record.crosschain, rules: [{ required: true }] }}
-              title='Cross Chain'
-            />
-            <CommonFormItem form={form} formName='stake' disabled={true}
-              options={{ initialValue: record.stake, rules: [{ required: true }] }}
-              title='Stake'
-            />
-            <CommonFormItem form={form} formName='reward' disabled={true}
-              options={{ initialValue: record.reward, rules: [{ required: true }] }}
-              title='Reward'
-            />
-            <CommonFormItem form={form} formName='account' disabled={true}
+            <CommonFormItem form={form} formName='storeman' disabled={true}
               options={{ initialValue: record.wAddr, rules: [{ required: true }] }}
-              title='Account'
-            />
-            <CommonFormItem form={form} formName='withdrawableAmount' disabled={true}
-              options={{ initialValue: '100', rules: [{ required: true }] }}
-              title='Withdrawable Amount'
+              title={intl.get('ValidatorRegister.validatorAccount')}
             />
           </div>
           <div className="validator-bg">
@@ -211,17 +202,25 @@ class InForm extends Component {
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('ValidatorRegister.balance')}
             />
-            { settings.reinput_pwd && <PwdForm form={form}/> }
+            {
+              !isExit &&
+              <CommonFormItem form={form} formName='amount'
+                options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('ValidatorRegister.balance')}
+              />
+            }
+            { settings.reinput_pwd && <PwdForm form={form} /> }
           </div>
         </Modal>
-        { this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={record} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} /> }
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign({}, record, { amount: form.getFieldValue('amount') })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
 }
 
-const StoremanInForm = Form.create({ name: 'InForm' })(InForm);
-class OsmClaim extends Component {
+const DelegationModifyForm = Form.create({ name: 'ModifyForm' })(ModifyForm);
+class DelegateAppendAndExit extends Component {
   state = {
     visible: false
   }
@@ -238,10 +237,12 @@ class OsmClaim extends Component {
     return (
       <div>
         <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
-        {this.state.visible && <StoremanInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
+        { this.state.visible &&
+          <DelegationModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />
+        }
       </div>
     );
   }
 }
 
-export default OsmClaim;
+export default DelegateAppendAndExit;

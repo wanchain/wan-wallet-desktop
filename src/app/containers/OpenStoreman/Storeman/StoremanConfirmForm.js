@@ -17,7 +17,7 @@ const RIGHT = 16;
 class StoremanConfirmForm extends Component {
   render () {
     const { onCancel, record, onSend, title, showConfirmItem, confirmLoading } = this.props;
-    const { publicKey, enodeID, crosschain, groupId, account, amount } = showConfirmItem;
+    const { publicKey, enodeID, crosschain, groupId, account, amount, storeman, withdrawable } = showConfirmItem;
 
     return (
       <div className="withdraw">
@@ -28,13 +28,22 @@ class StoremanConfirmForm extends Component {
           ]}
         >
           <div className="withdraw-bg">
-            <div className="withdraw-title">{intl.get('ValidatorRegister.validatorAccount')}</div>
+            <div className="withdraw-title">Storeman</div>
             {
               crosschain &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">Cross Chain</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.crosschain}</span></Col>
+                </Row>
+              </div>
+            }
+            {
+              storeman &&
+              <div className="withdraw-line key-style">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={LEFT}><span className="withdraw-name">Storeman Account</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.wAddr}</span></Col>
                 </Row>
               </div>
             }
@@ -62,6 +71,15 @@ class StoremanConfirmForm extends Component {
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">Enode ID</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{formatLongText(record.enodeID, 20)}</span></Col>
+                </Row>
+              </div>
+            }
+            {
+              withdrawable &&
+              <div className="withdraw-line key-style">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={LEFT}><span className="withdraw-name">Withdrawable Amount</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.reward}</span></Col>
                 </Row>
               </div>
             }

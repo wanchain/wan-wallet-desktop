@@ -17,7 +17,7 @@ const RIGHT = 16;
 class DelegationConfirmForm extends Component {
   render () {
     const { onCancel, record, onSend, title, showConfirmItem, confirmLoading } = this.props;
-    const { delegationFee, crosschain, groupId, account, amount, storeman } = showConfirmItem;
+    const { delegationFee, crosschain, groupId, account, amount, storeman, withdrawable } = showConfirmItem;
 
     return (
       <div className="withdraw">
@@ -42,8 +42,8 @@ class DelegationConfirmForm extends Component {
               storeman &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Storeman</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.storeman}</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">Storeman Account</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.wAddr}</span></Col>
                 </Row>
               </div>
             }
@@ -62,6 +62,15 @@ class DelegationConfirmForm extends Component {
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">Delegation Fee</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.delegationFee}</span></Col>
+                </Row>
+              </div>
+            }
+            {
+              withdrawable &&
+              <div className="withdraw-line key-style">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={LEFT}><span className="withdraw-name">Withdrawable Amount</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.reward}</span></Col>
                 </Row>
               </div>
             }

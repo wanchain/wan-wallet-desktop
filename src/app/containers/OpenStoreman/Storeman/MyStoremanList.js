@@ -110,7 +110,6 @@ class MyValidatorsList extends Component {
         crosschain: 'WAN / BTC',
         status: 'Processing',
         wAddr: '0x56664f3B65Cc5DAF4098ed10b66C4a86e58e21a4',
-        modifyStake: ['Append', 'Exit', 'Claim']
       }
     ]
     return (
