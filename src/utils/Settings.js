@@ -40,6 +40,18 @@ const defaultConfig = {
           "chain": "WAN",
           "buddy": 'BTC'
         },
+        "0xc6f4465a6a521124c8e3096b62575c157999d361": {
+          "select": false,
+          "symbol": "FNX",
+          "decimals": "18",
+          "chain": "WAN"
+        },
+        "0xcb72ef349870780fdc4786e8c86aab5b4fa36b73": {
+          "select": false,
+          "symbol": "RVX",
+          "decimals": "18",
+          "chain": "WAN"
+        }
       },
       cc_tokens: {
         "ETH": {
@@ -167,6 +179,12 @@ class Settings {
     Object.keys(defaultConfig.settings).forEach(item => {
       if (settings[item] === undefined) {
         this.set(`settings.${item}`, defaultConfig.settings[item])
+      } else if (item === 'main' && settings.main !== undefined) {
+        Object.keys(defaultConfig.settings.main.tokens).forEach(val => {
+          if(settings.main.tokens[val] === undefined) {
+            this.set(`settings.main.tokens.${val}`, defaultConfig.settings.main.tokens[val])
+          }
+        })
       }
     })
   }
