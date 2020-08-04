@@ -139,8 +139,7 @@ class Sidebar extends Component {
       walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
     } */
 
-    // walletChildren.splice(walletChildren.length, 0, {
-    walletChildren.splice(0, walletChildren.length, {
+    /* walletChildren.splice(0, walletChildren.length, {
         title: 'WAN',
         key: `Account_${'WAN'}`,
         icon: 'block',
@@ -206,7 +205,107 @@ class Sidebar extends Component {
         key: `/${'eth'}Account/${'MKR'}/Ethereum`,
         noCircle: true,
       }]
-    });
+    }); */
+
+    walletChildren.splice(0, walletChildren.length, {
+      title: 'Wanchain',
+      key: `Account_${'WAN'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'WAN',
+        key: `/${'eth'}Account/${'WAN'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanETH',
+        key: `/${'eth'}Account/${'ETH'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanBTC',
+        key: `/${'eth'}Account/${'BTC'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanEOS',
+        key: `/${'eth'}Account/${'EOS'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanUSDT',
+        key: `/${'eth'}Account/${'USDT'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanLINK',
+        key: `/${'eth'}Account/${'LINK'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: 'wanCVC',
+        key: `/${'eth'}Account/${'CVC'}/Wanchain`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'Ethereum',
+      key: `Account_${'ETH'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'ETH',
+        key: `/${'eth'}Account/${'ETH'}/Ethereum`,
+        noCircle: true,
+      }, {
+        title: 'WAN',
+        key: `/${'eth'}Account/${'WAN'}/Ethereum`,
+        noCircle: true,
+      }, {
+        title: 'wanBTC',
+        key: `/${'eth'}Account/${'BTC'}/Ethereum`,
+        noCircle: true,
+      }, {
+        title: 'CVC',
+        key: `/${'eth'}Account/${'CVC'}/Ethereum`,
+        noCircle: true,
+      }, {
+        title: 'EURS',
+        key: `/${'eth'}Account/${'EURS'}/Ethereum`,
+        noCircle: true,
+      }, {
+        title: 'GUSD',
+        key: `/${'eth'}Account/${'GUSD'}/Ethereum`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'Bitcoin',
+      key: `Account_${'BTC'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'BTC',
+        key: `/${'btc'}Account/${'BTC'}/Bitcoin`,
+        noCircle: true,
+      }]
+    }, {
+      title: 'EOS',
+      key: `Account_${'EOS'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: 'EOS',
+        key: `/${'eos'}Account/${'EOS'}/EOS`,
+        noCircle: true,
+      }]
+    }/* , {
+      title: 'MKR',
+      key: `Account_${'MKR'}`,
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: '@Wanchain',
+        key: `/${'eth'}Account/${'MKR'}/Wanchain`,
+        noCircle: true,
+      }, {
+        title: '@Ethereum',
+        key: `/${'eth'}Account/${'MKR'}/Ethereum`,
+        noCircle: true,
+      }]
+    } */);
 
     // Add token.
     walletChildren.push({
