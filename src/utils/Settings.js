@@ -180,11 +180,15 @@ class Settings {
       if (settings[item] === undefined) {
         this.set(`settings.${item}`, defaultConfig.settings[item])
       } else if (item === 'main' && settings.main !== undefined) {
-        Object.keys(defaultConfig.settings.main.tokens).forEach(val => {
-          if(settings.main.tokens[val] === undefined) {
-            this.set(`settings.main.tokens.${val}`, defaultConfig.settings.main.tokens[val])
-          }
-        })
+        if (settings.main.tokens === undefined) {
+          this.set(`settings.main.tokens`, defaultConfig.settings.main.tokens)
+        } else {
+          Object.keys(defaultConfig.settings.main.tokens).forEach(val => {
+            if (settings.main.tokens !== undefined && settings.main.tokens[val] === undefined) {
+              this.set(`settings.main.tokens.${val}`, defaultConfig.settings.main.tokens[val])
+            }
+          })
+        }
       }
     })
   }
