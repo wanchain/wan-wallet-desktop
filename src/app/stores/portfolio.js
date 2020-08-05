@@ -1,5 +1,6 @@
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 import axios from 'axios';
+import { message } from 'antd';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
@@ -63,16 +64,25 @@ class Portfolio {
     axios({
       method: 'GET',
       url: 'https://api.coingecko.com/api/v3/coins/list'
-    }).then(res => {
+    })
+    .then(res => {
       if (res.status === 200) {
         runInAction(() => {
           for (let obj of res.data) {
-            self.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
+            this.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
           }
+          this.updateCoinPrice();
         })
       } else {
-        console.log('Get coins list failed.');
+        console.log('Get coin list from coingecko failed!');
       }
+    })
+    .catch((error) => {
+      console.log('Get coin list from coingecko failed!', error);
+      // message.warn('Get coin list failed, try to get coin list again automatically.');
+      setTimeout(() => {
+        this.updateCoinsList_from_CoinGeckoAPI();
+      }, 5000);
     });
   }
 
@@ -102,7 +112,8 @@ class Portfolio {
         ids: convertedParam.join(),
         vs_currencies: 'usd',
       }
-    }).then((res) => {
+    })
+    .then((res) => {
       if (res.status === 200) {
         runInAction(() => {
           self.coinPriceObj = {};
@@ -111,9 +122,12 @@ class Portfolio {
           }
         })
       } else {
-        console.log('Get prices failed.', res);
+        console.log('Get prices from coingecko failed.', res);
       }
     })
+    .catch((error) => {
+      console.log('Get prices from coingecko failed', error);
+    });
   }
 
   @action updateTokenBalance() {
