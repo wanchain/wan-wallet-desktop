@@ -26,7 +26,7 @@ class ChainMiniList extends Component {
                 return (
                   <tr key={d.key}>
                     <td style={{ textAlign: 'left', width: '40%', paddingLeft: '28%' }}>{d.symbol}</td>
-                    <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>{d.title}</Tag></td>
+                    <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>{d.title.replace(/@/g, '').toUpperCase()}</Tag></td>
                     <td style={{ textAlign: 'left' }}>
                       <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => this.setCrossChainPairSelection(d.key, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => this.setCrossChainPairSelection(d.key, true)} />}</span>
                     </td>

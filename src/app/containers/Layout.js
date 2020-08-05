@@ -24,6 +24,8 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   getMnemonic: () => stores.session.getMnemonic(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getCcTokensInfo: () => stores.tokens.getCcTokensInfo(),
+  getTwoWayBridgeTokensInfo: () => stores.tokens.getTwoWayBridgeTokensInfo(),
+  getTwoWayBridgeCcTokensInfo: () => stores.crossChain.getTwoWayBridgeCcTokensInfo(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
@@ -82,6 +84,8 @@ class Layout extends Component {
           await initRegTokens('EOS');
           await this.props.getTokensInfo();
           await this.props.getCcTokensInfo();
+          await this.props.getTwoWayBridgeTokensInfo();
+          await this.props.getTwoWayBridgeCcTokensInfo();
           await this.props.getMnemonic();
           this.setState({
             initializeStep: 'Layout.initSuccess',

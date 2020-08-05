@@ -57,6 +57,35 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
+      twoWayBridge_cc_tokens: {
+        "BTC": [{
+          selected: false,
+          key: `/crossBTC`,
+          symbol: 'Bitcoin <-> Wanchain',
+        }, {
+          selected: false,
+          key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+          symbol: 'Bitcoin <-> Ethereum',
+        }, {
+          selected: false,
+          key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+          symbol: 'Ethereum <-> Wanchain',
+        }],
+        "ETH": [{
+          selected: false,
+          key: 'ETH:Wanchain <-> Ethereum',
+          symbol: 'Wanchain <-> Ethereum',
+        }],
+        "EOS": [{
+          selected: false,
+          key: 'EOS:EOS <-> Wanchain',
+          symbol: 'EOS <-> Wanchain',
+        }, {
+          selected: false,
+          key: 'EOS:EOS <-> Ethereum',
+          symbol: 'EOS <-> Ethereum',
+        }]
+      }
     },
     testnet: {
       tokens: {
@@ -90,6 +119,47 @@ const defaultConfig = {
           "decimals": 8,
           "chain": "BTC",
         }
+      },
+      /* twoWayBridge_tokens: {
+        "BTC-WBTC": {
+          select: true,
+          first: 'BTC',
+          first_chain: 'Bitcoin',
+          first_address: '',
+          second: 'WBTC',
+          second_chain: 'Wanchain',
+          second_address: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
+          detail: 'From BTC to WBTC',
+        },
+      }, */
+      twoWayBridge_cc_tokens: {
+        "BTC": [{
+          selected: false,
+          key: `/crossBTC`,
+          symbol: 'Bitcoin <-> Wanchain',
+        }, {
+          selected: false,
+          key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+          symbol: 'Bitcoin <-> Ethereum',
+        }, {
+          selected: false,
+          key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
+          symbol: 'Ethereum <-> Wanchain',
+        }],
+        "ETH": [{
+          selected: false,
+          key: 'ETH:Wanchain <-> Ethereum',
+          symbol: 'Wanchain <-> Ethereum',
+        }],
+        "EOS": [{
+          selected: false,
+          key: 'EOS:EOS <-> Wanchain',
+          symbol: 'EOS <-> Wanchain',
+        }, {
+          selected: false,
+          key: 'EOS:EOS <-> Ethereum',
+          symbol: 'EOS <-> Ethereum',
+        }]
       }
     }
   }
@@ -181,6 +251,21 @@ class Settings {
     this.set(`settings.${network}.cc_tokens["${addr}"]["${key}"]`, value);
   }
 
+  updateToken(value) {
+    let network = this.get('network');
+    this.set(`settings.${network}.tokens`, value);
+  }
+
+  updateCcToken(value) {
+    let network = this.get('network');
+    this.set(`settings.${network}.cc_tokens`, value);
+  }
+
+  updateTwoWayBridgeCcTokens(chain, index, selected) {
+    let network = this.get('network');
+    this.set(`settings.${network}.twoWayBridge_cc_tokens.${chain}[${index}].selected`, selected);
+  }
+
   addToken(addr, obj) {
     let network = this.get('network');
     this.set(`settings.${network}.tokens["${addr}"]`, obj);
@@ -197,59 +282,71 @@ class Settings {
   }
 
   updateRegTokens(regTokens, crossChain) {
-    let network = this.get('network');
-    let tokens = this.tokens;
-    let ccTokens = this.ccTokens;
-
-    regTokens.forEach(item => {
-      /** Add original token */
-      let token = tokens[item.tokenOrigAddr];
-      if (token) {
-        token.symbol = item.symbol;
-        token.decimals = item.decimals;
-        token.iconData = item.iconData;
-        token.iconType = item.iconType;
-      } else {
-        tokens[item.tokenOrigAddr] = {
-          chain: crossChain,
-          symbol: item.symbol,
-          decimals: item.decimals,
-          iconData: item.iconData,
-          iconType: item.iconType
-        }
+    try {
+      let network = this.get('network');
+      let tokens = this.tokens;
+      let ccTokens = this.ccTokens;
+      if (tokens === undefined) {
+        this.updateToken(defaultConfig.settings[network].tokens);
+        tokens = this.tokens;
+      }
+      if (ccTokens === undefined) {
+        this.updateCcToken(defaultConfig.settings[network].cc_tokens);
+        ccTokens = this.ccTokens;
       }
 
-      /** Add Wanchain buddy token */
-      if (tokens[item.tokenWanAddr]) {
-        tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
-        tokens[item.tokenWanAddr].decimals = item.decimals;
-        tokens[item.tokenWanAddr].buddy = item.tokenOrigAddr;
-      } else {
-        tokens[item.tokenWanAddr] = {
-          chain: 'WAN',
-          symbol: `W${item.symbol}`,
-          decimals: item.decimals,
-          buddy: item.tokenOrigAddr
+      regTokens.forEach(item => {
+        /** Add original token */
+        let token = tokens[item.tokenOrigAddr];
+        if (token) {
+          token.symbol = item.symbol;
+          token.decimals = item.decimals;
+          token.iconData = item.iconData;
+          token.iconType = item.iconType;
+        } else {
+          tokens[item.tokenOrigAddr] = {
+            chain: crossChain,
+            symbol: item.symbol,
+            decimals: item.decimals,
+            iconData: item.iconData,
+            iconType: item.iconType
+          }
         }
-      }
-      this.set(`settings.${network}.tokens`, tokens);
 
-      /** Add cross-chain token */
-      if (ccTokens[item.tokenOrigAddr]) {
-        ccTokens[item.tokenOrigAddr].wan_addr = item.tokenWanAddr;
-        ccTokens[item.tokenOrigAddr].chain = crossChain;
-        ccTokens[item.tokenOrigAddr].symbol = item.symbol;
-        ccTokens[item.tokenOrigAddr].decimals = item.decimals;
-      } else {
-        ccTokens[item.tokenOrigAddr] = {
-          wan_addr: item.tokenWanAddr,
-          chain: crossChain,
-          symbol: item.symbol,
-          decimals: item.decimals
+        /** Add Wanchain buddy token */
+        if (tokens[item.tokenWanAddr]) {
+          tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
+          tokens[item.tokenWanAddr].decimals = item.decimals;
+          tokens[item.tokenWanAddr].buddy = item.tokenOrigAddr;
+        } else {
+          tokens[item.tokenWanAddr] = {
+            chain: 'WAN',
+            symbol: `W${item.symbol}`,
+            decimals: item.decimals,
+            buddy: item.tokenOrigAddr
+          }
         }
-      }
-    });
-    this.set(`settings.${network}.cc_tokens`, ccTokens);
+        this.set(`settings.${network}.tokens`, tokens);
+
+        /** Add cross-chain token */
+        if (ccTokens[item.tokenOrigAddr]) {
+          ccTokens[item.tokenOrigAddr].wan_addr = item.tokenWanAddr;
+          ccTokens[item.tokenOrigAddr].chain = crossChain;
+          ccTokens[item.tokenOrigAddr].symbol = item.symbol;
+          ccTokens[item.tokenOrigAddr].decimals = item.decimals;
+        } else {
+          ccTokens[item.tokenOrigAddr] = {
+            wan_addr: item.tokenWanAddr,
+            chain: crossChain,
+            symbol: item.symbol,
+            decimals: item.decimals
+          }
+        }
+      });
+      this.set(`settings.${network}.cc_tokens`, ccTokens);
+    } catch (err) {
+      console.log('updateRegTokens error occurred:', err);
+    }
   }
 
   get appName() {
@@ -272,6 +369,16 @@ class Settings {
   get ccTokens() {
     let network = this.get('network');
     return this.get(`settings.${network}.cc_tokens`);
+  }
+
+  get twoWayBridgeTokens() {
+    let network = this.get('network');
+    return this.get(`settings.${network}.twoWayBridge_tokens`);
+  }
+
+  get twoWayBridgeCcTokens() {
+    let network = this.get('network');
+    return this.get(`settings.${network}.twoWayBridge_cc_tokens`);
   }
 
   get isDev() {

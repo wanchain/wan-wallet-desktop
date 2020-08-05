@@ -18,6 +18,7 @@ const { SubMenu, Item } = Menu;
   getWalletTokenList: stores.tokens.getWalletTokenList,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
+  getCrossChainTokenList: stores.crossChain.getCrossChainTokenList,
   // twoWayBridgeOnSideBar: stores.crossChain.twoWayBridgeOnSideBar,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
 }))
@@ -68,7 +69,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar, getWalletTokenList } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar, getWalletTokenList, getCrossChainTokenList } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -102,47 +103,6 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
 
-    /* if (tokensOnSideBar.length) {
-      walletChildren.splice(
-        walletChainLen,
-        walletChildren.length - walletChainLen,
-        ...tokensOnSideBar.map(item => ({
-          title: item.symbol,
-          key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}`,
-          icon: 'block'
-        })),
-      );
-    } else {
-      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
-    } */
-
-    /* if (tokensOnSideBar.length) {
-      walletChildren.splice(
-        walletChainLen,
-        walletChildren.length - walletChainLen,
-        ...tokensOnSideBar.map(item => ({
-          title: item.symbol,
-          key: `/tokens/${item.symbol}`,
-          icon: 'block',
-          mode: 'vertical',
-          children: [{
-            title: 'ETHEREUM',
-            key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}/eth`,
-            noCircle: true,
-          }, {
-            title: 'WANCHAIN',
-            key: `/tokens/${item.chain}/${item.tokenAddr}/${item.symbol}/wan`,
-            noCircle: true,
-          }]
-        })),
-      );
-    } else {
-      walletChildren.splice(walletChainLen, walletChildren.length - walletChainLen);
-    } */
-
-    // console.log('tokensOnSideBar:', tokensOnSideBar);
-
-    // console.log('getWalletTokenList:::::::::::::', getWalletTokenList);
     let walletList = [];
     getWalletTokenList.forEach(v => {
       if (v.children.length === 0) {
@@ -168,94 +128,7 @@ class Sidebar extends Component {
         });
       }
     });
-    // console.log('--------walletList---------', walletList);
     walletChildren.splice(0, walletChildren.length, ...walletList);
-    // walletChildren.splice(walletChildren.length, 0, {
-    /* walletChildren.splice(0, walletChildren.length, {
-      title: 'WAN',
-      key: `Account_${'WAN'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@Wanchain',
-        key: `/${'wan'}Account/${'WAN'}/Wanchain`,
-        noCircle: true,
-      }, {
-        title: '@Ethereum',
-        key: `/${'eth'}Account/${'WAN'}/Ethereum`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'ETH',
-      key: `Account_${'ETH'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@Ethereum',
-        key: `/${'eth'}Account/${'ETH'}/Ethereum`,
-        noCircle: true,
-      }, {
-        title: '@Wanchain',
-        key: `/${'eth'}Account/${'ETH'}/Wanchain`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'BTC',
-      key: `Account_${'BTC'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@Bitcoin',
-        key: `/${'btc'}Account/${'BTC'}/Bitcoin`,
-        noCircle: true,
-      }, {
-        title: '@Wanchain',
-        key: `/tokens/WAN/0x89a3e1494bc3db81dadc893ded7476d33d47dcbd/WBTC`,
-        noCircle: true,
-      }, {
-        title: '@Ethereum',
-        key: `/${'eth'}Account/${'BTC'}/Ethereum`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'EOS',
-      key: `Account_${'EOS'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@EOS',
-        key: `/${'eos'}Account/${'EOS'}/EOS`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'MKR',
-      key: `Account_${'MKR'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@Wanchain',
-        key: `/${'eth'}Account/${'MKR'}/Wanchain`,
-        noCircle: true,
-      }, {
-        title: '@Ethereum',
-        key: `/${'eth'}Account/${'MKR'}/Ethereum`,
-        noCircle: true,
-      }]
-    }, {
-      title: 'USDT',
-      key: `Account_${'USDT'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: '@Wanchain',
-        key: `/tokens/WAN/0x56948c162aaa6cce3f196b93903318502989f573/WUSDT`,
-        noCircle: true,
-      }, {
-        title: '@Ethereum',
-        key: `/tokens/ETH/0x28c96b26f6df3cf57a0a4e8fef02e9295e9ca458/USDT`,
-        noCircle: true,
-      }]
-    }); */
 
     // Add token.
     walletChildren.push({
@@ -264,46 +137,32 @@ class Sidebar extends Component {
       icon: 'block'
     });
 
-    /* if (crossChainOnSideBar.length) {
-      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen, ...crossChainOnSideBar.map(item => {
-        return ({
-          title: item.symbol,
-          key: `/crossChain/${item.chain}/${item.chain !== 'EOS' ? item.tokenAddr : item.tokenOrigAddr}/${item.symbol}`,
-          icon: 'block'
-        })
-      }));
-    } else {
-      crossChainChildren.splice(crossChainLen, crossChainChildren.length - crossChainLen);
-    } */
-    /* if (twoWayBridgeOnSideBar.length) {
-      crossChainChildren.splice(crossChainChildren.length, 0, ...twoWayBridgeOnSideBar.map(item => ({
-        title: item.symbol,
-        key: `/crosschain/${item.key}/${item.first_address ? item.first_address : ''}-${item.second_address ? item.second_address : ''}`,
-        icon: 'block'
-      })));
-    } */
-
-    crossChainChildren.splice(0, crossChainChildren.length);
-    crossChainChildren.splice(crossChainChildren.length, 0, {
-      title: 'BTC',
-      key: `${'CrossChain_BTC'}`,
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: 'Bitcoin <-> Wanchain',
-        // key: `/crosschain/Bitcoin-Wanchain/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-        key: `/crossBTC`,
-        noCircle: true,
-      }, {
-        title: 'Bitcoin <-> Ethereum',
-        key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-        noCircle: true,
-      }, {
-        title: 'Ethereum <-> Wanchain',
-        key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-        noCircle: true,
-      }]
+    let crossChainList = [];
+    getCrossChainTokenList.forEach(v => {
+      if (v.children.length === 0) {
+        return false;
+      }
+      if (v.children.find(c => c.selected === true)) {
+        let children = [];
+        v.children.forEach(c => {
+          if (c.selected === true) {
+            children.push({
+              title: c.symbol,
+              key: c.key,
+              noCircle: true,
+            });
+          }
+        });
+        crossChainList.push({
+          title: v.chain,
+          key: v.key,
+          icon: 'block',
+          mode: 'vertical',
+          children: children
+        });
+      }
     });
+    crossChainChildren.splice(0, crossChainChildren.length, ...crossChainList);
 
     // Add cross chain.
     crossChainChildren.push({

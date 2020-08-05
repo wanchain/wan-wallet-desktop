@@ -1,5 +1,4 @@
 import { observable, action, computed, toJS } from 'mobx';
-
 import tokens from './tokens';
 import session from './session';
 import wanAddress from './wanAddress';
@@ -13,6 +12,21 @@ class CrossChain {
   @observable currSymbol = '';
 
   @observable crossTrans = [];
+
+  @observable crossChainTokensList = {};
+
+  @action updateWalletTokenSelectedStatus(key, token, selected) {
+    let index = this.crossChainTokensList[token].findIndex(v => v.key === key);
+    if (index !== undefined || index !== -1) {
+      wand.request('crossChain_setTwoWayBridgeCcTokenSelectStatus', { token, index, selected }, (err, data) => {
+        if (err) {
+          console.log('Update selection status failed.', err);
+        } else {
+          this.crossChainTokensList[token][index].selected = selected;
+        }
+      })
+    }
+  }
 
   @action setCurrSymbol(symbol) {
     self.currSymbol = symbol;
@@ -28,7 +42,21 @@ class CrossChain {
     })
   }
 
-  @computed get crossChainTokensInfo () {
+  @action getTwoWayBridgeCcTokensInfo() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getTwoWayBridgeCcTokensInfo', {}, (err, data) => {
+        if (err) {
+          console.log('getTwoWayBridgeCcTokensInfo error: ', err);
+          reject(err)
+          return;
+        }
+        this.crossChainTokensList = data;
+        resolve()
+      })
+    })
+  }
+
+  @computed get crossChainTokensInfo() {
     return tokens.ccTokens;
   }
 
@@ -42,7 +70,17 @@ class CrossChain {
     return list;
   }
 
-  @computed get crossETHTrans () {
+  @computed get twoWayBridgeOnSideBar() {
+    let list = [];
+    tokens.twoWayBridgeTokensSiderbar.forEach(item => {
+      if (item.select) {
+        list.push(item);
+      }
+    });
+    return list;
+  }
+
+  @computed get crossETHTrans() {
     let crossEthTrans = [];
     self.crossTrans.forEach((item, index) => {
       if (item.tokenStand === 'ETH') {
@@ -72,7 +110,7 @@ class CrossChain {
     return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  @computed get crossErc20Trans () {
+  @computed get crossErc20Trans() {
     let crossEthTrans = [];
     let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {
@@ -107,7 +145,7 @@ class CrossChain {
     return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  @computed get crossBTCTrans () {
+  @computed get crossBTCTrans() {
     let crossBTCTrans = [];
     Object.values(btcAddress.transHistory).filter(val => val.crossAddress !== undefined).forEach((item, index) => {
       let inbound = item.chain === 'BTC';
@@ -142,7 +180,7 @@ class CrossChain {
     return crossBTCTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
-  @computed get crossEOSTrans () {
+  @computed get crossEOSTrans() {
     let crossEOSTrans = [];
     let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
     self.crossTrans.forEach((item, index) => {
@@ -171,6 +209,18 @@ class CrossChain {
       }
     });
     return crossEOSTrans.sort((a, b) => b.sendTime - a.sendTime);
+  }
+
+  @computed get getCrossChainTokenList() {
+    let list = [];
+    Object.keys(this.crossChainTokensList).forEach(index => {
+      list.push({
+        chain: index,
+        key: index,
+        children: this.crossChainTokensList[index]
+      });
+    });
+    return list;
   }
 }
 

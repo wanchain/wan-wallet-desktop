@@ -1571,6 +1571,28 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getTwoWayBridgeCcTokensInfo':
+            try {
+                ret = setting.twoWayBridgeCcTokens;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'setTwoWayBridgeCcTokenSelectStatus':
+            try {
+                let { token, index, selected } = payload;
+                setting.updateTwoWayBridgeCcTokens(token, index, selected);
+                ret = true;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'initRegTokens':
             let { crossChain } = payload;
             try {

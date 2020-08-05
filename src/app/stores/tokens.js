@@ -19,7 +19,7 @@ class Tokens {
 
   @observable ccTokensList = {};
 
-  @observable twoWayBridgeTokensInfoTokensList = {};
+  @observable twoWayBridgeTokensList = {};
 
   @observable tokensBalance = {};
 
@@ -173,8 +173,6 @@ class Tokens {
         }
       })
     });
-    // this.walletTokensList = [...this.walletTokensList];
-    // console.log('this.walletTokensList:', self.walletTokensList);
   }
 
   @action setCurrToken(addr, symbol) {
@@ -257,13 +255,12 @@ class Tokens {
   @action getTwoWayBridgeTokensInfo() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTwoWayBridgeTokensInfo', {}, (err, data) => {
-        // console.log('getTwoWayBridgeTokensInfo:', data, err);
         if (err) {
           console.log('getTwoWayBridgeTokensInfo: ', err);
           reject(err)
           return;
         }
-        self.twoWayBridgeTokensInfoTokensList = data;
+        self.twoWayBridgeTokensList = data;
         resolve()
       })
     })
@@ -406,13 +403,7 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
-  @computed({ equals: 'comparer.structural' }) get getWalletTokenList() {
-    /* let list = [];
-    Object.keys(this.walletTokensList).forEach(item => {
-      // list.push(Object.assign({}, this.walletTokensList[item]));
-      list.push(this.walletTokensList[item]);
-    });
-    return list; */
+  @computed get getWalletTokenList() {
     return this.walletTokensList.slice();
   }
 
@@ -439,20 +430,6 @@ class Tokens {
       }
     })
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
-  }
-
-  @computed get twoWayBridgeTokensInfoTokens() {
-    let list = [];
-    if (!(self.twoWayBridgeTokensInfoTokensList instanceof Object)) {
-      return [];
-    }
-    Object.keys(self.twoWayBridgeTokensInfoTokensList).forEach(item => {
-      try {
-        console.log('item:', item);
-      } catch (err) {
-        console.log(`Get cross chain ${item} failed`, err);
-      }
-    })
   }
 
   @computed get ccTokensSiderbar() {
@@ -482,12 +459,12 @@ class Tokens {
 
   @computed get twoWayBridgeTokensSiderbar() {
     let list = [];
-    if (!(self.twoWayBridgeTokensInfoTokensList instanceof Object)) {
+    if (!(self.twoWayBridgeTokensList instanceof Object)) {
       return [];
     }
-    Object.keys(self.twoWayBridgeTokensInfoTokensList).forEach(item => {
+    Object.keys(self.twoWayBridgeTokensList).forEach(item => {
       try {
-        let val = self.twoWayBridgeTokensInfoTokensList[item];
+        let val = self.twoWayBridgeTokensList[item];
         list.push({
           key: item,
           symbol: item,
