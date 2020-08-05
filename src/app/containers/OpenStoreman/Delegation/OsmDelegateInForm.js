@@ -124,7 +124,7 @@ class OsmDelegateInForm extends Component {
       this.setState({
         loading: false,
         confirmVisible: true,
-        record: { amount, account, storeman, crosschain, delegationFee, }
+        record: { amount, account, wAddr: storeman, crosschain, delegationFee, }
       });
     })
   }
