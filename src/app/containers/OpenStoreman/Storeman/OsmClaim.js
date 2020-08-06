@@ -13,6 +13,7 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import style from 'components/Staking/MyValidatorsList/index.less';
 import { checkAmountUnit, getStoremanContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo } from 'utils/helper';
 
+const ACTION = 'stakeClaim';
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm);
 
@@ -93,7 +94,9 @@ class InForm extends Component {
     };
 
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorStoremanAppend(path, from.toLowerCase(), amount);
+      let abiParams = [record.wAddr];
+      let satellite = { wAddr: record.wAddr, annotate: 'StoremanStakeClaim' };
+      await this.trezorStoremanClaim(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -112,10 +115,9 @@ class InForm extends Component {
     }
   }
 
-  trezorStoremanAppend = async (path, from, value) => {
-    let { record } = this.props;
+  trezorStoremanClaim = async (path, from, value, action, satellite, abiParams) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData('stakeClaim', record.wAddr, value), getContractAddr()]);
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData('stakeClaim', ...abiParams), getContractAddr()]);
       let rawTx = {
         to,
         from,
@@ -144,11 +146,6 @@ class InForm extends Component {
         tokenSymbol: 'WAN',
         status: 'Sending',
       };
-      let satellite = {
-        wAddr: record.wAddr,
-        annotate: 'StoremanStakeClaim',
-      }
-
       // save register validator history into DB
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateStakeInfo();

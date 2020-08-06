@@ -6,12 +6,12 @@ import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { toWei } from 'utils/support';
 import PwdForm from 'componentUtils/PwdForm';
-import { WANPATH, WALLETID } from 'utils/settings'
+import { WALLETID } from 'utils/settings'
 import { signTransaction } from 'componentUtils/trezor';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import DelegationConfirmForm from './DelegationConfirmForm';
 import style from 'components/Staking/MyValidatorsList/index.less';
-import { getContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit, getStoremanContractData } from 'utils/helper';
+import { getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit, getStoremanContractData } from 'utils/helper';
 
 const MINAMOUNT = 100;
 const pu = require('promisefy-util');
@@ -82,7 +82,9 @@ class ModifyForm extends Component {
     }
 
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorValidatorUpdate(path, from, action, amount);
+      let abiParams = [record.wAddr];
+      let satellite = { wAddr: record.wAddr, annotate: action === 'delegateIn' ? 'StoremanDelegateIn' : 'StoremanDelegateOut' };
+      await this.trezorValidatorUpdate(path, from, amount, action, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -98,10 +100,9 @@ class ModifyForm extends Component {
     }
   }
 
-  trezorValidatorUpdate = async (path, from, action, value) => {
-    let { record } = this.props;
+  trezorValidatorUpdate = async (path, from, value, action, satellite, abiParams) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, record.wAddr, value), getContractAddr()])
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
       let rawTx = {
         to,
         from,
@@ -131,14 +132,7 @@ class ModifyForm extends Component {
         tokenSymbol: 'WAN',
         status: 'Sending',
       };
-      let satellite = {
-        wAddr: record.wAddr,
-        annotate: action === 'delegateIn' ? 'StoremanDelegateIn' : 'StoremanDelegateOut'
-      }
-
-      // save register validator history into DB
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
-      // Update stake info & history
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {

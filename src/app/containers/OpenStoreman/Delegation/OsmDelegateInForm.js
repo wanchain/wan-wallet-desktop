@@ -153,7 +153,9 @@ class OsmDelegateInForm extends Component {
     }
 
     if (walletID === WALLETID.TREZOR) {
-      await this.trezorDelegateIn(path, from, amount);
+      let abiParams = [this.state.storemanInfo.wAddr];
+      let satellite = { wAddr: this.state.storemanInfo.wAddr, annotate: 'StoremanDelegateIn' };
+      await this.trezorDelegateIn(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -174,10 +176,9 @@ class OsmDelegateInForm extends Component {
     wand.shell.openExternal(href);
   }
 
-  trezorDelegateIn = async (path, from, value) => {
-    let { record } = this.state;
+  trezorDelegateIn = async (path, from, value, action, satellite, abiParams) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(ACTION, record.wAddr, value), getContractAddr()])
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
       let rawTx = {
         to,
         from,
@@ -190,9 +191,7 @@ class OsmDelegateInForm extends Component {
         gasLimit: '0x' + Number(200000).toString(16),
       };
       let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
-
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-
       console.log('Transaction Hash:', txHash);
       let params = {
         txHash,
@@ -207,10 +206,6 @@ class OsmDelegateInForm extends Component {
         tokenSymbol: 'WAN',
         status: 'Sending',
       }
-      let satellite = {
-        wAddr: record.wAddr,
-        annotate: 'StoremanDelegateIn'
-      };
 
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateStakeInfo();

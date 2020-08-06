@@ -94,7 +94,9 @@ class InForm extends Component {
     };
 
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorDelegationAppend(path, from.toLowerCase(), amount);
+      let abiParams = [record.wAddr];
+      let satellite = { wAddr: record.wAddr, annotate: 'StoremanDelegateClaim' };
+      await this.trezorDelegationAppend(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -113,10 +115,9 @@ class InForm extends Component {
     }
   }
 
-  trezorDelegationAppend = async (path, from, value) => {
-    let { record } = this.props;
+  trezorDelegationAppend = async (path, from, value, action, satellite, abiParams) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(ACTION, record.wAddr, value), getContractAddr()]);
+      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()]);
       let rawTx = {
         to,
         from,
@@ -145,12 +146,6 @@ class InForm extends Component {
         tokenSymbol: 'WAN',
         status: 'Sending',
       };
-      let satellite = {
-        wAddr: record.wAddr,
-        annotate: 'StoremanDelegateClaim',
-      }
-
-      // save register validator history into DB
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateStakeInfo();
       this.props.updateTransHistory();
