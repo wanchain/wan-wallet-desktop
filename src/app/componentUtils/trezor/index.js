@@ -8,6 +8,8 @@ import { getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContract
 const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
 
+export const WAN_PATH = "m/44'/5718350'/0'/0";
+
 export const signTransaction = (path, tx, callback) => {
   TrezorConnect.ethereumSignTransaction({
     path: path,
