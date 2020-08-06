@@ -1,10 +1,12 @@
+import { message } from 'antd';
 import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
-import { message } from 'antd';
 
+import { toWei } from 'utils/support.js';
+import { getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContractData } from 'utils/helper';
+
+const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
-
-export const WAN_PATH = "m/44'/5718350'/0'/0";
 
 export const signTransaction = (path, tx, callback) => {
   TrezorConnect.ethereumSignTransaction({
@@ -79,4 +81,45 @@ export const getAddresses = async (basePath, from, count) => {
     return bundleResult;
   }
   return null;
+}
+
+export const OsmTrezorTrans = async (path, from, value, action, satellite, abiParams) => {
+  try {
+    let { chainId, nonce, gasPrice, data, cscContractAddr } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
+    let rawTx = {
+      data,
+      from,
+      chainId,
+      Txtype: 1,
+      value: toWei(value),
+      to: cscContractAddr,
+      nonce: '0x' + nonce.toString(16),
+      gasPrice: toWei(gasPrice, 'gwei'),
+      gasLimit: '0x' + Number(200000).toString(16),
+    };
+
+    let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+    // Send register validator
+    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+    let params = {
+      txHash,
+      from: from.toLowerCase(),
+      to: rawTx.to,
+      value: rawTx.value,
+      gasPrice: rawTx.gasPrice,
+      gasLimit: rawTx.gasLimit,
+      nonce: rawTx.nonce,
+      srcSCAddrKey: 'WAN',
+      srcChainType: 'WAN',
+      tokenSymbol: 'WAN',
+      status: 'Sending',
+    };
+    // save register validator history into DB
+    await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
+    return Promise.resolve();
+  } catch (error) {
+    console.log(error);
+    message.error(intl.get('ValidatorRegister.registerFailed'));
+    return Promise.reject(error);
+  }
 }

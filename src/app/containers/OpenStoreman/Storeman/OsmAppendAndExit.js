@@ -82,7 +82,7 @@ class ModifyForm extends Component {
     }
 
     if (WALLETID.TREZOR === walletID) {
-      await this.trezorValidatorUpdate(path, from, action, amount);
+      await this.trezorStoremanUpdate(path, from, action, amount);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -98,7 +98,7 @@ class ModifyForm extends Component {
     }
   }
 
-  trezorValidatorUpdate = async (path, from, action, value) => {
+  trezorStoremanUpdate = async (path, from, action, value) => {
     let { record } = this.props;
     try {
       let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, record.wAddr, value), getContractAddr()])

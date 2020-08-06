@@ -2,20 +2,19 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { checkAmountUnit, getValueByAddrInfo, getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContractData } from 'utils/helper';
 import { Button, Modal, Form, Icon, message } from 'antd';
-import { signTransaction } from 'componentUtils/trezor';
-import { toWei } from 'utils/support.js';
 
+import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
+import { OsmTrezorTrans } from 'componentUtils/trezor';
+import StoremanConfirmForm from './StoremanConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
-import StoremanConfirmForm from './StoremanConfirmForm';
-import { WALLETID } from 'utils/settings'
+import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
 
-const pu = require('promisefy-util');
+const MINAMOUNT = 50000;
+const ACTION = 'stakeIn';
 const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm);
-const MINAMOUNT = 50000
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -123,18 +122,18 @@ class StoremanRegister extends Component {
   onSend = async () => {
     this.setState({ confirmLoading: true });
     let { form, group } = this.props;
-    let { myAddr: from, amount } = form.getFieldsValue(['myAddr', 'amount']);
+    let { myAddr: from, amount, publicKey: wPk } = form.getFieldsValue(['myAddr', 'amount', 'publicKey']);
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
 
     let tx = {
+      wPk,
       from,
       walletID,
       amount: amount.toString(),
       BIP44Path: path,
-      wPk: form.getFieldValue('publicKey'),
       groupId: group.groupId,
       enodeID: group.enodeID,
       delegateFee: group.delegateFee,
@@ -143,71 +142,25 @@ class StoremanRegister extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
-      await this.trezorRegisterValidator(path, from, (form.getFieldValue('amount') || 0).toString(), tx.secPk, tx.bn256Pk, tx.lockEpoch, tx.feeRate, tx.maxFeeRate);
-      this.setState({ confirmVisible: false });
-      this.props.onSend(walletID);
+      let abiParams = [group.groupId, wPk, group.enodeID];
+      let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'StoremanStakeIn' };
+      try {
+        await OsmTrezorTrans(path, from, amount, ACTION, satellite, abiParams);
+        this.props.updateStakeInfo();
+        this.props.updateTransHistory();
+        this.setState({ confirmVisible: false });
+        this.props.onSend(walletID);
+      } catch (error) {
+        message.warn(intl.get('ValidatorRegister.registerFailed'));
+      }
     } else {
-      wand.request('storeman_openStoremanAction', { tx, action: 'stakeIn' }, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
           message.warn(intl.get('ValidatorRegister.registerFailed'));
         }
         this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
-    }
-  }
-
-  trezorRegisterValidator = async (path, from, value, wPk, enodeID, feeRate) => {
-    let chainId = await getChainId();
-    let func = 'stakeRegister';// abi function
-    try {
-      let nonce = await getNonce(from, 'wan');
-      let gasPrice = await getGasPrice('wan');
-      let data = await getStoremanContractData(func, wPk, enodeID, feeRate);
-
-      let amountWei = toWei(value);
-      const cscContractAddr = await getContractAddr();
-      let rawTx = {
-        data,
-        from,
-        chainId,
-        value: amountWei,
-        to: cscContractAddr,
-        nonce: '0x' + nonce.toString(16),
-        gasLimit: '0x' + Number(200000).toString(16),
-        gasPrice: toWei(gasPrice, 'gwei'),
-        Txtype: Number(1),
-      };
-
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
-
-      // Send register validator
-      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      let params = {
-        txHash,
-        from: from.toLowerCase(),
-        to: rawTx.to,
-        value: rawTx.value,
-        gasPrice: rawTx.gasPrice,
-        gasLimit: rawTx.gasLimit,
-        nonce: rawTx.nonce,
-        srcSCAddrKey: 'WAN',
-        srcChainType: 'WAN',
-        tokenSymbol: 'WAN',
-        status: 'Sent',
-      };
-      let satellite = {
-        wPk,
-        enodeID,
-        annotate: 'StakeRegister'
-      }
-      // save register validator history into DB
-      await pu.promisefy(wand.request, ['staking_insertRegisterValidatorToDB', { tx: params, satellite }], this);
-      this.props.updateStakeInfo();
-      this.props.updateTransHistory();
-    } catch (error) {
-      console.log(error);
-      message.error(intl.get('ValidatorRegister.registerFailed'));
     }
   }
 
