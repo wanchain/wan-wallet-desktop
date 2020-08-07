@@ -367,9 +367,9 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         let index = hdUtil.getNewPathIndexByChainID(chainID, pathForm, WALLET_ID_RAWKEY);
                         let newPath = `${pathForm}${index}`;
                         let accountName = hdUtil.getNewNameForImportedAccount(chainID, 'Imported', wid);
-    
+
                         hdUtil.importPrivateKey(newPath, rawPriv);
-    
+
                         if (pk2 !== undefined) {
                             let rawPriv2;
                             if (pk2.length === 0) {
@@ -559,9 +559,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     }
                 });
                 payload.addresses.forEach(item => {
-                  if (!btcMultiBalances[item]) {
-                    btcMultiBalances[item] = '0'
-                  }
+                    if (!btcMultiBalances[item]) {
+                        btcMultiBalances[item] = '0'
+                    }
                 });
                 ret = {
                     utxos,
@@ -1561,6 +1561,29 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getTokenPairs':
+            try {
+                ret = await ccUtil.getTokenPairs();
+            } catch (e) {
+                console.log('getTokenPairs error:', e);
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getChainInfoByChainId':
+            try {
+                let { chainId } = payload;
+                ret = await ccUtil.getChainInfoByChainId(chainId);
+                logger.info(ret)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getTwoWayBridgeTokensInfo':
             try {
                 ret = setting.twoWayBridgeTokens;
@@ -1571,9 +1594,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getTwoWayBridgeCcTokensInfo':
+        case 'getCcTokenSelections':
             try {
-                ret = setting.twoWayBridgeCcTokens;
+                ret = setting.CcTokenSelections;
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1581,10 +1604,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'setTwoWayBridgeCcTokenSelectStatus':
+        case 'setCcTokenSelectStatus':
             try {
-                let { token, index, selected } = payload;
-                setting.updateTwoWayBridgeCcTokens(token, index, selected);
+                let { id, selected } = payload;
+                setting.updateCcTokenSelections(id, selected);
                 ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1749,7 +1772,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1770,7 +1793,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -1794,7 +1817,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
-                  err = ret;
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2137,58 +2160,58 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
 })
 
 ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
-  let ret, err
-  const [action, id] = actionUni.split('#')
+    let ret, err
+    const [action, id] = actionUni.split('#')
 
-  switch (action) {
+    switch (action) {
 
-      case 'openStoremanAction':
-          try {
-              let { tx, action } = payload;
-              let gasPrice = await ccUtil.getGasPrice('wan');
-              tx.gasLimit = 200000;
-              tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-              logger.info(`Open Storeman ${action}` + JSON.stringify(tx));
-              ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+        case 'openStoremanAction':
+            try {
+                let { tx, action } = payload;
+                let gasPrice = await ccUtil.getGasPrice('wan');
+                tx.gasLimit = 200000;
+                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                logger.info(`Open Storeman ${action}` + JSON.stringify(tx));
+                ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
-      case 'getContractData':
-        try {
-            let func = payload.func;
-            let params = payload.params;
-            var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }, { "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "renewal", "type": "bool" }], "name": "partnerIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }, { "indexed": false, "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }], "name": "stakeIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "stakeAppend", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "lockEpoch", "type": "uint256" }], "name": "stakeUpdate", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "renewal", "type": "bool" }], "name": "partnerIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "delegateIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }], "name": "delegateOut", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "type": "event" }];
-            let data = ccUtil.getDataByFuncInterface(cscDefinition,
-                setting.cscContractAddr,
-                func,
-                ...params);
+        case 'getContractData':
+            try {
+                let func = payload.func;
+                let params = payload.params;
+                var cscDefinition = [{ "constant": false, "inputs": [{ "name": "addr", "type": "address" }], "name": "stakeAppend", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "lockEpochs", "type": "uint256" }], "name": "stakeUpdate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "secPk", "type": "bytes" }, { "name": "bn256Pk", "type": "bytes" }, { "name": "lockEpochs", "type": "uint256" }, { "name": "feeRate", "type": "uint256" }, { "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "renewal", "type": "bool" }], "name": "partnerIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateIn", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [{ "name": "delegateAddress", "type": "address" }], "name": "delegateOut", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "addr", "type": "address" }, { "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }, { "indexed": false, "name": "maxFeeRate", "type": "uint256" }], "name": "stakeRegister", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "feeRate", "type": "uint256" }, { "indexed": false, "name": "lockEpoch", "type": "uint256" }], "name": "stakeIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "stakeAppend", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "lockEpoch", "type": "uint256" }], "name": "stakeUpdate", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }, { "indexed": false, "name": "renewal", "type": "bool" }], "name": "partnerIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "v", "type": "uint256" }], "name": "delegateIn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }], "name": "delegateOut", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "posAddress", "type": "address" }, { "indexed": true, "name": "feeRate", "type": "uint256" }], "name": "stakeUpdateFeeRate", "type": "event" }];
+                let data = ccUtil.getDataByFuncInterface(cscDefinition,
+                    setting.cscContractAddr,
+                    func,
+                    ...params);
 
-            ret = data;
-        } catch (e) {
-            logger.error('Get contract data failed');
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break;
+                ret = data;
+            } catch (e) {
+                logger.error('Get contract data failed');
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
-      case 'insertStoremanTransToDB':
-        try {
-            logger.info('insertStoremanTransToDB:' + payload);
-            let { tx, satellite } = payload;
-            await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
-        } catch (e) {
-            logger.error(e.message || e.stack)
-            err = e
-        }
-        sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-        break;
+        case 'insertStoremanTransToDB':
+            try {
+                logger.info('insertStoremanTransToDB:' + payload);
+                let { tx, satellite } = payload;
+                await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
-  }
+    }
 })
 
 function sendResponse(endpoint, e, payload) {

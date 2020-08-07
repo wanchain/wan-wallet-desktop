@@ -17,9 +17,7 @@ const { SubMenu, Item } = Menu;
   tokensOnSideBar: stores.tokens.tokensOnSideBar,
   getWalletTokenList: stores.tokens.getWalletTokenList,
   sidebarColumns: stores.languageIntl.sidebarColumns,
-  crossChainOnSideBar: stores.crossChain.crossChainOnSideBar,
-  getCrossChainTokenList: stores.crossChain.getCrossChainTokenList,
-  // twoWayBridgeOnSideBar: stores.crossChain.twoWayBridgeOnSideBar,
+  crossChainSelections: stores.crossChain.crossChainSelections,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
 }))
 
@@ -69,7 +67,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainOnSideBar, dAppsOnSideBar, getWalletTokenList, getCrossChainTokenList } = this.props;
+    const { sidebarColumns, settings, tokensOnSideBar, crossChainSelections, dAppsOnSideBar, getWalletTokenList } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -138,29 +136,27 @@ class Sidebar extends Component {
     });
 
     let crossChainList = [];
-    getCrossChainTokenList.forEach(v => {
-      if (v.children.length === 0) {
-        return false;
+    Object.keys(crossChainSelections).forEach(symbol => {
+      if (crossChainSelections[symbol].every(v => v.selected === false)) {
+        return;
       }
-      if (v.children.find(c => c.selected === true)) {
-        let children = [];
-        v.children.forEach(c => {
-          if (c.selected === true) {
-            children.push({
-              title: c.symbol,
-              key: c.key,
-              noCircle: true,
-            });
-          }
-        });
-        crossChainList.push({
-          title: v.chain,
-          key: v.key,
-          icon: 'block',
-          mode: 'vertical',
-          children: children
-        });
-      }
+      let arr = [];
+      crossChainSelections[symbol].forEach(v => {
+        if (v.selected) {
+          arr.push({
+            title: `${v.fromName} <-> ${v.toName}`,
+            key: v.id,
+            noCircle: true,
+          });
+        }
+      });
+      crossChainList.push({
+        title: symbol,
+        key: symbol,
+        icon: 'block',
+        mode: 'vertical',
+        children: arr,
+      });
     });
     crossChainChildren.splice(0, crossChainChildren.length, ...crossChainList);
 

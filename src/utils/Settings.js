@@ -57,34 +57,11 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      twoWayBridge_cc_tokens: {
-        "BTC": [{
-          selected: false,
-          key: `/crossBTC`,
-          symbol: 'Bitcoin <-> Wanchain',
-        }, {
-          selected: false,
-          key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-          symbol: 'Bitcoin <-> Ethereum',
-        }, {
-          selected: false,
-          key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-          symbol: 'Ethereum <-> Wanchain',
-        }],
-        "ETH": [{
-          selected: false,
-          key: 'ETH:Wanchain <-> Ethereum',
-          symbol: 'Wanchain <-> Ethereum',
-        }],
-        "EOS": [{
-          selected: false,
-          key: 'EOS:EOS <-> Wanchain',
-          symbol: 'EOS <-> Wanchain',
-        }, {
-          selected: false,
-          key: 'EOS:EOS <-> Ethereum',
-          symbol: 'EOS <-> Ethereum',
-        }]
+      cc_selected: {
+        "1": true,
+        "3": true,
+        "5": false,
+        "6": true,
       }
     },
     testnet: {
@@ -120,46 +97,11 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      /* twoWayBridge_tokens: {
-        "BTC-WBTC": {
-          select: true,
-          first: 'BTC',
-          first_chain: 'Bitcoin',
-          first_address: '',
-          second: 'WBTC',
-          second_chain: 'Wanchain',
-          second_address: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
-          detail: 'From BTC to WBTC',
-        },
-      }, */
-      twoWayBridge_cc_tokens: {
-        "BTC": [{
-          selected: false,
-          key: `/crossBTC`,
-          symbol: 'Bitcoin <-> Wanchain',
-        }, {
-          selected: false,
-          key: `/crosschain/Bitcoin-Ethereum/BTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-          symbol: 'Bitcoin <-> Ethereum',
-        }, {
-          selected: false,
-          key: `/crosschain/Ethereum-Wanchain/wanBTC-wanBTC/-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd`,
-          symbol: 'Ethereum <-> Wanchain',
-        }],
-        "ETH": [{
-          selected: false,
-          key: 'ETH:Wanchain <-> Ethereum',
-          symbol: 'Wanchain <-> Ethereum',
-        }],
-        "EOS": [{
-          selected: false,
-          key: 'EOS:EOS <-> Wanchain',
-          symbol: 'EOS <-> Wanchain',
-        }, {
-          selected: false,
-          key: 'EOS:EOS <-> Ethereum',
-          symbol: 'EOS <-> Ethereum',
-        }]
+      cc_selected: {
+        "1": true,
+        "3": true,
+        "5": false,
+        "6": true,
       }
     }
   }
@@ -261,9 +203,12 @@ class Settings {
     this.set(`settings.${network}.cc_tokens`, value);
   }
 
-  updateTwoWayBridgeCcTokens(chain, index, selected) {
+  updateCcTokenSelections(id, selected) {
     let network = this.get('network');
-    this.set(`settings.${network}.twoWayBridge_cc_tokens.${chain}[${index}].selected`, selected);
+    if (this.get(`settings.${network}.cc_selected`) === undefined) {
+      this.set(`settings.${network}.cc_selected`, defaultConfig.settings[network].cc_selected);
+    }
+    this.set(`settings.${network}.cc_selected.[${id}]`, selected);
   }
 
   addToken(addr, obj) {
@@ -376,9 +321,9 @@ class Settings {
     return this.get(`settings.${network}.twoWayBridge_tokens`);
   }
 
-  get twoWayBridgeCcTokens() {
+  get CcTokenSelections() {
     let network = this.get('network');
-    return this.get(`settings.${network}.twoWayBridge_cc_tokens`);
+    return this.get(`settings.${network}.cc_selected`);
   }
 
   get isDev() {

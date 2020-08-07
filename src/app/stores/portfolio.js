@@ -1,6 +1,5 @@
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 import axios from 'axios';
-import { message } from 'antd';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
@@ -74,12 +73,14 @@ class Portfolio {
           this.updateCoinPrice();
         })
       } else {
-        console.log('Get coin list from coingecko failed!');
+        console.log('Get coin list failed!');
+        setTimeout(() => {
+          this.updateCoinsList_from_CoinGeckoAPI();
+        }, 5000);
       }
     })
     .catch((error) => {
       console.log('Get coin list from coingecko failed!', error);
-      // message.warn('Get coin list failed, try to get coin list again automatically.');
       setTimeout(() => {
         this.updateCoinsList_from_CoinGeckoAPI();
       }, 5000);
@@ -122,7 +123,7 @@ class Portfolio {
           }
         })
       } else {
-        console.log('Get prices from coingecko failed.', res);
+        console.log('Get prices failed.', res);
       }
     })
     .catch((error) => {

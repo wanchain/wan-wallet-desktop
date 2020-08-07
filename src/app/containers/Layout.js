@@ -25,7 +25,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getCcTokensInfo: () => stores.tokens.getCcTokensInfo(),
   getTwoWayBridgeTokensInfo: () => stores.tokens.getTwoWayBridgeTokensInfo(),
-  getTwoWayBridgeCcTokensInfo: () => stores.crossChain.getTwoWayBridgeCcTokensInfo(),
+  getTokenPairs: () => stores.crossChain.getTokenPairs(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
@@ -66,7 +66,11 @@ class Layout extends Component {
     this.setState({
       initializeStep: 'Layout.connecting'
     });
+    let running = false;
     let id = setInterval(async () => {
+      if (running) {
+        return false;
+      }
       let ready = false;
       try {
         ready = await isSdkReady();
@@ -74,25 +78,30 @@ class Layout extends Component {
           initializeStep: 'Layout.connected'
         });
       } catch (e) {
+        console.log('isSdkReady err', e);
         this.setState({
           initializeStep: 'Layout.initSDKFailed'
         });
       }
       if (ready) {
         try {
+          running = true;
           await initRegTokens('ETH');
           await initRegTokens('EOS');
           await this.props.getTokensInfo();
           await this.props.getCcTokensInfo();
           await this.props.getTwoWayBridgeTokensInfo();
-          await this.props.getTwoWayBridgeCcTokensInfo();
+          await this.props.getTokenPairs();
           await this.props.getMnemonic();
           this.setState({
             initializeStep: 'Layout.initSuccess',
             loading: false
           });
           clearInterval(id);
+          running = false;
         } catch (err) {
+          running = false;
+          console.log('error occurred.', err)
           this.setState({
             initializeStep: 'Layout.initFailed',
           });

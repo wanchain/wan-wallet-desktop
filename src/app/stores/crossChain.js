@@ -15,18 +15,9 @@ class CrossChain {
 
   @observable crossChainTokensList = {};
 
-  @action updateWalletTokenSelectedStatus(key, token, selected) {
-    let index = this.crossChainTokensList[token].findIndex(v => v.key === key);
-    if (index !== undefined || index !== -1) {
-      wand.request('crossChain_setTwoWayBridgeCcTokenSelectStatus', { token, index, selected }, (err, data) => {
-        if (err) {
-          console.log('Update selection status failed.', err);
-        } else {
-          this.crossChainTokensList[token][index].selected = selected;
-        }
-      })
-    }
-  }
+  @observable tokenPairs = {};
+
+  @observable crossChainSelections = {};
 
   @action setCurrSymbol(symbol) {
     self.currSymbol = symbol;
@@ -42,16 +33,107 @@ class CrossChain {
     })
   }
 
-  @action getTwoWayBridgeCcTokensInfo() {
+  @action getTokenPairs() {
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_getTwoWayBridgeCcTokensInfo', {}, (err, data) => {
+      wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
         if (err) {
-          console.log('getTwoWayBridgeCcTokensInfo error: ', err);
+          console.log('getTokenPairs failed: ', err);
           reject(err)
-          return;
+        } else {
+          let tokenPairs = {};
+          let selected = {};
+          let selectionsFromDB = await this.getCcTokenSelections();
+          console.log('selectionsFromDB:', selectionsFromDB);
+          for (let i = 0; i < data.length; i++) {
+            // set tokenPairs
+            let v = data[i];
+            tokenPairs[v.id] = {
+              ancestorDecimals: v.ancestorDecimals,
+              ancestorSymbol: v.ancestorSymbol,
+              fromAccount: v.fromAccount,
+              fromChainID: v.fromChainID,
+              toChainID: v.toChainID,
+              tokenAddress: v.tokenAddress,
+            }
+
+            let chainNames = {};
+            let from = '';
+            if (v.fromChainID in chainNames) {
+              from = chainNames[v.fromChainID];
+            } else {
+              from = await this.getChainNameByChainId(v.fromChainID);
+              chainNames[v.fromChainID] = from;
+            }
+            tokenPairs[v.id].fromName = from[2];
+
+            let to = '';
+            if (v.toChainID in chainNames) {
+              to = chainNames[v.toChainID];
+            } else {
+              to = await this.getChainNameByChainId(v.toChainID);
+              chainNames[v.toChainID] = to;
+            }
+            tokenPairs[v.id].toName = to[2];
+
+            // set crossChainSelections
+            if (!(v.ancestorSymbol in selected)) {
+              selected[v.ancestorSymbol] = [];
+            }
+            selected[v.ancestorSymbol].push({
+              ancestorDecimals: v.ancestorDecimals,
+              ancestorSymbol: v.ancestorSymbol,
+              fromAccount: v.fromAccount,
+              fromChainID: v.fromChainID,
+              fromName: from[2],
+              toChainID: v.toChainID,
+              tokenAddress: v.tokenAddress,
+              toName: to[2],
+              id: v.id,
+              selected: !!selectionsFromDB[v.id]
+            })
+          }
+
+          this.tokenPairs = tokenPairs;
+          this.crossChainSelections = selected;
+          // console.log('tokenPairs:', this.tokenPairs, this.crossChainSelections);
+          resolve();
         }
-        this.crossChainTokensList = data;
-        resolve()
+      })
+    })
+  }
+
+  @action setCcTokenSelectedStatus(id, selected) {
+    wand.request('crossChain_setCcTokenSelectStatus', { id, selected }, (err, data) => {
+      console.log('Update:', err, data);
+      if (err) {
+        console.log('Update selection status failed.', err);
+        this.getTokenPairs();
+      }
+      this.getTokenPairs();
+    })
+  }
+
+  getChainNameByChainId(chainId) {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getChainInfoByChainId', { chainId: chainId }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      })
+    })
+  }
+
+  getCcTokenSelections() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getCcTokenSelections', {}, (err, data) => {
+        // console.log('Selections: ', err, data);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
       })
     })
   }
@@ -60,9 +142,9 @@ class CrossChain {
     return tokens.ccTokens;
   }
 
-  @computed get crossChainOnSideBar() {
+  @computed get twoWayBridgeOnSideBar() {
     let list = [];
-    tokens.ccTokensSiderbar.forEach(item => {
+    tokens.twoWayBridgeTokensSiderbar.forEach(item => {
       if (item.select) {
         list.push(item);
       }
@@ -70,12 +152,14 @@ class CrossChain {
     return list;
   }
 
-  @computed get twoWayBridgeOnSideBar() {
+  @computed get getCrossChainTokenList() {
     let list = [];
-    tokens.twoWayBridgeTokensSiderbar.forEach(item => {
-      if (item.select) {
-        list.push(item);
-      }
+    Object.keys(this.crossChainSelections).forEach(symbol => {
+      list.push({
+        chain: symbol,
+        key: symbol,
+        children: this.crossChainSelections[symbol],
+      })
     });
     return list;
   }
@@ -209,18 +293,6 @@ class CrossChain {
       }
     });
     return crossEOSTrans.sort((a, b) => b.sendTime - a.sendTime);
-  }
-
-  @computed get getCrossChainTokenList() {
-    let list = [];
-    Object.keys(this.crossChainTokensList).forEach(index => {
-      list.push({
-        chain: index,
-        key: index,
-        children: this.crossChainTokensList[index]
-      });
-    });
-    return list;
   }
 }
 
