@@ -75,7 +75,7 @@ export function isNumber (val) {
 export function formatNum (num) {
   if (num && num !== 'N/A') {
     if (num < 1) {
-      return num;
+      return new BigNumber(num).toFixed();
     }
     let tempNum = new BigNumber(num).toString();
     let [left, right] = tempNum.split('.');
