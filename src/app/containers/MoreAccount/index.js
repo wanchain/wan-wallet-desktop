@@ -9,7 +9,7 @@ const { Search } = Input;
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
   language: stores.languageIntl.language,
-  getWalletTokenList: stores.tokens.getWalletTokenList,
+  getWalletSelections: stores.tokens.getWalletSelections,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -26,7 +26,7 @@ class MoreAccount extends Component {
 
   columns = [
     {
-      dataIndex: 'chain',
+      dataIndex: 'symbol',
       width: 360,
       title: 'TOKEN',
       align: 'center',
@@ -46,13 +46,12 @@ class MoreAccount extends Component {
   ];
 
   render() {
-    let { getWalletTokenList } = this.props;
-
+    let { getWalletSelections } = this.props;
     return (
       <div className={style['moreCrossChain']}>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletTokenList} />
+            <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletSelections} />
           </Col>
         </Row>
       </div>

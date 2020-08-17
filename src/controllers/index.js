@@ -568,7 +568,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     btcMultiBalances
                 };
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('getBtcMultiBalances failed:' + e)
                 err = e
             }
 
@@ -630,11 +630,13 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             {
                 let balance, privateBalance;
                 const { addr, path } = payload;
+                // console.log('balances::::', addr, path);
                 try {
                     //private balance
                     let [...result] = await Promise.all(path.map(v => {
                         return new Promise((resolve, reject) => {
                             let OTABalances = ccUtil.getOtaFunds(v[0], v[1]);
+                            // console.log('OTABalances::::', OTABalances);
                             let amount = 0;
                             OTABalances.forEach(v => {
                                 amount = new BigNumber(amount).plus(new BigNumber(v.value));
@@ -987,7 +989,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
         case 'normal':
             try {
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
-                let from = await hdUtil.getAddress(walletID, chainType, path)
+                let from = await hdUtil.getAddress(walletID, chainType, path);
                 let fromAddr = from.address;
                 if (fromAddr.indexOf('0x') === -1) {
                     fromAddr = '0x' + fromAddr;
@@ -1007,7 +1009,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 }
 
                 logger.info('Normal transaction: ' + JSON.stringify(input));
-
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(symbol, chainType);
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
@@ -1060,7 +1061,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     "BIP44Path": path,
                     "walletID": walletID
                 }
-
                 logger.info('Private transaction: ' + JSON.stringify(input));
                 for (let obj of amount) {
                     input.amount = obj.face;
@@ -1074,6 +1074,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     }
                 }
             } catch (e) {
+                console.log('-------------private tx failed------------------:', e);
                 logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
@@ -1541,6 +1542,16 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getCoinsInfo':
+            try {
+                ret = setting.coins;
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getTokensInfo':
             try {
                 ret = setting.tokens;
@@ -1576,17 +1587,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 let { chainId } = payload;
                 ret = await ccUtil.getChainInfoByChainId(chainId);
-                logger.info(ret)
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
-        case 'getTwoWayBridgeTokensInfo':
-            try {
-                ret = setting.twoWayBridgeTokens;
+                // logger.info(ret)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1630,11 +1631,32 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'updateCoinsInfo':
+            {
+                let { symbol, key, value } = payload;
+                try {
+                    if (key === undefined) {
+                        setting.updateCoinItem(symbol, value);
+                    } else {
+                        setting.updateCoinKeyValue(symbol, key, value);
+                    }
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+                break
+            }
+
         case 'updateTokensInfo':
             {
                 let { addr, key, value } = payload;
                 try {
-                    setting.updateTokenKeyValue(addr, key, value);
+                    if (key === undefined) {
+                        setting.updateTokenItem(addr, value);
+                    } else {
+                        setting.updateTokenKeyValue(addr, key, value);
+                    }
                 } catch (e) {
                     logger.error(e.message || e.stack)
                     err = e
@@ -1713,7 +1735,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     });
                 }
             } catch (e) {
-                logger.error(e.message || e.stack)
+                logger.error('getSmgList failed: ' + e)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })

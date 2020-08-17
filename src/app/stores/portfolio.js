@@ -56,6 +56,7 @@ class Portfolio {
         balance: 0,
       }
     });
+    console.log('obj:', obj);
     return obj;
   }
 
@@ -64,27 +65,27 @@ class Portfolio {
       method: 'GET',
       url: 'https://api.coingecko.com/api/v3/coins/list'
     })
-    .then(res => {
-      if (res.status === 200) {
-        runInAction(() => {
-          for (let obj of res.data) {
-            this.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
-          }
-          this.updateCoinPrice();
-        })
-      } else {
-        console.log('Get coin list failed!');
+      .then(res => {
+        if (res.status === 200) {
+          runInAction(() => {
+            for (let obj of res.data) {
+              this.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
+            }
+            this.updateCoinPrice();
+          })
+        } else {
+          console.log('Get coin list failed!');
+          setTimeout(() => {
+            this.updateCoinsList_from_CoinGeckoAPI();
+          }, 5000);
+        }
+      })
+      .catch((error) => {
+        console.log('Get coin list from coingecko failed!', error);
         setTimeout(() => {
           this.updateCoinsList_from_CoinGeckoAPI();
         }, 5000);
-      }
-    })
-    .catch((error) => {
-      console.log('Get coin list from coingecko failed!', error);
-      setTimeout(() => {
-        this.updateCoinsList_from_CoinGeckoAPI();
-      }, 5000);
-    });
+      });
   }
 
   @action updateCoinPrice() {
@@ -93,9 +94,11 @@ class Portfolio {
       if (key in self.defaultCoinList) {
         return key
       } else {
-        return item.buddy ? item.symbol.substring(1) : item.symbol;
+        // return item.buddy ? item.symbol.substring(1) : item.symbol;
+        return item.buddy ? item.buddy : item.symbol;
       }
     });
+    console.log('update param:', param)
     let reconvertIds = {};
     for (let v of param) {
       if (v in self.specificTokenId_from_CoinGeckoAPI) {
@@ -106,6 +109,7 @@ class Portfolio {
     }
     let convertedParam = Object.keys(reconvertIds);
     if (convertedParam.length === 0) return;
+    console.log('convertedParam', convertedParam)
     axios({
       method: 'GET',
       url: 'https://api.coingecko.com/api/v3/simple/price',
@@ -114,49 +118,55 @@ class Portfolio {
         vs_currencies: 'usd',
       }
     })
-    .then((res) => {
-      if (res.status === 200) {
-        runInAction(() => {
-          self.coinPriceObj = {};
-          for (let i in res.data) {
-            self.coinPriceObj[reconvertIds[i]] = res.data[i].usd;
-          }
-        })
-      } else {
-        console.log('Get prices failed.', res);
-      }
-    })
-    .catch((error) => {
-      console.log('Get prices from coingecko failed', error);
-    });
+      .then((res) => {
+        console.log('res:', res);
+        if (res.status === 200) {
+          runInAction(() => {
+            self.coinPriceObj = {};
+            for (let i in res.data) {
+              self.coinPriceObj[reconvertIds[i]] = res.data[i].usd;
+            }
+          })
+        } else {
+          console.log('Get prices failed.', res);
+        }
+      })
+      .catch((error) => {
+        console.log('Get prices from coingecko failed', error);
+      });
   }
 
   @action updateTokenBalance() {
-    Object.keys(self.coinList).forEach(async (key) => {
-      let val = self.coinList[key];
-      if (key in self.defaultCoinList) {
-        switch (key) {
-          case 'WAN':
-            val.balance = wanAddress.getAllAmount;
-            break;
-          case 'ETH':
-            val.balance = ethAddress.getAllAmount;
-            break;
-          case 'BTC':
-            val.balance = btcAddress.getAllAmount;
-            break;
-          case 'EOS':
-            val.balance = eosAddress.getAllAmount;
-            break;
+    console.log(self.coinList)
+    try {
+      Object.keys(self.coinList).forEach(async (key) => {
+        let val = self.coinList[key];
+        if (key in self.defaultCoinList) {
+          switch (key) {
+            case 'WAN':
+              val.balance = wanAddress.getAllAmount;
+              break;
+            case 'ETH':
+              val.balance = ethAddress.getAllAmount;
+              break;
+            case 'BTC':
+              val.balance = btcAddress.getAllAmount;
+              break;
+            case 'EOS':
+              val.balance = eosAddress.getAllAmount;
+              break;
+          }
+        } else {
+          let balances = await tokens.getTokenBalance(val);
+          val.balance = Object.values(balances).reduce((total, cur) => {
+            return new BigNumber(total).plus(cur).toString(10);
+          });
+          val.balance = formatNumByDecimals(val.balance, val.decimals);
         }
-      } else {
-        let balances = await tokens.getTokenBalance(val);
-        val.balance = Object.values(balances).reduce((total, cur) => {
-          return new BigNumber(total).plus(cur).toString(10);
-        });
-        val.balance = formatNumByDecimals(val.balance, val.decimals);
-      }
-    });
+      });
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   @computed get portfolioList() {
@@ -174,7 +184,8 @@ class Portfolio {
       Object.keys(self.coinList).forEach((key, index) => {
         let val = list[index];
         if (!(key in self.defaultCoinList)) {
-          key = self.coinList[key].buddy ? self.coinList[key].symbol.substring(1) : self.coinList[key].symbol;
+          // key = self.coinList[key].buddy ? self.coinList[key].symbol.substring(1) : self.coinList[key].symbol;
+          key = self.coinList[key].buddy ? self.coinList[key].buddy : self.coinList[key].symbol;
         }
         if (key in self.coinPriceObj) {
           val.price = `$${self.coinPriceObj[key]}`;

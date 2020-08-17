@@ -34,7 +34,7 @@ class EthAccount extends Component {
       isUnlock: false,
     }
     this.props.updateTransHistory();
-    this.props.changeTitle(this.props.match.params.symbol);
+    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -71,10 +71,6 @@ class EthAccount extends Component {
       }),
     };
   });
-
-  componentDidUpdate() {
-    this.props.changeTitle(this.props.match.params.symbol);
-  }
 
   componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
@@ -143,7 +139,7 @@ class EthAccount extends Component {
   }
 
   render() {
-    const { getAmount, getAddrList, match } = this.props;
+    const { getAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -154,16 +150,15 @@ class EthAccount extends Component {
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
-
+    console.log('render EthAccount')
     return (
       <div className="account">
         <Row className="title">
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
             <span className="wanTotal">{120}</span>
-            <span className="wanTex">{match.params.symbol.toUpperCase()}</span>
-            <Tag className={style.symbol}>{match.params.chain.toUpperCase()}</Tag>
-            {/* <Tag className={style.symbol} color="#108ee9">ETHEREUM</Tag> */}
+            <span className="wanTex">{'ETH'}</span>
+            <Tag className="symbol">{'ETHERIUM'}</Tag>
           </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>

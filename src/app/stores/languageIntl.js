@@ -365,11 +365,12 @@ class LanguageIntl {
         step: '1',
         key: '/wallet',
         icon: 'wallet',
-        children: WALLET_CHAIN.map(item => ({
+        children: [],
+        /* children: WALLET_CHAIN.map(item => ({
           title: item,
           key: `/${item.toLowerCase()}Account`,
           icon: 'block'
-        }))
+        })) */
       },
       {
         title: intl.get('menuConfig.hardwareWallet'),
@@ -394,11 +395,12 @@ class LanguageIntl {
         step: '1',
         key: '/crossChain',
         icon: 'wallet',
-        children: CROSSCHAINTYPE.map(item => ({
+        children: [],
+        /* children: CROSSCHAINTYPE.map(item => ({
           title: item,
           key: `/cross${item}`,
           icon: 'block'
-        }))
+        })) */
       },
       {
         title: intl.get('menuConfig.galaxyPos'),

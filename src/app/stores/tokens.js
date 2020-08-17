@@ -15,11 +15,11 @@ import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
 class Tokens {
   @observable currTokenAddr = '';
 
+  @observable coinsList = {};
+
   @observable tokensList = {};
 
   @observable ccTokensList = {};
-
-  @observable twoWayBridgeTokensList = {};
 
   @observable tokensBalance = {};
 
@@ -27,151 +27,25 @@ class Tokens {
 
   @observable tokenIconList = {};
 
-  @observable walletTokensList = [{
-    chain: 'WAN',
-    key: `Account_${'WAN'}`,
-    children: [{
-      title: '@Wanchain',
-      symbol: 'WAN',
-      key: `/${'wan'}Account/${'WAN'}/Wanchain`,
-      selected: false,
-    }, {
-      title: '@Ethereum',
-      symbol: 'WAN',
-      key: `/${'eth'}Account/${'WAN'}/Ethereum`,
-      selected: false,
-    }]
-  }, {
-    chain: 'ETH',
-    key: `Account_${'ETH'}`,
-    children: [{
-      title: '@Ethereum',
-      symbol: 'ETH',
-      key: `/${'eth'}Account/${'ETH'}/Ethereum`,
-      selected: false,
-    }, {
-      title: '@Wanchain',
-      symbol: 'wanETH',
-      key: `/${'eth'}Account/${'ETH'}/Wanchain`,
-      selected: false,
-    }]
-  }, {
-    chain: 'BTC',
-    key: `Account_${'BTC'}`,
-    children: [{
-      title: '@Bitcoin',
-      symbol: 'BTC',
-      key: `/${'btc'}Account/${'BTC'}/Bitcoin`,
-      selected: false,
-    }, {
-      title: '@Wanchain',
-      symbol: 'wanBTC',
-      key: `/tokens/WAN/0x89a3e1494bc3db81dadc893ded7476d33d47dcbd/WBTC`,
-      selected: false,
-    }, {
-      title: '@Ethereum',
-      symbol: 'BTC',
-      key: `/${'eth'}Account/${'BTC'}/Ethereum`,
-      selected: false,
-    }]
-  }, {
-    chain: 'EOS',
-    key: `Account_${'EOS'}`,
-    children: [{
-      title: '@EOS',
-      symbol: 'EOS',
-      key: `/${'eos'}Account/${'EOS'}/EOS`,
-      selected: false,
-    }]
-  }, {
-    chain: 'MKR',
-    key: `Account_${'MKR'}`,
-    children: [{
-      title: '@Wanchain',
-      symbol: 'wanMKR',
-      key: `/${'eth'}Account/${'MKR'}/Wanchain`,
-      selected: false,
-    }, {
-      title: '@Ethereum',
-      symbol: 'MKR',
-      key: `/${'eth'}Account/${'MKR'}/Ethereum`,
-      selected: false,
-    }]
-  }, {
-    chain: 'USDT',
-    key: `Account_${'USDT'}`,
-    children: [{
-      title: '@Wanchain',
-      symbol: 'wanUSDT',
-      key: `/tokens/WAN/0x56948c162aaa6cce3f196b93903318502989f573/WUSDT`,
-      selected: false,
-    }, {
-      title: '@Ethereum',
-      symbol: 'USDT',
-      key: `/tokens/ETH/0x28c96b26f6df3cf57a0a4e8fef02e9295e9ca458/USDT`,
-      selected: false,
-    }]
-  }];
+  @observable walletSelections = {};
 
-  @observable twoWayBridgeTokenList = [{
-    select: true,
-    key: 'BTC-WBTC',
-    from: 'BTC',
-    to: 'WBTC',
-    fromChain: 'Bitcoin',
-    toChain: 'Wanchain',
-    fromAddress: '',
-    toAddress: '0x89a3e1494bc3db81dadc893ded7476d33d47dcbd',
-    detail: 'From BTC to WBTC',
-  }, {
-    select: false,
-    key: 'ETH-WETH',
-    from: 'ETH',
-    to: 'WETH',
-    fromChain: 'Ethereum',
-    toChain: 'Wanchain',
-    fromAddress: '',
-    toAddress: '0x46397994a7e1e926ea0de95557a4806d38f10b0d',
-    detail: 'From ETH to WETH',
-  }, {
-    select: false,
-    key: 'BTC-EBTC',
-    from: 'BTC',
-    to: 'EBTC',
-    fromChain: 'Bitcoin',
-    toChain: 'Ethereum',
-    fromAddress: '',
-    toAddress: '',
-    detail: 'From BTC to EBTC',
-  }, {
-    select: false,
-    key: 'EOS-WEOS',
-    from: 'EOS',
-    to: 'WEOS',
-    fromChain: 'EOS',
-    toChain: 'Wanchain',
-    fromAddress: '',
-    toAddress: '0x57195b9d12421e963b720020483f97bb7ff2e2a6',
-    detail: 'From EOS to WEOS',
-  }];
-
-  @action updateTwoWayBridgeTokenList(data) {
-    console.log('updateTwoWayBridgeTokenList');
-    self.twoWayBridgeTokenList = data;
+  @action updateWalletSelectedStatus(symbol, selected) {
+    wand.request('crossChain_updateCoinsInfo', { symbol, key: 'select', value: selected }, (err, data) => {
+      if (err) {
+        console.log('updateCoinsInfo failed:', err);
+      } else {
+        this.coinsList[symbol].select = selected;
+      }
+    });
   }
 
-  @action toggleTwoWayBridgeTokenSelection(obj) {
-    let index = self.twoWayBridgeTokenList.findIndex(v => v.key === obj.key);
-    self.twoWayBridgeTokenList[index].select = obj.select;
-  }
-
-  @action updateWalletTokenSelectedStatus(key, selected) {
-    this.walletTokensList.forEach((v) => {
-      v.children.forEach((child) => {
-        if (child.key === key) {
-          child.selected = selected;
-        }
-      })
+  @action updateTokenSelectedStatus(tokenAddress, selected) {
+    wand.request('crossChain_updateTokensInfo', { addr: tokenAddress, key: 'select', value: selected }, (err, data) => {
+      if (err) {
+        console.log('updateTokensInfo failed: ', err);
+      } else {
+        this.tokensList[tokenAddress].select = selected;
+      }
     });
   }
 
@@ -184,7 +58,7 @@ class Tokens {
 
   @action getToken(scAddr) {
     let token = self.tokensList[scAddr];
-    if (token.buddy && self.tokensList[token.buddy]) {
+    if (token && token.buddy && self.tokensList[token.buddy]) {
       token.iconData = self.tokensList[token.buddy].iconData;
       token.iconType = self.tokensList[token.buddy].iconType;
     }
@@ -193,6 +67,9 @@ class Tokens {
 
   @action async getTokenIcon(scAddr) {
     const token = self.getToken(scAddr);
+    if (token === undefined) {
+      return false;
+    }
     switch (token.symbol) {
       case 'WBTC':
         self.tokenIconList[scAddr] = btcImg;
@@ -213,6 +90,7 @@ class Tokens {
               tokenScAddr: scAddr
             }
           }, (err, data) => {
+            console.log('get Icon: ', err, data)
             if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
               self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
             } else {
@@ -221,6 +99,20 @@ class Tokens {
           });
         }
     }
+  }
+
+  @action getCoinsInfo() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getCoinsInfo', {}, (err, data) => {
+        if (err) {
+          console.log('getCoinsInfo: ', err);
+          reject(err)
+          return;
+        }
+        self.coinsList = data;
+        resolve()
+      })
+    })
   }
 
   @action getTokensInfo() {
@@ -246,21 +138,6 @@ class Tokens {
           return;
         }
         self.ccTokensList = data;
-        // console.log('getCcTokensInfo:', data);
-        resolve()
-      })
-    })
-  }
-
-  @action getTwoWayBridgeTokensInfo() {
-    return new Promise((resolve, reject) => {
-      wand.request('crossChain_getTwoWayBridgeTokensInfo', {}, (err, data) => {
-        if (err) {
-          console.log('getTwoWayBridgeTokensInfo: ', err);
-          reject(err)
-          return;
-        }
-        self.twoWayBridgeTokensList = data;
         resolve()
       })
     })
@@ -301,6 +178,7 @@ class Tokens {
   }
 
   @action getTokenBalance(item) {
+    console.log('balance item:', item);
     const { chain, scAddr } = item;
     return new Promise((resolve, reject) => {
       let normalArr = [];
@@ -334,6 +212,12 @@ class Tokens {
         default:
           console.log('Default.....');
       }
+
+      if ((normalArr.length || importArr.length || rawKeyArr.length) === 0) {
+        console.log('======= out =======')
+        return {};
+      }
+
       wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
         if (err) {
           console.log('stores_getTokensBalance:', err);
@@ -354,6 +238,36 @@ class Tokens {
         return;
       }
       self.E20TokensBalance[tokenScAddr] = data;
+    })
+  }
+
+  @action updateCoinsList(symbol, value) {
+    wand.request('crossChain_updateCoinsInfo', { symbol, key: undefined, value }, (err) => {
+      if (err) {
+        console.log('crossChain_updateCoinsInfo: ', err);
+      } else {
+        this.coinsList[symbol] = value;
+      }
+    });
+  }
+
+  @action updateTokensList(addr, value) {
+    wand.request('crossChain_updateTokensInfo', { addr, key: undefined, value }, (err) => {
+      if (err) {
+        console.log('crossChain_updateTokensInfo: ', err);
+      } else {
+        this.tokensList[addr] = value;
+      }
+    });
+  }
+
+  @action updateCoinsInfo(symbol, key, value) {
+    wand.request('crossChain_updateCoinsInfo', { symbol, key, value }, (err) => {
+      if (err) {
+        console.log('crossChain_updateCoinsInfo: ', err)
+        return;
+      }
+      self.coinsList[symbol][key] = value;
     })
   }
 
@@ -457,38 +371,10 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
-  @computed get twoWayBridgeTokensSiderbar() {
-    let list = [];
-    if (!(self.twoWayBridgeTokensList instanceof Object)) {
-      return [];
-    }
-    Object.keys(self.twoWayBridgeTokensList).forEach(item => {
-      try {
-        let val = self.twoWayBridgeTokensList[item];
-        list.push({
-          key: item,
-          symbol: item,
-          first_address: val.first_address ? val.second_address : '',
-          second_address: val.second_address ? val.second_address : '',
-          select: val.select,
-          detail: val.detail,
-        })
-      } catch (err) {
-        console.log(`Get cross chain ${item} failed`, err);
-      }
-    });
-    // console.log('list-------------:', list);
-    // return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return list;
-  }
-
   @computed get tokensOnSideBar() {
     let list = [];
-    if (!(self.tokensList instanceof Object)) {
-      return [];
-    }
-    Object.keys(self.tokensList).forEach(item => {
-      let val = self.tokensList[item];
+    Object.keys(this.tokensList).forEach(item => {
+      let val = this.tokensList[item];
       if (val.select) {
         list.push({
           chain: val.chain,
@@ -655,6 +541,48 @@ class Tokens {
     });
 
     return formatNum(amount.toString(10));
+  }
+
+  @computed get getWalletSelections() {
+    let selections = {};
+    Object.keys(this.coinsList).forEach(key => {
+      let v = this.coinsList[key];
+      if (!selections[key]) {
+        selections[key] = {
+          symbol: v.symbol,
+          key: v.symbol,
+          children: []
+        };
+      }
+      selections[key].children.push({
+        title: v.chain,
+        symbol: v.symbol,
+        key: `/${v.symbol.toLowerCase()}Account`,
+        selected: v.select,
+        isToken: false,
+      });
+    });
+
+    console.log('this.tokensList:', this.tokensList);
+    Object.keys(this.tokensList).forEach(key => {
+      let v = this.tokensList[key];
+      if (!selections[v.symbol]) {
+        selections[v.symbol] = {
+          symbol: v.symbol,
+          key: v.symbol,
+          children: []
+        };
+      }
+      selections[v.symbol].children.push({
+        title: v.chain,
+        symbol: v.symbol,
+        key: `/tokens/${v.chain}/${key}/${v.symbol}`,
+        tokenAddress: key,
+        selected: v.select,
+        isToken: true,
+      });
+    });
+    return Object.values(selections);
   }
 }
 

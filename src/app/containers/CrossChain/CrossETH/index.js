@@ -8,6 +8,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import style from './index.less';
 
 const CHAINTYPE = 'ETH';
 const WANCHAIN = 'WAN';
@@ -20,6 +21,7 @@ const WANCHAIN = 'WAN';
   getAmount: stores.ethAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
+  tokenPairs: stores.crossChain.tokenPairs,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -151,7 +153,7 @@ class CrossETH extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, getTokensListInfo, tokenPairs } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -161,10 +163,12 @@ class CrossETH extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
 
+    let info = Object.assign({}, tokenPairs[this.props.match.params.tokenPairId]);
+
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">ETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">ETH </span><span className={style.chain}>{info.fromChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -172,7 +176,7 @@ class CrossETH extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WETH </span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WETH </span><span className={style.chain}>{info.toChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>

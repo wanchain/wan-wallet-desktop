@@ -14,8 +14,7 @@ const { SubMenu, Item } = Menu;
 @inject(stores => ({
   chainId: stores.session.chainId,
   settings: stores.session.settings,
-  tokensOnSideBar: stores.tokens.tokensOnSideBar,
-  getWalletTokenList: stores.tokens.getWalletTokenList,
+  getWalletSelections: stores.tokens.getWalletSelections,
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainSelections: stores.crossChain.crossChainSelections,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
@@ -67,7 +66,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarColumns, settings, tokensOnSideBar, crossChainSelections, dAppsOnSideBar, getWalletTokenList } = this.props;
+    const { sidebarColumns, settings, crossChainSelections, dAppsOnSideBar, getWalletSelections } = this.props;
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -102,7 +101,7 @@ class Sidebar extends Component {
     }
 
     let walletList = [];
-    getWalletTokenList.forEach(v => {
+    getWalletSelections.forEach(v => {
       if (v.children.length === 0) {
         return false;
       }
@@ -111,14 +110,14 @@ class Sidebar extends Component {
         v.children.forEach(c => {
           if (c.selected === true) {
             children.push({
-              title: c.title,
+              title: `@ ${c.title}`,
               key: c.key,
               noCircle: true,
             });
           }
         });
         walletList.push({
-          title: v.chain,
+          title: v.symbol,
           key: v.key,
           icon: 'block',
           mode: 'vertical',
@@ -127,6 +126,7 @@ class Sidebar extends Component {
       }
     });
     walletChildren.splice(0, walletChildren.length, ...walletList);
+    // console.log('walletList=======:', walletList);
 
     // Add token.
     walletChildren.push({
@@ -135,7 +135,27 @@ class Sidebar extends Component {
       icon: 'block'
     });
 
-    let crossChainList = [];
+    let crossChainList = [{
+      title: 'BTC',
+      key: 'BTC',
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: `BTC <-> Wanchain`,
+        key: `/crossBTC`,
+        noCircle: true,
+      }],
+    }, {
+      title: 'EOS',
+      key: 'BEOSTC',
+      icon: 'block',
+      mode: 'vertical',
+      children: [{
+        title: `EOS <-> Wanchain`,
+        key: `/crossEOS`,
+        noCircle: true,
+      }],
+    }];
     Object.keys(crossChainSelections).forEach(symbol => {
       if (crossChainSelections[symbol].every(v => v.selected === false)) {
         return;
@@ -143,9 +163,15 @@ class Sidebar extends Component {
       let arr = [];
       crossChainSelections[symbol].forEach(v => {
         if (v.selected) {
+          let key = '';
+          if (v.fromAccount === '0x0000000000000000000000000000000000000000' && CROSSCHAINTYPE.includes(v.ancestorSymbol)) {
+            key = `/cross${v.ancestorSymbol}/${v.id}`;
+          } else {
+            key = `/crosschain/${v.id}`;
+          }
           arr.push({
-            title: `${v.fromName} <-> ${v.toName}`,
-            key: v.id,
+            title: `${v.fromChainName} <-> ${v.toChainName}`,
+            key,
             noCircle: true,
           });
         }

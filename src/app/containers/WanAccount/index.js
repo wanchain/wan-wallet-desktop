@@ -3,7 +3,7 @@ import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message, Tooltip, Icon } from 'antd';
+import { Button, Table, Row, Col, message, Tooltip, Icon, Tag } from 'antd';
 
 import style from './index.less';
 import totalImg from 'static/image/wan.png';
@@ -147,6 +147,7 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data,
     };
+    console.log('wan trans:', trans);
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {
@@ -301,7 +302,12 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className={style.title + ' title'}>
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{intl.get('WanAccount.wan')}</span></Col>
+          <Col span={12} className="col-left">
+            <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
+            <span className="wanTotal">{getAmount}</span>
+            <span className="wanTex">{intl.get('WanAccount.wan')}</span>
+            <Tag className="symbol">{'WANCHAIN'}</Tag>
+          </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>

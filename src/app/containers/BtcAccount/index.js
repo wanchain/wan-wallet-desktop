@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message } from 'antd';
+import { Button, Table, Row, Col, message, Tag } from 'antd';
 
 import './index.less';
 import { formatNum } from 'utils/support';
@@ -37,7 +37,7 @@ class BtcAccount extends Component {
   constructor(props) {
     super(props);
     this.props.updateTransHistory();
-    this.props.changeTitle(this.props.match.params.symbol);
+    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -70,10 +70,6 @@ class BtcAccount extends Component {
       }),
     };
   });
-
-  componentDidUpdate() {
-    this.props.changeTitle(this.props.match.params.symbol);
-  }
 
   componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
@@ -150,7 +146,12 @@ class BtcAccount extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} /> <span className="wanTotal">{formatNum(getAmount)}</span><span className="wanTex">BTC</span></Col>
+          <Col span={12} className="col-left">
+            <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
+            <span className="wanTotal">{formatNum(getAmount)}</span>
+            <span className="wanTex">BTC</span>
+            <Tag className="symbol">{'BITCOIN'}</Tag>
+          </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
             <SendNormalTrans from={from} handleSend={this.handleSend} />

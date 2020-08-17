@@ -26,7 +26,7 @@ const defaultConfig = {
     logout_timeout: '5',
     main: {
       tokens: {
-        "0x28362cd634646620ef2290058744f9244bb90ed9": {
+        /* "0x28362cd634646620ef2290058744f9244bb90ed9": {
           "select": false,
           "symbol": "WETH",
           "decimals": 18,
@@ -39,7 +39,7 @@ const defaultConfig = {
           "decimals": 8,
           "chain": "WAN",
           "buddy": 'BTC'
-        },
+        }, */
       },
       cc_tokens: {
         "ETH": {
@@ -57,6 +57,7 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
+      coins: {},
       cc_selected: {
         "1": true,
         "3": true,
@@ -66,7 +67,7 @@ const defaultConfig = {
     },
     testnet: {
       tokens: {
-        "0x46397994a7e1e926ea0de95557a4806d38f10b0d": {
+        /* "0x46397994a7e1e926ea0de95557a4806d38f10b0d": {
           "select": false,
           "symbol": "WETH",
           "decimals": 18,
@@ -79,7 +80,7 @@ const defaultConfig = {
           "decimals": 8,
           "chain": "WAN",
           "buddy": 'BTC'
-        },
+        }, */
       },
       cc_tokens: {
         "ETH": {
@@ -96,6 +97,20 @@ const defaultConfig = {
           "decimals": 8,
           "chain": "BTC",
         }
+      },
+      coins: {
+        "BTC": {
+          "chain": "Bitcoin",
+          "decimals": "8",
+          "select": false,
+          "symbol": "BTC"
+        },
+        "EOS": {
+          "chain": "EOS",
+          "decimals": "18",
+          "select": false,
+          "symbol": "EOS"
+        },
       },
       cc_selected: {
         "1": true,
@@ -183,9 +198,32 @@ class Settings {
     })
   }
 
+  updateCoinItem(symbol, value) {
+    let network = this.get('network');
+    if (this.get(`settings.${network}.coins`)) {
+      this.set(`settings.${network}.coins["${symbol}"]`, value);
+    }
+  }
+
+  updateTokenItem(addr, value) {
+    let network = this.get('network');
+    if (this.get(`settings.${network}.tokens`)) {
+      this.set(`settings.${network}.tokens["${addr}"]`, value);
+    }
+  }
+
+  updateCoinKeyValue(symbol, key, value) {
+    let network = this.get('network');
+    if (this.get(`settings.${network}.coins["${symbol}"]`)) {
+      this.set(`settings.${network}.coins["${symbol}"]["${key}"]`, value);
+    }
+  }
+
   updateTokenKeyValue(addr, key, value) {
     let network = this.get('network');
-    this.set(`settings.${network}.tokens["${addr}"]["${key}"]`, value);
+    if (this.get(`settings.${network}.tokens["${addr}"]`)) {
+      this.set(`settings.${network}.tokens["${addr}"]["${key}"]`, value);
+    }
   }
 
   updateCcTokenKeyValue(addr, key, value) {
@@ -306,6 +344,11 @@ class Settings {
     return htlcAddresses[this.get('network')];
   }
 
+  get coins() {
+    let network = this.get('network');
+    return this.get(`settings.${network}.coins`);
+  }
+
   get tokens() {
     let network = this.get('network');
     return this.get(`settings.${network}.tokens`);
@@ -314,11 +357,6 @@ class Settings {
   get ccTokens() {
     let network = this.get('network');
     return this.get(`settings.${network}.cc_tokens`);
-  }
-
-  get twoWayBridgeTokens() {
-    let network = this.get('network');
-    return this.get(`settings.${network}.twoWayBridge_tokens`);
   }
 
   get CcTokenSelections() {

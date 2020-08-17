@@ -37,19 +37,24 @@ export default () => {
       <Main>
         <Switch>
           <Route exact path="/" component={Portfolio} />
-          <Route path="/wanAccount/:symbol/:chain" component={WanAccount} />
-          <Route path="/btcAccount/:symbol/:chain" component={BtcAccount} />
-          <Route path="/ethAccount/:symbol/:chain" component={EthAccount} />
-          <Route path="/eosAccount/:symbol/:chain" component={EosAccount} />
+          <Route path="/wanAccount" component={WanAccount} />
+          <Route path="/btcAccount" component={BtcAccount} />
+          <Route path="/ethAccount" component={EthAccount} />
+          <Route path="/eosAccount" component={EosAccount} />
+          <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
+          <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
           <Route path="/MoreAccount" component={MoreAccount} />
           {/* <Route path="/wanAccount" component={WanAccount} />
           <Route path="/ethAccount" component={EthAccount} />
           <Route path="/btcAccount" component={BtcAccount} />
           <Route path="/eosAccount" component={EosAccount} /> */}
-          <Route path="/crosschain/:key/:symbol/:address" component={CrossChain} />
-          <Route path="/crossETH" component={CrossETH} />
+          {/* <Route path="/crosschain/:chainId/:key/:symbol/:address" component={CrossChain} /> */}
+          <Route path="/crosschain/:tokenPairId" component={CrossChain} />
+          <Route path="/crossETH/:tokenPairId" component={CrossETH} />
           <Route path="/crossBTC" component={CrossBTC} />
           <Route path="/crossEOS" component={CrossEOS} />
+          <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
+          <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
           <Route path="/moreCrossChain" component={MoreCrossChain} />
           <Route path="/settings" component={Settings} />
           <Route path="/trezor" component={Trezor} />
@@ -57,10 +62,6 @@ export default () => {
           <Route path="/offline" component={Offline} />
           <Route path="/delegation" component={Delegation} />
           <Route path="/validator" component={Validator} />
-          <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
-          <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
-          <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
-          <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
           <Route path="/AddDApp" component={AddDApp} />
           <Route path="/dapp/:url" component={DApps} />
           <Route path="/dAppMarket" component={DAppMarket} />
