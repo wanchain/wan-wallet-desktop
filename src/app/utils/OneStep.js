@@ -209,7 +209,7 @@ const OneStep = {
             input.gasPrice = gasPrice;
             wand.request('crossChain_crossErc20', { input, source: 'ETH', destination: 'WAN', type: 'REVOKE', tokenScAddr: trans_data.srcChainAddr }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossErc20:', err);
+                // console.log('crossChain_crossErc20:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });

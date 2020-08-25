@@ -15,15 +15,17 @@ import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
 class Tokens {
   @observable currTokenAddr = '';
 
-  @observable coinsList = {};
+  @observable coinsList = {}; // Original coins collection
 
-  @observable tokensList = {};
+  @observable tokensList = {}; // Tokens collection
 
   @observable ccTokensList = {};
 
   @observable tokensBalance = {};
 
-  @observable E20TokensBalance = {};
+  @observable tokensBalance_2way = {}; // Tokens' balances
+
+  @observable E20TokensBalance = {}; // Included in tokensBalance
 
   @observable tokenIconList = {};
 
@@ -90,7 +92,7 @@ class Tokens {
               tokenScAddr: scAddr
             }
           }, (err, data) => {
-            console.log('get Icon: ', err, data)
+            // console.log('get Icon: ', err, data)
             if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
               self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
             } else {
@@ -161,14 +163,19 @@ class Tokens {
     delete self.tokensList[tokenAddr.toLowerCase()];
   }
 
-  @action updateTokensBalance(tokenScAddr) {
-    let normalArr = Object.keys(wanAddress.addrInfo.normal);
-    let importArr = Object.keys(wanAddress.addrInfo.import);
-    let ledgerArr = Object.keys(wanAddress.addrInfo.ledger);
-    let trezorArr = Object.keys(wanAddress.addrInfo.trezor);
-    let rawKeyArr = Object.keys(wanAddress.addrInfo.rawKey);
-
-    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain: 'WAN' }, (err, data) => {
+  @action updateTokensBalance(tokenScAddr, chain = 'WAN') {
+    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
+    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
+      console.log('Cannot get addresses.');
+      return;
+    }
+    let addrInfo = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
+    let normalArr = Object.keys(addrInfo.normal || []);
+    let importArr = Object.keys(addrInfo.import || []);
+    let ledgerArr = Object.keys(addrInfo.ledger || []);
+    let trezorArr = Object.keys(addrInfo.trezor || []);
+    let rawKeyArr = Object.keys(addrInfo.rawKey || []);
+    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
@@ -177,8 +184,36 @@ class Tokens {
     })
   }
 
+  getTokensListInfo_2way(chain = 'WAN', chainID, SCAddress) {
+    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
+    let addrList = [];
+    let normal = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo.normal;
+    Object.keys(normal).forEach(item => {
+      let balance;
+      if (self.tokensBalance && self.tokensBalance[SCAddress]) {
+        if (self.tokensList && self.tokensList[SCAddress]) {
+          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item], self.tokensList[SCAddress].decimals)
+        } else {
+          balance = 0
+        }
+      } else {
+        balance = 0;
+      }
+
+      addrList.push({
+        key: item,
+        name: normal[item].name,
+        address: wanUtil.toChecksumAddress(item),
+        balance: formatNum(balance),
+        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${normal[item].path}`,
+        action: 'send',
+        amount: balance
+      });
+    });
+    return addrList;
+  }
+
   @action getTokenBalance(item) {
-    console.log('balance item:', item);
     const { chain, scAddr } = item;
     return new Promise((resolve, reject) => {
       let normalArr = [];
@@ -188,7 +223,7 @@ class Tokens {
       let rawKeyArr = [];
 
       switch (chain) {
-        case 'WAN':
+          case 'WAN':
           normalArr = Object.keys(wanAddress.addrInfo['normal'] || []);
           importArr = Object.keys(wanAddress.addrInfo['import'] || []);
           ledgerArr = Object.keys(wanAddress.addrInfo['ledger'] || []);
@@ -210,11 +245,10 @@ class Tokens {
           importArr = Object.keys(eosAddress.keyInfo['import']); */
           break;
         default:
-          console.log('Default.....');
+          // console.log('Default.....');
       }
 
       if ((normalArr.length || importArr.length || rawKeyArr.length) === 0) {
-        console.log('======= out =======')
         return {};
       }
 
@@ -378,6 +412,7 @@ class Tokens {
       if (val.select) {
         list.push({
           chain: val.chain,
+          chainSymbol: val.chainSymbol,
           tokenAddr: item,
           symbol: val.symbol,
           buddy: val.buddy,
@@ -391,6 +426,10 @@ class Tokens {
   @computed get getTokensListInfo() {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo.normal);
+    // console.log('normalArr:', normalArr);
+    // console.log('tokensBalance', self.tokensBalance);
+    // console.log('tokensList', self.tokensList);
+    // console.log('currTokenAddr', self.currTokenAddr);
     normalArr.forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
@@ -557,13 +596,13 @@ class Tokens {
       selections[key].children.push({
         title: v.chain,
         symbol: v.symbol,
+        name: v.name,
         key: `/${v.symbol.toLowerCase()}Account`,
         selected: v.select,
         isToken: false,
       });
     });
 
-    console.log('this.tokensList:', this.tokensList);
     Object.keys(this.tokensList).forEach(key => {
       let v = this.tokensList[key];
       if (!selections[v.symbol]) {
@@ -576,6 +615,7 @@ class Tokens {
       selections[v.symbol].children.push({
         title: v.chain,
         symbol: v.symbol,
+        name: v.name,
         key: `/tokens/${v.chain}/${key}/${v.symbol}`,
         tokenAddress: key,
         selected: v.select,

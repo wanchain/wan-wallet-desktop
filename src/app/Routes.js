@@ -41,20 +41,16 @@ export default () => {
           <Route path="/btcAccount" component={BtcAccount} />
           <Route path="/ethAccount" component={EthAccount} />
           <Route path="/eosAccount" component={EosAccount} />
-          <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
-          <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} />
+          <Route path="/tokens/:chain/:tokenAddr/:symbol" component={TokenTrans} />
+          {/* <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />
+          <Route path="/tokens/ETH/:tokenAddr/:symbol" component={E20TokenTrans} /> */}
           <Route path="/MoreAccount" component={MoreAccount} />
-          {/* <Route path="/wanAccount" component={WanAccount} />
-          <Route path="/ethAccount" component={EthAccount} />
-          <Route path="/btcAccount" component={BtcAccount} />
-          <Route path="/eosAccount" component={EosAccount} /> */}
-          {/* <Route path="/crosschain/:chainId/:key/:symbol/:address" component={CrossChain} /> */}
           <Route path="/crosschain/:tokenPairId" component={CrossChain} />
           <Route path="/crossETH/:tokenPairId" component={CrossETH} />
           <Route path="/crossBTC" component={CrossBTC} />
           <Route path="/crossEOS" component={CrossEOS} />
-          <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
-          <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} />
+          {/* <Route path="/crossChain/ETH/:tokenAddr/:symbol" component={CrossE20} />
+          <Route path="/crossChain/EOS/:tokenAddr/:symbol" component={CrossEOS} /> */}
           <Route path="/moreCrossChain" component={MoreCrossChain} />
           <Route path="/settings" component={Settings} />
           <Route path="/trezor" component={Trezor} />

@@ -462,6 +462,7 @@ const fr_FR = {
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Statut',
     'CrossChainTransForm.Date': 'Date',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',

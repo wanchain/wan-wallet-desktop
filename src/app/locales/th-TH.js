@@ -462,6 +462,7 @@ const th_TH = {
     'CrossChainTransForm.Secret': 'รหัสลับ',
     'CrossChainTransForm.Status': 'สถถานะ',
     'CrossChainTransForm.Date': 'วันที่',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',

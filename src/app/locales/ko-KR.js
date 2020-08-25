@@ -462,6 +462,7 @@ const ko_KR = {
     'CrossChainTransForm.Secret': '비밀',
     'CrossChainTransForm.Status': '상태',
     'CrossChainTransForm.Date': '날자',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',

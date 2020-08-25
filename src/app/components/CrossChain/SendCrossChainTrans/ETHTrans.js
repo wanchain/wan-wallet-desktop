@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 
-import { getGasPrice, getBalanceByAddr, getSmgList } from 'utils/helper';
+import { getGasPrice, getBalanceByAddr, getSmgList, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
 
@@ -18,6 +18,7 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
+  tokenPairs: stores.crossChain.tokenPairs,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
 }))
@@ -36,10 +37,10 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, addrInfo, getTokensListInfo, getE20TokensListInfo, chainType, addCrossTransTemplate, updateTransParams, type, tokenAddr } = this.props;
+    const { from, path, addrInfo, getTokensListInfo, getE20TokensListInfo, chainType, addCrossTransTemplate, updateTransParams, type, tokenAddr, tokenPairs, chainPairId } = this.props;
     let desChain, origGas, destGas, smgParams, storeman;
     smgParams = tokenAddr || 'ETH';
-
+    let info = Object.assign({}, tokenPairs[chainPairId]);
     if (type === INBOUND) {
       if (getBalanceByAddr(from, addrInfo) === '0') {
         message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
@@ -66,9 +67,8 @@ class ETHTrans extends Component {
     }
 
     addCrossTransTemplate(from, { chainType, path });
-    this.setState({ visible: true });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getSmgList('ETH', smgParams)]);
+      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       this.setState({
         smgList,
         estimateFee: {
@@ -76,13 +76,9 @@ class ETHTrans extends Component {
           destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
         }
       });
-      if (chainType === 'ETH') {
-        storeman = tokenAddr ? smgList[0].smgOrigAddr : smgList[0].ethAddress;
-      } else {
-        storeman = tokenAddr ? smgList[0].smgWanAddr : smgList[0].wanAddress;
-      }
-      updateTransParams(from, { gasPrice, gasLimit: origGas, storeman, txFeeRatio: smgList[0].txFeeRatio });
-      setTimeout(() => { this.setState({ spin: false }) }, 0);
+      storeman = smgList[0].groupId;
+      updateTransParams(from, { gasPrice, gasLimit: origGas, storeman, txFeeRatio: smgList[0].txFeeRatio || 0 });
+      this.setState({ visible: true, spin: false })
     } catch (err) {
       console.log('showModal:', err)
       message.warn(intl.get('network.down'));
@@ -108,7 +104,6 @@ class ETHTrans extends Component {
 
   render() {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
-
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>

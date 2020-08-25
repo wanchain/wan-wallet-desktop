@@ -465,6 +465,7 @@ const en_US = {
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Date',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',

@@ -17,7 +17,7 @@ import history from 'static/image/history.png';
 }))
 
 @observer
-class CrossChainTransHistory extends Component {
+class CrossETHHistory extends Component {
   state = {
     visible: false,
     record: {},
@@ -34,6 +34,8 @@ class CrossChainTransHistory extends Component {
   }
 
   onClickRow = record => {
+    // let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`
+    // wand.shell.openExternal(href);
     this.setState({ visible: true, record })
   }
 
@@ -43,11 +45,12 @@ class CrossChainTransHistory extends Component {
     })
   }
 
-  render() {
+  render () {
     const { crossChainTrans, transColumns } = this.props;
     transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{record.srcChainType}</span></div>;
     transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{record.dstChainType}</span></div>;
     transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
+    console.log('history:', crossChainTrans);
     return (
       <div>
         <div className="historyCon" id="wanAddrSelect">
@@ -56,10 +59,10 @@ class CrossChainTransHistory extends Component {
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={crossChainTrans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
-        {this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record} />}
+        { this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record}/> }
       </div>
     );
   }
 }
 
-export default CrossChainTransHistory;
+export default CrossETHHistory;

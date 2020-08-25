@@ -463,6 +463,7 @@ const zh_CN = {
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Date',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': '账户余额不足',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',

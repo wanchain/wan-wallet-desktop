@@ -139,7 +139,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
         case 'path':
           return `${WANPATH}${addrInfo['normal'][value][type]}`
         default:
-          return addrInfo['normal'][value][type]
+          return addrInfo['normal'][value][type];
       }
     } else {
       return undefined
@@ -213,7 +213,33 @@ export const getSmgList = function (crossChain, tokenAddr) {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getSmgList', { crossChain, tokenAddr }, (err, val) => {
       if (err) {
-        console.log('Get Smg list failed', err)
+        console.log('Get Smg list1 failed', err)
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+}
+
+export const getStoremanGroupList = function (srcChainName, dstChainName) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getStoremanGroupList', { srcChainName, dstChainName }, (err, val) => {
+      if (err) {
+        console.log('Get Smg list2 failed', err)
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+}
+
+export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getStoremanGroupListByChainPair', { chainId1, chainId2 }, (err, val) => {
+      if (err) {
+        console.log('Get Smg list3 failed', err)
         return reject(err);
       } else {
         return resolve(val);
@@ -367,7 +393,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
       balance = item.balance;
       return; // eslint-disable-line no-useless-return
     }
-  })
+  });
   return balance;
 }
 
@@ -944,6 +970,18 @@ export const dAppSort = function (dapps, ordering, orderList) {
 export const isValidPrivateKey = function (key, type) {
   return new Promise((resolve, reject) => {
     wand.request('address_isValidPrivateKey', { key, type }, (err, res) => {
+      if (err) {
+        return resolve(false);
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}
+
+export const getChainInfoByChainId = function (chainId) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getChainInfoByChainId', { chainId }, (err, res) => {
       if (err) {
         return resolve(false);
       } else {

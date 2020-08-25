@@ -7,7 +7,7 @@ import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
-import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossETHHistory';
 import style from './index.less';
 
 const CHAINTYPE = 'ETH';
@@ -25,23 +25,27 @@ const WANCHAIN = 'WAN';
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
-  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
+  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr),
+  setCurrChainId: id => stores.crossChain.setCurrChainId(id),
 }))
 
 @observer
 class CrossETH extends Component {
   constructor (props) {
     super(props);
+    const { tokenPairs, match } = props;
+    let tokenPairID = match.params.tokenPairId;
     this.props.setCurrSymbol('ETH');
-    this.props.setCurrToken(null, 'ETH');
     this.props.changeTitle('Common.crossChain');
+    this.props.setCurrChainId(tokenPairID);
+    this.info = tokenPairs[tokenPairID];
+    this.props.setCurrToken(this.info.tokenAddress);
   }
 
   componentDidMount() {
-    let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'ETH');
     this.timer = setInterval(() => {
-      this.props.updateTokensBalance(tokenAddr);
-    }, 5000)
+      this.props.updateTokensBalance(this.info.tokenAddress);
+    }, 5000);
   }
 
   componentWillUnmount() {
@@ -49,6 +53,9 @@ class CrossETH extends Component {
   }
 
   inboundHandleSend = from => {
+    const { tokenPairs, match } = this.props;
+    let tokenPairID = match.params.tokenPairId;
+    let info = this.info;
     let transParams = this.props.transParams[from];
     let input = {
       from: transParams.from,
@@ -57,12 +64,14 @@ class CrossETH extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
+      // txFeeRatio: transParams.txFeeRatio
+      tokenPairID: tokenPairID,
+      crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'ETH', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' }, (err, ret) => {
+        // console.log('ETH inbound result:', err, ret);
         if (err) {
-          console.log('ETH inbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -70,13 +79,22 @@ class CrossETH extends Component {
           }
           return reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            return resolve(ret);
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+            return reject(ret);
+          }
         }
       })
-    })
+    });
   }
 
   outboundHandleSend = from => {
+    const { tokenPairs, match } = this.props;
+    let tokenPairID = match.params.tokenPairId;
+    let info = this.info;
     let transParams = this.props.transParams[from];
     let input = {
       from: transParams.from,
@@ -85,12 +103,13 @@ class CrossETH extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
-      txFeeRatio: transParams.txFeeRatio
+      // txFeeRatio: transParams.txFeeRatio
+      tokenPairID: tokenPairID,
+      crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossETH', { input, source: 'WAN', destination: 'ETH', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.tokenAddress, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         if (err) {
-          console.log('ETH outbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -98,10 +117,16 @@ class CrossETH extends Component {
           }
           return reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            return resolve(ret);
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+            return reject(ret);
+          }
         }
       })
-    })
+    });
   }
 
   inboundColumns = [
@@ -124,7 +149,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
     }
   ];
 
@@ -148,12 +173,12 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
     }
   ];
 
   render () {
-    const { getNormalAddrList, getTokensListInfo, tokenPairs } = this.props;
+    const { getNormalAddrList, getTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -163,7 +188,7 @@ class CrossETH extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
 
-    let info = Object.assign({}, tokenPairs[this.props.match.params.tokenPairId]);
+    let info = this.info;
 
     return (
       <div className="account">

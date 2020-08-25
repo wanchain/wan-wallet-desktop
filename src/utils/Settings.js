@@ -83,13 +83,13 @@ const defaultConfig = {
         }, */
       },
       cc_tokens: {
-        "ETH": {
+        /* "ETH": {
           "select": false,
           "wan_addr": "0x46397994a7e1e926ea0de95557a4806d38f10b0d",
           "symbol": "ETH",
           "decimals": 18,
           "chain": "ETH"
-        },
+        }, */
         "BTC": {
           "select": false,
           "wan_addr": "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd",

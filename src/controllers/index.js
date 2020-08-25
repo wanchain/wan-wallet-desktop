@@ -1719,7 +1719,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 if (tokenAddr && tokenAddr.startsWith('0x')) {
                     ret = await ccUtil.syncTokenStoremanGroups(crossChain, tokenAddr);
                     coin2WanRatio = ccUtil.getRegTokenInfo(crossChain, tokenAddr).ratio;
-                    // console.log(ccUtil.getRegTokenInfo(crossChain, tokenAddr))
                 } else {
                     [ret, coin2WanRatio] = await Promise.all([ccUtil.getSmgList(crossChain), ccUtil.getC2WRatio(crossChain)]);
                 }
@@ -1741,12 +1740,50 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getStoremanGroupList':
+            try {
+                let { srcChainName, dstChainName } = payload;
+                ret = await ccUtil.getStoremanGroupList(srcChainName, dstChainName);
+            } catch (e) {
+                logger.error('getSmgList failed: ' + e)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getStoremanGroupListByChainPair':
+            try {
+                let { chainId1, chainId2 } = payload;
+                ret = await ccUtil.getStoremanGroupListByChainPair(chainId1, chainId2);
+            } catch (e) {
+                logger.error('getStoremanGroupListByChainPair failed: ' + e)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getHtmlAddr':
             try {
                 if (payload && payload.symbol) {
                     ret = setting.htlcAddresses[payload.symbol];
                 } else {
                     ret = setting.htlcAddresses;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+            
+        case 'crossChain':
+            try {
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
+                if (!ret.code) {
+                    err = ret;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)

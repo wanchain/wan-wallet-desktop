@@ -3,13 +3,15 @@ import tokens from './tokens';
 import session from './session';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
-import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 
 class CrossChain {
   @observable currSymbol = '';
+
+  @observable currChainId = '';
 
   @observable crossTrans = [];
 
@@ -19,6 +21,10 @@ class CrossChain {
 
   @action setCurrSymbol(symbol) {
     self.currSymbol = symbol;
+  }
+
+  @action setCurrChainId(id) {
+    self.currChainId = id;
   }
 
   @action updateCrossTrans() {
@@ -34,7 +40,7 @@ class CrossChain {
   @action getTokenPairs() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
-        // console.log('getTokenPairs: ', data);
+        console.log('getTokenPairs: ', data);
         if (err) {
           console.log('getTokenPairs failed: ', err);
           reject(err)
@@ -50,31 +56,17 @@ class CrossChain {
               ancestorDecimals: v.ancestorDecimals,
               ancestorSymbol: v.ancestorSymbol,
               fromAccount: v.fromAccount,
+              fromTokenName: v.fromTokenName,
               fromChainID: v.fromChainID,
+              fromChainName: v.fromChainName,
+              fromChainSymbol: v.fromChainSymbol,
               toChainID: v.toChainID,
+              toTokenName: v.toTokenName,
               tokenAddress: v.tokenAddress,
+              toChainName: v.toChainName,
+              toChainSymbol: v.toChainSymbol,
             }
-
-            let chainNames = {};
-            let from = '';
-            if (v.fromChainID in chainNames) {
-              from = chainNames[v.fromChainID];
-            } else {
-              from = await this.getChainNameByChainId(v.fromChainID);
-              chainNames[v.fromChainID] = from;
-            }
-            tokenPairs[v.id].fromChainName = from[2];
-            tokenPairs[v.id].fromChainSymbol = from[1];
-
-            let to = '';
-            if (v.toChainID in chainNames) {
-              to = chainNames[v.toChainID];
-            } else {
-              to = await this.getChainNameByChainId(v.toChainID);
-              chainNames[v.toChainID] = to;
-            }
-            tokenPairs[v.id].toChainName = to[2];
-            tokenPairs[v.id].toChainSymbol = to[1];
+            this.tokenPairs = tokenPairs;
 
             // set crossChainSelections
             if (!(v.ancestorSymbol in ccSelected)) {
@@ -85,32 +77,36 @@ class CrossChain {
               ancestorSymbol: v.ancestorSymbol,
               fromAccount: v.fromAccount,
               fromChainID: v.fromChainID,
-              fromChainName: from[2],
-              fromChainSymbol: from[1],
+              fromChainName: v.fromChainName,
+              fromChainSymbol: v.fromChainSymbol,
               toChainID: v.toChainID,
               tokenAddress: v.tokenAddress,
-              toChainName: to[2],
-              toChainSymbol: to[1],
+              toChainName: v.toChainName,
+              toChainSymbol: v.toChainSymbol,
               id: v.id,
               selected: !!CcSelectionsFromDB[v.id]
             });
+            this.crossChainSelections = ccSelected;
 
             // set coinsList & tokensList
             if (v.fromAccount === '0x0000000000000000000000000000000000000000') {
               if (!(v.ancestorSymbol in tokens.coinsList)) {
                 tokens.updateCoinsList(v.ancestorSymbol, {
-                  chain: from[2],
+                  chain: v.fromChainName,
                   decimals: v.ancestorDecimals,
                   symbol: v.ancestorSymbol,
+                  name: v.fromTokenName,
                   select: false,
                 });
               }
             } else {
               if (!(v.fromAccount in tokens.tokensList)) {
                 tokens.updateTokensList(v.fromAccount, {
-                  chain: from[2],
+                  chain: v.fromChainName,
+                  chainSymbol: v.fromChainSymbol,
                   decimals: v.ancestorDecimals,
                   symbol: v.ancestorSymbol,
+                  name: v.fromTokenName,
                   select: false,
                   buddy: v.ancestorSymbol,
                 });
@@ -119,17 +115,16 @@ class CrossChain {
 
             if (!(v.tokenAddress in tokens.tokensList)) {
               tokens.updateTokensList(v.tokenAddress, {
-                chain: to[2],
+                chain: v.toChainName,
+                chainSymbol: v.toChainSymbol,
                 decimals: v.ancestorDecimals,
+                name: v.toTokenName,
                 symbol: v.ancestorSymbol,
                 select: false,
                 buddy: v.ancestorSymbol,
               });
             }
           }
-
-          this.tokenPairs = tokenPairs;
-          this.crossChainSelections = ccSelected;
           resolve();
         }
       })
@@ -191,6 +186,45 @@ class CrossChain {
     return list;
   }
 
+  @computed get crossChainTrans() {
+    const ADDRESSES = { wanAddress, btcAddress, ethAddress };
+    let crossChainTrans = [];
+    let decimals = 8;
+    let from = this.tokenPairs[this.currChainId].fromChainSymbol;
+    let to = this.tokenPairs[this.currChainId].toChainSymbol;
+    try {
+      decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
+    } catch (err) {
+      console.log(err);
+    }
+    self.crossTrans.forEach((item, index) => {
+      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+        crossChainTrans.push({
+          key: index,
+          hashX: item.hashX,
+          storeman: item.storeman,
+          secret: item.x,
+          time: timeFormat(item.sendTime),
+          from: getInfoByAddress(item.fromAddr, ['name'], ADDRESSES[`${from.toLowerCase()}Address`].addrInfo).name || item.fromAddr,
+          fromAddr: item.fromAddr,
+          to: getInfoByAddress(item.toAddr, ['name'], ADDRESSES[`${to.toLowerCase()}Address`].addrInfo).name || item.toAddr,
+          toAddr: item.toAddr,
+          value: formatNum(formatNumByDecimals(item.contractValue, decimals)),
+          status: item.status,
+          sendTime: item.sendTime,
+          approveTxHash: item.approveTxHash,
+          srcChainType: item.srcChainType,
+          dstChainType: item.dstChainType,
+          lockTxHash: item.lockTxHash,
+          redeemTxHash: item.redeemTxHash || 'NULL',
+          revokeTxHash: item.revokeTxHash || 'NULL',
+          tokenStand: item.tokenStand
+        });
+      }
+    });
+    return crossChainTrans.sort((a, b) => b.sendTime - a.sendTime);
+  }
+
   @computed get crossETHTrans() {
     let crossEthTrans = [];
     self.crossTrans.forEach((item, index) => {
@@ -222,8 +256,14 @@ class CrossChain {
   }
 
   @computed get crossErc20Trans() {
+    // console.log('tokens.formatTokensList:', tokens.formatTokensList);
+    // console.log('coins:', tokens.coinsList);
+    // console.log('currSymbol:', self.currSymbol);
     let crossEthTrans = [];
-    let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
+    if (!(self.currSymbol in tokens.coinsList)) {
+      return [];
+    }
+    let currTokenInfo = tokens.coinsList[self.currSymbol];
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
         let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;

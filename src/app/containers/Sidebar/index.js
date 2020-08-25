@@ -100,6 +100,7 @@ class Sidebar extends Component {
       stakeChildren.splice(index, 1);
     }
 
+    // Wallet menu
     let walletList = [];
     getWalletSelections.forEach(v => {
       if (v.children.length === 0) {
@@ -135,6 +136,7 @@ class Sidebar extends Component {
       icon: 'block'
     });
 
+    // Cross chain menu
     let crossChainList = [{
       title: 'BTC',
       key: 'BTC',
@@ -147,7 +149,7 @@ class Sidebar extends Component {
       }],
     }, {
       title: 'EOS',
-      key: 'BEOSTC',
+      key: 'EOS',
       icon: 'block',
       mode: 'vertical',
       children: [{
@@ -156,6 +158,7 @@ class Sidebar extends Component {
         noCircle: true,
       }],
     }];
+
     Object.keys(crossChainSelections).forEach(symbol => {
       if (crossChainSelections[symbol].every(v => v.selected === false)) {
         return;

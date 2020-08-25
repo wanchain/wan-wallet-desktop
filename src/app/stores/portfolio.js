@@ -50,13 +50,12 @@ class Portfolio {
       obj[item.tokenAddr] = {
         buddy: item.buddy,
         scAddr: item.tokenAddr,
-        chain: item.chain,
+        chain: item.chainSymbol,
         symbol: item.symbol,
         decimals: item.decimals,
         balance: 0,
       }
     });
-    console.log('obj:', obj);
     return obj;
   }
 
@@ -98,7 +97,6 @@ class Portfolio {
         return item.buddy ? item.buddy : item.symbol;
       }
     });
-    console.log('update param:', param)
     let reconvertIds = {};
     for (let v of param) {
       if (v in self.specificTokenId_from_CoinGeckoAPI) {
@@ -109,7 +107,6 @@ class Portfolio {
     }
     let convertedParam = Object.keys(reconvertIds);
     if (convertedParam.length === 0) return;
-    console.log('convertedParam', convertedParam)
     axios({
       method: 'GET',
       url: 'https://api.coingecko.com/api/v3/simple/price',
@@ -119,7 +116,6 @@ class Portfolio {
       }
     })
       .then((res) => {
-        console.log('res:', res);
         if (res.status === 200) {
           runInAction(() => {
             self.coinPriceObj = {};
@@ -137,7 +133,6 @@ class Portfolio {
   }
 
   @action updateTokenBalance() {
-    console.log(self.coinList)
     try {
       Object.keys(self.coinList).forEach(async (key) => {
         let val = self.coinList[key];
@@ -184,7 +179,6 @@ class Portfolio {
       Object.keys(self.coinList).forEach((key, index) => {
         let val = list[index];
         if (!(key in self.defaultCoinList)) {
-          // key = self.coinList[key].buddy ? self.coinList[key].symbol.substring(1) : self.coinList[key].symbol;
           key = self.coinList[key].buddy ? self.coinList[key].buddy : self.coinList[key].symbol;
         }
         if (key in self.coinPriceObj) {

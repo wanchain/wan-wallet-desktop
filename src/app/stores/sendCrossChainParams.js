@@ -41,7 +41,7 @@ class SendCrossChainParams {
       self.transParams[addr] = {
         gasPrice,
         source: params.chainType,
-        destination: params.chainType !== 'WAN' ? 'WAN' : params.chainType,
+        destination: params.chainType ? params.chainType : 'WAN',
         from: {
           walletID: 1,
           path: params.path
@@ -55,6 +55,7 @@ class SendCrossChainParams {
         storeman: '',
         txFeeRatio: 0,
         gasLimit: GASLIMIT,
+        crossType: 'HTLC',
       };
     }
 

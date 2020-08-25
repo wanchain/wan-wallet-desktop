@@ -32,7 +32,7 @@ export const DEFAULT_GASPRICE = 180000000000;
 export const DEFAULT_GAS = 4700000;
 
 export const REDEEMWEOS_GAS = '250000';
-export const LOCKETH_GAS = '400000';
+export const LOCKETH_GAS = '1000000';
 export const REDEEMWETH_GAS = '250000';
 export const REVOKEETH_GAS = '250000';
 
@@ -78,3 +78,5 @@ export const PRIVATE_TX_AMOUNT_SELECTION = [50000, 5000, 1000, 500, 200, 100, 50
 
 export const DAPPORDERING = ['DApp.sortByName', 'DApp.sortByDate'];
 export const ALLCATEGORIES = 'DApp.allCategories';
+
+export const CROSS_TYPE = ['HTLC', 'FAST'];

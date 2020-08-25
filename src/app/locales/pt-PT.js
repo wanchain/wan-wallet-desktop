@@ -460,6 +460,7 @@ const pt_PT = {
     'CrossChainTransForm.Secret': 'Segredo',
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Data',
+    'CrossChainTransForm.crossType': 'Cross Type',
 
     'RedeemFromPrivate.noSufficientFunds': 'Sem fundos suficientes',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Falha ao obter informações de transações privadas',

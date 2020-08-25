@@ -7,7 +7,7 @@ import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
-import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossETHHistory';
 
 const CHAINTYPE = 'ETH';
 const WANCHAIN = 'WAN';
