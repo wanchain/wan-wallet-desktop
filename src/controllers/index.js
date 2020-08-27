@@ -189,6 +189,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 try {
                     pubKey = await hdUtil.getWalletSafe().getWallet(walletID).getPublicKey(path, true)
                 } catch (e) {
+                    logger.error('getPubKeyChainId failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -204,6 +205,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 try {
                     pubKey = await hdUtil.getWalletSafe().getWallet(payload.walletID).getPublicKey(payload.path)
                 } catch (e) {
+                    logger.error('getPubKey failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -440,6 +442,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     }
                 } catch (e) {
                     // console.log('importPrivateKey Error:', e);
+                    logger.error('importPrivateKey failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -509,6 +512,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
                 logger.info('Nonce: ' + payload.addr + ',' + nonce);
             } catch (e) {
+                logger.error('getNonce failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -527,7 +531,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     balance = { [`0x${addr}`]: balance }
                 }
             } catch (e) {
-                logger.error('Get balance failed');
+                logger.error('Get balance failed:');
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -538,6 +542,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.btcImportAddress(payload.address);
             } catch (e) {
+                logger.error('Get btcImportAddress failed');
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -580,6 +585,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 let feeRate = network === 'main' ? 30 : 300;
                 ret = await ccUtil.btcCoinSelect(payload.utxos, payload.value * Math.pow(10, 8), feeRate, payload.minConfParam);
             } catch (e) {
+                logger.error('btcCoinSelect failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -596,6 +602,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     obj[v] = eosAccountInfo[i];
                 });
             } catch (e) {
+                logger.error('getEosAccountInfo failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -608,6 +615,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 const { account } = payload;
                 ret = await ccUtil.getResourcePrice('EOS', account);
             } catch (e) {
+                logger.error('getEOSResourcePrice failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -619,6 +627,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.getRamPrice('EOS');
             } catch (e) {
+                logger.error('getRamPrice failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -662,7 +671,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     }
 
                 } catch (e) {
-                    logger.error('Get balances failed');
+                    logger.error('balances failed');
                     logger.error(e);
                     logger.error(e.message || e.stack)
                     err = e
@@ -682,6 +691,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                         resolve(OTABalances);
                     });
                 } catch (e) {
+                    logger.error('getPrivateTxInfo failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -699,6 +709,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                         });
                     }
                 } catch (e) {
+                    logger.error('scanMultiOTA failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -1536,6 +1547,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { scAddr, chain } = payload;
                 ret = await ccUtil.getTokenInfo(scAddr, chain);
             } catch (e) {
+                logger.error('getTokenInfo failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1546,6 +1558,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = setting.coins;
             } catch (e) {
+                logger.error('getCoinsInfo failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1556,6 +1569,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = setting.tokens;
             } catch (e) {
+                logger.error('getTokensInfo failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1566,6 +1580,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = setting.ccTokens;
             } catch (e) {
+                logger.error('getCcTokensInfo failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1576,7 +1591,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.getTokenPairs();
             } catch (e) {
-                console.log('getTokenPairs error:', e);
+                logger.error('getTokenPairs failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1589,6 +1604,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 ret = await ccUtil.getChainInfoByChainId(chainId);
                 // logger.info(ret)
             } catch (e) {
+                logger.error('getChainInfoByChainId failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1599,6 +1615,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = setting.CcTokenSelections;
             } catch (e) {
+                logger.error('getCcTokenSelections failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1611,6 +1628,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 setting.updateCcTokenSelections(id, selected);
                 ret = true;
             } catch (e) {
+                logger.error('setCcTokenSelectStatus failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1625,6 +1643,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     setting.updateRegTokens(ret, crossChain);
                 }
             } catch (e) {
+                logger.error('initRegTokens failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1641,6 +1660,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                         setting.updateCoinKeyValue(symbol, key, value);
                     }
                 } catch (e) {
+                    logger.error('updateCoinsInfo failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -1658,6 +1678,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                         setting.updateTokenKeyValue(addr, key, value);
                     }
                 } catch (e) {
+                    logger.error('updateTokensInfo failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -1671,6 +1692,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 try {
                     setting.updateCcTokenKeyValue(addr, key, value);
                 } catch (e) {
+                    logger.error('updateCcTokensInfo failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -1683,6 +1705,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { tokenAddr, symbol, decimals, select, chain } = payload;
                 setting.addToken(tokenAddr, { select, symbol, decimals, chain });
             } catch (e) {
+                logger.error('addCustomToken failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1694,6 +1717,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { tokenAddr } = payload;
                 setting.remove(`settings.${network}.tokens.${tokenAddr.toLowerCase()}`);
             } catch (e) {
+                logger.error('deleteCustomToken failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1706,6 +1730,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { address, tokenScAddr, chain } = payload;
                 ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
             } catch (e) {
+                logger.error('updateTokensBalance failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1770,22 +1795,27 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     ret = setting.htlcAddresses;
                 }
             } catch (e) {
+                logger.error('getHtmlAddr failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-            
+
         case 'crossChain':
             try {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                if (payload.type === 'REDEEM') {
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossChain failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1794,9 +1824,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossBTC':
             try {
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 let feeHard = network === 'main' ? 10000 : 100000;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
                 if (payload.type === 'LOCK' && payload.source === 'WAN') {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
@@ -1816,6 +1847,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossBTC failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1824,16 +1856,20 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossETH':
             try {
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                console.log(sourceAccount, sourceSymbol, tokenPairID);
+                console.log(destinationAccount, destinationSymbol, tokenPairID);
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossETH failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1842,19 +1878,15 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossEOS':
             try {
-                let srcChain, dstChain;
-                if (payload.source !== 'WAN') {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-                } else {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
-                }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossEOS failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1863,22 +1895,19 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossErc20':
             try {
-                let srcChain, dstChain;
-                if (payload.source !== 'WAN') {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-                } else {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
-                }
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossErc20 failed:');
+                logger.error(e)
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1905,6 +1934,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     }
                 });
             } catch (e) {
+                logger.error('getAllUndoneCrossTrans failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1915,6 +1945,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = global.wanDb.getItemAll('crossTrans', {});
             } catch (e) {
+                logger.error('getAllCrossTrans failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1937,6 +1968,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     ret = false;
                 }
             } catch (e) {
+                logger.error('increaseFailedRetryCount failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1948,6 +1980,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { chainType, options } = payload;
                 ret = await ccUtil.getRegisteredOrigToken(payload.chainType, payload.options);
             } catch (e) {
+                logger.error('getRegisteredOrigToken failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -2057,6 +2090,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 let dapp = payload;
                 setting.updateDapps(dapp);
             } catch (e) {
+                logger.error('updateDapps failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -2067,6 +2101,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             try {
                 val = setting.getDapps();
             } catch (e) {
+                logger.error('getDapps failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }

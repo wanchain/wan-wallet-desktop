@@ -80,3 +80,4 @@ export const DAPPORDERING = ['DApp.sortByName', 'DApp.sortByDate'];
 export const ALLCATEGORIES = 'DApp.allCategories';
 
 export const CROSS_TYPE = ['HTLC', 'FAST'];
+export const COIN_ACCOUNT = '0x0000000000000000000000000000000000000000';

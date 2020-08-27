@@ -52,12 +52,8 @@ class CrossChainTransForm extends Component {
     const { updateTransParams, settings, form, from, chainType, tokenAddr, estimateFee, transParams, tokenPairs, type } = this.props;
     const chainPairId = transParams[from].chainPairId;
     const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
-    console.log('info:', tokenPairInfo);
-    console.log('type:', type);
     let fromAddrInfo = this.props[`${tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'].toLowerCase()}AddrInfo`];
     let toAddrInfo = this.props[`${tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol'].toLowerCase()}AddrInfo`];
-    console.log('fromAddrInfo:', fromAddrInfo);
-    console.log('toAddrInfo:', toAddrInfo);
 
     form.validateFields(async err => {
       if (err) {
@@ -71,7 +67,7 @@ class CrossChainTransForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
-      console.log('next path::::', toPath);
+      // console.log('next path::::', toPath);
       /* if (tokenAddr) {
         if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));

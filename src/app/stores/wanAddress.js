@@ -105,15 +105,19 @@ class WanAddress {
     }
   }
 
-  @action updateWANBalance({ balance: arr, privateBalance: parr }) {
+  @action updateWANBalance(data) {
+    let { balance: arr, privateBalance: parr } = data;
+    if (arr === undefined && parr === undefined) {
+      arr = data;
+      parr = undefined;
+    }
     let keys = Object.keys(arr);
-    let pKeys = Object.keys(parr);
     let normal = Object.keys(self.addrInfo['normal']);
     let ledger = Object.keys(self.addrInfo['ledger']);
     let trezor = Object.keys(self.addrInfo['trezor']);
     let importArr = Object.keys(self.addrInfo['import']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
-
+    // console.log('set BBBB:', arr, parr);
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
         self.addrInfo['normal'][item].balance = arr[item];
@@ -132,6 +136,10 @@ class WanAddress {
       }
     });
 
+    if (!(parr instanceof Array)) {
+      return;
+    }
+    let pKeys = Object.keys(parr);
     pKeys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].wbalance !== parr[item]) {
         self.addrInfo['normal'][item].wbalance = parr[item];

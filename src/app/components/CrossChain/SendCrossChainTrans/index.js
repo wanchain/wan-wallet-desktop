@@ -53,7 +53,6 @@ class Trans extends Component {
     let desChain, origGas, destGas, storeman;
     let tokenAddr = info.tokenAddress;
     this.setState({ tokenAddr });
-    console.log('balance:', balance, typeof balance);
     if (type === INBOUND) {
       /* if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
@@ -86,7 +85,6 @@ class Trans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      // console.log('smgList, gasPrice, desGasPrice:', smgList, gasPrice, desGasPrice);
       this.setState({
         smgList,
         estimateFee: {

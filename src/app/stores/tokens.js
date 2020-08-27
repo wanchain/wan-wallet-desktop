@@ -11,6 +11,7 @@ import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
 import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
+import { getBalance } from 'utils/helper';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -22,8 +23,6 @@ class Tokens {
   @observable ccTokensList = {};
 
   @observable tokensBalance = {};
-
-  @observable tokensBalance_2way = {}; // Tokens' balances
 
   @observable E20TokensBalance = {}; // Included in tokensBalance
 
@@ -184,10 +183,65 @@ class Tokens {
     })
   }
 
-  getTokensListInfo_2way(chain = 'WAN', chainID, SCAddress) {
+  /* @action updateCoinsBalance(chain = 'WAN') {
+    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
+    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
+      console.log('Cannot get addresses.');
+      return;
+    }
+    let addrInfo = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
+    let normalArr = Object.keys(addrInfo.normal || []);
+    let importArr = Object.keys(addrInfo.import || []);
+    let ledgerArr = Object.keys(addrInfo.ledger || []);
+    let trezorArr = Object.keys(addrInfo.trezor || []);
+    let rawKeyArr = Object.keys(addrInfo.rawKey || []);
+    let addresses = normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr);
+
+    getBalance(addresses, chain).then(res => {
+      if (res && Object.keys(res).length) {
+        ADDRESSES[`${chain.toLowerCase()}Address`][`update${chain}Balance`](res);
+      }
+    }).catch(err => {
+      console.log('Get coins\' balance failed:', err);
+    })
+  } */
+
+  getCoinsListInfo_2way(chain, chainID) {
+    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
+    let addressObj = ADDRESSES[`${chain.toLowerCase()}Address`];
+    if (addressObj === undefined) {
+      return [];
+    }
+    let addrList = [];
+    let normal = addressObj.addrInfo.normal || [];
+    let ledger = addressObj.addrInfo.ledger || [];
+    let trezor = addressObj.addrInfo.trezor || [];
+    let addresses = Object.assign({}, normal, ledger, trezor);
+    // console.log('getCoinsListInfo_2way-------------------addresses:', addresses)
+    Object.keys(addresses).forEach(item => {
+      let balance = addresses[item].balance;
+      addrList.push({
+        key: item,
+        name: addresses[item].name,
+        address: wanUtil.toChecksumAddress(item),
+        balance: formatNum(balance),
+        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        action: 'send',
+        amount: balance
+      });
+    });
+    return addrList;
+  }
+
+  getTokensListInfo_2way(chain, chainID, SCAddress) {
     const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
     let addrList = [];
-    let normal = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo.normal;
+    let addresses = ADDRESSES[`${chain.toLowerCase()}Address`];
+    if (addresses === undefined) {
+      return [];
+    }
+    let normal = addresses.addrInfo.normal;
+    // console.log('tokensBalance:', self.tokensBalance);
     Object.keys(normal).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {

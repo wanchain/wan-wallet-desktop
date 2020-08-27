@@ -7,6 +7,7 @@ import eosAddress from './eosAddress';
 import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
+import { COIN_ACCOUNT } from 'utils/settings';
 
 class CrossChain {
   @observable currSymbol = '';
@@ -89,7 +90,7 @@ class CrossChain {
             this.crossChainSelections = ccSelected;
 
             // set coinsList & tokensList
-            if (v.fromAccount === '0x0000000000000000000000000000000000000000') {
+            if (v.fromAccount === COIN_ACCOUNT) {
               if (!(v.ancestorSymbol in tokens.coinsList)) {
                 tokens.updateCoinsList(v.ancestorSymbol, {
                   chain: v.fromChainName,
@@ -187,8 +188,9 @@ class CrossChain {
   }
 
   @computed get crossChainTrans() {
+    // console.log('this.currChainId:', this.currChainId);
     const ADDRESSES = { wanAddress, btcAddress, ethAddress };
-    let crossChainTrans = [];
+    let trans = [];
     let decimals = 8;
     let from = this.tokenPairs[this.currChainId].fromChainSymbol;
     let to = this.tokenPairs[this.currChainId].toChainSymbol;
@@ -199,7 +201,7 @@ class CrossChain {
     }
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
-        crossChainTrans.push({
+        trans.push({
           key: index,
           hashX: item.hashX,
           storeman: item.storeman,
@@ -222,7 +224,7 @@ class CrossChain {
         });
       }
     });
-    return crossChainTrans.sort((a, b) => b.sendTime - a.sendTime);
+    return trans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
   @computed get crossETHTrans() {

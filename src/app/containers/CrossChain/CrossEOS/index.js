@@ -38,6 +38,8 @@ class CrossEOS extends Component {
   }
 
   componentDidMount() {
+    this.props.updateTransHistory();
+    this.props.updateTokensBalance(this.tokenAddr);
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.updateTokensBalance(this.tokenAddr);

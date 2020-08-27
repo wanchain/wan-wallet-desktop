@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import { INBOUND, OUTBOUND, WALLET_CHAIN } from 'utils/settings';
+import { INBOUND, OUTBOUND, COIN_ACCOUNT } from 'utils/settings';
 import Trans from 'components/CrossChain/SendCrossChainTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 import wanLogo from 'static/image/wan.png';
@@ -13,7 +13,6 @@ import eosLogo from 'static/image/eos.png';
 import style from './index.less';
 
 const CHAINTYPE = 'ETH';
-// const CHAINTYPE = 'BTC';
 const WANCHAIN = 'WAN';
 
 @inject(stores => ({
@@ -22,14 +21,15 @@ const WANCHAIN = 'WAN';
   getNormalAddrList: stores.ethAddress.getNormalAddrList,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   tokensBalance: stores.tokens.tokensBalance,
-  tokensBalance_2way: stores.tokens.tokensBalance_2way,
   stores: stores,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
+  currChainId: stores.crossChain.currChainId,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
+  getCoinsListInfo_2way: (...args) => stores.tokens.getCoinsListInfo_2way(...args),
   getTokensListInfo_2way: (...args) => stores.tokens.getTokensListInfo_2way(...args),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   setCurrChainId: id => stores.crossChain.setCurrChainId(id),
@@ -39,30 +39,45 @@ const WANCHAIN = 'WAN';
 class CrossChain extends Component {
   constructor(props) {
     super(props);
-    const tokenPairId = props.match.params.tokenPairId;
-    const fromAccount = props.tokenPairs[tokenPairId].fromAccount;
-    this.props.changeTitle('Common.crossChain');
-    this.props.setCurrToken(fromAccount);
-    this.props.setCurrChainId(tokenPairId);
-    this.state = {
-      inboundData: [],
-      outboundData: [],
-    }
-    this.props.setCurrSymbol(props.tokenPairs[tokenPairId].ancestorSymbol);
+    const { match, tokenPairs, changeTitle } = this.props;
+    changeTitle('Common.crossChain');
+    const tokenPairId = match.params.tokenPairId;
+    this.init(tokenPairId);
+  }
+
+  init = (id) => {
+    const { tokenPairs, setCurrToken, setCurrChainId, setCurrSymbol } = this.props;
+    const { fromAccount, ancestorSymbol } = tokenPairs[id];
+    setCurrToken(fromAccount);
+    setCurrChainId(id);
+    setCurrSymbol(ancestorSymbol);
   }
 
   componentDidMount() {
-    const { match, tokenPairs, updateTokensBalance } = this.props;
+    const { updateTokensBalance, tokenPairs, match } = this.props;
     const tokenPairId = match.params.tokenPairId;
-    const info = Object.assign({}, tokenPairs[tokenPairId]);
-    this.timer = setInterval(() => {
-      updateTokensBalance(info.fromAccount, info.fromChainSymbol);
-      updateTokensBalance(info.tokenAddress, info.toChainSymbol);
-    }, 5000);
+    const { fromAccount, tokenAddress, fromChainSymbol, toChainSymbol } = tokenPairs[tokenPairId];
+    let updateBalance = () => {
+      if (fromAccount !== COIN_ACCOUNT) {
+        updateTokensBalance(fromAccount, fromChainSymbol);
+      }
+      if (tokenAddress !== COIN_ACCOUNT) {
+        updateTokensBalance(tokenAddress, toChainSymbol);
+      }
+    }
+    updateBalance();
+    this.timer = setInterval(updateBalance, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  componentWillReceiveProps(newProps) {
+    let id = newProps.match.params.tokenPairId;
+    if (id !== this.props.currChainId) {
+      this.init(id);
+    }
   }
 
   inboundHandleSend = from => {
@@ -80,7 +95,6 @@ class CrossChain extends Component {
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };
-    // console.log({ input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' });
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' }, (err, ret) => {
         console.log('inbound result:', err, ret);
@@ -119,7 +133,7 @@ class CrossChain extends Component {
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };
-    // console.log('input:', input);
+
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.tokenAddress, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         console.log('outbound result:', err, ret);
@@ -218,8 +232,7 @@ class CrossChain extends Component {
   ];
 
   render() {
-    const { getNormalAddrList, getTokensListInfo, getTokensListInfo_2way, tokenPairs } = this.props;
-    const { inboundData, outboundData } = this.state;
+    const { getTokensListInfo_2way, getCoinsListInfo_2way, tokenPairs, match } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
@@ -228,12 +241,13 @@ class CrossChain extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
 
-    const tokenPairId = this.props.match.params.tokenPairId;
-    let info = Object.assign({}, tokenPairs[tokenPairId]);
-
-    let fromAddresses = getTokensListInfo_2way(info.fromChainSymbol, info.fromChainID, info.fromAccount);
-    let toAddresses = getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.tokenAddress);
-
+    let tokenPairID = match.params.tokenPairId;
+    let info = tokenPairs[tokenPairID];
+    let fromAddresses = info.fromAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.fromChainSymbol, info.fromChainID) : getTokensListInfo_2way(info.fromChainSymbol, info.fromChainID, info.fromAccount);
+    let toAddresses = info.tokenAddress === COIN_ACCOUNT ? getCoinsListInfo_2way(info.toChainSymbol, info.toChainID) : getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.tokenAddress);
+    // console.log('data:', fromAddresses, toAddresses)
+    // console.log('info:', info)
+    // console.log('state:', this.state.tokenPairId)
     return (
       <div className="account">
         <Row className="title">

@@ -43,6 +43,7 @@ class CrossETH extends Component {
   }
 
   componentDidMount() {
+    this.props.updateTokensBalance(this.info.tokenAddress);
     this.timer = setInterval(() => {
       this.props.updateTokensBalance(this.info.tokenAddress);
     }, 5000);
