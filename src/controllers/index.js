@@ -1821,7 +1821,35 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-
+        case 'crossBTC_WAN':
+            try {
+                let feeHard = network === 'main' ? 10000 : 100000;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                if (payload.type === 'LOCK' && payload.source === 'WAN') {
+                    payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
+                }
+                if (payload.type === 'REDEEM') {
+                    if (payload.source === 'WAN') {
+                        payload.input.feeHard = feeHard
+                    }
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                if (payload.type === 'REVOKE') {
+                    if (payload.source === 'BTC') {
+                        payload.input.feeHard = feeHard
+                    }
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                    err = ret;
+                }
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
         case 'crossBTC':
             try {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
@@ -1870,6 +1898,27 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
             } catch (e) {
                 logger.error('crossETH failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'crossEOS_WAN':
+            try {
+                let srcChain, dstChain;
+                if (payload.source !== 'WAN') {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                } else {
+                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
+                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                if (!ret.code) {
+                    err = ret;
+                }
+            } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1980,8 +2029,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { chainType, options } = payload;
                 ret = await ccUtil.getRegisteredOrigToken(payload.chainType, payload.options);
             } catch (e) {
-                logger.error('getRegisteredOrigToken failed:')
-                logger.error(e.message || e.stack)
+                // logger.error('getRegisteredOrigToken failed:')
+                // logger.error(e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })

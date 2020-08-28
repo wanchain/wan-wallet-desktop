@@ -508,7 +508,7 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getTokensListInfo_2WanTypes() {
+  /* @computed get getTokensListInfo_2WanTypes() {
     let addTypes = ['normal', 'ledger', 'trezor', 'import', 'rawKey'];
     let addrList = [];
 
@@ -543,7 +543,7 @@ class Tokens {
     })
 
     return addrList;
-  }
+  } */
 
   @computed get getE20TokensListInfo() {
     let addrList = [];
@@ -670,7 +670,7 @@ class Tokens {
         title: v.chain,
         symbol: v.symbol,
         name: v.name,
-        key: `/tokens/${v.chain}/${key}/${v.symbol}`,
+        key: `/tokens/${v.chainSymbol}/${key}/${v.symbol}`,
         tokenAddress: key,
         selected: v.select,
         isToken: true,

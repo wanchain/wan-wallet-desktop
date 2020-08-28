@@ -47,9 +47,6 @@ class CrossBTC extends Component {
   }
 
   inboundHandleSend = () => {
-    const { tokenPairs, match } = this.props;
-    let tokenPairID = match.params.tokenPairId;
-    let info = this.info;
     let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
@@ -63,8 +60,7 @@ class CrossBTC extends Component {
       gas: transParams.gas,
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' }, (err, ret) => {
-        // wand.request('crossChain_crossBTC', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+        wand.request('crossChain_crossBTC_WAN', { input, source: 'BTC', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('BTC inbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
@@ -95,8 +91,7 @@ class CrossBTC extends Component {
       storeman: transParams.storeman
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.tokenAddress, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
-        // wand.request('crossChain_crossBTC', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
+        wand.request('crossChain_crossBTC_WAN', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('BTC outbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {

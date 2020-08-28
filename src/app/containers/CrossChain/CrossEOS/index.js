@@ -35,6 +35,11 @@ class CrossEOS extends Component {
     this.props.setCurrToken(null, props.symbol);
     this.props.changeTitle('Common.crossChain');
     this.tokenAddr = Object.keys(props.tokensList).find(item => props.tokensList[item].symbol === props.symbol);
+    // console.log('list:', props.tokensList);
+    // console.log('tokenAddr:', this.tokenAddr);
+    // console.log('props.symbol:', props.symbol);
+    // console.log('token list:::::::::', props.tokensList[this.tokenAddr]);
+    // console.log('props:', props);
   }
 
   componentDidMount() {
@@ -54,7 +59,7 @@ class CrossEOS extends Component {
     let { to, amount, storeman, txFeeRatio } = this.props.transParams[from];
     let input = { from: { walletID: 1, address: from, path: this.props.addrInfo[from].path }, to, amount, storeman, txFeeRatio };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossEOS', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'EOS', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossEOS_WAN', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'EOS', destination: 'WAN', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockEOS:', err);
           message.warn(intl.get('common.sendFailed'));
@@ -70,7 +75,7 @@ class CrossEOS extends Component {
     let { to, amount, storeman, txFeeRatio, gasPrice, gasLimit, from: fromParams } = this.props.transParams[from];
     let input = { from: fromParams, to, amount, storeman, txFeeRatio, gasPrice, gasLimit };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossEOS', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'WAN', destination: 'EOS', type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossEOS_WAN', { input, tokenScAddr: this.props.tokenOrigAddr, source: 'WAN', destination: 'EOS', type: 'LOCK' }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockWEOS:', err);
           message.warn(intl.get('common.sendFailed'));

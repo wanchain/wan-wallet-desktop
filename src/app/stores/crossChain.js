@@ -136,7 +136,6 @@ class CrossChain {
     wand.request('crossChain_setCcTokenSelectStatus', { id, selected }, (err, data) => {
       if (err) {
         console.log('Update selection status failed.', err);
-        this.getTokenPairs();
       }
       this.getTokenPairs();
     })
@@ -189,11 +188,16 @@ class CrossChain {
 
   @computed get crossChainTrans() {
     // console.log('this.currChainId:', this.currChainId);
-    const ADDRESSES = { wanAddress, btcAddress, ethAddress };
+    const ADDRESSES = { wanAddress, btcAddress, ethAddress, eosAddress };
     let trans = [];
     let decimals = 8;
+    // console.log('info:', this.tokenPairs[this.currChainId]);
     let from = this.tokenPairs[this.currChainId].fromChainSymbol;
     let to = this.tokenPairs[this.currChainId].toChainSymbol;
+    // console.log('from: to:', from, to);
+    if (ADDRESSES[`${from.toLowerCase()}Address`] === undefined || ADDRESSES[`${to.toLowerCase()}Address`] === undefined) {
+      return [];
+    }
     try {
       decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
     } catch (err) {
