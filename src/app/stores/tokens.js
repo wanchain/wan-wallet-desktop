@@ -59,9 +59,9 @@ class Tokens {
 
   @action getToken(scAddr) {
     let token = self.tokensList[scAddr];
-    if (token && token.buddy && self.tokensList[token.buddy]) {
-      token.iconData = self.tokensList[token.buddy].iconData;
-      token.iconType = self.tokensList[token.buddy].iconType;
+    if (token && token.ancestor && self.tokensList[token.ancestor]) {
+      token.iconData = self.tokensList[token.ancestor].iconData;
+      token.iconType = self.tokensList[token.ancestor].iconType;
     }
     return token;
   }
@@ -398,7 +398,7 @@ class Tokens {
         chain: val.chain,
         symbol: val.symbol,
         decimals: val.decimals,
-        buddy: val.buddy,
+        ancestor: val.ancestor,
         select: val.select
       })
     })
@@ -469,7 +469,7 @@ class Tokens {
           chainSymbol: val.chainSymbol,
           tokenAddr: item,
           symbol: val.symbol,
-          buddy: val.buddy,
+          ancestor: val.ancestor,
           decimals: val.decimals,
         })
       }

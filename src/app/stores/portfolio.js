@@ -15,19 +15,19 @@ class Portfolio {
 
   @observable defaultCoinList = {
     WAN: {
-      buddy: false,
+      ancestor: false,
       balance: 0,
     },
     ETH: {
-      buddy: false,
+      ancestor: false,
       balance: 0,
     },
     BTC: {
-      buddy: false,
+      ancestor: false,
       balance: 0,
     },
     EOS: {
-      buddy: false,
+      ancestor: false,
       balance: 0,
     }
   };
@@ -48,7 +48,7 @@ class Portfolio {
     let obj = {};
     tokens.tokensOnSideBar.forEach(item => {
       obj[item.tokenAddr] = {
-        buddy: item.buddy,
+        ancestor: item.ancestor,
         scAddr: item.tokenAddr,
         chain: item.chainSymbol,
         symbol: item.symbol,
@@ -93,8 +93,8 @@ class Portfolio {
       if (key in self.defaultCoinList) {
         return key
       } else {
-        // return item.buddy ? item.symbol.substring(1) : item.symbol;
-        return item.buddy ? item.buddy : item.symbol;
+        // return item.ancestor ? item.symbol.substring(1) : item.symbol;
+        return item.ancestor ? item.ancestor : item.symbol;
       }
     });
     let reconvertIds = {};
@@ -179,7 +179,7 @@ class Portfolio {
       Object.keys(self.coinList).forEach((key, index) => {
         let val = list[index];
         if (!(key in self.defaultCoinList)) {
-          key = self.coinList[key].buddy ? self.coinList[key].buddy : self.coinList[key].symbol;
+          key = self.coinList[key].ancestor ? self.coinList[key].ancestor : self.coinList[key].symbol;
         }
         if (key in self.coinPriceObj) {
           val.price = `$${self.coinPriceObj[key]}`;

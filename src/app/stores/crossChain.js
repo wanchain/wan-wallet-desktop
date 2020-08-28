@@ -109,7 +109,7 @@ class CrossChain {
                 decimals: v.ancestorDecimals,
                 symbol: v.ancestorSymbol,
                 name: v.fromTokenName,
-                buddy: v.ancestorSymbol,
+                ancestor: v.ancestorSymbol,
               }
               if (!(v.fromAccount in tokens.tokensList)) {
                 obj.select = false;
@@ -124,7 +124,7 @@ class CrossChain {
               decimals: v.ancestorDecimals,
               name: v.toTokenName,
               symbol: v.ancestorSymbol,
-              buddy: v.ancestorSymbol,
+              ancestor: v.ancestorSymbol,
             }
             if (!(v.tokenAddress in tokens.tokensList)) {
               obj.select = false;

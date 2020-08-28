@@ -30,14 +30,14 @@ const defaultConfig = {
           "symbol": "WETH",
           "decimals": 18,
           "chain": "WAN",
-          "buddy": 'ETH'
+          "ancestor": 'ETH'
         },
         "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
           "chain": "WAN",
-          "buddy": 'BTC'
+          "ancestor": 'BTC'
         }, */
       },
       cc_tokens: {
@@ -71,14 +71,14 @@ const defaultConfig = {
           "symbol": "WETH",
           "decimals": 18,
           "chain": "WAN",
-          "buddy": 'ETH'
+          "ancestor": 'ETH'
         },
         "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd": {
           "select": false,
           "symbol": "WBTC",
           "decimals": 8,
           "chain": "WAN",
-          "buddy": 'BTC'
+          "ancestor": 'BTC'
         }, */
       },
       cc_tokens: {
@@ -305,17 +305,17 @@ class Settings {
           }
         }
 
-        /** Add Wanchain buddy token */
+        /** Add Wanchain ancestor token */
         if (tokens[item.tokenWanAddr]) {
           tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
           tokens[item.tokenWanAddr].decimals = item.decimals;
-          tokens[item.tokenWanAddr].buddy = item.tokenOrigAddr;
+          tokens[item.tokenWanAddr].ancestor = item.tokenOrigAddr;
         } else {
           tokens[item.tokenWanAddr] = {
             chain: 'WAN',
             symbol: `W${item.symbol}`,
             decimals: item.decimals,
-            buddy: item.tokenOrigAddr
+            ancestor: item.tokenOrigAddr
           }
         }
         this.set(`settings.${network}.tokens`, tokens);
