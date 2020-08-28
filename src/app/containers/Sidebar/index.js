@@ -143,7 +143,7 @@ class Sidebar extends Component {
       icon: 'block',
       mode: 'vertical',
       children: [{
-        title: `BTC <-> Wanchain`,
+        title: `Bitcoin <-> Wanchain`,
         key: `/crossBTC`,
         noCircle: true,
       }],

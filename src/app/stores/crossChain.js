@@ -89,53 +89,40 @@ class CrossChain {
             });
             this.crossChainSelections = ccSelected;
 
-            // set coinsList & tokensList
-            if (v.fromAccount === COIN_ACCOUNT) {
-              let obj = {
-                chain: v.fromChainName,
-                decimals: v.ancestorDecimals,
-                symbol: v.ancestorSymbol,
-                name: v.fromTokenSymbol,
-              }
-              if (!(v.ancestorSymbol in tokens.coinsList)) {
-                obj.select = false;
-              } else {
-                obj.select = tokens.coinsList[v.ancestorSymbol].select;
-              }
-              tokens.updateCoinsList(v.ancestorSymbol, obj);
-            } else {
-              // From token
-              let obj = {
-                chain: v.fromChainName,
-                chainSymbol: v.fromChainSymbol,
-                decimals: v.ancestorDecimals,
-                symbol: v.ancestorSymbol,
-                name: v.fromTokenSymbol,
-                ancestor: v.ancestorSymbol,
-              }
-              if (!(v.fromAccount in tokens.tokensList)) {
-                obj.select = false;
-              } else {
-                obj.select = tokens.tokensList[v.fromAccount].select;
-              }
-              tokens.updateTokensList(v.fromAccount, obj);
-            }
-
-            // To token
+            // From token
             let obj = {
-              chain: v.toChainName,
-              chainSymbol: v.toChainSymbol,
-              decimals: v.ancestorDecimals,
-              name: v.toTokenSymbol,
-              symbol: v.ancestorSymbol,
+              account: v.fromAccount,
+              chain: v.fromChainName,
+              chainSymbol: v.fromChainSymbol,
+              decimals: v.decimals,
+              symbol: v.fromTokenSymbol,
               ancestor: v.ancestorSymbol,
             }
-            if (!(v.tokenAddress in tokens.tokensList)) {
+            let key = `${v.fromChainID}-${v.fromAccount}`
+            if (!(key in tokens.tokensList)) {
               obj.select = false;
             } else {
-              obj.select = tokens.tokensList[v.tokenAddress].select;
+              obj.select = tokens.tokensList[key].select;
             }
-            tokens.updateTokensList(v.tokenAddress, obj);
+            tokens.updateTokensList(key, obj);
+
+            // To token
+            key = `${v.toChainID}-${v.toAccount}`
+            obj = {
+              account: v.toAccount,
+              chain: v.toChainName,
+              chainSymbol: v.toChainSymbol,
+              decimals: v.decimals,
+              // name: v.toTokenName,
+              symbol: v.toTokenSymbol,
+              ancestor: v.ancestorSymbol,
+            }
+            if (!(key in tokens.tokensList)) {
+              obj.select = false;
+            } else {
+              obj.select = tokens.tokensList[key].select;
+            }
+            tokens.updateTokensList(key, obj);
           }
           resolve();
         }
@@ -277,9 +264,6 @@ class CrossChain {
     // console.log('coins:', tokens.coinsList);
     // console.log('currSymbol:', self.currSymbol);
     let crossEthTrans = [];
-    if (!(self.currSymbol in tokens.coinsList)) {
-      return [];
-    }
     let currTokenInfo = tokens.coinsList[self.currSymbol];
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {

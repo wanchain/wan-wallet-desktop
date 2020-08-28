@@ -22,7 +22,6 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
-  getCoinsInfo: () => stores.tokens.getCoinsInfo(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getCcTokensInfo: () => stores.tokens.getCcTokensInfo(),
   getTokenPairs: () => stores.crossChain.getTokenPairs(),
@@ -88,7 +87,6 @@ class Layout extends Component {
           running = true;
           await initRegTokens('ETH');
           await initRegTokens('EOS');
-          await this.props.getCoinsInfo();
           await this.props.getTokensInfo();
           await this.props.getCcTokensInfo();
           await this.props.getTokenPairs();

@@ -16,8 +16,6 @@ import { getBalance } from 'utils/helper';
 class Tokens {
   @observable currTokenAddr = '';
 
-  @observable coinsList = {}; // Original coins collection
-
   @observable tokensList = {}; // Tokens collection
 
   @observable ccTokensList = {};
@@ -29,16 +27,6 @@ class Tokens {
   @observable tokenIconList = {};
 
   @observable walletSelections = {};
-
-  @action updateWalletSelectedStatus(symbol, selected) {
-    wand.request('crossChain_updateCoinsInfo', { symbol, key: 'select', value: selected }, (err, data) => {
-      if (err) {
-        console.log('updateCoinsInfo failed:', err);
-      } else {
-        this.coinsList[symbol].select = selected;
-      }
-    });
-  }
 
   @action updateTokenSelectedStatus(tokenAddress, selected) {
     wand.request('crossChain_updateTokensInfo', { addr: tokenAddress, key: 'select', value: selected }, (err, data) => {
@@ -100,20 +88,6 @@ class Tokens {
           });
         }
     }
-  }
-
-  @action getCoinsInfo() {
-    return new Promise((resolve, reject) => {
-      wand.request('crossChain_getCoinsInfo', {}, (err, data) => {
-        if (err) {
-          console.log('getCoinsInfo: ', err);
-          reject(err)
-          return;
-        }
-        self.coinsList = data;
-        resolve()
-      })
-    })
   }
 
   @action getTokensInfo() {
@@ -182,29 +156,6 @@ class Tokens {
       self.tokensBalance[tokenScAddr] = data;
     })
   }
-
-  /* @action updateCoinsBalance(chain = 'WAN') {
-    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
-    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
-      console.log('Cannot get addresses.');
-      return;
-    }
-    let addrInfo = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
-    let normalArr = Object.keys(addrInfo.normal || []);
-    let importArr = Object.keys(addrInfo.import || []);
-    let ledgerArr = Object.keys(addrInfo.ledger || []);
-    let trezorArr = Object.keys(addrInfo.trezor || []);
-    let rawKeyArr = Object.keys(addrInfo.rawKey || []);
-    let addresses = normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr);
-
-    getBalance(addresses, chain).then(res => {
-      if (res && Object.keys(res).length) {
-        ADDRESSES[`${chain.toLowerCase()}Address`][`update${chain}Balance`](res);
-      }
-    }).catch(err => {
-      console.log('Get coins\' balance failed:', err);
-    })
-  } */
 
   getCoinsListInfo_2way(chain, chainID) {
     const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
@@ -329,16 +280,6 @@ class Tokens {
     })
   }
 
-  @action updateCoinsList(symbol, value) {
-    wand.request('crossChain_updateCoinsInfo', { symbol, key: undefined, value }, (err) => {
-      if (err) {
-        console.log('crossChain_updateCoinsInfo: ', err);
-      } else {
-        this.coinsList[symbol] = value;
-      }
-    });
-  }
-
   @action updateTokensList(addr, value) {
     wand.request('crossChain_updateTokensInfo', { addr, key: undefined, value }, (err) => {
       if (err) {
@@ -347,16 +288,6 @@ class Tokens {
         this.tokensList[addr] = value;
       }
     });
-  }
-
-  @action updateCoinsInfo(symbol, key, value) {
-    wand.request('crossChain_updateCoinsInfo', { symbol, key, value }, (err) => {
-      if (err) {
-        console.log('crossChain_updateCoinsInfo: ', err)
-        return;
-      }
-      self.coinsList[symbol][key] = value;
-    })
   }
 
   @action updateTokensInfo(addr, key, value) {
@@ -638,36 +569,17 @@ class Tokens {
 
   @computed get getWalletSelections() {
     let selections = {};
-    Object.keys(this.coinsList).forEach(key => {
-      let v = this.coinsList[key];
-      if (!selections[key]) {
-        selections[key] = {
-          symbol: v.symbol,
-          ancestor: v.symbol,
-          key: v.symbol,
-          children: []
-        };
-      }
-      selections[key].children.push({
-        title: v.chain,
-        symbol: v.symbol,
-        name: v.symbol,
-        key: `/${v.symbol.toLowerCase()}Account`,
-        selected: v.select,
-        isToken: false,
-      });
-    });
     Object.keys(this.tokensList).forEach(key => {
       let v = this.tokensList[key];
-      if (!selections[v.symbol]) {
-        selections[v.symbol] = {
+      if (!selections[v.ancestor]) {
+        selections[v.ancestor] = {
           symbol: v.symbol,
           ancestor: v.ancestor,
-          key: v.symbol,
+          key: v.ancestor,
           children: []
         };
       }
-      selections[v.symbol].children.push({
+      selections[v.ancestor].children.push({
         title: v.chain,
         symbol: v.symbol,
         name: v.name,
