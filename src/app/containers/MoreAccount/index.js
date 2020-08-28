@@ -26,7 +26,7 @@ class MoreAccount extends Component {
 
   columns = [
     {
-      dataIndex: 'symbol',
+      dataIndex: 'ancestor',
       width: 360,
       title: 'TOKEN',
       align: 'center',

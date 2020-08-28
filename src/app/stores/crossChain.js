@@ -95,10 +95,12 @@ class CrossChain {
                 chain: v.fromChainName,
                 decimals: v.ancestorDecimals,
                 symbol: v.ancestorSymbol,
-                name: v.fromTokenName,
+                name: v.fromTokenSymbol,
               }
               if (!(v.ancestorSymbol in tokens.coinsList)) {
                 obj.select = false;
+              } else {
+                obj.select = tokens.coinsList[v.ancestorSymbol].select;
               }
               tokens.updateCoinsList(v.ancestorSymbol, obj);
             } else {
@@ -108,11 +110,13 @@ class CrossChain {
                 chainSymbol: v.fromChainSymbol,
                 decimals: v.ancestorDecimals,
                 symbol: v.ancestorSymbol,
-                name: v.fromTokenName,
+                name: v.fromTokenSymbol,
                 ancestor: v.ancestorSymbol,
               }
               if (!(v.fromAccount in tokens.tokensList)) {
                 obj.select = false;
+              } else {
+                obj.select = tokens.tokensList[v.fromAccount].select;
               }
               tokens.updateTokensList(v.fromAccount, obj);
             }
@@ -122,12 +126,14 @@ class CrossChain {
               chain: v.toChainName,
               chainSymbol: v.toChainSymbol,
               decimals: v.ancestorDecimals,
-              name: v.toTokenName,
+              name: v.toTokenSymbol,
               symbol: v.ancestorSymbol,
               ancestor: v.ancestorSymbol,
             }
             if (!(v.tokenAddress in tokens.tokensList)) {
               obj.select = false;
+            } else {
+              obj.select = tokens.tokensList[v.tokenAddress].select;
             }
             tokens.updateTokensList(v.tokenAddress, obj);
           }

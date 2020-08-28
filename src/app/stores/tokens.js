@@ -643,6 +643,7 @@ class Tokens {
       if (!selections[key]) {
         selections[key] = {
           symbol: v.symbol,
+          ancestor: v.symbol,
           key: v.symbol,
           children: []
         };
@@ -650,18 +651,18 @@ class Tokens {
       selections[key].children.push({
         title: v.chain,
         symbol: v.symbol,
-        name: v.name,
+        name: v.symbol,
         key: `/${v.symbol.toLowerCase()}Account`,
         selected: v.select,
         isToken: false,
       });
     });
-
     Object.keys(this.tokensList).forEach(key => {
       let v = this.tokensList[key];
       if (!selections[v.symbol]) {
         selections[v.symbol] = {
           symbol: v.symbol,
+          ancestor: v.ancestor,
           key: v.symbol,
           children: []
         };

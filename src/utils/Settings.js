@@ -200,24 +200,14 @@ class Settings {
   updateCoinItem(symbol, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.coins`)) {
-      let old = this.get(`settings.${network}.coins["${symbol}"]`);
-      if (old) {
-        this.set(`settings.${network}.coins["${symbol}"]`, Object.assign({ select: !!old.select}, value));
-      } else {
-        this.set(`settings.${network}.coins["${symbol}"]`, value);
-      }
+      this.set(`settings.${network}.coins["${symbol}"]`, value);
     }
   }
 
   updateTokenItem(addr, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.tokens`)) {
-      let old = this.get(`settings.${network}.tokens["${addr}"]`);
-      if (old) {
-        this.set(`settings.${network}.tokens["${addr}"]`, Object.assign({ select: !!old.select}, value));
-      } else {
-        this.set(`settings.${network}.tokens["${addr}"]`, value);
-      }
+      this.set(`settings.${network}.tokens["${addr}"]`, value);
     }
   }
 
