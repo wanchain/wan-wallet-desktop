@@ -91,40 +91,45 @@ class CrossChain {
 
             // set coinsList & tokensList
             if (v.fromAccount === COIN_ACCOUNT) {
+              let obj = {
+                chain: v.fromChainName,
+                decimals: v.ancestorDecimals,
+                symbol: v.ancestorSymbol,
+                name: v.fromTokenName,
+              }
               if (!(v.ancestorSymbol in tokens.coinsList)) {
-                tokens.updateCoinsList(v.ancestorSymbol, {
-                  chain: v.fromChainName,
-                  decimals: v.ancestorDecimals,
-                  symbol: v.ancestorSymbol,
-                  name: v.fromTokenName,
-                  select: false,
-                });
+                obj.select = false;
               }
+              tokens.updateCoinsList(v.ancestorSymbol, obj);
             } else {
-              if (!(v.fromAccount in tokens.tokensList)) {
-                tokens.updateTokensList(v.fromAccount, {
-                  chain: v.fromChainName,
-                  chainSymbol: v.fromChainSymbol,
-                  decimals: v.ancestorDecimals,
-                  symbol: v.ancestorSymbol,
-                  name: v.fromTokenName,
-                  select: false,
-                  buddy: v.ancestorSymbol,
-                });
+              // From token
+              let obj = {
+                chain: v.fromChainName,
+                chainSymbol: v.fromChainSymbol,
+                decimals: v.ancestorDecimals,
+                symbol: v.ancestorSymbol,
+                name: v.fromTokenName,
+                buddy: v.ancestorSymbol,
               }
+              if (!(v.fromAccount in tokens.tokensList)) {
+                obj.select = false;
+              }
+              tokens.updateTokensList(v.fromAccount, obj);
             }
 
-            if (!(v.tokenAddress in tokens.tokensList)) {
-              tokens.updateTokensList(v.tokenAddress, {
-                chain: v.toChainName,
-                chainSymbol: v.toChainSymbol,
-                decimals: v.ancestorDecimals,
-                name: v.toTokenName,
-                symbol: v.ancestorSymbol,
-                select: false,
-                buddy: v.ancestorSymbol,
-              });
+            // To token
+            let obj = {
+              chain: v.toChainName,
+              chainSymbol: v.toChainSymbol,
+              decimals: v.ancestorDecimals,
+              name: v.toTokenName,
+              symbol: v.ancestorSymbol,
+              buddy: v.ancestorSymbol,
             }
+            if (!(v.tokenAddress in tokens.tokensList)) {
+              obj.select = false;
+            }
+            tokens.updateTokensList(v.tokenAddress, obj);
           }
           resolve();
         }

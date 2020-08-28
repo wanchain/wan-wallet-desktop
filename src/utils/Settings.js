@@ -5,7 +5,6 @@ import { app } from 'electron'
 import Logger from './Logger'
 import yargs from 'yargs'
 import WalletHelper from '~/src/utils/Helper'
-// import totalImg from '~/static/image/btc.png';
 
 // caches for config
 let _mode = undefined
@@ -201,14 +200,24 @@ class Settings {
   updateCoinItem(symbol, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.coins`)) {
-      this.set(`settings.${network}.coins["${symbol}"]`, value);
+      let old = this.get(`settings.${network}.coins["${symbol}"]`);
+      if (old) {
+        this.set(`settings.${network}.coins["${symbol}"]`, Object.assign({ select: !!old.select}, value));
+      } else {
+        this.set(`settings.${network}.coins["${symbol}"]`, value);
+      }
     }
   }
 
   updateTokenItem(addr, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.tokens`)) {
-      this.set(`settings.${network}.tokens["${addr}"]`, value);
+      let old = this.get(`settings.${network}.tokens["${addr}"]`);
+      if (old) {
+        this.set(`settings.${network}.tokens["${addr}"]`, Object.assign({ select: !!old.select}, value));
+      } else {
+        this.set(`settings.${network}.tokens["${addr}"]`, value);
+      }
     }
   }
 
