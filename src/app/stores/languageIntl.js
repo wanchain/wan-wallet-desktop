@@ -416,13 +416,13 @@ class LanguageIntl {
         ]
       },
       {
-        title: 'Open Storeman',
+        title: 'Storeman',
         step: '1',
         key: '/openstoreman',
         icon: 'pie-chart',
         children: [
           {
-            title: 'Delegation',
+            title: 'Delegator',
             key: '/osm_delegation',
             icon: 'block'
           },

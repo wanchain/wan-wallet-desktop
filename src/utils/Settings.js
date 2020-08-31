@@ -15,6 +15,8 @@ let _settings = undefined
 
 const defaultConfig = {
   mode: 'light',
+  // TODO
+  // network: 'main',
   network: 'testnet',
   lang: 'en',
   skippedUpdateVersion: null,
@@ -25,20 +27,6 @@ const defaultConfig = {
     logout_timeout: '5',
     main: {
       tokens: {
-        /* "0x28362cd634646620ef2290058744f9244bb90ed9": {
-          "select": false,
-          "symbol": "WETH",
-          "decimals": 18,
-          "chain": "WAN",
-          "ancestor": 'ETH'
-        },
-        "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7": {
-          "select": false,
-          "symbol": "WBTC",
-          "decimals": 8,
-          "chain": "WAN",
-          "ancestor": 'BTC'
-        }, */
       },
       cc_tokens: {
         "ETH": {
@@ -56,7 +44,6 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      // coins: {},
       cc_selected: {
         "1": true,
         "3": true,
@@ -66,20 +53,6 @@ const defaultConfig = {
     },
     testnet: {
       tokens: {
-        /* "0x46397994a7e1e926ea0de95557a4806d38f10b0d": {
-          "select": false,
-          "symbol": "WETH",
-          "decimals": 18,
-          "chain": "WAN",
-          "ancestor": 'ETH'
-        },
-        "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd": {
-          "select": false,
-          "symbol": "WBTC",
-          "decimals": 8,
-          "chain": "WAN",
-          "ancestor": 'BTC'
-        }, */
       },
       cc_tokens: {
         /* "ETH": {
@@ -97,20 +70,6 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      /* coins: {
-        "BTC": {
-          "chain": "Bitcoin",
-          "decimals": "8",
-          "select": false,
-          "symbol": "BTC"
-        },
-        "EOS": {
-          "chain": "EOS",
-          "decimals": "18",
-          "select": false,
-          "symbol": "EOS"
-        },
-      }, */
       cc_selected: {
         "1": true,
         "3": true,

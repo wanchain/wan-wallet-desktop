@@ -33,7 +33,7 @@ class ConfigFactoryService {
             } */
             this.config.iWAN = {
                 "url": ['192.168.1.179'],
-                "port": [8444],
+                "port": [8443],
                 "wallet": {
                     "apikey": "d21b98b09c1b4f1001986401e25a27a07a4673140b5125b81cdfedcea4db9e7b",
                     "secret": "93c30e4a70f5ec3d4427f76602851791aa58fb823773c96cf1347f8b0276b036"
