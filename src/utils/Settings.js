@@ -15,7 +15,7 @@ let _settings = undefined
 
 const defaultConfig = {
   mode: 'light',
-  network: 'main',
+  network: 'testnet',
   lang: 'en',
   skippedUpdateVersion: null,
   settings: {
@@ -56,7 +56,7 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      coins: {},
+      // coins: {},
       cc_selected: {
         "1": true,
         "3": true,
@@ -97,7 +97,7 @@ const defaultConfig = {
           "chain": "BTC",
         }
       },
-      coins: {
+      /* coins: {
         "BTC": {
           "chain": "Bitcoin",
           "decimals": "8",
@@ -110,7 +110,7 @@ const defaultConfig = {
           "select": false,
           "symbol": "EOS"
         },
-      },
+      }, */
       cc_selected: {
         "1": true,
         "3": true,

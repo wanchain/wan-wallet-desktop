@@ -63,7 +63,7 @@ class CrossChain {
               fromChainSymbol: v.fromChainSymbol,
               toChainID: v.toChainID,
               toTokenName: v.toTokenName,
-              tokenAddress: v.tokenAddress,
+              toAccount: v.toAccount,
               toChainName: v.toChainName,
               toChainSymbol: v.toChainSymbol,
             }
@@ -81,7 +81,7 @@ class CrossChain {
               fromChainName: v.fromChainName,
               fromChainSymbol: v.fromChainSymbol,
               toChainID: v.toChainID,
-              tokenAddress: v.tokenAddress,
+              toAccount: v.toAccount,
               toChainName: v.toChainName,
               toChainSymbol: v.toChainSymbol,
               id: v.id,
@@ -98,7 +98,7 @@ class CrossChain {
               symbol: v.fromTokenSymbol,
               ancestor: v.ancestorSymbol,
             }
-            let key = `${v.fromChainID}-${v.fromAccount}`
+            let key = `${v.fromChainID}-${v.fromAccount}`;
             if (!(key in tokens.tokensList)) {
               obj.select = false;
             } else {
@@ -113,7 +113,6 @@ class CrossChain {
               chain: v.toChainName,
               chainSymbol: v.toChainSymbol,
               decimals: v.decimals,
-              // name: v.toTokenName,
               symbol: v.toTokenSymbol,
               ancestor: v.ancestorSymbol,
             }

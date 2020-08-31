@@ -51,7 +51,7 @@ class Trans extends Component {
     this.setState({ chainType });
     let addrInfo = this.props[`${info.fromChainSymbol.toLowerCase()}AddrInfo`];
     let desChain, origGas, destGas, storeman;
-    let tokenAddr = info.tokenAddress;
+    let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
     if (type === INBOUND) {
       /* if (Number(getBalanceByAddr(from, addrInfo)) === 0) {

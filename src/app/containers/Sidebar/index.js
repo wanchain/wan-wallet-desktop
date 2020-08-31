@@ -106,7 +106,7 @@ class Sidebar extends Component {
       if (v.children.length === 0) {
         return false;
       }
-      if (v.children.find(c => c.selected === true)) {
+      if (v.children.some(c => c.selected === true)) {
         let children = [];
         v.children.forEach(c => {
           if (c.selected === true) {

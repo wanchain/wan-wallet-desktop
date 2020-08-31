@@ -39,13 +39,13 @@ class CrossETH extends Component {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrChainId(tokenPairID);
     this.info = tokenPairs[tokenPairID];
-    this.props.setCurrToken(this.info.tokenAddress);
+    this.props.setCurrToken(this.info.toAccount);
   }
 
   componentDidMount() {
-    this.props.updateTokensBalance(this.info.tokenAddress);
+    this.props.updateTokensBalance(this.info.toAccount);
     this.timer = setInterval(() => {
-      this.props.updateTokensBalance(this.info.tokenAddress);
+      this.props.updateTokensBalance(this.info.toAccount);
     }, 5000);
   }
 
@@ -70,7 +70,7 @@ class CrossETH extends Component {
       crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         // console.log('ETH inbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
@@ -109,7 +109,7 @@ class CrossETH extends Component {
       crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.tokenAddress, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));

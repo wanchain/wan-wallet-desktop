@@ -10,7 +10,7 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
-import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE } from 'utils/settings';
+import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE, COIN_ACCOUNT } from 'utils/settings';
 import { getBalance } from 'utils/helper';
 
 class Tokens {
@@ -148,11 +148,13 @@ class Tokens {
     let ledgerArr = Object.keys(addrInfo.ledger || []);
     let trezorArr = Object.keys(addrInfo.trezor || []);
     let rawKeyArr = Object.keys(addrInfo.rawKey || []);
+    console.log(normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr));
     wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain }, (err, data) => {
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
       }
+      console.log('Token B:', tokenScAddr, chain, data);
       self.tokensBalance[tokenScAddr] = data;
     })
   }
@@ -186,14 +188,17 @@ class Tokens {
 
   getTokensListInfo_2way(chain, chainID, SCAddress) {
     const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
-    let addrList = [];
-    let addresses = ADDRESSES[`${chain.toLowerCase()}Address`];
-    if (addresses === undefined) {
+    let addressObj = ADDRESSES[`${chain.toLowerCase()}Address`];
+    if (addressObj === undefined) {
       return [];
     }
-    let normal = addresses.addrInfo.normal;
+    let addrList = [];
+    let normal = addressObj.addrInfo.normal;
+    let ledger = addressObj.addrInfo.ledger || [];
+    let trezor = addressObj.addrInfo.trezor || [];
+    let addresses = Object.assign({}, normal, ledger, trezor);
     // console.log('tokensBalance:', self.tokensBalance);
-    Object.keys(normal).forEach(item => {
+    Object.keys(addresses).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
         if (self.tokensList && self.tokensList[SCAddress]) {
@@ -207,10 +212,10 @@ class Tokens {
 
       addrList.push({
         key: item,
-        name: normal[item].name,
+        name: addresses[item].name,
         address: wanUtil.toChecksumAddress(item),
         balance: formatNum(balance),
-        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${normal[item].path}`,
+        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -228,7 +233,7 @@ class Tokens {
       let rawKeyArr = [];
 
       switch (chain) {
-          case 'WAN':
+        case 'WAN':
           normalArr = Object.keys(wanAddress.addrInfo['normal'] || []);
           importArr = Object.keys(wanAddress.addrInfo['import'] || []);
           ledgerArr = Object.keys(wanAddress.addrInfo['ledger'] || []);
@@ -250,7 +255,7 @@ class Tokens {
           importArr = Object.keys(eosAddress.keyInfo['import']); */
           break;
         default:
-          // console.log('Default.....');
+        // console.log('Default.....');
       }
 
       if ((normalArr.length || importArr.length || rawKeyArr.length) === 0) {
@@ -579,12 +584,19 @@ class Tokens {
           children: []
         };
       }
+      let route = '';
+      if (v.account === COIN_ACCOUNT) { // Coin
+        route = `/${v.symbol.toLowerCase()}Account`;
+      } else { // Token
+        route = `/tokens/${v.chainSymbol}/${key}/${v.symbol}`;
+      }
       selections[v.ancestor].children.push({
         title: v.chain,
         symbol: v.symbol,
         name: v.name,
-        key: `/tokens/${v.chainSymbol}/${key}/${v.symbol}`,
-        tokenAddress: key,
+        key: route,
+        account: v.account,
+        toAccount: key,
         selected: v.select,
         isToken: true,
       });

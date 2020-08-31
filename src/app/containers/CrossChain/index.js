@@ -12,9 +12,6 @@ import btcLogo from 'static/image/btc.png';
 import eosLogo from 'static/image/eos.png';
 import style from './index.less';
 
-const CHAINTYPE = 'ETH';
-const WANCHAIN = 'WAN';
-
 @inject(stores => ({
   tokenIconList: stores.tokens.tokenIconList,
   language: stores.languageIntl.language,
@@ -39,7 +36,7 @@ const WANCHAIN = 'WAN';
 class CrossChain extends Component {
   constructor(props) {
     super(props);
-    const { match, tokenPairs, changeTitle } = this.props;
+    const { match, changeTitle } = this.props;
     changeTitle('Common.crossChain');
     const tokenPairId = match.params.tokenPairId;
     this.init(tokenPairId);
@@ -56,13 +53,13 @@ class CrossChain extends Component {
   componentDidMount() {
     const { updateTokensBalance, tokenPairs, match } = this.props;
     const tokenPairId = match.params.tokenPairId;
-    const { fromAccount, tokenAddress, fromChainSymbol, toChainSymbol } = tokenPairs[tokenPairId];
+    const { fromAccount, toAccount, fromChainSymbol, toChainSymbol } = tokenPairs[tokenPairId];
     let updateBalance = () => {
       if (fromAccount !== COIN_ACCOUNT) {
         updateTokensBalance(fromAccount, fromChainSymbol);
       }
-      if (tokenAddress !== COIN_ACCOUNT) {
-        updateTokensBalance(tokenAddress, toChainSymbol);
+      if (toAccount !== COIN_ACCOUNT) {
+        updateTokensBalance(toAccount, toChainSymbol);
       }
     }
     updateBalance();
@@ -96,7 +93,7 @@ class CrossChain extends Component {
       crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.tokenAddress, type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log('inbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
@@ -135,7 +132,7 @@ class CrossChain extends Component {
     };
 
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.tokenAddress, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         console.log('outbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
@@ -244,14 +241,16 @@ class CrossChain extends Component {
     let tokenPairID = match.params.tokenPairId;
     let info = tokenPairs[tokenPairID];
     let fromAddresses = info.fromAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.fromChainSymbol, info.fromChainID) : getTokensListInfo_2way(info.fromChainSymbol, info.fromChainID, info.fromAccount);
-    let toAddresses = info.tokenAddress === COIN_ACCOUNT ? getCoinsListInfo_2way(info.toChainSymbol, info.toChainID) : getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.tokenAddress);
+    let toAddresses = info.toAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.toChainSymbol, info.toChainID) : getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.toAccount);
     // console.log('data:', fromAddresses, toAddresses)
     // console.log('info:', info)
-    // console.log('state:', this.state.tokenPairId)
+    // console.log('tokenPairID:', tokenPairID)
+    // console.log('props:', this.props)
+
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.tokenAddress)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
+          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -259,7 +258,7 @@ class CrossChain extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.tokenAddress)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
+          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
