@@ -13,6 +13,7 @@ import staking from './staking';
 import tokens from './tokens';
 import crossChain from './crossChain';
 import dapps from './dapps';
+import openstoreman from './openstoreman';
 
 export default {
   session,
@@ -28,5 +29,6 @@ export default {
   languageIntl,
   tokens,
   crossChain,
-  dapps
+  dapps,
+  openstoreman
 };

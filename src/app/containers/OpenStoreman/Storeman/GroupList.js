@@ -5,17 +5,14 @@ import { Row, Col, Table, Button, Form } from 'antd';
 
 import style from './index.less';
 import StoremanRegister from './StoremanRegister';
-import Cell from 'components/Staking/Common/Cell';
-import Validator from 'components/Staking/Common/Validator';
-import { formatNum } from 'utils/support';
 
 const StoremanRegisterForm = Form.create({ name: 'StoremanRegister' })(StoremanRegister);
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  myValidatorList: stores.staking.myValidatorList,
+  groupListData: stores.openstoreman.groupListData,
   osmGroupListColumns: stores.languageIntl.osmGroupListColumns,
-  getValidatorsInfo: () => stores.staking.getValidatorsInfo()
+  getOpenStoremanGroupList: () => stores.openstoreman.getOpenStoremanGroupList()
 }))
 
 @observer
@@ -29,8 +26,8 @@ class GroupList extends Component {
 
   componentDidMount () {
     this.timer = setInterval(() => {
-      this.props.getValidatorsInfo()
-    }, 3000)
+      this.props.getOpenStoremanGroupList()
+    }, 10000)
   }
 
   componentWillUnmount () {
@@ -61,23 +58,18 @@ class GroupList extends Component {
       },
       {
         ...osmGroupListColumns[1],
-        // render: principal => <Cell title={formatNum(Number(principal.value).toFixed(0))} bottom={intl.get('staking.fromDaysAgo1') + principal.days + intl.get('staking.fromDaysAgo2')} />,
       },
       {
         ...osmGroupListColumns[2],
-        // render: entrustment => <Cell title={formatNum(Number(entrustment.value).toFixed(0))} />,
       },
       {
         ...osmGroupListColumns[3],
-        // render: img => <img className={style['table-arrow']} src={img} />,
       },
       {
         ...osmGroupListColumns[4],
-        // render: validator => <Validator img={validator.img} name={validator.name} title={validator.address}/>,
       },
       {
         ...osmGroupListColumns[5],
-        // render: img => <img className={style['table-arrow']} src={img} />,
       },
       {
         ...osmGroupListColumns[6],
@@ -95,21 +87,9 @@ class GroupList extends Component {
   }
 
   render () {
-    const fakeData = [
-      {
-        key: 1,
-        groupId: '1',
-        startTime: '2020/7/9',
-        endTime: '2020/8/9',
-        crosschain: 'WAN / BTC',
-        currDeposit: '20000',
-        delegationFee: '0.1%',
-        action: 'Register',
-      }
-    ]
     return (
       <div className="validators">
-        <Table columns={this.getColumns()} dataSource={fakeData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
+        <Table columns={this.getColumns()} dataSource={this.props.groupListData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
         {this.state.validatorRegister && <StoremanRegisterForm group={this.state.selectGroup} onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
       </div>
     );

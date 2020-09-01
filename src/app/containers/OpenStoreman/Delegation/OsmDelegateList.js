@@ -9,8 +9,9 @@ import DelegateAppendAndExit from './DelegateAppendAndExit';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  stakingList: stores.staking.stakingList,
+  delegatorListData: stores.openstoreman.delegatorListData,
   osmDelegateListColumns: stores.languageIntl.osmDelegateListColumns,
+  getStoremanDelegatorInfo: () => stores.openstoreman.getStoremanDelegatorInfo()
 }))
 
 @observer
@@ -18,6 +19,12 @@ class OsmDelegateList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
+  }
+
+  componentDidMount () {
+    this.timer = setInterval(() => {
+      this.props.getStoremanDelegatorInfo()
+    }, 10000)
   }
 
   modifyWithdraw = () => {
@@ -56,7 +63,7 @@ class OsmDelegateList extends Component {
         <div>
           <Row>
             <Col span={8} align="center"><DelegateAppendAndExit record={record} modifyType='top-up' /></Col>
-            <Col span={8} align="center"><DelegateAppendAndExit record={record} modifyType='exit' /></Col>
+            <Col span={8} align="center"><DelegateAppendAndExit enableButton={record.canDelegateOut && !record.quited} record={record} modifyType='exit' /></Col>
             <Col span={8} align="center"><OsmDelegateClaim record={record} /></Col>
           </Row>
           <Row>
@@ -70,27 +77,9 @@ class OsmDelegateList extends Component {
   }
 
   render() {
-    const fakeData = [
-      {
-        key: 1,
-        account: 'Account1',
-        myAddress: {
-          addr: '0x56664f3B65Cc5DAF4098ed10b66C4a86e58e21a4',
-          type: 'normal',
-          path: "m/44'/5718350'/0'/0",
-        },
-        stake: '213122.2222424',
-        groupId: '112',
-        storeman: '13',
-        reward: '55',
-        incentive: '14235',
-        crosschain: 'Wanchain <-> Ethereum',
-        wAddr: '0x56664f3B65Cc5DAF4098ed10b66C4a86e58e21a4',
-      }
-    ]
     return (
       <div>
-        <Table columns={this.getColumns()} dataSource={fakeData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table columns={this.getColumns()} dataSource={this.props.delegatorListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }

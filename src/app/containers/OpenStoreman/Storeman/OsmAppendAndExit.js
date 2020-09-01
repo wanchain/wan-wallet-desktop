@@ -5,8 +5,8 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { toWei } from 'utils/support.js';
-import PwdForm from 'componentUtils/PwdForm';
 import { WALLETID } from 'utils/settings';
+import PwdForm from 'componentUtils/PwdForm';
 import { signTransaction } from 'componentUtils/trezor';
 import StoremanConfirmForm from './StoremanConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
@@ -73,7 +73,7 @@ class ModifyForm extends Component {
       from,
       amount,
       walletID,
-      wAddr: record.wAddr,
+      wkAddr: record.wkAddr,
       BIP44Path: record.myAddress.path,
     };
 
@@ -82,8 +82,8 @@ class ModifyForm extends Component {
     }
 
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wAddr];
-      let satellite = { wAddr: record.wAddr, annotate: action === 'stakeAppend' ? 'StoremanStakeAppend' : 'StoremanStakeOut' };
+      let abiParams = [record.wkAddr];
+      let satellite = { wkAddr: record.wkAddr, annotate: action === 'stakeAppend' ? 'StoremanStakeAppend' : 'StoremanStakeOut' };
       await this.trezorStoremanUpdate(path, from, amount, action, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
@@ -233,11 +233,12 @@ class OsmAppendAndExit extends Component {
   }
 
   render () {
+    const { record, modifyType, enableButton } = this.props;
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
+        <Button className={style.modifyTopUpBtn} disabled={ modifyType === 'exit' && !enableButton } onClick={this.handleStateToggle} />
         { this.state.visible &&
-          <StoremanModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />
+          <StoremanModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={record} modifyType={modifyType} />
         }
       </div>
     );

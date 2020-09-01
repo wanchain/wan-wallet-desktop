@@ -5,8 +5,8 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { toWei } from 'utils/support';
-import PwdForm from 'componentUtils/PwdForm';
 import { WALLETID } from 'utils/settings'
+import PwdForm from 'componentUtils/PwdForm';
 import { signTransaction } from 'componentUtils/trezor';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import DelegationConfirmForm from './DelegationConfirmForm';
@@ -21,7 +21,6 @@ const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirm
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
@@ -73,7 +72,7 @@ class ModifyForm extends Component {
       from,
       amount,
       walletID,
-      wAddr: record.wAddr,
+      wkAddr: record.wkAddr,
       BIP44Path: record.myAddress.path,
     };
 
@@ -82,8 +81,8 @@ class ModifyForm extends Component {
     }
 
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wAddr];
-      let satellite = { wAddr: record.wAddr, annotate: action === 'delegateIn' ? 'StoremanDelegateIn' : 'StoremanDelegateOut' };
+      let abiParams = [record.wkAddr];
+      let satellite = { wkAddr: record.wkAddr, annotate: action === 'delegateIn' ? 'StoremanDelegateIn' : 'StoremanDelegateOut' };
       await this.trezorValidatorUpdate(path, from, amount, action, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
@@ -133,7 +132,6 @@ class ModifyForm extends Component {
         status: 'Sending',
       };
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
-      this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
       console.log(error);
@@ -180,8 +178,8 @@ class ModifyForm extends Component {
           <div className="validator-bg">
             <div className="stakein-title">Storeman Account</div>
             <CommonFormItem form={form} formName='storeman' disabled={true}
-              options={{ initialValue: record.wAddr, rules: [{ required: true }] }}
-              title={intl.get('ValidatorRegister.validatorAccount')}
+              options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
+              title='Storeman Account'
             />
           </div>
           <div className="validator-bg">
@@ -228,11 +226,13 @@ class DelegateAppendAndExit extends Component {
   }
 
   render () {
+    const { record, modifyType, enableButton } = this.props;
+
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
+        <Button className={style.modifyTopUpBtn} disabled={ modifyType === 'exit' && !enableButton } onClick={this.handleStateToggle} />
         { this.state.visible &&
-          <DelegationModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} modifyType={this.props.modifyType} />
+          <DelegationModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={record} modifyType={modifyType} />
         }
       </div>
     );

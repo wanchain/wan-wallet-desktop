@@ -12,7 +12,6 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
 
-const MINAMOUNT = 50000;
 const ACTION = 'stakeIn';
 const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm);
 
@@ -20,8 +19,7 @@ const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   addrSelectedList: stores.wanAddress.addrSelectedList,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  storemanListInfo: stores.openstoreman.storemanListInfo,
 }))
 
 @observer
@@ -29,7 +27,6 @@ class StoremanRegister extends Component {
   state = {
     balance: 0,
     confirmVisible: false,
-    initAmount: MINAMOUNT,
     confirmLoading: false,
   };
 
@@ -75,12 +72,12 @@ class StoremanRegister extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    let { form } = this.props;
+    let { form, group } = this.props;
     let balance = form.getFieldValue('balance');
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).minus(MINAMOUNT).lt(0)) {
+    if (new BigNumber(value).minus(group.minStakeIn).lt(0)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
@@ -122,7 +119,7 @@ class StoremanRegister extends Component {
   onSend = async () => {
     this.setState({ confirmLoading: true });
     let { form, group } = this.props;
-    let { myAddr: from, amount, publicKey: wPk } = form.getFieldsValue(['myAddr', 'amount', 'publicKey']);
+    let { myAddr: from, amount, publicKey: wPk, enodeID } = form.getFieldsValue(['myAddr', 'amount', 'publicKey', 'enodeID']);
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
@@ -134,9 +131,8 @@ class StoremanRegister extends Component {
       walletID,
       amount: amount.toString(),
       BIP44Path: path,
-      groupId: group.groupId,
-      enodeID: group.enodeID,
-      delegateFee: group.delegateFee,
+      groupId: group.groupIdText,
+      enodeID: enodeID,
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
@@ -146,8 +142,6 @@ class StoremanRegister extends Component {
       let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'StoremanStakeIn' };
       try {
         await OsmTrezorTrans(path, from, amount, ACTION, satellite, abiParams);
-        this.props.updateStakeInfo();
-        this.props.updateTransHistory();
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } catch (error) {
@@ -165,9 +159,10 @@ class StoremanRegister extends Component {
   }
 
   render() {
-    const { form, settings, addrSelectedList, onCancel, group } = this.props;
+    const { form, settings, addrSelectedList, onCancel, group, storemanListInfo } = this.props;
     let record = form.getFieldsValue(['publicKey', 'enodeID', 'myAddr', 'amount', 'crosschain']);
     let showConfirmItem = { groupId: true, publicKey: true, enodeID: true, crosschain: true, account: true, amount: true };
+    let addrSelectedListFilter = addrSelectedList.filter(v => !storemanListInfo.map(i => i.from.toLowerCase()).includes(v.toLowerCase()))
 
     return (
       <div>
@@ -205,7 +200,7 @@ class StoremanRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
             <div className="validator-line">
-              <AddrSelectForm form={form} addrSelectedList={addrSelectedList} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+              <AddrSelectForm form={form} addrSelectedList={addrSelectedListFilter} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
             </div>
             <CommonFormItem form={form} formName='balance' disabled={true}
               options={{ initialValue: this.state.balance }}
@@ -213,7 +208,7 @@ class StoremanRegister extends Component {
               title={intl.get('ValidatorRegister.balance')}
             />
             <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: this.state.initAmount, rules: [{ required: true, validator: this.checkAmount }] }}
+              options={{ initialValue: this.props.group.minStakeIn, rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('Common.amount')}
             />

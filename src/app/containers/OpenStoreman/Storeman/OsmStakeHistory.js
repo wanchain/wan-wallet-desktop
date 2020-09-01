@@ -11,8 +11,8 @@ import { MAIN, TESTNET } from 'utils/settings'
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  historyList: stores.openstoreman.storemanHistoryList,
   osmStakingColumns: stores.languageIntl.osmStakingColumns,
-  historyList: stores.staking.registerValidatorHistoryList,
 }))
 
 @observer
@@ -24,7 +24,6 @@ class OsmStakeHistory extends Component {
 
   stakingColumnsTree = () => {
     this.props.osmStakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
-    this.props.osmStakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.osmStakingColumns;
   }
 

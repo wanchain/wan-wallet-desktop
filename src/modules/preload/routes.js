@@ -10,5 +10,5 @@ module.exports = {
     crossChain: ['initRegTokens', 'getCoinsInfo', 'getTokensInfo', 'getCcTokensInfo', 'getTokenPairs', 'getChainInfoByChainId', 'getCcTokenSelections', 'setCcTokenSelectStatus', 'updateCoinsInfo', 'updateTokensInfo', 'updateCcTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'deleteCustomToken', 'getSmgList', 'getStoremanGroupList', 'getStoremanGroupListByChainPair', 'getHtmlAddr', 'crossChain', 'crossBTC', 'crossBTC_WAN', 'crossETH', 'crossEOS', 'crossEOS_WAN', 'crossErc20', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans', 'getRegisteredOrigToken'],
     dappStore: ['getRegisteredDapp', 'getRegisteredAds'],
     upgrade: ['start'],
-    storeman: ['openStoremanAction', 'getContractData', 'insertStoremanTransToDB'],
-}
+    storeman: ['getStoremanConf', 'getStoremanDelegatorTotalIncentive', 'getStoremanStakeTotalIncentive', 'getStoremanDelegators', 'openStoremanAction', 'getContractData', 'insertStoremanTransToDB', 'getOpenStoremanGroupList', 'getStoremanStakeInfo', 'getStoremanDelegatorInfo', 'getStoremanGroupMember', 'getStoremanCandidates'],
+  }
