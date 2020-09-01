@@ -246,7 +246,7 @@ class OpenStoreman {
       return Promise.all([wandWrapper('storeman_getStoremanGroupMember', { groupId: groupMemberId }), wandWrapper('storeman_getStoremanCandidates', { groupId: groupCandidatesMemberId })])
     }).then(ret => {
       runInAction(() => {
-        let temp = ret.flat()
+        let temp = ret.flat();
         temp.forEach((item, index) => {
           // TODO Delete it
           if (index === 0) {
@@ -256,7 +256,7 @@ class OpenStoreman {
           item.chain1 = temp.chain1;
           item.chain2 = temp.chain2;
           item.nameShowing = item.name ? item.name : item.wkAddr;
-          item.icon = item.iconData ? item.iconData : ('data:image/png;base64,' + new Identicon(item.wkAddr).toString());
+          item.icon = item.iconData ? `data:image/${item.iconType};base64, ${item.iconData}` : ('data:image/png;base64,' + new Identicon(item.wkAddr).toString());
         })
         this.storemanMemberList = temp;
       })
