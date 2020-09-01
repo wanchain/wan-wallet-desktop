@@ -247,11 +247,7 @@ class OpenStoreman {
     }).then(ret => {
       runInAction(() => {
         let temp = ret.flat();
-        temp.forEach((item, index) => {
-          // TODO Delete it
-          if (index === 0) {
-            item.name = 'wanchain';
-          }
+        temp.forEach(item => {
           let temp = this.storemanGroupList.find(v => v.groupId === item.groupId);
           item.chain1 = temp.chain1;
           item.chain2 = temp.chain2;

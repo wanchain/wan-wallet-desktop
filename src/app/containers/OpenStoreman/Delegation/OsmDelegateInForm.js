@@ -301,10 +301,7 @@ class OsmDelegateInForm extends Component {
                             optionFilterProp="children"
                             onChange={this.onStoremanChange}
                             getPopupContainer={() => document.getElementById('osmNameSelect')}
-                            filterOption={(input, option) => {
-                              console.log(input, option)
-                              return option.props.children.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }}
+                            filterOption={(input, option) => option.props.children.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0}
                           >
                             {storemanListSelect.map((item, index) => <Select.Option value={item.props.value} key={index}>{item}</Select.Option>)}
                           </Select>
