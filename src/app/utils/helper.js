@@ -684,7 +684,7 @@ export const createWANAddr = async function () {
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'WAN', path: path }, async (err, val_address_get) => {
       if (!err) {
-        let name = await getNewAccountName(5718350, 'Account');
+        let name = await getNewAccountName(5718350, 'WAN-Account');
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
           if (!err && val_account_create) {
             let addressInfo = {

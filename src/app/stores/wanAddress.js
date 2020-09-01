@@ -31,7 +31,7 @@ class WanAddress {
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
-      name: newAddr.name ? newAddr.name : `Account${newAddr.start + 1}`,
+      name: newAddr.name ? newAddr.name : `WAN-Account${newAddr.start + 1}`,
       address: newAddr.address,
       waddress: newAddr.waddress,
       balance: '0',
