@@ -1030,6 +1030,41 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
+        case 'tokenNormal':
+            try {
+                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
+                let from = await hdUtil.getAddress(walletID, chainType, path);
+                // console.log('normal from:::', from);
+                let fromAddr = from.address;
+                if (fromAddr.indexOf('0x') === -1) {
+                    fromAddr = '0x' + fromAddr;
+                }
+                let input = {
+                    symbol: symbol,
+                    from: fromAddr,
+                    to: to,
+                    amount: amount,
+                    gasPrice: gasPrice,
+                    gasLimit: gasLimit,
+                    BIP44Path: path,
+                    walletID: walletID,
+                    nonce: nonce,
+                    data: data,
+                    satellite: satellite
+                }
+
+                logger.info('Normal transaction: ' + JSON.stringify(input));
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(to, chainType, '3');// tokenaddr chain
+                // console.log('Normal:::', srcChain);
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
+                logger.info('Transaction hash: ' + JSON.stringify(ret));
+            } catch (e) {
+                logger.error('Send transaction failed: ' + e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
         case 'BTCNormal':
             try {
                 logger.info('Normal transaction: ' + JSON.stringify(payload));
@@ -1592,7 +1627,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 ret = await ccUtil.getTokenPairs();
             } catch (e) {
                 logger.error('getTokenPairs failed:')
-                logger.error(e.message || e.stack)
+                logger.error(e, e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1725,7 +1760,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             break
 
         case 'updateTokensBalance':
-            let { address, tokenScAddr, chain } = payload;
             try {
                 let { address, tokenScAddr, chain } = payload;
                 ret = await ccUtil.getMultiTokenBalance(address, tokenScAddr, chain);
@@ -1885,8 +1919,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
         case 'crossETH':
             try {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
-                console.log(sourceAccount, sourceSymbol, tokenPairID);
-                console.log(destinationAccount, destinationSymbol, tokenPairID);
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 if (payload.type === 'REDEEM') {

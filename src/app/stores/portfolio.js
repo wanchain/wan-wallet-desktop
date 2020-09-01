@@ -9,6 +9,7 @@ import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
+import { COIN_ACCOUNT } from 'utils/settings';
 
 class Portfolio {
   @observable coinPriceObj;
@@ -136,6 +137,9 @@ class Portfolio {
     try {
       Object.keys(self.coinList).forEach(async (key) => {
         let val = self.coinList[key];
+        if (key.indexOf(COIN_ACCOUNT) !== -1) {
+          key = val.symbol;
+        }
         if (key in self.defaultCoinList) {
           switch (key) {
             case 'WAN':
@@ -165,6 +169,7 @@ class Portfolio {
   }
 
   @computed get portfolioList() {
+    // console.log('self.coinList:', self.coinList);
     let list = Object.keys(self.coinList).map((key, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: key, writable: true },
@@ -179,7 +184,11 @@ class Portfolio {
       Object.keys(self.coinList).forEach((key, index) => {
         let val = list[index];
         if (!(key in self.defaultCoinList)) {
-          key = self.coinList[key].ancestor ? self.coinList[key].ancestor : self.coinList[key].symbol;
+          if (key.indexOf(COIN_ACCOUNT) !== -1) {
+            key = self.coinList[key].symbol;
+          } else {
+            key = self.coinList[key].ancestor ? self.coinList[key].ancestor : self.coinList[key].symbol;
+          }
         }
         if (key in self.coinPriceObj) {
           val.price = `$${self.coinPriceObj[key]}`;
@@ -217,6 +226,7 @@ class Portfolio {
       item.balance = formatNum(item.balance);
       item.value = `$${formatNum(item.value.substr(1))}`;
     });
+    // console.log('list:', list)
     return list;
   }
 }

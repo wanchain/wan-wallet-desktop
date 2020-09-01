@@ -6,14 +6,13 @@ import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  updateWalletSelectedStatus: (...args) => stores.tokens.updateWalletSelectedStatus(...args),
   updateTokenSelectedStatus: (...args) => stores.tokens.updateTokenSelectedStatus(...args),
 }))
 
 @observer
 class ChainMiniList extends Component {
   render() {
-    let { record, updateWalletSelectedStatus, updateTokenSelectedStatus } = this.props;
+    let { record, updateTokenSelectedStatus } = this.props;
     return (
       record.children.length && (
         <table className={style.tokenList}>
@@ -25,7 +24,7 @@ class ChainMiniList extends Component {
                     <td style={{ textAlign: 'left', width: '50%', paddingLeft: '20%' }}>{d.symbol}</td>
                     <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>@{d.title.toUpperCase()}</Tag></td>
                     <td style={{ textAlign: 'left' }}>
-                      <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => d.isToken ? updateTokenSelectedStatus(d.toAccount, false) : updateWalletSelectedStatus(d.symbol, false) } /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => d.isToken ? updateTokenSelectedStatus(d.toAccount, true) : updateWalletSelectedStatus(d.symbol, true)} />}</span>
+                      <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => updateTokenSelectedStatus(d.toAccount, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => updateTokenSelectedStatus(d.toAccount, true)} />}</span>
                     </td>
                   </tr>
                 )

@@ -9,12 +9,16 @@ import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import session from './session';
+
 import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
-import { WANPATH, ETHPATH, WALLET_CHAIN, CROSSCHAINTYPE, COIN_ACCOUNT } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, CROSSCHAINTYPE, COIN_ACCOUNT } from 'utils/settings';
 import { getBalance } from 'utils/helper';
 
 class Tokens {
   @observable currTokenAddr = '';
+
+  @observable currTokenChain = '';
 
   @observable tokensList = {}; // Tokens collection
 
@@ -45,8 +49,12 @@ class Tokens {
     self.currTokenAddr = addr;
   }
 
+  @action setCurrTokenChain(chain) {
+    self.currTokenChain = chain;
+  }
+
   @action getToken(scAddr) {
-    let token = self.tokensList[scAddr];
+    let token = Object.values(self.tokensList).find(obj => obj.account === scAddr);
     if (token && token.ancestor && self.tokensList[token.ancestor]) {
       token.iconData = self.tokensList[token.ancestor].iconData;
       token.iconType = self.tokensList[token.ancestor].iconType;
@@ -137,40 +145,36 @@ class Tokens {
   }
 
   @action updateTokensBalance(tokenScAddr, chain = 'WAN') {
-    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
-    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
-      console.log('Cannot get addresses.');
+    let addrInfo = this.getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
       return;
     }
-    let addrInfo = ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
     let normalArr = Object.keys(addrInfo.normal || []);
     let importArr = Object.keys(addrInfo.import || []);
     let ledgerArr = Object.keys(addrInfo.ledger || []);
     let trezorArr = Object.keys(addrInfo.trezor || []);
     let rawKeyArr = Object.keys(addrInfo.rawKey || []);
-    console.log(normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr));
+    // console.log('Update Token Balance:', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain });
     wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain }, (err, data) => {
+      // console.log('result:', err, data)
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;
       }
-      console.log('Token B:', tokenScAddr, chain, data);
       self.tokensBalance[tokenScAddr] = data;
     })
   }
 
   getCoinsListInfo_2way(chain, chainID) {
-    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
-    let addressObj = ADDRESSES[`${chain.toLowerCase()}Address`];
+    let addressObj = this.getChainAddressInfoByChain(chain);
     if (addressObj === undefined) {
       return [];
     }
     let addrList = [];
-    let normal = addressObj.addrInfo.normal || [];
-    let ledger = addressObj.addrInfo.ledger || [];
-    let trezor = addressObj.addrInfo.trezor || [];
+    let normal = addressObj.normal || [];
+    let ledger = addressObj.ledger || [];
+    let trezor = addressObj.trezor || [];
     let addresses = Object.assign({}, normal, ledger, trezor);
-    // console.log('getCoinsListInfo_2way-------------------addresses:', addresses)
     Object.keys(addresses).forEach(item => {
       let balance = addresses[item].balance;
       addrList.push({
@@ -187,17 +191,16 @@ class Tokens {
   }
 
   getTokensListInfo_2way(chain, chainID, SCAddress) {
-    const ADDRESSES = { ethAddress, btcAddress, eosAddress, wanAddress };
-    let addressObj = ADDRESSES[`${chain.toLowerCase()}Address`];
+    let addressObj = this.getChainAddressInfoByChain(chain);
     if (addressObj === undefined) {
       return [];
     }
+
     let addrList = [];
-    let normal = addressObj.addrInfo.normal;
-    let ledger = addressObj.addrInfo.ledger || [];
-    let trezor = addressObj.addrInfo.trezor || [];
+    let normal = addressObj.normal;
+    let ledger = addressObj.ledger || [];
+    let trezor = addressObj.trezor || [];
     let addresses = Object.assign({}, normal, ledger, trezor);
-    // console.log('tokensBalance:', self.tokensBalance);
     Object.keys(addresses).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
@@ -416,10 +419,6 @@ class Tokens {
   @computed get getTokensListInfo() {
     let addrList = [];
     let normalArr = Object.keys(wanAddress.addrInfo.normal);
-    // console.log('normalArr:', normalArr);
-    // console.log('tokensBalance', self.tokensBalance);
-    // console.log('tokensList', self.tokensList);
-    // console.log('currTokenAddr', self.currTokenAddr);
     normalArr.forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
@@ -444,42 +443,61 @@ class Tokens {
     return addrList;
   }
 
-  /* @computed get getTokensListInfo_2WanTypes() {
-    let addTypes = ['normal', 'ledger', 'trezor', 'import', 'rawKey'];
+  @computed get getTokensListInfo_ByChain() {
+    const chain = this.currTokenChain;
+    let addrInfo = this.getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
+      return;
+    }
     let addrList = [];
-
-    Object.keys(wanAddress.addrInfo).forEach(type => {
-      if (!addTypes.includes(type)) {
-        return;
-      }
-
-      Object.keys(wanAddress.addrInfo[type]).forEach(item => {
+    [addrInfo.normal, addrInfo.ledger || {}, addrInfo.trezor || {}].forEach(obj => {
+      Object.keys(obj).forEach(item => {
         let balance;
-
-        if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-          if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-            balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
+        let pathPrefix = '';
+        switch (chain) {
+          case 'WAN':
+            pathPrefix = WANPATH;
+            break;
+          case 'ETH':
+            pathPrefix = ETHPATH;
+            break;
+          case 'EOS':
+            pathPrefix = EOSPATH;
+            break;
+          case 'BTC':
+            //  network = 1 ? 'main' : 'testnet',
+            if (session.chainId === 1) {
+              pathPrefix = BTCPATH_MAIN;
+            } else {
+              pathPrefix = BTCPATH_TEST;
+            }
+            break;
+          default:
+            pathPrefix = WANPATH;
+        }
+        if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
+          let tokenKey = Object.keys(this.tokensList).find(key => key.indexOf(this.currTokenAddr) !== -1);
+          if (this.tokensList && tokenKey && this.tokensList[tokenKey]) {
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], this.tokensList[tokenKey].decimals)
           } else {
             balance = 0
           }
         } else {
           balance = 0;
         }
-        let path = ['ledger', 'trezor'].includes(type) ? `${wanAddress.addrInfo[type][item].path}` : `${WANPATH}${wanAddress.addrInfo[type][item].path}`;
         addrList.push({
-          path,
           key: item,
-          name: wanAddress.addrInfo[type][item].name,
+          name: obj[item].name,
           address: wanUtil.toChecksumAddress(item),
-          balance: balance,
+          balance: formatNum(balance),
+          path: `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance
         });
-      })
-    })
-
+      });
+    });
     return addrList;
-  } */
+  }
 
   @computed get getE20TokensListInfo() {
     let addrList = [];
@@ -588,7 +606,7 @@ class Tokens {
       if (v.account === COIN_ACCOUNT) { // Coin
         route = `/${v.symbol.toLowerCase()}Account`;
       } else { // Token
-        route = `/tokens/${v.chainSymbol}/${key}/${v.symbol}`;
+        route = `/tokens/${v.chainSymbol}/${v.account}/${v.symbol}`;
       }
       selections[v.ancestor].children.push({
         title: v.chain,
@@ -598,10 +616,23 @@ class Tokens {
         account: v.account,
         toAccount: key,
         selected: v.select,
-        isToken: true,
       });
     });
     return Object.values(selections);
+  }
+
+  getTokenInfoFromTokensListByAddr(addr) {
+    return Object.values(this.tokensList).find(obj => obj.account === addr);
+  }
+
+  getChainAddressInfoByChain(chain) {
+    const ADDRESSES = { wanAddress, ethAddress };
+    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
+      console.log('Cannot get addresses.');
+      return undefined;
+    } else {
+      return ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
+    }
   }
 }
 

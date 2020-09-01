@@ -14,7 +14,6 @@ const TokenCollectionCreateForm = Form.create({ name: 'TokenNormalTransForm' })(
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   tokensBalance: stores.tokens.tokensBalance,
   transParams: stores.sendTransParams.transParams,
@@ -22,10 +21,11 @@ const TokenCollectionCreateForm = Form.create({ name: 'TokenNormalTransForm' })(
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
+  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
-class SendNormalTrans extends Component {
+class SendTokenNormalTrans extends Component {
   state = {
     spin: true,
     loading: false,
@@ -33,7 +33,12 @@ class SendNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, tokenAddr, tokensBalance } = this.props;
+    const { from, path, tokenAddr, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, tokensBalance, getChainAddressInfoByChain } = this.props;
+    let addrInfo = getChainAddressInfoByChain(chainType);
+    if (addrInfo === undefined) {
+      message.warn(intl.get('Unknown token type')); // To do : i18n
+      return;
+    }
 
     // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
@@ -90,4 +95,4 @@ class SendNormalTrans extends Component {
   }
 }
 
-export default SendNormalTrans;
+export default SendTokenNormalTrans;

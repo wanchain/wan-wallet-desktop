@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
+import bs58check from 'bs58check';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH } from 'utils/settings';
 
 import { fromWei, isNumber } from 'utils/support';
@@ -287,6 +288,17 @@ export const checkETHAddr = function (address) {
   })
 };
 
+export const checkBase58 = function (address) {
+  return new Promise((resolve, reject) => {
+    try {
+      bs58check.decode(address);
+      resolve(true);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 export const checkWanValidatorAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isValidatorAddress', { address: address }, (err, val) => {
@@ -389,7 +401,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
     tmp = Object.assign(tmp, addrInfo[item])
   })
   Object.values(tmp).forEach(item => {
-    if (item.address === addr) {
+    if (item.address === addr || item.address === addr.toLowerCase()) {
       balance = item.balance;
       return; // eslint-disable-line no-useless-return
     }

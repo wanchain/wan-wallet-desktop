@@ -7,13 +7,11 @@ import { Table, Row, Col, message } from 'antd';
 import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import SendNormalTrans from 'components/SendNormalTrans';
+import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor'
-
-const CHAINTYPE = 'WAN';
 
 message.config({
   duration: 2,
@@ -22,59 +20,59 @@ message.config({
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.tokens.getTokenAmount,
+  currTokenAddr: stores.tokens.currTokenAddr,
   transParams: stores.sendTransParams.transParams,
   tokenIconList: stores.tokens.tokenIconList,
-  getTokensListInfo: stores.tokens.getTokensListInfo_2WanTypes,
+  getTokensListInfo_ByChain: stores.tokens.getTokensListInfo_ByChain,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
+  setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr)
+  updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
+  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
 class TokenTrans extends Component {
-  columns = [
-    {
-      dataIndex: 'name',
-      editable: true
-    },
-    {
-      dataIndex: 'address',
-      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
-    },
-    {
-      dataIndex: 'balance',
-      sorter: (a, b) => a.balance - b.balance,
-    },
-    {
-      dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={typeof (record.balance) === 'string' ? record.balance.replace(/,/g, '') : record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} transType={TRANSTYPE.tokenTransfer} /></div>
-    }
-  ];
-
   constructor(props) {
     super(props);
-    this.props.setCurrToken(this.props.tokenAddr);
     this.props.changeTitle('WanAccount.wallet');
+    this.init(props.tokenAddr, props.chain);
+  }
+
+  init = (tokenAddr, chain) => {
+    this.props.setCurrToken(tokenAddr);
+    this.props.setCurrTokenChain(chain);
     this.props.updateTransHistory();
-    if (!this.props.tokenIconList[this.props.tokenAddr]) {
-      this.props.getTokenIcon(this.props.tokenAddr);
+    if (!this.props.tokenIconList[tokenAddr]) {
+      this.props.getTokenIcon(tokenAddr);
     }
   }
 
   componentDidMount() {
+    const { tokenAddr, chain } = this.props;
+    this.props.updateTransHistory();
+    this.props.updateTokensBalance(tokenAddr, chain);
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
-      this.props.updateTokensBalance(this.props.tokenAddr);
+      this.props.updateTokensBalance(tokenAddr, chain);
     }, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  componentWillReceiveProps(newProps) {
+    let addr = newProps.match.params.tokenAddr;
+    let chain = newProps.match.params.chain;
+    if (addr !== this.props.currTokenAddr) {
+      // console.log('Do Init!!!', addr, chain, this.props.currTokenAddr)
+      this.init(addr, chain);
+    }
   }
 
   sendLedgerTrans = (path, tx) => {
@@ -106,17 +104,48 @@ class TokenTrans extends Component {
     })
   }
 
+  columns = [
+    {
+      dataIndex: 'name',
+      editable: true
+    },
+    {
+      dataIndex: 'address',
+      render: text => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} /></div>
+    },
+    {
+      dataIndex: 'balance',
+      sorter: (a, b) => a.balance - b.balance,
+    },
+    {
+      dataIndex: 'action',
+      render: (text, record) => {
+        // console.log('record:', record);
+        return <div><SendTokenNormalTrans balance={typeof (record.balance) === 'string' ? record.balance.replace(/,/g, '') : record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.props.chain} transType={TRANSTYPE.tokenTransfer} /></div>
+      }
+    }
+  ];
+
   handleSend = from => {
     let params = this.props.transParams[from];
-    let type = checkAddrType(from, this.props.addrInfo);
+    // console.log('params:', params);
+    const { chain, symbol, getChainAddressInfoByChain } = this.props;
+    let addrInfo = getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
+      message.warn(intl.get('Unknown token type')); // To do : i18n
+      return;
+    }
+
+    let type = checkAddrType(from, addrInfo);
     let walletID = getWalletIdByType(type);
     let trans = {
       walletID,
-      chainType: CHAINTYPE,
-      symbol: CHAINTYPE,
+      chainType: chain,
+      symbol: symbol,
       path: params.path,
       to: params.to,
-      amount: '0',
+      // amount: '0',
+      amount: params.token,
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
@@ -126,6 +155,7 @@ class TokenTrans extends Component {
         token: params.token
       }
     };
+    // console.log('trans:', trans);
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'ledger':
@@ -197,7 +227,7 @@ class TokenTrans extends Component {
         case 'normal':
         case 'import':
         case 'rawKey':
-          wand.request('transaction_normal', trans, (err, txHash) => {
+          wand.request('transaction_tokenNormal', trans, (err, txHash) => {
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
               console.log('transaction_normal:', err);
@@ -220,11 +250,13 @@ class TokenTrans extends Component {
   }
 
   render() {
-    const { getAmount, getTokensListInfo, symbol, tokenAddr } = this.props;
+    const { getAmount, getTokensListInfo_ByChain, symbol, tokenAddr, chain } = this.props;
 
     this.props.language && this.columns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
+
+    // console.log('params:', tokenAddr, chain, symbol);
 
     return (
       <div className="account">
@@ -236,7 +268,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo_ByChain} />
           </Col>
         </Row>
         <Row className="mainBody">
@@ -249,4 +281,4 @@ class TokenTrans extends Component {
   }
 }
 
-export default props => <TokenTrans {...props} symbol={props.match.params.symbol} key={props.match.params.tokenAddr} tokenAddr={props.match.params.tokenAddr} />;
+export default props => <TokenTrans {...props} symbol={props.match.params.symbol} chain={props.match.params.chain} key={props.match.params.tokenAddr} tokenAddr={props.match.params.tokenAddr} />;

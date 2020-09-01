@@ -3,11 +3,10 @@ import { Button, Modal, Form, Input, Table } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-
-import style from './index.less';
 import { formatNum } from 'utils/support';
 import { TRANSTYPE } from 'utils/settings';
 import { getSplitAmountToArray } from 'utils/helper';
+import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -110,7 +109,7 @@ class ConfirmForm extends Component {
               <Table className={style.splitAmountTable} scroll={{ x: 480 }} rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns()} pagination={false} />
             ) : (
                 <div>
-                  <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}> {
+                  <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : (chain === undefined ? intl.get('AdvancedOptionForm.gwin') : chain)) + ')'}> {
                     getFieldDecorator(
                       'gasPrice', { initialValue: gasPrice })
                       (<Input disabled={true} />)
