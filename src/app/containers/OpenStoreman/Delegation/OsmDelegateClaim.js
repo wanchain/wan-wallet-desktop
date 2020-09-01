@@ -4,23 +4,22 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 import { signTransaction } from 'componentUtils/trezor';
-import { toWei } from 'utils/support.js';
 
-import style from 'components/Staking/MyValidatorsList/index.less';
+import { toWei } from 'utils/support.js';
+import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import DelegationConfirmForm from './DelegationConfirmForm';
-import { WALLETID } from 'utils/settings';
+import style from 'components/Staking/MyValidatorsList/index.less';
 import { checkAmountUnit, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, getStoremanContractData } from 'utils/helper';
 
-const ACTION = 'delegateClaim'
+const ACTION = 'delegateClaim';
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
@@ -89,13 +88,13 @@ class InForm extends Component {
       from,
       amount,
       walletID,
-      wAddr: record.wAddr,
+      wkAddr: record.wkAddr,
       BIP44Path: record.myAddress.path,
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wAddr];
-      let satellite = { wAddr: record.wAddr, annotate: 'StoremanDelegateClaim' };
+      let abiParams = [record.wkAddr];
+      let satellite = { wkAddr: record.wkAddr, annotate: 'StoremanDelegateClaim' };
       await this.trezorDelegationAppend(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
@@ -147,7 +146,6 @@ class InForm extends Component {
         status: 'Sending',
       };
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
-      this.props.updateStakeInfo();
       this.props.updateTransHistory();
     } catch (error) {
       console.log('Trezor validator append failed:', error);
@@ -169,7 +167,7 @@ class InForm extends Component {
         <Modal visible closable={false} destroyOnClose={true} title='Delegation Claim' className="validator-register-modal"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={record.reward === '0'} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className="validator-bg">
@@ -178,12 +176,8 @@ class InForm extends Component {
               options={{ initialValue: record.stake, rules: [{ required: true }] }}
               title='Stake'
             />
-            <CommonFormItem form={form} formName='Incentive' disabled={true}
-              options={{ initialValue: record.incentive, rules: [{ required: true }] }}
-              title='Incentive'
-            />
             <CommonFormItem form={form} formName='storeman' disabled={true}
-              options={{ initialValue: record.wAddr, rules: [{ required: true }] }}
+              options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
               title='Storeman'
             />
             <CommonFormItem form={form} formName='withdrawable' disabled={true}

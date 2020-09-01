@@ -16,10 +16,9 @@ const InForm = Form.create({ name: 'OsmDelegateInForm' })(OsmDelegateInForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  stakingList: stores.staking.stakingList,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  getStoremanDelegatorTotalIncentive: () => stores.openstoreman.getStoremanDelegatorTotalIncentive(),
 }))
 
 @observer
@@ -35,11 +34,10 @@ class Delegation extends Component {
   }
 
   componentDidMount () {
-    this.props.updateStakeInfo();
     this.timer = setInterval(() => {
-      this.props.updateStakeInfo();
       this.props.updateTransHistory();
-    }, 20000)
+      this.props.getStoremanDelegatorTotalIncentive()
+    }, 10000)
   }
 
   componentWillUnmount () {

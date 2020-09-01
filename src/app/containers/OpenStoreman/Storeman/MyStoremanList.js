@@ -9,13 +9,14 @@ import OsmAppendAndExit from './OsmAppendAndExit';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  myValidatorList: stores.staking.myValidatorList,
+  storemanListData: stores.openstoreman.storemanListData,
   osmStoremanListColumns: stores.languageIntl.osmStoremanListColumns,
-  getValidatorsInfo: () => stores.staking.getValidatorsInfo()
+  getStoremanStakeInfo: () => stores.openstoreman.getStoremanStakeInfo(),
+  getStoremanDelegatorInfo: () => stores.openstoreman.getStoremanDelegatorInfo()
 }))
 
 @observer
-class MyValidatorsList extends Component {
+class MyStoremanList extends Component {
   state = {
     withdrawVisible: false,
     stakeInVisible: false,
@@ -23,8 +24,9 @@ class MyValidatorsList extends Component {
 
   componentDidMount () {
     this.timer = setInterval(() => {
-      this.props.getValidatorsInfo()
-    }, 3000)
+      this.props.getStoremanStakeInfo()
+      this.props.getStoremanDelegatorInfo()
+    }, 10000)
   }
 
   componentWillUnmount () {
@@ -57,7 +59,13 @@ class MyValidatorsList extends Component {
       },
       {
         ...osmStoremanListColumns[3],
-        render: rank => <div><span>{rank[0]}</span>/<span>{rank[1]}</span></div>
+        render: rank => {
+          if (rank[0].toString() === '-1') {
+            return <div><span>&gt;</span><span>{rank[1]}</span></div>
+          } else {
+            return <div><span>{rank[0]}</span>/<span>{rank[1]}</span></div>
+          }
+        }
       },
       {
         ...osmStoremanListColumns[4],
@@ -77,7 +85,7 @@ class MyValidatorsList extends Component {
         <div>
           <Row>
             <Col span={8} align="center"><OsmAppendAndExit record={record} modifyType='top-up' /></Col>
-            <Col span={8} align="center"><OsmAppendAndExit record={record} modifyType='exit' /></Col>
+            <Col span={8} align="center"><OsmAppendAndExit enableButton={record.canStakeOut && !record.quited} record={record} modifyType='exit' /></Col>
             <Col span={8} align="center"><OsmVldClaim record={record} /></Col>
 
           </Row>
@@ -92,32 +100,12 @@ class MyValidatorsList extends Component {
   }
 
   render () {
-    const fakeData = [
-      {
-        key: 1,
-        account: 'Account1',
-        myAddress: {
-          addr: '0x56664f3B65Cc5DAF4098ed10b66C4a86e58e21a4',
-          type: 'normal',
-          path: "m/44'/5718350'/0'/0",
-        },
-        stake: '20000',
-        groupId: '112',
-        rank: ['11', '21'],
-        slash: '1',
-        activity: '2',
-        reward: '55',
-        crosschain: 'WAN / BTC',
-        status: 'Processing',
-        wAddr: '0x56664f3B65Cc5DAF4098ed10b66C4a86e58e21a4',
-      }
-    ]
     return (
       <div className="validators">
-        <Table columns={this.getColumns()} dataSource={fakeData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table columns={this.getColumns()} dataSource={this.props.storemanListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }
 }
 
-export default MyValidatorsList;
+export default MyStoremanList;

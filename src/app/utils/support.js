@@ -171,3 +171,11 @@ export function formatLongText(data, len = '8') {
     return data;
   }
 }
+
+export function showNA (data) {
+  if (data === '0' || data === 0) {
+    return 'N/A';
+  } else {
+    return data;
+  }
+}

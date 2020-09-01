@@ -43,7 +43,7 @@ class DelegationConfirmForm extends Component {
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">Storeman Account</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.wAddr}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.wkAddr}</span></Col>
                 </Row>
               </div>
             }

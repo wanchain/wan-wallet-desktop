@@ -89,13 +89,13 @@ class InForm extends Component {
       from,
       amount,
       walletID,
-      wAddr: record.wAddr,
+      wkAddr: record.wkAddr,
       BIP44Path: record.myAddress.path,
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wAddr];
-      let satellite = { wAddr: record.wAddr, annotate: 'StoremanStakeClaim' };
+      let abiParams = [record.wkAddr];
+      let satellite = { wkAddr: record.wkAddr, annotate: 'StoremanStakeClaim' };
       await this.trezorStoremanClaim(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
@@ -164,13 +164,13 @@ class InForm extends Component {
     const { onCancel, form, settings, record, addrInfo } = this.props;
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo);
     let showConfirmItem = { storeman: true, withdrawable: true, account: true };
-
+    let withdrawableAmount = record.canStakeClaim ? new BigNumber(record.stake).plus(record.reward).toString(10) : record.reward;
     return (
       <div>
         <Modal visible closable={false} destroyOnClose={true} title='Storeman Claim' className="validator-register-modal"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={withdrawableAmount === '0'} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <div className="validator-bg">
@@ -188,11 +188,11 @@ class InForm extends Component {
               title='Reward'
             />
             <CommonFormItem form={form} formName='account' disabled={true}
-              options={{ initialValue: record.wAddr, rules: [{ required: true }] }}
+              options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
               title='Account'
             />
             <CommonFormItem form={form} formName='withdrawableAmount' disabled={true}
-              options={{ initialValue: '100', rules: [{ required: true }] }}
+              options={{ initialValue: withdrawableAmount, rules: [{ required: true }] }}
               title='Withdrawable Amount'
             />
           </div>
@@ -232,10 +232,11 @@ class OsmClaim extends Component {
   }
 
   render () {
+    const { record } = this.props;
     return (
       <div>
         <Button className={style.modifyTopUpBtn} onClick={this.handleStateToggle} />
-        {this.state.visible && <StoremanInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={this.props.record} />}
+        {this.state.visible && <StoremanInForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={record} />}
       </div>
     );
   }

@@ -2,10 +2,11 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, Select, message, Row, Col, Avatar } from 'antd';
+import { Button, Modal, Form, Icon, Select, message, Row, Col, Spin, Avatar } from 'antd';
 
-import { toWei } from 'utils/support.js';
+import localStyle from './index.less'; // Do not delete this line
 import PwdForm from 'componentUtils/PwdForm';
+import { toWei, fromWei } from 'utils/support.js';
 import { signTransaction } from 'componentUtils/trezor';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings';
 import CommonFormItem from 'componentUtils/CommonFormItem';
@@ -21,13 +22,15 @@ const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 
 @inject(stores => ({
-  settings: stores.session.settings,
   chainId: stores.session.chainId,
+  settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
+  storemanConf: stores.openstoreman.storemanConf,
+  groupChainInfo: stores.openstoreman.groupChainInfo,
   addrSelectedList: stores.wanAddress.addrSelectedList,
-  onlineValidatorList: stores.staking.onlineValidatorList,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  storemanGroupList: stores.openstoreman.storemanGroupList,
+  storemanMemberList: stores.openstoreman.storemanMemberList,
+  getStoremanMemberList: () => stores.openstoreman.getStoremanMemberList()
 }))
 
 @observer
@@ -44,6 +47,10 @@ class OsmDelegateInForm extends Component {
     }
   }
 
+  componentDidMount () {
+    this.props.getStoremanMemberList();
+  }
+
   getValueByAddrInfoArgs = (...args) => {
     return getValueByAddrInfo(...args, this.props.addrInfo);
   }
@@ -54,17 +61,28 @@ class OsmDelegateInForm extends Component {
     })
   }
 
-  onStoremanChange = storeman => {
-    let { form, onlineValidatorList } = this.props;
-    let storemanInfo = onlineValidatorList.find(i => i.name === storeman);
-    let crosschain = storemanInfo ? storemanInfo.crosschain : undefined;
-    form.setFieldsValue({
-      storeman,
-      crosschain,
-      quota: storemanInfo ? storemanInfo.quota : '0',
-      delegationFee: storemanInfo ? storemanInfo.feeRate : '0',
-    });
-    this.setState({ storemanInfo });
+  onStoremanChange = value => {
+    let { form, storemanMemberList, storemanGroupList, storemanConf } = this.props;
+    if (value) {
+      let storeman = value.split('/')[0];
+      let storemanInfo = storemanMemberList.find(i => i.wkAddr === storeman);
+      let groupInfo = storemanGroupList.find(i => i.groupId === storemanInfo.groupId);
+      let crosschain = storemanInfo ? `${storemanInfo.chain1[2]} / ${storemanInfo.chain2[2]}` : undefined;
+      form.setFieldsValue({
+        storeman,
+        crosschain,
+        quota: storemanInfo ? new BigNumber(fromWei(storemanInfo.deposit) * storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
+        delegationFee: groupInfo ? groupInfo.delegateFee / 10000 + '%' : '0',
+      });
+      this.setState({ storemanInfo });
+    } else {
+      form.setFieldsValue({
+        storeman: null,
+        quota: '0',
+        delegationFee: '0',
+      });
+      this.setState({ storemanInfo: undefined });
+    }
   }
 
   onCrossChainChange = crosschain => {
@@ -79,7 +97,7 @@ class OsmDelegateInForm extends Component {
     if (!checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).lt('0.0001') || Math.floor(valueStringPre) < 100) {
+    if (new BigNumber(value).lt('1') || Math.floor(valueStringPre) < 1) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
@@ -124,7 +142,7 @@ class OsmDelegateInForm extends Component {
       this.setState({
         loading: false,
         confirmVisible: true,
-        record: { amount, account, wAddr: storeman, crosschain, delegationFee, }
+        record: { amount, account, wkAddr: storeman.split('/')[0], crosschain, delegationFee, }
       });
     })
   }
@@ -145,21 +163,20 @@ class OsmDelegateInForm extends Component {
       walletID,
       BIP44Path: path,
       amount: amount.toString(),
-      wAddr: this.state.storemanInfo.wAddr,
+      wkAddr: this.state.storemanInfo.wkAddr,
     }
-
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
 
     if (walletID === WALLETID.TREZOR) {
-      let abiParams = [this.state.storemanInfo.wAddr];
-      let satellite = { wAddr: this.state.storemanInfo.wAddr, annotate: 'StoremanDelegateIn' };
+      let abiParams = [this.state.storemanInfo.wkAddr];
+      let satellite = { wkAddr: this.state.storemanInfo.wkAddr, annotate: 'StoremanDelegateIn' };
       await this.trezorDelegateIn(path, from, amount, ACTION, satellite, abiParams);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
-      wand.request('storeman_openStoremanAction', { tx, ACTION }, (err, ret) => {
+      wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
           message.warn(intl.get('ValidatorRegister.updateFailed'));
         } else {
@@ -208,8 +225,6 @@ class OsmDelegateInForm extends Component {
       }
 
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
-      this.props.updateStakeInfo();
-      this.props.updateTransHistory();
     } catch (error) {
       console.log('Trezor validator append failed', error);
       message.error(intl.get('ValidatorRegister.topUpFailed'));
@@ -217,126 +232,121 @@ class OsmDelegateInForm extends Component {
   }
 
   render () {
-    const { onlineValidatorList, form, settings, disabled, onCancel, addrSelectedList } = this.props;
+    const { storemanMemberList, form, settings, onCancel, addrSelectedList, groupChainInfo } = this.props;
     const { getFieldDecorator } = form;
     let showConfirmItem = { storeman: true, delegationFee: true, crosschain: true, account: true, amount: true };
-
-    // TODO delete it
-    let crosschainData = ['wan-btc', 'eth-wan', 'wan-eos']
-    this.props.onlineValidatorList.forEach((i, index) => {
-      index % 2 ? i.crosschain = 'wan-btc' : i.crosschain = 'eth-wan'
-    })
-
-    let storemanListSelect = onlineValidatorList.filter(i => {
+    let storemanListSelect = storemanMemberList.filter(i => {
       let crosschain = this.state.crosschain;
-      return !crosschain || crosschain === i.crosschain;
-    }).map(v => <div name={v.name}><Avatar src={v.icon} name={v.name} value={v.name} size="small" /> {v.name}</div>);
+      return !crosschain || crosschain === `${i.chain1[2]} / ${i.chain2[2]}`;
+    }).map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />{v.nameShowing}</div>);
 
-    let crosschainListSelect = crosschainData.filter(i => {
+    let crosschainListSelect = groupChainInfo.filter(i => {
       let storemanInfo = this.state.storemanInfo;
       return !storemanInfo || storemanInfo.crosschain === i;
-    })
+    });
+
+    let spin = storemanMemberList.length !== 0 && groupChainInfo.length !== 0;
+
     return (
       <div>
-        <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal']}
+        <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal'] + ' spincont'}
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={!spin} loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <div className="validator-bg">
-            <div className="stakein-title">Storeman's Account</div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle">
-                <Col span={6}><span className="stakein-name">Cross Chain</span></Col>
-                <Col span={18}>
-                  <Form layout="inline" id="osmChainSelect">
-                    <Form.Item>
-                      {getFieldDecorator('crosschain', {
-                        rules: [{ required: false }],
-                      })(
-                        <Select
-                          disabled={disabled}
-                          showArrow={!disabled}
-                          showSearch
-                          allowClear
-                          style={{ width: 400 }}
-                          placeholder="Select Cross Chain"
-                          optionFilterProp="children"
-                          onChange={this.onCrossChainChange}
-                          getPopupContainer={() => document.getElementById('osmChainSelect')}
-                        >
-                          {crosschainListSelect.map((item, index) => <Select.Option value={item} key={index}>{item}</Select.Option>)}
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
+          <Spin spinning={!spin} size="large">
+            <div className="validator-bg">
+              <div className="stakein-title">Storeman's Account</div>
+              <div className="validator-line">
+                <Row type="flex" justify="space-around" align="middle">
+                  <Col span={6}><span className="stakein-name">Cross Chain</span></Col>
+                  <Col span={18}>
+                    <Form layout="inline" id="osmChainSelect">
+                      <Form.Item>
+                        {getFieldDecorator('crosschain', {
+                          rules: [{ required: false }],
+                        })(
+                          <Select
+                            showSearch
+                            allowClear
+                            style={{ width: 400 }}
+                            placeholder="Select Cross Chain"
+                            optionFilterProp="children"
+                            onChange={this.onCrossChainChange}
+                            getPopupContainer={() => document.getElementById('osmChainSelect')}
+                          >
+                            {crosschainListSelect.map((item, index) => <Select.Option value={item} key={index}>{item}</Select.Option>)}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+              <div className="validator-line">
+                <Row type="flex" justify="space-around" align="middle" className="storeman">
+                  <Col span={6}><span className="stakein-name">Storeman</span></Col>
+                  <Col span={15}>
+                    <Form layout="inline" id="osmNameSelect">
+                      <Form.Item>
+                        {getFieldDecorator('storeman', {
+                          rules: [{ required: false }],
+                        })(
+                          <Select
+                            showSearch
+                            allowClear
+                            style={{ width: 400 }}
+                            placeholder="Select Storeman Account"
+                            optionFilterProp="children"
+                            onChange={this.onStoremanChange}
+                            getPopupContainer={() => document.getElementById('osmNameSelect')}
+                            filterOption={(input, option) => option.props.children.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                          >
+                            {storemanListSelect.map((item, index) => <Select.Option value={item.props.value} key={index}>{item}</Select.Option>)}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                  <Col span={3} align="right" className={style['col-stakein-info']}>
+                    <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
+                  </Col>
+                </Row>
+              </div>
+              <CommonFormItem form={form} formName='quota' disabled={true}
+                options={{ initialValue: '0' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title='Quota'
+                colSpan={colSpan}
+              />
+              <CommonFormItem form={form} formName='delegationFee' disabled={true}
+                options={{ initialValue: '0' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title='Delegation Fee'
+                colSpan={colSpan}
+              />
             </div>
-            <div className="validator-line">
-              <Row type="flex" justify="space-around" align="middle" className="storeman">
-                <Col span={6}><span className="stakein-name">Storeman</span></Col>
-                <Col span={15}>
-                  <Form layout="inline" id="osmNameSelect">
-                    <Form.Item>
-                      {getFieldDecorator('storeman', {
-                        rules: [{ required: false }],
-                      })(
-                        <Select
-                          disabled={disabled}
-                          showArrow={!disabled}
-                          showSearch
-                          allowClear
-                          style={{ width: 400 }}
-                          placeholder="Select Storeman Account"
-                          optionFilterProp="children"
-                          onChange={this.onStoremanChange}
-                          getPopupContainer={() => document.getElementById('osmNameSelect')}
-                        >
-                          {storemanListSelect.map((item, index) => <Select.Option value={item.props.name} key={index}>{item}</Select.Option>)}
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Form>
-                </Col>
-                <Col span={3} align="right" className={style['col-stakein-info']}>
-                  <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
-                </Col>
-              </Row>
+            <div className="validator-bg">
+              <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
+              <div className="validator-line">
+                <AddrSelectForm form={form} colSpan={6} addrSelectedList={addrSelectedList} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+              </div>
+              <CommonFormItem form={form} formName='balance' disabled={true}
+                options={{ initialValue: '0' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('ValidatorRegister.balance')}
+                colSpan={colSpan}
+              />
+              <CommonFormItem form={form} formName='amount'
+                options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('Common.amount')}
+                colSpan={colSpan}
+              />
+              {settings.reinput_pwd && <PwdForm form={form} />}
             </div>
-            <CommonFormItem form={form} formName='quota' disabled={true}
-              options={{ initialValue: '0' }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title='Quota'
-              colSpan={colSpan}
-            />
-            <CommonFormItem form={form} formName='delegationFee' disabled={true}
-              options={{ initialValue: '0' }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title='Delegation Fee'
-              colSpan={colSpan}
-            />
-          </div>
-          <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
-            <div className="validator-line">
-              <AddrSelectForm form={form} colSpan={6} addrSelectedList={addrSelectedList} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
-            </div>
-            <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: '0' }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.balance')}
-              colSpan={colSpan}
-            />
-            <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('Common.amount')}
-              colSpan={colSpan}
-            />
-            {settings.reinput_pwd && <PwdForm form={form} />}
-          </div>
+          </Spin>
         </Modal>
         {
           this.state.confirmVisible &&

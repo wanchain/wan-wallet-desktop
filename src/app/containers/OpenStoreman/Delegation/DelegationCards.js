@@ -3,22 +3,22 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
-import style from 'components/Staking/Cards/index.less';
-import Card from 'components/Staking/Cards/Card';
 import { formatNum } from 'utils/support';
+import Card from 'components/Staking/Cards/Card';
+import style from 'components/Staking/Cards/index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  stakeInfo: stores.staking.stakeInfo,
+  delegationCards: stores.openstoreman.delegationCards,
 }))
 
 @observer
-class Cards extends Component {
+class DelegationCards extends Component {
   render () {
-    const { stakeInfo, language } = this.props;
-    let stakeBottom = intl.get('staking.inValidators1') + stakeInfo.validatorCnt + intl.get('staking.inValidators2');
-    let infoReady = stakeInfo.epochIDRaw !== undefined;
-    if (language === 'en_US' && stakeInfo.validatorCnt > 1) {
+    const { language, delegationCards } = this.props;
+    let stakeBottom = intl.get('staking.inValidators1') + delegationCards.myStake[1] + intl.get('staking.inValidators2');
+    let infoReady = true;
+    if (language === 'en_US' && delegationCards.myStake[1] > 1) {
       stakeBottom += 's';
     }
 
@@ -26,13 +26,30 @@ class Cards extends Component {
       <div className={style.cards}>
         <Row gutter={16}>
           <Col span={8}>
-            <Card infoReady={infoReady} className={style.card1} title={intl.get('staking.myStake')} value={formatNum(stakeInfo.myStake)} tail="WAN" bottom={stakeBottom} />
+            <Card infoReady={delegationCards.myStake[2]}
+              className={style.card1}
+              title={intl.get('staking.myStake')}
+              value={formatNum(delegationCards.myStake[0])}
+              tail="WAN"
+              bottom={stakeBottom}
+            />
           </Col>
           <Col span={8}>
-            <Card infoReady={infoReady} className={style.card2} title={intl.get('staking.totalReward')} value={formatNum(stakeInfo.totalDistributedRewards)} tail="WAN" bottom={intl.get('staking.startFrom1') + stakeInfo.startFrom + intl.get('staking.startFrom2')} />
+            <Card infoReady={delegationCards.myReward[2]}
+              className={style.card2}
+              title={intl.get('staking.totalReward')}
+              value={formatNum(delegationCards.myReward[0])}
+              tail="WAN"
+              bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
+            />
           </Col>
           <Col span={8}>
-            <Card infoReady={infoReady} className={style.card3} title='Withdrawable Amount' value={'0'} bottom={stakeInfo.epochEndTime} />
+            <Card infoReady={delegationCards.withdrawableAmount[1]}
+              className={style.card3}
+              title='Withdrawable Amount'
+              value={formatNum(delegationCards.withdrawableAmount[0])}
+              bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
+            />
           </Col>
         </Row>
       </div>
@@ -40,4 +57,4 @@ class Cards extends Component {
   }
 }
 
-export default Cards;
+export default DelegationCards;

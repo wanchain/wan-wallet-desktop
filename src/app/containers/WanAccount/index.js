@@ -48,29 +48,20 @@ class WanAccount extends Component {
   columns = [
     {
       dataIndex: 'name',
-      editable: true,
-      width: '15%'
+      editable: true
     },
     {
       dataIndex: 'address',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>,
-      width: '47%'
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>
     },
     {
       dataIndex: 'balance',
-      sorter: (a, b) => a.balance - b.balance,
-      width: '20%'
+      sorter: (a, b) => a.balance - b.balance
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
-      width: '13%'
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
     },
-    {
-      dataIndex: 'blank',
-      key: 'expand',
-      width: '5%'
-    }
   ];
 
   columnsTree = this.columns.map((col) => {

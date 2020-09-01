@@ -1,27 +1,22 @@
-import React, { Component } from 'react';
-import { Table, Avatar } from 'antd';
-import { observer, inject } from 'mobx-react';
+import { Table } from 'antd';
 import intl from 'react-intl-universal';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react';
 
 import style from './index.less';
 import history from 'static/image/history.png';
-import { MAIN, TESTNET } from 'utils/settings'
+import { MAIN, TESTNET } from 'utils/settings';
 
 @inject(stores => ({
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
-  historyList: stores.staking.registerValidatorHistoryList,
+  historyList: stores.openstoreman.delegationHistoryList,
   osmStakingColumns: stores.languageIntl.osmStakingColumns,
-  setSelectedAddr: addr => stores.wanAddress.setSelectedAddr(addr),
 }))
 
 @observer
 class OsmDelegationHistory extends Component {
-  onChange = value => {
-    this.props.setSelectedAddr(value);
-  }
-
   onClickRow = record => {
     let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
     wand.shell.openExternal(href);
@@ -29,7 +24,6 @@ class OsmDelegationHistory extends Component {
 
   stakingColumnsTree = () => {
     this.props.osmStakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
-    this.props.osmStakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
     return this.props.osmStakingColumns;
   }
 

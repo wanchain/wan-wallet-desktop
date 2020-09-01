@@ -2344,7 +2344,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 let { tx, action } = payload;
                 let gasPrice = await ccUtil.getGasPrice('wan');
-                tx.gasLimit = 200000;
+                tx.gasLimit = 2000000;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
                 logger.info(`Open Storeman ${action}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx);
@@ -2376,7 +2376,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'insertStoremanTransToDB':
             try {
-                logger.info('insertStoremanTransToDB:' + payload);
+                logger.info(`${action}: ${payload}`);
                 let { tx, satellite } = payload;
                 await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
             } catch (e) {
@@ -2384,6 +2384,91 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 err = e
             }
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'getOpenStoremanGroupList':
+            try {
+              ret = await ccUtil.getOpenStoremanGroupList();
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+  
+        case 'getStoremanStakeInfo':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanStakeInfo(payload.sender);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'getStoremanDelegatorInfo':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanDelegatorInfo(payload.sender);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
+
+        case 'getStoremanGroupMember':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanGroupMember(payload.groupId);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
+
+        case 'getStoremanCandidates':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanCandidates(payload.groupId);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
+
+        case 'getStoremanStakeTotalIncentive':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanStakeTotalIncentive(payload.sender);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
+
+        case 'getStoremanDelegatorTotalIncentive':
+            try {
+              logger.info(`${action}: ${payload}`);
+              ret = await ccUtil.getStoremanDelegatorTotalIncentive(payload.sender);
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
+        case 'getStoremanConf':
+            try {
+              ret = await ccUtil.getStoremanConf();
+            } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
             break;
 
     }

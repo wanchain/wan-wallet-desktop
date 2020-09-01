@@ -1,42 +1,38 @@
+import { Row, Col } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Row, Col } from 'antd';
-
-import GroupList from './GroupList';
-import MyStoremanList from './MyStoremanList';
-import StoremanCards from './StoremanCards';
-import OsmStakeHistory from './OsmStakeHistory';
 
 import style from './index.less';
+import GroupList from './GroupList';
 import total from 'static/image/total.png';
+import StoremanCards from './StoremanCards';
+import MyStoremanList from './MyStoremanList';
+import OsmStakeHistory from './OsmStakeHistory';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  stakingList: stores.staking.stakingList,
-  updateStakeInfo: () => stores.staking.updateStakeInfo(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  getStoremanStakeTotalIncentive: () => stores.openstoreman.getStoremanStakeTotalIncentive()
 }))
 
 @observer
-class Validator extends Component {
-  state = {
-    validatorRegister: false,
-  }
-
+class Storeman extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      validatorRegister: false,
+    }
     this.props.updateTransHistory();
     this.props.changeTitle('stormen.title');
   }
 
   componentDidMount() {
-    this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
-      this.props.updateStakeInfo();
-    }, 20000);
+      this.props.getStoremanStakeTotalIncentive();
+    }, 15000);
   }
 
   componentWillUnmount() {
@@ -77,4 +73,4 @@ class Validator extends Component {
   }
 }
 
-export default Validator;
+export default Storeman;
