@@ -2,11 +2,12 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
-import { toWei } from 'utils/support';
-import { WALLETID } from 'utils/settings'
+import localStyle from './index.less'; // Do not delete this line
+import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
+import { toWei, fromWei } from 'utils/support';
 import { signTransaction } from 'componentUtils/trezor';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import DelegationConfirmForm from './DelegationConfirmForm';
@@ -21,6 +22,7 @@ const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirm
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  storemanConf: stores.openstoreman.storemanConf,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
@@ -29,10 +31,23 @@ class ModifyForm extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      selectType: '',
+      gasPrice: '0',
+      gasLimit: '0',
+      selectType: '0',
       confirmVisible: false,
       confirmLoading: false,
+      fee: props.txParams.fee,
       isExit: props.modifyType === 'exit',
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.txParams.fee !== '0' && prevProps.txParams.fee === '0') {
+      this.setState({
+        fee: this.props.txParams.fee,
+        gasLimit: this.props.txParams.gasLimit,
+        gasPrice: this.props.txParams.gasPrice
+      })
     }
   }
 
@@ -46,6 +61,12 @@ class ModifyForm extends Component {
     let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
+
+      if (new BigNumber(form.getFieldValue('balance')).minus(this.state.isExit ? '0' : form.getFieldValue('amount')).lt(this.state.fee)) {
+        message.warn(intl.get('NormalTransForm.overBalance'));
+        return;
+      }
+
       let pwd = form.getFieldValue('pwd');
       if (!settings.reinput_pwd) {
         this.setState({ confirmVisible: true });
@@ -64,16 +85,17 @@ class ModifyForm extends Component {
   onSend = async () => {
     this.setState({ confirmLoading: true });
     let { record, form } = this.props;
-    let { type, path, addr: from } = record.myAddress;
+    let { path, addr: from, walletID } = record.myAddress;
     let action = this.state.isExit ? 'delegateOut' : 'delegateIn';
     let amount = this.state.isExit ? '0' : form.getFieldValue('amount');
-    let walletID = type !== 'normal' ? WALLETID[type.toUpperCase()] : WALLETID.NATIVE;
     let tx = {
       from,
       amount,
       walletID,
+      BIP44Path: path,
       wkAddr: record.wkAddr,
-      BIP44Path: record.myAddress.path,
+      gasLimit: this.state.gasLimit,
+      gasPrice: fromWei(this.state.gasPrice),
     };
 
     if (walletID === WALLETID.LEDGER) {
@@ -134,7 +156,6 @@ class ModifyForm extends Component {
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateTransHistory();
     } catch (error) {
-      console.log(error);
       message.error(intl.get('ValidatorRegister.updateFailed'));
     }
   }
@@ -144,66 +165,110 @@ class ModifyForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    let { form } = this.props;
-    let balance = form.getFieldValue('balance');
+    let { record, form } = this.props;
+    let { capacity, balance } = form.getFieldsValue(['capacity', 'balance']);
+
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).minus(MINAMOUNT).lt(0)) {
+    if (new BigNumber(value).lt(MINAMOUNT)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
-    if (new BigNumber(value).minus(balance).gte(0)) {
+    if (!this.state.isExit && new BigNumber(value).gt(capacity)) {
+      callback(intl.get('StakeInForm.stakeExceed'));
+      return;
+    }
+    if (new BigNumber(value).gte(balance)) {
       callback(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
+    let { path, addr: from, walletID } = record.myAddress;
+    let action = this.state.isExit ? 'delegateOut' : 'delegateIn';
+    let amount = this.state.isExit ? '0' : value;
+    let tx = {
+      from,
+      amount,
+      walletID,
+      BIP44Path: path,
+      wkAddr: record.wkAddr,
+    };
+    wand.request('storeman_openStoremanAction', { tx, action, isEstimateFee: false }, (err, ret) => {
+      if (err) {
+        message.warn(intl.get('ValidatorRegister.updateFailed'));
+      } else {
+        let data = ret.result;
+        this.setState({
+          gasPrice: data.gasPrice,
+          gasLimit: data.estimateGas,
+          fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
+        })
+      }
+    });
     callback();
   }
 
   render () {
     const { isExit } = this.state;
-    const { onCancel, form, settings, record, addrInfo } = this.props;
-    let title = isExit ? 'Storeman Exit' : 'Storeman Top-up';
+    const { onCancel, form, settings, record, addrInfo, storemanConf, spin } = this.props;
+    let title = isExit ? 'Delegation Exit' : 'Delegation Top-up';
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
     let showConfirmItem = { storeman: true, groupId: true, crosschain: true, account: true, amount: !isExit };
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal + spincont"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <div className="validator-bg">
-            <div className="stakein-title">Storeman Account</div>
-            <CommonFormItem form={form} formName='storeman' disabled={true}
-              options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
-              title='Storeman Account'
-            />
-          </div>
-          <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
-            <CommonFormItem form={form} formName='myAccount' disabled={true}
-              options={{ initialValue: record.account }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.address')}
-            />
-            <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: balance }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.balance')}
-            />
-            {
-              !isExit &&
-              <CommonFormItem form={form} formName='amount'
-                options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
-                prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('ValidatorRegister.balance')}
+          <Spin spinning={spin} size="large">
+            <div className="validator-bg">
+              <div className="stakein-title">Storeman Account</div>
+              <CommonFormItem form={form} formName='storeman' disabled={true}
+                options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
+                title='Storeman Account'
               />
-            }
-            { settings.reinput_pwd && <PwdForm form={form} /> }
-          </div>
+              {
+                !isExit &&
+                <CommonFormItem form={form} formName='capacity' disabled={true} title='Capacity'
+                  options={{
+                    rules: [{ required: true }],
+                    initialValue: new BigNumber(fromWei(record.deposit) * (storemanConf.delegationMulti || 0)).minus(fromWei(record.delegateDeposit)).toString(10)
+                  }}
+                />
+              }
+            </div>
+            <div className="validator-bg">
+              <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
+              <CommonFormItem form={form} formName='myAccount' disabled={true}
+                options={{ initialValue: record.account }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('ValidatorRegister.address')}
+              />
+              <CommonFormItem form={form} formName='balance' disabled={true}
+                options={{ initialValue: balance }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('Common.balance')}
+              />
+              {
+                !isExit &&
+                <CommonFormItem form={form} formName='amount'
+                  options={{ rules: [{ required: true, validator: this.checkAmount }] }}
+                  prefix={<Icon type="credit-card" className="colorInput" />}
+                  title={intl.get('Common.amount')}
+                  placeholder={MINAMOUNT}
+                />
+              }
+              <CommonFormItem form={form} formName='fee' disabled={true}
+                options={{ initialValue: this.state.fee + ' WAN' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title="Gas Fee"
+              />
+              { settings.reinput_pwd && <PwdForm form={form} /> }
+            </div>
+          </Spin>
         </Modal>
         {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign({}, record, { amount: form.getFieldValue('amount') })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
@@ -214,11 +279,43 @@ class ModifyForm extends Component {
 const DelegationModifyForm = Form.create({ name: 'ModifyForm' })(ModifyForm);
 class DelegateAppendAndExit extends Component {
   state = {
-    visible: false
+    txParams: {
+      fee: '0',
+      gasPrice: '0',
+      gasLimit: '0',
+    },
+    visible: false,
+    spin: this.props.modifyType === 'exit',
   }
 
   handleStateToggle = () => {
-    this.setState(state => ({ visible: !state.visible }));
+    let { record, modifyType } = this.props;
+    this.setState({ visible: true });
+    if (modifyType === 'exit') {
+      let { path, addr, walletID } = record.myAddress;
+      let tx = {
+        walletID,
+        from: addr,
+        amount: '0',
+        BIP44Path: path,
+        wkAddr: record.wkAddr,
+      };
+      wand.request('storeman_openStoremanAction', { tx, action: 'delegateOut', isEstimateFee: false }, (err, ret) => {
+        if (err) {
+          message.warn(intl.get('ValidatorRegister.updateFailed'));
+        } else {
+          let data = ret.result;
+          this.setState({
+            spin: false,
+            txParams: {
+              gasPrice: data.gasPrice,
+              gasLimit: data.estimateGas,
+              fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
+            }
+          })
+        }
+      });
+    }
   }
 
   handleSend = () => {
@@ -232,7 +329,7 @@ class DelegateAppendAndExit extends Component {
       <div>
         <Button className={style.modifyTopUpBtn} disabled={ modifyType === 'exit' && !enableButton } onClick={this.handleStateToggle} />
         { this.state.visible &&
-          <DelegationModifyForm onCancel={this.handleStateToggle} onSend={this.handleSend} record={record} modifyType={modifyType} />
+          <DelegationModifyForm spin={this.state.spin} onCancel={this.handleSend} onSend={this.handleSend} record={record} modifyType={modifyType} txParams={this.state.txParams} />
         }
       </div>
     );

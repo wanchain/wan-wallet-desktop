@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
-import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus } from 'utils/settings'
+import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus, WALLETID } from 'utils/settings'
 import { getInfoByAddress, checkAddrType } from 'utils/helper';
 import { dateFormat, formatLongText, fromWei, timeFormat, formatNum, showNA } from 'utils/support';
 
@@ -85,6 +85,7 @@ class OpenStoreman {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       if (accountInfo) {
         accountInfo.path = `${WANPATH}${accountInfo.path}`
+        accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE
         return {
           key: index,
           account: accountInfo.name,
@@ -96,7 +97,9 @@ class OpenStoreman {
           crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
           quited: item.quited,
-          canDelegateOut: item.canDelegateOut
+          canDelegateOut: item.canDelegateOut,
+          deposit: item.wkStake.deposit,
+          delegateDeposit: item.wkStake.delegateDeposit
         }
       }
     })
@@ -290,14 +293,15 @@ class OpenStoreman {
   }
 
   @action async getStoremanConf () {
-    try {
-      let ret = await wandWrapper('storeman_getStoremanConf');
-      ret.sort((a, b) => a - b)
-      runInAction(() => {
-        this.storemanConf = ret;
-      })
-    } catch (err) {
-      console.log(`action_getStoremanDelegatorTotalIncentive: ${err}`);
+    if (!Object.keys(this.storemanConf).length) {
+      try {
+        let ret = await wandWrapper('storeman_getStoremanConf');
+        runInAction(() => {
+          this.storemanConf = ret;
+        })
+      } catch (err) {
+        console.log(`action_getStoremanConf: ${err}`);
+      }
     }
   }
 }

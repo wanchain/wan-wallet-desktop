@@ -38,12 +38,15 @@ class OsmDelegateInForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      confirmVisible: false,
-      confirmLoading: false,
+      fee: '0',
+      gasPrice: '0',
+      gasLimit: '0',
       loading: false,
       record: undefined,
-      selectedChain: undefined,
+      confirmVisible: false,
+      confirmLoading: false,
       storemanInfo: undefined,
+      selectedChain: undefined,
     }
   }
 
@@ -91,23 +94,49 @@ class OsmDelegateInForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
+    let { form } = this.props;
     let valueStringPre = value.toString().slice(0, 4);
-    let { quota, balance } = this.props.form.getFieldsValue(['quota', 'balance']);
+    let { quota, balance } = form.getFieldsValue(['quota', 'balance']);
 
-    if (!checkAmountUnit(18, value)) {
+    if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
     if (new BigNumber(value).lt('1') || Math.floor(valueStringPre) < 1) {
       callback(intl.get('StakeInForm.stakeTooLow'));
       return;
     }
-    if (new BigNumber(value).gt(balance)) {
+    if (new BigNumber(value).gte(balance)) {
       callback(intl.get('SendNormalTrans.overBalance'));
       return;
     }
     if (new BigNumber(value).gt(quota)) {
       callback(intl.get('StakeInForm.stakeExceed'));
       return;
+    }
+
+    let { myAddr: from } = form.getFieldsValue(['myAddr']);
+    if (from && this.state.storemanInfo) {
+      let path = this.getValueByAddrInfoArgs(from, 'path');
+      let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
+      let tx = {
+        from,
+        walletID,
+        BIP44Path: path,
+        amount: value,
+        wkAddr: this.state.storemanInfo.wkAddr,
+      }
+      wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
+        if (err) {
+          message.warn(intl.get('ValidatorRegister.updateFailed'));
+        } else {
+          let data = ret.result;
+          this.setState({
+            gasPrice: data.gasPrice,
+            gasLimit: data.estimateGas,
+            fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
+          })
+        }
+      });
     }
 
     callback();
@@ -121,6 +150,12 @@ class OsmDelegateInForm extends Component {
         this.setState({ loading: false });
         return;
       };
+
+      if (new BigNumber(form.getFieldValue('balance')).minus(form.getFieldValue('amount')).lt(this.state.fee)) {
+        this.setState({ loading: false });
+        message.warn(intl.get('NormalTransForm.overBalance'));
+        return;
+      }
 
       let { myAddr: account, amount, pwd, delegationFee, crosschain, storeman } = form.getFieldsValue(['myAddr', 'amount', 'pwd', 'delegationFee', 'crosschain', 'storeman']);
       if (settings.reinput_pwd) {
@@ -163,6 +198,8 @@ class OsmDelegateInForm extends Component {
       walletID,
       BIP44Path: path,
       amount: amount.toString(),
+      gasLimit: this.state.gasLimit,
+      gasPrice: fromWei(this.state.gasPrice),
       wkAddr: this.state.storemanInfo.wkAddr,
     }
     if (walletID === WALLETID.LEDGER) {
@@ -317,7 +354,7 @@ class OsmDelegateInForm extends Component {
               <CommonFormItem form={form} formName='quota' disabled={true}
                 options={{ initialValue: '0' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title='Quota'
+                title='Capacity'
                 colSpan={colSpan}
               />
               <CommonFormItem form={form} formName='delegationFee' disabled={true}
@@ -339,9 +376,16 @@ class OsmDelegateInForm extends Component {
                 colSpan={colSpan}
               />
               <CommonFormItem form={form} formName='amount'
-                options={{ initialValue: MINAMOUNT, rules: [{ required: true, validator: this.checkAmount }] }}
+                options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
+                placeholder={MINAMOUNT}
+                colSpan={colSpan}
+              />
+              <CommonFormItem form={form} formName='fee' disabled={true}
+                options={{ initialValue: this.state.fee + ' WAN' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title="Gas Fee"
                 colSpan={colSpan}
               />
               {settings.reinput_pwd && <PwdForm form={form} />}

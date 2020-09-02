@@ -58,7 +58,7 @@ export const WANPATH = "m/44'/5718350'/0'/0/";
 
 export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
 export const OSMSTAKEACT = ['Storeman-stakeIn', 'Storeman-stakeAppend', 'Storeman-stakeOut'];
-export const OSMDELEGATIONACT = ['Storeman-delegateIn'];
+export const OSMDELEGATIONACT = ['Storeman-delegateIn', 'Storeman-delegateOut'];
 export const storemanGroupStatus = ['none', 'initial', 'curveSeted', 'failed', 'selected', 'ready', 'unregistered', 'dismissed'];
 
 export const X = '0x0000000000000000000000000000000000000000000000000000000000000001';
