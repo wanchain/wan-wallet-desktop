@@ -29,10 +29,10 @@ message.config({
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
+  getChainStoreInfoByChain: chain => stores.tokens.getChainStoreInfoByChain(chain),
 }))
 
 @observer
@@ -46,19 +46,18 @@ class TokenTrans extends Component {
   init = (tokenAddr, chain) => {
     this.props.setCurrToken(tokenAddr);
     this.props.setCurrTokenChain(chain);
-    this.props.updateTransHistory();
+    this.props.getChainStoreInfoByChain(chain).updateTransHistory();
     if (!this.props.tokenIconList[tokenAddr]) {
       this.props.getTokenIcon(tokenAddr);
     }
   }
 
   componentDidMount() {
-    const { tokenAddr, chain } = this.props;
-    this.props.updateTransHistory();
-    this.props.updateTokensBalance(tokenAddr, chain);
+    this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
+    this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
     this.timer = setInterval(() => {
-      this.props.updateTransHistory();
-      this.props.updateTokensBalance(tokenAddr, chain);
+      this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory(); // Don't delete this.props.
+      this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
     }, 5000);
   }
 
@@ -128,7 +127,7 @@ class TokenTrans extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    // console.log('params:', params);
+    console.log('params:', params);
     const { chain, symbol, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(chain);
     if (addrInfo === undefined) {
@@ -144,7 +143,6 @@ class TokenTrans extends Component {
       symbol: symbol,
       path: params.path,
       to: params.to,
-      // amount: '0',
       amount: params.token,
       gasLimit: `0x${params.gasLimit.toString(16)}`,
       gasPrice: params.gasPrice,
@@ -155,7 +153,7 @@ class TokenTrans extends Component {
         token: params.token
       }
     };
-    // console.log('trans:', trans);
+    console.log('trans:', trans);
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'ledger':
@@ -177,7 +175,7 @@ class TokenTrans extends Component {
                   },
                   satellite: trans.satellite
                 }, () => {
-                  this.props.updateTransHistory();
+                  this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
                 })
                 console.log('TxHash:', txHash);
                 resolve(txHash);
@@ -217,7 +215,7 @@ class TokenTrans extends Component {
                   },
                   satellite: trans.satellite
                 }, () => {
-                  this.props.updateTransHistory();
+                  this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
                 })
                 resolve(txHash);
               }
@@ -233,7 +231,7 @@ class TokenTrans extends Component {
               console.log('transaction_normal:', err);
               reject(false); // eslint-disable-line prefer-promise-reject-errors
             } else {
-              this.props.updateTransHistory();
+              this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
               console.log('Tx hash: ', txHash);
               resolve(txHash)
             }

@@ -628,10 +628,18 @@ class Tokens {
   getChainAddressInfoByChain(chain) {
     const ADDRESSES = { wanAddress, ethAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
-      console.log('Cannot get addresses.');
       return undefined;
     } else {
       return ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
+    }
+  }
+
+  getChainStoreInfoByChain(chain) {
+    const ADDRESSES = { wanAddress, ethAddress };
+    if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
+      return undefined;
+    } else {
+      return ADDRESSES[`${chain.toLowerCase()}Address`];
     }
   }
 }

@@ -158,7 +158,6 @@ class EthAddress {
 
     @computed get getAddrList () {
       let addrList = [];
-      // let normalArr = Object.keys(self.addrInfo.normal);
       let normalArr = self.addrInfo['normal'];
       let rawKeyArr = self.addrInfo['rawKey'];
 

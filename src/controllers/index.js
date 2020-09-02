@@ -1042,7 +1042,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 let input = {
                     symbol: symbol,
                     from: fromAddr,
-                    to: to,
+                    to: satellite.transferTo,
                     amount: amount,
                     gasPrice: gasPrice,
                     gasLimit: gasLimit,
