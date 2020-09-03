@@ -49,6 +49,10 @@ class Config extends Component {
     this.props.updateSettings({ offline_wallet: e.target.checked });
   }
 
+  handleSignMessage = e => {
+    this.props.updateSettings({ sign_message: e.target.checked });
+  }
+
   handleTimeoutChange = e => {
     this.props.updateSettings({ logout_timeout: e });
   }
@@ -123,7 +127,7 @@ class Config extends Component {
 
   render() {
     const { getTokenList, crossChainTokensInfo } = this.props;
-    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet } = this.props.settings;
+    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet, sign_message } = this.props.settings;
 
     const options = [{
       value: '0',
@@ -225,7 +229,9 @@ class Config extends Component {
         </Card>
         <Card title={intl.get('Config.others')}>
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
-          <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
+          <Checkbox className={style['checkbox_sty']} checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
+          <p className={style['set_title']}>{intl.get('SignMessage.enableSider')}</p>
+          <Checkbox checked={sign_message} onChange={this.handleSignMessage}>{intl.get('SignMessage.showSign')}</Checkbox>
         </Card>
         {
           this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />

@@ -60,6 +60,7 @@ class Sidebar extends Component {
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
+    let signMessageIndex = sidebarColumns.findIndex(item => item.key === '/signmessage');
 
     let stakeChildren = sidebarColumns[stakeIndex].children;
     let dAppsChildren = sidebarColumns[dAppsIndex].children;
@@ -78,6 +79,17 @@ class Sidebar extends Component {
       })
     } else if (offlineIndex !== -1 && !settings.offline_wallet) {
       sidebarColumns.splice(offlineIndex, 1);
+    }
+
+    if (signMessageIndex === -1 && settings.sign_message) {
+      sidebarColumns.push({
+        title: intl.get('SignMessage.title'),
+        step: '1',
+        key: '/signmessage',
+        icon: 'bank'
+      })
+    } else if (signMessageIndex !== -1 && !settings.sign_message) {
+      sidebarColumns.splice(signMessageIndex, 1);
     }
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');

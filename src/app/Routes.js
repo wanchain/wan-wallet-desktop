@@ -10,6 +10,7 @@ import {
   Delegation,
   Validator,
   Offline,
+  SignMessage,
   TokenTrans,
   E20TokenTrans,
   EthAccount,
@@ -42,6 +43,7 @@ export default () => {
             <Route path="/trezor" component={Trezor} />
             <Route path="/ledger" component={Ledger} />
             <Route path="/offline" component={Offline} />
+            <Route path="/signmessage" component={SignMessage} />
             <Route path="/delegation" component={Delegation} />
             <Route path="/validator" component={Validator} />
             <Route path="/tokens/WAN/:tokenAddr/:symbol" component={TokenTrans} />

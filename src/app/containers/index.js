@@ -6,6 +6,7 @@ export { default as Settings } from './Settings';
 export { default as Trezor } from './Trezor';
 export { default as Ledger } from './Ledger';
 export { default as Offline } from './Offline';
+export { default as SignMessage } from './SignMessage';
 export { default as Delegation } from './Delegation';
 export { default as Validator } from './Validator';
 export { default as TokenTrans } from './TokenTrans';
