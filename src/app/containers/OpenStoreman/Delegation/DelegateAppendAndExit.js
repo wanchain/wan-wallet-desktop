@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
-import localStyle from './index.less'; // Do not delete this line
+import './index.less';
 import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
 import { toWei, fromWei } from 'utils/support';
@@ -33,7 +33,6 @@ class ModifyForm extends Component {
     this.state = {
       gasPrice: '0',
       gasLimit: '0',
-      selectType: '0',
       confirmVisible: false,
       confirmLoading: false,
       fee: props.txParams.fee,
@@ -61,7 +60,6 @@ class ModifyForm extends Component {
     let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
-
       if (new BigNumber(form.getFieldValue('balance')).minus(this.state.isExit ? '0' : form.getFieldValue('amount')).lt(this.state.fee)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
@@ -184,16 +182,14 @@ class ModifyForm extends Component {
       return;
     }
     let { path, addr: from, walletID } = record.myAddress;
-    let action = this.state.isExit ? 'delegateOut' : 'delegateIn';
-    let amount = this.state.isExit ? '0' : value;
     let tx = {
       from,
-      amount,
       walletID,
+      amount: value,
       BIP44Path: path,
       wkAddr: record.wkAddr,
     };
-    wand.request('storeman_openStoremanAction', { tx, action, isEstimateFee: false }, (err, ret) => {
+    wand.request('storeman_openStoremanAction', { tx, action: 'delegateIn', isEstimateFee: false }, (err, ret) => {
       if (err) {
         message.warn(intl.get('ValidatorRegister.updateFailed'));
       } else {

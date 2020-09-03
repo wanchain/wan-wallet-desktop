@@ -27,3 +27,15 @@
 .itemTitle {
   vertical-align: middle;
 }
+
+:global {
+  .spincont {
+    .ant-spin-nested-loading > div > .ant-spin {
+      top: 10%;
+      position: absolute!important;
+    }
+    .ant-spin-blur::after {
+      opacity: 0;
+    }
+  }
+}

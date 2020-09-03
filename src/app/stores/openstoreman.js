@@ -58,7 +58,8 @@ class OpenStoreman {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
       if (accountInfo && groupInfo) {
-        accountInfo.path = `${WANPATH}${accountInfo.path}`
+        accountInfo.path = `${WANPATH}${accountInfo.path}`;
+        accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         return {
           key: index,
           account: accountInfo.name,
@@ -84,8 +85,8 @@ class OpenStoreman {
     return this.storemanDelegatorInfo.map((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       if (accountInfo) {
-        accountInfo.path = `${WANPATH}${accountInfo.path}`
-        accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE
+        accountInfo.path = `${WANPATH}${accountInfo.path}`;
+        accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         return {
           key: index,
           account: accountInfo.name,
@@ -213,10 +214,8 @@ class OpenStoreman {
     let sender = Object.keys(Object.assign({}, normal, ledger, trezor));
     try {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
-      runInAction(() => {
-        this.storemanListInfo = ret;
-        this.storemanListInfo.infoReady = true;
-      })
+      this.storemanListInfo = ret;
+      this.storemanListInfo.infoReady = true;
     } catch (err) {
       console.log(`action_getStoremanStakeInfo: ${err}`);
     }

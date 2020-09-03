@@ -119,11 +119,11 @@ class OsmDelegateInForm extends Component {
       let path = this.getValueByAddrInfoArgs(from, 'path');
       let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
       let tx = {
-        from,
         walletID,
         BIP44Path: path,
         amount: value,
         wkAddr: this.state.storemanInfo.wkAddr,
+        from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
       wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
         if (err) {
@@ -150,7 +150,6 @@ class OsmDelegateInForm extends Component {
         this.setState({ loading: false });
         return;
       };
-
       if (new BigNumber(form.getFieldValue('balance')).minus(form.getFieldValue('amount')).lt(this.state.fee)) {
         this.setState({ loading: false });
         message.warn(intl.get('NormalTransForm.overBalance'));
@@ -192,6 +191,8 @@ class OsmDelegateInForm extends Component {
     let { myAddr: from, amount } = form.getFieldsValue(['myAddr', 'amount']);
     let path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
+
+    from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
 
     let tx = {
       from,

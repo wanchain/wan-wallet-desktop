@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { WALLETID } from 'utils/settings';
+import { fromWei } from 'utils/support.js';
 import PwdForm from 'componentUtils/PwdForm';
 import { OsmTrezorTrans } from 'componentUtils/trezor';
 import StoremanConfirmForm from './StoremanConfirmForm';
@@ -25,7 +26,10 @@ const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm
 @observer
 class StoremanRegister extends Component {
   state = {
-    balance: 0,
+    fee: '0',
+    balance: '0',
+    gasPrice: '0',
+    gasLimit: '0',
     confirmVisible: false,
     confirmLoading: false,
   };
@@ -77,13 +81,40 @@ class StoremanRegister extends Component {
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).minus(group.minStakeIn).lt(0)) {
+    if (new BigNumber(value).lt(group.minStakeIn)) {
       callback(intl.get('ValidatorRegister.stakeTooLow'));
       return;
     }
-    if (new BigNumber(value).minus(balance).gte(0)) {
+    if (new BigNumber(value).gte(balance)) {
       callback(intl.get('SendNormalTrans.hasBalance'));
       return;
+    }
+
+    let { myAddr: from, publicKey: wPk, enodeID } = form.getFieldsValue(['myAddr', 'publicKey', 'enodeID']);
+    if (from && wPk && enodeID && value !== '0') {
+      let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
+      let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
+      let tx = {
+        wPk,
+        enodeID,
+        walletID,
+        BIP44Path,
+        amount: value,
+        groupId: group.groupIdText,
+        from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
+      }
+      wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
+        if (err) {
+          message.warn(intl.get('ValidatorRegister.registerFailed'));
+        } else {
+          let data = ret.result;
+          this.setState({
+            gasPrice: data.gasPrice,
+            gasLimit: data.estimateGas,
+            fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
+          })
+        }
+      });
     }
     callback();
   }
@@ -92,8 +123,8 @@ class StoremanRegister extends Component {
     let { form, settings } = this.props;
     form.validateFields(err => {
       if (err) return;
-      if (new BigNumber(this.state.balance).minus(form.getFieldValue('amount')).lte(0)) {
-        message.error(intl.get('NormalTransForm.overBalance'));
+      if (new BigNumber(form.getFieldValue('balance')).minus(form.getFieldValue('amount')).lt(this.state.fee)) {
+        message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
 
@@ -120,7 +151,7 @@ class StoremanRegister extends Component {
     this.setState({ confirmLoading: true });
     let { form, group } = this.props;
     let { myAddr: from, amount, publicKey: wPk, enodeID } = form.getFieldsValue(['myAddr', 'amount', 'publicKey', 'enodeID']);
-    let path = this.getValueByAddrInfoArgs(from, 'path');
+    let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
@@ -128,11 +159,13 @@ class StoremanRegister extends Component {
     let tx = {
       wPk,
       from,
+      amount,
       walletID,
-      amount: amount.toString(),
-      BIP44Path: path,
-      groupId: group.groupIdText,
+      BIP44Path,
       enodeID: enodeID,
+      groupId: group.groupIdText,
+      gasLimit: this.state.gasLimit,
+      gasPrice: fromWei(this.state.gasPrice),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
@@ -141,7 +174,7 @@ class StoremanRegister extends Component {
       let abiParams = [group.groupId, wPk, group.enodeID];
       let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'StoremanStakeIn' };
       try {
-        await OsmTrezorTrans(path, from, amount, ACTION, satellite, abiParams);
+        await OsmTrezorTrans(BIP44Path, from, amount, ACTION, satellite, abiParams);
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } catch (error) {
@@ -208,9 +241,15 @@ class StoremanRegister extends Component {
               title={intl.get('ValidatorRegister.balance')}
             />
             <CommonFormItem form={form} formName='amount'
-              options={{ initialValue: this.props.group.minStakeIn, rules: [{ required: true, validator: this.checkAmount }] }}
+              options={{ rules: [{ required: true, validator: this.checkAmount }] }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('Common.amount')}
+              placeholder={this.props.group.minStakeIn}
+            />
+            <CommonFormItem form={form} formName='fee' disabled={true}
+              options={{ initialValue: this.state.fee + ' WAN' }}
+              prefix={<Icon type="credit-card" className="colorInput" />}
+              title="Gas Fee"
             />
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>

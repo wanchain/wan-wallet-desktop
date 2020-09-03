@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { signTransaction } from 'componentUtils/trezor';
 import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
-import localStyle from './index.less'; // Do not delete this line
+import './index.less';
 import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
 import { toWei, fromWei } from 'utils/support.js';
