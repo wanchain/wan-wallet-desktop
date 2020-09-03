@@ -12,7 +12,7 @@ import { COIN_ACCOUNT } from 'utils/settings';
 class CrossChain {
   @observable currSymbol = '';
 
-  @observable currChainId = '';
+  @observable currTokenPairId = '';
 
   @observable crossTrans = [];
 
@@ -24,8 +24,8 @@ class CrossChain {
     self.currSymbol = symbol;
   }
 
-  @action setCurrChainId(id) {
-    self.currChainId = id;
+  @action setCurrTokenPairId(id) {
+    self.currTokenPairId = id;
   }
 
   @action updateCrossTrans() {
@@ -134,7 +134,10 @@ class CrossChain {
       if (err) {
         console.log('Update selection status failed.', err);
       }
-      this.getTokenPairs();
+      let target = Object.values(this.crossChainSelections).flat(Infinity).find(obj => obj.id === id);
+      if (target) {
+        target.selected = selected;
+      }
     })
   }
 
@@ -184,14 +187,12 @@ class CrossChain {
   }
 
   @computed get crossChainTrans() {
-    // console.log('this.currChainId:', this.currChainId);
+    // console.log('this.currTokenPairId:', this.currTokenPairId);
     const ADDRESSES = { wanAddress, btcAddress, ethAddress, eosAddress };
     let trans = [];
     let decimals = 8;
-    // console.log('info:', this.tokenPairs[this.currChainId]);
-    let from = this.tokenPairs[this.currChainId].fromChainSymbol;
-    let to = this.tokenPairs[this.currChainId].toChainSymbol;
-    // console.log('from: to:', from, to);
+    let from = this.tokenPairs[this.currTokenPairId].fromChainSymbol;
+    let to = this.tokenPairs[this.currTokenPairId].toChainSymbol;
     if (ADDRESSES[`${from.toLowerCase()}Address`] === undefined || ADDRESSES[`${to.toLowerCase()}Address`] === undefined) {
       return [];
     }

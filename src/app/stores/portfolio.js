@@ -169,7 +169,6 @@ class Portfolio {
   }
 
   @computed get portfolioList() {
-    // console.log('self.coinList:', self.coinList);
     let list = Object.keys(self.coinList).map((key, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: key, writable: true },
@@ -226,7 +225,6 @@ class Portfolio {
       item.balance = formatNum(item.balance);
       item.value = `$${formatNum(item.value.substr(1))}`;
     });
-    // console.log('list:', list)
     return list;
   }
 }
