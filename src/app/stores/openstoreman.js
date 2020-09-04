@@ -36,6 +36,14 @@ class OpenStoreman {
 
   @observable storemanDelegatorTotalIncentive = [];
 
+  @observable storemanListInfoInfoReady = false;
+
+  @observable storemanDelegatorInfoInfoReady = false;
+
+  @observable storemanStakeTotalIncentiveInfoReady = false;
+
+  @observable storemanDelegatorTotalIncentiveInfoReady = false;
+
   @computed get groupListData () {
     return this.storemanGroupList.filter(v => v.canStakeIn).map((item, index) => {
       return {
@@ -166,15 +174,16 @@ class OpenStoreman {
       delegationStake: ['N/A', 'N/A', false],
       reward: ['N/A', 'N/A', false],
     };
+
     cardsList.myStake[0] = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
     cardsList.myStake[1] = this.storemanListInfo.length;
-    cardsList.myStake[2] = this.storemanListInfo.infoReady;
+    cardsList.myStake[2] = this.storemanListInfoInfoReady;
     cardsList.delegationStake[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
     cardsList.delegationStake[1] = this.storemanDelegatorInfo.length;
-    cardsList.delegationStake[2] = this.storemanDelegatorInfo.infoReady;
+    cardsList.delegationStake[2] = this.storemanDelegatorInfoInfoReady;
     cardsList.reward[0] = fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
-    cardsList.reward[1] = this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
-    cardsList.reward[2] = this.storemanStakeTotalIncentive.infoReady;
+    cardsList.reward[1] = this.storemanStakeTotalIncentive.length && this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
+    cardsList.reward[2] = this.storemanStakeTotalIncentiveInfoReady;
 
     return cardsList;
   }
@@ -188,12 +197,12 @@ class OpenStoreman {
 
     cardsList.myStake[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
     cardsList.myStake[1] = this.storemanDelegatorInfo.length;
-    cardsList.myStake[2] = this.storemanDelegatorInfo.infoReady;
+    cardsList.myStake[2] = this.storemanDelegatorInfoInfoReady;
     cardsList.myReward[0] = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
-    cardsList.myReward[1] = this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
-    cardsList.myReward[2] = this.storemanDelegatorTotalIncentive.infoReady;
+    cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
+    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveinfoReady;
     cardsList.withdrawableAmount[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0));
-    cardsList.withdrawableAmount[1] = this.storemanDelegatorInfo.infoReady;
+    cardsList.withdrawableAmount[1] = this.storemanDelegatorInfoInfoReady;
 
     return cardsList;
   }
@@ -214,8 +223,11 @@ class OpenStoreman {
     let sender = Object.keys(Object.assign({}, normal, ledger, trezor));
     try {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
+      console.log('storeman_getStoremanStakeInfo_ret', ret);
       this.storemanListInfo = ret;
-      this.storemanListInfo.infoReady = true;
+      console.log('Before')
+      this.storemanListInfoInfoReady = true;
+      console.log('After')
     } catch (err) {
       console.log(`action_getStoremanStakeInfo: ${err}`);
     }
@@ -229,7 +241,7 @@ class OpenStoreman {
       let ret = await wandWrapper('storeman_getStoremanDelegatorInfo', { sender });
       runInAction(() => {
         this.storemanDelegatorInfo = ret;
-        this.storemanDelegatorInfo.infoReady = true;
+        this.storemanDelegatorInfoInfoReady = true;
       })
     } catch (err) {
       console.log(`action_getStoremanDelegatorInfo: ${err}`);
@@ -269,7 +281,7 @@ class OpenStoreman {
       ret.sort((a, b) => a - b)
       runInAction(() => {
         this.storemanStakeTotalIncentive = ret;
-        this.storemanStakeTotalIncentive.infoReady = true;
+        this.storemanStakeTotalIncentiveInfoReady = true;
       })
     } catch (err) {
       console.log(`action_getStoremanStakeTotalIncentive: ${err}`);
@@ -284,7 +296,7 @@ class OpenStoreman {
       ret.sort((a, b) => a - b)
       runInAction(() => {
         this.storemanDelegatorTotalIncentive = ret;
-        this.storemanDelegatorTotalIncentive.infoReady = true;
+        this.storemanDelegatorTotalIncentiveInfoReady = true;
       })
     } catch (err) {
       console.log(`action_getStoremanDelegatorTotalIncentive: ${err}`);
