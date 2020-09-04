@@ -693,6 +693,7 @@ const zh_CN = {
     'Offline.inputRawTxText': '请正确输入签名后的交易数据',
     'Offline.linkToWebsite': '下载离线钱包',
 
+    'SignMessage.signature': '签名',
     'SignMessage.title': '数据签名',
     'SignMessage.enableSider': '开启数据签名功能',
     'SignMessage.showSign': '显示数据签名菜单',

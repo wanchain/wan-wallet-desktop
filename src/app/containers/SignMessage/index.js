@@ -30,7 +30,7 @@ class SignMessage extends Component {
 
   handleNext = () => {
     let { myAddr: from } = this.props.form.getFieldsValue(['myAddr']);
-    if (from && this.state.message) {
+    if (from && this.state.message.trim()) {
       let path = this.getValueByAddrInfoArgs(from, 'path');
       let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
       wand.request('wallet_signPersonalMessage', { walletID, path, rawTx: this.state.message }, (err, data) => {
@@ -96,7 +96,7 @@ class SignMessage extends Component {
         <p className={style.threeBtn}>
           <Button type="primary" onClick={this.handleNext}>{intl.get('SignMessage.sign')}</Button>
         </p>
-        <Descriptions title="Message" column={1} size="small">
+        <Descriptions title={intl.get('SignMessage.signature')} column={1} size="small">
           <Descriptions.Item label={intl.get('SignMessage.original')}>{this.state.showMessage}</Descriptions.Item>
           <Descriptions.Item label={intl.get('SignMessage.signed')}>
             {this.state.signedMessage}

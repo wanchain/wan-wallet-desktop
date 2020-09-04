@@ -692,6 +692,7 @@ const es_ES = {
     'Offline.inputRawTxText': 'Por favor ingrese la transaccion firmada',
     'Offline.linkToWebsite': 'Descargue la cartera offline',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',

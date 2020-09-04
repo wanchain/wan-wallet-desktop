@@ -692,6 +692,7 @@ const th_TH = {
     'Offline.inputRawTxText': 'กรุณากรอกข้อมูลธุรกรรม',
     'Offline.linkToWebsite': 'ดาวน์โหลดกระเป๋าแบบออฟไลน์',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',

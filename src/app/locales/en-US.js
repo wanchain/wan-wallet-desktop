@@ -692,6 +692,7 @@ const en_US = {
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',

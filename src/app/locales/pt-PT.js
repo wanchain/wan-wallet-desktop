@@ -689,6 +689,7 @@ const pt_PT = {
     'Offline.inputRawTxText': 'Insira a transação assinada',
     'Offline.linkToWebsite': 'Baixar a carteira offline',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',

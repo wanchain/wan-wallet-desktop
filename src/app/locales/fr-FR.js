@@ -692,6 +692,7 @@ const fr_FR = {
     'Offline.inputRawTxText': 'Veuillez saisir la transaction signée',
     'Offline.linkToWebsite': 'Télécharger le portefeuille hors ligne',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',

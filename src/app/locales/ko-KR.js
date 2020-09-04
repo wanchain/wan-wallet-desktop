@@ -692,6 +692,7 @@ const ko_KR = {
     'Offline.inputRawTxText': '합의된 트랜잭션을 입력 바랍니다',
     'Offline.linkToWebsite': '오프라인 지갑 다운로드',
 
+    'SignMessage.signature': 'Signature',
     'SignMessage.title': 'Sign Message',
     'SignMessage.enableSider': 'Enable Sign Personal Message',
     'SignMessage.showSign': 'Show Sign Personal Message in the sidebar',
