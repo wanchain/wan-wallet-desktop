@@ -200,7 +200,7 @@ class OpenStoreman {
     cardsList.myStake[2] = this.storemanDelegatorInfoInfoReady;
     cardsList.myReward[0] = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
     cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
-    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveinfoReady;
+    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveInfoReady;
     cardsList.withdrawableAmount[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0));
     cardsList.withdrawableAmount[1] = this.storemanDelegatorInfoInfoReady;
 
