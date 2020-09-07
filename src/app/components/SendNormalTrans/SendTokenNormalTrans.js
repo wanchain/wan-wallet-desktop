@@ -42,7 +42,7 @@ class SendTokenNormalTrans extends Component {
 
     // No sufficient funds
     if (getBalanceByAddr(from, addrInfo) === '0') {
-      message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
+      message.warn(intl.get('SendNormalTrans.hasNoBalance', { coin: chainType }));
       return;
     }
     if (transType === TRANSTYPE.tokenTransfer) {
@@ -51,6 +51,7 @@ class SendTokenNormalTrans extends Component {
         return;
       }
     }
+
     this.setState({ visible: true });
     addTransTemplate(from, { chainType, chainId });
     try {

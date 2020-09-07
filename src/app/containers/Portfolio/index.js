@@ -62,16 +62,18 @@ class Portfolio extends Component {
         img = eosLogo;
         break;
       default:
-        if (!this.props.tokenIconList[record.scAddr]) {
-          this.props.getTokenIcon(record.scAddr);
+        let scAddr = record.scAddr.replace(/^.*-/, '');
+        if (!this.props.tokenIconList[scAddr]) {
+          this.props.getTokenIcon(scAddr);
         }
-        img = this.props.tokenIconList[record.scAddr];
+        img = this.props.tokenIconList[scAddr];
     }
     return <div><img className={style.nameIco} src={img} /><span>{text}</span></div>;
   }
 
   render() {
     const { portfolioList } = this.props;
+    // console.log('portfolioList:', portfolioList)
     return (
       <div>
         <Table columns={this.columns} dataSource={portfolioList} pagination={false} />

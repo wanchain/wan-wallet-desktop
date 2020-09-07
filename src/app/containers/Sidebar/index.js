@@ -127,7 +127,6 @@ class Sidebar extends Component {
       }
     });
     walletChildren.splice(0, walletChildren.length, ...walletList);
-    // console.log('walletList=======:', walletList);
 
     // Add token.
     walletChildren.push({
@@ -137,28 +136,7 @@ class Sidebar extends Component {
     });
 
     // Cross chain menu
-    let crossChainList = [{
-      title: 'BTC',
-      key: 'BTC',
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: `Bitcoin <-> Wanchain`,
-        key: `/crossBTC`,
-        noCircle: true,
-      }],
-    }, {
-      title: 'EOS',
-      key: 'EOS',
-      icon: 'block',
-      mode: 'vertical',
-      children: [{
-        title: `EOS <-> Wanchain`,
-        key: `/crossEOS`,
-        noCircle: true,
-      }],
-    }];
-
+    let crossChainList = [];
     Object.keys(crossChainSelections).forEach(symbol => {
       if (crossChainSelections[symbol].every(v => v.selected === false)) {
         return;
@@ -172,6 +150,7 @@ class Sidebar extends Component {
           } else {
             key = `/crosschain/${v.id}`;
           }
+          // key = `/crosschain/${v.id}`;
           arr.push({
             title: `${v.fromChainName} <-> ${v.toChainName}`,
             key,
@@ -192,6 +171,7 @@ class Sidebar extends Component {
         });
       }
     });
+    // console.log('crossChainList:', crossChainList);
     crossChainChildren.splice(0, crossChainChildren.length, ...crossChainList);
 
     // Add cross chain.

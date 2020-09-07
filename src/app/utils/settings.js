@@ -84,3 +84,4 @@ export const ALLCATEGORIES = 'DApp.allCategories';
 
 export const CROSS_TYPE = ['HTLC', 'FAST'];
 export const COIN_ACCOUNT = '0x0000000000000000000000000000000000000000';
+export const COIN_ACCOUNT_EOS = 'eosio.token:EOS';

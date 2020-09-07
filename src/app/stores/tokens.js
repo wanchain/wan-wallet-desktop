@@ -12,7 +12,7 @@ import eosAddress from './eosAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, CROSSCHAINTYPE, COIN_ACCOUNT } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, CROSSCHAINTYPE, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
 import { getBalance } from 'utils/helper';
 
 class Tokens {
@@ -54,10 +54,10 @@ class Tokens {
   }
 
   @action getToken(scAddr) {
-    let token = Object.values(self.tokensList).find(obj => obj.account === scAddr);
-    if (token && token.ancestor && self.tokensList[token.ancestor]) {
-      token.iconData = self.tokensList[token.ancestor].iconData;
-      token.iconType = self.tokensList[token.ancestor].iconType;
+    let token = this.getTokenInfoFromTokensListByAddr(scAddr);
+    if (token && token.ancestor && this.tokensList[token.ancestor]) {
+      token.iconData = this.tokensList[token.ancestor].iconData;
+      token.iconType = this.tokensList[token.ancestor].iconType;
     }
     return token;
   }
@@ -154,8 +154,8 @@ class Tokens {
     let ledgerArr = Object.keys(addrInfo.ledger || []);
     let trezorArr = Object.keys(addrInfo.trezor || []);
     let rawKeyArr = Object.keys(addrInfo.rawKey || []);
-    // console.log('Update Token Balance:', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain });
-    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr), tokenScAddr, chain }, (err, data) => {
+    let addresses = normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr);
+    wand.request('crossChain_updateTokensBalance', { address: addresses, tokenScAddr, chain }, (err, data) => {
       // console.log('result:', err, data)
       if (err) {
         console.log('stores_getTokensBalance:', err);
@@ -204,8 +204,9 @@ class Tokens {
     Object.keys(addresses).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
-        if (self.tokensList && self.tokensList[SCAddress]) {
-          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item], self.tokensList[SCAddress].decimals)
+        let tokenInfo = this.getTokenInfoFromTokensListByAddr(SCAddress);
+        if (self.tokensList && tokenInfo) {
+          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item], tokenInfo.decimals)
         } else {
           balance = 0
         }
@@ -227,7 +228,8 @@ class Tokens {
   }
 
   @action getTokenBalance(item) {
-    const { chain, scAddr } = item;
+    let { chain, scAddr } = item;
+    scAddr = scAddr.replace(/^.*-/, '');
     return new Promise((resolve, reject) => {
       let normalArr = [];
       let importArr = [];
@@ -264,8 +266,9 @@ class Tokens {
       if ((normalArr.length || importArr.length || rawKeyArr.length) === 0) {
         return {};
       }
-
+      // console.log('p:', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain })
       wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
+        // console.log(err, data);
         if (err) {
           console.log('stores_getTokensBalance:', err);
           reject(err);
@@ -298,7 +301,7 @@ class Tokens {
     });
   }
 
-  @action updateTokensInfo(addr, key, value) {
+  /* @action updateTokensInfo(addr, key, value) {
     wand.request('crossChain_updateTokensInfo', { addr, key, value }, (err) => {
       if (err) {
         console.log('crossChain_updateTokensInfo: ', err)
@@ -306,7 +309,7 @@ class Tokens {
       }
       self.tokensList[addr][key] = value;
     })
-  }
+  } */
 
   @action updateCcTokensInfo(addr, key, value) {
     wand.request('crossChain_updateCcTokensInfo', { addr, key, value }, (err) => {
@@ -603,7 +606,7 @@ class Tokens {
         };
       }
       let route = '';
-      if (v.account === COIN_ACCOUNT) { // Coin
+      if (v.account === COIN_ACCOUNT || v.account === COIN_ACCOUNT_EOS) { // Coin
         route = `/${v.symbol.toLowerCase()}Account`;
       } else { // Token
         route = `/tokens/${v.chainSymbol}/${v.account}/${v.symbol}`;
@@ -635,7 +638,7 @@ class Tokens {
   }
 
   getChainStoreInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {

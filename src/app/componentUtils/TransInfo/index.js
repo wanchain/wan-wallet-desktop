@@ -55,7 +55,7 @@ class TransInfo extends Component {
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Chain')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={['E20', 'EOS'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
+            <Col span={COLRIGHT}><Input disabled={true} placeholder={['TOKEN', 'EOS'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.from')}</Col>
@@ -66,7 +66,7 @@ class TransInfo extends Component {
             <Col span={COLRIGHT}><Input disabled={true} placeholder={to} /></Col>
           </Row>
           {
-            tokenStand === 'E20' &&
+            tokenStand === 'TOKEN' &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
               <Col span={COLRIGHT}>

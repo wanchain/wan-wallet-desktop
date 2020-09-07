@@ -11,25 +11,48 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
 import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getChainInfoByChainId } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getChainInfoByChainId, getMintQuota, getBurnQuota } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  wanAddrInfo: stores.wanAddress.addrInfo,
-  ethAddrInfo: stores.ethAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
+  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
 class CrossChainTransForm extends Component {
-  state = {
-    confirmVisible: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      confirmVisible: false,
+      quota: 0,
+    }
+  }
+
+  async componentWillMount() {
+    let { from, chainType, type, smgList, transParams, tokenPairs } = this.props;
+    if (smgList.length === 0) {
+      return;
+    }
+    const storeman = smgList[0].groupId;
+    const chainPairId = transParams[from].chainPairId;
+    const tokenPairInfo = tokenPairs[chainPairId];
+    const decimals = tokenPairInfo.ancestorDecimals;
+    let quota = '';
+    if (type === INBOUND) {
+      quota = await getMintQuota(chainType, chainPairId, storeman);
+    } else {
+      quota = await getBurnQuota(chainType, chainPairId, storeman);
+    }
+    this.setState({
+      quota: formatNumByDecimals(quota, decimals)
+    })
   }
 
   componentWillUnmount() {
@@ -49,11 +72,11 @@ class CrossChainTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, chainType, tokenAddr, estimateFee, transParams, tokenPairs, type } = this.props;
+    const { updateTransParams, settings, form, from, estimateFee, transParams, tokenPairs, type, getChainAddressInfoByChain } = this.props;
     const chainPairId = transParams[from].chainPairId;
     const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
-    let fromAddrInfo = this.props[`${tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'].toLowerCase()}AddrInfo`];
-    let toAddrInfo = this.props[`${tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol'].toLowerCase()}AddrInfo`];
+    let fromAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
+    let toAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
 
     form.validateFields(async err => {
       if (err) {
@@ -67,18 +90,12 @@ class CrossChainTransForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
-      // console.log('next path::::', toPath);
-      /* if (tokenAddr) {
-        if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } else {
-        if (isExceedBalance(origAddrAmount, estimateFee.original, chainType === 'ETH' ? sendAmount : 0) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } */
+
+      // console.log('==', origAddrAmount, estimateFee.original, destAddrAmount, estimateFee.destination);
+      if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      }
 
       if (settings.reinput_pwd) {
         if (!pwd) {
@@ -142,21 +159,19 @@ class CrossChainTransForm extends Component {
     }
   }
 
-  updateLockAccounts = (storeman, option) => {
-    let { from, form, updateTransParams, smgList, chainType, tokenAddr, decimals } = this.props;
-
-    /* if (chainType === 'ETH') {
-      form.setFieldsValue({
-        capacity: tokenAddr ? formatNumByDecimals(smgList[option.key].quota, decimals) : fromWei(smgList[option.key].quota),
-        quota: tokenAddr ? formatNumByDecimals(smgList[option.key].inboundQuota, decimals) : fromWei(smgList[option.key].inboundQuota),
-      });
+  updateLockAccounts = async (storeman, option) => {
+    let { from, form, updateTransParams, chainType, type, transParams, tokenPairs } = this.props;
+    const chainPairId = transParams[from].chainPairId;
+    const decimals = tokenPairs[chainPairId].ancestorDecimals;
+    let quota = '';
+    // console.log('params:', chainType, chainPairId, storeman, typeof chainPairId);
+    if (type === INBOUND) {
+      quota = await getMintQuota(chainType, chainPairId, storeman);
     } else {
-      form.setFieldsValue({
-        quota: tokenAddr ? formatNumByDecimals(smgList[option.key].outboundQuota, decimals) : fromWei(smgList[option.key].outboundQuota),
-      });
+      quota = await getBurnQuota(chainType, chainPairId, storeman);
     }
-
-    updateTransParams(from, { storeman, txFeeRatio: smgList[option.key].txFeeRatio }); */
+    // console.log('quota:', quota);
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) });
     updateTransParams(from, { storeman });
   }
 
@@ -184,25 +199,23 @@ class CrossChainTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, chainType, estimateFee, balance, tokenPairs, transParams, type, account } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, tokenSymbol, toAccountList;
+    const { loading, form, from, settings, smgList, chainType, estimateFee, balance, tokenPairs, transParams, type, account, getChainAddressInfoByChain } = this.props;
+    const { quota } = this.state;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList;
     const chainPairId = transParams[from].chainPairId;
     const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
-    const decimals = tokenPairInfo.ancestorDecimals;
-
+    // console.log('tokenPairInfo:', tokenPairInfo);
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
-      // let addrInfo = this.props[`${tokenPairInfo.fromChainSymbol.toLowerCase()}AddrInfo`];
-      let addrInfo = this.props.ethAddrInfo;
-      toAccountList = this.props[`${tokenPairInfo.toChainSymbol.toLowerCase()}AddrInfo`];
-      selectedList = Object.keys(this.props[`${tokenPairInfo.toChainSymbol.toLowerCase()}AddrInfo`].normal);
+      toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
+      selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
       title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
       tokenSymbol = tokenPairInfo.ancestorSymbol;
       totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
-      toAccountList = this.props[`${tokenPairInfo.fromChainSymbol.toLowerCase()}AddrInfo`];
-      selectedList = Object.keys(this.props[`${tokenPairInfo.fromChainSymbol.toLowerCase()}AddrInfo`].normal);
+      toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
+      selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
       title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
       tokenSymbol = tokenPairInfo.ancestorSymbol;
       totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
@@ -210,7 +223,6 @@ class CrossChainTransForm extends Component {
 
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
-      capacity = quota = 0;
     } else {
       defaultSelectStoreman = smgList[0].groupId;
     }
@@ -259,18 +271,6 @@ class CrossChainTransForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('CrossChainTransForm.storemanAccount')}
               />
-              {/* {
-                chainType === 'ETH' &&
-                <CommonFormItem
-                  form={form}
-                  colSpan={6}
-                  formName='capacity'
-                  disabled={true}
-                  options={{ initialValue: capacity }}
-                  prefix={<Icon type="credit-card" className="colorInput" />}
-                  title={intl.get('CrossChainTransForm.capacity')}
-                />
-              }
               <CommonFormItem
                 form={form}
                 colSpan={6}
@@ -279,7 +279,7 @@ class CrossChainTransForm extends Component {
                 options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
-              /> */}
+              />
               <SelectForm
                 form={form}
                 colSpan={6}
@@ -316,9 +316,6 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount') + ` (${tokenSymbol})`}
               />
-              {
-                // !(chainType === 'ETH' && symbol === undefined) && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
-              }
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
             </div>
           </Spin>

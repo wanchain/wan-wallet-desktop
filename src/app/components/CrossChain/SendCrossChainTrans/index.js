@@ -14,15 +14,11 @@ const TransForm = Form.create({ name: 'CrossChainTransForm' })(CrossChainTransFo
   return {
     chainId: stores.session.chainId,
     language: stores.languageIntl.language,
-    wanAddrInfo: stores.wanAddress.addrInfo,
-    ethAddrInfo: stores.ethAddress.addrInfo,
-    btcAddrInfo: stores.btcAddress.addrInfo,
-    getTokensListInfo: stores.tokens.getTokensListInfo,
     transParams: stores.sendCrossChainParams.transParams,
-    getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
     tokenPairs: stores.crossChain.tokenPairs,
     updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
     addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
+    getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   }
 })
 
@@ -42,42 +38,39 @@ class Trans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, getTokensListInfo, getE20TokensListInfo, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId } = this.props;
+    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
     if (!(chainPairId in tokenPairs)) {
       return false;
     }
     let info = Object.assign({}, tokenPairs[chainPairId]);
     let chainType = info.fromChainSymbol;
     this.setState({ chainType });
-    let addrInfo = this.props[`${info.fromChainSymbol.toLowerCase()}AddrInfo`];
+    let addrInfo = getChainAddressInfoByChain(info.fromChainSymbol);
     let desChain, origGas, destGas, storeman;
     let tokenAddr = info.toAccount;
+    // console.log('info:', info);
     this.setState({ tokenAddr });
     if (type === INBOUND) {
-      /* if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoWANBalance'));
+      if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
-      } */
-
-      /* if (tokenAddr && (new BigNumber(getE20TokensListInfo.find(item => item.address === from).amount)).isEqualTo(0)) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      } */
-
+      }
       if (balance === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
-
       desChain = info.toChainSymbol;
       origGas = LOCKETH_GAS;// ToDo
       destGas = REDEEMWETH_GAS;// ToDo
     } else {
-      /* if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
+      if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        return;
+      }
+      if (balance === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
-      } */
-
+      }
       desChain = info.fromChainSymbol;
       origGas = LOCKWETH_GAS;// ToDo
       destGas = REDEEMETH_GAS;// ToDo
@@ -85,6 +78,11 @@ class Trans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
+      smgList = smgList.filter(obj => {
+        let now = Date.now();
+        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
+      });
+      // console.log('smgList:', smgList);
       this.setState({
         smgList,
         estimateFee: {

@@ -26,7 +26,7 @@ const WANCHAIN = 'WAN';
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr),
-  setCurrChainId: id => stores.crossChain.setCurrChainId(id),
+  setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
 }))
 
 @observer
@@ -37,7 +37,7 @@ class CrossETH extends Component {
     let tokenPairID = match.params.tokenPairId;
     this.props.setCurrSymbol('ETH');
     this.props.changeTitle('Common.crossChain');
-    this.props.setCurrChainId(tokenPairID);
+    this.props.setCurrTokenPairId(tokenPairID);
     this.info = tokenPairs[tokenPairID];
     this.props.setCurrToken(this.info.toAccount);
   }

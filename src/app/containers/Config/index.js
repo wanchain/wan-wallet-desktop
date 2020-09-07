@@ -16,8 +16,6 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
   crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
-  updateTokensInfo: (addr, key, val) => stores.tokens.updateTokensInfo(addr, key, val),
-  updateCcTokensInfo: (addr, key, val) => stores.tokens.updateCcTokensInfo(addr, key, val),
   deleteCustomToken: token => stores.tokens.deleteCustomToken(token),
 }))
 

@@ -25,7 +25,7 @@ const Option = Select.Option;
 }))
 
 @observer
-class TransHistory extends Component {
+class TokenTransHistory extends Component {
   constructor (props) {
     super(props);
     this.props.setCurrPage(this.props.name || []);
@@ -85,4 +85,4 @@ class TransHistory extends Component {
   }
 }
 
-export default TransHistory;
+export default TokenTransHistory;

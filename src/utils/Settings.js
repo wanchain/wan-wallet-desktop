@@ -28,22 +28,7 @@ const defaultConfig = {
     main: {
       tokens: {
       },
-      cc_tokens: {
-        "ETH": {
-          "select": false,
-          "wan_addr": "0x28362cd634646620ef2290058744f9244bb90ed9",
-          "symbol": "ETH",
-          "decimals": 18,
-          "chain": "ETH"
-        },
-        "BTC": {
-          "select": false,
-          "wan_addr": "0xd15e200060fc17ef90546ad93c1c61bfefdc89c7",
-          "symbol": "BTC",
-          "decimals": 8,
-          "chain": "BTC",
-        }
-      },
+      cc_tokens: {},
       cc_selected: {
         "1": true,
         "3": true,
@@ -54,22 +39,7 @@ const defaultConfig = {
     testnet: {
       tokens: {
       },
-      cc_tokens: {
-        /* "ETH": {
-          "select": false,
-          "wan_addr": "0x46397994a7e1e926ea0de95557a4806d38f10b0d",
-          "symbol": "ETH",
-          "decimals": 18,
-          "chain": "ETH"
-        }, */
-        "BTC": {
-          "select": false,
-          "wan_addr": "0x89a3e1494bc3db81dadc893ded7476d33d47dcbd",
-          "symbol": "BTC",
-          "decimals": 8,
-          "chain": "BTC",
-        }
-      },
+      cc_tokens: {},
       cc_selected: {
         "1": true,
         "3": true,

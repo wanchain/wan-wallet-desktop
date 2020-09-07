@@ -2,10 +2,10 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message } from 'antd';
+import { Table, Row, Col, message, Tag } from 'antd';
 
 import style from './index.less';
-import TransHistory from 'components/TransHistory';
+import TokenTransHistory from 'components/TransHistory/TokenTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
@@ -25,6 +25,7 @@ message.config({
   currTokenAddr: stores.tokens.currTokenAddr,
   transParams: stores.sendTransParams.transParams,
   tokenIconList: stores.tokens.tokenIconList,
+  tokensList: stores.tokens.tokensList,
   getTokensListInfo_ByChain: stores.tokens.getTokensListInfo_ByChain,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
@@ -178,6 +179,7 @@ class TokenTrans extends Component {
                   this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
                 })
                 console.log('TxHash:', txHash);
+                message.success(intl.get('Send.transSuccess'));
                 resolve(txHash);
               }
             });
@@ -217,6 +219,7 @@ class TokenTrans extends Component {
                 }, () => {
                   this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
                 })
+                message.success(intl.get('Send.transSuccess'));
                 resolve(txHash);
               }
             });
@@ -228,11 +231,12 @@ class TokenTrans extends Component {
           wand.request('transaction_tokenNormal', trans, (err, txHash) => {
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
-              console.log('transaction_normal:', err);
+              // console.log('transaction_tokenNormal:', err);
               reject(false); // eslint-disable-line prefer-promise-reject-errors
             } else {
               this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
               console.log('Tx hash: ', txHash);
+              message.success(intl.get('Send.transSuccess'));
               resolve(txHash)
             }
           });
@@ -259,7 +263,12 @@ class TokenTrans extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} /><span className="wanTotal">{getAmount}</span><span className="wanTex">{symbol}</span></Col>
+          <Col span={12} className="col-left">
+            <img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} />
+            <span className="wanTotal">{getAmount}</span>
+            <span className="wanTex">{symbol}</span>
+            <Tag className="symbol">{chain}</Tag>
+          </Col>
           <Col span={12} className="col-right">
             <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
           </Col>
@@ -271,7 +280,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={['normal', 'import', 'ledger', 'trezor', 'rawKey']} transType={TRANSTYPE.tokenTransfer} />
+            <TokenTransHistory name={['normal', 'import', 'ledger', 'trezor', 'rawKey']} transType={TRANSTYPE.tokenTransfer} />
           </Col>
         </Row>
       </div>

@@ -21,7 +21,7 @@ import style from './index.less';
   stores: stores,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
-  currChainId: stores.crossChain.currChainId,
+  currTokenPairId: stores.crossChain.currTokenPairId,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -29,7 +29,7 @@ import style from './index.less';
   getCoinsListInfo_2way: (...args) => stores.tokens.getCoinsListInfo_2way(...args),
   getTokensListInfo_2way: (...args) => stores.tokens.getTokensListInfo_2way(...args),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
-  setCurrChainId: id => stores.crossChain.setCurrChainId(id),
+  setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
 }))
 
 @observer
@@ -43,11 +43,18 @@ class CrossChain extends Component {
   }
 
   init = (id) => {
-    const { tokenPairs, setCurrToken, setCurrChainId, setCurrSymbol } = this.props;
+    const { tokenPairs, setCurrToken, setCurrTokenPairId, setCurrSymbol } = this.props;
     const { fromAccount, ancestorSymbol } = tokenPairs[id];
     setCurrToken(fromAccount);
-    setCurrChainId(id);
+    setCurrTokenPairId(id);
     setCurrSymbol(ancestorSymbol);
+  }
+
+  componentWillReceiveProps(newProps) {
+    let id = newProps.match.params.tokenPairId;
+    if (id !== this.props.currTokenPairId) {
+      this.init(id);
+    }
   }
 
   componentDidMount() {
@@ -68,13 +75,6 @@ class CrossChain extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
-  }
-
-  componentWillReceiveProps(newProps) {
-    let id = newProps.match.params.tokenPairId;
-    if (id !== this.props.currChainId) {
-      this.init(id);
-    }
   }
 
   inboundHandleSend = from => {

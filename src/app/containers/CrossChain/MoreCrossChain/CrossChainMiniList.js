@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Icon, Input, Checkbox, List, Tag } from 'antd';
+import { Icon } from 'antd';
 import style from './index.less';
 
 @inject(stores => ({

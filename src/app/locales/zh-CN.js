@@ -465,6 +465,8 @@ const zh_CN = {
     'CrossChainTransForm.Date': 'Date',
     'CrossChainTransForm.crossType': 'Cross Type',
 
+    'CrossChain.selectFailed': '修改选择状态失败',
+
     'RedeemFromPrivate.noSufficientFunds': '账户余额不足',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',
     'RedeemFromPrivateForm.redeem': '提币',
@@ -476,6 +478,7 @@ const zh_CN = {
     'Rename.edit': '修改',
 
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
+    'SendNormalTrans.hasNoBalance': '请确保您有足够的{coin}余额',
     'SendNormalTrans.hasNoWANBalance': '请确保您有足够的WAN',
     'SendNormalTrans.hasNoTokenBalance': '请确保您有足够的token',
     'SendNormalTrans.hasNoETHBalance': '请确保您有足够的ETH',

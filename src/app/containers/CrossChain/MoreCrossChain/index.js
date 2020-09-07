@@ -1,9 +1,8 @@
 import intl from 'react-intl-universal';
 import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Icon, Input, Checkbox, List } from 'antd';
+import { Table, Row, Col } from 'antd';
 import CrossChainMiniList from './CrossChainMiniList';
-import totalImg from 'static/image/btc.png';
 import style from './index.less';
 
 @inject(stores => ({

@@ -1002,3 +1002,29 @@ export const getChainInfoByChainId = function (chainId) {
     })
   })
 }
+
+export const getMintQuota = function (chainType, tokenPairID, storemanGroupID) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getMintQuota', { chainType, tokenPairID, storemanGroupID }, (err, res) => {
+      // console.log('getMintQuota:', err, res);
+      if (err) {
+        return resolve(false);
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}
+
+export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getBurnQuota', { chainType, tokenPairID, storemanGroupID }, (err, res) => {
+      // console.log('getBurnQuota:', err, res);
+      if (err) {
+        return resolve(false);
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}
