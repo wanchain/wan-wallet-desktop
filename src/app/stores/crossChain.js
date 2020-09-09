@@ -1,3 +1,4 @@
+import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
 import tokens from './tokens';
 import session from './session';
@@ -8,6 +9,7 @@ import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 import { COIN_ACCOUNT } from 'utils/settings';
+import { message } from 'antd';
 
 class CrossChain {
   @observable currSymbol = '';
@@ -130,11 +132,16 @@ class CrossChain {
   }
 
   @action setCcTokenSelectedStatus(id, selected) {
+    if (id === undefined) {
+      message.error(intl.get('CrossChain.selectFailed'));
+      return;
+    }
     wand.request('crossChain_setCcTokenSelectStatus', { id, selected }, (err, data) => {
       if (err) {
         console.log('Update selection status failed.', err);
+        message.error(intl.get('CrossChain.selectFailed'));
       }
-      let target = Object.values(this.crossChainSelections).flat(Infinity).find(obj => obj.id === id);
+      let target = Object.values(this.crossChainSelections).flat(1).find(obj => obj.id === id);
       if (target) {
         target.selected = selected;
       }

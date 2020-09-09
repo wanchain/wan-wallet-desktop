@@ -9,7 +9,7 @@ import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-import { COIN_ACCOUNT } from 'utils/settings';
+import { COIN_ACCOUNT, WALLET_CHAIN } from 'utils/settings';
 
 class Portfolio {
   @observable coinPriceObj;
@@ -18,18 +18,22 @@ class Portfolio {
     WAN: {
       ancestor: false,
       balance: 0,
+      chain: 'Wanchain',
     },
     ETH: {
       ancestor: false,
       balance: 0,
+      chain: 'Ethereum',
     },
     BTC: {
       ancestor: false,
       balance: 0,
+      chain: 'Bitcoin',
     },
     EOS: {
       ancestor: false,
       balance: 0,
+      chain: 'EOS',
     }
   };
 
@@ -39,10 +43,10 @@ class Portfolio {
 
   @observable tokenIds_from_CoinGeckoAPI = {}
 
-  @observable coinList = Object.assign({}, this.defaultCoinList);
+  @observable coinList = {};
 
   @action setCoin() {
-    self.coinList = Object.assign({}, self.defaultCoinList, self.getToken);
+    self.coinList = Object.assign({}, self.getToken);
   }
 
   @computed get getToken() {
@@ -51,7 +55,8 @@ class Portfolio {
       obj[item.tokenAddr] = {
         ancestor: item.ancestor,
         scAddr: item.tokenAddr,
-        chain: item.chainSymbol,
+        chain: item.chain,
+        chainSymbol: item.chainSymbol,
         symbol: item.symbol,
         decimals: item.decimals,
         balance: 0,
@@ -140,7 +145,7 @@ class Portfolio {
         if (key.indexOf(COIN_ACCOUNT) !== -1) {
           key = val.symbol;
         }
-        if (key in self.defaultCoinList) {
+        if (WALLET_CHAIN.includes(key)) {
           switch (key) {
             case 'WAN':
               val.balance = wanAddress.getAllAmount;
@@ -172,6 +177,7 @@ class Portfolio {
     let list = Object.keys(self.coinList).map((key, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: key, writable: true },
+      chain: { value: self.coinList[key].chain, writable: true },
       price: { value: '$0', writable: true },
       balance: { value: self.coinList[key].balance ? self.coinList[key].balance : '0', writable: true }, // To do
       value: { value: '$0', writable: true },
@@ -220,7 +226,7 @@ class Portfolio {
       }
     });
     list.forEach(item => {
-      item.name = Object.keys(self.defaultCoinList).includes(item.name) ? item.name : self.coinList[item.name].symbol;
+      item.name = self.coinList[item.name].symbol;
       item.price = `$${formatNum(item.price.substr(1))}`;
       item.balance = formatNum(item.balance);
       item.value = `$${formatNum(item.value.substr(1))}`;

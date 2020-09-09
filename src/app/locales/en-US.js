@@ -86,6 +86,7 @@ const en_US = {
 
     'Portfolio.portfolio': 'Portfolio',
     'Portfolio.name': 'NAME',
+    'Portfolio.chain': 'CHAIN',
     'Portfolio.price': 'PRICE',
     'Portfolio.balance': 'BALANCE',
     'Portfolio.value': 'VALUE',

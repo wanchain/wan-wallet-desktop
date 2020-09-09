@@ -35,7 +35,9 @@ class CrossBTC extends Component {
   }
 
   componentDidMount() {
+    console.log('tokensList:', this.props.tokensList);
     let tokenAddr = Object.keys(this.props.tokensList).find(item => this.props.tokensList[item].symbol === 'BTC');
+    console.log('tokenAddr:', tokenAddr)
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.updateTokensBalance(tokenAddr);
@@ -77,9 +79,6 @@ class CrossBTC extends Component {
   }
 
   outboundHandleSend = () => {
-    const { tokenPairs, match } = this.props;
-    let tokenPairID = match.params.tokenPairId;
-    let info = this.info;
     let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,

@@ -146,7 +146,7 @@ class Tokens {
 
   @action updateTokensBalance(tokenScAddr, chain = 'WAN') {
     let addrInfo = this.getChainAddressInfoByChain(chain);
-    if (addrInfo === undefined) {
+    if (addrInfo === undefined || tokenScAddr === undefined) {
       return;
     }
     let normalArr = Object.keys(addrInfo.normal || []);
@@ -228,7 +228,7 @@ class Tokens {
   }
 
   @action getTokenBalance(item) {
-    let { chain, scAddr } = item;
+    let { chainSymbol, scAddr } = item;
     scAddr = scAddr.replace(/^.*-/, '');
     return new Promise((resolve, reject) => {
       let normalArr = [];
@@ -237,7 +237,7 @@ class Tokens {
       let trezorArr = [];
       let rawKeyArr = [];
 
-      switch (chain) {
+      switch (chainSymbol) {
         case 'WAN':
           normalArr = Object.keys(wanAddress.addrInfo['normal'] || []);
           importArr = Object.keys(wanAddress.addrInfo['import'] || []);
@@ -266,8 +266,7 @@ class Tokens {
       if ((normalArr.length || importArr.length || rawKeyArr.length) === 0) {
         return {};
       }
-      // console.log('p:', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain })
-      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chain }, (err, data) => {
+      wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chainSymbol }, (err, data) => {
         // console.log(err, data);
         if (err) {
           console.log('stores_getTokensBalance:', err);
@@ -420,8 +419,13 @@ class Tokens {
   }
 
   @computed get getTokensListInfo() {
+    const chain = this.currTokenChain;
+    let addrInfo = this.getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
+      return [];
+    }
     let addrList = [];
-    let normalArr = Object.keys(wanAddress.addrInfo.normal);
+    let normalArr = Object.keys(addrInfo.normal);
     normalArr.forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
@@ -435,10 +439,10 @@ class Tokens {
       }
       addrList.push({
         key: item,
-        name: wanAddress.addrInfo.normal[item].name,
+        name: addrInfo.normal[item].name,
         address: wanUtil.toChecksumAddress(item),
         balance: formatNum(balance),
-        path: `${WANPATH}${wanAddress.addrInfo.normal[item].path}`,
+        path: `${WANPATH}${addrInfo.normal[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -630,6 +634,9 @@ class Tokens {
 
   getChainAddressInfoByChain(chain) {
     const ADDRESSES = { wanAddress, ethAddress };
+    if (chain === undefined) {
+      return undefined;
+    }
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {

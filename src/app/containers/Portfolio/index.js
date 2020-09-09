@@ -73,7 +73,6 @@ class Portfolio extends Component {
 
   render() {
     const { portfolioList } = this.props;
-    // console.log('portfolioList:', portfolioList)
     return (
       <div>
         <Table columns={this.columns} dataSource={portfolioList} pagination={false} />

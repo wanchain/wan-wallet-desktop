@@ -467,6 +467,10 @@ class LanguageIntl {
         dataIndex: 'name',
         key: 'name',
       }, {
+        title: intl.get('Portfolio.chain'),
+        dataIndex: 'chain',
+        key: 'chain',
+      }, {
         title: intl.get('Portfolio.balance'),
         dataIndex: 'balance',
         key: 'balance',

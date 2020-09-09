@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-
 import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossChainTransForm from 'components/CrossChain/CrossChainTransForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
