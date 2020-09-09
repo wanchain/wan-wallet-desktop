@@ -51,7 +51,7 @@ class CrossBTCConfirmForm extends Component {
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }
-          <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
+          <Form.Item label={intl.get('Common.storeman')}>
             {getFieldDecorator('storemanAccount', { initialValue: storemanAccount })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>

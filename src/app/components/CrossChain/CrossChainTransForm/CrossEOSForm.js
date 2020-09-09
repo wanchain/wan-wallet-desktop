@@ -229,7 +229,7 @@ class CrossEOSForm extends Component {
                 selectedList={smgList}
                 filterItem={item => item.storemanGroup.replace(/^([a-zA-z0-9]{24})[a-zA-z0-9]{84}([a-zA-z0-9]{24})$/, '$1****$2')}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('CrossChainTransForm.storemanAccount')}
+                formMessage={intl.get('Common.storeman')}
               />
               <CommonFormItem
                 form={form}

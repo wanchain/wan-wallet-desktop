@@ -31,6 +31,7 @@ const pt_PT = {
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',
@@ -86,6 +87,7 @@ const pt_PT = {
 
     'Portfolio.portfolio': 'Portfólio',
     'Portfolio.name': 'NOME',
+    'Portfolio.chain': 'CHAIN',
     'Portfolio.price': 'PREÇO',
     'Portfolio.balance': 'SALDO',
     'Portfolio.value': 'VALOR',
@@ -438,7 +440,6 @@ const pt_PT = {
     'NormalTransForm.pwdIsIncorrect': 'Senha está incorreta',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacidade',
     'CrossChainTransForm.quota': 'Capacidade restante',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
@@ -455,12 +456,13 @@ const pt_PT = {
     'CrossChainTransForm.NoticeTxHash': 'Note Hash',
     'CrossChainTransForm.ConfirmTxHash': 'Confirmar Hash',
     'CrossChainTransForm.CancelTxHash': 'Cancelar Hash',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'Valor',
     'CrossChainTransForm.Secret': 'Segredo',
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Data',
     'CrossChainTransForm.crossType': 'Cross Type',
+
+    'CrossChain.selectFailed': 'Update selection status failed.',
 
     'RedeemFromPrivate.noSufficientFunds': 'Sem fundos suficientes',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Falha ao obter informações de transações privadas',
@@ -473,6 +475,7 @@ const pt_PT = {
     'Rename.edit': 'Editar',
 
     'SendNormalTrans.hasBalance': 'Verifique se você tem saldo suficiente',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
     'SendNormalTrans.hasNoWANBalance': 'Por favor,verifique se você possui saldo suificiente em WAN',
     'SendNormalTrans.hasNoTokenBalance': 'Por favor,verifique se você possui saldo suficiente em token',
     'SendNormalTrans.hasNoETHBalance': 'Por favor,verifique se você tem saldo suficiente em ETH',
@@ -693,7 +696,7 @@ const pt_PT = {
     'title.imported': 'Importar endereço',
     'title.importedKey': 'Chave importada',
 
-    'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde'
+    'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde',
 
 }
 

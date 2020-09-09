@@ -25,7 +25,7 @@ class Storeman extends Component {
       validatorRegister: false,
     }
     this.props.updateTransHistory();
-    this.props.changeTitle('stormen.title');
+    this.props.changeTitle('Common.storeman');
   }
 
   componentDidMount() {

@@ -31,6 +31,7 @@ const en_US = {
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': 'connecting to server',
     'Layout.connected': 'connected to server',
@@ -443,7 +444,6 @@ const en_US = {
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirm Cross Chain Transaction',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacity',
     'CrossChainTransForm.quota': 'Capacity Left',
     'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
@@ -461,7 +461,6 @@ const en_US = {
     'CrossChainTransForm.NoticeTxHash': 'Notice Hash',
     'CrossChainTransForm.ConfirmTxHash': 'Confirm Hash',
     'CrossChainTransForm.CancelTxHash': 'Cancel Hash',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'Value',
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Status',
@@ -707,7 +706,6 @@ const en_US = {
 
     'network.down': 'The network request failed, Please try again later',
 
-    'stormen.title': 'Storeman'
 }
 
 export default en_US;

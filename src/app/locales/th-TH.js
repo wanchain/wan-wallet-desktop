@@ -31,6 +31,7 @@ const th_TH = {
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
@@ -86,6 +87,7 @@ const th_TH = {
 
     'Portfolio.portfolio': 'พอร์ตฟอลิโอ',
     'Portfolio.name': 'ชื่อทรัพย์สิน',
+    'Portfolio.chain': 'CHAIN',
     'Portfolio.price': 'ราคา',
     'Portfolio.balance': 'ยอดคงเหลือ',
     'Portfolio.value': 'มูลค่า',
@@ -440,7 +442,6 @@ const th_TH = {
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'ความจุ',
     'CrossChainTransForm.quota': 'ความจุคงเหลือ',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
@@ -457,12 +458,13 @@ const th_TH = {
     'CrossChainTransForm.NoticeTxHash': 'Hash การแจ้งเตือน',
     'CrossChainTransForm.ConfirmTxHash': 'Hash การยืนยัน',
     'CrossChainTransForm.CancelTxHash': 'Hash การยกเลิก',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'ค่า',
     'CrossChainTransForm.Secret': 'รหัสลับ',
     'CrossChainTransForm.Status': 'สถถานะ',
     'CrossChainTransForm.Date': 'วันที่',
     'CrossChainTransForm.crossType': 'Cross Type',
+
+    'CrossChain.selectFailed': 'Update selection status failed.',
 
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',
@@ -475,6 +477,7 @@ const th_TH = {
     'Rename.edit': 'แก้ไข',
 
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
     'SendNormalTrans.hasNoWANBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ WAN เพียงพอ',
     'SendNormalTrans.hasNoTokenBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของโทเค็นเพียงพอ',
     'SendNormalTrans.hasNoETHBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ ETH เพียงพอ',
@@ -696,7 +699,7 @@ const th_TH = {
     'title.imported': 'นำเข้าแอดเดรส',
     'title.importedKey': 'Imported Key',
 
-    'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง'
+    'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง',
 
 }
 

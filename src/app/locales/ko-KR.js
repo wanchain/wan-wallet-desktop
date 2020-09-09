@@ -31,6 +31,7 @@ const ko_KR = {
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',
@@ -86,6 +87,7 @@ const ko_KR = {
 
     'Portfolio.portfolio': '나의 자산',
     'Portfolio.name': '자산명',
+    'Portfolio.chain': 'CHAIN',
     'Portfolio.price': '자산 가격',
     'Portfolio.balance': '자산 합계',
     'Portfolio.value': '자산 가치',
@@ -440,7 +442,6 @@ const ko_KR = {
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': '용량',
     'CrossChainTransForm.quota': '남은 용량',
     'CrossChainTransForm.estimateFee': '예상 수수료',
@@ -457,12 +458,13 @@ const ko_KR = {
     'CrossChainTransForm.NoticeTxHash': 'Hash 통지',
     'CrossChainTransForm.ConfirmTxHash': 'Hash 확인',
     'CrossChainTransForm.CancelTxHash': 'Hash 취소',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': '가치',
     'CrossChainTransForm.Secret': '비밀',
     'CrossChainTransForm.Status': '상태',
     'CrossChainTransForm.Date': '날자',
     'CrossChainTransForm.crossType': 'Cross Type',
+
+    'CrossChain.selectFailed': 'Update selection status failed.',
 
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',
@@ -475,6 +477,7 @@ const ko_KR = {
     'Rename.edit': '수정',
 
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
     'SendNormalTrans.hasNoWANBalance': '충분한 WAN 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoTokenBalance': '충분한 토큰 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoETHBalance': '충분한 ETH 잔액이 있는지 확인 바랍니다',
@@ -696,7 +699,7 @@ const ko_KR = {
     'title.imported': '가져온 주소',
     'title.importedKey': '키 가져오기',
 
-    'network.down': '네트워크 요청이 실패했습니다. 나중에 다시 시도하십시오'
+    'network.down': '네트워크 요청이 실패했습니다. 나중에 다시 시도하십시오',
 
 }
 

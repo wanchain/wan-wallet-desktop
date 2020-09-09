@@ -44,7 +44,7 @@ class CrossEOSConfirmForm extends Component {
           <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName(srcChain) + ')'}>
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('CrossChainTransForm.storemanAccount')}>
+          <Form.Item label={intl.get('Common.storeman')}>
             {getFieldDecorator('storemanAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>

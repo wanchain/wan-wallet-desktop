@@ -269,7 +269,7 @@ class CrossChainTransForm extends Component {
                 selectedList={smgList}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('CrossChainTransForm.storemanAccount')}
+                formMessage={intl.get('Common.storeman')}
               />
               <CommonFormItem
                 form={form}

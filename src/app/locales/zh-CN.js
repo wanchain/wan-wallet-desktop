@@ -31,6 +31,7 @@ const zh_CN = {
     'Common.networkError': '网络故障，请重启钱包',
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',
@@ -87,6 +88,7 @@ const zh_CN = {
 
     'Portfolio.portfolio': '我的资产',
     'Portfolio.name': '名称',
+    'Portfolio.chain': '链名',
     'Portfolio.price': '单价',
     'Portfolio.balance': '余额',
     'Portfolio.value': '估值',
@@ -440,7 +442,6 @@ const zh_CN = {
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': '最大配额',
     'CrossChainTransForm.quota': '剩余配额',
     'CrossChainTransForm.txFeeRatio': '比率',
@@ -458,7 +459,6 @@ const zh_CN = {
     'CrossChainTransForm.NoticeTxHash': 'Notice Hash',
     'CrossChainTransForm.ConfirmTxHash': 'Confirm Hash',
     'CrossChainTransForm.CancelTxHash': 'Cancel Hash',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'Value',
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Status',
@@ -702,7 +702,6 @@ const zh_CN = {
 
     'network.down': '网络请求失败，请稍后再试',
 
-    'stormen.title': 'Storeman'
 }
 
 export default zh_CN;

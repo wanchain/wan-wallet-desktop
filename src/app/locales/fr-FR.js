@@ -31,6 +31,7 @@ const fr_FR = {
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
+    'Common.storeman': 'Storeman',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',
@@ -86,6 +87,7 @@ const fr_FR = {
 
     'Portfolio.portfolio': 'Portfolio',
     'Portfolio.name': 'NOM',
+    'Portfolio.chain': 'CHAIN',
     'Portfolio.price': 'PRIX',
     'Portfolio.balance': 'SOLDE',
     'Portfolio.value': 'VALEUR',
@@ -440,7 +442,6 @@ const fr_FR = {
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
-    'CrossChainTransForm.storemanAccount': 'Storeman',
     'CrossChainTransForm.capacity': 'Capacités',
     'CrossChainTransForm.quota': 'Capacités disponibles',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
@@ -457,12 +458,13 @@ const fr_FR = {
     'CrossChainTransForm.NoticeTxHash': 'Notice du hachage',
     'CrossChainTransForm.ConfirmTxHash': 'Confirmer le hachage',
     'CrossChainTransForm.CancelTxHash': 'Annuler le hachage',
-    'CrossChainTransForm.Storeman': 'Storeman',
     'CrossChainTransForm.Value': 'Valeur',
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Statut',
     'CrossChainTransForm.Date': 'Date',
     'CrossChainTransForm.crossType': 'Cross Type',
+
+    'CrossChain.selectFailed': 'Update selection status failed.',
 
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',
@@ -475,6 +477,7 @@ const fr_FR = {
     'Rename.edit': 'Modifier',
 
     'SendNormalTrans.hasBalance': 'Assurez-vous d\'avoir un solde suffisant',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
     'SendNormalTrans.hasNoWANBalance': 'Veuillez vous assurer d\'avoir un solde WAN suffisant',
     'SendNormalTrans.hasNoTokenBalance': 'Veuillez vous assurer d\'avoir un solde en token suffisant',
     'SendNormalTrans.hasNoETHBalance': 'Veuillez vous assurer d\'avoir un solde ETH suffisant',
@@ -696,7 +699,7 @@ const fr_FR = {
     'title.imported': 'Adresse importée',
     'title.importedKey': 'Clé importée',
 
-    'network.down': 'Requête de connexion échouée, veuillez réessayer plus tard'
+    'network.down': 'Requête de connexion échouée, veuillez réessayer plus tard',
 
 }
 
