@@ -196,7 +196,6 @@ class Settings {
     try {
       let network = this.get('network');
       let tokens = this.tokens;
-      console.log('this token', tokens)
       let ccTokens = this.ccTokens;
       if (tokens === undefined) {
         this.updateToken(defaultConfig.settings[network].tokens);
@@ -206,7 +205,6 @@ class Settings {
         this.updateCcToken(defaultConfig.settings[network].cc_tokens);
         ccTokens = this.ccTokens;
       }
-      console.log('regToken', regTokens)
 
       regTokens.forEach(item => {
         /** Add original token */
