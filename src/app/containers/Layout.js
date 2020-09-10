@@ -85,8 +85,8 @@ class Layout extends Component {
       if (ready) {
         try {
           running = true;
-          await initRegTokens('ETH');
-          await initRegTokens('EOS');
+          // await initRegTokens('ETH');
+          // await initRegTokens('EOS');
           await this.props.getTokensInfo();
           await this.props.getCcTokensInfo();
           await this.props.getTokenPairs();
