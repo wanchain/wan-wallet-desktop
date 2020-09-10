@@ -1072,7 +1072,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 payload.feeRate = network === 'main' ? 30 : 300;
 
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'BTC');
-                let ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
                 logger.error('Send transaction failed: ' + e.message || e.stack)
                 err = e
@@ -1456,7 +1456,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let gasPrice = await ccUtil.getGasPrice('wan');
                 tx.gasLimit = 200000;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-                let ret = await global.crossInvoker.PosStakeAppend(tx);
+                ret = await global.crossInvoker.PosStakeAppend(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1470,7 +1470,7 @@ ipc.on(ROUTE_STAKING, async (event, actionUni, payload) => {
                 let gasPrice = await ccUtil.getGasPrice('wan');
                 tx.gasLimit = 200000;
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
-                let ret = await global.crossInvoker.PosStakeUpdate(tx);
+                ret = await global.crossInvoker.PosStakeUpdate(tx);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2214,7 +2214,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: val })
             break;
         case 'getDAppInjectFile':
-            let ret = "";
+            ret = "";
 
             if (setting.isDev) {
                 ret = `file://${__dirname}/../modals/dAppInject.js`;
