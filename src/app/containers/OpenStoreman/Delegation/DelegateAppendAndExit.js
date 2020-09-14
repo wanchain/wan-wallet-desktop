@@ -14,7 +14,7 @@ import DelegationConfirmForm from './DelegationConfirmForm';
 import style from 'components/Staking/MyValidatorsList/index.less';
 import { getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit, getStoremanContractData } from 'utils/helper';
 
-const MINAMOUNT = 100;
+const MINAMOUNT = 1;
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 

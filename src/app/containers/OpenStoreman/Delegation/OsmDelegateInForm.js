@@ -126,7 +126,7 @@ class OsmDelegateInForm extends Component {
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
       wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
-        if (err) {
+        if (err || !ret.code) {
           message.warn(intl.get('ValidatorRegister.updateFailed'));
         } else {
           let data = ret.result;
@@ -200,7 +200,6 @@ class OsmDelegateInForm extends Component {
       BIP44Path: path,
       amount: amount.toString(),
       gasLimit: this.state.gasLimit,
-      gasPrice: fromWei(this.state.gasPrice),
       wkAddr: this.state.storemanInfo.wkAddr,
     }
     if (walletID === WALLETID.LEDGER) {

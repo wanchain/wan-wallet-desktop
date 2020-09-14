@@ -32,6 +32,8 @@ class OpenStoreman {
 
   @observable storemanConf = {};
 
+  @observable storemanDelegators = [];
+
   @observable storemanStakeTotalIncentive = [];
 
   @observable storemanDelegatorTotalIncentive = [];
@@ -77,7 +79,7 @@ class OpenStoreman {
           rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
-          reward: fromWei(item.incentive),
+          reward: fromWei(item.incentive || 0), // TODO to delete the '|| 0'
           crosschain: `${groupInfo.chain1[2]} / ${groupInfo.chain2[2]}`,
           status: storemanGroupStatus[groupInfo.status],
           wkAddr: item.wkAddr,
@@ -225,9 +227,7 @@ class OpenStoreman {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
       console.log('storeman_getStoremanStakeInfo_ret', ret);
       this.storemanListInfo = ret;
-      console.log('Before')
       this.storemanListInfoInfoReady = true;
-      console.log('After')
     } catch (err) {
       console.log(`action_getStoremanStakeInfo: ${err}`);
     }
