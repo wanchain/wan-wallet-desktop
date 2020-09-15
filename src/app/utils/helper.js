@@ -142,8 +142,12 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
         default:
           return addrInfo['normal'][value][type];
       }
+    } else if (addrInfo.ledger[value]) {
+      return addrInfo.ledger[value] && addrInfo.ledger[value][type];
+    } else if (addrInfo.trezor[value]) {
+      return addrInfo.trezor[value] && addrInfo.trezor[value][type];
     } else {
-      return undefined
+      return undefined;
     }
   }
 }

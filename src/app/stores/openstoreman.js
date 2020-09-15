@@ -4,9 +4,9 @@ import { BigNumber } from 'bignumber.js';
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
+import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
+import { formatLongText, fromWei, timeFormat, formatNum, showNA } from 'utils/support';
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus, WALLETID } from 'utils/settings'
-import { getInfoByAddress, checkAddrType } from 'utils/helper';
-import { dateFormat, formatLongText, fromWei, timeFormat, formatNum, showNA } from 'utils/support';
 
 function wandWrapper(action, options = {}) {
   return new Promise((resolve, reject) => {
@@ -32,8 +32,6 @@ class OpenStoreman {
 
   @observable storemanConf = {};
 
-  @observable storemanDelegators = [];
-
   @observable storemanStakeTotalIncentive = [];
 
   @observable storemanDelegatorTotalIncentive = [];
@@ -53,8 +51,8 @@ class OpenStoreman {
         minStakeIn: fromWei(item.minStakeIn),
         groupId: formatLongText(item.groupId),
         groupIdText: item.groupId,
-        startTime: dateFormat(item.registerTime),
-        endTime: dateFormat(item.endRegisterTime),
+        startTime: timeFormat(item.registerTime),
+        endTime: timeFormat(item.endRegisterTime),
         crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
         currDeposit: showNA(fromWei(item.deposit)),
         delegationFee: item.delegateFee / 10000 + '%',
@@ -68,7 +66,7 @@ class OpenStoreman {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
       if (accountInfo && groupInfo) {
-        accountInfo.path = `${WANPATH}${accountInfo.path}`;
+        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         return {
           key: index,
@@ -180,9 +178,9 @@ class OpenStoreman {
     cardsList.myStake[0] = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
     cardsList.myStake[1] = this.storemanListInfo.length;
     cardsList.myStake[2] = this.storemanListInfoInfoReady;
-    cardsList.delegationStake[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
-    cardsList.delegationStake[1] = this.storemanDelegatorInfo.length;
-    cardsList.delegationStake[2] = this.storemanDelegatorInfoInfoReady;
+    cardsList.delegationStake[0] = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegateDeposit).toString(10), 0));
+    cardsList.delegationStake[1] = this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegatorCount).toString(10), 0);
+    cardsList.delegationStake[2] = this.storemanListInfoInfoReady;
     cardsList.reward[0] = fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
     cardsList.reward[1] = this.storemanStakeTotalIncentive.length && this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
     cardsList.reward[2] = this.storemanStakeTotalIncentiveInfoReady;
