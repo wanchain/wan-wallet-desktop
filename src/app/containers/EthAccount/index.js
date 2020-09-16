@@ -150,7 +150,6 @@ class EthAccount extends Component {
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
-    console.log('render EthAccount')
     return (
       <div className="account">
         <Row className="title">
@@ -158,7 +157,7 @@ class EthAccount extends Component {
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
             <span className="wanTotal">{120}</span>
             <span className="wanTex">{'ETH'}</span>
-            <Tag className="symbol">{'ETHERIUM'}</Tag>
+            <Tag className="symbol">{intl.get('Common.ethereum')}</Tag>
           </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
