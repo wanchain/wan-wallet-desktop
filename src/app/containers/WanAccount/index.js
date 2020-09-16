@@ -306,7 +306,7 @@ class WanAccount extends Component {
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
             <span className="wanTotal">{getAmount}</span>
             <span className="wanTex">{intl.get('WanAccount.wan')}</span>
-            <Tag className="symbol">{'WANCHAIN'}</Tag>
+            <Tag className="symbol">{intl.get('Common.wanchain')}</Tag>
           </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>

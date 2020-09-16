@@ -43,7 +43,6 @@ class CrossChain {
   @action getTokenPairs() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
-        console.log('getTokenPairs: ', data);
         if (err) {
           console.log('getTokenPairs failed: ', err);
           reject(err)

@@ -63,7 +63,7 @@ class WanAddress {
           addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
         }
         if (addr.name === undefined) {
-          addr.name = `Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `WAN-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,
