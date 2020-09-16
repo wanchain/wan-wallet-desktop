@@ -6,14 +6,14 @@ import { Button, Modal, Form, Icon, Select, message, Row, Col, Spin, Avatar } fr
 
 import localStyle from './index.less'; // Do not delete this line
 import PwdForm from 'componentUtils/PwdForm';
-import { toWei, fromWei } from 'utils/support.js';
+import { fromWei, wandWrapper } from 'utils/support.js';
 import { signTransaction } from 'componentUtils/trezor';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import DelegationConfirmForm from './DelegationConfirmForm';
 import style from 'components/Staking/DelegateInForm/index.less';
-import { getNonce, getGasPrice, checkAmountUnit, getChainId, getContractAddr, getStoremanContractData, getValueByAddrInfo } from 'utils/helper';
+import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
 
 const colSpan = 6;
 const MINAMOUNT = 100;
@@ -116,11 +116,11 @@ class OsmDelegateInForm extends Component {
 
     let { myAddr: from } = form.getFieldsValue(['myAddr']);
     if (from && this.state.storemanInfo) {
-      let path = this.getValueByAddrInfoArgs(from, 'path');
+      let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
       let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
       let tx = {
         walletID,
-        BIP44Path: path,
+        BIP44Path,
         amount: value,
         wkAddr: this.state.storemanInfo.wkAddr,
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
@@ -189,15 +189,14 @@ class OsmDelegateInForm extends Component {
     this.setState({ confirmLoading: true });
     let { form } = this.props;
     let { myAddr: from, amount } = form.getFieldsValue(['myAddr', 'amount']);
-    let path = this.getValueByAddrInfoArgs(from, 'path');
+    let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
-
     let tx = {
       from,
       walletID,
-      BIP44Path: path,
+      BIP44Path,
       amount: amount.toString(),
       gasLimit: this.state.gasLimit,
       wkAddr: this.state.storemanInfo.wkAddr,
@@ -205,11 +204,9 @@ class OsmDelegateInForm extends Component {
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
-
     if (walletID === WALLETID.TREZOR) {
-      let abiParams = [this.state.storemanInfo.wkAddr];
-      let satellite = { wkAddr: this.state.storemanInfo.wkAddr, annotate: 'StoremanDelegateIn' };
-      await this.trezorDelegateIn(path, from, amount, ACTION, satellite, abiParams);
+      let satellite = { wkAddr: this.state.storemanInfo.wkAddr, annotate: 'Storeman-delegateIn' };
+      await this.trezorDelegateIn(BIP44Path, from, amount, satellite);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -230,23 +227,29 @@ class OsmDelegateInForm extends Component {
     wand.shell.openExternal(href);
   }
 
-  trezorDelegateIn = async (path, from, value, action, satellite, abiParams) => {
+  trezorDelegateIn = async (BIP44Path, from, amount, satellite) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
+      let tx = {
+        amount,
+        BIP44Path,
+        walletID: WALLETID.TREZOR,
+        wkAddr: this.state.storemanInfo.wkAddr,
+        from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
+      }
+      let { result: estimateData } = await wandWrapper('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false });
       let rawTx = {
-        to,
         from,
-        data,
-        chainId,
+        chainId: Number(estimateData.chainId),
         Txtype: 1,
-        value: toWei(value),
-        nonce: '0x' + nonce.toString(16),
-        gasPrice: toWei(gasPrice, 'gwei'),
-        gasLimit: '0x' + Number(200000).toString(16),
+        to: estimateData.to,
+        value: estimateData.value,
+        data: estimateData.data,
+        nonce: '0x' + estimateData.nonce.toString(16),
+        gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
+        gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
       };
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+      let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);// Trezor sign
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-      console.log('Transaction Hash:', txHash);
       let params = {
         txHash,
         from: from.toLowerCase(),
@@ -260,7 +263,6 @@ class OsmDelegateInForm extends Component {
         tokenSymbol: 'WAN',
         status: 'Sending',
       }
-
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
     } catch (error) {
       console.log('Trezor validator append failed', error);

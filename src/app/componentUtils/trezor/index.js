@@ -2,7 +2,7 @@ import { message } from 'antd';
 import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
 
-import { toWei } from 'utils/support.js';
+import { wandWrapper } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContractData } from 'utils/helper';
 
 const pu = require('promisefy-util');
@@ -85,22 +85,21 @@ export const getAddresses = async (basePath, from, count) => {
   return null;
 }
 
-export const OsmTrezorTrans = async (path, from, value, action, satellite, abiParams) => {
+export const OsmTrezorTrans = async (tx, from, action, satellite) => {
   try {
-    let { chainId, nonce, gasPrice, data, cscContractAddr } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
+    let { result: estimateData } = await wandWrapper('storeman_openStoremanAction', { tx, action, isEstimateFee: false });
     let rawTx = {
-      data,
       from,
-      chainId,
+      chainId: Number(estimateData.chainId),
       Txtype: 1,
-      value: toWei(value),
-      to: cscContractAddr,
-      nonce: '0x' + nonce.toString(16),
-      gasPrice: toWei(gasPrice, 'gwei'),
-      gasLimit: '0x' + Number(200000).toString(16),
+      to: estimateData.to,
+      value: estimateData.value,
+      data: estimateData.data,
+      nonce: '0x' + estimateData.nonce.toString(16),
+      gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
+      gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
     };
-
-    let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+    let raw = await pu.promisefy(signTransaction, [tx.BIP44Path, rawTx], this);// Trezor sign
     // Send register validator
     let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
     let params = {

@@ -162,19 +162,18 @@ class StoremanRegister extends Component {
       amount,
       walletID,
       BIP44Path,
-      enodeID: enodeID,
+      enodeID,
       groupId: group.groupIdText,
       gasLimit: this.state.gasLimit,
-      gasPrice: fromWei(this.state.gasPrice),
     }
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
-      let abiParams = [group.groupId, wPk, group.enodeID];
-      let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'StoremanStakeIn' };
+      let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
       try {
-        await OsmTrezorTrans(BIP44Path, from, amount, ACTION, satellite, abiParams);
+        let { gasLimit, ...txParams } = tx
+        await OsmTrezorTrans(txParams, from, ACTION, satellite);
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } catch (error) {

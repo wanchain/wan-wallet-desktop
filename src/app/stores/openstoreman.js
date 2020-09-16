@@ -5,21 +5,8 @@ import { observable, action, computed, runInAction, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
-import { formatLongText, fromWei, timeFormat, formatNum, showNA } from 'utils/support';
+import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } from 'utils/support';
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus, WALLETID } from 'utils/settings'
-
-function wandWrapper(action, options = {}) {
-  return new Promise((resolve, reject) => {
-    wand.request(action, options, (err, ret) => {
-      if (err) {
-        console.log(`${action} Error: ${err}`);
-        reject(err);
-      } else {
-        resolve(ret);
-      }
-    })
-  })
-}
 
 class OpenStoreman {
   @observable storemanGroupList = [];
@@ -45,8 +32,9 @@ class OpenStoreman {
   @observable storemanDelegatorTotalIncentiveInfoReady = false;
 
   @computed get groupListData () {
-    return this.storemanGroupList.filter(v => v.canStakeIn).map((item, index) => {
-      return {
+    let data = [];
+    this.storemanGroupList.filter(v => v.canStakeIn).forEach((item, index) => {
+      data.push({
         key: index,
         minStakeIn: fromWei(item.minStakeIn),
         groupId: formatLongText(item.groupId),
@@ -57,18 +45,20 @@ class OpenStoreman {
         currDeposit: showNA(fromWei(item.deposit)),
         delegationFee: item.delegateFee / 10000 + '%',
         action: 'Register',
-      }
-    })
+      })
+    });
+    return data;
   }
 
   @computed get storemanListData () {
-    return this.storemanListInfo.map((item, index) => {
+    let data = [];
+    this.storemanListInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
-      if (accountInfo && groupInfo) {
+      if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
-        return {
+        data.push({
           key: index,
           account: accountInfo.name,
           myAddress: accountInfo,
@@ -84,18 +74,20 @@ class OpenStoreman {
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,
           minStakeIn: fromWei(groupInfo.minStakeIn)
-        }
+        })
       }
-    })
+    });
+    return data;
   }
 
   @computed get delegatorListData () {
-    return this.storemanDelegatorInfo.map((item, index) => {
+    let data = [];
+    this.storemanDelegatorInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
-      if (accountInfo) {
-        accountInfo.path = `${WANPATH}${accountInfo.path}`;
+      if (accountInfo && accountInfo.type) {
+        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
-        return {
+        data.push({
           key: index,
           account: accountInfo.name,
           myAddress: accountInfo,
@@ -109,9 +101,10 @@ class OpenStoreman {
           canDelegateOut: item.canDelegateOut,
           deposit: item.wkStake.deposit,
           delegateDeposit: item.wkStake.delegateDeposit
-        }
+        })
       }
-    })
+    });
+    return data;
   }
 
   @computed get storemanHistoryList () {

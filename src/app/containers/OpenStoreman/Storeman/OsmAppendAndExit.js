@@ -7,12 +7,12 @@ import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 import './index.less';
 import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
-import { toWei, fromWei } from 'utils/support.js';
+import { wandWrapper, fromWei } from 'utils/support.js';
 import { signTransaction } from 'componentUtils/trezor';
 import StoremanConfirmForm from './StoremanConfirmForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import style from 'components/Staking/MyValidatorsList/index.less';
-import { getStoremanContractData, getContractAddr, getNonce, getGasPrice, getChainId, getValueByAddrInfo, checkAmountUnit } from 'utils/helper';
+import { getValueByAddrInfo, checkAmountUnit } from 'utils/helper';
 
 const MINAMOUNT = 100;
 const pu = require('promisefy-util');
@@ -93,16 +93,14 @@ class ModifyForm extends Component {
       wkAddr: record.wkAddr,
       BIP44Path: path,
       gasLimit: this.state.gasLimit,
-      gasPrice: fromWei(this.state.gasPrice),
     };
 
     if (walletID === WALLETID.LEDGER) {
       message.info(intl.get('Ledger.signTransactionInLedger'));
     }
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wkAddr];
-      let satellite = { wkAddr: record.wkAddr, annotate: action === 'stakeAppend' ? 'StoremanStakeAppend' : 'StoremanStakeOut' };
-      await this.trezorStoremanUpdate(path, from, amount, action, satellite, abiParams);
+      let satellite = { wkAddr: record.wkAddr, annotate: action === 'stakeAppend' ? 'Storeman-stakeAppend' : 'Storeman-stakeOut' };
+      await this.trezorStoremanUpdate(path, from, amount, action, satellite);
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -118,22 +116,28 @@ class ModifyForm extends Component {
     }
   }
 
-  trezorStoremanUpdate = async (path, from, value, action, satellite, abiParams) => {
+  trezorStoremanUpdate = async (BIP44Path, from, amount, action, satellite) => {
     try {
-      let { chainId, nonce, gasPrice, data, to } = await Promise.all([getChainId(), getNonce(from, 'wan'), getGasPrice('wan'), getStoremanContractData(action, ...abiParams), getContractAddr()])
+      let tx = {
+        amount,
+        BIP44Path,
+        walletID: WALLETID.TREZOR,
+        wkAddr: this.props.record.wkAddr,
+        from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
+      }
+      let { result: estimateData } = await wandWrapper('storeman_openStoremanAction', { tx, action, isEstimateFee: false });
       let rawTx = {
-        to,
         from,
-        data,
-        chainId,
+        chainId: Number(estimateData.chainId),
         Txtype: 1,
-        value: toWei(value),
-        nonce: '0x' + nonce.toString(16),
-        gasLimit: '0x' + Number(200000).toString(16),
-        gasPrice: toWei(gasPrice, 'gwei'),
+        to: estimateData.to,
+        value: estimateData.value,
+        data: estimateData.data,
+        nonce: '0x' + estimateData.nonce.toString(16),
+        gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
+        gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
       };
-
-      let raw = await pu.promisefy(signTransaction, [path, rawTx], this);// Trezor sign
+      let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);// Trezor sign
       // Send modify validator info
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
 
