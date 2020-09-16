@@ -466,6 +466,8 @@ const en_US = {
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Date',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': 'Rapid Mode',
+    'CrossChainTransForm.HTLC': 'Secure Mode',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

@@ -464,6 +464,8 @@ const zh_CN = {
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Date',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': '极速模式',
+    'CrossChainTransForm.HTLC': '安全模式',
 
     'CrossChain.selectFailed': '修改选择状态失败',
 

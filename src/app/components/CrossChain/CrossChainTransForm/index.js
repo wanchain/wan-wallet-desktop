@@ -290,8 +290,9 @@ class CrossChainTransForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='crossType'
+                isTextValueData={true}
                 initialValue={CROSS_TYPE[0]}
-                selectedList={CROSS_TYPE}
+                selectedList={CROSS_TYPE.map(v => ({ value: v, text: intl.get(`CrossChainTransForm.${v}`) }))}
                 formMessage={'Type'}
                 handleChange={this.updateCrossType}
               />

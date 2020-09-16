@@ -82,6 +82,6 @@ export const PRIVATE_TX_AMOUNT_SELECTION = [50000, 5000, 1000, 500, 200, 100, 50
 export const DAPPORDERING = ['DApp.sortByName', 'DApp.sortByDate'];
 export const ALLCATEGORIES = 'DApp.allCategories';
 
-export const CROSS_TYPE = ['Rapid Mode', 'Secure Mode'];
+export const CROSS_TYPE = ['FAST', 'HTLC'];
 export const COIN_ACCOUNT = '0x0000000000000000000000000000000000000000';
 export const COIN_ACCOUNT_EOS = 'eosio.token:EOS';

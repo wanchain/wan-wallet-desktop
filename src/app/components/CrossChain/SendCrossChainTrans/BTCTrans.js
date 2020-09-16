@@ -37,7 +37,6 @@ class BTCTrans extends Component {
   showModal = async () => {
     const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, feeRate, path, currentTokenPairInfo } = this.props;
     let info = Object.assign({}, currentTokenPairInfo);
-    // console.log('info:', info);
     if (direction === INBOUND) {
       if (getAmount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
@@ -53,7 +52,6 @@ class BTCTrans extends Component {
     this.setState({ visible: true });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol)]);
-      // console.log('gasPrice, smgList:', gasPrice, smgList);
       let originalFee, destinationFee;
       let smg = smgList[0];
 
