@@ -261,7 +261,7 @@ class OsmDelegateInForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        status: 'Sending',
+        status: 'Sent',
       }
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
     } catch (error) {

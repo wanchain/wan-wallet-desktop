@@ -163,7 +163,7 @@ class InForm extends Component {
         srcSCAddrKey: 'WAN',
         srcChainType: 'WAN',
         tokenSymbol: 'WAN',
-        status: 'Sending',
+        status: 'Sent',
       };
       // save register validator history into DB
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
