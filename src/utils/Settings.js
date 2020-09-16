@@ -26,23 +26,33 @@ const defaultConfig = {
     offline_wallet: false,
     logout_timeout: '5',
     main: {
-      tokens: {},
+      tokens: {
+        "2153201998-0x0000000000000000000000000000000000000000": {
+          "select": true
+        },
+        "2147483708-0x0000000000000000000000000000000000000000": {
+          "select": true
+        }
+      },
       cc_tokens: {},
       cc_selected: {
         "1": true,
-        "3": true,
-        "5": false,
-        "6": true,
+        "2": true
       }
     },
     testnet: {
-      tokens: {},
+      tokens: {
+        "2153201998-0x0000000000000000000000000000000000000000": {
+          "select": true
+        },
+        "2147483708-0x0000000000000000000000000000000000000000": {
+          "select": true
+        }
+      },
       cc_tokens: {},
       cc_selected: {
         "1": true,
-        "3": true,
-        "5": false,
-        "6": true,
+        "2": true
       }
     }
   }
