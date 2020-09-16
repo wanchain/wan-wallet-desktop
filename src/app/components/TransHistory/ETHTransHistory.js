@@ -53,7 +53,7 @@ class ETHTransHistory extends Component {
 
     return (
       <div>
-        <div className="historyCon" id="wanAddrSelect">
+        <div className="historyCon" id="ethAddrSelect">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
           <Select
             showSearch
@@ -63,7 +63,7 @@ class ETHTransHistory extends Component {
             optionFilterProp="children"
             onChange={this.onChange}
             defaultValue={this.props.selectedAddr ? this.props.selectedAddr[0] : undefined}
-            getPopupContainer = {() => document.getElementById('wanAddrSelect')}
+            getPopupContainer = {() => document.getElementById('ethAddrSelect')}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
             {addrList.map((item, index) => <Option value={item.address} key={index}>{item.name}</Option>)}

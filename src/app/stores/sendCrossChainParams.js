@@ -1,5 +1,5 @@
 import { observable, action, computed, toJS } from 'mobx';
-
+import { CROSS_TYPE } from 'utils/settings';
 import session from './session';
 
 const GASLIMIT = 21000;
@@ -55,7 +55,7 @@ class SendCrossChainParams {
         storeman: '',
         txFeeRatio: 0,
         gasLimit: GASLIMIT,
-        crossType: 'HTLC',
+        crossType: params.crossType ? params.crossType : CROSS_TYPE[0],
       };
     }
 

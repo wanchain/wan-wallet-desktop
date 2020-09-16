@@ -7,7 +7,7 @@ import style from './index.less';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
-import { CROSSCHAINTYPE, WALLET_CHAIN, COIN_ACCOUNT } from 'utils/settings';
+import { CROSSCHAINTYPE, WALLET_CHAIN, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
 
 const { SubMenu, Item } = Menu;
 
@@ -145,12 +145,11 @@ class Sidebar extends Component {
       crossChainSelections[symbol].forEach(v => {
         if (v.selected) {
           let key = '';
-          if (v.fromAccount === COIN_ACCOUNT && CROSSCHAINTYPE.includes(v.ancestorSymbol)) {
+          if ((v.fromAccount === COIN_ACCOUNT || v.fromAccount === COIN_ACCOUNT_EOS) && CROSSCHAINTYPE.includes(v.ancestorSymbol)) {
             key = `/cross${v.ancestorSymbol}/${v.id}`;
           } else {
             key = `/crosschain/${v.id}`;
           }
-          // key = `/crosschain/${v.id}`;
           arr.push({
             title: `${v.fromChainName} <-> ${v.toChainName}`,
             key,

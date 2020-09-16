@@ -26,8 +26,7 @@ const defaultConfig = {
     offline_wallet: false,
     logout_timeout: '5',
     main: {
-      tokens: {
-      },
+      tokens: {},
       cc_tokens: {},
       cc_selected: {
         "1": true,
@@ -37,8 +36,7 @@ const defaultConfig = {
       }
     },
     testnet: {
-      tokens: {
-      },
+      tokens: {},
       cc_tokens: {},
       cc_selected: {
         "1": true,
@@ -207,7 +205,7 @@ class Settings {
       }
 
       regTokens.forEach(item => {
-        /** Add original token */
+        // Add original token
         let token = tokens[item.tokenOrigAddr];
         if (token) {
           token.symbol = item.symbol;
@@ -224,7 +222,7 @@ class Settings {
           }
         }
 
-        /** Add Wanchain ancestor token */
+        // Add Wanchain ancestor token
         if (tokens[item.tokenWanAddr]) {
           tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
           tokens[item.tokenWanAddr].decimals = item.decimals;
@@ -239,7 +237,7 @@ class Settings {
         }
         this.set(`settings.${network}.tokens`, tokens);
 
-        /** Add cross-chain token */
+        // Add cross-chain token
         if (ccTokens[item.tokenOrigAddr]) {
           ccTokens[item.tokenOrigAddr].wan_addr = item.tokenWanAddr;
           ccTokens[item.tokenOrigAddr].chain = crossChain;

@@ -10,24 +10,25 @@ const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams
+  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
 }))
 
 @observer
 class CrossBTCConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, totalFeeTitle, handleCancel, direction } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, totalFeeTitle, handleCancel, direction, currentTokenPairInfo: info } = this.props;
     const { value, toAddr, storeman, btcAddress, amount } = this.props.BTCCrossTransParams;
     let desChain, storemanAccount, sendValue, symbol;
 
     if (direction === INBOUND) {
-      symbol = 'BTC'
-      desChain = 'WAN';
+      symbol = info.fromTokenSymbol;
+      desChain = info.toChainName;
       sendValue = value;
       storemanAccount = btcAddress;
     } else {
-      symbol = 'WBTC'
-      desChain = 'BTC';
+      symbol = info.toTokenSymbol;
+      desChain = info.fromChainName;
       sendValue = amount;
       storemanAccount = storeman;
     }
@@ -47,14 +48,14 @@ class CrossBTCConfirmForm extends Component {
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
           {
             direction !== INBOUND &&
-            <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName('WAN') + ')'}>
+            <Form.Item label={intl.get('Common.from') + ' (' + info.toChainName + ')'}>
               {getFieldDecorator('from', { initialValue: from })(inputCom)}
             </Form.Item>
           }
           <Form.Item label={intl.get('Common.storeman')}>
             {getFieldDecorator('storemanAccount', { initialValue: storemanAccount })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>
+          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>

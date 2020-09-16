@@ -46,11 +46,11 @@ class CrossEOSHistory extends Component {
     })
   }
 
-  render () {
-    const { crossEOSTrans, crossErc20Trans, transColumns, symbol } = this.props;
+  render() {
+    const { crossEOSTrans, crossErc20Trans, transColumns } = this.props;
     let trans;
 
-    if (symbol === 'EOS') {
+    /* if (symbol === 'EOS') {
       trans = crossEOSTrans;
       transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
       transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
@@ -59,17 +59,22 @@ class CrossEOSHistory extends Component {
       trans = crossErc20Trans;
       transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
       transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
-    }
+    } */
+
+    trans = crossEOSTrans;
+    transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
+    transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
+    transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
 
     return (
       <div>
-        <div className="historyCon" id="wanAddrSelect">
+        <div className="historyCon">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={trans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
-        { this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record}/> }
+        {this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record} />}
       </div>
     );
   }

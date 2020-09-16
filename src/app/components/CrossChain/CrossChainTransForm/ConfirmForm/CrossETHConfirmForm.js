@@ -3,27 +3,23 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
-import { getFullChainName } from 'utils/helper';
-
 const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
   language: stores.languageIntl.language,
   transParams: stores.sendCrossChainParams.transParams,
+  tokenPairs: stores.crossChain.tokenPairs,
 }))
 
 @observer
 class CrossETHConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
-    let desChain;
-
-    if (chainType === 'ETH') {
-      desChain = 'WAN';
-    } else {
-      desChain = 'ETH';
-    }
+    const chainPairId = transParams[from].chainPairId;
+    const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
+    let fromChain = tokenPairInfo.fromChainName;
+    let desChain = tokenPairInfo.toChainName;
 
     return (
       <Modal
@@ -38,13 +34,13 @@ class CrossETHConfirmForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className="transForm">
-          <Form.Item label={intl.get('Common.from') + ' (' + getFullChainName(chainType) + ')'}>
+          <Form.Item label={intl.get('Common.from') + ' (' + fromChain + ')'}>
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('Common.storeman')}>
             {getFieldDecorator('storemanAccount', { initialValue: storeman })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}>
+          <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>

@@ -40,6 +40,10 @@ class CrossChain extends Component {
     changeTitle('Common.crossChain');
     const tokenPairId = match.params.tokenPairId;
     this.init(tokenPairId);
+    this.state = {
+      error: false,
+      convertDisabled: false,
+    }
   }
 
   init = (id) => {
@@ -58,10 +62,10 @@ class CrossChain extends Component {
   }
 
   componentDidMount() {
-    const { updateTokensBalance, tokenPairs, match } = this.props;
-    const tokenPairId = match.params.tokenPairId;
-    const { fromAccount, toAccount, fromChainSymbol, toChainSymbol } = tokenPairs[tokenPairId];
     let updateBalance = () => {
+      const { updateTokensBalance, tokenPairs, match } = this.props;
+      const tokenPairId = match.params.tokenPairId;
+      const { fromAccount, toAccount, fromChainSymbol, toChainSymbol } = tokenPairs[tokenPairId];
       if (fromAccount !== COIN_ACCOUNT) {
         updateTokensBalance(fromAccount, fromChainSymbol);
       }
@@ -75,6 +79,13 @@ class CrossChain extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  componentDidCatch(err, info) {
+    this.setState({
+      error: true,
+    });
+    console.log('Caught an error in this component.', err, info);
   }
 
   inboundHandleSend = from => {
@@ -180,6 +191,12 @@ class CrossChain extends Component {
     return <img className="totalImg" src={img} />;
   }
 
+  setButtonStatus = (val) => {
+    this.setState({
+      convertDisabled: val
+    });
+  }
+
   inboundColumns = [
     {
       dataIndex: 'name',
@@ -200,7 +217,7 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => <div><Trans balance={record.balance} disabled={this.state.convertDisabled} setButtonStatus={this.setButtonStatus} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
     }
   ];
 
@@ -224,7 +241,7 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => <div><Trans balance={record.balance} disabled={this.state.convertDisabled} setButtonStatus={this.setButtonStatus} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
     }
   ];
 
@@ -237,41 +254,34 @@ class CrossChain extends Component {
     this.props.language && this.outboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
-
     let tokenPairID = match.params.tokenPairId;
     let info = tokenPairs[tokenPairID];
     let fromAddresses = info.fromAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.fromChainSymbol, info.fromChainID) : getTokensListInfo_2way(info.fromChainSymbol, info.fromChainID, info.fromAccount);
     let toAddresses = info.toAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.toChainSymbol, info.toChainID) : getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.toAccount);
-    // console.log('data:', fromAddresses, toAddresses)
-    // console.log('info:', info)
-    // console.log('tokenPairID:', tokenPairID)
-    // console.log('props:', this.props)
 
-    return (
-      <div className="account">
-        <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
-        </Row>
-        <Row className="mainBody">
-          <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={fromAddresses} />
-          </Col>
-        </Row>
-        <Row className="title">
-          <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
-        </Row>
-        <Row className="mainBody">
-          <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={toAddresses} />
-          </Col>
-        </Row>
-        <Row className="mainBody">
-          <Col>
-            <CrossChainTransHistory />
-          </Col>
-        </Row>
-      </div>
-    );
+    return this.state.error ? <div className="errorComponent">An error occurred in this component.</div> : (<div className="account">
+      <Row className="title">
+        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
+      </Row>
+      <Row className="mainBody">
+        <Col>
+          <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={fromAddresses} />
+        </Col>
+      </Row>
+      <Row className="title">
+        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
+      </Row>
+      <Row className="mainBody">
+        <Col>
+          <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={toAddresses} />
+        </Col>
+      </Row>
+      <Row className="mainBody">
+        <Col>
+          <CrossChainTransHistory />
+        </Col>
+      </Row>
+    </div>)
   }
 }
 

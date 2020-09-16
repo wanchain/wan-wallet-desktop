@@ -41,95 +41,10 @@ const OneStep = {
   },
 
   handleRedeem: function () {
+    // console.log('===============1', this.pending);
     this.pending.redeem.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
       this.sending.add(trans_data.hashX);
-      if (trans_data.tokenStand === 'TOKEN') {
-        let input = {
-          x: trans_data.x,
-          hashX: trans_data.hashX,
-        };
-        if (trans_data.srcChainType !== 'WAN') {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gasLimit = REDEEMWETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossErc20', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                console.log('crossChain_crossErc20:', err);
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              }
-            });
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX);
-          });
-        } else {
-          getGasPrice('ETH').then(gasPrice => {
-            input.gasLimit = REDEEMETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossErc20', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                console.log('crossChain_crossErc20:', err);
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              }
-            })
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX);
-          });
-        }
-      }
-
-      // Handle Undo ETH Cross Chain Trans
-      if (trans_data.tokenStand === 'ETH') {
-        let input = {
-          x: trans_data.x,
-          hashX: trans_data.hashX,
-        };
-        if (trans_data.srcChainType !== 'WAN') {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gasLimit = REDEEMWETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossETH', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              }
-            })
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX)
-          });
-        } else {
-          getGasPrice('ETH').then(gasPrice => {
-            input.gasLimit = REDEEMETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossETH', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              }
-            })
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX);
-          });
-        }
-      }
-
-      // Handle Undo WAN Cross Chain Trans
-      if (trans_data.tokenStand === 'WAN') {
+      if (trans_data.tokenStand === 'TOKEN' || trans_data.tokenStand === 'ETH' || trans_data.tokenStand === 'WAN') {
         let input = {
           x: trans_data.x,
           hashX: trans_data.hashX,
@@ -144,13 +59,14 @@ const OneStep = {
             input.tokenPairID = trans_data.tokenPairID;
             wand.request('crossChain_crossChain', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
               if (err) {
+                // console.log('crossChain_crossChain:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
               }
-            })
+            });
           }).catch(() => {
-            this.sending.delete(trans_data.hashX)
+            this.sending.delete(trans_data.hashX);
           });
         } else {
           getGasPrice('ETH').then(gasPrice => {
@@ -159,6 +75,7 @@ const OneStep = {
             input.tokenPairID = trans_data.tokenPairID;
             wand.request('crossChain_crossChain', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
               if (err) {
+                // console.log('crossChain_crossChain:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -168,44 +85,7 @@ const OneStep = {
             this.sending.delete(trans_data.hashX);
           });
         }
-      }
-
-      if (['WAN', 'BTC'].includes(trans_data.chain)) {
-        let input = {
-          x: trans_data.x,
-          hashX: trans_data.hashX,
-        }
-        if (trans_data.chain === 'BTC') {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gas = REDEEMWETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossBTC', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-              }
-            })
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX);
-          });
-        } else {
-          input.tokenPairID = trans_data.tokenPairID;
-          wand.request('crossChain_crossBTC', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-            if (err) {
-              this.sending.delete(trans_data.hashX);
-              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-              increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
-            }
-          })
-        }
-      }
-
-      if (trans_data.tokenStand === 'EOS') {
+      } else if (trans_data.tokenStand === 'EOS') {
         let input = {
           x: trans_data.x,
           hashX: trans_data.hashX,
@@ -220,7 +100,7 @@ const OneStep = {
             input.gasPrice = gasPrice;
             wand.request('crossChain_crossEOS', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
               if (err) {
-                console.log('crossChain_crossEOS:', err);
+                // console.log('crossChain_crossEOS:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -232,10 +112,42 @@ const OneStep = {
         } else {
           wand.request('crossChain_crossEOS', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
             if (err) {
-              console.log('crossChain_crossEOS:', err);
+              // console.log('crossChain_crossEOS:', err);
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+            }
+          })
+        }
+      } else if (['WAN', 'BTC'].includes(trans_data.chain)) {
+        let input = {
+          x: trans_data.x,
+          hashX: trans_data.hashX,
+        }
+        if (trans_data.chain === 'BTC') {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+              gasPrice = DEFAULT_GASPRICE
+            }
+            input.gas = REDEEMWETH_GAS;
+            input.gasPrice = gasPrice;
+            // console.log('Redeem BTC:', trans_data)
+            wand.request('crossChain_crossBTC', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType }, (err, ret) => {
+              if (err) {
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
+              }
+            })
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        } else {
+          wand.request('crossChain_crossBTC', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType }, (err, ret) => {
+            if (err) {
+              this.sending.delete(trans_data.hashX);
+              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+              increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
             }
           })
         }
@@ -246,91 +158,11 @@ const OneStep = {
   },
 
   handleRevoke: function () {
+    // console.log('===============2', this.pending);
     this.pending.revoke.filter(item => !this.sending.has(item.hashX)).forEach(trans_data => {
       this.sending.add(trans_data.hashX);
-      if (trans_data.tokenStand === 'TOKEN') {
-        let input = {
-          hashX: trans_data.hashX,
-        };
-        if (trans_data.srcChainType !== 'WAN') {
-          getGasPrice('ETH').then(gasPrice => {
-            input.gasLimit = REVOKEETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossErc20', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              }
-            });
-          }).catch(e => {
-            this.sending.delete(trans_data.hashX);
-          });
-        } else {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gasLimit = REVOKEWETH_GAS;
-            input.gasPrice = gasPrice;
-            input.tokenPairID = trans_data.tokenPairID;
-            wand.request('crossChain_crossErc20', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                console.log('crossChain_crossErc20:', err);
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              }
-            })
-          }).catch(e => {
-            this.sending.delete(trans_data.hashX);
-          });
-        }
-      }
 
-      if (trans_data.tokenStand === 'ETH') {
-        let input = {
-          hashX: trans_data.hashX,
-          tokenPairID: trans_data.tokenPairID,
-        };
-        if (trans_data.srcChainType !== 'WAN') {
-          getGasPrice('ETH').then(gasPrice => {
-            input.gasLimit = REVOKEETH_GAS;
-            input.gasPrice = gasPrice;
-            wand.request('crossChain_crossETH', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              }
-            });
-          }).catch(e => {
-            console.log('revoke_eth:', e)
-            this.sending.delete(trans_data.hashX)
-          });
-        } else {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gasLimit = REVOKEWETH_GAS;
-            input.gasPrice = gasPrice;
-            wand.request('crossChain_crossETH', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              }
-            });
-          }).catch(e => {
-            console.log('revoke_weth:', e)
-            this.sending.delete(trans_data.hashX)
-          });
-        }
-      }
-
-      if (trans_data.tokenStand === 'WAN') {
+      if (trans_data.tokenStand === 'TOKEN' || trans_data.tokenStand === 'ETH' || trans_data.tokenStand === 'WAN') {
         let input = {
           hashX: trans_data.hashX,
           tokenPairID: trans_data.tokenPairID,
@@ -347,11 +179,10 @@ const OneStep = {
               }
             });
           }).catch(e => {
-            console.log('revoke_wan:', e)
-            this.sending.delete(trans_data.hashX)
+            this.sending.delete(trans_data.hashX);
           });
         } else {
-          getGasPrice('WAN').then(gasPrice => {
+          getGasPrice(trans_data.srcChainType).then(gasPrice => {
             if (gasPrice < DEFAULT_GASPRICE) {
               gasPrice = DEFAULT_GASPRICE
             }
@@ -363,16 +194,45 @@ const OneStep = {
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
               }
-            });
+            })
           }).catch(e => {
-            console.log('revoke_wan:', e)
-            this.sending.delete(trans_data.hashX)
+            this.sending.delete(trans_data.hashX);
           });
         }
-      }
-
-      // if (['WAN', 'BTC'].includes(trans_data.chain)) {
-      if (['WAN', 'BTC'].includes(trans_data.tokenStand)) {
+      } else if (trans_data.tokenStand === 'EOS') { // EOS
+        let input = {
+          hashX: trans_data.hashX,
+          tokenPairID: trans_data.tokenPairID,
+        };
+        if (trans_data.srcChainType !== 'WAN') {
+          wand.request('crossChain_crossEOS', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
+            if (err) {
+              // console.log('crossChain_crossEOS:', err);
+              this.sending.delete(trans_data.hashX);
+              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+              increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+            }
+          })
+        } else {
+          getGasPrice('WAN').then(gasPrice => {
+            if (gasPrice < DEFAULT_GASPRICE) {
+              gasPrice = DEFAULT_GASPRICE
+            }
+            input.gasLimit = REDEEMWEOS_GAS;
+            input.gasPrice = gasPrice;
+            wand.request('crossChain_crossEOS', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
+              if (err) {
+                // console.log('crossChain_crossEOS:', err);
+                this.sending.delete(trans_data.hashX);
+                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
+                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
+              }
+            });
+          }).catch(() => {
+            this.sending.delete(trans_data.hashX);
+          });
+        }
+      } else if (['WAN', 'BTC'].includes(trans_data.chain)) { // if (['WAN', 'BTC'].includes(trans_data.tokenStand)) {  // if (['WAN', 'BTC'].includes(trans_data.chain)) { // BTC
         let input = {
           x: trans_data.x,
           hashX: trans_data.hashX,
@@ -380,6 +240,7 @@ const OneStep = {
         }
         if (trans_data.tokenStand === 'BTC') {
           input.from = trans_data.from;
+          // console.log('BTC revoke:', trans_data)
           wand.request('crossChain_crossBTC', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
             if (err) {
               this.sending.delete(trans_data.hashX);
@@ -401,41 +262,6 @@ const OneStep = {
                 increaseFailedRetryCount({ transType: 'crossTransBtc', hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
               }
             })
-          }).catch(() => {
-            this.sending.delete(trans_data.hashX);
-          });
-        }
-      }
-
-      if (trans_data.tokenStand === 'EOS') {
-        let input = {
-          hashX: trans_data.hashX,
-          tokenPairID: trans_data.tokenPairID,
-        };
-        if (trans_data.srcChainType !== 'WAN') {
-          wand.request('crossChain_crossEOS', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-            if (err) {
-              console.log('crossChain_crossEOS:', err);
-              this.sending.delete(trans_data.hashX);
-              this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-              increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-            }
-          })
-        } else {
-          getGasPrice('WAN').then(gasPrice => {
-            if (gasPrice < DEFAULT_GASPRICE) {
-              gasPrice = DEFAULT_GASPRICE
-            }
-            input.gasLimit = REDEEMWEOS_GAS;
-            input.gasPrice = gasPrice;
-            wand.request('crossChain_crossEOS', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
-              if (err) {
-                console.log('crossChain_crossEOS:', err);
-                this.sending.delete(trans_data.hashX);
-                this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
-                increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });
-              }
-            });
           }).catch(() => {
             this.sending.delete(trans_data.hashX);
           });

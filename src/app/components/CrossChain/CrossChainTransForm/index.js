@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
-
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -50,6 +49,7 @@ class CrossChainTransForm extends Component {
     } else {
       quota = await getBurnQuota(chainType, chainPairId, storeman);
     }
+    // console.log('quota:', quota);
     this.setState({
       quota: formatNumByDecimals(quota, decimals)
     })
@@ -91,7 +91,6 @@ class CrossChainTransForm extends Component {
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
 
-      // console.log('==', origAddrAmount, estimateFee.original, destAddrAmount, estimateFee.destination);
       if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
@@ -164,7 +163,6 @@ class CrossChainTransForm extends Component {
     const chainPairId = transParams[from].chainPairId;
     const decimals = tokenPairs[chainPairId].ancestorDecimals;
     let quota = '';
-    // console.log('params:', chainType, chainPairId, storeman, typeof chainPairId);
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, chainPairId, storeman);
     } else {
@@ -204,7 +202,6 @@ class CrossChainTransForm extends Component {
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList;
     const chainPairId = transParams[from].chainPairId;
     const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
-    // console.log('tokenPairInfo:', tokenPairInfo);
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);

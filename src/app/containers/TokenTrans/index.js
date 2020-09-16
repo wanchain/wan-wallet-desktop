@@ -26,7 +26,7 @@ message.config({
   transParams: stores.sendTransParams.transParams,
   tokenIconList: stores.tokens.tokenIconList,
   tokensList: stores.tokens.tokensList,
-  getTokensListInfo_ByChain: stores.tokens.getTokensListInfo_ByChain,
+  getTokensListInfo: stores.tokens.getTokensListInfo,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
@@ -252,13 +252,11 @@ class TokenTrans extends Component {
   }
 
   render() {
-    const { getAmount, getTokensListInfo_ByChain, symbol, tokenAddr, chain } = this.props;
+    const { getAmount, getTokensListInfo, symbol, tokenAddr, chain } = this.props;
 
     this.props.language && this.columns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
-
-    // console.log('params:', tokenAddr, chain, symbol);
 
     return (
       <div className="account">
@@ -275,7 +273,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo_ByChain} />
+            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">

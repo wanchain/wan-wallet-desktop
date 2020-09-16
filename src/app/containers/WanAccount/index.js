@@ -48,23 +48,28 @@ class WanAccount extends Component {
   columns = [
     {
       dataIndex: 'name',
-      editable: true
+      editable: true,
+      width: '20%'
     },
     {
       dataIndex: 'address',
-      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>
+      render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>,
+      width: '42%'
     },
     {
       dataIndex: 'balance',
-      sorter: (a, b) => a.balance - b.balance
+      sorter: (a, b) => a.balance - b.balance,
+      width: '20%'
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      width: '13%'
     },
     {
       dataIndex: 'blank',
       key: 'expand',
+      width: '5%'
     }
   ];
 
@@ -219,8 +224,8 @@ class WanAccount extends Component {
       <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
         <tbody>
           <tr>
-            <td style={{ width: '15%', padding: '0px 16px' }}></td>
-            <td style={{ width: '47%', padding: '0px 16px' }}>
+            <td style={{ width: '20%', padding: '0px 16px' }}></td>
+            <td style={{ width: '42%', padding: '0px 16px' }}>
               <div className="addrText">
                 <p className={style.privateAddress}>
                   <Tooltip placement="bottomLeft" title={privateAddress} overlayStyle={{ width: 400 }} >{privateAddress}</Tooltip>

@@ -117,7 +117,6 @@ class WanAddress {
     let trezor = Object.keys(self.addrInfo['trezor']);
     let importArr = Object.keys(self.addrInfo['import']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
-    // console.log('set BBBB:', arr, parr);
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
         self.addrInfo['normal'][item].balance = arr[item];
@@ -135,8 +134,7 @@ class WanAddress {
         self.addrInfo['rawKey'][item].balance = arr[item];
       }
     });
-
-    if (!(parr instanceof Array)) {
+    if (!(parr instanceof Object)) {
       return;
     }
     let pKeys = Object.keys(parr);

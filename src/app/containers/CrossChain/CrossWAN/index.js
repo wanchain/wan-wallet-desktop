@@ -2,24 +2,25 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
-import totalImg from 'static/image/btc.png';
+import totalImg from 'static/image/wan.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
-import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
-import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
+import WANTrans from 'components/CrossChain/SendCrossChainTrans/WANTrans';
+import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossWANHistory';
 import style from './index.less';
 
-const CHAINTYPE = 'BTC';
+const CHAINTYPE = 'WAN';
+const WANCHAIN = 'WAN';
+
 @inject(stores => ({
   tokensList: stores.tokens.formatTokensList,
-  addrInfo: stores.btcAddress.addrInfo,
+  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
-  getNormalAddrList: stores.btcAddress.getNormalAddrList,
-  getAmount: stores.btcAddress.getNormalAmount,
+  getNormalAddrList: stores.wanAddress.getNormalAddrList,
+  getAmount: stores.wanAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
-  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
-  updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
@@ -29,8 +30,8 @@ const CHAINTYPE = 'BTC';
 }))
 
 @observer
-class CrossBTC extends Component {
-  constructor(props) {
+class CrossWAN extends Component {
+  constructor (props) {
     super(props);
     const { tokenPairs, match } = props;
     let tokenPairID = match.params.tokenPairId;
@@ -40,7 +41,6 @@ class CrossBTC extends Component {
     this.info = tokenPairs[tokenPairID];
     this.props.setCurrToken(this.info.toAccount);
     this.props.setCurrTokenChain(this.info.toChainSymbol);
-    this.props.updateTransHistory();
   }
 
   componentDidMount() {
@@ -54,30 +54,25 @@ class CrossBTC extends Component {
     clearInterval(this.timer);
   }
 
-  inboundHandleSend = () => {
-    // console.log('inboundHandleSend');
-    const { match } = this.props;
+  inboundHandleSend = from => {
+    const { tokenPairs, match } = this.props;
     let tokenPairID = match.params.tokenPairId;
     let info = this.info;
-    console.log('info:', info);
-    let transParams = this.props.BTCCrossTransParams;
+    let transParams = this.props.transParams[from];
     let input = {
       from: transParams.from,
-      value: transParams.value,
-      feeRate: transParams.feeRate,
-      changeAddress: transParams.changeAddress,
-      smgBtcAddr: transParams.smgBtcAddr,
-      storeman: transParams.storeman,
-      wanAddress: transParams.wanAddress,
+      to: transParams.to,
+      amount: transParams.amount,
       gasPrice: transParams.gasPrice,
-      gas: transParams.gas,
+      gasLimit: transParams.gasLimit,
+      storeman: transParams.storeman,
+      tokenPairID: tokenPairID,
+      crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC2WAN', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
-        // console.log(err, ret);
-        this.props.updateTransHistory();
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
+        // console.log('WAN inbound result:', err, ret);
         if (err) {
-          console.log('BTC inbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -85,35 +80,38 @@ class CrossBTC extends Component {
           }
           return reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            return resolve(ret);
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+            return reject(ret);
+          }
         }
       })
-    })
+    });
   }
 
-  outboundHandleSend = () => {
-    // console.log('outboundHandleSend');
-    const { match } = this.props;
+  outboundHandleSend = from => {
+    const { tokenPairs, match } = this.props;
     let tokenPairID = match.params.tokenPairId;
     let info = this.info;
-    let transParams = this.props.BTCCrossTransParams;
+    let transParams = this.props.transParams[from];
     let input = {
       from: transParams.from,
+      to: transParams.to,
       amount: transParams.amount,
-      crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
-      gas: transParams.gas,
-      txFeeRatio: transParams.txFeeRatio,
-      storeman: transParams.storeman
+      gasLimit: transParams.gasLimit,
+      storeman: transParams.storeman,
+      // txFeeRatio: transParams.txFeeRatio
+      tokenPairID: tokenPairID,
+      crossType: transParams.crossType
     };
-    // console.log('outboud param:', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID });
-    /* return new Promise((resolve, reject) => {
-      // wand.request('crossChain_crossBTC2WAN', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
-      wand.request('crossChain_crossBTC2WAN', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
-        console.log(err, ret);
-        this.props.updateTransHistory();
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+        // console.log('WAN outbound result:', err, ret);
         if (err) {
-          console.log('BTC outbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -121,10 +119,16 @@ class CrossBTC extends Component {
           }
           return reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            return resolve(ret);
+          } else {
+            message.warn(intl.get('Common.sendFailed'));
+            return reject(ret);
+          }
         }
       })
-    }) */
+    });
   }
 
   inboundColumns = [
@@ -140,9 +144,14 @@ class CrossBTC extends Component {
     },
     {
       dataIndex: 'balance',
-      width: '30%',
+      width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+    },
+    {
+      dataIndex: 'action',
+      width: '10%',
+      render: (text, record) => <div><WANTrans balance={record.balance} from={record.address} record={record} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
     }
   ];
 
@@ -166,29 +175,24 @@ class CrossBTC extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} direction={OUTBOUND} /></div>
+      render: (text, record) => <div><WANTrans balance={record.balance} from={record.address} record={record} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} type={OUTBOUND}/></div>
     }
   ];
 
-  render() {
+  render () {
     const { getNormalAddrList, getTokensListInfo } = this.props;
-    let from = getNormalAddrList.length ? getNormalAddrList[0].address : '';
-
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
-
     this.props.language && this.outboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
+    let info = this.info;
 
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{this.info.fromTokenSymbol} </span><span className={style.chain}>{this.info.fromChainName}</span></Col>
-          <Col span={12} className="col-right">
-            <BTCTrans from={from} handleSend={this.inboundHandleSend} direction={INBOUND} chainType={CHAINTYPE} />
-          </Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.fromTokenName} </span><span className={style.chain}>{info.fromChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -196,7 +200,7 @@ class CrossBTC extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{this.info.toTokenSymbol} </span><span className={style.chain}>{this.info.toChainName}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.toTokenName} </span><span className={style.chain}>{info.toChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -205,7 +209,7 @@ class CrossBTC extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <CrossBTCHistory name={['normal']} />
+            <CrossChainTransHistory name={['normal']} symbol='ETH' />
           </Col>
         </Row>
       </div>
@@ -213,4 +217,4 @@ class CrossBTC extends Component {
   }
 }
 
-export default CrossBTC;
+export default CrossWAN;

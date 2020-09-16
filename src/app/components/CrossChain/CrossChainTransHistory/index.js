@@ -50,7 +50,7 @@ class CrossChainTransHistory extends Component {
     transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
     return (
       <div>
-        <div className="historyCon" id="wanAddrSelect">
+        <div className="historyCon">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">

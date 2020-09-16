@@ -37,20 +37,19 @@ class Trans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
+    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain, setButtonStatus } = this.props;
     if (!(chainPairId in tokenPairs)) {
       return false;
     }
     let info = Object.assign({}, tokenPairs[chainPairId]);
-    let chainType = info.fromChainSymbol;
+    let chainType = type === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
     this.setState({ chainType });
-    let addrInfo = getChainAddressInfoByChain(info.fromChainSymbol);
     let desChain, origGas, destGas, storeman;
     let tokenAddr = info.toAccount;
     // console.log('info:', info);
     this.setState({ tokenAddr });
     if (type === INBOUND) {
-      if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
@@ -62,7 +61,7 @@ class Trans extends Component {
       origGas = LOCKETH_GAS;// ToDo
       destGas = REDEEMWETH_GAS;// ToDo
     } else {
-      if (Number(getBalanceByAddr(from, addrInfo)) === 0) {
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
@@ -76,12 +75,12 @@ class Trans extends Component {
     }
     addCrossTransTemplate(from, { chainType, path });
     try {
+      setButtonStatus(true);
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       smgList = smgList.filter(obj => {
         let now = Date.now();
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
       });
-      // console.log('smgList:', smgList);
       this.setState({
         smgList,
         estimateFee: {
@@ -99,8 +98,10 @@ class Trans extends Component {
         chainPairId: chainPairId,
       });
       this.setState({ visible: true, spin: false });
+      setButtonStatus(false);
     } catch (err) {
       console.log('showModal:', err)
+      setButtonStatus(false);
       message.warn(intl.get('network.down'));
     }
   }
@@ -124,10 +125,10 @@ class Trans extends Component {
 
   render() {
     const { visible, loading, spin, smgList, estimateFee, tokenAddr, chainType } = this.state;
-    const { balance, from, type, account } = this.props;
+    const { balance, from, type, account, disabled } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} disabled={disabled}>{intl.get('Common.convert')}</Button>
         {visible &&
           <TransForm balance={balance} from={from} account={account} tokenAddr={tokenAddr} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

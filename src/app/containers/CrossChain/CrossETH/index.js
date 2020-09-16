@@ -25,7 +25,8 @@ const WANCHAIN = 'WAN';
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
-  updateTokensBalance: tokenScAddr => stores.tokens.updateTokensBalance(tokenScAddr),
+  updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
+  setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
 }))
 
@@ -35,11 +36,12 @@ class CrossETH extends Component {
     super(props);
     const { tokenPairs, match } = props;
     let tokenPairID = match.params.tokenPairId;
-    this.props.setCurrSymbol('ETH');
+    this.props.setCurrSymbol(CHAINTYPE);
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrTokenPairId(tokenPairID);
     this.info = tokenPairs[tokenPairID];
     this.props.setCurrToken(this.info.toAccount);
+    this.props.setCurrTokenChain(this.info.toChainSymbol);
   }
 
   componentDidMount() {
@@ -71,7 +73,7 @@ class CrossETH extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
-        // console.log('ETH inbound result:', err, ret);
+        console.log('ETH inbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
@@ -150,7 +152,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={CHAINTYPE} type={INBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} record={record} account={record.name} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
     }
   ];
 
@@ -174,7 +176,7 @@ class CrossETH extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.outboundHandleSend} chainType={WANCHAIN} type={OUTBOUND}/></div>
+      render: (text, record) => <div><ETHTrans balance={record.balance} from={record.address} record={record} account={record.name} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} type={OUTBOUND}/></div>
     }
   ];
 
@@ -189,12 +191,10 @@ class CrossETH extends Component {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
 
-    let info = this.info;
-
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">ETH </span><span className={style.chain}>{info.fromChainName}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{this.info.fromTokenSymbol} </span><span className={style.chain}>{this.info.fromChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -202,7 +202,7 @@ class CrossETH extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">WETH </span><span className={style.chain}>{info.toChainName}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{this.info.toTokenSymbol} </span><span className={style.chain}>{this.info.toChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>

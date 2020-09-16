@@ -55,16 +55,21 @@ class CrossChain {
           for (let i = 0; i < data.length; i++) {
             // set tokenPairs
             let v = data[i];
+            if (v.ancestorSymbol === 'NS') {
+              continue;
+            }
             tokenPairs[v.id] = {
               ancestorDecimals: v.ancestorDecimals,
               ancestorSymbol: v.ancestorSymbol,
               fromAccount: v.fromAccount,
               fromTokenName: v.fromTokenName,
+              fromTokenSymbol: v.fromTokenSymbol,
               fromChainID: v.fromChainID,
               fromChainName: v.fromChainName,
               fromChainSymbol: v.fromChainSymbol,
               toChainID: v.toChainID,
               toTokenName: v.toTokenName,
+              toTokenSymbol: v.toTokenSymbol,
               toAccount: v.toAccount,
               toChainName: v.toChainName,
               toChainSymbol: v.toChainSymbol,
@@ -109,7 +114,7 @@ class CrossChain {
             tokens.updateTokensList(key, obj);
 
             // To token
-            key = `${v.toChainID}-${v.toAccount}`
+            let key2 = `${v.toChainID}-${v.toAccount}`;
             obj = {
               account: v.toAccount,
               chain: v.toChainName,
@@ -118,12 +123,12 @@ class CrossChain {
               symbol: v.toTokenSymbol,
               ancestor: v.ancestorSymbol,
             }
-            if (!(key in tokens.tokensList)) {
+            if (!(key2 in tokens.tokensList)) {
               obj.select = false;
             } else {
-              obj.select = tokens.tokensList[key].select;
+              obj.select = tokens.tokensList[key2].select;
             }
-            tokens.updateTokensList(key, obj);
+            tokens.updateTokensList(key2, obj);
           }
           resolve();
         }
@@ -179,6 +184,10 @@ class CrossChain {
 
   @computed get crossChainTokensInfo() {
     return tokens.ccTokens;
+  }
+
+  @computed get currentTokenPairInfo() {
+    return this.tokenPairs[this.currTokenPairId];
   }
 
   @computed get getCrossChainTokenList() {

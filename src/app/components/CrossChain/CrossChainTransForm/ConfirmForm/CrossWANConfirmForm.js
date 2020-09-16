@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
+import { getFullChainName } from 'utils/helper';
+
 const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
@@ -12,10 +14,10 @@ const inputCom = <Input disabled={true} />
 }))
 
 @observer
-class ConfirmForm extends Component {
+class CrossWANConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs } = this.props;
-    const { amount, toAddr, storeman, crossType } = transParams[from];
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs } = this.props;
+    const { amount, toAddr, storeman } = this.props.transParams[from];
     const chainPairId = transParams[from].chainPairId;
     const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
     let fromChain = tokenPairInfo.fromChainName;
@@ -25,7 +27,7 @@ class ConfirmForm extends Component {
       <Modal
         destroyOnClose={true}
         closable={false}
-        visible={visible}
+        visible={true}
         title={intl.get('CrossChainTransForm.ConfirmForm.transactionConfirm')}
         onCancel={handleCancel}
         footer={[
@@ -43,9 +45,6 @@ class ConfirmForm extends Component {
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
-            {getFieldDecorator('crossType', { initialValue: crossType })(inputCom)}
-          </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}
           </Form.Item>
@@ -58,4 +57,4 @@ class ConfirmForm extends Component {
   }
 }
 
-export default ConfirmForm;
+export default CrossWANConfirmForm;

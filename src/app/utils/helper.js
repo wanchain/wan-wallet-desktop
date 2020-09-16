@@ -402,7 +402,7 @@ export const getBalanceByAddr = function (addr, addrInfo) {
   let balance = 0;
   let tmp = {};
   Object.keys(addrInfo).forEach(item => {
-    tmp = Object.assign(tmp, addrInfo[item])
+    Object.assign(tmp, addrInfo[item])
   })
   Object.values(tmp).forEach(item => {
     if (item.address === addr || item.address === addr.toLowerCase()) {
@@ -810,6 +810,7 @@ export const createEOSAddr = async function () {
 export const btcCoinSelect = function (utxos, value) {
   return new Promise((resolve, reject) => {
     wand.request('address_btcCoinSelect', { utxos, value }, (err, data) => {
+      // console.log('select:-----------:', err, data)
       if (err) {
         console.log('btcCoinSelect: ', err)
         return reject(err);

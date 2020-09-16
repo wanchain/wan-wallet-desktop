@@ -1880,11 +1880,13 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-        case 'crossBTC_WAN':
+
+        case 'crossBTC2WAN':
             try {
                 let feeHard = network === 'main' ? 10000 : 100000;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
                 if (payload.type === 'LOCK' && payload.source === 'WAN') {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
@@ -1899,11 +1901,12 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                         payload.input.feeHard = feeHard
                     }
                 }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }
             } catch (e) {
+                logger.error('crossBTC2WAN failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1911,9 +1914,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             break
         case 'crossBTC':
             try {
-                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
                 let feeHard = network === 'main' ? 10000 : 100000;
                 if (payload.type === 'LOCK' && payload.source === 'WAN') {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
@@ -1961,7 +1964,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'crossEOS_WAN':
+        case 'crossEOS2WAN':
             try {
                 let srcChain, dstChain;
                 if (payload.source !== 'WAN') {

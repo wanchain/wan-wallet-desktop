@@ -1,18 +1,13 @@
 import React, { Component, Suspense } from 'react';
-import { Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, initRegTokens } from 'utils/helper';
-
-import style from './Layout.less';
-import SideBar from './Sidebar';
-import MHeader from 'components/MHeader';
-import MFooter from 'components/MFooter';
 import Loading from 'components/Loading';
-import Mask from 'components/Mask';
 import { WANPATH } from 'utils/settings';
+import Transition from 'components/Transition';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
 const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'containers/Register'));
+const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'containers/Main'));
 
 @inject(stores => ({
   auth: stores.session.auth,
@@ -36,9 +31,7 @@ const Register = React.lazy(() => import(/* webpackChunkName:'RegisterPage' */'c
 class Layout extends Component {
   state = {
     loading: true,
-    collapsed: false,
     initializeStep: '',
-    maskMainContent: false,
   }
 
   componentDidMount() {
@@ -167,49 +160,17 @@ class Layout extends Component {
     });
   }
 
-  toggleNav = () => {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
-
-  toggleMask = show => {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      this.setState({
-        maskMainContent: show
-      })
-    }, show ? 0 : 50);
-  }
-
   render() {
     const { hasMnemonicOrNot, auth, location } = this.props;
-    const showHeader = !(location.pathname.includes('dapp') || location.pathname.includes('AddDApp'));
     if (this.state.loading) {
       return <Loading step={this.state.initializeStep} />
     } else {
       if (!hasMnemonicOrNot) {
-        return <Suspense fallback={<div>Loading...</div>}><Register /></Suspense>;
+        return <Suspense fallback={<Transition/>}><Register /></Suspense>;
       } else if (!auth) {
-        return <Suspense fallback={<div>Loading......</div>}><Login /></Suspense>
+        return <Suspense fallback={<Transition/>}><Login /></Suspense>
       } else {
-        return (
-          <Row className="container">
-            <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
-              <SideBar handleNav={this.toggleNav} path={location.pathname} toggleMask={this.toggleMask} />
-            </Col>
-            <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
-              {showHeader ? <MHeader /> : null}
-              <Row className="content">
-                {this.props.children}
-              </Row>
-              {showHeader ? <MFooter /> : null}
-            </Col>
-            {
-              this.state.maskMainContent && <Mask />
-            }
-          </Row>
-        )
+      return <Suspense fallback={<Transition/>}><Main>{this.props.children}</Main></Suspense>
       }
     }
   }

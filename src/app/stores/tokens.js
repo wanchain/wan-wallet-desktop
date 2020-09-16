@@ -422,70 +422,17 @@ class Tokens {
     const chain = this.currTokenChain;
     let addrInfo = this.getChainAddressInfoByChain(chain);
     if (addrInfo === undefined) {
-      return [];
-    }
-    let addrList = [];
-    let normalArr = Object.keys(addrInfo.normal);
-    normalArr.forEach(item => {
-      let balance;
-      if (self.tokensBalance && self.tokensBalance[self.currTokenAddr]) {
-        if (self.tokensList && self.tokensList[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.tokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
-        } else {
-          balance = 0
-        }
-      } else {
-        balance = 0;
-      }
-      addrList.push({
-        key: item,
-        name: addrInfo.normal[item].name,
-        address: wanUtil.toChecksumAddress(item),
-        balance: formatNum(balance),
-        path: `${WANPATH}${addrInfo.normal[item].path}`,
-        action: 'send',
-        amount: balance
-      });
-    });
-    return addrList;
-  }
-
-  @computed get getTokensListInfo_ByChain() {
-    const chain = this.currTokenChain;
-    let addrInfo = this.getChainAddressInfoByChain(chain);
-    if (addrInfo === undefined) {
       return;
     }
     let addrList = [];
     [addrInfo.normal, addrInfo.ledger || {}, addrInfo.trezor || {}].forEach(obj => {
       Object.keys(obj).forEach(item => {
         let balance;
-        let pathPrefix = '';
-        switch (chain) {
-          case 'WAN':
-            pathPrefix = WANPATH;
-            break;
-          case 'ETH':
-            pathPrefix = ETHPATH;
-            break;
-          case 'EOS':
-            pathPrefix = EOSPATH;
-            break;
-          case 'BTC':
-            //  network = 1 ? 'main' : 'testnet',
-            if (session.chainId === 1) {
-              pathPrefix = BTCPATH_MAIN;
-            } else {
-              pathPrefix = BTCPATH_TEST;
-            }
-            break;
-          default:
-            pathPrefix = WANPATH;
-        }
+        let pathPrefix = this.getPathPrefix(chain);
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
-          let tokenKey = Object.keys(this.tokensList).find(key => key.indexOf(this.currTokenAddr) !== -1);
-          if (this.tokensList && tokenKey && this.tokensList[tokenKey]) {
-            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], this.tokensList[tokenKey].decimals)
+          let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
+          if (this.tokensList && token !== undefined) {
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
           } else {
             balance = 0
           }
@@ -633,10 +580,11 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress };
     if (chain === undefined) {
       return undefined;
     }
+
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {
@@ -651,6 +599,31 @@ class Tokens {
     } else {
       return ADDRESSES[`${chain.toLowerCase()}Address`];
     }
+  }
+
+  getPathPrefix(chain) {
+    let pathPrefix;
+    switch (chain) {
+      case 'WAN':
+        pathPrefix = WANPATH;
+        break;
+      case 'ETH':
+        pathPrefix = ETHPATH;
+        break;
+      case 'EOS':
+        pathPrefix = EOSPATH;
+        break;
+      case 'BTC':
+        if (session.chainId === 1) {
+          pathPrefix = BTCPATH_MAIN;
+        } else {
+          pathPrefix = BTCPATH_TEST;
+        }
+        break;
+      default:
+        pathPrefix = WANPATH;
+    }
+    return pathPrefix;
   }
 }
 

@@ -32,7 +32,7 @@ class BTCTransHistory extends Component {
 
     return (
       <div>
-        <div className="historyCon" id="wanAddrSelect">
+        <div className="historyCon">
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">
