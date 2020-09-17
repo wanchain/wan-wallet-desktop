@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
@@ -251,7 +252,8 @@ class OpenStoreman {
       return Promise.all([wandWrapper('storeman_getStoremanGroupMember', { groupId: groupMemberId }), wandWrapper('storeman_getStoremanCandidates', { groupId: groupCandidatesMemberId })])
     }).then(ret => {
       runInAction(() => {
-        let temp = ret.flat();
+        // Re-Duplicates by wkAddr
+        let temp = _.unionBy(ret.flat(), 'wkAddr');
         temp.forEach(item => {
           let temp = this.storemanGroupList.find(v => v.groupId === item.groupId);
           item.chain1 = temp.chain1;
