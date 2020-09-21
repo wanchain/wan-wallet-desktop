@@ -42,7 +42,8 @@ TrezorConnect.init({
   updateAddress: type => stores.wanAddress.updateAddress(type),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr)
+  addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr),
+  setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
 }))
 
 @observer
@@ -50,6 +51,7 @@ class Trezor extends Component {
   constructor (props) {
     super(props);
     this.props.changeTitle('Trezor.trezor');
+    this.props.setCurrTokenChain('WAN');
     // Declare trezor event
     TrezorConnect.on(DEVICE_EVENT, (event) => {
       if (event.type === DEVICE.CONNECT) {

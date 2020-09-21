@@ -210,7 +210,10 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => {
+        // console.log('record:', record)
+        return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
+      }
     }
   ];
 
@@ -234,7 +237,10 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => {
+        // console.log('record:', record)
+        return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
+      }
     }
   ];
 
@@ -254,7 +260,7 @@ class CrossChain extends Component {
 
     return this.state.error ? <div className="errorComponent">An error occurred in this component.</div> : (<div className="account">
       <Row className="title">
-        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
+        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.fromTokenSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
       </Row>
       <Row className="mainBody">
         <Col>
@@ -262,7 +268,7 @@ class CrossChain extends Component {
         </Col>
       </Row>
       <Row className="title">
-        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.ancestorSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
+        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.toTokenSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
       </Row>
       <Row className="mainBody">
         <Col>

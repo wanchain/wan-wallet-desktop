@@ -9,7 +9,7 @@ import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-import { COIN_ACCOUNT, WALLET_CHAIN } from 'utils/settings';
+import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
 
 class Portfolio {
   @observable coinPriceObj;
@@ -142,7 +142,7 @@ class Portfolio {
     try {
       Object.keys(self.coinList).forEach(async (key) => {
         let val = self.coinList[key];
-        if (key.indexOf(COIN_ACCOUNT) !== -1) {
+        if (key.indexOf(COIN_ACCOUNT) !== -1 || key.indexOf(COIN_ACCOUNT_EOS) !== -1) {
           key = val.symbol;
         }
         if (WALLET_CHAIN.includes(key)) {
@@ -162,10 +162,14 @@ class Portfolio {
           }
         } else {
           let balances = await tokens.getTokenBalance(val);
-          val.balance = Object.values(balances).reduce((total, cur) => {
-            return new BigNumber(total).plus(cur).toString(10);
-          });
-          val.balance = formatNumByDecimals(val.balance, val.decimals);
+          if (Object.keys(balances).length === 0) {
+            val.balance = 0;
+          } else {
+            val.balance = Object.values(balances).reduce((total, cur) => {
+              return new BigNumber(total).plus(cur).toString(10);
+            });
+            val.balance = formatNumByDecimals(val.balance, val.decimals);
+          }
         }
       });
     } catch (e) {

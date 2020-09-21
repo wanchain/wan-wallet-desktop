@@ -17,7 +17,7 @@ const CHAINTYPE = 'ETH';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.ethAddress.getAddrList,
-  getAmount: stores.ethAddress.getAllAmount,
+  getAllAmount: stores.ethAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
@@ -139,7 +139,7 @@ class EthAccount extends Component {
   }
 
   render() {
-    const { getAmount, getAddrList } = this.props;
+    const { getAllAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -155,7 +155,7 @@ class EthAccount extends Component {
         <Row className="title">
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
-            <span className="wanTotal">{120}</span>
+            <span className="wanTotal">{getAllAmount}</span>
             <span className="wanTex">{'ETH'}</span>
             <Tag className="symbol">{intl.get('Common.ethereum')}</Tag>
           </Col>

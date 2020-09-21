@@ -162,8 +162,7 @@ class CrossEOSForm extends Component {
 
   render () {
     const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, tokenPairs, currTokenPairId, addrInfo } = this.props;
-    let srcChain, desChain, selectedList, title, tokenSymbol, txFeeRatio, quota, fromAccount;
-    let totalFeeTitle;
+    let srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit, totalFeeTitle;
     const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     let txParam = transParams[from];
 
@@ -175,6 +174,7 @@ class CrossEOSForm extends Component {
       selectedList = Object.keys(toAccountList.normal).map(key => toAccountList.normal[key].name);
       title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
       totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
+      unit = tokenPairInfo.fromTokenSymbol;
     } else {
       fromAccount = record.name;
       srcChain = tokenPairInfo.toChainSymbol;
@@ -182,8 +182,8 @@ class CrossEOSForm extends Component {
       selectedList = Object.keys(addrInfo);
       title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
       totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
+      unit = tokenPairInfo.toTokenSymbol;
     }
-    tokenSymbol = tokenPairInfo.ancestorSymbol;
 
     if (smgList.length === 0) {
       quota = 0;
@@ -223,7 +223,7 @@ class CrossEOSForm extends Component {
                 colSpan={6}
                 formName='balance'
                 disabled={true}
-                options={{ initialValue: balance + ` ${tokenSymbol}` }}
+                options={{ initialValue: balance + ` ${unit}` }}
                 prefix={<Icon type="wallet" className="colorInput" />}
                 title={intl.get('Common.balance')}
               />
@@ -242,7 +242,7 @@ class CrossEOSForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
+                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
@@ -279,7 +279,7 @@ class CrossEOSForm extends Component {
                 placeholder={0}
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${tokenSymbol})`}
+                title={intl.get('Common.amount')}
               />
               <Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6}/>}
@@ -287,7 +287,7 @@ class CrossEOSForm extends Component {
           </Spin>
         </Modal>
         {
-          this.state.confirmVisible && <Confirm tokenSymbol={tokenSymbol} direction={direction} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+          this.state.confirmVisible && <Confirm tokenSymbol={unit} direction={direction} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
         }
       </div>
     );

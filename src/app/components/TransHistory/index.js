@@ -42,7 +42,8 @@ class TransHistory extends Component {
 
   render () {
     const { addrInfo, historyList, name, offline, offlineHistoryList, transType, getChainStoreInfoByChain, currTokenChain } = this.props;
-    let tokenTransferHistoryList = getChainStoreInfoByChain(currTokenChain).tokenTransferHistoryList;
+    let tokenAddress = getChainStoreInfoByChain(currTokenChain);
+    let tokenTransferHistoryList = tokenAddress ? tokenAddress.tokenTransferHistoryList : [];
     let addrList = [];
     let dataSource;
     if (name) {

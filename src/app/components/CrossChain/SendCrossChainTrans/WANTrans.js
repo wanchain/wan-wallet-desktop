@@ -79,7 +79,8 @@ class WANTrans extends Component {
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
       });
       if (smgList.length === 0) {
-        console.log('No smg')
+        message.warn(intl.get('SendNormalTrans.smgUnavailable'));
+        this.setState({ visible: false, spin: false, loading: false });
         return;
       }
       this.setState({

@@ -1971,27 +1971,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'crossErc20':
-            try {
-                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
-                if (payload.type === 'REDEEM') {
-                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
-                }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
-                if (!ret.code) {
-                    err = ret;
-                }
-            } catch (e) {
-                logger.error('crossErc20 failed:');
-                logger.error(e)
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'getAllUndoneCrossTrans':
             try {
                 ret = {

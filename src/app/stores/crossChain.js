@@ -23,11 +23,11 @@ class CrossChain {
   @observable crossChainSelections = {};
 
   @action setCurrSymbol(symbol) {
-    self.currSymbol = symbol;
+    this.currSymbol = symbol;
   }
 
   @action setCurrTokenPairId(id) {
-    self.currTokenPairId = id;
+    this.currTokenPairId = id;
   }
 
   @action updateCrossTrans() {
@@ -35,7 +35,7 @@ class CrossChain {
       if (err) {
         console.log('crossChain_getAllCrossTrans:', err);
       } else {
-        self.crossTrans = ret;
+        this.crossTrans = ret;
       }
     })
   }
@@ -43,6 +43,7 @@ class CrossChain {
   @action getTokenPairs() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
+        // console.log('data:', data);
         if (err) {
           console.log('getTokenPairs failed: ', err);
           reject(err)
@@ -203,6 +204,9 @@ class CrossChain {
   }
 
   @computed get crossChainTrans() {
+    // console.log('crossChainTrans============');
+    // console.log('crossTrans:', self.crossTrans);
+    // console.log('currSymbol:', self.currSymbol);
     let trans = [];
     let decimals = 8;
     try {
@@ -210,10 +214,13 @@ class CrossChain {
     } catch (err) {
       console.log(err);
     }
+    // console.log('decimals:', decimals);
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+        // console.log('item:', JSON.parse(JSON.stringify(item)));
         let from = item.srcChainType;
         let to = item.dstChainType;
+        // console.log('from, to:', getInfoByAddress(item.fromAddr, ['name'], tokens.getChainAddressInfoByChain(from)).name, getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(to)).name);
         trans.push({
           key: index,
           hashX: item.hashX,
@@ -276,11 +283,11 @@ class CrossChain {
   }
 
   @computed get crossEOSTrans() {
-    let crossEOSTrans = [];
+    let trans = [];
     let decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
-        crossEOSTrans.push({
+        trans.push({
           key: index,
           hashX: item.hashX,
           storeman: item.storeman,
@@ -303,7 +310,7 @@ class CrossChain {
         });
       }
     });
-    return crossEOSTrans.sort((a, b) => b.sendTime - a.sendTime);
+    return trans.sort((a, b) => b.sendTime - a.sendTime);
   }
 }
 

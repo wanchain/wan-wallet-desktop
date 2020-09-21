@@ -21,7 +21,7 @@ const CHAINTYPE = 'WAN';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
-  getAmount: stores.wanAddress.getAllAmount,
+  getAllAmount: stores.wanAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
@@ -276,7 +276,7 @@ class WanAccount extends Component {
   }
 
   render() {
-    const { getAmount, getAddrList } = this.props;
+    const { getAllAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -302,7 +302,7 @@ class WanAccount extends Component {
         <Row className={style.title + ' title'}>
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
-            <span className="wanTotal">{getAmount}</span>
+            <span className="wanTotal">{getAllAmount}</span>
             <span className="wanTex">{intl.get('WanAccount.wan')}</span>
             <Tag className="symbol">{intl.get('Common.wanchain')}</Tag>
           </Col>

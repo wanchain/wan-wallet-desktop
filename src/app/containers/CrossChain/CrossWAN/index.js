@@ -17,6 +17,8 @@ const WANCHAIN = 'WAN';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.wanAddress.getNormalAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
@@ -180,7 +182,7 @@ class CrossWAN extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, ledgerAddrList, trezorAddrList, getTokensListInfo } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
@@ -196,7 +198,7 @@ class CrossWAN extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList, trezorAddrList)} />
           </Col>
         </Row>
         <Row className="title">

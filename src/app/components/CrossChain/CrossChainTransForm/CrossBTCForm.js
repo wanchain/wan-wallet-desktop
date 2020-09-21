@@ -183,10 +183,9 @@ class CrossBTCForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo, getChainAddressInfoByChain } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList, unit;
     let info = currentTokenPairInfo;
     let toAddrInfo = getChainAddressInfoByChain(currentTokenPairInfo.toChainSymbol);
-    // console.log('currentTokenPairInfo:', currentTokenPairInfo);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = toAddrInfo;
@@ -208,11 +207,13 @@ class CrossBTCForm extends Component {
     } else {
       if (direction === INBOUND) {
         defaultSelectStoreman = smgList[0].btcAddress;
-        capacity = formatNumByDecimals(smgList[0].quota, 8)
-        quota = formatNumByDecimals(smgList[0].inboundQuota, 8)
+        capacity = formatNumByDecimals(smgList[0].quota, 8);
+        quota = formatNumByDecimals(smgList[0].inboundQuota, 8);
+        unit = currentTokenPairInfo.fromTokenSymbol;
       } else {
         defaultSelectStoreman = smgList[0][`${currentTokenPairInfo.toChainSymbol.toLowerCase()}Address`];
         quota = formatNumByDecimals(smgList[0].outboundQuota, 8);
+        unit = currentTokenPairInfo.toTokenSymbol;
       }
     }
 
@@ -249,7 +250,7 @@ class CrossBTCForm extends Component {
                 colSpan={6}
                 formName='balance'
                 disabled={true}
-                options={{ initialValue: balance + (direction === INBOUND ? ' BTC' : ' WBTC') }}
+                options={{ initialValue: `${balance} ${unit}` }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('StakeInForm.balance')}
               />
@@ -270,7 +271,7 @@ class CrossBTCForm extends Component {
                   colSpan={6}
                   formName='capacity'
                   disabled={true}
-                  options={{ initialValue: capacity + ' BTC' }}
+                  options={{ initialValue: `${capacity} ${unit}` }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('CrossChainTransForm.capacity')}
                 />
@@ -280,7 +281,7 @@ class CrossBTCForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota + ' BTC' }}
+                options={{ initialValue: `${quota} ${unit}` }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
@@ -309,7 +310,7 @@ class CrossBTCForm extends Component {
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 placeholder={0}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + (direction === INBOUND ? ' (BTC)' : ' (WBTC)')}
+                title={intl.get('Common.amount')}
               />
               {
                 direction === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)

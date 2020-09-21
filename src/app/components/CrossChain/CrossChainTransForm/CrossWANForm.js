@@ -197,7 +197,7 @@ class CrossWANForm extends Component {
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, tokenPairs, estimateFee, balance, getChainAddressInfoByChain, record, currTokenPairId } = this.props;
     const { quota } = this.state;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, fromAccount, toAccountList;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, fromAccount, toAccountList, unit;
     const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
@@ -205,16 +205,16 @@ class CrossWANForm extends Component {
       fromAccount = record.name;
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
       title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
-      tokenSymbol = tokenPairInfo.ancestorSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
+      unit = tokenPairInfo.fromTokenSymbol;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
       fromAccount = record.name;
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
       title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
-      tokenSymbol = tokenPairInfo.ancestorSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
+      unit = tokenPairInfo.toTokenSymbol;
     }
 
     if (smgList.length === 0) {
@@ -253,7 +253,7 @@ class CrossWANForm extends Component {
                 colSpan={6}
                 formName='balance'
                 disabled={true}
-                options={{ initialValue: balance + ` ${tokenSymbol}` }}
+                options={{ initialValue: balance + ` ${unit}` }}
                 prefix={<Icon type="wallet" className="colorInput" />}
                 title={intl.get('Common.balance')}
               />
@@ -272,7 +272,7 @@ class CrossWANForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
+                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
@@ -311,7 +311,7 @@ class CrossWANForm extends Component {
                 placeholder={0}
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${tokenSymbol})`}
+                title={intl.get('Common.amount')}
               />
               {
                 !(chainType === 'ETH' && symbol === undefined) && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
@@ -321,7 +321,7 @@ class CrossWANForm extends Component {
           </Spin>
         </Modal>
         {
-          this.state.confirmVisible && <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+          this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         }
       </div>
     );

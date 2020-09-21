@@ -182,7 +182,7 @@ class Tokens {
         name: addresses[item].name,
         address: wanUtil.toChecksumAddress(item),
         balance: formatNum(balance),
-        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -219,7 +219,7 @@ class Tokens {
         name: addresses[item].name,
         address: wanUtil.toChecksumAddress(item),
         balance: formatNum(balance),
-        path: `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -256,8 +256,9 @@ class Tokens {
           rawKeyArr = Object.keys(btcAddress.addrInfo['rawKey'] || {});
           break;
         case 'EOS':
-          /* normalArr = Object.keys(eosAddress.keyInfo['normal']);
-          importArr = Object.keys(eosAddress.keyInfo['import']); */
+          // console.log('EOS Balance:', item)
+          normalArr = Object.keys(eosAddress.keyInfo['normal']);
+          rawKeyArr = Object.keys(eosAddress.keyInfo['rawKey']);
           break;
         default:
         // console.log('Default.....');
@@ -267,10 +268,9 @@ class Tokens {
         return {};
       }
       wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chainSymbol }, (err, data) => {
-        // console.log(err, data);
         if (err) {
-          console.log('stores_getTokensBalance:', err);
-          reject(err);
+          console.log('stores_getTokensBalance:', err, { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chainSymbol });
+          resolve({});
         } else {
           resolve(data);
         }
@@ -318,13 +318,6 @@ class Tokens {
       }
       self.ccTokensList[addr][key] = value;
     })
-  }
-
-  @action addWrc20Tokens(scInfo) {
-    const { addr } = scInfo;
-    if (addr) {
-      self.wrc20List.addr = { ...scInfo };
-    }
   }
 
   @computed get getTokenList() {
@@ -567,13 +560,15 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
     if (chain === undefined) {
       return undefined;
     }
 
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
+    } else if (chain.toLowerCase() === 'eos') {
+      return ADDRESSES[`${chain.toLowerCase()}Address`].keyInfo;
     } else {
       return ADDRESSES[`${chain.toLowerCase()}Address`].addrInfo;
     }

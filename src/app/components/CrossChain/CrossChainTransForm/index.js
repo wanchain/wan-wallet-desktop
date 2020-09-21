@@ -206,15 +206,15 @@ class CrossChainTransForm extends Component {
       desChain = tokenPairInfo.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
-      title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
-      tokenSymbol = tokenPairInfo.ancestorSymbol;
+      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
+      tokenSymbol = tokenPairInfo.fromTokenSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
-      title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
-      tokenSymbol = tokenPairInfo.ancestorSymbol;
+      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
+      tokenSymbol = tokenPairInfo.toTokenSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
     }
 
@@ -312,7 +312,7 @@ class CrossChainTransForm extends Component {
                 placeholder={0}
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('Common.amount') + ` (${tokenSymbol})`}
+                title={intl.get('Common.amount')}
               />
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
             </div>

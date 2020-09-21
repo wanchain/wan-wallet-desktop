@@ -19,7 +19,8 @@ const LEDGER = 'ledger';
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr)
+  addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr),
+  setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
 }))
 
 @observer
@@ -27,6 +28,7 @@ class Ledger extends Component {
   constructor (props) {
     super(props);
     this.props.changeTitle('Ledger.ledger');
+    this.props.setCurrTokenChain('WAN');
   }
 
   componentDidUpdate () {

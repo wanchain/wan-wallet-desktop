@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 
-import { getFullChainName } from 'utils/helper';
-
 const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
