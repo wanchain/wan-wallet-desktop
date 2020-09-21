@@ -73,7 +73,7 @@ class CrossBTC extends Component {
       gas: transParams.gas,
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC2WAN', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+      wand.request('crossChain_crossBTC', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         // console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
@@ -106,10 +106,8 @@ class CrossBTC extends Component {
       txFeeRatio: transParams.txFeeRatio,
       storeman: transParams.storeman
     };
-    // console.log('outboud param:', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID });
-    /* return new Promise((resolve, reject) => {
-      // wand.request('crossChain_crossBTC2WAN', { input, source: 'WAN', destination: 'BTC', type: 'LOCK' }, (err, ret) => {
-      wand.request('crossChain_crossBTC2WAN', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_crossBTC', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
@@ -124,7 +122,7 @@ class CrossBTC extends Component {
           return resolve(ret)
         }
       })
-    }) */
+    })
   }
 
   inboundColumns = [

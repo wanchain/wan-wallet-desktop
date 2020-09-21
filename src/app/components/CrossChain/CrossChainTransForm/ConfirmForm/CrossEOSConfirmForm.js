@@ -11,28 +11,31 @@ const inputCom = <Input disabled={true} />
 @inject(stores => ({
   language: stores.languageIntl.language,
   transParams: stores.sendCrossChainParams.transParams,
+  tokenPairs: stores.crossChain.tokenPairs,
+  currTokenPairId: stores.crossChain.currTokenPairId,
 }))
 
 @observer
 class CrossEOSConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, direction, estimateFee, handleCancel, tokenSymbol } = this.props;
+    const { form: { getFieldDecorator }, from, loading, sendTrans, direction, estimateFee, handleCancel, tokenSymbol, tokenPairs, currTokenPairId } = this.props;
     const { amount, toAddr, storeman } = this.props.transParams[from];
+    const info = Object.assign({}, tokenPairs[currTokenPairId]);
     let srcChain, desChain;
 
     if (direction === INBOUND) {
-      srcChain = 'EOS'
-      desChain = 'WAN';
+      srcChain = info.fromChainSymbol;
+      desChain = info.toChainSymbol;
     } else {
-      srcChain = 'WAN'
-      desChain = 'EOS';
+      srcChain = info.toChainSymbol;
+      desChain = info.fromChainSymbol;
     }
 
     return (
       <Modal
         destroyOnClose={true}
         closable={false}
-        visible={visible}
+        visible={true}
         title={intl.get('CrossChainTransForm.ConfirmForm.transactionConfirm')}
         onCancel={handleCancel}
         footer={[

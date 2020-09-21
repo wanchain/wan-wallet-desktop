@@ -33,9 +33,6 @@ class EOSTrans extends Component {
     const { from, record, getTokensListInfo, addCrossTransTemplate, updateTransParams, direction, tokenOrigAddr, currentTokenPairInfo } = this.props;
     let wanGas, storeman;
     let info = Object.assign({}, currentTokenPairInfo);
-    // console.log('info:', info);
-    // console.log('getTokensListInfo:', getTokensListInfo);
-
     if (direction === INBOUND) {
       if (![record.balance, record.ramAvailable, record.cpuAvailable, record.netTotal].every(item => new BigNumber(item).gt(0))) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
@@ -49,31 +46,20 @@ class EOSTrans extends Component {
       }
       wanGas = LOCKWEOS_GAS;
     }
-    addCrossTransTemplate(from, { path: record.path, crossType: CROSS_TYPE[1] });
-    this.setState({ visible: true });
+    this.setState(() => ({ visible: true, spin: true, loading: true }));
+    addCrossTransTemplate(from, { path: record.path, crossType: CROSS_TYPE[1] }); // EOS只有HTLC
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol)]);
-      // getStoremanGroupList
-      // let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      // console.log('smgList===========================:', smgList);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
-      // console.log('smgList:', smgList);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol, info.fromAccount)]);
       this.setState({
         smgList,
         estimateFee: new BigNumber(gasPrice).times(wanGas).div(BigNumber(10).pow(9)).toString(10)
       });
-      storeman = smgList[0].groupId;
-      updateTransParams(from, { storeman, gasPrice, gasLimit: wanGas, txFeeRatio: smgList[0].txFeeRatio || 0 });
-      /* updateTransParams(from, {
-        txFeeRatio: smgList[0].txFeeRatio || 0,
-        chainPairId: chainPairId,
-      }); */
-      setTimeout(() => { this.setState({ spin: false }) }, 0);
+      storeman = smgList[0].storemanGroup;
+      updateTransParams(from, { storeman, gasPrice, gasLimit: wanGas, txFeeRatio: smgList[0].txFeeRatio || 0, quota: smgList[0].quota });
+      this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {
-      console.log('showModal:', err)
+      console.log('showModal:', err);
+      this.setState(() => ({ visible: false, spin: false, loading: false }));
       message.warn(intl.get('network.down'));
     }
   }
@@ -95,15 +81,15 @@ class EOSTrans extends Component {
     });
   }
 
-  render () {
+  render() {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
     const { decimals, direction, record } = this.props;
-
+    let balance = direction === INBOUND ? record.balance : record.amount;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
         { visible &&
-          <CollectionCreateForm balance={direction === INBOUND ? record.balance : record.amount} decimals={decimals} direction={direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm balance={balance} record={record} decimals={decimals} direction={direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );

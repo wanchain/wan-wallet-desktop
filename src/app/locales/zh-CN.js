@@ -204,6 +204,7 @@ const zh_CN = {
     'PasswordConfirmForm.pwdMessage': '请输入密码',
 
     'Sidebar.wanchain': 'Wanchain',
+    'Sidebar.moreTokens': '更多',
 
     'Trezor.trezor': 'Trezor',
     'Trezor.connectTrezorWalletToComputer': '请将Trezor连接上你的电脑',
@@ -484,6 +485,7 @@ const zh_CN = {
     'SendNormalTrans.hasNoWANBalance': '请确保您有足够的WAN',
     'SendNormalTrans.hasNoTokenBalance': '请确保您有足够的token',
     'SendNormalTrans.hasNoETHBalance': '请确保您有足够的ETH',
+    'SendNormalTrans.smgUnavailable': '无可用的storeman组',
 
     'TransHistory.time': '时间',
     'TransHistory.from': '发送方',

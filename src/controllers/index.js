@@ -1776,7 +1776,11 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             let coin2WanRatio
             try {
                 let { crossChain, tokenAddr } = payload;
-                if (tokenAddr && tokenAddr.startsWith('0x')) {
+                if (tokenAddr && crossChain === 'EOS') {
+                    tokenAddr = ccUtil.encodeAccount(crossChain, tokenAddr);
+                    ret = await ccUtil.syncTokenStoremanGroups(crossChain, tokenAddr);
+                    coin2WanRatio = ccUtil.getRegTokenInfo(crossChain, tokenAddr).ratio;
+                } else if (tokenAddr && tokenAddr.startsWith('0x')) {
                     ret = await ccUtil.syncTokenStoremanGroups(crossChain, tokenAddr);
                     coin2WanRatio = ccUtil.getRegTokenInfo(crossChain, tokenAddr).ratio;
                 } else {
@@ -1881,58 +1885,27 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'crossBTC2WAN':
+        case 'crossBTC':
             try {
-                let feeHard = network === 'main' ? 10000 : 100000;
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
-                if (payload.type === 'LOCK' && payload.source === 'WAN') {
+                let srcChain = sourceSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
+                let dstChain = destinationSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
+                let feeHard = network === 'main' ? 10000 : 100000;
+                if (payload.type === 'LOCK' && sourceSymbol === 'WAN') {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
                 if (payload.type === 'REDEEM') {
-                    if (payload.source === 'WAN') {
+                    if (sourceSymbol === 'WAN') {
                         payload.input.feeHard = feeHard
                     }
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 if (payload.type === 'REVOKE') {
-                    if (payload.source === 'BTC') {
+                    if (sourceSymbol === 'BTC') {
                         payload.input.feeHard = feeHard
                     }
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
-                if (!ret.code) {
-                    err = ret;
-                }
-            } catch (e) {
-                logger.error('crossBTC2WAN failed:')
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-        case 'crossBTC':
-            try {
-                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
-                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
-                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
-                let feeHard = network === 'main' ? 10000 : 100000;
-                if (payload.type === 'LOCK' && payload.source === 'WAN') {
-                    payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
-                }
-                if (payload.type === 'REDEEM') {
-                    if (payload.source === 'WAN') {
-                        payload.input.feeHard = feeHard
-                    }
-                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
-                }
-                if (payload.type === 'REVOKE') {
-                    if (payload.source === 'BTC') {
-                        payload.input.feeHard = feeHard
-                    }
-                }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
                 if (!ret.code) {
                     err = ret;
                 }
@@ -1966,15 +1939,11 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossEOS2WAN':
             try {
-                let srcChain, dstChain;
-                if (payload.source !== 'WAN') {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.destination, payload.destination);
-                } else {
-                    srcChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.source, payload.source);
-                    dstChain = global.crossInvoker.getSrcChainNameByContractAddr(payload.tokenScAddr, payload.destination);
-                }
-                ret = await global.crossInvoker.invoke(srcChain, dstChain, payload.type, payload.input);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
+                const EOSSYMBOL = ccUtil.encodeAccount('EOS', sourceAccount);
+                let srcChain = sourceSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(ccUtil.encodeAccount('EOS', sourceAccount), sourceSymbol);
+                let dstChain = destinationSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(ccUtil.encodeAccount('EOS', destinationAccount), destinationSymbol);
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
                 }

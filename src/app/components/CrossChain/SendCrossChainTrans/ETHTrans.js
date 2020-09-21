@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 import { getGasPrice, getBalanceByAddr, getSmgList, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm';
-import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
+import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
 
 const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm);
 
@@ -31,7 +31,8 @@ class ETHTrans extends Component {
     estimateFee: {
       original: 0,
       destination: 0,
-    }
+    },
+    gasPrice: 0,
   }
 
   showModal = async () => {
@@ -39,7 +40,7 @@ class ETHTrans extends Component {
     let desChain, origGas, destGas, storeman;
     let info = Object.assign({}, tokenPairs[chainPairId]);
     if (type === INBOUND) {
-      if (balance === 0) {
+      if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
         return;
       }
@@ -47,7 +48,7 @@ class ETHTrans extends Component {
       origGas = LOCKETH_GAS;
       destGas = REDEEMWETH_GAS;
     } else {
-      if (balance === 0) {
+      if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
@@ -56,6 +57,7 @@ class ETHTrans extends Component {
       destGas = REDEEMETH_GAS;
     }
 
+    this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
@@ -68,20 +70,22 @@ class ETHTrans extends Component {
         estimateFee: {
           original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
-        }
+        },
+        gasPrice,
       });
       storeman = smgList[0].groupId;
       updateTransParams(from, {
         gasPrice,
         gasLimit: origGas,
         storeman,
-        txFeeRatio: smgList[0].txFeeRatio || 0,
+        // txFeeRatio: smgList[0].txFeeRatio || 0,
         chainPairId: chainPairId,
       });
-      this.setState({ visible: true, spin: false })
+      this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {
-      console.log('showModal:', err)
+      console.log('showModal:', err);
       message.warn(intl.get('network.down'));
+      this.setState(() => ({ visible: false, spin: false, loading: false }));
     }
   }
 
@@ -103,13 +107,13 @@ class ETHTrans extends Component {
   }
 
   render() {
-    const { visible, loading, spin, smgList, estimateFee } = this.state;
+    const { visible, loading, spin, smgList, estimateFee, gasPrice } = this.state;
     const { balance, from, type, account, decimals, symbol, tokenAddr, chainType } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
         {visible &&
-          <CollectionCreateForm balance={balance} from={from} account={account} decimals={decimals} tokenAddr={tokenAddr} symbol={symbol} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
+          <CollectionCreateForm balance={balance} from={from} account={account} gasPrice={gasPrice} decimals={decimals} tokenAddr={tokenAddr} symbol={symbol} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );

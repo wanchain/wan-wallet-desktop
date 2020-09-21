@@ -21,7 +21,7 @@ message.config({
 @inject(stores => ({
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
-  getAmount: stores.tokens.getTokenAmount,
+  getTokenAmount: stores.tokens.getTokenAmount,
   currTokenAddr: stores.tokens.currTokenAddr,
   transParams: stores.sendTransParams.transParams,
   tokenIconList: stores.tokens.tokenIconList,
@@ -120,7 +120,6 @@ class TokenTrans extends Component {
     {
       dataIndex: 'action',
       render: (text, record) => {
-        // console.log('record:', record);
         return <div><SendTokenNormalTrans balance={typeof (record.balance) === 'string' ? record.balance.replace(/,/g, '') : record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.props.chain} transType={TRANSTYPE.tokenTransfer} /></div>
       }
     }
@@ -128,7 +127,6 @@ class TokenTrans extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    console.log('params:', params);
     const { chain, symbol, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(chain);
     if (addrInfo === undefined) {
@@ -154,7 +152,6 @@ class TokenTrans extends Component {
         token: params.token
       }
     };
-    console.log('trans:', trans);
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'ledger':
@@ -252,8 +249,7 @@ class TokenTrans extends Component {
   }
 
   render() {
-    const { getAmount, getTokensListInfo, symbol, tokenAddr, chain } = this.props;
-
+    const { getTokenAmount, getTokensListInfo, symbol, tokenAddr, chain } = this.props;
     this.props.language && this.columns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
@@ -263,7 +259,7 @@ class TokenTrans extends Component {
         <Row className="title">
           <Col span={12} className="col-left">
             <img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} />
-            <span className="wanTotal">{getAmount}</span>
+            <span className="wanTotal">{getTokenAmount}</span>
             <span className="wanTex">{symbol}</span>
             <Tag className="symbol">{chain}</Tag>
           </Col>
@@ -278,7 +274,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TokenTransHistory name={['normal', 'import', 'ledger', 'trezor', 'rawKey']} transType={TRANSTYPE.tokenTransfer} />
+            <TokenTransHistory name={chain === 'WAN' ? ['normal', 'import', 'ledger', 'trezor', 'rawKey'] : ['normal', 'rawKey']} />
           </Col>
         </Row>
       </div>

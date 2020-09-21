@@ -42,7 +42,6 @@ class CrossChain extends Component {
     this.init(tokenPairId);
     this.state = {
       error: false,
-      convertDisabled: false,
     }
   }
 
@@ -191,12 +190,6 @@ class CrossChain extends Component {
     return <img className="totalImg" src={img} />;
   }
 
-  setButtonStatus = (val) => {
-    this.setState({
-      convertDisabled: val
-    });
-  }
-
   inboundColumns = [
     {
       dataIndex: 'name',
@@ -217,7 +210,7 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} disabled={this.state.convertDisabled} setButtonStatus={this.setButtonStatus} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
     }
   ];
 
@@ -241,7 +234,7 @@ class CrossChain extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><Trans balance={record.balance} disabled={this.state.convertDisabled} setButtonStatus={this.setButtonStatus} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
+      render: (text, record) => <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>
     }
   ];
 

@@ -7,7 +7,7 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, CROSS_TYPE } from 'utils/settings';
+import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, CROSS_TYPE, FAST_GAS } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
 import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
@@ -17,10 +17,10 @@ const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
+  currTokenPairId: stores.crossChain.currTokenPairId,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -30,26 +30,27 @@ class CrossWANForm extends Component {
   state = {
     confirmVisible: false,
     quota: 0,
+    crossType: CROSS_TYPE[0],
   }
 
-  async componentWillMount() {
-    let { from, chainType, type, smgList, transParams, tokenPairs } = this.props;
-    if (smgList.length === 0) {
-      return;
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.smgList !== this.props.smgList) {
+      let { chainType, type, smgList, tokenPairs, currTokenPairId } = this.props;
+      if (smgList.length === 0) {
+        return;
+      }
+      const storeman = smgList[0].groupId;
+      const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
+      let quota = '';
+      if (type === INBOUND) {
+        quota = await getMintQuota(chainType, currTokenPairId, storeman);
+      } else {
+        quota = await getBurnQuota(chainType, currTokenPairId, storeman);
+      }
+      this.setState({
+        quota: formatNumByDecimals(quota, decimals)
+      })
     }
-    const storeman = smgList[0].groupId;
-    const chainPairId = transParams[from].chainPairId;
-    const tokenPairInfo = tokenPairs[chainPairId];
-    const decimals = tokenPairInfo.ancestorDecimals;
-    let quota = '';
-    if (type === INBOUND) {
-      quota = await getMintQuota(chainType, chainPairId, storeman);
-    } else {
-      quota = await getBurnQuota(chainType, chainPairId, storeman);
-    }
-    this.setState({
-      quota: formatNumByDecimals(quota, decimals)
-    })
   }
 
   componentWillUnmount() {
@@ -69,9 +70,8 @@ class CrossWANForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, chainType, wanAddrInfo, tokenAddr, estimateFee, transParams, tokenPairs, type, getChainAddressInfoByChain } = this.props;
-    const chainPairId = transParams[from].chainPairId;
-    const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
+    const { updateTransParams, settings, form, from, estimateFee, tokenPairs, type, getChainAddressInfoByChain, currTokenPairId } = this.props;
+    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     let fromAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
     let toAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
 
@@ -118,9 +118,8 @@ class CrossWANForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { balance, chainType, smgList, form, estimateFee, transParams, from, tokenPairs } = this.props;
-    const chainPairId = transParams[from].chainPairId;
-    let tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
+    const { balance, chainType, smgList, form, estimateFee, transParams, from, tokenPairs, currTokenPairId } = this.props;
+    let tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     const decimals = tokenPairInfo.ancestorDecimals;
 
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
@@ -156,14 +155,13 @@ class CrossWANForm extends Component {
   }
 
   updateLockAccounts = async (storeman, option) => {
-    let { from, form, updateTransParams, chainType, type, transParams, tokenPairs } = this.props;
-    const chainPairId = transParams[from].chainPairId;
-    const decimals = tokenPairs[chainPairId].ancestorDecimals;
+    let { from, form, updateTransParams, chainType, type, transParams, tokenPairs, currTokenPairId } = this.props;
+    const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
-      quota = await getMintQuota(chainType, chainPairId, storeman);
+      quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
-      quota = await getBurnQuota(chainType, chainPairId, storeman);
+      quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
     console.log('quota:', quota);
     form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) });
@@ -173,6 +171,9 @@ class CrossWANForm extends Component {
   updateCrossType = (v) => {
     let { from, updateTransParams } = this.props;
     updateTransParams(from, { crossType: v });
+    this.setState({
+      crossType: v,
+    })
   }
 
   filterStoremanData = item => {
@@ -194,11 +195,10 @@ class CrossWANForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, wanAddrInfo, chainType, symbol, type, tokenAddr, tokenPairs, transParams, decimals, estimateFee, balance, getChainAddressInfoByChain, record } = this.props;
+    const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, tokenPairs, estimateFee, balance, getChainAddressInfoByChain, record, currTokenPairId } = this.props;
     const { quota } = this.state;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, fromAccount, toAccountList;
-    const chainPairId = transParams[from].chainPairId;
-    const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
+    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
@@ -206,7 +206,7 @@ class CrossWANForm extends Component {
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
       title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
       tokenSymbol = tokenPairInfo.ancestorSymbol;
-      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
@@ -214,7 +214,7 @@ class CrossWANForm extends Component {
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
       title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
       tokenSymbol = tokenPairInfo.ancestorSymbol;
-      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
     }
 
     if (smgList.length === 0) {
@@ -290,7 +290,7 @@ class CrossWANForm extends Component {
                 colSpan={6}
                 formName='crossType'
                 isTextValueData={true}
-                initialValue={CROSS_TYPE[0]}
+                initialValue={this.state.crossType}
                 selectedList={CROSS_TYPE.map(v => ({ value: v, text: intl.get(`CrossChainTransForm.${v}`) }))}
                 formMessage={'Type'}
                 handleChange={this.updateCrossType}

@@ -32,6 +32,7 @@ class WANTrans extends Component {
       destination: 0,
     },
     tokenAddr: '',
+    gasPrice: 0,
   }
 
   showModal = async () => {
@@ -68,6 +69,8 @@ class WANTrans extends Component {
       origGas = LOCKWETH_GAS;// ToDo
       destGas = REDEEMETH_GAS;// ToDo
     }
+
+    this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
@@ -84,7 +87,8 @@ class WANTrans extends Component {
         estimateFee: {
           original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
-        }
+        },
+        gasPrice,
       });
       storeman = smgList[0].groupId;
 
@@ -92,13 +96,14 @@ class WANTrans extends Component {
         gasPrice,
         gasLimit: origGas,
         storeman,
-        txFeeRatio: smgList[0].txFeeRatio,
+        // txFeeRatio: smgList[0].txFeeRatio,
         chainPairId: chainPairId,
       });
-      this.setState({ visible: true, spin: false });
+      this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {
       console.log('showModal:', err)
       message.warn(intl.get('network.down'));
+      this.setState(() => ({ visible: false, spin: false, loading: false }));
     }
   }
 
@@ -120,13 +125,13 @@ class WANTrans extends Component {
   }
 
   render() {
-    const { visible, loading, spin, smgList, estimateFee, tokenAddr } = this.state;
+    const { visible, loading, spin, smgList, estimateFee, tokenAddr, gasPrice } = this.state;
     const { balance, from, type, account, record } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
         {visible &&
-          <TransForm balance={balance} from={from} account={account} tokenAddr={tokenAddr} record={record} chainType={this.props.chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
+          <TransForm balance={balance} from={from} account={account} gasPrice={gasPrice} tokenAddr={tokenAddr} record={record} chainType={this.props.chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );

@@ -9,15 +9,15 @@ const inputCom = <Input disabled={true} />
   language: stores.languageIntl.language,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
+  currTokenPairId: stores.crossChain.currTokenPairId,
 }))
 
 @observer
 class ConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, currTokenPairId } = this.props;
     const { amount, toAddr, storeman, crossType } = transParams[from];
-    const chainPairId = transParams[from].chainPairId;
-    const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
+    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     let fromChain = tokenPairInfo.fromChainName;
     let desChain = tokenPairInfo.toChainName;
 
@@ -44,7 +44,7 @@ class ConfirmForm extends Component {
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
-            {getFieldDecorator('crossType', { initialValue: crossType })(inputCom)}
+            {getFieldDecorator('crossType', { initialValue: intl.get(`CrossChainTransForm.${crossType}`) })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}

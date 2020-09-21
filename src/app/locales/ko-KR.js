@@ -203,6 +203,7 @@ const ko_KR = {
     'PasswordConfirmForm.pwdMessage': '패스워드를 입력하세요!',
 
     'Sidebar.wanchain': 'Wanchain',
+    'Sidebar.moreTokens': 'More Tokens',
 
     'Trezor.trezor': 'Trezor',
     'Trezor.installBridge': ' Trezor.io에서 Trezor Bridge를 다운로드 및 설치 하세요 ',

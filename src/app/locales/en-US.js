@@ -486,6 +486,7 @@ const en_US = {
     'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
     'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
     'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': 'TIME',
     'TransHistory.from': 'FROM',
@@ -534,8 +535,6 @@ const en_US = {
     'CrossChainTransHistory.Cancelled': 'Cancelled',
     'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
     'CrossChainTransHistory.Success': 'Success',
-
-    'MoreCrossChain.more': 'More Tokens',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',

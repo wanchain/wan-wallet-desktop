@@ -1,18 +1,16 @@
 /* eslint-disable prefer-promise-reject-errors */
-import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
+import { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon, Tag } from 'antd';
-
 import style from './index.less';
 import totalImg from 'static/image/wan.png';
-import { WANPATH, WALLETID } from 'utils/settings';
+import { WALLETID } from 'utils/settings';
 import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
-
 import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import arrow from 'static/image/arrow.png';

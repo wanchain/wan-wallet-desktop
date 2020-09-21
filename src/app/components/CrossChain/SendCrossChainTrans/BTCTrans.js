@@ -49,7 +49,7 @@ class BTCTrans extends Component {
       }
     }
 
-    this.setState({ visible: true });
+    this.setState(() => ({ visible: true, spin: true, loading: true }));
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol)]);
       let originalFee, destinationFee;
@@ -87,12 +87,13 @@ class BTCTrans extends Component {
         estimateFee: {
           original: originalFee,
           destination: destinationFee
-        }
+        },
+        spin: false,
+        loading: false,
       });
-
-      setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
-      console.log('showModal:', err)
+      console.log('showModal:', err);
+      this.setState(() => ({ visible: false, spin: false, loading: false }));
       message.warn(intl.get('network.down'));
     }
   }
@@ -126,10 +127,9 @@ class BTCTrans extends Component {
       let item = getTokensListInfo.find(item => item.address === from);
       balance = item ? item.amount : '0';
     }
-
     return (
       <div>
-        <Button type="primary" {...btnStyle} onClick={this.showModal}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" {...btnStyle} onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
         { visible &&
           <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }

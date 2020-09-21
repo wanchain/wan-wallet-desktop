@@ -45,9 +45,9 @@ class CrossETH extends Component {
   }
 
   componentDidMount() {
-    this.props.updateTokensBalance(this.info.toAccount);
+    this.props.updateTokensBalance(this.info.toAccount, this.info.toChainSymbol);
     this.timer = setInterval(() => {
-      this.props.updateTokensBalance(this.info.toAccount);
+      this.props.updateTokensBalance(this.info.toAccount, this.info.toChainSymbol);
     }, 5000);
   }
 
@@ -67,7 +67,6 @@ class CrossETH extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
-      // txFeeRatio: transParams.txFeeRatio
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };

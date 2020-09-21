@@ -203,6 +203,7 @@ const es_ES = {
     'PasswordConfirmForm.pwdMessage': 'Por favor ingrese la contraseña!',
 
     'Sidebar.wanchain': 'Wanchain',
+    'Sidebar.moreTokens': 'More Tokens',
 
     'Trezor.trezor': 'Trezor',
     'Trezor.installBridge': 'Instale el puente Trezor desde trezor.io',

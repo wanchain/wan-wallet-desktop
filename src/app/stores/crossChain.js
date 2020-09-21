@@ -144,10 +144,11 @@ class CrossChain {
       if (err) {
         console.log('Update selection status failed.', err);
         message.error(intl.get('CrossChain.selectFailed'));
-      }
-      let target = Object.values(this.crossChainSelections).flat(1).find(obj => obj.id === id);
-      if (target) {
-        target.selected = selected;
+      } else {
+        let target = Object.values(this.crossChainSelections).flat(1).find(obj => obj.id === id);
+        if (target) {
+          target.selected = selected;
+        }
       }
     })
   }
@@ -202,15 +203,8 @@ class CrossChain {
   }
 
   @computed get crossChainTrans() {
-    // console.log('this.currTokenPairId:', this.currTokenPairId);
-    const ADDRESSES = { wanAddress, btcAddress, ethAddress, eosAddress };
     let trans = [];
     let decimals = 8;
-    let from = this.tokenPairs[this.currTokenPairId].fromChainSymbol;
-    let to = this.tokenPairs[this.currTokenPairId].toChainSymbol;
-    if (ADDRESSES[`${from.toLowerCase()}Address`] === undefined || ADDRESSES[`${to.toLowerCase()}Address`] === undefined) {
-      return [];
-    }
     try {
       decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
     } catch (err) {
@@ -218,15 +212,17 @@ class CrossChain {
     }
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+        let from = item.srcChainType;
+        let to = item.dstChainType;
         trans.push({
           key: index,
           hashX: item.hashX,
           storeman: item.storeman,
           secret: item.x,
           time: timeFormat(item.sendTime),
-          from: getInfoByAddress(item.fromAddr, ['name'], ADDRESSES[`${from.toLowerCase()}Address`].addrInfo).name || item.fromAddr,
+          from: getInfoByAddress(item.fromAddr, ['name'], tokens.getChainAddressInfoByChain(from)).name || item.fromAddr,
           fromAddr: item.fromAddr,
-          to: getInfoByAddress(item.toAddr, ['name'], ADDRESSES[`${to.toLowerCase()}Address`].addrInfo).name || item.toAddr,
+          to: getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(to)).name || item.toAddr,
           toAddr: item.toAddr,
           value: formatNum(formatNumByDecimals(item.contractValue, decimals)),
           status: item.status,
@@ -242,74 +238,6 @@ class CrossChain {
       }
     });
     return trans.sort((a, b) => b.sendTime - a.sendTime);
-  }
-
-  @computed get crossETHTrans() {
-    let crossEthTrans = [];
-    self.crossTrans.forEach((item, index) => {
-      if (item.tokenStand === 'ETH') {
-        let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
-        let toAddrInfo = item.srcChainAddr === 'WAN' ? ethAddress.addrInfo : wanAddress.addrInfo;
-        crossEthTrans.push({
-          key: index,
-          hashX: item.hashX,
-          storeman: item.storeman,
-          secret: item.x,
-          time: timeFormat(item.sendTime),
-          from: (getInfoByAddress(item.fromAddr, ['name'], fromAddrInfo)).name,
-          fromAddr: item.fromAddr,
-          to: (getInfoByAddress(item.toAddr, ['name'], toAddrInfo)).name,
-          toAddr: item.toAddr,
-          value: formatNum(fromWei(item.contractValue)),
-          status: item.status,
-          sendTime: item.sendTime,
-          srcChainAddr: item.srcChainAddr,
-          dstChainAddr: item.dstChainAddr,
-          lockTxHash: item.lockTxHash,
-          redeemTxHash: item.redeemTxHash || 'NULL',
-          revokeTxHash: item.revokeTxHash || 'NULL'
-        });
-      }
-    });
-    return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
-  }
-
-  @computed get crossErc20Trans() {
-    // console.log('tokens.formatTokensList:', tokens.formatTokensList);
-    // console.log('coins:', tokens.coinsList);
-    // console.log('currSymbol:', self.currSymbol);
-    let crossEthTrans = [];
-    let currTokenInfo = tokens.coinsList[self.currSymbol];
-    self.crossTrans.forEach((item, index) => {
-      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
-        let fromAddrInfo = item.srcChainAddr === 'WAN' ? wanAddress.addrInfo : ethAddress.addrInfo;
-        let toAddrInfo = item.srcChainAddr === 'WAN' ? ethAddress.addrInfo : wanAddress.addrInfo;
-        crossEthTrans.push({
-          key: index,
-          hashX: item.hashX,
-          storeman: item.storeman,
-          secret: item.x,
-          time: timeFormat(item.sendTime),
-          from: (getInfoByAddress(item.fromAddr, ['name'], fromAddrInfo)).name,
-          fromAddr: item.fromAddr,
-          to: (getInfoByAddress(item.toAddr, ['name'], toAddrInfo)).name,
-          toAddr: item.toAddr,
-          value: formatNum(formatNumByDecimals(Number(item.contractValue), currTokenInfo.decimals)),
-          status: item.status,
-          sendTime: item.sendTime,
-          srcChainAddr: item.srcChainAddr,
-          dstChainAddr: item.dstChainAddr,
-          approveTxHash: item.approveTxHash,
-          lockTxHash: item.lockTxHash,
-          redeemTxHash: item.redeemTxHash || 'NULL',
-          revokeTxHash: item.revokeTxHash || 'NULL',
-          srcChainType: item.srcChainType,
-          dstChainType: item.dstChainType,
-          tokenStand: item.tokenStand
-        });
-      }
-    });
-    return crossEthTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
   @computed get crossBTCTrans() {
@@ -349,7 +277,7 @@ class CrossChain {
 
   @computed get crossEOSTrans() {
     let crossEOSTrans = [];
-    let currTokenInfo = Object.values(tokens.formatTokensList).find(item => isSameString(item.symbol, self.currSymbol))
+    let decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
         crossEOSTrans.push({
@@ -358,11 +286,11 @@ class CrossChain {
           storeman: item.storeman,
           secret: item.x,
           time: timeFormat(item.sendTime),
-          from: item.srcChainAddr === 'WAN' ? (getInfoByAddress(item.fromAddr, ['name'], wanAddress.addrInfo)).name : item.fromAddr,
+          from: item.srcChainType === 'WAN' ? (getInfoByAddress(item.fromAddr, ['name'], wanAddress.addrInfo)).name : item.fromAddr,
           fromAddr: item.fromAddr,
-          to: item.srcChainAddr === 'WAN' ? item.toAddr : (getInfoByAddress(item.toAddr, ['name'], wanAddress.addrInfo)).name,
+          to: item.srcChainType === 'WAN' ? item.toAddr : (getInfoByAddress(item.toAddr, ['name'], wanAddress.addrInfo)).name,
           toAddr: item.toAddr,
-          value: formatNum(formatNumByDecimals(item.contractValue, currTokenInfo.decimals)),
+          value: formatNum(formatNumByDecimals(item.contractValue, decimals)),
           status: item.status,
           sendTime: item.sendTime,
           approveTxHash: item.approveTxHash,

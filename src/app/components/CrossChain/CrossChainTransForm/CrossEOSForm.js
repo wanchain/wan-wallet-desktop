@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
-
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -23,7 +22,10 @@ const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
   wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
   transParams: stores.sendCrossChainParams.transParams,
+  tokenPairs: stores.crossChain.tokenPairs,
+  currTokenPairId: stores.crossChain.currTokenPairId,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
+  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
@@ -159,34 +161,38 @@ class CrossEOSForm extends Component {
   }
 
   render () {
-    const { loading, form, from, settings, smgList, wanAddrInfo, direction, addrInfo, symbol, decimals, estimateFee, balance, getNormalAccountListWithBalance } = this.props;
-    let srcChain, desChain, selectedList, defaultSelectStoreman, quota, title, tokenSymbol, txFeeRatio, fromAccount;
+    const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, tokenPairs, currTokenPairId, addrInfo } = this.props;
+    let srcChain, desChain, selectedList, title, tokenSymbol, txFeeRatio, quota, fromAccount;
+    let totalFeeTitle;
+    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
+    let txParam = transParams[from];
+
     if (direction === INBOUND) {
-      srcChain = 'EOS'
-      desChain = 'WAN';
-      fromAccount = from;
-      selectedList = Object.values(wanAddrInfo.normal).map(item => item.name);
-      title = `${symbol} -> W${symbol}`;
-      tokenSymbol = symbol;
+      fromAccount = record.address;
+      srcChain = tokenPairInfo.fromChainSymbol;
+      desChain = tokenPairInfo.toChainSymbol;
+      let toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
+      selectedList = Object.keys(toAccountList.normal).map(key => toAccountList.normal[key].name);
+      title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
+      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
     } else {
-      srcChain = 'WAN'
-      desChain = 'EOS';
-      fromAccount = getValueByAddrInfo(from, 'name', wanAddrInfo);
-      selectedList = Object.values(getNormalAccountListWithBalance).map(v => {
-        return v.account;
-      });
-      title = `W${symbol} -> ${symbol}`;
-      tokenSymbol = `W${symbol}`;
+      fromAccount = record.name;
+      srcChain = tokenPairInfo.toChainSymbol;
+      desChain = tokenPairInfo.fromChainSymbol;
+      selectedList = Object.keys(addrInfo);
+      title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
+      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
     }
+    tokenSymbol = tokenPairInfo.ancestorSymbol;
+
     if (smgList.length === 0) {
-      defaultSelectStoreman = '';
       quota = 0;
       txFeeRatio = 0;
     } else {
-      defaultSelectStoreman = smgList[0].storemanGroup;
-      quota = formatNumByDecimals(direction === INBOUND ? smgList[0].inboundQuota : smgList[0].outboundQuota, decimals);
-      txFeeRatio = smgList[0].txFeeRatio / 100 + '%';
+      quota = formatNumByDecimals(txParam.quota, decimals);
+      txFeeRatio = txParam.txFeeRatio / 100 + '%';
     }
+
     return (
       <div>
         <Modal
@@ -225,7 +231,7 @@ class CrossEOSForm extends Component {
                 form={form}
                 colSpan={6}
                 formName='storemanAccount'
-                initialValue={defaultSelectStoreman}
+                initialValue={txParam.storeman}
                 selectedList={smgList}
                 filterItem={item => item.storemanGroup.replace(/^([a-zA-z0-9]{24})[a-zA-z0-9]{84}([a-zA-z0-9]{24})$/, '$1****$2')}
                 handleChange={this.updateLockAccounts}
@@ -280,7 +286,9 @@ class CrossEOSForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} direction={direction} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        {
+          this.state.confirmVisible && <Confirm tokenSymbol={tokenSymbol} direction={direction} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading}/>
+        }
       </div>
     );
   }

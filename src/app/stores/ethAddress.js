@@ -45,7 +45,7 @@ class EthAddress {
 
     @action addAddresses (type, addrArr) {
       addrArr.forEach(addr => {
-        if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
+        if (!Object.keys(self.addrInfo[type] || []).includes(addr.address)) {
           if (addr.name === undefined) {
             addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
           }
@@ -233,7 +233,7 @@ class EthAddress {
         addrList = self.selectedAddr
       } else {
         page.forEach(name => {
-          addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+          addrList = addrList.concat(Object.keys(self.addrInfo[name] || []))
         })
       }
       Object.keys(self.transHistory).forEach(item => {

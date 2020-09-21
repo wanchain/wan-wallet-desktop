@@ -512,7 +512,7 @@ class WanAddress {
       addrList = self.selectedAddr
     } else {
       page.forEach(name => {
-        addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+        addrList = addrList.concat(Object.keys(self.addrInfo[name] || []))
       })
     }
     Object.keys(self.transHistory).forEach(item => {

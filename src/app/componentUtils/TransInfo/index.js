@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { Modal, Button, Col, Row, Input, message, Icon, Tooltip } from 'antd';
-import { MAIN, TESTNET } from 'utils/settings';
+import { MAIN, TESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET } from 'utils/settings';
 
 import style from './index.less';
 
@@ -21,7 +21,20 @@ class TransInfo extends Component {
       message.warn('No txHash');
       return false;
     }
-    let href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+    let href = '';
+    switch (chain) {
+      case 'WAN':
+        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+        break;
+      case 'ETH':
+        href = this.props.chainId === 1 ? `${ETHMAIN}/tx/${hash}` : `${ETHTESTNET}/tx/${hash}`;
+        break;
+      case 'BTC':
+        href = this.props.chainId === 1 ? `${BTCMAIN}/tx/${hash}` : `${BTCTESTNET}/tx/${hash}`;
+        break;
+      default:
+        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+    }
     wand.shell.openExternal(href);
   }
 
@@ -32,7 +45,6 @@ class TransInfo extends Component {
 
   render() {
     const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
-
     return (
       <Modal
         className={style.transModal}
@@ -55,7 +67,7 @@ class TransInfo extends Component {
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Chain')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={['TOKEN', 'EOS'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
+            <Col span={COLRIGHT}><Input disabled={true} placeholder={['TOKEN', 'EOS', 'WAN', 'ETH'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.from')}</Col>

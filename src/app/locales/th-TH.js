@@ -203,6 +203,7 @@ const th_TH = {
     'PasswordConfirmForm.pwdMessage': 'กรุณากรอกรหัสผ่าน!',
 
     'Sidebar.wanchain': 'Wanchain',
+    'Sidebar.moreTokens': 'More Tokens',
 
     'Trezor.trezor': 'Trezor',
     'Trezor.installBridge': 'ติดตั้ง Trezor bridge จาก trezor.io',

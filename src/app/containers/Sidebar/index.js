@@ -76,8 +76,6 @@ class Sidebar extends Component {
     let walletChildren = sidebarColumns[walletIndex].children;
     let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
     let crossChainChildren = sidebarColumns[crossChainIndex].children;
-    let crossChainLen = CROSSCHAINTYPE.length;
-    let walletChainLen = WALLET_CHAIN.length;
     if (offlineIndex === -1 && settings.offline_wallet) {
       sidebarColumns.push({
         title: intl.get('menuConfig.offline'),
@@ -102,6 +100,7 @@ class Sidebar extends Component {
 
     // Wallet menu
     let walletList = [];
+    // console.log('getWalletSelections;', getWalletSelections)
     getWalletSelections.forEach(v => {
       if (v.children.length === 0) {
         return false;
@@ -148,7 +147,7 @@ class Sidebar extends Component {
           if ((v.fromAccount === COIN_ACCOUNT || v.fromAccount === COIN_ACCOUNT_EOS) && CROSSCHAINTYPE.includes(v.ancestorSymbol)) {
             key = `/cross${v.ancestorSymbol}/${v.id}`;
           } else {
-            key = `/crosschain/${v.id}`;
+            key = `/crossChain/${v.id}`;
           }
           arr.push({
             title: `${v.fromChainName} <-> ${v.toChainName}`,
@@ -175,7 +174,7 @@ class Sidebar extends Component {
 
     // Add cross chain.
     crossChainChildren.push({
-      title: intl.get('MoreCrossChain.more'),
+      title: intl.get('Sidebar.moreTokens'),
       key: `/moreCrossChain`,
       icon: 'block'
     });
