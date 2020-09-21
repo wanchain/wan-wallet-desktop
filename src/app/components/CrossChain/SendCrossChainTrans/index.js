@@ -85,7 +85,7 @@ class Trans extends Component {
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
       });
       if (smgList.length === 0) {
-        this.setState(() => ({ visible: false, spin: false, loading: false }));
+        // this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
         return;
       }

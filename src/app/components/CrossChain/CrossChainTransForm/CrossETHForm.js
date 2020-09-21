@@ -301,7 +301,7 @@ class CrossETHForm extends Component {
                 selectedList={selectedList}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />
-              <SelectForm
+             {/*  <SelectForm
                 form={form}
                 colSpan={6}
                 formName='crossType'
@@ -310,7 +310,7 @@ class CrossETHForm extends Component {
                 selectedList={CROSS_TYPE.map(v => ({ value: v, text: intl.get(`CrossChainTransForm.${v}`) }))}
                 formMessage={'Type'}
                 handleChange={this.updateCrossType}
-              />
+              /> */}
               <CommonFormItem
                 form={form}
                 colSpan={6}
