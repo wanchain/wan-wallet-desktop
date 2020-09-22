@@ -1,10 +1,11 @@
 import wanUtil from 'wanchain-util';
 import BigNumber from 'bignumber.js';
-import { observable, action, computed, toJS, autorun } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import Identicon from 'identicon.js';
 import btcImg from 'static/image/btc.png';
 import ethImg from 'static/image/eth.png';
 import eosImg from 'static/image/eos.png';
+import wanImg from 'static/image/wan.png';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
@@ -62,7 +63,39 @@ class Tokens {
     return token;
   }
 
-  @action async getTokenIcon(scAddr) {
+  @action async initTokenIcon(obj) {
+    let scAddr = obj.account;
+    switch (obj.ancestor) {
+      case 'BTC':
+        self.tokenIconList[scAddr] = btcImg;
+        break;
+      case 'ETH':
+        self.tokenIconList[scAddr] = ethImg;
+        break;
+      case 'EOS':
+        self.tokenIconList[scAddr] = eosImg;
+        break;
+      case 'WAN':
+        self.tokenIconList[scAddr] = wanImg;
+        break;
+      default:
+        wand.request('crossChain_getRegisteredOrigToken', {
+          chainType: obj.chainSymbol,
+          options: {
+            tokenScAddr: scAddr
+          }
+        }, (err, data) => {
+          // console.log('res:', err, data, scAddr)
+          if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
+            self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
+          } else {
+            self.tokenIconList[scAddr] = `data:image/${data[0].iconType};base64,${data[0].iconData}`;
+          }
+        });
+    }
+  }
+
+  @action async setTokenIcon(scAddr) {
     const token = self.getToken(scAddr);
     if (token === undefined) {
       return false;
@@ -96,6 +129,32 @@ class Tokens {
           });
         }
     }
+  }
+
+  getCoinImage = (chain, addr = false) => {
+    let img;
+    switch (chain.toUpperCase()) {
+      case 'WAN':
+        img = wanImg;
+        break;
+      case 'ETH':
+        img = ethImg;
+        break;
+      case 'BTC':
+        img = btcImg;
+        break;
+      case 'EOS':
+        img = eosImg;
+        break;
+      default:
+        if (addr) {
+          if (!this.tokenIconList[addr]) {
+            this.setTokenIcon(addr);
+          }
+          img = this.tokenIconList[addr];
+        }
+    }
+    return img;
   }
 
   @action getTokensInfo() {
@@ -299,16 +358,6 @@ class Tokens {
       }
     });
   }
-
-  /* @action updateTokensInfo(addr, key, value) {
-    wand.request('crossChain_updateTokensInfo', { addr, key, value }, (err) => {
-      if (err) {
-        console.log('crossChain_updateTokensInfo: ', err)
-        return;
-      }
-      self.tokensList[addr][key] = value;
-    })
-  } */
 
   @action updateCcTokensInfo(addr, key, value) {
     wand.request('crossChain_updateCcTokensInfo', { addr, key, value }, (err) => {

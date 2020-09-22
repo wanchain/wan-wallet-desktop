@@ -3,11 +3,13 @@ import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col } from 'antd';
 import CrossChainMiniList from './CrossChainMiniList';
+import { COIN_ACCOUNT } from 'utils/settings';
 import style from './index.less';
 
 @inject(stores => ({
   getCrossChainTokenList: stores.crossChain.getCrossChainTokenList,
   language: stores.languageIntl.language,
+  getCoinImage: (...args) => stores.tokens.getCoinImage(...args),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
@@ -31,6 +33,10 @@ class MoreCrossChain extends Component {
       title: 'TOKEN',
       align: 'center',
       ellipsis: true,
+      render: (text, record) => {
+        let child = record.children[0];
+        return <div><img className="totalImg" src={this.props.getCoinImage(child.ancestorSymbol, child.fromAccount === COIN_ACCOUNT ? child.toAccount : child.fromAccount)} />{text}</div>
+      }
     },
     {
       dataIndex: 'key',

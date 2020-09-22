@@ -112,6 +112,7 @@ class CrossChain {
               obj.select = tokens.tokensList[key].select;
             }
             tokens.updateTokensList(key, obj);
+            tokens.initTokenIcon(obj);
 
             // To token
             let key2 = `${v.toChainID}-${v.toAccount}`;
@@ -129,6 +130,7 @@ class CrossChain {
               obj.select = tokens.tokensList[key2].select;
             }
             tokens.updateTokensList(key2, obj);
+            tokens.initTokenIcon(obj);
           }
           resolve();
         }
@@ -204,9 +206,6 @@ class CrossChain {
   }
 
   @computed get crossChainTrans() {
-    // console.log('crossChainTrans============');
-    // console.log('crossTrans:', self.crossTrans);
-    // console.log('currSymbol:', self.currSymbol);
     let trans = [];
     let decimals = 8;
     try {
@@ -214,13 +213,10 @@ class CrossChain {
     } catch (err) {
       console.log(err);
     }
-    // console.log('decimals:', decimals);
     self.crossTrans.forEach((item, index) => {
       if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
-        // console.log('item:', JSON.parse(JSON.stringify(item)));
         let from = item.srcChainType;
         let to = item.dstChainType;
-        // console.log('from, to:', getInfoByAddress(item.fromAddr, ['name'], tokens.getChainAddressInfoByChain(from)).name, getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(to)).name);
         trans.push({
           key: index,
           hashX: item.hashX,
@@ -255,7 +251,6 @@ class CrossChain {
       let toAddrInfo = inbound ? wanAddress.addrInfo : btcAddress.addrInfo;
       let redeemTxHash = inbound ? `0x${item.refundTxHash}` : item.btcRefundTxHash;
       let revokeTxHash = inbound ? item.btcRevokeTxHash : `0x${item.revokeTxHash}`;
-
       let fromInfo = getInfoByPath(item.from, fromAddrInfo);
       let toInfo = getInfoByPath(inbound ? item.wanAddress : item.btcCrossAddr, toAddrInfo);
       crossBTCTrans.push({

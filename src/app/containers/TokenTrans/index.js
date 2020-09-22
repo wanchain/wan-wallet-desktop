@@ -29,7 +29,7 @@ message.config({
   getTokensListInfo: stores.tokens.getTokensListInfo,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
-  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
+  setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
@@ -49,7 +49,7 @@ class TokenTrans extends Component {
     this.props.setCurrTokenChain(chain);
     this.props.getChainStoreInfoByChain(chain).updateTransHistory();
     if (!this.props.tokenIconList[tokenAddr]) {
-      this.props.getTokenIcon(tokenAddr);
+      this.props.setTokenIcon(tokenAddr);
     }
   }
 

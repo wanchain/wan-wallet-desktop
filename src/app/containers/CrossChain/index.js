@@ -23,11 +23,12 @@ import style from './index.less';
   tokenPairs: stores.crossChain.tokenPairs,
   currTokenPairId: stores.crossChain.currTokenPairId,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
+  setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
   setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getCoinsListInfo_2way: (...args) => stores.tokens.getCoinsListInfo_2way(...args),
   getTokensListInfo_2way: (...args) => stores.tokens.getTokensListInfo_2way(...args),
+  getCoinImage: (...args) => stores.tokens.getCoinImage(...args),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
 }))
@@ -164,32 +165,6 @@ class CrossChain extends Component {
     })
   }
 
-  getCoinImage = (text, addr = false) => {
-    let img;
-    switch (text.toUpperCase()) {
-      case 'WAN':
-        img = wanLogo;
-        break;
-      case 'ETH':
-        img = ethLogo;
-        break;
-      case 'BTC':
-        img = btcLogo;
-        break;
-      case 'EOS':
-        img = eosLogo;
-        break;
-      default:
-        if (addr) {
-          if (!this.props.tokenIconList[addr]) {
-            this.props.getTokenIcon(addr);
-          }
-          img = this.props.tokenIconList[addr];
-        }
-    }
-    return <img className="totalImg" src={img} />;
-  }
-
   inboundColumns = [
     {
       dataIndex: 'name',
@@ -245,7 +220,7 @@ class CrossChain extends Component {
   ];
 
   render() {
-    const { getTokensListInfo_2way, getCoinsListInfo_2way, tokenPairs, match } = this.props;
+    const { getTokensListInfo_2way, getCoinsListInfo_2way, tokenPairs, match, getCoinImage } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     });
@@ -260,7 +235,7 @@ class CrossChain extends Component {
 
     return this.state.error ? <div className="errorComponent">An error occurred in this component.</div> : (<div className="account">
       <Row className="title">
-        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.fromTokenSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
+        <Col span={12} className="col-left"><img className="totalImg" src={getCoinImage(info.ancestorSymbol, info.fromAccount)} /><span className="wanTotal">{info.fromTokenSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
       </Row>
       <Row className="mainBody">
         <Col>
@@ -268,7 +243,7 @@ class CrossChain extends Component {
         </Col>
       </Row>
       <Row className="title">
-        <Col span={12} className="col-left">{this.getCoinImage(info.ancestorSymbol, info.toAccount)}<span className="wanTotal">{info.toTokenSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
+        <Col span={12} className="col-left"><img className="totalImg" src={getCoinImage(info.ancestorSymbol, info.toAccount)} /><span className="wanTotal">{info.toTokenSymbol}</span><span className={style.chain}>{info.toChainName}</span></Col>
       </Row>
       <Row className="mainBody">
         <Col>

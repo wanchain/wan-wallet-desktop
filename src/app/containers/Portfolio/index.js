@@ -16,7 +16,7 @@ import eosLogo from 'static/image/eos.png';
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
   updateTokenBalance: () => stores.portfolio.updateTokenBalance(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  getTokenIcon: (tokenScAddr) => stores.tokens.getTokenIcon(tokenScAddr),
+  setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
 }))
 
 @observer
@@ -64,7 +64,7 @@ class Portfolio extends Component {
       default:
         let scAddr = record.scAddr.replace(/^.*-/, '');
         if (!this.props.tokenIconList[scAddr]) {
-          this.props.getTokenIcon(scAddr);
+          this.props.setTokenIcon(scAddr);
         }
         img = this.props.tokenIconList[scAddr];
     }

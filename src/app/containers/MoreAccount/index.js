@@ -3,6 +3,7 @@ import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Icon, Input } from 'antd';
 import ChainMiniList from './ChainMiniList';
+import { COIN_ACCOUNT } from 'utils/settings';
 import style from './index.less';
 
 const { Search } = Input;
@@ -10,6 +11,7 @@ const CHAINTYPE = 'BTC';
 @inject(stores => ({
   language: stores.languageIntl.language,
   getWalletSelections: stores.tokens.getWalletSelections,
+  tokenIconList: stores.tokens.tokenIconList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -31,6 +33,10 @@ class MoreAccount extends Component {
       title: 'TOKEN',
       align: 'center',
       ellipsis: false,
+      render: (text, record) => {
+        let filtered = record.children.map(v => v.account).filter(v => v !== COIN_ACCOUNT);
+        return <div><img className="totalImg" src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} />{text}</div>
+      }
     },
     {
       dataIndex: 'key',
@@ -46,7 +52,7 @@ class MoreAccount extends Component {
   ];
 
   render() {
-    let { getWalletSelections } = this.props;
+    let { getWalletSelections, tokenIconList } = this.props;
     return (
       <div className={style['moreCrossChain']}>
         <Row className="mainBody">
