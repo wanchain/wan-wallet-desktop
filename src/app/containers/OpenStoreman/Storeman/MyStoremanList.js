@@ -26,7 +26,7 @@ class MyStoremanList extends Component {
     this.timer = setInterval(() => {
       this.props.getStoremanStakeInfo()
       this.props.getStoremanDelegatorInfo()
-    }, 10000)
+    }, 20000)
   }
 
   componentWillUnmount () {

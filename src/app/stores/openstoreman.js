@@ -44,7 +44,7 @@ class OpenStoreman {
         endTime: timeFormat(item.endRegisterTime),
         crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
         currDeposit: showNA(fromWei(item.deposit)),
-        delegationFee: item.delegateFee / 10000 + '%',
+        delegationFee: item.delegateFee / 100 + '%',
         action: 'Register',
       })
     });

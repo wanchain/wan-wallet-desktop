@@ -24,7 +24,11 @@ class OsmDelegateList extends Component {
   componentDidMount () {
     this.timer = setInterval(() => {
       this.props.getStoremanDelegatorInfo()
-    }, 10000)
+    }, 20000)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.timer)
   }
 
   modifyWithdraw = () => {

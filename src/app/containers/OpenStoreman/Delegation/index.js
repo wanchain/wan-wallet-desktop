@@ -40,7 +40,7 @@ class Delegation extends Component {
       this.props.getStoremanConf();
       this.props.updateTransHistory();
       this.props.getStoremanDelegatorTotalIncentive()
-    }, 10000)
+    }, 20000)
   }
 
   componentWillUnmount () {

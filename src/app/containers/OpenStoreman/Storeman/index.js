@@ -32,7 +32,7 @@ class Storeman extends Component {
     this.timer = setInterval(() => {
       this.props.updateTransHistory();
       this.props.getStoremanStakeTotalIncentive();
-    }, 15000);
+    }, 20000);
   }
 
   componentWillUnmount() {
