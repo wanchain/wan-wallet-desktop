@@ -391,7 +391,7 @@ class Tokens {
           name: obj[item].name,
           address: wanUtil.toChecksumAddress(item),
           balance: formatNum(balance),
-          path: `${pathPrefix}${obj[item].path}`,
+          path: obj[item].path.startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance
         });
