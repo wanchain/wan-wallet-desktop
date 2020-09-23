@@ -35,7 +35,10 @@ class MoreCrossChain extends Component {
       ellipsis: true,
       render: (text, record) => {
         let child = record.children[0];
-        return <div><img className="totalImg" src={this.props.getCoinImage(child.ancestorSymbol, child.fromAccount === COIN_ACCOUNT ? child.toAccount : child.fromAccount)} />{text}</div>
+        return (<div className={style.tokenGrid}>
+          <div><img className="totalImg" src={this.props.getCoinImage(child.ancestorSymbol, child.fromAccount === COIN_ACCOUNT ? child.toAccount : child.fromAccount)} /></div>
+          <div>{text}</div>
+        </div>)
       }
     },
     {
@@ -44,7 +47,7 @@ class MoreCrossChain extends Component {
       title: 'CROSS-CHAIN',
       align: 'center',
       ellipsis: true,
-      render: (text, record) => <CrossChainMiniList record={record}/>
+      render: (text, record) => <CrossChainMiniList record={record} />
     },
     {
       flex: 1

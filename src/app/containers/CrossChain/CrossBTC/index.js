@@ -11,7 +11,6 @@ import style from './index.less';
 
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
-  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.btcAddress.getNormalAddrList,
@@ -22,7 +21,7 @@ const CHAINTYPE = 'BTC';
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),

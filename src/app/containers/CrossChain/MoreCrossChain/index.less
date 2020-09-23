@@ -87,4 +87,18 @@
         display: inline-block;
         text-align: left;
     }
+
+    .tokenGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 50%);
+
+        &>div:first-child {
+            text-align: right;
+        }
+
+        &>div:last-child {
+            text-align: left;
+            padding-left: 2px;
+        }
+    }
 }

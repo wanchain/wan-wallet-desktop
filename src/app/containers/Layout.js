@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, initRegTokens } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
 import Loading from 'components/Loading';
 import { WANPATH } from 'utils/settings';
 import Transition from 'components/Transition';
@@ -18,7 +18,6 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
-  getCcTokensInfo: () => stores.tokens.getCcTokensInfo(),
   getTokenPairs: () => stores.crossChain.getTokenPairs(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
@@ -78,10 +77,7 @@ class Layout extends Component {
       if (ready) {
         try {
           running = true;
-          // await initRegTokens('ETH');
-          // await initRegTokens('EOS');
           await this.props.getTokensInfo();
-          await this.props.getCcTokensInfo();
           await this.props.getTokenPairs();
           await this.props.getMnemonic();
           this.setState({

@@ -34,7 +34,6 @@ const defaultConfig = {
           "select": true
         }
       },
-      cc_tokens: {},
       cc_selected: {
         "1": true,
         "2": true
@@ -49,7 +48,6 @@ const defaultConfig = {
           "select": true
         }
       },
-      cc_tokens: {},
       cc_selected: {
         "1": true,
         "2": true
@@ -162,19 +160,9 @@ class Settings {
     }
   }
 
-  updateCcTokenKeyValue(addr, key, value) {
-    let network = this.get('network');
-    this.set(`settings.${network}.cc_tokens["${addr}"]["${key}"]`, value);
-  }
-
   updateToken(value) {
     let network = this.get('network');
     this.set(`settings.${network}.tokens`, value);
-  }
-
-  updateCcToken(value) {
-    let network = this.get('network');
-    this.set(`settings.${network}.cc_tokens`, value);
   }
 
   updateCcTokenSelections(id, selected) {
@@ -200,74 +188,6 @@ class Settings {
     return this.get(`settings.${network}.dapps`);
   }
 
-  updateRegTokens(regTokens, crossChain) {
-    try {
-      let network = this.get('network');
-      let tokens = this.tokens;
-      let ccTokens = this.ccTokens;
-      if (tokens === undefined) {
-        this.updateToken(defaultConfig.settings[network].tokens);
-        tokens = this.tokens;
-      }
-      if (ccTokens === undefined) {
-        this.updateCcToken(defaultConfig.settings[network].cc_tokens);
-        ccTokens = this.ccTokens;
-      }
-
-      regTokens.forEach(item => {
-        // Add original token
-        let token = tokens[item.tokenOrigAddr];
-        if (token) {
-          token.symbol = item.symbol;
-          token.decimals = item.decimals;
-          token.iconData = item.iconData;
-          token.iconType = item.iconType;
-        } else {
-          tokens[item.tokenOrigAddr] = {
-            chain: crossChain,
-            symbol: item.symbol,
-            decimals: item.decimals,
-            iconData: item.iconData,
-            iconType: item.iconType
-          }
-        }
-
-        // Add Wanchain ancestor token
-        if (tokens[item.tokenWanAddr]) {
-          tokens[item.tokenWanAddr].symbol = `W${item.symbol}`;
-          tokens[item.tokenWanAddr].decimals = item.decimals;
-          tokens[item.tokenWanAddr].ancestor = item.tokenOrigAddr;
-        } else {
-          tokens[item.tokenWanAddr] = {
-            chain: 'WAN',
-            symbol: `W${item.symbol}`,
-            decimals: item.decimals,
-            ancestor: item.tokenOrigAddr
-          }
-        }
-        this.set(`settings.${network}.tokens`, tokens);
-
-        // Add cross-chain token
-        if (ccTokens[item.tokenOrigAddr]) {
-          ccTokens[item.tokenOrigAddr].wan_addr = item.tokenWanAddr;
-          ccTokens[item.tokenOrigAddr].chain = crossChain;
-          ccTokens[item.tokenOrigAddr].symbol = item.symbol;
-          ccTokens[item.tokenOrigAddr].decimals = item.decimals;
-        } else {
-          ccTokens[item.tokenOrigAddr] = {
-            wan_addr: item.tokenWanAddr,
-            chain: crossChain,
-            symbol: item.symbol,
-            decimals: item.decimals
-          }
-        }
-      });
-      this.set(`settings.${network}.cc_tokens`, ccTokens);
-    } catch (err) {
-      console.log('updateRegTokens error occurred:', err);
-    }
-  }
-
   get appName() {
     return 'WAN Wallet'
   }
@@ -288,11 +208,6 @@ class Settings {
   get tokens() {
     let network = this.get('network');
     return this.get(`settings.${network}.tokens`);
-  }
-
-  get ccTokens() {
-    let network = this.get('network');
-    return this.get(`settings.${network}.cc_tokens`);
   }
 
   get CcTokenSelections() {

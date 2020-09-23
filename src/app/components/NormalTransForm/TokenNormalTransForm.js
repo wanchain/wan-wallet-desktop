@@ -19,7 +19,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
   from: stores.sendTransParams.currentFrom,
   tokensBalance: stores.tokens.tokensBalance,
   tokenAddr: stores.tokens.currTokenAddr,
-  tokenChain: stores.tokens.currTokenChain,
+  currTokenChain: stores.tokens.currTokenChain,
   gasFeeArr: stores.sendTransParams.gasFeeArr,
   transParams: stores.sendTransParams.transParams,
   minGasPrice: stores.sendTransParams.minGasPrice,
@@ -85,8 +85,8 @@ class TokenNormalTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, balance, tokenAddr, tokenChain, form, from, getChainAddressInfoByChain } = this.props;
-    let addrInfo = getChainAddressInfoByChain(tokenChain);
+    const { updateTransParams, settings, balance, tokenAddr, currTokenChain, form, from, getChainAddressInfoByChain } = this.props;
+    let addrInfo = getChainAddressInfoByChain(currTokenChain);
     if (addrInfo === undefined) {
       message.warn(intl.get('Unknown token type')); // To do : i18n
       return;
@@ -137,7 +137,7 @@ class TokenNormalTransForm extends Component {
 
   updateGasLimit = () => {
     let data = '0x';
-    let { form, tokenAddr, from, tokenChain, getTokenInfoFromTokensListByAddr } = this.props;
+    let { form, tokenAddr, from, currTokenChain, getTokenInfoFromTokensListByAddr } = this.props;
     let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
     try {
       if (transferTo) {
@@ -147,7 +147,7 @@ class TokenNormalTransForm extends Component {
         this.props.updateTransParams(from, { data });
       }
       let tx = { from, to: tokenAddr, data, value: '0x0' };
-      wand.request('transaction_estimateGas', { chainType: tokenChain, tx }, (err, gasLimit) => {
+      wand.request('transaction_estimateGas', { chainType: currTokenChain, tx }, (err, gasLimit) => {
         if (err) {
           message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
@@ -161,7 +161,7 @@ class TokenNormalTransForm extends Component {
   }
 
   checkToWANAddr = (rule, value, callback) => {
-    let { tokenAddr, tokenChain } = this.props;
+    let { tokenAddr, currTokenChain } = this.props;
     if (value === undefined) {
       callback(rule.message);
       return;
@@ -170,7 +170,7 @@ class TokenNormalTransForm extends Component {
       callback(rule.message);
     }
     let checkFunc = null;
-    switch (tokenChain) {
+    switch (currTokenChain) {
       case 'WAN':
         checkFunc = checkWanAddr;
         break;
@@ -243,7 +243,7 @@ class TokenNormalTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, tokenChain } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, currTokenChain } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
@@ -315,7 +315,7 @@ class TokenNormalTransForm extends Component {
         <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
         {
           confirmVisible &&
-          <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} chain={tokenChain} visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+          <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} chain={currTokenChain} visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         }
       </div>
     );

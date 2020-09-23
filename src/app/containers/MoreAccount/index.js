@@ -1,13 +1,11 @@
 import intl from 'react-intl-universal';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, message, Icon, Input } from 'antd';
+import { Table, Row, Col } from 'antd';
 import ChainMiniList from './ChainMiniList';
 import { COIN_ACCOUNT } from 'utils/settings';
 import style from './index.less';
 
-const { Search } = Input;
-const CHAINTYPE = 'BTC';
 @inject(stores => ({
   language: stores.languageIntl.language,
   getWalletSelections: stores.tokens.getWalletSelections,
@@ -35,7 +33,10 @@ class MoreAccount extends Component {
       ellipsis: false,
       render: (text, record) => {
         let filtered = record.children.map(v => v.account).filter(v => v !== COIN_ACCOUNT);
-        return <div><img className="totalImg" src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} />{text}</div>
+        return (<div className={style.tokenGrid}>
+          <div><img className="totalImg" src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} /></div>
+          <div>{text}</div>
+        </div>)
       }
     },
     {

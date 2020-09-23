@@ -12,7 +12,6 @@ import style from './index.less';
 const CHAINTYPE = 'EOS';
 
 @inject(stores => ({
-  tokensList: stores.tokens.formatTokensList,
   language: stores.languageIntl.language,
   addrInfo: stores.eosAddress.accountInfo,
   getTokensListInfo: stores.tokens.getTokensListInfo,
@@ -23,7 +22,7 @@ const CHAINTYPE = 'EOS';
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),

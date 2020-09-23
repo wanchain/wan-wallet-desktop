@@ -23,7 +23,6 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
   transParams: stores.sendTransParams.transParams,
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
-  E20TokensBalance: stores.tokens.E20TokensBalance,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
   updateGasLimit: gasLimit => stores.sendTransParams.updateGasLimit(gasLimit),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),

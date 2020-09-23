@@ -15,7 +15,6 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
   language: stores.languageIntl.language,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
-  getE20TokensListInfo: stores.tokens.getE20TokensListInfo,
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),

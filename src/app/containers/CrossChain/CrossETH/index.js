@@ -14,7 +14,6 @@ const CHAINTYPE = 'ETH';
 const WANCHAIN = 'WAN';
 
 @inject(stores => ({
-  tokensList: stores.tokens.formatTokensList,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.ethAddress.getNormalAddrList,
@@ -24,7 +23,7 @@ const WANCHAIN = 'WAN';
   tokenPairs: stores.crossChain.tokenPairs,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),

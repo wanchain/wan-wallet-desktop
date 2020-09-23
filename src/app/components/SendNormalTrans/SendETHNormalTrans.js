@@ -14,7 +14,6 @@ const CollectionCreateForm = Form.create({ name: 'ETHNormalTransForm' })(ETHNorm
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  E20TokensBalance: stores.tokens.E20TokensBalance,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (gasPrice, chainType) => stores.sendTransParams.updateGasPrice(gasPrice, chainType),
@@ -29,16 +28,10 @@ class SendETHNormalTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, E20TokensBalance, tokenAddr } = this.props;
+    const { from, addrInfo, path, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice } = this.props;
     if (getBalanceByAddr(from, addrInfo) === '0') {
       message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
       return;
-    }
-    if (transType === TRANSTYPE.tokenTransfer) {
-      if (!E20TokensBalance[tokenAddr] || E20TokensBalance[tokenAddr][from] === '0') {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      }
     }
     this.setState({ visible: true });
     addTransTemplate(from, { chainType, chainId });
@@ -78,7 +71,7 @@ class SendETHNormalTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm tokenAddr={this.props.tokenAddr} transType={this.props.transType} balance={this.props.balance} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm tokenAddr={this.props.tokenAddr} balance={this.props.balance} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );

@@ -1612,17 +1612,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getCcTokensInfo':
-            try {
-                ret = setting.ccTokens;
-            } catch (e) {
-                logger.error('getCcTokensInfo failed:')
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'getTokenPairs':
             try {
                 ret = await ccUtil.getTokenPairs();
@@ -1671,21 +1660,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'initRegTokens':
-            let { crossChain } = payload;
-            try {
-                ret = await ccUtil.getRegTokens(crossChain);
-                if (Array.isArray(ret)) {
-                    setting.updateRegTokens(ret, crossChain);
-                }
-            } catch (e) {
-                logger.error('initRegTokens failed:')
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'updateCoinsInfo':
             {
                 let { symbol, key, value } = payload;
@@ -1715,20 +1689,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     }
                 } catch (e) {
                     logger.error('updateTokensInfo failed:')
-                    logger.error(e.message || e.stack)
-                    err = e
-                }
-                sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
-                break
-            }
-
-        case 'updateCcTokensInfo':
-            {
-                let { addr, key, value } = payload;
-                try {
-                    setting.updateCcTokenKeyValue(addr, key, value);
-                } catch (e) {
-                    logger.error('updateCcTokensInfo failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }

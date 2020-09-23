@@ -12,8 +12,6 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  getTokenList: stores.tokens.getTokenList,
-  crossChainTokensInfo: stores.crossChain.crossChainTokensInfo,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
   deleteCustomToken: token => stores.tokens.deleteCustomToken(token),
@@ -119,7 +117,6 @@ class Config extends Component {
   }
 
   render() {
-    const { getTokenList, crossChainTokensInfo } = this.props;
     const { reinput_pwd, staking_advance, logout_timeout, offline_wallet } = this.props.settings;
 
     const options = [{

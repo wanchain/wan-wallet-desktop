@@ -12,9 +12,8 @@ import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import session from './session';
 
-import { formatNum, formatNumByDecimals, formatTokensList } from 'utils/support';
+import { formatNum, formatNumByDecimals } from 'utils/support';
 import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, CROSSCHAINTYPE, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
-import { getBalance } from 'utils/helper';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -23,11 +22,7 @@ class Tokens {
 
   @observable tokensList = {}; // Tokens collection
 
-  @observable ccTokensList = {};
-
   @observable tokensBalance = {};
-
-  @observable E20TokensBalance = {}; // Included in tokensBalance
 
   @observable tokenIconList = {};
 
@@ -43,10 +38,7 @@ class Tokens {
     });
   }
 
-  @action setCurrToken(addr, symbol) {
-    if (symbol) {
-      addr = Object.keys(self.formatTokensList).find(item => self.formatTokensList[item].symbol === symbol)
-    }
+  @action setCurrToken(addr) {
     self.currTokenAddr = addr;
   }
 
@@ -169,24 +161,6 @@ class Tokens {
         resolve()
       })
     })
-  }
-
-  @action getCcTokensInfo() {
-    return new Promise((resolve, reject) => {
-      wand.request('crossChain_getCcTokensInfo', {}, (err, data) => {
-        if (err) {
-          console.log('getCcTokensInfo: ', err);
-          reject(err)
-          return;
-        }
-        self.ccTokensList = data;
-        resolve()
-      })
-    })
-  }
-
-  @computed get formatTokensList() {
-    return formatTokensList(self.ccTokensList)
   }
 
   @action addCustomToken(tokenInfo) {
@@ -337,18 +311,6 @@ class Tokens {
     });
   }
 
-  @action updateE20TokensBalance(tokenScAddr) {
-    let normalArr = Object.keys(ethAddress.addrInfo.normal);
-    let rawKeyArr = Object.keys(ethAddress.addrInfo.rawKey);
-    wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(rawKeyArr), tokenScAddr, chain: 'ETH' }, (err, data) => {
-      if (err) {
-        console.log('stores_getTokensBalance:', err);
-        return;
-      }
-      self.E20TokensBalance[tokenScAddr] = data;
-    })
-  }
-
   @action updateTokensList(addr, value) {
     wand.request('crossChain_updateTokensInfo', { addr, key: undefined, value }, (err) => {
       if (err) {
@@ -357,16 +319,6 @@ class Tokens {
         this.tokensList[addr] = value;
       }
     });
-  }
-
-  @action updateCcTokensInfo(addr, key, value) {
-    wand.request('crossChain_updateCcTokensInfo', { addr, key, value }, (err) => {
-      if (err) {
-        console.log('crossChain_updateCcTokensInfo: ', err)
-        return;
-      }
-      self.ccTokensList[addr][key] = value;
-    })
   }
 
   @computed get getTokenList() {
@@ -390,56 +342,6 @@ class Tokens {
 
   @computed get getWalletTokenList() {
     return this.walletTokensList.slice();
-  }
-
-  @computed get ccTokens() {
-    let excludedList = CROSSCHAINTYPE;
-    let list = [];
-    if (!(self.ccTokensList instanceof Object)) {
-      return [];
-    }
-    Object.keys(self.ccTokensList).forEach(item => {
-      try {
-        let val = self.ccTokensList[item];
-        if (!excludedList.includes(item)) {
-          list.push({
-            addr: item,
-            chain: val.chain,
-            symbol: val.symbol,
-            decimals: val.decimals,
-            select: val.select
-          })
-        }
-      } catch (err) {
-        console.log(`Get cross chain ${item} failed`, err);
-      }
-    })
-    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
-  }
-
-  @computed get ccTokensSiderbar() {
-    let list = [];
-    if (!(self.ccTokensList instanceof Object)) {
-      return [];
-    }
-    Object.keys(self.ccTokensList).forEach(item => {
-      try {
-        let val = self.ccTokensList[item];
-        if (!CROSSCHAINTYPE.includes(item)) {
-          list.push({
-            tokenAddr: val.wan_addr,
-            tokenOrigAddr: val.chain === 'EOS' ? wand.ccUtil.encodeAccount('EOS', item) : item,
-            chain: val.chain,
-            symbol: val.symbol,
-            decimals: val.decimals,
-            select: val.select
-          })
-        }
-      } catch (err) {
-        console.log(`Get cross chain ${item} failed`, err);
-      }
-    })
-    return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
   @computed get tokensOnSideBar() {
@@ -498,60 +400,6 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getE20TokensListInfo() {
-    let addrList = [];
-    let normalArr = Object.keys(ethAddress.addrInfo.normal);
-    normalArr.forEach(item => {
-      let balance;
-      if (self.formatTokensList && self.formatTokensList[self.currTokenAddr]) {
-        let tokenOrigAddr = self.formatTokensList[self.currTokenAddr].tokenOrigAddr;
-        if (self.E20TokensBalance && self.E20TokensBalance[tokenOrigAddr]) {
-          balance = formatNumByDecimals(self.E20TokensBalance[tokenOrigAddr][item], self.formatTokensList[self.currTokenAddr].decimals)
-        } else {
-          balance = 0
-        }
-      } else {
-        balance = 0;
-      }
-      addrList.push({
-        key: item,
-        name: ethAddress.addrInfo.normal[item].name,
-        address: item,
-        balance: formatNum(balance),
-        path: `${ETHPATH}${ethAddress.addrInfo.normal[item].path}`,
-        action: 'send',
-        amount: balance
-      });
-    });
-    return addrList;
-  }
-
-  @computed get getE20TokensInfo() {
-    let addrList = [];
-    let normal = ethAddress.addrInfo.normal;
-    let rawKey = ethAddress.addrInfo.rawKey;
-    [normal, rawKey].forEach(obj => {
-      Object.keys(obj).forEach(item => {
-        let balance;
-        if (self.E20TokensBalance && self.E20TokensBalance[self.currTokenAddr]) {
-          balance = formatNumByDecimals(self.E20TokensBalance[self.currTokenAddr][item], self.tokensList[self.currTokenAddr].decimals)
-        } else {
-          balance = 0
-        }
-        addrList.push({
-          key: item,
-          name: obj[item].name,
-          address: item,
-          balance: formatNum(balance),
-          path: `${ETHPATH}${obj[item].path}`,
-          action: 'send',
-          amount: balance
-        });
-      });
-    });
-    return addrList;
-  }
-
   @computed get getTokenAmount() {
     if (this.currTokenAddr.length === 0) {
       return 0;
@@ -560,16 +408,6 @@ class Tokens {
     this.getTokensListInfo.forEach(item => {
       amount = amount.plus(item.amount);
     });
-    return formatNum(amount.toString(10));
-  }
-
-  @computed get getE20TokenAmount() {
-    let amount = new BigNumber(0);
-
-    self.getE20TokensInfo.forEach(item => {
-      amount = amount.plus(item.amount);
-    });
-
     return formatNum(amount.toString(10));
   }
 

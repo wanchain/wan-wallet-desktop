@@ -6,10 +6,6 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND, COIN_ACCOUNT } from 'utils/settings';
 import Trans from 'components/CrossChain/SendCrossChainTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
-import wanLogo from 'static/image/wan.png';
-import ethLogo from 'static/image/eth.png';
-import btcLogo from 'static/image/btc.png';
-import eosLogo from 'static/image/eos.png';
 import style from './index.less';
 
 @inject(stores => ({
@@ -24,7 +20,7 @@ import style from './index.less';
   currTokenPairId: stores.crossChain.currTokenPairId,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
-  setCurrToken: (addr, symbol) => stores.tokens.setCurrToken(addr, symbol),
+  setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getCoinsListInfo_2way: (...args) => stores.tokens.getCoinsListInfo_2way(...args),
   getTokensListInfo_2way: (...args) => stores.tokens.getTokensListInfo_2way(...args),
@@ -105,7 +101,7 @@ class CrossChain extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
-        console.log('inbound result:', err, ret);
+        // console.log('inbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
@@ -144,7 +140,7 @@ class CrossChain extends Component {
 
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
-        console.log('outbound result:', err, ret);
+        // console.log('outbound result:', err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
@@ -186,7 +182,6 @@ class CrossChain extends Component {
       dataIndex: 'action',
       width: '10%',
       render: (text, record) => {
-        // console.log('record:', record)
         return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
       }
     }
@@ -213,7 +208,6 @@ class CrossChain extends Component {
       dataIndex: 'action',
       width: '10%',
       render: (text, record) => {
-        // console.log('record:', record)
         return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
       }
     }

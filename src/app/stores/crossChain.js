@@ -185,10 +185,6 @@ class CrossChain {
     return Object.assign({}, this.tokenPairs[id]);
   }
 
-  @computed get crossChainTokensInfo() {
-    return tokens.ccTokens;
-  }
-
   @computed get currentTokenPairInfo() {
     return this.tokenPairs[this.currTokenPairId];
   }
