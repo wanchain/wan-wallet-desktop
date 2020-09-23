@@ -22,11 +22,16 @@ class MyStoremanList extends Component {
     stakeInVisible: false,
   }
 
+  update() {
+    this.props.getStoremanStakeInfo()
+    this.props.getStoremanDelegatorInfo()
+  }
+
   componentDidMount () {
+    this.update();
     this.timer = setInterval(() => {
-      this.props.getStoremanStakeInfo()
-      this.props.getStoremanDelegatorInfo()
-    }, 20000)
+      this.update();
+    }, 60000)
   }
 
   componentWillUnmount () {

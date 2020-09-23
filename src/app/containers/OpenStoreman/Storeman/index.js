@@ -28,11 +28,16 @@ class Storeman extends Component {
     this.props.changeTitle('Common.storeman');
   }
 
+  update() {
+    this.props.updateTransHistory();
+    this.props.getStoremanStakeTotalIncentive();
+  }
+
   componentDidMount() {
+    this.update();
     this.timer = setInterval(() => {
-      this.props.updateTransHistory();
-      this.props.getStoremanStakeTotalIncentive();
-    }, 20000);
+      this.update();
+    }, 60000);
   }
 
   componentWillUnmount() {

@@ -35,12 +35,17 @@ class Delegation extends Component {
     this.props.updateTransHistory();
   }
 
+  update() {
+    this.props.getStoremanConf();
+    this.props.updateTransHistory();
+    this.props.getStoremanDelegatorTotalIncentive()
+}
+
   componentDidMount () {
+    this.update();
     this.timer = setInterval(() => {
-      this.props.getStoremanConf();
-      this.props.updateTransHistory();
-      this.props.getStoremanDelegatorTotalIncentive()
-    }, 20000)
+      this.update();
+    }, 60000)
   }
 
   componentWillUnmount () {

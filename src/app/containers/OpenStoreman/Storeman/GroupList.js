@@ -25,9 +25,10 @@ class GroupList extends Component {
   }
 
   componentDidMount () {
+    this.props.getOpenStoremanGroupList()
     this.timer = setInterval(() => {
       this.props.getOpenStoremanGroupList()
-    }, 20000)
+    }, 60000)
   }
 
   componentWillUnmount () {
