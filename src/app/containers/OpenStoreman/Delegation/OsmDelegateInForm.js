@@ -223,7 +223,7 @@ class OsmDelegateInForm extends Component {
   }
 
   onClick = () => {
-    let href = this.props.chainId === 1 ? `${MAIN}/vlds` : `${TESTNET}/vlds`;
+    let href = this.props.chainId === 1 ? `${MAIN}/storemangroups` : `${TESTNET}/storemangroups`;
     wand.shell.openExternal(href);
   }
 
@@ -285,13 +285,14 @@ class OsmDelegateInForm extends Component {
     });
 
     let spin = storemanMemberList.length !== 0 && groupChainInfo.length !== 0;
+    let isCapacity = Number(form.getFieldValue('quota')) === 0;
 
     return (
       <div>
         <Modal visible destroyOnClose={true} closable={false} title={intl.get('StakeInForm.title')} onCancel={this.onCancel} className={style['stakein-modal'] + ' spincont'}
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={!spin} loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={!spin || isCapacity} loading={this.state.loading} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={!spin} size="large">

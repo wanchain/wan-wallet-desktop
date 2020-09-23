@@ -234,7 +234,7 @@ class ModifyForm extends Component {
                 <CommonFormItem form={form} formName='capacity' disabled={true} title='Capacity'
                   options={{
                     rules: [{ required: true }],
-                    initialValue: new BigNumber(fromWei(record.deposit) * (storemanConf.delegationMulti || 0)).minus(fromWei(record.delegateDeposit)).toString(10)
+                    initialValue: new BigNumber(fromWei(record.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(record.delegateDeposit)).toString(10)
                   }}
                 />
               }

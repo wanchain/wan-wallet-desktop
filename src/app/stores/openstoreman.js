@@ -217,7 +217,6 @@ class OpenStoreman {
     let sender = Object.keys(Object.assign({}, normal, ledger, trezor));
     try {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
-      console.log('storeman_getStoremanStakeInfo_ret', ret);
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
     } catch (err) {
