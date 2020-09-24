@@ -218,7 +218,8 @@ export default {
           reuseExistingChunk: true
         }
       }
-    }
+    },
+    mergeDuplicateChunks: true,
   },
   node: {
     __dirname: false,

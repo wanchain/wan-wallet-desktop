@@ -34,10 +34,6 @@ export default {
                         cacheDirectory: true
                     }
                 }
-            },
-            {
-                test: /\.json$/,
-                loader: 'json-loader'
             }
         ]
     },
