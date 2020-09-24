@@ -16,7 +16,6 @@ const InForm = Form.create({ name: 'OsmDelegateInForm' })(OsmDelegateInForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  storemanConf: stores.openstoreman.storemanConf,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   getStoremanConf: () => stores.openstoreman.getStoremanConf(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),

@@ -2275,6 +2275,16 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
     const [action, id] = actionUni.split('#')
 
     switch (action) {
+        case 'publicToAddress':
+            try {
+                let { wPk } = payload;
+                ret = await ccUtil.publicToAddress(wPk);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;          
 
         case 'openStoremanAction':
             try {

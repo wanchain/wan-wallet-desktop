@@ -3,7 +3,6 @@ import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
 
 import { wandWrapper } from 'utils/support.js';
-import { getNonce, getGasPrice, getChainId, getContractAddr, getStoremanContractData } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');

@@ -71,7 +71,7 @@ class OpenStoreman {
           rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
-          reward: fromWei(item.incentive || 0), // TODO to delete the '|| 0'
+          reward: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
           status: storemanGroupStatus[groupInfo.status],
           wkAddr: item.wkAddr,
@@ -102,6 +102,7 @@ class OpenStoreman {
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
           quited: item.quited,
+          canDelegateClaim: item.canDelegateClaim,
           canDelegateOut: item.canDelegateOut,
           deposit: item.wkStake.deposit,
           delegateDeposit: item.wkStake.delegateDeposit
