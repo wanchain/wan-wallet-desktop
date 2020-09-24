@@ -10,7 +10,6 @@ import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory
 import style from './index.less';
 
 const CHAINTYPE = 'WAN';
-const WANCHAIN = 'WAN';
 
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
