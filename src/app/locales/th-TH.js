@@ -565,6 +565,7 @@ const th_TH = {
     'staking.table.modifyStake': 'คำสั่ง',
     'staking.table.topup': 'เพิ่ม Stake',
     'staking.table.exit': 'ถอน',
+    'staking.table.claim': 'Claim',
     'staking.table.modify': 'แก้ไข',
     'staking.table.type': 'ประเภท',
     'staking.delegateHistory': 'ประวัติของการ Delegation',

@@ -95,9 +95,9 @@ class MyStoremanList extends Component {
 
           </Row>
           <Row>
-            <Col span={8} className={style.modifyBtnText} align="center">Top-up</Col>
-            <Col span={8} className={style.modifyBtnText} align="center">Exit</Col>
-            <Col span={8} className={style.modifyBtnText} align="center">Claim</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">{intl.get('staking.table.topup')}</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">{intl.get('staking.table.exit')}</Col>
+            <Col span={8} className={style.modifyBtnText} align="center">{intl.get('staking.table.claim')}</Col>
           </Row>
         </div>
       }

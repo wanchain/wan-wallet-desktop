@@ -570,6 +570,7 @@ const zh_CN = {
     'staking.table.modifyStake': '操作',
     'staking.table.topup': '充值',
     'staking.table.exit': '退出',
+    'staking.table.claim': '提取',
     'staking.table.modify': '修改',
     'staking.table.type': '类型',
     'staking.delegateHistory': '委托历史记录',

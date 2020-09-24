@@ -565,6 +565,7 @@ const fr_FR = {
     'staking.table.modifyStake': 'ACTION',
     'staking.table.topup': 'Recharge',
     'staking.table.exit': 'Sortie',
+    'staking.table.claim': 'Claim',
     'staking.table.modify': 'Modifier',
     'staking.table.type': 'TYPE',
     'staking.delegateHistory': 'Historique de délégation',

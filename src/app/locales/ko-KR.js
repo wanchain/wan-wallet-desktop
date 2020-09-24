@@ -565,6 +565,7 @@ const ko_KR = {
     'staking.table.modifyStake': '실행',
     'staking.table.topup': '재충전',
     'staking.table.exit': '종료',
+    'staking.table.claim': 'Claim',
     'staking.table.modify': '수정',
     'staking.table.type': '종류',
     'staking.delegateHistory': '위임 내역',

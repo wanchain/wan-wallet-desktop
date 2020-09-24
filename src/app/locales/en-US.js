@@ -570,6 +570,7 @@ const en_US = {
     'staking.table.modifyStake': 'ACTION',
     'staking.table.topup': 'Top-up',
     'staking.table.exit': 'Exit',
+    'staking.table.claim': 'Claim',
     'staking.table.modify': 'Modify',
     'staking.table.type': 'TYPE',
     'staking.delegateHistory': 'Delegation History',

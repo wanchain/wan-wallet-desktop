@@ -563,6 +563,7 @@ const pt_PT = {
     'staking.table.modifyStake': 'AÇÃO',
     'staking.table.topup': 'Aumentar Stake',
     'staking.table.exit': 'Sair',
+    'staking.table.claim': 'Claim',
     'staking.table.modify': 'Modificar',
     'staking.table.type': 'TIPO',
     'staking.delegateHistory': 'Histórico da Delegação',
