@@ -11,15 +11,13 @@ common.entry.unshift('react-hot-loader/patch');
 
 export default merge(common, {
     target: 'electron-renderer',
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
     mode: 'development',
     output: {
         publicPath: publicPath
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NamedModulesPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
       // new BundleAnalyzerPlugin()
     ],
     devServer: {
