@@ -16,11 +16,11 @@ import style from 'components/Staking/Cards/index.less';
 class DelegationCards extends Component {
   render () {
     const { language, delegationCards } = this.props;
-    let stakeBottom = intl.get('staking.inValidators1') + delegationCards.myStake[1] + intl.get('staking.inValidators2');
-    let infoReady = true;
-    if (language === 'en_US' && delegationCards.myStake[1] > 1) {
-      stakeBottom += 's';
-    }
+    // let stakeBottom = intl.get('staking.inValidators1') + delegationCards.myStake[1] + intl.get('staking.inValidators2');
+    // let infoReady = true;
+    // if (language === 'en_US' && delegationCards.myStake[1] > 1) {
+    //   stakeBottom += 's';
+    // }
 
     return (
       <div className={style.cards}>
@@ -31,7 +31,7 @@ class DelegationCards extends Component {
               title={intl.get('staking.myStake')}
               value={formatNum(delegationCards.myStake[0])}
               tail="WAN"
-              bottom={stakeBottom}
+              // bottom={stakeBottom}
             />
           </Col>
           <Col span={8}>
@@ -40,7 +40,7 @@ class DelegationCards extends Component {
               title={intl.get('staking.totalReward')}
               value={formatNum(delegationCards.myReward[0])}
               tail="WAN"
-              bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
+              // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
             />
           </Col>
           <Col span={8}>
@@ -48,7 +48,7 @@ class DelegationCards extends Component {
               className={style.card3}
               title='Withdrawable Amount'
               value={formatNum(delegationCards.withdrawableAmount[0])}
-              bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
+              // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
             />
           </Col>
         </Row>

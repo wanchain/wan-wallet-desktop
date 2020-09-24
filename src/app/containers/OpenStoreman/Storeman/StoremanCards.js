@@ -16,17 +16,17 @@ import style from 'components/Staking/Cards/index.less';
 class StoremanCards extends Component {
   render () {
     const { storemanCards } = this.props;
-    let stakeBottom = intl.get('staking.inValidators1') + storemanCards.myStake[1] + intl.get('staking.inValidators2');
-    let delegationBottom = intl.get('staking.inValidators1') + storemanCards.delegationStake[1] + intl.get('staking.delegations');
+    // let stakeBottom = intl.get('staking.inValidators1') + storemanCards.myStake[1] + intl.get('staking.inValidators2');
+    // let delegationBottom = intl.get('staking.inValidators1') + storemanCards.delegationStake[1] + intl.get('staking.delegations');
 
-    if (this.props.language === 'en_US') {
-      if (storemanCards.myStake[1] > 1) {
-        stakeBottom += 's';
-      }
-      if (storemanCards.delegationStake[1] > 1) {
-        delegationBottom += 's';
-      }
-    }
+    // if (this.props.language === 'en_US') {
+    //   if (storemanCards.myStake[1] > 1) {
+    //     stakeBottom += 's';
+    //   }
+    //   if (storemanCards.delegationStake[1] > 1) {
+    //     delegationBottom += 's';
+    //   }
+    // }
 
     return (
       <div className={style.cards}>
@@ -36,7 +36,7 @@ class StoremanCards extends Component {
               title={intl.get('ValidatorRegister.myPrincipal')}
               value={formatNum(storemanCards.myStake[0])}
               tail="WAN"
-              bottom={stakeBottom}
+              // bottom={stakeBottom}
               infoReady={storemanCards.myStake[2]}
             />
           </Col>
@@ -45,7 +45,7 @@ class StoremanCards extends Component {
               title={intl.get('ValidatorRegister.myEntrusted')}
               value={formatNum(storemanCards.delegationStake[0])}
               tail="WAN"
-              bottom={delegationBottom}
+              // bottom={delegationBottom}
               infoReady={storemanCards.delegationStake[2]}
             />
           </Col>
@@ -54,7 +54,7 @@ class StoremanCards extends Component {
               title={intl.get('staking.totalReward')}
               value={formatNum(storemanCards.reward[0])}
               tail="WAN"
-              bottom={intl.get('staking.startFrom1') + storemanCards.reward[1] + intl.get('staking.startFrom2')}
+              // bottom={intl.get('staking.startFrom1') + storemanCards.reward[1] + intl.get('staking.startFrom2')}
               infoReady={storemanCards.reward[2]}
             />
           </Col>

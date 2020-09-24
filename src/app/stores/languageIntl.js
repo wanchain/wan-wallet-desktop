@@ -422,7 +422,7 @@ class LanguageIntl {
         icon: 'pie-chart',
         children: [
           {
-            title: 'Delegator',
+            title: intl.get('menuConfig.delegation'),
             key: '/osm_delegation',
             icon: 'block'
           },

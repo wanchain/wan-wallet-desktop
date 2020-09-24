@@ -8,6 +8,7 @@ import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
 import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } from 'utils/support';
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus, WALLETID } from 'utils/settings'
+import languageIntl from './languageIntl';
 
 class OpenStoreman {
   @observable storemanGroupList = [];
@@ -124,8 +125,8 @@ class OpenStoreman {
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
           stakeAmount: formatNum(fromWei(histories[item].value)),
-          annotate,
-          status,
+          annotate: languageIntl.language && OSMSTAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
+          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
       }
     });
@@ -149,8 +150,8 @@ class OpenStoreman {
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
           stakeAmount: formatNum(fromWei(histories[item].value)),
-          annotate,
-          status,
+          annotate: languageIntl.language && OSMDELEGATIONACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
+          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
       }
     });
