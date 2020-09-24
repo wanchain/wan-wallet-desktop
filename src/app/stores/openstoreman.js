@@ -127,7 +127,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: formatNum(fromWei(histories[item].withdrawValue ? histories[item].withdrawValue : histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && OSMSTAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
@@ -152,7 +152,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: formatNum(fromWei(histories[item].withdrawValue ? histories[item].withdrawValue : histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && OSMDELEGATIONACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
