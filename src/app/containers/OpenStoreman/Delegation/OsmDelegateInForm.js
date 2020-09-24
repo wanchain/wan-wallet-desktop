@@ -71,12 +71,12 @@ class OsmDelegateInForm extends Component {
       let storeman = value.split('/')[0];
       let storemanInfo = storemanMemberList.find(i => i.wkAddr === storeman);
       let groupInfo = storemanGroupList.find(i => i.groupId === storemanInfo.groupId);
-      let crosschain = storemanInfo ? `${storemanInfo.chain1[2]} / ${storemanInfo.chain2[2]}` : undefined;
+      let crosschain = storemanInfo ? `${storemanInfo.chain1[2]} <-> ${storemanInfo.chain2[2]}` : undefined;
       form.setFieldsValue({
         storeman,
         crosschain,
         quota: storemanInfo ? new BigNumber(fromWei(storemanInfo.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
-        delegationFee: groupInfo ? groupInfo.delegateFee / 10000 + '%' : '0',
+        delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
       this.setState({ storemanInfo });
     } else {
@@ -286,7 +286,7 @@ class OsmDelegateInForm extends Component {
     let showConfirmItem = { storeman: true, delegationFee: true, crosschain: true, account: true, amount: true };
     let storemanListSelect = storemanMemberList.filter(i => {
       let crosschain = this.state.crosschain;
-      return !crosschain || crosschain === `${i.chain1[2]} / ${i.chain2[2]}`;
+      return !crosschain || crosschain === `${i.chain1[2]} <-> ${i.chain2[2]}`;
     }).map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />{v.nameShowing}</div>);
 
     let crosschainListSelect = groupChainInfo.filter(i => {

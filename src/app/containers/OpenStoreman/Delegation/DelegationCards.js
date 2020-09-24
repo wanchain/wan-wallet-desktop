@@ -46,7 +46,7 @@ class DelegationCards extends Component {
           <Col span={8}>
             <Card infoReady={delegationCards.withdrawableAmount[1]}
               className={style.card3}
-              title='Withdrawable Amount'
+              title={intl.get('staking.unclaimAmount')}
               value={formatNum(delegationCards.withdrawableAmount[0])}
               // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
             />

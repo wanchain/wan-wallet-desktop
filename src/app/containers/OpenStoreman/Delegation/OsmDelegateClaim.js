@@ -208,7 +208,7 @@ class InForm extends Component {
               />
               <CommonFormItem form={form} formName='withdrawable' disabled={true}
                 options={{ initialValue: record.reward, rules: [{ required: true }] }}
-                title='Withdrawable Amount'
+                title={intl.get('staking.unclaimAmount')}
               />
             </div>
             <div className="validator-bg">

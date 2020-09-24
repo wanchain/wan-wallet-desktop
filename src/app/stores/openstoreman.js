@@ -43,7 +43,7 @@ class OpenStoreman {
         groupIdText: item.groupId,
         startTime: timeFormat(item.registerTime),
         endTime: timeFormat(item.endRegisterTime),
-        crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
+        crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
         currDeposit: showNA(fromWei(item.deposit)),
         delegationFee: item.delegateFee / 100 + '%',
         action: 'Register',
@@ -70,7 +70,7 @@ class OpenStoreman {
           slash: item.slashedCount,
           activity: item.activity,
           reward: fromWei(item.incentive || 0), // TODO to delete the '|| 0'
-          crosschain: `${groupInfo.chain1[2]} / ${groupInfo.chain2[2]}`,
+          crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
           status: storemanGroupStatus[groupInfo.status],
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
@@ -97,7 +97,7 @@ class OpenStoreman {
           groupId: item.groupId,
           reward: item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           storeman: item.wkAddr,
-          crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
+          crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
           quited: item.quited,
           canDelegateOut: item.canDelegateOut,
@@ -160,7 +160,7 @@ class OpenStoreman {
   }
 
   @computed get groupChainInfo () {
-    return [...new Set(this.storemanGroupList.map(v => `${v.chain1[2]} / ${v.chain2[2]}`))];
+    return [...new Set(this.storemanGroupList.map(v => `${v.chain1[2]} <-> ${v.chain2[2]}`))];
   }
 
   @computed get storemanCards () {
