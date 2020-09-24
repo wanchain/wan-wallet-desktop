@@ -86,6 +86,9 @@ class MyStoremanList extends Component {
       },
       {
         ...osmStoremanListColumns[8],
+      },
+      {
+        ...osmStoremanListColumns[9],
         render: (text, record) =>
         <div>
           <Row>
