@@ -711,7 +711,8 @@ const zh_CN = {
     'network.down': '网络请求失败，请稍后再试',
 
     'Storeman.selecting': '竞选中',
-    'Storeman.selected': '竞选完成',
+    'Storeman.selected': '已选中',
+    'Storeman.unselected': '未选中',
     'Storeman.ready': '准备就绪',
     'Storeman.working': '工作中',
     'Storeman.quitting': '正在退出',

@@ -62,6 +62,10 @@ class OpenStoreman {
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
+        let status = storemanGroupStatus[groupInfo.status];
+        if (status == 'Selected' && item.rank.toString() === '-1') {
+          status = 'Unselected';
+        }
         data.push({
           key: index,
           account: accountInfo.name,
@@ -74,7 +78,7 @@ class OpenStoreman {
           reward: fromWei(item.incentive),
           unclaimed: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
-          status: intl.get(`Storeman.${storemanGroupStatus[groupInfo.status].toLowerCase()}`),
+          status: intl.get(`Storeman.${status.toLowerCase()}`),
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,

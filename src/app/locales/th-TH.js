@@ -707,6 +707,7 @@ const th_TH = {
     'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง',
 
     'Storeman.selecting': 'Selecting',
+    'Storeman.unselected': 'Unselected',
     'Storeman.selected': 'Selected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',

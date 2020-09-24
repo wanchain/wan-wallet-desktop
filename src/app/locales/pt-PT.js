@@ -705,6 +705,7 @@ const pt_PT = {
 
     'Storeman.selecting': 'Selecting',
     'Storeman.selected': 'Selected',
+    'Storeman.unselected': 'Unselected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',
