@@ -7,8 +7,10 @@ import { observable, action, computed, runInAction, toJS } from 'mobx';
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
 import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } from 'utils/support';
-import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, storemanGroupStatus, WALLETID } from 'utils/settings'
+import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
+
+const storemanGroupStatus = ['None', 'Initializing', intl.get('storeman.selecting'), intl.get('Common.failed'), intl.get('storeman.selected'), intl.get('storeman.ready'), intl.get('storeman.quitting'), intl.get('storeman.quitted')];
 
 class OpenStoreman {
   @observable storemanGroupList = [];

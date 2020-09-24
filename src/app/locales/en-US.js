@@ -1,4 +1,5 @@
 const en_US = {
+    'Common.failed': 'Failed',
     'Common.continue': 'Continue',
     'Common.warning': 'WARNING',
     'Common.copy': 'Copy',
@@ -488,7 +489,6 @@ const en_US = {
     'TransHistory.value': 'AMOUNT',
     'TransHistory.status': 'STATUS',
     'TransHistory.success': 'Success',
-    'TransHistory.failed': 'Failed',
     'TransHistory.pending': 'Pending',
     'TransHistory.transactionHistory': 'Transaction History',
     'TransHistory.selectAFromAddress': 'Select an account name',
@@ -709,6 +709,13 @@ const en_US = {
     'title.importedKey': 'Imported Key',
 
     'network.down': 'The network request failed, Please try again later',
+
+    'storeman.selecting': 'Selecting',
+    'storeman.selected': 'Selected',
+    'storeman.ready': 'Ready',
+    'storeman.working': 'Working',
+    'storeman.quitting': 'Quitting',
+    'storeman.quitted': 'Quitted',
 
 }
 

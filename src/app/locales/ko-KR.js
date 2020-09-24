@@ -1,4 +1,5 @@
 const ko_KR = {
+    'Common.failed': '트랜잭션 실패',
     'Common.continue': '다음 단계',
     'Common.warning': '경고',
     'Common.copy': '복사',
@@ -483,7 +484,6 @@ const ko_KR = {
     'TransHistory.value': '트랜잭션 가치',
     'TransHistory.status': '트랜잭션 상태',
     'TransHistory.success': '트랜잭션 성공',
-    'TransHistory.failed': '트랜잭션 실패',
     'TransHistory.pending': '트랜잭션 진행중',
     'TransHistory.transactionHistory': '트랜잭션 히스토리',
     'TransHistory.selectAFromAddress': '주소를 선택 바랍니다.',
@@ -704,6 +704,13 @@ const ko_KR = {
     'title.importedKey': '키 가져오기',
 
     'network.down': '네트워크 요청이 실패했습니다. 나중에 다시 시도하십시오',
+
+    'storeman.selecting': 'Selecting',
+    'storeman.selected': 'Selected',
+    'storeman.ready': 'Ready',
+    'storeman.working': 'Working',
+    'storeman.quitting': 'Quitting',
+    'storeman.quitted': 'Quitted',
 
 }
 

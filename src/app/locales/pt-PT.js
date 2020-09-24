@@ -481,7 +481,7 @@ const pt_PT = {
     'TransHistory.value': 'MONTANTE',
     'TransHistory.status': 'STATUS',
     'TransHistory.success': 'Sucesso',
-    'TransHistory.failed': 'ERRO',
+    'Common.failed': 'ERRO',
     'TransHistory.pending': 'Pendente',
     'TransHistory.transactionHistory': 'Histórico de transações',
     'TransHistory.selectAFromAddress': 'Selecione um nome de conta',
@@ -701,6 +701,13 @@ const pt_PT = {
     'title.importedKey': 'Chave importada',
 
     'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde',
+
+    'storeman.selecting': 'Selecting',
+    'storeman.selected': 'Selected',
+    'storeman.ready': 'Ready',
+    'storeman.working': 'Working',
+    'storeman.quitting': 'Quitting',
+    'storeman.quitted': 'Quitted',
 
 }
 
