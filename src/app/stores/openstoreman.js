@@ -10,7 +10,7 @@ import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } f
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
 
-const storemanGroupStatus = ['None', 'Initializing', intl.get('storeman.selecting'), intl.get('Common.failed'), intl.get('storeman.selected'), intl.get('storeman.ready'), intl.get('storeman.quitting'), intl.get('storeman.quitted')];
+const storemanGroupStatus = ['None', 'Initializing', 'Selecting', 'Failed', 'Selected', 'Ready', 'Quitting', 'Quitted'];
 
 class OpenStoreman {
   @observable storemanGroupList = [];
@@ -73,7 +73,7 @@ class OpenStoreman {
           activity: item.activity,
           reward: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
-          status: storemanGroupStatus[groupInfo.status],
+          status: intl.get(`Storeman.${storemanGroupStatus[groupInfo.status].toLowerCase()}`),
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,

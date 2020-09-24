@@ -484,6 +484,7 @@ const fr_FR = {
     'TransHistory.value': 'MONTANT',
     'TransHistory.status': 'STATUT',
     'TransHistory.success': 'Succès',
+    'TransHistory.failed': 'Échoué',
     'TransHistory.pending': 'En attente',
     'TransHistory.transactionHistory': 'Historique des transactions',
     'TransHistory.selectAFromAddress': 'Sélectionnez un nom de compte',
@@ -705,12 +706,12 @@ const fr_FR = {
 
     'network.down': 'Requête de connexion échouée, veuillez réessayer plus tard',
 
-    'storeman.selecting': 'Selecting',
-    'storeman.selected': 'Selected',
-    'storeman.ready': 'Ready',
-    'storeman.working': 'Working',
-    'storeman.quitting': 'Quitting',
-    'storeman.quitted': 'Quitted',
+    'Storeman.selecting': 'Selecting',
+    'Storeman.selected': 'Selected',
+    'Storeman.ready': 'Ready',
+    'Storeman.working': 'Working',
+    'Storeman.quitting': 'Quitting',
+    'Storeman.quitted': 'Quitted',
 
 }
 

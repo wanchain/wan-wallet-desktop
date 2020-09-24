@@ -488,6 +488,7 @@ const zh_CN = {
     'TransHistory.value': '金额',
     'TransHistory.status': '状态',
     'TransHistory.success': '成功',
+    'TransHistory.failed': '失败',
     'TransHistory.pending': '进行中',
     'TransHistory.transactionHistory': '转账历史',
     'TransHistory.selectAFromAddress': '请选择账户',
@@ -709,12 +710,12 @@ const zh_CN = {
 
     'network.down': '网络请求失败，请稍后再试',
 
-    'storeman.selecting': '竞选中',
-    'storeman.selected': '竞选完成',
-    'storeman.ready': '准备就绪',
-    'storeman.working': '工作中',
-    'storeman.quitting': '正在退出',
-    'storeman.quitted': '已退出',
+    'Storeman.selecting': '竞选中',
+    'Storeman.selected': '竞选完成',
+    'Storeman.ready': '准备就绪',
+    'Storeman.working': '工作中',
+    'Storeman.quitting': '正在退出',
+    'Storeman.quitted': '已退出',
 
 }
 

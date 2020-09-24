@@ -484,6 +484,7 @@ const es_ES = {
     'TransHistory.value': 'CANTIDAD',
     'TransHistory.status': 'ESTADO',
     'TransHistory.success': 'Éxito',
+    'TransHistory.failed': 'Fallido',
     'TransHistory.pending': 'Pendiente',
     'TransHistory.transactionHistory': 'Historial de transacciones',
     'TransHistory.selectAFromAddress': 'Selecciona un nombre de cuenta',
@@ -705,12 +706,12 @@ const es_ES = {
 
     'network.down': 'La solicitud de red falló. Vuelve a intentarlo más tarde.',
 
-    'storeman.selecting': 'Selecting',
-    'storeman.selected': 'Selected',
-    'storeman.ready': 'Ready',
-    'storeman.working': 'Working',
-    'storeman.quitting': 'Quitting',
-    'storeman.quitted': 'Quitted',
+    'Storeman.selecting': 'Selecting',
+    'Storeman.selected': 'Selected',
+    'Storeman.ready': 'Ready',
+    'Storeman.working': 'Working',
+    'Storeman.quitting': 'Quitting',
+    'Storeman.quitted': 'Quitted',
 
 }
 
