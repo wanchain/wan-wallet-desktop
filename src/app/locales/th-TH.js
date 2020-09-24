@@ -1,4 +1,5 @@
 const th_TH = {
+    'Common.failed': 'ผิดพลาด',
     'Common.continue': 'ดำเนินการต่อ',
     'Common.warning': 'ระวัง',
     'Common.copy': 'คัดลอก',
@@ -483,7 +484,6 @@ const th_TH = {
     'TransHistory.value': 'จำนวน',
     'TransHistory.status': 'สถานะ',
     'TransHistory.success': 'สำเร็จ',
-    'TransHistory.failed': 'ผิดพลาด',
     'TransHistory.pending': 'กำลังดำเนินการ',
     'TransHistory.transactionHistory': 'ประวัติการทำธุรกรรม',
     'TransHistory.selectAFromAddress': 'กรุณาเลือกแอดเดรสของคุณ',
@@ -704,6 +704,13 @@ const th_TH = {
     'title.importedKey': 'Imported Key',
 
     'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง',
+
+    'storeman.selecting': 'Selecting',
+    'storeman.selected': 'Selected',
+    'storeman.ready': 'Ready',
+    'storeman.working': 'Working',
+    'storeman.quitting': 'Quitting',
+    'storeman.quitted': 'Quitted',
 
 }
 
