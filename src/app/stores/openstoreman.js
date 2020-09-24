@@ -94,7 +94,7 @@ class OpenStoreman {
           myAddress: accountInfo,
           stake: fromWei(item.deposit),
           groupId: item.groupId,
-          reward: fromWei(item.incentive),
+          reward: item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.deposit),
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} / ${item.chain2[2]}`,
           wkAddr: item.wkAddr,

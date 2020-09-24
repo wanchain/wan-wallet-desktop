@@ -21,6 +21,7 @@ const Confirm = Form.create({ name: 'StoremanConfirmForm' })(StoremanConfirmForm
   addrInfo: stores.wanAddress.addrInfo,
   addrSelectedList: stores.wanAddress.addrSelectedList,
   storemanListInfo: stores.openstoreman.storemanListInfo,
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
 }))
 
 @observer
@@ -177,13 +178,16 @@ class StoremanRegister extends Component {
         this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } catch (error) {
-        message.warn(intl.get('ValidatorRegister.registerFailed'));
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
       }
     } else {
       wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.registerFailed'));
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        } else {
+          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
+        this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });

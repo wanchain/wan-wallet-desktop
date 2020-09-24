@@ -106,9 +106,14 @@ class InForm extends Component {
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let abiParams = [record.wkAddr];
       let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-stakeClaim' };
-      await this.trezorStoremanClaim(path, from, satellite);
+      try {
+        await this.trezorStoremanClaim(path, from, satellite);
+      } catch (err) {
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        console.log(`trezorTrans Error: ${err}`)
+      }
+      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -117,17 +122,19 @@ class InForm extends Component {
       }
       wand.request('storeman_openStoremanAction', { tx, action: 'stakeClaim' }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.topUpFailed'));
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
+          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
           console.log('validatorIn ret:', ret);
         }
+        this.props.updateTransHistory();
         this.setState({ confirmVisible: false });
         this.props.onSend();
       });
     }
   }
 
-  trezorStoremanClaim = async (BIP44Path, from, satellite) => {
+  trezorTrans = async (BIP44Path, from, satellite) => {
     try {
       let tx = {
         amount: '0',
@@ -171,7 +178,7 @@ class InForm extends Component {
       this.props.updateTransHistory();
     } catch (error) {
       console.log('Trezor validator append failed:', error);
-      message.error(intl.get('ValidatorRegister.topUpFailed'));
+      message.warn(intl.get('WanAccount.sendTransactionFailed'));
     }
   }
 

@@ -16,11 +16,6 @@ import DelegateAppendAndExit from './DelegateAppendAndExit';
 
 @observer
 class OsmDelegateList extends Component {
-  state = {
-    withdrawVisible: false,
-    stakeInVisible: false,
-  }
-
   componentDidMount () {
     this.props.getStoremanDelegatorInfo()
     this.timer = setInterval(() => {
@@ -30,18 +25,6 @@ class OsmDelegateList extends Component {
 
   componentWillUnmount () {
     clearInterval(this.timer)
-  }
-
-  modifyWithdraw = () => {
-    this.setState({ withdrawVisible: true });
-  }
-
-  handleCancel = () => {
-    this.setState({ withdrawVisible: false, stakeInVisible: false });
-  }
-
-  handleSend = () => {
-    this.setState({ withdrawVisible: false, stakeInVisible: false });
   }
 
   getColumns () {

@@ -30,6 +30,7 @@ const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirm
   addrSelectedList: stores.wanAddress.addrSelectedList,
   storemanGroupList: stores.openstoreman.storemanGroupList,
   storemanMemberList: stores.openstoreman.storemanMemberList,
+  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   getStoremanMemberList: () => stores.openstoreman.getStoremanMemberList()
 }))
 
@@ -206,16 +207,24 @@ class OsmDelegateInForm extends Component {
     }
     if (walletID === WALLETID.TREZOR) {
       let satellite = { wkAddr: this.state.storemanInfo.wkAddr, annotate: 'Storeman-delegateIn' };
-      await this.trezorDelegateIn(BIP44Path, from, amount, satellite);
+      try {
+        await this.trezorTrans(BIP44Path, from, amount, satellite);
+      } catch (err) {
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        console.log(`trezorTrans Error: ${err}`)
+      }
+      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
       wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.updateFailed'));
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
           console.log('validatorModify ret:', ret);
+          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
+        this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });
         this.props.onSend();
       });
@@ -227,7 +236,7 @@ class OsmDelegateInForm extends Component {
     wand.shell.openExternal(href);
   }
 
-  trezorDelegateIn = async (BIP44Path, from, amount, satellite) => {
+  trezorTrans = async (BIP44Path, from, amount, satellite) => {
     try {
       let tx = {
         amount,
@@ -264,9 +273,10 @@ class OsmDelegateInForm extends Component {
         status: 'Sent',
       }
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
+      this.props.updateTransHistory();
     } catch (error) {
       console.log('Trezor validator append failed', error);
-      message.error(intl.get('ValidatorRegister.topUpFailed'));
+      message.warn(intl.get('WanAccount.sendTransactionFailed'));
     }
   }
 

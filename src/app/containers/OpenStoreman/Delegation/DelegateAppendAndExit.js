@@ -101,23 +101,31 @@ class ModifyForm extends Component {
 
     if (WALLETID.TREZOR === walletID) {
       let satellite = { wkAddr: record.wkAddr, annotate: action === 'delegateIn' ? 'Storeman-delegateIn' : 'Storeman-delegateOut' };
-      await this.trezorValidatorUpdate(path, from, amount, action, satellite);
+      try {
+        await this.trezorTrans(path, from, amount, action, satellite);
+      } catch (err) {
+        message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        console.log(`trezorTrans Error: ${err}`)
+      }
+      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
-      this.props.onSend(walletID);
+      this.props.onSend();
     } else {
       wand.request('storeman_openStoremanAction', { tx, action }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.updateFailed'));
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
+          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
           console.log('validatorModify ret:', ret);
         }
         this.setState({ confirmVisible: false, confirmLoading: false });
+        this.props.updateTransHistory();
         this.props.onSend();
       });
     }
   }
 
-  trezorValidatorUpdate = async (BIP44Path, from, amount, action, satellite) => {
+  trezorTrans = async (BIP44Path, from, amount, action, satellite) => {
     try {
       let tx = {
         amount,
@@ -157,7 +165,7 @@ class ModifyForm extends Component {
       await pu.promisefy(wand.request, ['storeman_insertStoremanTransToDB', { tx: params, satellite }], this);
       this.props.updateTransHistory();
     } catch (error) {
-      message.error(intl.get('ValidatorRegister.updateFailed'));
+      message.warn(intl.get('WanAccount.sendTransactionFailed'));
     }
   }
 
