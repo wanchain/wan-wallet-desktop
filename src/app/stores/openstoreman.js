@@ -63,7 +63,7 @@ class OpenStoreman {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         let status = storemanGroupStatus[groupInfo.status];
-        if (status == 'Selected' && item.rank.toString() === '-1') {
+        if (status === 'Selected' && item.rank.toString() === '-1') {
           status = 'Unselected';
         }
         data.push({
