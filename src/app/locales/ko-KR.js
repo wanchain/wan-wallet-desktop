@@ -708,7 +708,7 @@ const ko_KR = {
 
     'Storeman.selecting': 'Selecting',
     'Storeman.selected': 'Selected',
-    'Storeman.unselected': 'Unselected',
+    'Storeman.unselected': 'Not Selected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',
