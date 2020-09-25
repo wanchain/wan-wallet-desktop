@@ -31,6 +31,7 @@ const ko_KR = {
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
     'Common.storeman': 'Storeman',
+    'Common.chain': '체인',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',
@@ -356,6 +357,8 @@ const ko_KR = {
     'CopyAndQrcode.deleteFailedText': '계정 삭제 실패',
     'CopyAndQrcode.deleteSuccessfulText': '계정 삭제 완료',
 
+    'MoreTokens.tokenList': 'Token List',
+
     'HwWallet.Accounts.name': '지갑명',
     'HwWallet.Accounts.address': '지갑 주소',
     'HwWallet.Accounts.balance': '지갑 자산 합계',
@@ -447,7 +450,6 @@ const ko_KR = {
     'CrossChainTransForm.invalidAmount': '금액을 같거나 이상으로 입력하십시오: ',
     'CrossChainTransForm.overQuota': '금액이 상점 storeman의 남은 용량보다 큽니다.',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': '체인',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'Hash 승인',
     'CrossChainTransForm.LockTxHash': 'Hash 잠금',

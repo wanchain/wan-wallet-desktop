@@ -31,6 +31,7 @@ const th_TH = {
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
     'Common.storeman': 'Storeman',
+    'Common.chain': 'เชน',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
@@ -356,6 +357,8 @@ const th_TH = {
     'CopyAndQrcode.deleteFailedText': 'Delete account failed',
     'CopyAndQrcode.deleteSuccessfulText': 'Delete account completed',
 
+    'MoreTokens.tokenList': 'Token List',
+
     'HwWallet.Accounts.name': 'ชื่อ',
     'HwWallet.Accounts.address': 'แอดเดรส',
     'HwWallet.Accounts.balance': 'ยอดคงเหลือ',
@@ -447,7 +450,6 @@ const th_TH = {
     'CrossChainTransForm.invalidAmount': 'กรุณากรอกจำนวนที่มากกว่าหรือเท่ากับ ',
     'CrossChainTransForm.overQuota': 'จำนวนมากกว่าจำนวนความจุคงเหลือของ Storeman',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': 'เชน',
     'CrossChainTransForm.To': 'ถึง',
     'CrossChainTransForm.ApproveTxHash': 'Hash การอนุมัติ',
     'CrossChainTransForm.LockTxHash': 'Hash การล็อค',

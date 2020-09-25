@@ -31,6 +31,7 @@ const pt_PT = {
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
     'Common.storeman': 'Storeman',
+    'Common.chain': 'Chain (cadeia/blockchain)',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',
@@ -354,6 +355,8 @@ const pt_PT = {
     'CopyAndQrcode.deleteFailedText': 'Falha na exclusão da conta',
     'CopyAndQrcode.deleteSuccessfulText': 'Exclusão da conta feita com sucesso',
 
+    'MoreTokens.tokenList': 'Token List',
+
     'HwWallet.Accounts.name': 'NOME',
     'HwWallet.Accounts.address': 'ENDEREÇO',
     'HwWallet.Accounts.balance': 'SALDO',
@@ -445,7 +448,6 @@ const pt_PT = {
     'CrossChainTransForm.invalidAmount': 'Insira um valor igual ou superior a',
     'CrossChainTransForm.overQuota': 'A quantidade é maior que a capacidade restante do storeman',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': 'Chain (cadeia/blockchain)',
     'CrossChainTransForm.To': 'Para',
     'CrossChainTransForm.ApproveTxHash': 'Aprovar Hash',
     'CrossChainTransForm.LockTxHash': 'Bloquear Hash',

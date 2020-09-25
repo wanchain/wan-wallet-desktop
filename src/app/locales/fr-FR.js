@@ -31,6 +31,7 @@ const fr_FR = {
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
     'Common.storeman': 'Storeman',
+    'Common.chain': 'Chain',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',
@@ -356,6 +357,8 @@ const fr_FR = {
     'CopyAndQrcode.deleteFailedText': 'Échec de la suppression du compte',
     'CopyAndQrcode.deleteSuccessfulText': 'Suppression du compte terminée',
 
+    'MoreTokens.tokenList': 'Token List',
+
     'HwWallet.Accounts.name': 'NOM',
     'HwWallet.Accounts.address': 'ADRESSE',
     'HwWallet.Accounts.balance': 'SOLDE',
@@ -447,7 +450,6 @@ const fr_FR = {
     'CrossChainTransForm.invalidAmount': 'Veuillez saisir un montant supérieur ou égal à ',
     'CrossChainTransForm.overQuota': 'Le montant dépasse la capacité disponible de Storeman',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': 'Chain',
     'CrossChainTransForm.To': 'Vers',
     'CrossChainTransForm.ApproveTxHash': 'Approuver le hachage',
     'CrossChainTransForm.LockTxHash': 'Verrouiller le hachage',

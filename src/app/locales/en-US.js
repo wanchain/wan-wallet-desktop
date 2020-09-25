@@ -31,6 +31,7 @@ const en_US = {
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
     'Common.storeman': 'Storeman',
+    'Common.chain': 'Chain',
 
     'Layout.connecting': 'connecting to server',
     'Layout.connected': 'connected to server',
@@ -449,7 +450,6 @@ const en_US = {
     'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
     'CrossChainTransForm.overQuota': 'The amount is greater than the remaining capacity of the storeman',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': 'Chain',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'Approve Hash',
     'CrossChainTransForm.LockTxHash': 'Lock Hash',

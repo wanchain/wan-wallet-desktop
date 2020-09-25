@@ -22,8 +22,13 @@ class AddToken extends Component {
   }
 
   handleSearch = () => {
-    this.setState({ loading: true })
+    this.setState({ loading: true });
+    if (this.state.tokenAddr.length === 0) {
+      message.warn(intl.get('Config.checkTokenAddr'));
+      return;
+    }
     wand.request('crossChain_getTokenInfo', { scAddr: this.state.tokenAddr, chain: this.props.chain }, (err, ret) => {
+      console.log('Info:', ret);
       if (err) {
         console.log('crossChain_getTokenInfo:', err);
         this.setState({ loading: false })
@@ -51,8 +56,10 @@ class AddToken extends Component {
   handleAddToken = () => {
     const { tokensList, addCustomToken, chain } = this.props;
     const { tokenAddr, tokenInfo } = this.state;
-    let token = { tokenAddr, select: true, symbol: tokenInfo.symbol, decimals: tokenInfo.decimals, chain };
-    if (tokensList[tokenAddr.toLowerCase()]) {
+    const key = `${Number('0x80000000'.toString(10)) + (chain === 'WAN' ? 5718350 : 60)}-${tokenAddr}`;
+    let token = { key, account: tokenAddr, ancestor: tokenInfo.symbol, chain: chain === 'WAN' ? 'Wanchain' : 'Ethereum', chainSymbol: chain, decimals: tokenInfo.decimals, select: true, symbol: tokenInfo.symbol };
+    // console.log('token:', token);
+    if (tokensList[key.toLowerCase()]) {
       message.warn(intl.get('Config.existedTokenAddr'));
       this.setState({
         showConfirm: false
@@ -63,6 +70,7 @@ class AddToken extends Component {
         btnLoading: true
       })
     }
+
     wand.request('crossChain_addCustomToken', token, err => {
       if (err) {
         console.log('crossChain_addCustomToken', err);
@@ -81,7 +89,7 @@ class AddToken extends Component {
     })
   }
 
-  render () {
+  render() {
     return (
       <div>
         <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken`)} closable={false}
@@ -90,15 +98,19 @@ class AddToken extends Component {
             <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleSearch}>{intl.get('popup.search')}</Button>,
           ]}
         >
+          <div style={{ marginBottom: '20px' }}>
+            <Input placeholder={intl.get('Common.chain')} value={this.props.chain} disabled={true} />
+          </div>
+
           <div>
-            <Input placeholder={intl.get('Common.tokenAddr')} value={this.state.tokenAddr} onChange={this.handleChange}/>
+            <Input placeholder={intl.get('Common.tokenAddr')} value={this.state.tokenAddr} onChange={this.handleChange} />
           </div>
         </Modal>
         {
           this.state.showConfirm &&
           <div>
             <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken`)} closable={false} className={style.showTokenModal}
-            footer={[
+              footer={[
                 <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
                 <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('Common.ok')}</Button>,
               ]}

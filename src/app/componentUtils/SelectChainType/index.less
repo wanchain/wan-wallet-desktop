@@ -1,0 +1,46 @@
+@checked-bg: linear-gradient(90deg, #4a4c72 0%, #3d3e5f 100%);
+
+.chainTypeModal {
+  :global {
+    .ant-modal-footer {
+      .ant-btn {
+        margin: 0px 8px;
+      }
+    }
+  }
+}
+
+.radioGroupContainer {
+  text-align: center;
+}
+
+.radioGroup {
+  text-align: center;
+
+  :global {
+    .ant-radio-button-wrapper {
+      width: auto;
+      height: auto;
+      min-width: 150px;
+      min-height: 60px;
+      padding: 20px 10px;
+      margin: 0px 10px;
+      background: transparent;
+      border: none !important;
+    }
+
+    .ant-radio-button-wrapper-checked {
+      background: @checked-bg;
+    }
+
+    .ant-radio-button-wrapper-checked:focus-within {
+      outline: none;
+      background: @checked-bg;
+    }
+  }
+}
+
+.chainImage {
+  width: 52px;
+  margin-bottom: 8px;
+}

@@ -66,7 +66,7 @@ class TransInfo extends Component {
             </Col>
           </Row>
           <Row className={style.tableRow}>
-            <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Chain')}</Col>
+            <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.chain')}</Col>
             <Col span={COLRIGHT}><Input disabled={true} placeholder={['TOKEN', 'EOS', 'WAN', 'ETH'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
           </Row>
           <Row className={style.tableRow}>

@@ -164,8 +164,11 @@ class Tokens {
   }
 
   @action addCustomToken(tokenInfo) {
-    let { tokenAddr } = tokenInfo;
-    self.tokensList[tokenAddr.toLowerCase()] = {
+    let { key } = tokenInfo;
+    self.tokensList[key.toLowerCase()] = {
+      account: tokenInfo.account,
+      ancestor: tokenInfo.ancestor,
+      chainSymbol: tokenInfo.chainSymbol,
       select: tokenInfo.select,
       chain: tokenInfo.chain,
       symbol: tokenInfo.symbol,

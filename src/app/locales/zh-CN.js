@@ -31,6 +31,7 @@ const zh_CN = {
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
     'Common.storeman': 'Storeman',
+    'Common.chain': '链名',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',
@@ -356,6 +357,8 @@ const zh_CN = {
     'CopyAndQrcode.deleteFailedText': '删除账户失败',
     'CopyAndQrcode.deleteSuccessfulText': '删除账户成功',
 
+    'MoreTokens.tokenList': ' 代币列表',
+
     'HwWallet.Accounts.name': '名称',
     'HwWallet.Accounts.address': '地址',
     'HwWallet.Accounts.balance': '余额',
@@ -448,7 +451,6 @@ const zh_CN = {
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
     'CrossChainTransForm.overQuota': '输入的金额超出Storeman的剩余配额',
     'CrossChainTransForm.HashX': 'HashX',
-    'CrossChainTransForm.Chain': 'Chain',
     'CrossChainTransForm.To': 'To',
     'CrossChainTransForm.ApproveTxHash': 'Approve Hash',
     'CrossChainTransForm.LockTxHash': 'Lock Hash',

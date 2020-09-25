@@ -1698,8 +1698,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'addCustomToken':
             try {
-                let { tokenAddr, symbol, decimals, select, chain } = payload;
-                setting.addToken(tokenAddr, { select, symbol, decimals, chain });
+                let { key, account, ancestor, chain, chainSymbol, decimals, select, symbol } = payload;
+                setting.addToken(key, { account, ancestor, chain, chainSymbol, decimals, select, symbol });
             } catch (e) {
                 logger.error('addCustomToken failed:')
                 logger.error(e.message || e.stack)
