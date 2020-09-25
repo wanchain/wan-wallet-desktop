@@ -47,6 +47,9 @@ class OsmDelegateList extends Component {
       },
       {
         ...osmDelegateListColumns[5],
+      },
+      {
+        ...osmDelegateListColumns[6],
         render: (text, record) =>
         <div>
           <Row>

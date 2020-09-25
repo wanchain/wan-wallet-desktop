@@ -5,10 +5,10 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message } from 'antd';
 
 import { WALLETID } from 'utils/settings';
-import { fromWei } from 'utils/support.js';
 import PwdForm from 'componentUtils/PwdForm';
 import { OsmTrezorTrans } from 'componentUtils/trezor';
 import StoremanConfirmForm from './StoremanConfirmForm';
+import { fromWei, wandWrapper } from 'utils/support.js';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
@@ -154,7 +154,7 @@ class StoremanRegister extends Component {
     let { myAddr: from, amount, publicKey: wPk, enodeID } = form.getFieldsValue(['myAddr', 'amount', 'publicKey', 'enodeID']);
     let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
-
+    let wkAddr = await wandWrapper('publicToAddress', { wPk });
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
 
     let tx = {
@@ -171,7 +171,7 @@ class StoremanRegister extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
-      let satellite = { wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
+      let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupIdText, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
       try {
         let { gasLimit, ...txParams } = tx
         await OsmTrezorTrans(txParams, from, ACTION, satellite);

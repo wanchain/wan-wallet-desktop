@@ -103,10 +103,12 @@ class InForm extends Component {
       BIP44Path: path,
       wkAddr: record.wkAddr,
       gasLimit: this.state.gasLimit,
+      withdrawValue: record.reward,
+      canDelegateClaim: record.canDelegateClaim
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateClaim' };
+      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateClaim', withdrawValue: record.reward };
       try {
         await this.trezorTrans(path, from, satellite);
       } catch (err) {
@@ -141,6 +143,8 @@ class InForm extends Component {
         BIP44Path,
         walletID: WALLETID.TREZOR,
         wkAddr: this.props.record.wkAddr,
+        withdrawValue: this.props.record.reward,
+        canDelegateClaim: this.props.record.canDelegateClaim,
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
       let { result: estimateData } = await wandWrapper('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false });

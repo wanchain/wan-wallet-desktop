@@ -10,7 +10,7 @@ import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } f
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
 
-const storemanGroupStatus = ['None', 'Initializing', intl.get('storeman.selecting'), intl.get('Common.failed'), intl.get('storeman.selected'), intl.get('storeman.ready'), intl.get('storeman.quitting'), intl.get('storeman.quitted')];
+const storemanGroupStatus = ['None', 'Initializing', 'Selecting', 'Failed', 'Selected', 'Ready', 'Quitting', 'Quitted'];
 
 class OpenStoreman {
   @observable storemanGroupList = [];
@@ -62,6 +62,10 @@ class OpenStoreman {
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
+        let status = storemanGroupStatus[groupInfo.status];
+        if (status === 'Selected' && item.rank.toString() === '-1') {
+          status = 'Unselected';
+        }
         data.push({
           key: index,
           account: accountInfo.name,
@@ -71,9 +75,10 @@ class OpenStoreman {
           rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
-          reward: fromWei(item.incentive || 0), // TODO to delete the '|| 0'
+          reward: fromWei(item.incentive),
+          unclaimed: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
-          status: storemanGroupStatus[groupInfo.status],
+          status: intl.get(`Storeman.${status.toLowerCase()}`),
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,
@@ -97,11 +102,13 @@ class OpenStoreman {
           myAddress: accountInfo,
           stake: fromWei(item.deposit),
           groupId: item.groupId,
-          reward: item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
+          reward: fromWei(item.incentive),
+          unclaimed: item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
           quited: item.quited,
+          canDelegateClaim: item.canDelegateClaim,
           canDelegateOut: item.canDelegateOut,
           deposit: item.wkStake.deposit,
           delegateDeposit: item.wkStake.delegateDeposit
@@ -126,7 +133,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: formatNum(fromWei(histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && OSMSTAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
@@ -151,7 +158,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: formatNum(fromWei(histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
           annotate: languageIntl.language && OSMDELEGATIONACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });

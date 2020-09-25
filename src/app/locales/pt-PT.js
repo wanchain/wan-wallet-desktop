@@ -1,4 +1,5 @@
 const pt_PT = {
+    'Common.failed': 'ERRO',
     'Common.continue': 'Continuar',
     'Common.warning': 'ATENÇÃO',
     'Common.copy': 'Copiar',
@@ -481,7 +482,7 @@ const pt_PT = {
     'TransHistory.value': 'MONTANTE',
     'TransHistory.status': 'STATUS',
     'TransHistory.success': 'Sucesso',
-    'Common.failed': 'ERRO',
+    'TransHistory.failed': 'ERRO',
     'TransHistory.pending': 'Pendente',
     'TransHistory.transactionHistory': 'Histórico de transações',
     'TransHistory.selectAFromAddress': 'Selecione um nome de conta',
@@ -702,12 +703,13 @@ const pt_PT = {
 
     'network.down': 'A solicitação de rede falhou.Tente novamente mais tarde',
 
-    'storeman.selecting': 'Selecting',
-    'storeman.selected': 'Selected',
-    'storeman.ready': 'Ready',
-    'storeman.working': 'Working',
-    'storeman.quitting': 'Quitting',
-    'storeman.quitted': 'Quitted',
+    'Storeman.selecting': 'Selecting',
+    'Storeman.selected': 'Selected',
+    'Storeman.unselected': 'Unselected',
+    'Storeman.ready': 'Ready',
+    'Storeman.working': 'Working',
+    'Storeman.quitting': 'Quitting',
+    'Storeman.quitted': 'Quitted',
 
 }
 

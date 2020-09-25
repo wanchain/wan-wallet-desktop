@@ -273,6 +273,11 @@ class LanguageIntl {
         title: 'REWARD',
       },
       {
+        key: 'unclaimed',
+        dataIndex: 'unclaimed',
+        title: 'UNCLAIMED',
+      },
+      {
         key: 'status',
         dataIndex: 'status',
         title: 'STATUS',
@@ -312,6 +317,11 @@ class LanguageIntl {
         key: 'reward',
         dataIndex: 'reward',
         title: 'REWARD',
+      },
+      {
+        key: 'unclaimed',
+        dataIndex: 'unclaimed',
+        title: 'UNCLAIMED',
       },
       {
         key: 'action',
