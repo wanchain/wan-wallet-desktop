@@ -20,7 +20,6 @@ class SelectChainType extends Component {
   }
 
   handleChange = e => {
-    console.log('change:', e)
     this.setState({
       chain: e.target.value
     })
@@ -48,7 +47,7 @@ class SelectChainType extends Component {
   render() {
     return (
       <div>
-        <Modal visible destroyOnClose={true} title={'Token Chain Type'} closable={false} className={style.chainTypeModal}
+        <Modal visible destroyOnClose={true} title={'Choose Block Chain'} closable={false} className={style.chainTypeModal}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="ok" type="primary" onClick={this.handleOk}>{intl.get('Common.ok')}</Button>,
