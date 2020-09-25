@@ -4,7 +4,6 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import style from './index.less';
 import { defaultTimeout } from 'utils/settings';
-import AddToken from 'componentUtils/AddToken';
 import PasswordConfirmForm from 'components/PasswordConfirmForm';
 import ConfirmDeleteToken from './ConfirmDeleteToken';
 const { Option } = Select;
@@ -20,7 +19,6 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
 @observer
 class Config extends Component {
   state = {
-    showAddToken: false,
     showConfirm: false,
     showDeleteToken: false,
     tokenToDelete: null,
@@ -46,19 +44,6 @@ class Config extends Component {
 
   handleTimeoutChange = e => {
     this.props.updateSettings({ logout_timeout: e });
-  }
-
-  handleAddToken = chain => {
-    this.addTokenChain = chain
-    this.setState({
-      showAddToken: true
-    });
-  }
-
-  onCancel = () => {
-    this.setState({
-      showAddToken: false
-    });
   }
 
   handleOk = pwd => {
@@ -164,9 +149,6 @@ class Config extends Component {
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
         </Card>
-        {
-          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />
-        }
         {
           this.state.showDeleteToken && <ConfirmDeleteToken token={this.state.tokenToDelete} onOk={this.deleteToken} onClose={this.hideDeleteToken} />
         }

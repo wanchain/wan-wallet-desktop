@@ -84,7 +84,7 @@ class AddToken extends Component {
   render () {
     return (
       <div>
-        <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken${this.props.chain}`)} closable={false}
+        <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken`)} closable={false}
           footer={[
             <Button key="back" className="cancel" onClick={this.props.onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleSearch}>{intl.get('popup.search')}</Button>,
@@ -97,7 +97,7 @@ class AddToken extends Component {
         {
           this.state.showConfirm &&
           <div>
-            <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken${this.props.chain}`)} closable={false} className={style.showTokenModal}
+            <Modal visible destroyOnClose={true} title={intl.get(`Config.addToken`)} closable={false} className={style.showTokenModal}
             footer={[
                 <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
                 <Button loading={this.state.btnLoading} key="submit" type="primary" onClick={this.handleAddToken}>{intl.get('Common.ok')}</Button>,

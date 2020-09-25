@@ -1,8 +1,9 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col } from 'antd';
+import { Table, Row, Col, Icon } from 'antd';
 import ChainMiniList from './ChainMiniList';
+import AddToken from 'componentUtils/AddToken';
 import { COIN_ACCOUNT } from 'utils/settings';
 import style from './index.less';
 
@@ -20,6 +21,7 @@ class MoreAccount extends Component {
     this.state = {
       pairFilter: false,
       selectedOnly: false,
+      showAddToken: false,
     }
     this.props.changeTitle('MoreTokens.tokenList');
   }
@@ -52,15 +54,39 @@ class MoreAccount extends Component {
     }
   ];
 
+  handleAddToken = chain => {
+    console.log('onAddCustomToken')
+    this.addTokenChain = chain
+    this.setState({
+      showAddToken: true
+    });
+  }
+
+  onCancel = () => {
+    this.setState({
+      showAddToken: false
+    });
+  }
+
   render() {
     let { getWalletSelections, tokenIconList } = this.props;
     return (
       <div className={style['moreCrossChain']}>
+        <Row>
+          <Col>
+            <div className={style['addCustom']} onClick={this.handleAddToken}>
+              <Icon type="plus" style={{ fontWeight: 'bold' }}/>
+            </div>
+          </Col>
+        </Row>
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletSelections} />
           </Col>
         </Row>
+        {
+          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />
+        }
       </div>
     );
   }
