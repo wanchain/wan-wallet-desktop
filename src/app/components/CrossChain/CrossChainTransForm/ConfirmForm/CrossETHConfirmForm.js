@@ -43,9 +43,9 @@ class CrossETHConfirmForm extends Component {
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
+          {/* <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
             {getFieldDecorator('crossType', { initialValue: intl.get(`CrossChainTransForm.${crossType}`) })(inputCom)}
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}
           </Form.Item>
