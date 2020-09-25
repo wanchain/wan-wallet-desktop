@@ -26,12 +26,6 @@ class Portfolio extends Component {
     this.props.changeTitle('Portfolio.portfolio');
   }
 
-  componentWillMount() {
-    const { portfolioColumns } = this.props;
-    this.columns = [...portfolioColumns];
-    this.columns[0]['render'] = this.TokenImgRender;
-  }
-
   componentDidMount() {
     this.props.setCoin();
     this.props.updateCoinPrice();
@@ -72,10 +66,12 @@ class Portfolio extends Component {
   }
 
   render() {
-    const { portfolioList } = this.props;
+    const { portfolioColumns, portfolioList } = this.props;
+    let columns = [...portfolioColumns];
+    columns[0]['render'] = this.TokenImgRender;
     return (
       <div>
-        <Table columns={this.columns} dataSource={portfolioList} pagination={false} />
+        <Table columns={columns} dataSource={portfolioList} pagination={false} />
       </div>
     );
   }

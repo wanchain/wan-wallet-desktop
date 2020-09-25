@@ -69,9 +69,7 @@ export const FAKEADDR = '0x0000000000000000000000000000000000000003';
 export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';
 
 export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH', 'EOS'];
-// export const WALLET_CHAIN = [];
 export const CROSSCHAINTYPE = ['WAN', 'BTC', 'ETH', 'EOS'];
-// export const CROSSCHAINTYPE = [];
 
 export const MAX_CONFIRM_BLKS = 100000000;
 export const MIN_CONFIRM_BLKS = 0;
@@ -86,3 +84,10 @@ export const ALLCATEGORIES = 'DApp.allCategories';
 export const CROSS_TYPE = ['FAST', 'HTLC'];
 export const COIN_ACCOUNT = '0x0000000000000000000000000000000000000000';
 export const COIN_ACCOUNT_EOS = 'eosio.token:EOS';
+
+export const TOKEN_PRIORITY = {
+  WAN: 4,
+  BTC: 3,
+  ETH: 2,
+  EOS: 1,
+}

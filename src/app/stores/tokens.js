@@ -13,7 +13,7 @@ import eosAddress from './eosAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, CROSSCHAINTYPE, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY } from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -442,7 +442,9 @@ class Tokens {
         selected: v.select,
       });
     });
-    return Object.values(selections);
+    return Object.values(selections).sort((m, n) => {
+      return Number(TOKEN_PRIORITY[m.ancestor] === undefined ? 0 : TOKEN_PRIORITY[m.ancestor]) > Number(TOKEN_PRIORITY[n.ancestor] === undefined ? 0 : TOKEN_PRIORITY[n.ancestor]) ? -1 : 1;
+    });
   }
 
   getTokenInfoFromTokensListByAddr(addr) {

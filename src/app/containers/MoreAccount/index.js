@@ -68,7 +68,7 @@ class MoreAccount extends Component {
   }
 
   render() {
-    let { getWalletSelections, tokenIconList } = this.props;
+    let { getWalletSelections } = this.props;
     return (
       <div className={style['moreCrossChain']}>
         <Row>

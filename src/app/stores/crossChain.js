@@ -8,7 +8,7 @@ import eosAddress from './eosAddress';
 import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
-import { COIN_ACCOUNT } from 'utils/settings';
+import { TOKEN_PRIORITY } from 'utils/settings';
 import { message } from 'antd';
 
 class CrossChain {
@@ -198,7 +198,9 @@ class CrossChain {
         children: this.crossChainSelections[symbol],
       })
     });
-    return list;
+    return list.sort((m, n) => {
+      return Number(TOKEN_PRIORITY[m.chain] === undefined ? 0 : TOKEN_PRIORITY[m.chain]) > Number(TOKEN_PRIORITY[n.chain] === undefined ? 0 : TOKEN_PRIORITY[n.chain]) ? -1 : 1;
+    });
   }
 
   @computed get crossChainTrans() {
