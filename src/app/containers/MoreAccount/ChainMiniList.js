@@ -22,7 +22,7 @@ class ChainMiniList extends Component {
                 return (
                   <tr key={d.key}>
                     <td style={{ textAlign: 'left', width: '50%', paddingLeft: '20%' }}>{d.symbol}</td>
-                    <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>@{d.title.toUpperCase()}</Tag></td>
+                    <td style={{ textAlign: 'right', width: '30%' }}> <Tag className={style.symbolTag}>@{intl.get(`Common.${d.title.toLowerCase()}`)}</Tag></td>
                     <td style={{ textAlign: 'left' }}>
                       <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => updateTokenSelectedStatus(d.toAccount, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => updateTokenSelectedStatus(d.toAccount, true)} />}</span>
                     </td>

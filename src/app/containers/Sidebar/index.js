@@ -110,7 +110,7 @@ class Sidebar extends Component {
         v.children.forEach(c => {
           if (c.selected === true) {
             children.push({
-              title: `@ ${c.title}`,
+              title: `@${intl.get(`Common.${c.title.toLowerCase()}`)}`,
               key: c.key,
               noCircle: true,
             });
@@ -150,7 +150,7 @@ class Sidebar extends Component {
             key = `/crossChain/${v.id}`;
           }
           arr.push({
-            title: `${v.fromChainName} <-> ${v.toChainName}`,
+            title: `${intl.get(`Common.${v.fromChainName.toLowerCase()}`)} <-> ${intl.get(`Common.${v.toChainName.toLowerCase()}`)}`,
             key,
             noCircle: true,
           });

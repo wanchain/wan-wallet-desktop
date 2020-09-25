@@ -1,5 +1,6 @@
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 import axios from 'axios';
+import intl from 'react-intl-universal';
 
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
@@ -18,22 +19,22 @@ class Portfolio {
     WAN: {
       ancestor: false,
       balance: 0,
-      chain: 'Wanchain',
+      chain: intl.get('Common.wanchain'),
     },
     ETH: {
       ancestor: false,
       balance: 0,
-      chain: 'Ethereum',
+      chain: intl.get('Common.ethereum'),
     },
     BTC: {
       ancestor: false,
       balance: 0,
-      chain: 'Bitcoin',
+      chain: intl.get('Common.bitcoin'),
     },
     EOS: {
       ancestor: false,
       balance: 0,
-      chain: 'EOS',
+      chain: intl.get('Common.eos'),
     }
   };
 

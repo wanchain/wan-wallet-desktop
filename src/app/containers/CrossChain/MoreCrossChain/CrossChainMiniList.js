@@ -20,10 +20,10 @@ class CrossChainMiniList extends Component {
             {
               record.children.map((d, i) =>
                 <tr key={i}>
-                  <td style={{ textAlign: 'right', width: '45%' }}>{d.fromChainName}</td>
+                  <td style={{ textAlign: 'right', width: '45%' }}>{intl.get(`Common.${d.fromChainName.toLowerCase()}`)}</td>
                   <td style={{ textAlign: 'center', width: '10%' }}>{` < - > `}</td>
                   <td style={{ textAlign: 'left', width: '45%' }}>
-                    <span className={style.tokenItemSymbol}>{d.toChainName}</span>
+                    <span className={style.tokenItemSymbol}>{intl.get(`Common.${d.toChainName.toLowerCase()}`)}</span>
                     <span className={style.tokenItemSelected}>{d.selected ? <Icon type="star" className={style.starIcon} theme="filled" style={{ color: '#ff8c00' }} onClick={() => setCcTokenSelectedStatus(d.id, false)} /> : <Icon type="star" className={style.starIcon} theme="outlined" onClick={() => setCcTokenSelectedStatus(d.id, true)} />}</span>
                   </td>
                 </tr>

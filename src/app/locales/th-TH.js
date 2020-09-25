@@ -1,4 +1,8 @@
 const th_TH = {
+    'Common.activity': 'ACTIVITY',
+    'Common.history': 'History',
+    'Common.action': 'คำสั่ง',
+    'Common.account': 'บัญชี',
     'Common.failed': 'ผิดพลาด',
     'Common.continue': 'ดำเนินการต่อ',
     'Common.warning': 'ระวัง',
@@ -715,6 +719,19 @@ const th_TH = {
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',
     'Storeman.quitted': 'Quitted',
+    'Storeman.stake': 'STAKE',
+    'Storeman.storeman': 'STOREMAN',
+    'Storeman.crosschain': 'CROSS CHAIN',
+    'Storeman.reward': 'REWARD',
+    'Storeman.claimable': 'CLAIMABLE AMOUNT',
+    'Storeman.openGroupList': 'Open Group List',
+    'Storeman.storemanList': 'Storeman List',
+    'Storeman.group': 'GROUP',
+    'Storeman.startTime': 'START TIME',
+    'Storeman.endTime': 'END TIME',
+    'Storeman.delegateFee': 'DELEGATION FEE',
+    'Storeman.rank': 'RANK',
+    'Storeman.slash': 'SLASH',
 
 }
 

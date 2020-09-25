@@ -1,4 +1,8 @@
 const pt_PT = {
+    'Common.activity': 'ACTIVITY',
+    'Common.history': 'History',
+    'Common.action': 'AÇÃO',
+    'Common.account': 'CONTA',
     'Common.failed': 'ERRO',
     'Common.continue': 'Continuar',
     'Common.warning': 'ATENÇÃO',
@@ -712,6 +716,19 @@ const pt_PT = {
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',
     'Storeman.quitted': 'Quitted',
+    'Storeman.stake': 'STAKE',
+    'Storeman.storeman': 'STOREMAN',
+    'Storeman.crosschain': 'CROSS CHAIN',
+    'Storeman.reward': 'REWARD',
+    'Storeman.claimable': 'CLAIMABLE AMOUNT',
+    'Storeman.openGroupList': 'Open Group List',
+    'Storeman.storemanList': 'Storeman List',
+    'Storeman.group': 'GROUP',
+    'Storeman.startTime': 'START TIME',
+    'Storeman.endTime': 'END TIME',
+    'Storeman.delegateFee': 'DELEGATION FEE',
+    'Storeman.rank': 'RANK',
+    'Storeman.slash': 'SLASH',
 
 }
 

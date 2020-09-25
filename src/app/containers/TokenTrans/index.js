@@ -9,7 +9,7 @@ import TokenTransHistory from 'components/TransHistory/TokenTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
-import { checkAddrType, getWalletIdByType } from 'utils/helper';
+import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor'
 
@@ -261,7 +261,7 @@ class TokenTrans extends Component {
             <img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} />
             <span className="wanTotal">{getTokenAmount}</span>
             <span className="wanTex">{symbol}</span>
-            <Tag className="symbol">{chain}</Tag>
+            <Tag className="symbol">{getFullChainName(chain)}</Tag>
           </Col>
           <Col span={12} className="col-right">
             <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>

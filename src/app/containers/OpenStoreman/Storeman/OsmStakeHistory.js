@@ -32,7 +32,7 @@ class OsmStakeHistory extends Component {
     return (
       <div>
         <div className="historyCon">
-          <img src={history} /><span className={style.itemTitle}>Storeman History</span>
+          <img src={history} /><span className={style.itemTitle}>{intl.get('Common.history')}</span>
         </div>
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.stakingColumnsTree()} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />

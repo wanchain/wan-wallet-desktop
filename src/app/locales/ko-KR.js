@@ -1,4 +1,8 @@
 const ko_KR = {
+    'Common.activity': 'ACTIVITY',
+    'Common.history': 'History',
+    'Common.action': '실행',
+    'Common.account': '계정',
     'Common.failed': '트랜잭션 실패',
     'Common.continue': '다음 단계',
     'Common.warning': '경고',
@@ -715,6 +719,19 @@ const ko_KR = {
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',
     'Storeman.quitted': 'Quitted',
+    'Storeman.stake': 'STAKE',
+    'Storeman.storeman': 'STOREMAN',
+    'Storeman.crosschain': 'CROSS CHAIN',
+    'Storeman.reward': 'REWARD',
+    'Storeman.claimable': 'CLAIMABLE AMOUNT',
+    'Storeman.openGroupList': 'Open Group List',
+    'Storeman.storemanList': 'Storeman List',
+    'Storeman.group': 'GROUP',
+    'Storeman.startTime': 'START TIME',
+    'Storeman.endTime': 'END TIME',
+    'Storeman.delegateFee': 'DELEGATION FEE',
+    'Storeman.rank': 'RANK',
+    'Storeman.slash': 'SLASH',
 
 }
 

@@ -200,37 +200,37 @@ class LanguageIntl {
       {
         key: 'groupId',
         dataIndex: 'groupId',
-        title: 'GROUP ID',
+        title: intl.get('Storeman.group'),
       },
       {
         key: 'startTime',
         dataIndex: 'startTime',
-        title: 'START TIME',
+        title: intl.get('Storeman.startTime'),
       },
       {
         key: 'endTime',
         dataIndex: 'endTime',
-        title: 'END TIME',
+        title: intl.get('Storeman.endTime'),
       },
       {
         key: 'crosschain',
         dataIndex: 'crosschain',
-        title: 'CROSS CHAIN',
+        title: intl.get('Storeman.crosschain'),
       },
       {
         key: 'currDeposit',
         dataIndex: 'currDeposit',
-        title: 'STAKE',
+        title: intl.get('Storeman.stake'),
       },
       {
         key: 'delegationFee',
         dataIndex: 'delegationFee',
-        title: 'DELEGATION FEE',
+        title: intl.get('Storeman.delegateFee'),
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'ACTION',
+        title: intl.get('Common.action'),
       }
     ]
   }
@@ -240,52 +240,52 @@ class LanguageIntl {
       {
         key: 'account',
         dataIndex: 'account',
-        title: 'ACCOUNT',
+        title: intl.get('Common.account'),
       },
       {
         key: 'stake',
         dataIndex: 'stake',
-        title: 'STAKE',
+        title: intl.get('Storeman.stake'),
       },
       {
         key: 'crosschain',
         dataIndex: 'crosschain',
-        title: 'CROSS CHAIN',
+        title: intl.get('Storeman.crosschain'),
       },
       {
         key: 'rank',
         dataIndex: 'rank',
-        title: 'RANK',
+        title: intl.get('Storeman.rank'),
       },
       {
         key: 'slash',
         dataIndex: 'slash',
-        title: 'SLASH',
+        title: intl.get('Storeman.slash'),
       },
       {
         key: 'activity',
         dataIndex: 'activity',
-        title: 'ACTIVITY',
+        title: intl.get('Common.activity'),
       },
       {
         key: 'reward',
         dataIndex: 'reward',
-        title: 'REWARD',
+        title: intl.get('Storeman.reward'),
       },
       {
         key: 'unclaimed',
         dataIndex: 'unclaimed',
-        title: 'CLAIMABLE AMOUNT',
+        title: intl.get('Storeman.claimable'),
       },
       {
         key: 'status',
         dataIndex: 'status',
-        title: 'STATUS',
+        title: intl.get('TransHistory.status'),
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'ACTION',
+        title: intl.get('Common.action'),
         align: 'center',
       }
     ]
@@ -296,37 +296,37 @@ class LanguageIntl {
       {
         key: 'account',
         dataIndex: 'account',
-        title: 'ACCOUNT',
+        title: intl.get('Common.account'),
       },
       {
         key: 'stake',
         dataIndex: 'stake',
-        title: 'STAKE',
+        title: intl.get('Storeman.stake'),
       },
       {
         key: 'storeman',
         dataIndex: 'storeman',
-        title: 'STOREMAN',
+        title: intl.get('Storeman.storeman'),
       },
       {
         key: 'crosschain',
         dataIndex: 'crosschain',
-        title: 'CROSS CHAIN',
+        title: intl.get('Storeman.crosschain'),
       },
       {
         key: 'reward',
         dataIndex: 'reward',
-        title: 'REWARD',
+        title: intl.get('Storeman.reward'),
       },
       {
         key: 'unclaimed',
         dataIndex: 'unclaimed',
-        title: 'CLAIMABLE AMOUNT',
+        title: intl.get('Storeman.claimable'),
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: 'ACTION',
+        title: intl.get('Common.action'),
         align: 'center',
       }
     ]
@@ -347,7 +347,7 @@ class LanguageIntl {
         dataIndex: 'from',
         key: 'from',
       }, {
-        title: 'STOREMAN',
+        title: intl.get('Storeman.storeman'),
         dataIndex: 'storeman',
         key: 'storeman'
       }, {
@@ -426,7 +426,7 @@ class LanguageIntl {
         ]
       },
       {
-        title: 'Storeman',
+        title: intl.get('Storeman.storeman'),
         step: '1',
         key: '/openstoreman',
         icon: 'pie-chart',
@@ -437,7 +437,7 @@ class LanguageIntl {
             icon: 'block'
           },
           {
-            title: 'Storeman',
+            title: intl.get('Storeman.storeman'),
             key: '/osm_storeman',
             icon: 'block'
           }

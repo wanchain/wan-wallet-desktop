@@ -1,4 +1,8 @@
 const zh_CN = {
+    'Common.activity': '活跃度',
+    'Common.history': '历史记录',
+    'Common.action': '操作',
+    'Common.account': '账户',
     'Common.failed': '失败',
     'Common.continue': '下一步',
     'Common.warning': '警示',
@@ -19,7 +23,7 @@ const zh_CN = {
     'Common.wanchain': '万维链',
     'Common.ethereum': '以太坊',
     'Common.bitcoin': '比特币',
-    'Common.eos': 'EOS',
+    'Common.eos': '柚子链',
     'Common.options': '选项',
     'Common.cancel': '取消',
     'Common.ok': '确定',
@@ -30,7 +34,7 @@ const zh_CN = {
     'Common.networkError': '网络故障，请重启钱包',
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': '跨链节点',
     'Common.chain': '链名',
 
     'Layout.connecting': '正在连接服务器',
@@ -719,6 +723,19 @@ const zh_CN = {
     'Storeman.working': '工作中',
     'Storeman.quitting': '正在退出',
     'Storeman.quitted': '已退出',
+    'Storeman.stake': '质押',
+    'Storeman.storeman': '跨链节点',
+    'Storeman.crosschain': '跨链',
+    'Storeman.reward': '奖励',
+    'Storeman.claimable': '可提取金额',
+    'Storeman.openGroupList': '开放节点组',
+    'Storeman.storemanList': '节点列表',
+    'Storeman.group': '节点组',
+    'Storeman.startTime': '开始时间',
+    'Storeman.endTime': '结束时间',
+    'Storeman.delegateFee': '委托费用',
+    'Storeman.rank': '排名',
+    'Storeman.slash': '惩罚',
 
 }
 

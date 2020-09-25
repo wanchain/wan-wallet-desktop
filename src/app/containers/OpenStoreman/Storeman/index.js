@@ -53,7 +53,7 @@ class Storeman extends Component {
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span className={style.itemTitle}>Open Group List</span>
+              <img src={total} /><span className={style.itemTitle}>{intl.get('Storeman.openGroupList')}</span>
             </Col>
           </div>
         </Row>
@@ -63,7 +63,7 @@ class Storeman extends Component {
         <Row>
           <div className="historyCon">
             <Col span={12} className="col-left">
-              <img src={total} /><span className={style.itemTitle}>Storeman List</span>
+              <img src={total} /><span className={style.itemTitle}>{intl.get('Storeman.storemanList')}</span>
             </Col>
           </div>
         </Row>
