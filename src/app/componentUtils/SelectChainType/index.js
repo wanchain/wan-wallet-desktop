@@ -35,7 +35,14 @@ class SelectChainType extends Component {
   onCancel = () => {
     this.setState({
       showAddToken: false,
-    })
+    });
+  }
+
+  onCloseAll = () => {
+    this.setState({
+      showAddToken: false,
+    });
+    this.props.onCancel();
   }
 
   render() {
@@ -55,7 +62,7 @@ class SelectChainType extends Component {
           </div>
         </Modal>
         {
-          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} chain={this.state.chain} />
+          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} onCloseAll={this.onCloseAll} chain={this.state.chain} />
         }
       </div>
     );

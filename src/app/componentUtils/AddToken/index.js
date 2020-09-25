@@ -2,7 +2,6 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Modal, Input, Button, message, Descriptions } from 'antd';
-
 import style from './index.less';
 
 @inject(stores => ({
@@ -79,7 +78,7 @@ class AddToken extends Component {
         addCustomToken(token)
         message.success(intl.get('TransHistory.success'))
       }
-      this.props.onCancel();
+      this.props.onCloseAll();
     })
   }
 

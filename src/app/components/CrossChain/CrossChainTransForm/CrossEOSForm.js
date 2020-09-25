@@ -118,6 +118,7 @@ class CrossEOSForm extends Component {
   }
 
   checkQuota = (rule, value, callback) => {
+    value = value.split(' ')[0];
     if (new BigNumber(value).gt(0)) {
       let amount = this.props.form.getFieldValue('amount');
       if (isExceedBalance(value, amount)) {

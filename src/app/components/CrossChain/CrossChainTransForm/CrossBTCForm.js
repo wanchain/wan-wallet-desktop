@@ -145,6 +145,20 @@ class CrossBTCForm extends Component {
     }
   }
 
+  checkQuota = (rule, value, callback) => {
+    value = value.split(' ')[0];
+    if (new BigNumber(value).gt(0)) {
+      let { amount } = this.props.form.getFieldsValue(['amount']);
+      if (isExceedBalance(value, amount)) {
+        callback(intl.get('CrossChainTransForm.overQuota'));
+        return;
+      }
+      callback();
+    } else {
+      callback(intl.get('CrossChainTransForm.overQuota'));
+    }
+  }
+
   updateLockAccounts = (storeman, option) => {
     let { form, updateBTCTransParams, smgList, direction, currentTokenPairInfo } = this.props;
 
@@ -281,7 +295,7 @@ class CrossBTCForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: `${quota} ${unit}` }}
+                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
