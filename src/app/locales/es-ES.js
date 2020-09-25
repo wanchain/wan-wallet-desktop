@@ -571,7 +571,7 @@ const es_ES = {
     'staking.table.type': 'TIPO',
     'staking.delegateHistory': 'Historial de delegacion',
     'staking.delegateList': 'Lista de delegacion',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': 'Validador',
 

@@ -569,7 +569,7 @@ const pt_PT = {
     'staking.table.type': 'TIPO',
     'staking.delegateHistory': 'Histórico da Delegação',
     'staking.delegateList': 'Lista de Delegações',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': 'Validador',
 

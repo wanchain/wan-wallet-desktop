@@ -571,7 +571,7 @@ const ko_KR = {
     'staking.table.type': '종류',
     'staking.delegateHistory': '위임 내역',
     'staking.delegateList': '위임인 리스트',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': '노드 확인',
 

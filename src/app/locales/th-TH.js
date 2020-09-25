@@ -571,7 +571,7 @@ const th_TH = {
     'staking.table.type': 'ประเภท',
     'staking.delegateHistory': 'ประวัติของการ Delegation',
     'staking.delegateList': 'รายการ Delegation',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': 'Validator',
 
