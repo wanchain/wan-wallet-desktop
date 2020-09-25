@@ -569,7 +569,7 @@ const pt_PT = {
     'staking.table.type': 'TIPO',
     'staking.delegateHistory': 'Histórico da Delegação',
     'staking.delegateList': 'Lista de Delegações',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': 'Validador',
 
@@ -705,7 +705,7 @@ const pt_PT = {
 
     'Storeman.selecting': 'Selecting',
     'Storeman.selected': 'Selected',
-    'Storeman.unselected': 'Unselected',
+    'Storeman.unselected': 'Not Selected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',
     'Storeman.quitting': 'Quitting',

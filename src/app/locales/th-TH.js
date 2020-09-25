@@ -571,7 +571,7 @@ const th_TH = {
     'staking.table.type': 'ประเภท',
     'staking.delegateHistory': 'ประวัติของการ Delegation',
     'staking.delegateList': 'รายการ Delegation',
-    'staking.unclaimAmount': 'Unclaimed Amount',
+    'staking.unclaimAmount': 'Claimable Amount',
 
     'validator.title': 'Validator',
 
@@ -707,7 +707,7 @@ const th_TH = {
     'network.down': 'การเชื่อมต่อเครือข่ายล้มเหลว กรุณาลองอีกครั้งในภายหลัง',
 
     'Storeman.selecting': 'Selecting',
-    'Storeman.unselected': 'Unselected',
+    'Storeman.unselected': 'Not Selected',
     'Storeman.selected': 'Selected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',

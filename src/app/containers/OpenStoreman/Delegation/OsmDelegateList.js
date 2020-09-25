@@ -38,6 +38,10 @@ class OsmDelegateList extends Component {
       },
       {
         ...osmDelegateListColumns[2],
+        render: (text, record) =>
+        <div>
+          {record.storeman.replace(/^(0x[a-zA-z0-9]{4})[a-zA-z0-9]{32}([a-zA-z0-9]{4})$/, '$1...$2')}
+        </div>
       },
       {
         ...osmDelegateListColumns[3],

@@ -275,7 +275,7 @@ class LanguageIntl {
       {
         key: 'unclaimed',
         dataIndex: 'unclaimed',
-        title: 'UNCLAIMED',
+        title: 'CLAIMABLE AMOUNT',
       },
       {
         key: 'status',
@@ -321,7 +321,7 @@ class LanguageIntl {
       {
         key: 'unclaimed',
         dataIndex: 'unclaimed',
-        title: 'UNCLAIMED',
+        title: 'CLAIMABLE AMOUNT',
       },
       {
         key: 'action',
