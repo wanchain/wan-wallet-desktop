@@ -22,6 +22,7 @@ class MoreCrossChain extends Component {
       pairFilter: false,
       selectedOnly: false,
     }
+    this.props.changeTitle('MoreTokens.tokenList');
   }
 
   setCrossChainPairSelection = (record, selected) => { }
@@ -36,8 +37,8 @@ class MoreCrossChain extends Component {
       render: (text, record) => {
         let child = record.children[0];
         return (<div className={style.tokenGrid}>
-          <div><img className="totalImg" src={this.props.getCoinImage(child.ancestorSymbol, child.fromAccount === COIN_ACCOUNT ? child.toAccount : child.fromAccount)} /></div>
-          <div>{text}</div>
+          <div><img className={style.totalImg} src={this.props.getCoinImage(child.ancestorSymbol, child.fromAccount === COIN_ACCOUNT ? child.toAccount : child.fromAccount)} /></div>
+          <div className={style.coinText}>{text}</div>
         </div>)
       }
     },

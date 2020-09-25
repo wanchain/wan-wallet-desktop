@@ -1,3 +1,4 @@
+@icon-size: 48px;
 .moreCrossChain {
     :global {
         .ant-table-thead>tr {
@@ -91,6 +92,7 @@
     .tokenGrid {
         display: grid;
         grid-template-columns: repeat(2, 50%);
+        gap: 16px;
 
         &>div:first-child {
             text-align: right;
@@ -98,7 +100,15 @@
 
         &>div:last-child {
             text-align: left;
-            padding-left: 2px;
         }
+    }
+    .totalImg {
+        width: @icon-size;
+        height: @icon-size;
+        line-height:  @icon-size;
+        border-radius: 50%;
+    }
+    .coinText {
+        line-height:  @icon-size;
     }
 }

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, Icon } from 'antd';
 import ChainMiniList from './ChainMiniList';
-import AddToken from 'componentUtils/AddToken';
+import SelectChainType from 'componentUtils/SelectChainType';
 import { COIN_ACCOUNT } from 'utils/settings';
 import style from './index.less';
 
@@ -36,8 +36,8 @@ class MoreAccount extends Component {
       render: (text, record) => {
         let filtered = record.children.map(v => v.account).filter(v => v !== COIN_ACCOUNT);
         return (<div className={style.tokenGrid}>
-          <div><img className="totalImg" src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} /></div>
-          <div>{text}</div>
+          <div><img className={style.totalImg} src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} /></div>
+          <div className={style.coinText}>{text}</div>
         </div>)
       }
     },
@@ -55,7 +55,6 @@ class MoreAccount extends Component {
   ];
 
   handleAddToken = chain => {
-    console.log('onAddCustomToken')
     this.addTokenChain = chain
     this.setState({
       showAddToken: true
@@ -85,7 +84,7 @@ class MoreAccount extends Component {
           </Col>
         </Row>
         {
-          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} />
+          this.state.showAddToken && <SelectChainType onCancel={this.onCancel} />
         }
       </div>
     );
