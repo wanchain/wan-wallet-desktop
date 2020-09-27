@@ -675,7 +675,7 @@ const zh_CN = {
     'ValidatorRegister.balance': '余额',
     'ValidatorRegister.stakeTooLow': '最低金额是10000WAN',
     'ValidatorRegister.historyTitle': '历史记录',
-    'TransHistory.Storeman-delegateClaim': '提取资金',
+    'TransHistory.Storeman-delegateIncentiveClaim': '提取资金',
     'TransHistory.Storeman-delegateOut': '申请退出',
     'TransHistory.Storeman-delegateIn': '委托',
     'TransHistory.Storeman-stakeClaim': '提取资金',

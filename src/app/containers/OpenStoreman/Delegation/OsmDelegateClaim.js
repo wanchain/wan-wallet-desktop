@@ -108,7 +108,7 @@ class InForm extends Component {
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateClaim', withdrawValue: record.reward };
+      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateIncentiveClaim', withdrawValue: record.reward };
       try {
         await this.trezorTrans(path, from, satellite);
       } catch (err) {

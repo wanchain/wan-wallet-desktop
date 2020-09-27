@@ -67,6 +67,7 @@ class OpenStoreman {
         }
         data.push({
           key: index,
+          quited: item.quited,
           account: accountInfo.name,
           myAddress: accountInfo,
           stake: fromWei(item.deposit),
@@ -81,7 +82,7 @@ class OpenStoreman {
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,
-          minStakeIn: fromWei(groupInfo.minStakeIn)
+          minStakeIn: fromWei(groupInfo.minStakeIn),
         })
       }
     });
@@ -92,7 +93,8 @@ class OpenStoreman {
     let data = [];
     this.storemanDelegatorInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
-      if (accountInfo && accountInfo.type) {
+      let groupInfo = this.storemanGroupList.find(i => i.groupId === item.groupId);
+      if (groupInfo && accountInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         data.push({
@@ -110,7 +112,8 @@ class OpenStoreman {
           canDelegateClaim: item.canDelegateClaim,
           canDelegateOut: item.canDelegateOut,
           deposit: item.wkStake.deposit,
-          delegateDeposit: item.wkStake.delegateDeposit
+          delegateDeposit: item.wkStake.delegateDeposit,
+          minDelegateIn: fromWei(groupInfo.minDelegateIn),
         })
       }
     });

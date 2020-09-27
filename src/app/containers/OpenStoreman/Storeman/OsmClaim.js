@@ -103,12 +103,12 @@ class InForm extends Component {
       wkAddr: record.wkAddr,
       BIP44Path: record.myAddress.path,
       gasLimit: this.state.gasLimit,
-      withdrawValue: record.reward,
+      withdrawValue: record.unclaimed,
       canStakeClaim: record.canStakeClaim
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-stakeClaim', withdrawValue: record.reward };
+      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-stakeClaim', withdrawValue: record.unclaimed };
       try {
         await this.trezorStoremanClaim(path, from, satellite);
       } catch (err) {
@@ -143,7 +143,7 @@ class InForm extends Component {
         BIP44Path,
         walletID: WALLETID.TREZOR,
         wkAddr: this.props.record.wkAddr,
-        withdrawValue: this.props.record.reward,
+        withdrawValue: this.props.record.unclaimed,
         canStakeClaim: this.props.record.canStakeClaim,
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
@@ -194,14 +194,13 @@ class InForm extends Component {
     const { onCancel, form, settings, record, addrInfo, spin } = this.props;
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo);
     let showConfirmItem = { storeman: true, withdrawable: true, account: true };
-    let withdrawableAmount = record.canStakeClaim ? new BigNumber(record.stake).plus(record.reward).toString(10) : record.reward;
 
     return (
       <div>
         <Modal visible closable={false} destroyOnClose={true} title='Storeman Claim' className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={withdrawableAmount === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={record.unclaimed === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={spin} size="large">
@@ -224,7 +223,7 @@ class InForm extends Component {
                 title='Account'
               />
               <CommonFormItem form={form} formName='withdrawableAmount' disabled={true}
-                options={{ initialValue: withdrawableAmount, rules: [{ required: true }] }}
+                options={{ initialValue: record.unclaimed, rules: [{ required: true }] }}
                 title={intl.get('staking.unclaimAmount')}
               />
             </div>

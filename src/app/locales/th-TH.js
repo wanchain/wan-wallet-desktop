@@ -671,7 +671,7 @@ const th_TH = {
     'ValidatorRegister.balance': 'ยอดคงเหลือ',
     'ValidatorRegister.stakeTooLow': 'จำนวนจะต้องไม่ต่ำกว่า 10,000 WAN',
     'ValidatorRegister.historyTitle': 'ประวัติของ Validator',
-    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-delegateIncentiveClaim': 'Delegate Claim',
     'TransHistory.Storeman-delegateOut': 'Delegate Out',
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',

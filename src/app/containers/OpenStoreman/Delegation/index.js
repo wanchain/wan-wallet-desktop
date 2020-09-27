@@ -19,6 +19,7 @@ const InForm = Form.create({ name: 'OsmDelegateInForm' })(OsmDelegateInForm);
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   getStoremanConf: () => stores.openstoreman.getStoremanConf(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  getOpenStoremanGroupList: () => stores.openstoreman.getOpenStoremanGroupList(),
   getStoremanDelegatorTotalIncentive: () => stores.openstoreman.getStoremanDelegatorTotalIncentive(),
 }))
 
@@ -37,6 +38,7 @@ class Delegation extends Component {
   update() {
     this.props.getStoremanConf();
     this.props.updateTransHistory();
+    this.props.getOpenStoremanGroupList();
     this.props.getStoremanDelegatorTotalIncentive()
 }
 

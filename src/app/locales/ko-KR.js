@@ -671,7 +671,7 @@ const ko_KR = {
     'ValidatorRegister.balance': '계정 자산 합계',
     'ValidatorRegister.stakeTooLow': '최소 합계는 10,000 WAN이어야 합니다.',
     'ValidatorRegister.historyTitle': '검증자 내역',
-    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-delegateIncentiveClaim': 'Delegate Claim',
     'TransHistory.Storeman-delegateOut': 'Delegate Out',
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',

@@ -668,7 +668,7 @@ const pt_PT = {
     'ValidatorRegister.balance': 'Saldo',
     'ValidatorRegister.stakeTooLow': 'O valor mínimo deve ser 10000 WAN',
     'ValidatorRegister.historyTitle': 'Histórico do validador',
-    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-delegateIncentiveClaim': 'Delegate Claim',
     'TransHistory.Storeman-delegateOut': 'Delegate Out',
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',

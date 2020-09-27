@@ -180,8 +180,8 @@ class ModifyForm extends Component {
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).lt(MINAMOUNT)) {
-      callback(intl.get('ValidatorRegister.stakeTooLow'));
+    if (new BigNumber(value).lt(record.minDelegateIn)) {
+      callback(intl.get('Common.amountTooLow', { minAmount: record.minDelegateIn }));
       return;
     }
     if (!this.state.isExit && new BigNumber(value).gt(capacity)) {
@@ -262,10 +262,9 @@ class ModifyForm extends Component {
               {
                 !isExit &&
                 <CommonFormItem form={form} formName='amount'
-                  options={{ rules: [{ required: true, validator: this.checkAmount }] }}
+                  options={{ initialValue: record.minDelegateIn, rules: [{ required: true, validator: this.checkAmount }] }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.amount')}
-                  placeholder={MINAMOUNT}
                 />
               }
               <CommonFormItem form={form} formName='fee' disabled={true}

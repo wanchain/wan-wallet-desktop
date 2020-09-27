@@ -674,7 +674,7 @@ const en_US = {
     'ValidatorRegister.balance': 'Balance',
     'ValidatorRegister.stakeTooLow': 'Minimum amount should be 10000 WAN',
     'ValidatorRegister.historyTitle': 'Validator History',
-    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-delegateIncentiveClaim': 'Delegate Claim',
     'TransHistory.Storeman-delegateOut': 'Delegate Out',
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',

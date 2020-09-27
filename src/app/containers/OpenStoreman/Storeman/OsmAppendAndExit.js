@@ -183,7 +183,7 @@ class ModifyForm extends Component {
       callback(intl.get('Common.invalidAmount'));
     }
     if (new BigNumber(value).lt(MINAMOUNT)) {
-      callback(intl.get('ValidatorRegister.stakeTooLow'));
+      callback(intl.get('Common.amountTooLow', { minAmount: MINAMOUNT }));
       return;
     }
     if (new BigNumber(value).gte(balance)) {
