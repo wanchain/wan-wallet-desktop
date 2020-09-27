@@ -658,7 +658,7 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
             let addressInfo;
             if (chainType === 'WAN') {
               addressInfo = {
-                start: 0,
+                start: '0',
                 address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
                 waddress: (`0x${val_address_get.waddress}`)
               }
@@ -691,7 +691,7 @@ export const createWANAddr = async function () {
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}`.toLowerCase(), waddr: `0x${val_address_get.waddress}`.toLowerCase() } }, (err, val_account_create) => {
           if (!err && val_account_create) {
             let addressInfo = {
-              start: index,
+              start: index.toString(),
               name,
               path,
               address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
@@ -721,7 +721,7 @@ export const createBTCAddr = function (btcPath, index) {
             wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, addr: val_address_get.address } }, (err, val_account_create) => {
               if (!err && val_account_create) {
                 return resolve({
-                  start: index,
+                  start: index.toString(),
                   name,
                   address: val_address_get.address
                 });
@@ -751,7 +751,7 @@ export const createETHAddr = async function () {
         wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${val_address_get.address}` } }, (err, val_account_create) => {
           if (!err && val_account_create) {
             let addressInfo = {
-              start: index,
+              start: index.toString(),
               name,
               address: `0x${val_address_get.address}`
             }

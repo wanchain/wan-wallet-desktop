@@ -10,7 +10,6 @@ import style from './index.less';
   getCrossChainTokenList: stores.crossChain.getCrossChainTokenList,
   language: stores.languageIntl.language,
   getCoinImage: (...args) => stores.tokens.getCoinImage(...args),
-  setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 

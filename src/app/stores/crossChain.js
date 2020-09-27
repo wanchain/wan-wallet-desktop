@@ -205,12 +205,13 @@ class CrossChain {
     let trans = [];
     let decimals = 8;
     try {
-      decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
+      decimals = this.crossChainSelections[this.currSymbol][0].ancestorDecimals;
     } catch (err) {
       console.log(err);
     }
-    self.crossTrans.forEach((item, index) => {
-      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+    let tokenData = this.tokenPairs[this.currTokenPairId];
+    this.crossTrans.forEach((item, index) => {
+      if ([tokenData.fromAccount, tokenData.toAccount].includes(item.srcChainAddr) && [tokenData.fromAccount, tokenData.toAccount].includes(item.dstChainAddr) && item.lockTxHash !== '') {
         let from = item.srcChainType;
         let to = item.dstChainType;
         trans.push({

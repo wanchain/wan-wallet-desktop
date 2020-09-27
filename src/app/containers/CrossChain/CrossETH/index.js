@@ -11,7 +11,6 @@ import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory
 import style from './index.less';
 
 const CHAINTYPE = 'ETH';
-const WANCHAIN = 'WAN';
 
 @inject(stores => ({
   addrInfo: stores.ethAddress.addrInfo,
