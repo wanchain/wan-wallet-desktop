@@ -262,9 +262,10 @@ class ModifyForm extends Component {
               {
                 !isExit &&
                 <CommonFormItem form={form} formName='amount'
-                  options={{ initialValue: record.minDelegateIn, rules: [{ required: true, validator: this.checkAmount }] }}
+                  options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.amount')}
+                  placeholder={record.minDelegateIn}
                 />
               }
               <CommonFormItem form={form} formName='fee' disabled={true}

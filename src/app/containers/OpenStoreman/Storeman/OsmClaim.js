@@ -56,6 +56,7 @@ class InForm extends Component {
     let balance = form.getFieldValue('balance');
     if (value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
+      return;
     }
     if (new BigNumber(value).lt(0)) {
       callback(intl.get('StakeInForm.stakeTooLow'));

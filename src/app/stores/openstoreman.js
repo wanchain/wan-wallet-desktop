@@ -6,7 +6,7 @@ import { observable, action, computed, runInAction, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
-import { formatLongText, fromWei, timeFormat, formatNum, showNA, wandWrapper } from 'utils/support';
+import { formatLongText, fromWei, timeFormat, formatNum, roundFun, wandWrapper } from 'utils/support';
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
 
@@ -181,13 +181,13 @@ class OpenStoreman {
       reward: ['N/A', 'N/A', false],
     };
 
-    cardsList.myStake[0] = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
+    cardsList.myStake[0] = roundFun(fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0)), 2);
     cardsList.myStake[1] = this.storemanListInfo.length;
     cardsList.myStake[2] = this.storemanListInfoInfoReady;
-    cardsList.delegationStake[0] = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegateDeposit).toString(10), 0));
+    cardsList.delegationStake[0] = roundFun(fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegateDeposit).toString(10), 0)), 2);
     cardsList.delegationStake[1] = this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegatorCount).toString(10), 0);
     cardsList.delegationStake[2] = this.storemanListInfoInfoReady;
-    cardsList.reward[0] = fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
+    cardsList.reward[0] = roundFun(fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0)), 2);
     cardsList.reward[1] = this.storemanStakeTotalIncentive.length && this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
     cardsList.reward[2] = this.storemanStakeTotalIncentiveInfoReady;
 
@@ -201,13 +201,13 @@ class OpenStoreman {
       withdrawableAmount: ['N/A', 'N/A'],
     };
 
-    cardsList.myStake[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0));
+    cardsList.myStake[0] = roundFun(fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0)), 2);
     cardsList.myStake[1] = this.storemanDelegatorInfo.length;
     cardsList.myStake[2] = this.storemanDelegatorInfoInfoReady;
-    cardsList.myReward[0] = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
+    cardsList.myReward[0] = roundFun(fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0)), 2);
     cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
     cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveInfoReady;
-    cardsList.withdrawableAmount[0] = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0));
+    cardsList.withdrawableAmount[0] = roundFun(fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0)), 2);
     cardsList.withdrawableAmount[1] = this.storemanDelegatorInfoInfoReady;
 
     return cardsList;
@@ -272,7 +272,7 @@ class OpenStoreman {
           item.nameShowing = item.name ? item.name : item.wkAddr;
           item.icon = item.iconData ? `data:image/${item.iconType};base64, ${item.iconData}` : ('data:image/png;base64,' + new Identicon(item.wkAddr).toString());
         })
-        this.storemanMemberList = temp;
+        this.storemanMemberList = temp.filter(v => !v.isWhite);
       })
     }).catch(err => console.log(err))
   }

@@ -75,7 +75,6 @@ class OsmDelegateInForm extends Component {
       form.setFieldsValue({
         storeman,
         crosschain,
-        amount: fromWei(groupInfo.minDelegateIn),
         quota: storemanInfo ? new BigNumber(fromWei(storemanInfo.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
         delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
@@ -85,7 +84,6 @@ class OsmDelegateInForm extends Component {
         storeman: null,
         quota: '0',
         delegationFee: '0',
-        amount: '0'
       });
       this.setState({ storemanInfo: undefined, minAmount: '0' });
     }
@@ -393,7 +391,7 @@ class OsmDelegateInForm extends Component {
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
-                placeholder={'0'}
+                placeholder={this.state.minAmount}
                 colSpan={colSpan}
               />
               <CommonFormItem form={form} formName='fee' disabled={true}
