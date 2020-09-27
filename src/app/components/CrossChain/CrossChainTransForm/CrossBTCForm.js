@@ -173,7 +173,6 @@ class CrossBTCForm extends Component {
       });
     }
     let smg = smgList[option.key];
-    console.log('smgList:', smgList)
     updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg[`${currentTokenPairInfo.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
   }
 
@@ -214,7 +213,6 @@ class CrossBTCForm extends Component {
       totalFeeTitle = `${estimateFee.original} ${currentTokenPairInfo.toChainSymbol} + ${this.state.fee} ${currentTokenPairInfo.fromChainSymbol}`;
     }
 
-    // console.log('smgList:', smgList)
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
       capacity = quota = 0;

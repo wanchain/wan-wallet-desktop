@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Modal, Input, Button, message, Descriptions } from 'antd';
+
 import style from './index.less';
 
 @inject(stores => ({
@@ -27,7 +28,6 @@ class AddToken extends Component {
       return;
     }
     wand.request('crossChain_getTokenInfo', { scAddr: this.state.tokenAddr, chain: this.props.chain }, (err, ret) => {
-      console.log('Info:', ret);
       if (err) {
         console.log('crossChain_getTokenInfo:', err);
         this.setState({ loading: false })

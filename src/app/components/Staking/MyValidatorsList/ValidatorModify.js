@@ -104,8 +104,6 @@ class ModifyForm extends Component {
         wand.request('staking_validatorUpdate', { tx }, (err, ret) => {
           if (err) {
             message.warn(intl.get('ValidatorRegister.updateFailed'));
-          } else {
-            console.log('validatorModify ret:', ret);
           }
           this.setState({ confirmVisible: false, confirmLoading: false });
           this.props.onSend();

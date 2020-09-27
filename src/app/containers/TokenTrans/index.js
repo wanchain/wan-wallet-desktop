@@ -70,7 +70,6 @@ class TokenTrans extends Component {
     let addr = newProps.match.params.tokenAddr;
     let chain = newProps.match.params.chain;
     if (addr !== this.props.currTokenAddr) {
-      // console.log('Do Init!!!', addr, chain, this.props.currTokenAddr)
       this.init(addr, chain);
     }
   }
@@ -228,7 +227,6 @@ class TokenTrans extends Component {
           wand.request('transaction_tokenNormal', trans, (err, txHash) => {
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
-              // console.log('transaction_tokenNormal:', err);
               reject(false); // eslint-disable-line prefer-promise-reject-errors
             } else {
               this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();

@@ -87,11 +87,9 @@ class Ledger extends Component {
 
         console.log(`Sign Failed: ${err}`);
       } else {
-        console.log('Signature: ', sig)
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;
-        console.log('Tx:', tx)
         let wTx = new WanTx(tx);
         let signedTx = '0x' + wTx.serialize().toString('hex');
         console.log('Signed tx: ', signedTx);

@@ -77,7 +77,6 @@ class Tokens {
             tokenScAddr: scAddr
           }
         }, (err, data) => {
-          // console.log('res:', err, data, scAddr)
           if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
             self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
           } else {
@@ -112,7 +111,6 @@ class Tokens {
               tokenScAddr: scAddr
             }
           }, (err, data) => {
-            // console.log('get Icon: ', err, data)
             if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
               self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
             } else {
@@ -192,7 +190,6 @@ class Tokens {
     let rawKeyArr = Object.keys(addrInfo.rawKey || {});
     let addresses = normalArr.concat(importArr, ledgerArr, trezorArr, rawKeyArr);
     wand.request('crossChain_updateTokensBalance', { address: addresses, tokenScAddr, chain }, (err, data) => {
-      // console.log('result:', err, data)
       if (err) {
         console.log('stores_getTokensBalance:', err);
         return;

@@ -49,7 +49,6 @@ class CrossChainTransForm extends Component {
       } else {
         quota = await getBurnQuota(chainType, currTokenPairId, storeman);
       }
-      console.log('quota:', quota);
       this.setState({
         quota: formatNumByDecimals(quota, decimals)
       })
@@ -166,7 +165,6 @@ class CrossChainTransForm extends Component {
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    // console.log('quota:', quota);
     form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) });
     updateTransParams(from, { storeman });
   }

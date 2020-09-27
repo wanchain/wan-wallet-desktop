@@ -54,11 +54,9 @@ class CrossBTC extends Component {
   }
 
   inboundHandleSend = () => {
-    // console.log('inboundHandleSend');
     const { match } = this.props;
     let tokenPairID = match.params.tokenPairId;
     let info = this.info;
-    console.log('info:', info);
     let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
@@ -73,7 +71,6 @@ class CrossBTC extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossBTC', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
-        // console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
           console.log('BTC inbound lock:', err);
@@ -91,7 +88,6 @@ class CrossBTC extends Component {
   }
 
   outboundHandleSend = () => {
-    // console.log('outboundHandleSend');
     const { match } = this.props;
     let tokenPairID = match.params.tokenPairId;
     let info = this.info;

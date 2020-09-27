@@ -165,7 +165,6 @@ class ETHNormalTransForm extends Component {
         if (err) {
           message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
-          console.log('Update Gas Limit:', gasLimit);
           this.props.updateTransParams(from, { gasLimit });
           this.props.updateGasLimit(gasLimit);
         }

@@ -797,7 +797,6 @@ export const createEOSAddr = async function () {
 export const btcCoinSelect = function (utxos, value) {
   return new Promise((resolve, reject) => {
     wand.request('address_btcCoinSelect', { utxos, value }, (err, data) => {
-      // console.log('select:-----------:', err, data)
       if (err) {
         console.log('btcCoinSelect: ', err)
         return reject(err);
@@ -998,7 +997,6 @@ export const getChainInfoByChainId = function (chainId) {
 export const getMintQuota = function (chainType, tokenPairID, storemanGroupID) {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getMintQuota', { chainType, tokenPairID, storemanGroupID }, (err, res) => {
-      // console.log('getMintQuota:', err, res);
       if (err) {
         return resolve(false);
       } else {
@@ -1011,7 +1009,6 @@ export const getMintQuota = function (chainType, tokenPairID, storemanGroupID) {
 export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getBurnQuota', { chainType, tokenPairID, storemanGroupID }, (err, res) => {
-      // console.log('getBurnQuota:', err, res);
       if (err) {
         return resolve(false);
       } else {

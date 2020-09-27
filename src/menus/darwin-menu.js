@@ -178,7 +178,6 @@ export default (i18n) => {
                         type: 'radio',
                         click: async (m) => {
                             // !sdkInitialized
-                            console.log('sdkInitialized: ', sdkInitialized)
                             if (!setting.network.includes('main')) {
                                 menuFactoryService.networkMenu = m.menu
                                 const mainWin = Windows.getByType('main')

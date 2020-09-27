@@ -110,8 +110,6 @@ class InForm extends Component {
       wand.request('staking_validatorAppend', { tx }, (err, ret) => {
         if (err) {
           message.warn(intl.get('ValidatorRegister.topUpFailed'));
-        } else {
-          console.log('validatorIn ret:', ret);
         }
         this.setState({ confirmVisible: false });
         this.props.onSend();

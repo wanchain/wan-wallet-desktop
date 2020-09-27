@@ -22,7 +22,6 @@ class TokenTransHistory extends Component {
   }
 
   onClickRow = record => {
-    console.log('chain:', this.props.currTokenChain);
     let href = '';
     switch (this.props.currTokenChain) {
       case 'WAN':

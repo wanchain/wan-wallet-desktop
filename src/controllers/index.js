@@ -136,7 +136,6 @@ ipc.on(ROUTE_PHRASE, (event, actionUni, payload) => {
 ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
     let err
     const [action, id] = actionUni.split('#')
-    // console.log(actionUni);
 
     switch (action) {
         case 'lock':
@@ -329,7 +328,6 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
         case 'exportPrivateKeys':
             let privateKeys;
             try {
-                console.log('exportPrivateKeys wid:', payload.wid);
                 privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
                 privateKeys.forEach((item, index) => {
                     switch (payload.chainType) {
@@ -361,9 +359,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                     let chainID = getChainIdByType(type.toUpperCase(), network !== 'main');
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(pk) : Buffer.from(pk, 'hex');
                     let address = await hdUtil.getAddressByPrivateKey(wid, type.toUpperCase(), rawPriv);
-                    // console.log('address:', address);
                     let existAddress = await hdUtil.checkIsExist(((type === 'ETH' || type === 'WAN') ? `0x${address}` : address), chainID);
-                    // console.log('existAddress:', existAddress);
                     if (!existAddress) {
                         let pathForm = `m/44'/${chainID}'/0'/0/`;
                         let isValidAddress = false;
@@ -442,7 +438,6 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                         };
                     }
                 } catch (e) {
-                    // console.log('importPrivateKey Error:', e);
                     logger.error('importPrivateKey failed:')
                     logger.error(e.message || e.stack)
                     err = e
@@ -599,7 +594,6 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             try {
                 const { accounts } = payload;
                 let [...eosAccountInfo] = await Promise.all(accounts.map(v => ccUtil.getEosAccountInfo(v)));
-                // console.log('eosAccountInfo::::::::::::::', eosAccountInfo);
                 accounts.forEach((v, i) => {
                     obj[v] = eosAccountInfo[i];
                 });
@@ -641,13 +635,11 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             {
                 let balance, privateBalance;
                 const { addr, path } = payload;
-                // console.log('balances::::', addr, path);
                 try {
                     //private balance
                     let [...result] = await Promise.all(path.map(v => {
                         return new Promise((resolve, reject) => {
                             let OTABalances = ccUtil.getOtaFunds(v[0], v[1]);
-                            // console.log('OTABalances::::', OTABalances);
                             let amount = 0;
                             OTABalances.forEach(v => {
                                 amount = new BigNumber(amount).plus(new BigNumber(v.value));
@@ -1036,7 +1028,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             try {
                 let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path);
-                // console.log('normal from:::', from);
                 let fromAddr = from.address;
                 if (fromAddr.indexOf('0x') === -1) {
                     fromAddr = '0x' + fromAddr;
@@ -1085,7 +1076,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 logger.info('Normal transaction: ' + JSON.stringify(payload));
 
                 const EOSSYMBOL = ccUtil.encodeAccount('EOS', 'eosio.token:EOS');
-                // console.log('EOSSYMBOL', EOSSYMBOL)
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
@@ -1121,7 +1111,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     }
                 }
             } catch (e) {
-                console.log('-------------private tx failed------------------:', e);
                 logger.error('Send private transaction failed: ' + e.message || e.stack)
                 err = e
             }
@@ -2224,7 +2213,6 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (cost < 0) {
                     cost = cost * -1;
                 }
-                // console.log('btcNodeDelay result:', result);
                 if (!result) {
                     ret = 'Time out';
                 } else {
@@ -2252,7 +2240,6 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
                 if (cost < 0) {
                     cost = cost * -1;
                 }
-                // console.log('eosNodeDelay result:', result);
                 if (!result) {
                     ret = 'Time out';
                 } else {
@@ -2629,7 +2616,6 @@ async function retryRun(func, ...params) {
 }
 
 const getChainIdByType = function (type, isTestNet = false) {
-    // console.log(type, isTestNet);
     let ID
     switch (type) {
         case 'WAN':

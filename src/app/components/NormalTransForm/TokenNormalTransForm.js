@@ -91,14 +91,12 @@ class TokenNormalTransForm extends Component {
       message.warn(intl.get('Unknown token type')); // To do : i18n
       return;
     }
-    console.log('addrInfo:', addrInfo);
     form.validateFields(err => {
       if (err) {
         console.log('TokenNormalTransForm_handleNext', err);
         return;
       };
       let { pwd, amount: token, transferTo } = form.getFieldsValue(['pwd', 'amount', 'transferTo']);
-      console.log('amount:', token)
       let addrAmount = getBalanceByAddr(from, addrInfo);
       if (new BigNumber(addrAmount).lt(this.state.gasFee) || new BigNumber(balance).lt(token)) {
         message.warn(intl.get('NormalTransForm.overBalance'));

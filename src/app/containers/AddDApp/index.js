@@ -40,7 +40,6 @@ class AddDApp extends Component {
     e.preventDefault();
     this.form.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         let ret = this.props.addCustomDApp(values);
         if (!ret) {
           message.error(intl.get('DApp.addFailed'));

@@ -89,7 +89,7 @@ class Accounts extends Component {
               this.props.updateTransHistory();
             })
             resolve();
-            console.log('TxHash:', txHash);
+            console.log('Tx Hash:', txHash);
           }
         });
       });

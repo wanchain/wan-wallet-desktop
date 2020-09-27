@@ -100,7 +100,6 @@ class Sidebar extends Component {
 
     // Wallet menu
     let walletList = [];
-    // console.log('getWalletSelections;', getWalletSelections)
     getWalletSelections.forEach(v => {
       if (v.children.length === 0) {
         return false;
@@ -169,7 +168,6 @@ class Sidebar extends Component {
         });
       }
     });
-    // console.log('crossChainList:', crossChainList);
     crossChainChildren.splice(0, crossChainChildren.length, ...crossChainList);
 
     // Add cross chain.
