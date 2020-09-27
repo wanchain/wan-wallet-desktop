@@ -217,19 +217,18 @@ class CrossETHForm extends Component {
     const { quota } = this.state;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
     const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
-
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.fromTokenName} -> ${tokenPairInfo.toTokenName}`;
+      title = `${tokenPairInfo.fromTokenSymbol} -> ${tokenPairInfo.toTokenSymbol}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
       unit = tokenPairInfo.fromTokenSymbol;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.toTokenName} -> ${tokenPairInfo.fromTokenName}`;
+      title = `${tokenPairInfo.toTokenSymbol} -> ${tokenPairInfo.fromTokenSymbol}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
       unit = tokenPairInfo.toTokenSymbol;
     }

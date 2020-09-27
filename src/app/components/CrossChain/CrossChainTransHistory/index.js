@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Tooltip } from 'antd';
-import { getFullChainName, convertStatus } from 'utils/helper';
+import { convertStatus } from 'utils/helper';
 
 import style from 'components/TransHistory/index.less';
 import TransInfo from 'componentUtils/TransInfo';

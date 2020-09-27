@@ -10,7 +10,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
-import { WALLETID, TRANSTYPE, MAIN, TESTNET } from 'utils/settings';
+import { WALLETID, TRANSTYPE, MAIN, TESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor'
 
 message.config({
@@ -27,6 +27,7 @@ message.config({
   tokenIconList: stores.tokens.tokenIconList,
   tokensList: stores.tokens.tokensList,
   getTokensListInfo: stores.tokens.getTokensListInfo,
+  currTokenChain: stores.tokens.currTokenChain,
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
@@ -240,10 +241,23 @@ class TokenTrans extends Component {
     })
   }
 
-  onClickRow = () => {
-    let { chainId, tokenAddr } = this.props;
-    let href = chainId === 1 ? `${MAIN}/token/${tokenAddr}` : `${TESTNET}/token/${tokenAddr}`
-    wand.shell.openExternal(href);
+  onClickTokenAddress = () => {
+    let { chainId, tokenAddr, currTokenChain } = this.props;
+    let prefix = '';
+    switch (currTokenChain) {
+      case 'WAN':
+        prefix = chainId === 1 ? MAIN : TESTNET;
+        break;
+      case 'ETH':
+        prefix = chainId === 1 ? ETHMAIN : ETHTESTNET;
+        break;
+      case 'BTC':
+        prefix = chainId === 1 ? BTCMAIN : BTCTESTNET;
+        break;
+      default:
+        prefix = chainId === 1 ? MAIN : TESTNET;
+    }
+    wand.shell.openExternal(`${prefix}/token/${tokenAddr}`);
   }
 
   render() {
@@ -256,13 +270,13 @@ class TokenTrans extends Component {
       <div className="account">
         <Row className="title">
           <Col span={12} className="col-left">
-            <img className="totalImg" src={this.props.tokenIconList[this.props.tokenAddr]} />
+            <img className="totalImg" src={this.props.tokenIconList[tokenAddr]} />
             <span className="wanTotal">{getTokenAmount}</span>
             <span className="wanTex">{symbol}</span>
             <Tag className="symbol">{getFullChainName(chain)}</Tag>
           </Col>
           <Col span={12} className="col-right">
-            <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickRow}>{tokenAddr}</span></span>
+            <span className={style.tokenTxt}>{intl.get('Common.tokenAddr')}: <span className={style.tokenAddr} onClick={this.onClickTokenAddress}>{tokenAddr}</span></span>
           </Col>
         </Row>
         <Row className="mainBody">

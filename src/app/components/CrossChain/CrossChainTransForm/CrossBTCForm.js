@@ -228,7 +228,6 @@ class CrossBTCForm extends Component {
         unit = currentTokenPairInfo.toTokenSymbol;
       }
     }
-
     return (
       <div>
         <Modal

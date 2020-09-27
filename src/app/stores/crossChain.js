@@ -3,8 +3,6 @@ import { observable, action, computed, toJS } from 'mobx';
 import tokens from './tokens';
 import session from './session';
 import wanAddress from './wanAddress';
-import ethAddress from './ethAddress';
-import eosAddress from './eosAddress';
 import btcAddress from './btcAddress';
 import { getInfoByAddress, getInfoByPath } from 'utils/helper';
 import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
