@@ -44,6 +44,10 @@ export function roundFun (value, n) {
   return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
 }
 
+export function floorFun (value, n) {
+  return Math.floor(value * Math.pow(10, n)) / Math.pow(10, n);
+}
+
 export function timeFormat (time) {
   const current = new Date(time * 1000);
   let date = ('0' + current.getDate()).substr(-2);
