@@ -36,6 +36,7 @@ const pt_PT = {
     'Common.convert': 'Converter',
     'Common.storeman': 'Storeman',
     'Common.chain': 'Chain (cadeia/blockchain)',
+    'Common.amountTooLow': 'O valor mínimo deve ser { minAmount } WAN',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',

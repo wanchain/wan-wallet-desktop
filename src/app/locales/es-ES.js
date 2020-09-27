@@ -36,6 +36,7 @@ const es_ES = {
     'Common.convert': 'Convertir',
     'Common.storeman': 'Storeman',
     'Common.chain': 'Chain',
+    'Common.amountTooLow': 'La cantidad minima debe ser de { minAmount } WAN',
 
     'Layout.connecting': 'conectando al servidor',
     'Layout.connected': 'conectado al servidor',

@@ -36,6 +36,7 @@ const ko_KR = {
     'Common.convert': '변환',
     'Common.storeman': 'Storeman',
     'Common.chain': '체인',
+    'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',

@@ -36,6 +36,7 @@ const en_US = {
     'Common.convert': 'Convert',
     'Common.storeman': 'Storeman',
     'Common.chain': 'Chain',
+    'Common.amountTooLow': 'Minimum amount should be { minAmount } WAN',
 
     'Layout.connecting': 'connecting to server',
     'Layout.connected': 'connected to server',

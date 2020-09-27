@@ -16,7 +16,6 @@ import style from 'components/Staking/DelegateInForm/index.less';
 import { checkAmountUnit, getValueByAddrInfo } from 'utils/helper';
 
 const colSpan = 6;
-const MINAMOUNT = 100;
 const ACTION = 'delegateIn';
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
@@ -44,6 +43,7 @@ class OsmDelegateInForm extends Component {
       gasLimit: '0',
       loading: false,
       record: undefined,
+      minAmount: '0',
       confirmVisible: false,
       confirmLoading: false,
       storemanInfo: undefined,
@@ -75,17 +75,19 @@ class OsmDelegateInForm extends Component {
       form.setFieldsValue({
         storeman,
         crosschain,
+        amount: fromWei(groupInfo.minDelegateIn),
         quota: storemanInfo ? new BigNumber(fromWei(storemanInfo.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
         delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
-      this.setState({ storemanInfo });
+      this.setState({ storemanInfo, minAmount: fromWei(groupInfo.minDelegateIn) });
     } else {
       form.setFieldsValue({
         storeman: null,
         quota: '0',
         delegationFee: '0',
+        amount: '0'
       });
-      this.setState({ storemanInfo: undefined });
+      this.setState({ storemanInfo: undefined, minAmount: '0' });
     }
   }
 
@@ -96,18 +98,17 @@ class OsmDelegateInForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     let { form } = this.props;
-    let valueStringPre = value.toString().slice(0, 4);
     let { quota, balance } = form.getFieldsValue(['quota', 'balance']);
 
-    if (value === undefined || !checkAmountUnit(18, value)) {
+    if (value === '0' || value === undefined || !checkAmountUnit(18, value)) {
       callback(intl.get('Common.invalidAmount'));
     }
-    if (new BigNumber(value).lt('1') || Math.floor(valueStringPre) < 1) {
-      callback(intl.get('StakeInForm.stakeTooLow'));
+    if (new BigNumber(value).gte(balance)) {
+      callback(intl.get('NormalTransForm.overBalance'));
       return;
     }
-    if (new BigNumber(value).gte(balance)) {
-      callback(intl.get('SendNormalTrans.overBalance'));
+    if (new BigNumber(value).lt(this.state.minAmount)) {
+      callback(intl.get('Common.amountTooLow', { minAmount: this.state.minAmount }));
       return;
     }
     if (new BigNumber(value).gt(quota)) {
@@ -392,7 +393,7 @@ class OsmDelegateInForm extends Component {
                 options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
-                placeholder={MINAMOUNT}
+                placeholder={'0'}
                 colSpan={colSpan}
               />
               <CommonFormItem form={form} formName='fee' disabled={true}

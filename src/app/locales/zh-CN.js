@@ -36,6 +36,7 @@ const zh_CN = {
     'Common.convert': '转换',
     'Common.storeman': '跨链节点',
     'Common.chain': '链名',
+    'Common.amountTooLow': '最低金额是{minAmount}WAN',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',

@@ -218,11 +218,6 @@ class LanguageIntl {
         title: intl.get('Storeman.crosschain'),
       },
       {
-        key: 'currDeposit',
-        dataIndex: 'currDeposit',
-        title: intl.get('Storeman.stake'),
-      },
-      {
         key: 'delegationFee',
         dataIndex: 'delegationFee',
         title: intl.get('Storeman.delegateFee'),

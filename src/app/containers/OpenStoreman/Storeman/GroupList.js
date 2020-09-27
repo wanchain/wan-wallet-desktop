@@ -71,9 +71,6 @@ class GroupList extends Component {
       },
       {
         ...osmGroupListColumns[5],
-      },
-      {
-        ...osmGroupListColumns[6],
         render: (text, record) =>
           <div>
             <Row>

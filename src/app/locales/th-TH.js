@@ -36,6 +36,7 @@ const th_TH = {
     'Common.convert': 'แปลง',
     'Common.storeman': 'Storeman',
     'Common.chain': 'เชน',
+    'Common.amountTooLow': 'จำนวนจะต้องไม่ต่ำกว่า { minAmount } WAN',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',

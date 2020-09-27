@@ -1,4 +1,4 @@
-import { Row, Col, Table } from 'antd';
+import { Row, Col, Table, Popover } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
@@ -52,9 +52,25 @@ class MyStoremanList extends Component {
 
   getColumns () {
     const { osmStoremanListColumns } = this.props;
+
     return [
       {
-        ...osmStoremanListColumns[0]
+        ...osmStoremanListColumns[0],
+        render: (account, record) => {
+          const text = <span>More information</span>;
+          const content = (
+            <div>
+              <p>STOREMAN: {record.wkAddr}</p>
+              <p>GROUPID: {record.groupId}</p>
+            </div>
+          );
+          return (
+            <Popover placement="topLeft" title={text} content={content}>
+              <p>{account}</p>
+            </Popover>
+          )
+        }
+
       },
       {
         ...osmStoremanListColumns[1],
