@@ -426,7 +426,7 @@ class LanguageIntl {
         ]
       },
       {
-        title: intl.get('Storeman.storeman'),
+        title: intl.get('Common.storeman'),
         step: '1',
         key: '/openstoreman',
         icon: 'pie-chart',
@@ -437,7 +437,7 @@ class LanguageIntl {
             icon: 'block'
           },
           {
-            title: intl.get('Storeman.storeman'),
+            title: intl.get('Common.storeman'),
             key: '/osm_storeman',
             icon: 'block'
           }
