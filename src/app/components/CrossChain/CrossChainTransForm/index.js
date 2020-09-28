@@ -90,7 +90,7 @@ class CrossChainTransForm extends Component {
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
 
-      if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+      if (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
@@ -120,7 +120,7 @@ class CrossChainTransForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { balance, chainType, smgList, form, estimateFee, from, tokenPairs, currTokenPairId } = this.props;
+    const { balance, chainType, smgList, form, estimateFee, from, type, tokenPairs, currTokenPairId } = this.props;
     let tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     const decimals = tokenPairInfo.ancestorDecimals;
 
@@ -128,10 +128,10 @@ class CrossChainTransForm extends Component {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
-        /* if (chainType === 'WAN') {
+        /* if (type === OUTBOUND) {
           let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
           let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString(); // Outbound: crosschain fee + gas fee
           form.setFieldsValue({
             totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
           });

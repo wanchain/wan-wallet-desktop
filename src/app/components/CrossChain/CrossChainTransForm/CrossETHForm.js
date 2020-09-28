@@ -3,12 +3,11 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
-
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import { ETHPATH, WANPATH, PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS } from 'utils/settings';
+import { ETHPATH, WANPATH, PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
@@ -89,23 +88,14 @@ class CrossETHForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
-      /* let origAddrAmount = getBalanceByAddr(from, chainType === 'ETH' ? addrInfo : wanAddrInfo);
-      let destAddrAmount = getBalanceByAddr(to, chainType === 'ETH' ? wanAddrInfo : addrInfo);
-      let path = chainType === 'ETH' ? WANPATH + wanAddrInfo.normal[to].path : ETHPATH + addrInfo.normal[to].path; */
 
-      /* if (tokenAddr) {
-        if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } else {
-        if (isExceedBalance(origAddrAmount, estimateFee.original, chainType === 'ETH' ? sendAmount : 0) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
-          message.warn(intl.get('CrossChainTransForm.overBalance'));
-          return;
-        }
-      } */
-
-      if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+      // inbound
+      if (type === INBOUND && (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      }
+      // outbound
+      if (type === OUTBOUND && (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
@@ -136,18 +126,27 @@ class CrossETHForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     // const { decimals, balance, chainType, smgList, form, estimateFee } = this.props;
-    const { balance, chainType, smgList, form, estimateFee, from, tokenPairs, currTokenPairId } = this.props;
+    const { balance, chainType, smgList, form, estimateFee, from, type, tokenPairs, currTokenPairId } = this.props;
     let tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     const decimals = tokenPairInfo.ancestorDecimals;
-
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
-      if (new BigNumber(value).gt(balance)) {
-        callback(intl.get('CrossChainTransForm.overTransBalance'));
+      if (type === INBOUND) {
+        if (new BigNumber(value).plus(estimateFee.original).gt(balance)) {
+          callback(intl.get('CrossChainTransForm.overTransBalance'));
+        } else {
+          callback();
+        }
+      } else if (type === OUTBOUND) {
+        if (new BigNumber(value).gt(balance)) {
+          callback(intl.get('CrossChainTransForm.overTransBalance'));
+        } else {
+          callback();
+        }
       } else {
-        /* if (chainType === 'WAN') {
+        /* if (type === OUTBOUND) {
           let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
           let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();// Outbound: crosschain fee + gas fee
           form.setFieldsValue({
             totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
           });

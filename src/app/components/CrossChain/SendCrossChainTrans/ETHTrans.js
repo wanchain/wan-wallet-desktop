@@ -71,9 +71,13 @@ class ETHTrans extends Component {
       }
       this.setState({
         smgList,
-        estimateFee: {
+        /* estimateFee: {
           original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
+        }, */
+        estimateFee: {
+          original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
+          destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
         },
         gasPrice,
       });

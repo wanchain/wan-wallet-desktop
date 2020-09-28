@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 import { getGasPrice, getBalanceByAddr, getSmgList, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossWANForm from 'components/CrossChain/CrossChainTransForm/CrossWANForm';
-import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
+import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
 
 const TransForm = Form.create({ name: 'CrossWANForm' })(CrossWANForm);
 
@@ -45,24 +45,24 @@ class WANTrans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
     if (type === INBOUND) {
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
-        return;
-      }
       if (balance === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
+        return;
+      }
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
       desChain = info.toChainSymbol;
       origGas = LOCKETH_GAS;// ToDo
       destGas = REDEEMWETH_GAS;// ToDo
     } else {
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
-        return;
-      }
       if (balance === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
+        return;
+      }
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
+        message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
       desChain = info.fromChainSymbol;
@@ -85,14 +85,17 @@ class WANTrans extends Component {
       }
       this.setState({
         smgList,
-        estimateFee: {
+        /* estimateFee: {
           original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
+        }, */
+        estimateFee: {
+          original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
+          destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
         },
         gasPrice,
       });
       storeman = smgList[0].groupId;
-
       updateTransParams(from, {
         gasPrice,
         gasLimit: origGas,

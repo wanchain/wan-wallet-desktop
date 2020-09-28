@@ -67,7 +67,6 @@ class CrossBTCForm extends Component {
         destAddrAmount = getBalanceByAddr(to, toAddrInfo);
         origAddrFee = this.state.fee;
         destAddrFee = estimateFee.destination;
-
         if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
@@ -77,8 +76,7 @@ class CrossBTCForm extends Component {
         destAddrAmount = getBalanceByAddr(to, addrInfo);
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
-
-        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(balance, sendAmount) || isExceedBalance(formatNumByDecimals(smgList[0].quota, 8), sendAmount)) {
+        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(balance, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
@@ -115,15 +113,19 @@ class CrossBTCForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee } = this.props;
+    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee, balance } = this.props;
     let { quota } = form.getFieldsValue(['quota']);
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
         if (direction === INBOUND) {
           btcCoinSelect(utxos, value).then(data => {
             let fee = formatNumByDecimals(data.fee, 8);
-            this.setState({ fee })
-            if (isExceedBalance(quota.split(' ')[0], value, fee)) {
+            this.setState({ fee });
+            if (isExceedBalance(balance, fee, value)) {
+              callback(intl.get('CrossChainTransForm.overBalance'));
+              return;
+            }
+            if (isExceedBalance(quota.split(' ')[0], value)) {
               callback(intl.get('CrossChainTransForm.overQuota'));
               return;
             }
@@ -133,6 +135,10 @@ class CrossBTCForm extends Component {
             callback(intl.get('Common.invalidAmount'));
           });
         } else {
+          if (isExceedBalance(balance, value)) {
+            callback(intl.get('CrossChainTransForm.overBalance'));
+            return;
+          }
           this.setState({ fee: btcFee });
           callback();
         }

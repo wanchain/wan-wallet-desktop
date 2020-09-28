@@ -102,14 +102,14 @@ class CrossEOSForm extends Component {
       if (new BigNumber(value).gt(balance)) {
         callback(intl.get('CrossChainTransForm.overTransBalance'));
       } else {
-        if (direction !== INBOUND) {
+        /* if (direction !== INBOUND) {
           let storemanAccount = form.getFieldValue('storemanAccount');
           let smg = smgList.find(item => item.storemanGroup.substr(0, 24) === storemanAccount.substr(0, 24));
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString();
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString(); // Outbound: crosschain fee + gas fee
           form.setFieldsValue({
             totalFee: `${new BigNumber(newOriginalFee).plus(estimateFee)} WAN`,
           });
-        }
+        } */
         callback();
       }
     } else {

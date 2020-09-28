@@ -190,7 +190,7 @@ class CrossWAN extends Component {
     return (
       <div className="account">
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.fromTokenName} </span><span className={style.chain}>{info.fromChainName}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.fromTokenSymbol} </span><span className={style.chain}>{info.fromChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
@@ -198,7 +198,7 @@ class CrossWAN extends Component {
           </Col>
         </Row>
         <Row className="title">
-          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.toTokenName} </span><span className={style.chain}>{info.toChainName}</span></Col>
+          <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{info.toTokenSymbol} </span><span className={style.chain}>{info.toChainName}</span></Col>
         </Row>
         <Row className="mainBody">
           <Col>
