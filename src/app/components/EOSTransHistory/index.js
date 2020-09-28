@@ -15,7 +15,6 @@ const TESTNET = 'https://jungle.bloks.io';
   normalHistoryList: stores.eosAddress.normalHistoryList,
   resourceHistoryList: stores.eosAddress.resourceHistoryList,
   selectedAddr: stores.eosAddress.selectedAddr,
-  transColumns: stores.languageIntl.transColumns,
   privateTransColumns: stores.languageIntl.privateTransColumns,
   setCurrPage: page => stores.eosAddress.setCurrPage(page),
   setHistorySelectedAccountName: name => stores.eosAddress.setHistorySelectedAccountName(name)

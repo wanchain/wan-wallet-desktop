@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Tooltip } from 'antd';
 import { convertStatus } from 'utils/helper';
-
+import { cloneDeep } from 'lodash';
 import style from 'components/TransHistory/index.less';
 import TransInfo from 'componentUtils/TransInfo';
 import history from 'static/image/history.png';
@@ -44,7 +44,8 @@ class CrossChainTransHistory extends Component {
   }
 
   render() {
-    const { crossChainTrans, transColumns } = this.props;
+    const { crossChainTrans } = this.props;
+    let transColumns = cloneDeep(this.props.transColumns);
     transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{record.srcChainType}</span></div>;
     transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{record.dstChainType}</span></div>;
     transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
