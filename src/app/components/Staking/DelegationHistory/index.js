@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Avatar } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
+import { cloneDeep } from 'lodash';
 import style from './index.less';
 import history from 'static/image/history.png';
 import { MAIN, TESTNET } from 'utils/settings'
@@ -28,9 +28,10 @@ class DelegationHistory extends Component {
   }
 
   stakingColumnsTree = () => {
-    this.props.stakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
-    this.props.stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
-    return this.props.stakingColumns;
+    let stakingColumns = cloneDeep(this.props.stakingColumns);
+    stakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
+    stakingColumns[3].render = validator => <span title={validator.address}><Avatar src={validator.img} size="large" /> {validator.name}</span>;
+    return stakingColumns;
   }
 
   render () {

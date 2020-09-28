@@ -2,7 +2,7 @@ import { Table, Avatar } from 'antd';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-
+import { cloneDeep } from 'lodash';
 import style from './index.less';
 import history from 'static/image/history.png';
 import { MAIN, TESTNET } from 'utils/settings'
@@ -23,8 +23,9 @@ class OsmStakeHistory extends Component {
   }
 
   stakingColumnsTree = () => {
-    this.props.osmStakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
-    return this.props.osmStakingColumns;
+    let osmStakingColumns = cloneDeep(this.props.osmStakingColumns);
+    osmStakingColumns[2].render = (from, info) => <span title={info.fromAddress}>{from}</span>;
+    return osmStakingColumns;
   }
 
   render () {
