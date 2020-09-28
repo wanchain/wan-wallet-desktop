@@ -209,13 +209,13 @@ class CrossBTCForm extends Component {
       desChain = info.toChainSymbol;
       toAccountList = toAddrInfo;
       selectedList = Object.keys(toAddrInfo.normal);
-      title = `${currentTokenPairInfo.fromTokenSymbol} -> ${currentTokenPairInfo.toTokenSymbol}`;
+      title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
       totalFeeTitle = `${this.state.fee} ${currentTokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${currentTokenPairInfo.toChainSymbol}`;
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = addrInfo;
       selectedList = Object.keys(addrInfo.normal);
-      title = `${currentTokenPairInfo.toTokenSymbol} -> ${currentTokenPairInfo.fromTokenSymbol}`;
+      title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
       totalFeeTitle = `${estimateFee.original} ${currentTokenPairInfo.toChainSymbol} + ${this.state.fee} ${currentTokenPairInfo.fromChainSymbol}`;
     }
 

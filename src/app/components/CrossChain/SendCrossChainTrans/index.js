@@ -79,7 +79,6 @@ class Trans extends Component {
     addCrossTransTemplate(from, { chainType, path });
     try {
       let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      console.log('smgList:', smgList)
       smgList = smgList.filter(obj => {
         let now = Date.now();
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);

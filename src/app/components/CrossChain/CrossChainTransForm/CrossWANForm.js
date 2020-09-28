@@ -215,7 +215,7 @@ class CrossWANForm extends Component {
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
       fromAccount = record.name;
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
-      title = `${tokenPairInfo.fromTokenSymbol} -> ${tokenPairInfo.toTokenSymbol}`;
+      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${estimateFee.original}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
       unit = tokenPairInfo.fromTokenSymbol;
     } else {
@@ -223,7 +223,7 @@ class CrossWANForm extends Component {
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
       fromAccount = record.name;
       selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
-      title = `${tokenPairInfo.toTokenSymbol} -> ${tokenPairInfo.fromTokenSymbol}`;
+      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${estimateFee.original}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
       unit = tokenPairInfo.toTokenSymbol;
     }

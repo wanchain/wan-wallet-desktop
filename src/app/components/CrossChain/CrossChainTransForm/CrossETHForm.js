@@ -220,14 +220,14 @@ class CrossETHForm extends Component {
       desChain = tokenPairInfo.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.fromTokenSymbol} -> ${tokenPairInfo.toTokenSymbol}`;
+      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
       unit = tokenPairInfo.fromTokenSymbol;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.toTokenSymbol} -> ${tokenPairInfo.fromTokenSymbol}`;
+      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
       unit = tokenPairInfo.toTokenSymbol;
     }
@@ -300,7 +300,7 @@ class CrossETHForm extends Component {
                 selectedList={selectedList}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
               />
-             {/*  <SelectForm
+              {/*  <SelectForm
                 form={form}
                 colSpan={6}
                 formName='crossType'
