@@ -71,13 +71,13 @@ class MoreAccount extends Component {
     let { getWalletSelections } = this.props;
     return (
       <div className={style['moreCrossChain']}>
-        <Row>
+        {/* <Row>
           <Col>
             <div className={style['addCustom']} onClick={this.handleAddToken}>
               <Icon type="plus" style={{ fontWeight: 'bold' }}/>
             </div>
           </Col>
-        </Row>
+        </Row> */}
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletSelections} />
