@@ -7,6 +7,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
+import { formatNum } from 'utils/support';
 import style from './index.less';
 
 const CHAINTYPE = 'BTC';
@@ -136,6 +137,7 @@ class CrossBTC extends Component {
       width: '30%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     }
   ];
 
@@ -155,6 +157,7 @@ class CrossBTC extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

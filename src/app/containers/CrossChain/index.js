@@ -6,6 +6,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND, COIN_ACCOUNT } from 'utils/settings';
 import Trans from 'components/CrossChain/SendCrossChainTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
+import { formatNum } from 'utils/support';
 import style from './index.less';
 
 @inject(stores => ({
@@ -175,6 +176,7 @@ class CrossChain extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',
@@ -201,6 +203,7 @@ class CrossChain extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

@@ -315,7 +315,7 @@ class CrossWANForm extends Component {
                 title={intl.get('Common.amount')}
               />
               {
-                !(chainType === 'ETH' && symbol === undefined) && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
+                type === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
               }
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
             </div>

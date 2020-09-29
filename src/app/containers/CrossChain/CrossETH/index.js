@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
-
+import { formatNum } from 'utils/support';
 import totalImg from 'static/image/eth.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
@@ -145,6 +145,7 @@ class CrossETH extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',
@@ -169,6 +170,7 @@ class CrossETH extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

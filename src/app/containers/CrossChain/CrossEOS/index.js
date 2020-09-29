@@ -7,6 +7,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import EOSTrans from 'components/CrossChain/SendCrossChainTrans/EOSTrans';
 import CrossEOSHistory from 'components/CrossChain/CrossChainTransHistory/CrossEOSHistory';
+import { formatNum } from 'utils/support';
 import style from './index.less';
 
 const CHAINTYPE = 'EOS';
@@ -112,6 +113,7 @@ class CrossEOS extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',
@@ -136,6 +138,7 @@ class CrossEOS extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

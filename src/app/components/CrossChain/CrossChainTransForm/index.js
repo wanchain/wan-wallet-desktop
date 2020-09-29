@@ -184,7 +184,6 @@ class CrossChainTransForm extends Component {
   sendAllAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
-      balance = typeof (balance) === 'string' ? balance.replace(/,/g, '') : balance;
       form.setFieldsValue({
         amount: new BigNumber(balance).toString(10)
       });
@@ -312,6 +311,7 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
               />
+              <Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
             </div>
           </Spin>

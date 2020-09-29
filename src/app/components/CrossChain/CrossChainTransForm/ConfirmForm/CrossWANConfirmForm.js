@@ -38,7 +38,7 @@ class CrossWANConfirmForm extends Component {
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('Common.storeman')}>
-            {getFieldDecorator('storemanAccount', { initialValue: storeman })(inputCom)}
+            {getFieldDecorator('storemanAccount', { initialValue: storeman.replace(/^(\w{24})\w*(\w{24})$/g, '$1****$2') })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}

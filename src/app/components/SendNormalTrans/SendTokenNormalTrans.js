@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import wanUtil, { toChecksumOTAddress } from 'wanchain-util';
-
 import { TRANSTYPE } from 'utils/settings';
 import NormalTransForm from 'components/NormalTransForm';
 import TokenNormalTransForm from 'components/NormalTransForm/TokenNormalTransForm';

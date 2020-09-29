@@ -7,6 +7,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import WANTrans from 'components/CrossChain/SendCrossChainTrans/WANTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossWANHistory';
+import { formatNum } from 'utils/support';
 import style from './index.less';
 
 const CHAINTYPE = 'WAN';
@@ -145,6 +146,7 @@ class CrossWAN extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',
@@ -169,6 +171,7 @@ class CrossWAN extends Component {
       width: '20%',
       ellipsis: true,
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

@@ -430,17 +430,18 @@ class WanAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item]['from'])) {
-        let status = self.transHistory[item].status;
-        let type = checkAddrType(self.transHistory[item]['from'], self.addrInfo)
+      let data = self.transHistory[item];
+      if (addrList.includes(data['from'])) {
+        let status = data.status;
+        let type = checkAddrType(data['from'], self.addrInfo);
         historyList.push({
           key: item,
-          time: timeFormat(self.transHistory[item]['sendTime']),
-          from: self.addrInfo[type][self.transHistory[item]['from']].name,
-          to: wanUtil.toChecksumAddress(self.transHistory[item].to.toLowerCase()),
-          value: formatNum(fromWei(self.transHistory[item].value)),
+          time: timeFormat(data['sendTime']),
+          from: self.addrInfo[type][data['from']].name,
+          to: wanUtil.toChecksumAddress(data.to.toLowerCase()),
+          value: formatNum(fromWei(data.value)),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item]['sendTime'],
+          sendTime: data['sendTime'],
           offline: !!item.offline
         });
       }

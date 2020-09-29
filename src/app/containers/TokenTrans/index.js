@@ -3,15 +3,14 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message, Tag } from 'antd';
-
-import style from './index.less';
 import TokenTransHistory from 'components/TransHistory/TokenTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
-import { signTransaction } from 'componentUtils/trezor'
+import { signTransaction } from 'componentUtils/trezor';
+import style from './index.less';
 
 message.config({
   duration: 2,
@@ -164,7 +163,7 @@ class TokenTrans extends Component {
                 wand.request('transaction_insertTransToDB', {
                   rawTx: {
                     txHash,
-                    value: trans.amount,
+                    value: '0x0',
                     from: from.toLowerCase(),
                     srcSCAddrKey: 'WAN',
                     srcChainType: 'WAN',
@@ -205,7 +204,7 @@ class TokenTrans extends Component {
                 wand.request('transaction_insertTransToDB', {
                   rawTx: {
                     txHash,
-                    value: trans.amount,
+                    value: '0x0',
                     from: from.toLowerCase(),
                     srcSCAddrKey: 'WAN',
                     srcChainType: 'WAN',

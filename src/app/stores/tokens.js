@@ -170,7 +170,8 @@ class Tokens {
       select: tokenInfo.select,
       chain: tokenInfo.chain,
       symbol: tokenInfo.symbol,
-      decimals: tokenInfo.decimals
+      decimals: tokenInfo.decimals,
+      isCustomToken: tokenInfo.isCustomToken,
     }
   }
 
@@ -213,8 +214,8 @@ class Tokens {
       addrList.push({
         key: item,
         name: addresses[item].name,
-        address: wanUtil.toChecksumAddress(item),
-        balance: formatNum(balance),
+        address: item,
+        balance,
         path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
@@ -246,12 +247,11 @@ class Tokens {
       } else {
         balance = 0;
       }
-
       addrList.push({
         key: item,
         name: addresses[item].name,
-        address: wanUtil.toChecksumAddress(item),
-        balance: formatNum(balance),
+        address: item,
+        balance,
         path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
@@ -389,8 +389,8 @@ class Tokens {
         addrList.push({
           key: item,
           name: obj[item].name,
-          address: wanUtil.toChecksumAddress(item),
-          balance: formatNum(balance),
+          address: item,
+          balance,
           path: obj[item].path.startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance
@@ -437,6 +437,7 @@ class Tokens {
         account: v.account,
         toAccount: key,
         selected: v.select,
+        isCustomToken: !!v.isCustomToken
       });
     });
     return Object.values(selections).sort((m, n) => {
