@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, Icon } from 'antd';
+import { Table, Row, Col, Icon, Modal, message } from 'antd';
 import ChainMiniList from './ChainMiniList';
 import SelectChainType from 'componentUtils/SelectChainType';
 import { COIN_ACCOUNT } from 'utils/settings';
@@ -12,6 +12,7 @@ import style from './index.less';
   getWalletSelections: stores.tokens.getWalletSelections,
   tokenIconList: stores.tokens.tokenIconList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  deleteCustomToken: token => stores.tokens.deleteCustomToken(token),
 }))
 
 @observer
@@ -22,6 +23,8 @@ class MoreAccount extends Component {
       pairFilter: false,
       selectedOnly: false,
       showAddToken: false,
+      showDeleteToken: false,
+      deleteObj: {},
     }
     this.props.changeTitle('MoreTokens.tokenList');
   }
@@ -47,7 +50,7 @@ class MoreAccount extends Component {
       title: 'CROSS-CHAIN',
       align: 'center',
       ellipsis: false,
-      render: (text, record) => <ChainMiniList record={record} />
+      render: (text, record) => <ChainMiniList record={record} handleDelete={this.handleDelete} />
     },
     {
       flex: 1
@@ -67,17 +70,47 @@ class MoreAccount extends Component {
     });
   }
 
+  handleDelete =(data) => {
+    this.setState({
+      deleteObj: data,
+      showDeleteToken: true
+    });
+  }
+
+  deleteConfirm = () => {
+    const addr = this.state.deleteObj.toAccount;
+    wand.request('crossChain_deleteCustomToken', { tokenAddr: addr }, err => {
+      if (err) {
+        console.log('stores_deleteCustomToken', err);
+        message.warn(intl.get('Config.deleteTokenAddrErr'));
+      } else {
+        this.props.deleteCustomToken(addr);
+        message.success(intl.get('TransHistory.success'));
+      }
+    });
+    this.setState({
+      showDeleteToken: false,
+      deleteObj: {},
+    })
+  }
+
+  deleteCancel = () => {
+    this.setState({
+      showDeleteToken: false
+    });
+  }
+
   render() {
     let { getWalletSelections } = this.props;
     return (
       <div className={style['moreCrossChain']}>
-        {/* <Row>
+        <Row>
           <Col>
             <div className={style['addCustom']} onClick={this.handleAddToken}>
               <Icon type="plus" style={{ fontWeight: 'bold' }}/>
             </div>
           </Col>
-        </Row> */}
+        </Row>
         <Row className="mainBody">
           <Col>
             <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletSelections} />
@@ -86,6 +119,21 @@ class MoreAccount extends Component {
         {
           this.state.showAddToken && <SelectChainType onCancel={this.onCancel} />
         }
+        <Modal
+            title={intl.get('Config.deleteConfirm')}
+            visible={this.state.showDeleteToken}
+            onOk={this.deleteConfirm}
+            onCancel={this.deleteCancel}
+            closable={false}
+            okText={intl.get('Common.ok')}
+            cancelText={intl.get('Common.cancel')}
+            bodyStyle={{ textAlign: 'center' }}
+          >
+            <div className={style.deleteMsg}>
+              <span className={style.deleteConfirmMsg}>{intl.get('CopyAndQrcode.confirmText')} : </span>
+              <span className={style.symbolSty}>{this.state.deleteObj.symbol}</span>
+            </div>
+          </Modal>
       </div>
     );
   }

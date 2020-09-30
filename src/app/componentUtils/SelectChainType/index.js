@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Modal, Input, Button, message, Descriptions, Radio } from 'antd';
+import { Modal, Button, Radio } from 'antd';
 import AddToken from 'componentUtils/AddToken';
 import wanImg from 'static/image/wan.png';
 import ethImg from 'static/image/eth.png';

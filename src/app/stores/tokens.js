@@ -1,4 +1,3 @@
-import wanUtil from 'wanchain-util';
 import BigNumber from 'bignumber.js';
 import { observable, action, computed } from 'mobx';
 import Identicon from 'identicon.js';

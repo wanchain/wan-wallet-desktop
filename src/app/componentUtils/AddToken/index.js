@@ -54,11 +54,11 @@ class AddToken extends Component {
 
   handleAddToken = () => {
     const { tokensList, addCustomToken, chain } = this.props;
-    const { tokenAddr, tokenInfo } = this.state;
+    let { tokenAddr, tokenInfo } = this.state;
+    tokenAddr = tokenAddr.toLowerCase();
     const key = `${Number('0x80000000'.toString(10)) + (chain === 'WAN' ? 5718350 : 60)}-${tokenAddr}`;
-    let token = { key, account: tokenAddr, ancestor: tokenInfo.symbol, chain: chain === 'WAN' ? 'Wanchain' : 'Ethereum', chainSymbol: chain, decimals: tokenInfo.decimals, select: true, symbol: tokenInfo.symbol };
-    // console.log('token:', token);
-    if (tokensList[key.toLowerCase()]) {
+    let token = { key, account: tokenAddr, ancestor: tokenInfo.symbol, chain: chain === 'WAN' ? 'Wanchain' : 'Ethereum', chainSymbol: chain, decimals: tokenInfo.decimals, select: true, symbol: tokenInfo.symbol, isCustomToken: true };
+    if (tokensList[key]) {
       message.warn(intl.get('Config.existedTokenAddr'));
       this.setState({
         showConfirm: false
@@ -75,8 +75,8 @@ class AddToken extends Component {
         console.log('crossChain_addCustomToken', err);
         message.warn(intl.get('Config.addTokenAddrErr'));
       } else {
-        addCustomToken(token)
-        message.success(intl.get('TransHistory.success'))
+        addCustomToken(token);
+        message.success(intl.get('TransHistory.success'));
       }
       this.props.onCloseAll();
     })

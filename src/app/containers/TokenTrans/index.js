@@ -10,6 +10,7 @@ import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
 import { WALLETID, TRANSTYPE, MAIN, TESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor';
+import { formatNum } from 'utils/support';
 import style from './index.less';
 
 message.config({
@@ -115,6 +116,7 @@ class TokenTrans extends Component {
     {
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
+      render: num => formatNum(num),
     },
     {
       dataIndex: 'action',

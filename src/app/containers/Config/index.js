@@ -13,15 +13,12 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
   language: stores.languageIntl.language,
   network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
-  deleteCustomToken: token => stores.tokens.deleteCustomToken(token),
 }))
 
 @observer
 class Config extends Component {
   state = {
     showConfirm: false,
-    showDeleteToken: false,
-    tokenToDelete: null,
   }
 
   handleChange = e => {
@@ -67,38 +64,6 @@ class Config extends Component {
     this.setState({
       showConfirm: false
     });
-  }
-
-  showDeleteToken = (token) => {
-    this.setState({
-      showDeleteToken: true,
-      tokenToDelete: token,
-    })
-  }
-
-  hideDeleteToken = () => {
-    this.setState({
-      showDeleteToken: false,
-      tokenToDelete: null,
-    })
-  }
-
-  deleteToken = () => {
-    const addr = this.state.tokenToDelete.addr;
-    wand.request('crossChain_deleteCustomToken', { tokenAddr: addr }, err => {
-      if (err) {
-        console.log('stores_deleteCustomToken', err);
-        message.warn(intl.get('Config.deleteTokenAddrErr'));
-      } else {
-        this.props.deleteCustomToken(addr);
-        message.success(intl.get('TransHistory.success'))
-      }
-    });
-    this.hideDeleteToken();
-  }
-
-  deleteCrossChainToken = (token) => {
-    console.log('deleteCrossChainToken:', token);
   }
 
   render() {
@@ -149,9 +114,6 @@ class Config extends Component {
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
         </Card>
-        {
-          this.state.showDeleteToken && <ConfirmDeleteToken token={this.state.tokenToDelete} onOk={this.deleteToken} onClose={this.hideDeleteToken} />
-        }
       </div>
     );
   }

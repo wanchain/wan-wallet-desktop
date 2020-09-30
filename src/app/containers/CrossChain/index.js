@@ -10,17 +10,12 @@ import { formatNum } from 'utils/support';
 import style from './index.less';
 
 @inject(stores => ({
-  tokenIconList: stores.tokens.tokenIconList,
   language: stores.languageIntl.language,
-  getNormalAddrList: stores.ethAddress.getNormalAddrList,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
-  tokensBalance: stores.tokens.tokensBalance,
   stores: stores,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
   currTokenPairId: stores.crossChain.currTokenPairId,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
   setCurrToken: addr => stores.tokens.setCurrToken(addr),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getCoinsListInfo_2way: (...args) => stores.tokens.getCoinsListInfo_2way(...args),

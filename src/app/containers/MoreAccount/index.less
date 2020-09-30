@@ -1,4 +1,5 @@
 @icon-size: 48px;
+
 .moreCrossChain {
     :global {
         .ant-table-thead>tr {
@@ -111,14 +112,16 @@
             text-align: left;
         }
     }
+
     .totalImg {
         width: @icon-size;
         height: @icon-size;
-        line-height:  @icon-size;
+        line-height: @icon-size;
         border-radius: 50%;
     }
+
     .coinText {
-        line-height:  @icon-size;
+        line-height: @icon-size;
     }
 }
 
@@ -138,4 +141,27 @@
         color: rgba(255, 255, 255, 1);
         font-size: 20px;
     }
+}
+
+.deleteTokenIcon {
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 6px;
+
+    &:hover {
+        color: red;
+    }
+}
+
+.deleteConfirmMsg {
+    opacity: 0.6;
+}
+
+.deleteMsg {
+    font-size: 18px;
+}
+
+.symbolSty {
+    text-align: center;
+    font-size: 18px;
+    color: goldenrod
 }
