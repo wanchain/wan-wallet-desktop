@@ -154,8 +154,9 @@ class StoremanRegister extends Component {
     let { myAddr: from, amount, publicKey: wPk, enodeID } = form.getFieldsValue(['myAddr', 'amount', 'publicKey', 'enodeID']);
     let BIP44Path = this.getValueByAddrInfoArgs(from, 'path');
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
-    let wkAddr = await wandWrapper('publicToAddress', { wPk });
+
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
+    console.log('4')
 
     let tx = {
       wPk,
@@ -171,6 +172,7 @@ class StoremanRegister extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
+      let wkAddr = await wandWrapper('storeman_publicToAddress', { wPk });
       let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupIdText, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
       try {
         let { gasLimit, ...txParams } = tx
@@ -181,6 +183,7 @@ class StoremanRegister extends Component {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
       }
     } else {
+      console.log(tx, ACTION, 'KK')
       wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
