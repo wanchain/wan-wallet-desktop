@@ -85,13 +85,22 @@ class CrossWANForm extends Component {
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
       let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
+      console.log(destAddrAmount, estimateFee.destination);
       // inbound
-      if (type === INBOUND && (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
+      /* if (type === INBOUND && (isExceedBalance(origAddrAmount, estimateFee.original, sendAmount) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      } */
+      if (type === INBOUND && isExceedBalance(origAddrAmount, estimateFee.original, sendAmount)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
       // outbound
-      if (type === OUTBOUND && (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
+      /* if (type === OUTBOUND && (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination))) {
+        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        return;
+      } */
+      if (type === OUTBOUND && isExceedBalance(origAddrAmount, estimateFee.original)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }

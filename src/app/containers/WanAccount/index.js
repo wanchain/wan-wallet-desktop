@@ -295,7 +295,6 @@ class WanAccount extends Component {
         />;
       }
     });
-
     return (
       <div className="account">
         <Row className={style.title + ' title'}>
