@@ -55,7 +55,8 @@ class GroupList extends Component {
     const { osmGroupListColumns } = this.props;
     return [
       {
-        ...osmGroupListColumns[0]
+        ...osmGroupListColumns[0],
+        render: (text, record) => <span>{record.groupIdName}</span>
       },
       {
         ...osmGroupListColumns[1],

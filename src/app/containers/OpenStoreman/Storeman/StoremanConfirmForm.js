@@ -52,7 +52,7 @@ class StoremanConfirmForm extends Component {
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">Group ID</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.groupId}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.groupIdName}</span></Col>
                 </Row>
               </div>
             }

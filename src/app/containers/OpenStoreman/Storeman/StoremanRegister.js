@@ -101,7 +101,7 @@ class StoremanRegister extends Component {
         walletID,
         BIP44Path,
         amount: value,
-        groupId: group.groupIdText,
+        groupId: group.groupId,
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
       wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
@@ -163,7 +163,7 @@ class StoremanRegister extends Component {
       walletID,
       BIP44Path,
       enodeID,
-      groupId: group.groupIdText,
+      groupId: group.groupId,
       gasLimit: this.state.gasLimit,
     }
     if (walletID === WALLETID.LEDGER) {
@@ -172,7 +172,7 @@ class StoremanRegister extends Component {
     if (walletID === WALLETID.TREZOR) {
       try {
         let wkAddr = await wandWrapper('storeman_publicToAddress', { wPk });
-        let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupIdText, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
+        let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupId, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
         let { gasLimit, ...txParams } = tx
         await OsmTrezorTrans(txParams, from, ACTION, satellite);
         this.props.onSend(walletID);
@@ -211,7 +211,7 @@ class StoremanRegister extends Component {
           <div className="validator-bg">
             <div className="stakein-title">Storeman Account</div>
             <CommonFormItem form={form} formName='groupId' disabled={true}
-              options={{ initialValue: group.groupId }}
+              options={{ initialValue: group.groupIdName }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title='Group ID'
             />
@@ -257,7 +257,7 @@ class StoremanRegister extends Component {
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupId: group.groupId, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupId: group.groupIdName, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }

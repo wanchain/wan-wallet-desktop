@@ -236,7 +236,7 @@ class ModifyForm extends Component {
                 title='Cross Chain'
               />
               <CommonFormItem form={form} formName='groupId' disabled={true}
-                options={{ initialValue: record.groupId, rules: [{ required: true }] }}
+                options={{ initialValue: record.groupIdName, rules: [{ required: true }] }}
                 title='Group ID'
               />
             </div>

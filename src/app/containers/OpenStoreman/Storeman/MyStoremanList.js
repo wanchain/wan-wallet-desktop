@@ -57,11 +57,11 @@ class MyStoremanList extends Component {
       {
         ...osmStoremanListColumns[0],
         render: (account, record) => {
-          const text = <span>More information</span>;
+          const text = <span>{intl.get('StakeInForm.more')}</span>;
           const content = (
             <div>
-              <p>STOREMAN: {record.wkAddr}</p>
-              <p>GROUPID: {record.groupId}</p>
+              <p>{intl.get('Storeman.group')}: {record.groupIdName}</p>
+              <p>{intl.get('Storeman.storeman')}: {record.wkAddr}</p>
             </div>
           );
           return (

@@ -41,8 +41,8 @@ class OpenStoreman {
       data.push({
         key: index,
         minStakeIn: fromWei(item.minStakeIn),
-        groupId: hexCharCodeToStr(item.groupId),
-        groupIdText: item.groupId,
+        groupId: item.groupId,
+        groupIdName: hexCharCodeToStr(item.groupId),
         startTime: timeFormat(item.registerTime),
         endTime: timeFormat(item.endRegisterTime),
         crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
@@ -72,6 +72,7 @@ class OpenStoreman {
           myAddress: accountInfo,
           stake: fromWei(item.deposit),
           groupId: item.groupId,
+          groupIdName: hexCharCodeToStr(item.groupId),
           rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
