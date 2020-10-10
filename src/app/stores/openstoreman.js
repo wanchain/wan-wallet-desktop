@@ -6,7 +6,7 @@ import { observable, action, computed, runInAction, toJS } from 'mobx';
 
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
-import { formatLongText, fromWei, timeFormat, formatNum, floorFun, wandWrapper } from 'utils/support';
+import { hexCharCodeToStr, fromWei, timeFormat, formatNum, floorFun, wandWrapper } from 'utils/support';
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
 
@@ -37,11 +37,11 @@ class OpenStoreman {
 
   @computed get groupListData () {
     let data = [];
-    this.storemanGroupList.filter(v => v.canStakeIn).forEach((item, index) => {
+    this.storemanGroupList.filter(v => !v.canStakeIn).forEach((item, index) => {
       data.push({
         key: index,
         minStakeIn: fromWei(item.minStakeIn),
-        groupId: formatLongText(item.groupId),
+        groupId: hexCharCodeToStr(item.groupId),
         groupIdText: item.groupId,
         startTime: timeFormat(item.registerTime),
         endTime: timeFormat(item.endRegisterTime),
@@ -101,10 +101,10 @@ class OpenStoreman {
           key: index,
           account: accountInfo.name,
           myAddress: accountInfo,
-          stake: fromWei(item.deposit),
+          stake: floorFun(fromWei(item.deposit)),
           groupId: item.groupId,
-          reward: fromWei(item.incentive),
-          unclaimed: item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
+          reward: floorFun(fromWei(item.incentive)),
+          unclaimed: item.canDelegateClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10)) : floorFun(fromWei(item.incentive)),
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
@@ -200,14 +200,15 @@ class OpenStoreman {
       myReward: ['N/A', 'N/A'],
       withdrawableAmount: ['N/A', 'N/A'],
     };
-
+    let exReward = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
+    let unexReward = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0))
     cardsList.myStake[0] = floorFun(fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0)), 2);
     cardsList.myStake[1] = this.storemanDelegatorInfo.length;
     cardsList.myStake[2] = this.storemanDelegatorInfoInfoReady;
-    cardsList.myReward[0] = floorFun(fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0)), 2);
+    cardsList.myReward[0] = floorFun(new BigNumber(exReward).plus(unexReward).toString(10));
     cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
-    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveInfoReady;
-    cardsList.withdrawableAmount[0] = floorFun(fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0)), 2);
+    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveInfoReady && this.storemanDelegatorInfoInfoReady;
+    cardsList.withdrawableAmount[0] = floorFun(unexReward);
     cardsList.withdrawableAmount[1] = this.storemanDelegatorInfoInfoReady;
 
     return cardsList;

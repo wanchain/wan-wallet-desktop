@@ -115,7 +115,7 @@ class InForm extends Component {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
         console.log(`trezorTrans Error: ${err}`)
       }
-      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+      message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -127,7 +127,7 @@ class InForm extends Component {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
           console.log('validatorIn ret:', ret);
-          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
         this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });
@@ -267,7 +267,7 @@ class OsmDelegateClaim extends Component {
     };
     wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
       if (err) {
-        message.warn(intl.get('ValidatorRegister.updateFailed'));
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
         let data = ret.result;
         this.setState({

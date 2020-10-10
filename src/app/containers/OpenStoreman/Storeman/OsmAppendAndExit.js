@@ -106,7 +106,7 @@ class ModifyForm extends Component {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
         console.log(`trezorTrans Error: ${err}`)
       }
-      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+      message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -115,7 +115,7 @@ class ModifyForm extends Component {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
           console.log('validatorModify ret:', ret);
-          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
         this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });
@@ -200,7 +200,7 @@ class ModifyForm extends Component {
     };
     wand.request('storeman_openStoremanAction', { tx, action: 'stakeAppend', isEstimateFee: false }, (err, ret) => {
       if (err) {
-        message.warn(intl.get('ValidatorRegister.updateFailed'));
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
         let data = ret.result;
         this.setState({
@@ -257,7 +257,7 @@ class ModifyForm extends Component {
                 <CommonFormItem form={form} formName='amount'
                   options={{ rules: [{ required: true, validator: this.checkAmount }] }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
-                  title={intl.get('ValidatorRegister.balance')}
+                  title={intl.get('Common.amount')}
                   placeholder={MINAMOUNT}
                 />
               }
@@ -302,7 +302,7 @@ class OsmAppendAndExit extends Component {
       };
       wand.request('storeman_openStoremanAction', { tx, action: 'stakeOut', isEstimateFee: false }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.updateFailed'));
+          message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
           let data = ret.result;
           this.setState({

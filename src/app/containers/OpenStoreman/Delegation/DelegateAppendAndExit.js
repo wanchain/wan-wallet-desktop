@@ -107,7 +107,7 @@ class ModifyForm extends Component {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
         console.log(`trezorTrans Error: ${err}`)
       }
-      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+      message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend();
     } else {
@@ -115,7 +115,7 @@ class ModifyForm extends Component {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
-          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
           console.log('validatorModify ret:', ret);
         }
         this.setState({ confirmVisible: false, confirmLoading: false });
@@ -202,7 +202,7 @@ class ModifyForm extends Component {
     };
     wand.request('storeman_openStoremanAction', { tx, action: 'delegateIn', isEstimateFee: false }, (err, ret) => {
       if (err || !ret.code) {
-        message.warn(intl.get('ValidatorRegister.updateFailed'));
+        message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
         let data = ret.result;
         this.setState({
@@ -309,7 +309,7 @@ class DelegateAppendAndExit extends Component {
       };
       wand.request('storeman_openStoremanAction', { tx, action: 'delegateOut', isEstimateFee: false }, (err, ret) => {
         if (err) {
-          message.warn(intl.get('ValidatorRegister.updateFailed'));
+          message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
           let data = ret.result;
           this.setState({

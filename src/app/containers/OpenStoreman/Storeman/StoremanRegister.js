@@ -156,8 +156,6 @@ class StoremanRegister extends Component {
     let walletID = from.indexOf(':') !== -1 ? WALLETID[from.split(':')[0].toUpperCase()] : WALLETID.NATIVE;
 
     from = from.indexOf(':') === -1 ? from : from.split(':')[1].trim();
-    console.log('4')
-
     let tx = {
       wPk,
       from,
@@ -172,23 +170,22 @@ class StoremanRegister extends Component {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     if (walletID === WALLETID.TREZOR) {
-      let wkAddr = await wandWrapper('storeman_publicToAddress', { wPk });
-      let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupIdText, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
       try {
+        let wkAddr = await wandWrapper('storeman_publicToAddress', { wPk });
+        let satellite = { wkAddr, wPk, enodeID: group.enodeID, groupId: group.groupIdText, delegateFee: group.delegateFee, annotate: 'Storeman-stakeIn' };
         let { gasLimit, ...txParams } = tx
         await OsmTrezorTrans(txParams, from, ACTION, satellite);
-        this.setState({ confirmVisible: false });
         this.props.onSend(walletID);
       } catch (error) {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
       }
+      this.setState({ confirmVisible: false, confirmLoading: false });
     } else {
-      console.log(tx, ACTION, 'KK')
       wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
-          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
         this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });

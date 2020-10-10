@@ -35,20 +35,17 @@ const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirm
 
 @observer
 class OsmDelegateInForm extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      fee: '0',
-      gasPrice: '0',
-      gasLimit: '0',
-      loading: false,
-      record: undefined,
-      minAmount: '0',
-      confirmVisible: false,
-      confirmLoading: false,
-      storemanInfo: undefined,
-      selectedChain: undefined,
-    }
+  state = {
+    fee: '0',
+    gasPrice: '0',
+    gasLimit: '0',
+    loading: false,
+    record: undefined,
+    minAmount: '0',
+    confirmVisible: false,
+    confirmLoading: false,
+    storemanInfo: undefined,
+    selectedChain: undefined,
   }
 
   componentDidMount () {
@@ -60,9 +57,11 @@ class OsmDelegateInForm extends Component {
   }
 
   onChangeAddrSelect = value => {
+    let amount = this.props.form.getFieldValue('amount');
     this.props.form.setFieldsValue({
+      amount,
       balance: value ? this.getValueByAddrInfoArgs(value, 'balance') : 0
-    })
+    });
   }
 
   onStoremanChange = value => {
@@ -127,7 +126,7 @@ class OsmDelegateInForm extends Component {
       }
       wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
         if (err || !ret.code) {
-          message.warn(intl.get('ValidatorRegister.updateFailed'));
+          message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
           let data = ret.result;
           this.setState({
@@ -212,7 +211,7 @@ class OsmDelegateInForm extends Component {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
         console.log(`trezorTrans Error: ${err}`)
       }
-      message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+      message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
       this.setState({ confirmVisible: false });
       this.props.onSend(walletID);
     } else {
@@ -221,7 +220,7 @@ class OsmDelegateInForm extends Component {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
           console.log('validatorModify ret:', ret);
-          message.warn(intl.get('WanAccount.sendTransactionSuccessFully'));
+          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
         this.props.updateTransHistory();
         this.setState({ confirmVisible: false, confirmLoading: false });
