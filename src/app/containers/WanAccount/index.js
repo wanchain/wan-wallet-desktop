@@ -47,7 +47,7 @@ class WanAccount extends Component {
     {
       dataIndex: 'name',
       editable: true,
-      width: '20%'
+      width: '20%',
     },
     {
       dataIndex: 'address',
@@ -295,6 +295,7 @@ class WanAccount extends Component {
         />;
       }
     });
+
     return (
       <div className="account">
         <Row className={style.title + ' title'}>

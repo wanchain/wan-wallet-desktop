@@ -450,6 +450,7 @@ const ko_KR = {
     'CrossChainTransForm.quota': '남은 용량',
     'CrossChainTransForm.estimateFee': '예상 수수료',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': '금액이 잔액보다 큽니다.',
     'CrossChainTransForm.transInfo': '크로스체인 거래 정보',
     'CrossChainTransForm.invalidAmount': '금액을 같거나 이상으로 입력하십시오: ',

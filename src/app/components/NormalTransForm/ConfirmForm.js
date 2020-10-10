@@ -109,7 +109,7 @@ class ConfirmForm extends Component {
               <Table className={style.splitAmountTable} scroll={{ x: 480 }} rowKey={'face'} dataSource={this.state.dataSource} columns={this.columns()} pagination={false} />
             ) : (
                 <div>
-                  <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : (chain === undefined ? intl.get('AdvancedOptionForm.gwin') : chain)) + ')'}> {
+                  <Form.Item label={intl.get('NormalTransForm.ConfirmForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : ((chain === undefined || chain === 'WAN') ? intl.get('AdvancedOptionForm.gwin') : chain)) + ')'}> {
                     getFieldDecorator(
                       'gasPrice', { initialValue: gasPrice })
                       (<Input disabled={true} />)

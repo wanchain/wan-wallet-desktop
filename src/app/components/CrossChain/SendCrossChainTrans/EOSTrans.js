@@ -55,7 +55,7 @@ class EOSTrans extends Component {
         estimateFee: new BigNumber(gasPrice).times(wanGas).div(BigNumber(10).pow(9)).toString(10)
       });
       storeman = smgList[0].storemanGroup;
-      updateTransParams(from, { storeman, gasPrice, gasLimit: wanGas, txFeeRatio: smgList[0].txFeeRatio || 0, quota: smgList[0].quota });
+      updateTransParams(from, { storeman, gasPrice, gasLimit: wanGas, txFeeRatio: smgList[0].txFeeRatio || 0, quota: direction === INBOUND ? smgList[0].inboundQuota : smgList[0].outboundQuota });
       this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {
       console.log('showModal:', err);

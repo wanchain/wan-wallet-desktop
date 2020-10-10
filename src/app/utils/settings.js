@@ -52,6 +52,9 @@ export const BTCTESTNET = 'https://www.blockchain.com/btc-testnet';
 export const ETHMAIN = 'https://etherscan.io';
 export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 
+export const EOSMAIN = 'https://bloks.io';
+export const EOSTESTNET = 'https://jungle.bloks.io';
+
 export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
 export const BTCPATH_TEST = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";

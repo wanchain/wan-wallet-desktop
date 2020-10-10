@@ -132,7 +132,7 @@ class CrossBTCForm extends Component {
             updateBTCTransParams({ from: getNormalPathFromUtxos(data.inputs, addrInfo, btcPath) });
             callback();
           }).catch(() => {
-            callback(intl.get('Common.invalidAmount'));
+            callback(intl.get('CrossChainTransForm.overBalance'));
           });
         } else {
           if (isExceedBalance(balance, value)) {

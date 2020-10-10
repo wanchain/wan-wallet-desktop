@@ -11,6 +11,7 @@ import { checkAddrType, getWalletIdByType, getTypeByWalletId } from 'utils/helpe
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
+import { parse } from 'yargs';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
@@ -31,7 +32,7 @@ class WanAddress {
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
-      name: newAddr.name ? newAddr.name : `WAN-Account${newAddr.start + 1}`,
+      name: newAddr.name ? newAddr.name : `WAN-Account${Number(newAddr.start) + 1}`,
       address: newAddr.address,
       waddress: newAddr.waddress,
       balance: '0',
@@ -363,7 +364,13 @@ class WanAddress {
         });
       });
     });
-    return addrList;
+    return addrList.sort((f, s) => {
+      if (f.wid === s.wid) {
+        return parseInt(f.path.substring(f.path.lastIndexOf('/') + 1)) > parseInt(s.path.substring(s.path.lastIndexOf('/') + 1)) ? 1 : -1;
+      } else {
+        return f.wid > s.wid ? 1 : -1;
+      }
+    });
   }
 
   @computed get getNormalAddrList() {

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
 
@@ -14,6 +14,7 @@ const CollectionCreateForm = Form.create({ name: 'CrossETHForm' })(CrossETHForm)
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
+  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
@@ -31,12 +32,16 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, chainType, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId } = this.props;
+    const { from, path, balance, chainType, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
     let desChain, origGas, destGas, storeman;
     let info = Object.assign({}, tokenPairs[chainPairId]);
     if (type === INBOUND) {
       if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
+        return;
+      }
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
+        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
       }
       desChain = info.toChainSymbol;
@@ -45,6 +50,10 @@ class ETHTrans extends Component {
     } else {
       if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
+        return;
+      }
+      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
+        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
       }
       desChain = info.fromChainSymbol;

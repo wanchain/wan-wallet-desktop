@@ -7,7 +7,7 @@ import style from './index.less';
 @observer
 class AddDAppForm extends Component {
   checkUrl = (rule, value, callback) => {
-    if (value.startsWith('https://')) {
+    if (String(value).startsWith('https://')) {
       callback();
     } else {
       callback(intl.get('DApp.urlPlaceholder'));

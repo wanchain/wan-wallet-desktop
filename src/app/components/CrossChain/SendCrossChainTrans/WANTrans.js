@@ -42,24 +42,24 @@ class WANTrans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
     if (type === INBOUND) {
-      if (balance === 0) {
+      if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
       if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
       }
       desChain = info.toChainSymbol;
       origGas = LOCKETH_GAS;// ToDo
       destGas = REDEEMWETH_GAS;// ToDo
     } else {
-      if (balance === 0) {
+      if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
       if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
+        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
       }
       desChain = info.fromChainSymbol;

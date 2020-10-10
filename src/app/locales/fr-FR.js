@@ -450,6 +450,7 @@ const fr_FR = {
     'CrossChainTransForm.quota': 'Capacités disponibles',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'Le montant dépasse le solde.',
     'CrossChainTransForm.transInfo': 'Information de transaction Cross Chain',
     'CrossChainTransForm.invalidAmount': 'Veuillez saisir un montant supérieur ou égal à ',

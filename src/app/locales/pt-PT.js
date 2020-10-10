@@ -448,6 +448,7 @@ const pt_PT = {
     'CrossChainTransForm.quota': 'Capacidade restante',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
     'CrossChainTransForm.transInfo': 'Informações sobre transações cross-chain',
     'CrossChainTransForm.invalidAmount': 'Insira um valor igual ou superior a',

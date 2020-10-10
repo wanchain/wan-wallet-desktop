@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { Modal, Button, Col, Row, Input, message, Icon, Tooltip } from 'antd';
-import { MAIN, TESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET } from 'utils/settings';
+import { MAIN, TESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET, EOSMAIN, EOSTESTNET } from 'utils/settings';
 
 import style from './index.less';
 
@@ -31,6 +31,9 @@ class TransInfo extends Component {
         break;
       case 'BTC':
         href = this.props.chainId === 1 ? `${BTCMAIN}/tx/${hash}` : `${BTCTESTNET}/tx/${hash}`;
+        break;
+      case 'EOS':
+        href = this.props.chainId === 1 ? `${EOSMAIN}/transaction/${hash}` : `${EOSTESTNET}/transaction/${hash}`;
         break;
       default:
         href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
@@ -78,7 +81,7 @@ class TransInfo extends Component {
             <Col span={COLRIGHT}><Input disabled={true} placeholder={to} /></Col>
           </Row>
           {
-            tokenStand === 'TOKEN' &&
+            (tokenStand === 'TOKEN' || approveTxHash.length !== 0) &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
               <Col span={COLRIGHT}>

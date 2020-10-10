@@ -450,6 +450,7 @@ const th_TH = {
     'CrossChainTransForm.quota': 'ความจุคงเหลือ',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'จำนวนมากกว่ายอดคงเหลือ',
     'CrossChainTransForm.transInfo': 'รายละเอียดธุรกรรม Cross Chain',
     'CrossChainTransForm.invalidAmount': 'กรุณากรอกจำนวนที่มากกว่าหรือเท่ากับ ',

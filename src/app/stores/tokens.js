@@ -215,7 +215,7 @@ class Tokens {
         name: addresses[item].name,
         address: item,
         balance,
-        path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -251,7 +251,7 @@ class Tokens {
         name: addresses[item].name,
         address: item,
         balance,
-        path: addresses[item].path.startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -301,7 +301,6 @@ class Tokens {
       }
       wand.request('crossChain_updateTokensBalance', { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chainSymbol }, (err, data) => {
         if (err) {
-          console.log('stores_getTokensBalance:', err, { address: normalArr.concat(importArr).concat(ledgerArr).concat(trezorArr).concat(rawKeyArr), tokenScAddr: scAddr, chain: chainSymbol });
           resolve({});
         } else {
           resolve(data);
@@ -390,7 +389,7 @@ class Tokens {
           name: obj[item].name,
           address: item,
           balance,
-          path: obj[item].path.startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
+          path: String(obj[item].path).startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance
         });

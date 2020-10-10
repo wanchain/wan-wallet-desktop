@@ -450,6 +450,7 @@ const es_ES = {
     'CrossChainTransForm.quota': 'Capacidad restante',
     'CrossChainTransForm.estimateFee': 'Tarifa estimada',
     'CrossChainTransForm.overBalance': 'El costo excede el saldo. Verifique el saldo en la cadena original y en la de destino.',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'La cantidad es mayor que el saldo',
     'CrossChainTransForm.transInfo': 'Información de transacciones de cadena cruzada',
     'CrossChainTransForm.invalidAmount': 'Ingrese una cantidad igual o mayor que ',

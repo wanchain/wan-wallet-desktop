@@ -144,6 +144,7 @@ class CrossChainTransForm extends Component {
   }
 
   checkQuota = (rule, value, callback) => {
+    value = value.split(' ')[0];
     if (new BigNumber(value).gt(0)) {
       let { amount } = this.props.form.getFieldsValue(['amount']);
       if (isExceedBalance(value, amount)) {
@@ -197,7 +198,7 @@ class CrossChainTransForm extends Component {
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, tokenPairs, type, account, getChainAddressInfoByChain, currTokenPairId } = this.props;
     const { quota } = this.state;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList;
+    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList, unit;
     const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     if (type === INBOUND) {
       desChain = tokenPairInfo.toChainSymbol;
@@ -206,6 +207,7 @@ class CrossChainTransForm extends Component {
       title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
       tokenSymbol = tokenPairInfo.fromTokenSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
+      unit = tokenPairInfo.fromTokenSymbol;
     } else {
       desChain = tokenPairInfo.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
@@ -213,6 +215,7 @@ class CrossChainTransForm extends Component {
       title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
       tokenSymbol = tokenPairInfo.toTokenSymbol;
       totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
+      unit = tokenPairInfo.toTokenSymbol;
     }
 
     if (smgList.length === 0) {
@@ -270,7 +273,7 @@ class CrossChainTransForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: quota, rules: [{ validator: this.checkQuota }] }}
+                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />

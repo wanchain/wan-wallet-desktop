@@ -7,10 +7,6 @@ import MFooter from 'components/MFooter';
 import Mask from 'components/Mask';
 import style from './index.less';
 
-@inject(stores => ({
-
-}))
-
 @observer
 class Main extends Component {
     constructor(props) {

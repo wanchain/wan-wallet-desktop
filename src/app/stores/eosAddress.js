@@ -106,7 +106,13 @@ class EosAddress {
         });
       });
     });
-    return keyList;
+    return keyList.sort((f, s) => {
+      if (f.wid === s.wid) {
+        return parseInt(f.path.substring(f.path.lastIndexOf('/') + 1)) > parseInt(s.path.substring(s.path.lastIndexOf('/') + 1)) ? 1 : -1;
+      } else {
+        return f.wid > s.wid ? 1 : -1;
+      }
+    });
   }
 
   @computed get getAccountList() {

@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
+import { INBOUND } from 'utils/settings';
 
 const inputCom = <Input disabled={true} />
 
@@ -14,12 +15,13 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossWANConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, type } = this.props;
     const { amount, toAddr, storeman, crossType } = this.props.transParams[from];
     const chainPairId = transParams[from].chainPairId;
-    const tokenPairInfo = Object.assign({}, tokenPairs[chainPairId]);
-    let fromChain = tokenPairInfo.fromChainName;
-    let desChain = tokenPairInfo.toChainName;
+    const info = Object.assign({}, tokenPairs[chainPairId]);
+
+    let fromChain = type === INBOUND ? info.fromChainName : info.toChainName;
+    let desChain = type === INBOUND ? info.toChainName : info.fromChainName;
 
     return (
       <Modal

@@ -57,7 +57,7 @@ class StoremanRegister extends Component {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
     }
-    if (value.startsWith('0x') && value.length === 130) {
+    if (String(value).startsWith('0x') && value.length === 130) {
       callback();
     } else {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
@@ -69,7 +69,7 @@ class StoremanRegister extends Component {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));
       return;
     }
-    if (value.startsWith('0x') && value.length === 130) {
+    if (String(value).startsWith('0x') && value.length === 130) {
       callback();
     } else {
       callback(intl.get('ValidatorRegister.publicKeyIsWrong'));

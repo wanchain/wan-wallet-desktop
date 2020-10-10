@@ -450,6 +450,7 @@ const en_US = {
     'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': 'Estimated Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
+    'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
     'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
     'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',

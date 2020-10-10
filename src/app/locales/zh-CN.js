@@ -451,6 +451,7 @@ const zh_CN = {
     'CrossChainTransForm.txFeeRatio': '比率',
     'CrossChainTransForm.estimateFee': '估算的费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
+    'CrossChainTransForm.originNoBalance': '原始链余额不足',
     'CrossChainTransForm.overTransBalance': '输入金额超过账户余额',
     'CrossChainTransForm.transInfo': '跨链交易信息',
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
