@@ -243,7 +243,7 @@ class InForm extends Component {
               <CommonFormItem form={form} formName='fee' disabled={true}
                 options={{ initialValue: this.state.fee + ' WAN' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title="Gas Fee"
+                title={intl.get('CrossChainTransForm.estimateFee')}
               />
               { settings.reinput_pwd && <PwdForm form={form}/> }
             </div>

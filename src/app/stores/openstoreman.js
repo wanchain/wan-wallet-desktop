@@ -109,6 +109,7 @@ class OpenStoreman {
           myAddress: accountInfo,
           stake: floorFun(fromWei(item.deposit)),
           groupId: item.groupId,
+          groupIdName: hexCharCodeToStr(item.groupId),
           reward: floorFun(fromWei(item.incentive), 4),
           unclaimed: item.canDelegateClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10), 4) : floorFun(fromWei(item.incentive), 4),
           storeman: item.wkAddr,

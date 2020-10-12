@@ -209,21 +209,21 @@ class StoremanRegister extends Component {
           ]}
         >
           <div className="validator-bg">
-            <div className="stakein-title">Storeman Account</div>
+            <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
             <CommonFormItem form={form} formName='groupId' disabled={true}
               options={{ initialValue: group.groupIdName }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title='Group ID'
+              title={intl.get('Storeman.group')}
             />
             <CommonFormItem form={form} formName='crosschain' disabled={true}
               options={{ initialValue: group.crosschain }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title='Cross Chain'
+              title={intl.get('Common.crossChain')}
             />
             <CommonFormItem form={form} formName='publicKey'
               options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
-              title='Public Key'
+              title={intl.get('WanAccount.publicKey')}
               placeholder='Enter Public Key'
             />
             <CommonFormItem form={form} formName='enodeID'
@@ -252,12 +252,12 @@ class StoremanRegister extends Component {
             <CommonFormItem form={form} formName='fee' disabled={true}
               options={{ initialValue: this.state.fee + ' WAN' }}
               prefix={<Icon type="credit-card" className="colorInput" />}
-              title="Gas Fee"
+              title={intl.get('CrossChainTransForm.estimateFee')}
             />
             {settings.reinput_pwd && <PwdForm form={form} />}
           </div>
         </Modal>
-        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupId: group.groupIdName, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
+        {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupIdName: group.groupIdName, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>
     );
   }
