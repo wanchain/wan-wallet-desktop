@@ -319,7 +319,7 @@ class OsmDelegateInForm extends Component {
                             showSearch
                             allowClear
                             style={{ width: 400 }}
-                            placeholder="Select Cross Chain"
+                            placeholder={intl.get('Storeman.selectCrosschain')}
                             optionFilterProp="children"
                             onChange={this.onCrossChainChange}
                             getPopupContainer={() => document.getElementById('osmChainSelect')}
@@ -345,7 +345,7 @@ class OsmDelegateInForm extends Component {
                             showSearch
                             allowClear
                             style={{ width: 400 }}
-                            placeholder="Select Storeman Account"
+                            placeholder={intl.get('Storeman.selectStoremanAccount')}
                             optionFilterProp="children"
                             onChange={this.onStoremanChange}
                             getPopupContainer={() => document.getElementById('osmNameSelect')}

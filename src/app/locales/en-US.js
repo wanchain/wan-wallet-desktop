@@ -727,7 +727,9 @@ const en_US = {
     'Storeman.stake': 'STAKE',
     'Storeman.storeman': 'STOREMAN',
     'Storeman.storemanAccount': 'Storeman Account',
+    'Storeman.selectStoremanAccount': 'Select Storeman Account',
     'Storeman.crosschain': 'CROSS CHAIN',
+    'Storeman.selectCrosschain': 'Select Cross Chain',
     'Storeman.reward': 'REWARD',
     'Storeman.claimable': 'CLAIMABLE AMOUNT',
     'Storeman.openGroupList': 'Open Group List',
@@ -741,7 +743,8 @@ const en_US = {
     'Storeman.delegateFee': 'DELEGATION FEE',
     'Storeman.rank': 'RANK',
     'Storeman.slash': 'SLASH',
-
+    'Storeman.enterPublicKey': 'Enter Public Key',
+    'Storeman.enterEnodeID': 'Enter Enode ID'
 }
 
 export default en_US;

@@ -224,13 +224,13 @@ class StoremanRegister extends Component {
               options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title={intl.get('WanAccount.publicKey')}
-              placeholder='Enter Public Key'
+              placeholder={intl.get('Storeman.enterPublicKey')}
             />
             <CommonFormItem form={form} formName='enodeID'
               options={{ rules: [{ required: true, validator: this.checkEnodeId }] }}
               prefix={<Icon type="wallet" className="colorInput" />}
               title='Enode ID'
-              placeholder='Enter Enode ID'
+              placeholder={intl.get('Storeman.enterEnodeID')}
             />
           </div>
           <div className="validator-bg">

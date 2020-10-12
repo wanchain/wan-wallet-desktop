@@ -728,7 +728,9 @@ const zh_CN = {
     'Storeman.stake': '质押',
     'Storeman.storeman': '跨链节点',
     'Storeman.storemanAccount': '节点信息',
+    'Storeman.selectStoremanAccount': '选择跨链节点',
     'Storeman.crosschain': '跨链',
+    'Storeman.selectCrosschain': '选择跨链方向',
     'Storeman.reward': '奖励',
     'Storeman.claimable': '可提取金额',
     'Storeman.openGroupList': '开放节点组',
@@ -742,7 +744,8 @@ const zh_CN = {
     'Storeman.delegateFee': '委托费用',
     'Storeman.rank': '排名',
     'Storeman.slash': '惩罚',
-
+    'Storeman.enterPublicKey': '输入公钥',
+    'Storeman.enterEnodeID': '输入Enode ID'
 }
 
 export default zh_CN;
