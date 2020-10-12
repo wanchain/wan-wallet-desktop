@@ -730,6 +730,7 @@ const ko_KR = {
     'Storeman.openGroupList': 'Open Group List',
     'Storeman.storemanList': 'Storeman List',
     'Storeman.group': 'Group',
+    'Storeman.groupUpper': 'GROUP',
     'Storeman.currgroup': 'CURRENT GROUP',
     'Storeman.nextGroup': 'NEXT GROUP',
     'Storeman.startTime': 'START TIME',

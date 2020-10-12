@@ -734,6 +734,7 @@ const zh_CN = {
     'Storeman.openGroupList': '开放节点组',
     'Storeman.storemanList': '节点列表',
     'Storeman.group': '节点组',
+    'Storeman.groupUpper': '节点组',
     'Storeman.currgroup': '当前节点组',
     'Storeman.nextGroup': '下一个节点组',
     'Storeman.startTime': '开始时间',

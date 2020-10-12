@@ -10,6 +10,7 @@ import { hexCharCodeToStr, fromWei, timeFormat, formatNum, floorFun, wandWrapper
 import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
 import languageIntl from './languageIntl';
 
+const INIT_GROUPID = '0x0000000000000000000000000000000000000000000000000000000000000000';
 const storemanGroupStatus = ['None', 'Initializing', 'Selecting', 'Failed', 'Selected', 'Ready', 'Quitting', 'Quitted'];
 
 class OpenStoreman {
@@ -22,6 +23,8 @@ class OpenStoreman {
   @observable storemanMemberList = [];
 
   @observable storemanConf = {};
+
+  @observable selectedStoremanInfo = {};
 
   @observable storemanStakeTotalIncentive = [];
 
@@ -73,11 +76,12 @@ class OpenStoreman {
           stake: fromWei(item.deposit),
           groupId: item.groupId,
           groupIdName: hexCharCodeToStr(item.groupId),
+          nextGroupIdName: item.nextGroupId === INIT_GROUPID ? null : hexCharCodeToStr(item.nextGroupId),
           rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
-          reward: fromWei(item.incentive),
-          unclaimed: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
+          reward: floorFun(fromWei(item.incentive), 4),
+          unclaimed: item.canStakeClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10), 4) : floorFun(fromWei(item.incentive), 4),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
           status: intl.get(`Storeman.${status.toLowerCase()}`),
           oriStatus: status.toLowerCase(),
@@ -105,8 +109,8 @@ class OpenStoreman {
           myAddress: accountInfo,
           stake: floorFun(fromWei(item.deposit)),
           groupId: item.groupId,
-          reward: floorFun(fromWei(item.incentive)),
-          unclaimed: item.canDelegateClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10)) : floorFun(fromWei(item.incentive)),
+          reward: floorFun(fromWei(item.incentive), 4),
+          unclaimed: item.canDelegateClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10), 4) : floorFun(fromWei(item.incentive), 4),
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
@@ -232,8 +236,16 @@ class OpenStoreman {
     let sender = Object.keys(Object.assign({}, normal, ledger, trezor));
     try {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
+      console.log(ret, 'bbbb')
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
+      let nextGroupIdArr = new Set(ret.map(v => v.nextGroupId).filter(v => v.nextGroupId !== INIT_GROUPID));
+      nextGroupIdArr.forEach(async groupId => {
+        let selectedStoreman = await wandWrapper('storeman_getSelectedStoreman', { groupId })
+        runInAction(() => {
+          this.selectedStoremanInfo[groupId] = selectedStoreman;
+        })
+      });
     } catch (err) {
       console.log(`action_getStoremanStakeInfo: ${err}`);
     }

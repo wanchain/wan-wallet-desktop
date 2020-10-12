@@ -198,7 +198,7 @@ class InForm extends Component {
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title='Storeman Claim' className="validator-register-modal + spincont"
+        <Modal visible closable={false} destroyOnClose={true} title={intl.get('TransHistory.Storeman-stakeClaim')} className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button disabled={record.unclaimed === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
@@ -206,22 +206,22 @@ class InForm extends Component {
         >
           <Spin spinning={spin} size="large">
             <div className="validator-bg">
-              <div className="stakein-title">Storeman Account</div>
+              <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
               <CommonFormItem form={form} formName='crosschain' disabled={true}
                 options={{ initialValue: record.crosschain, rules: [{ required: true }] }}
-                title='Cross Chain'
+                title={intl.get('Common.crossChain')}
               />
               <CommonFormItem form={form} formName='stake' disabled={true}
                 options={{ initialValue: record.stake, rules: [{ required: true }] }}
-                title='Stake'
+                title={intl.get('staking.myStake')}
               />
               <CommonFormItem form={form} formName='reward' disabled={true}
                 options={{ initialValue: record.reward, rules: [{ required: true }] }}
-                title='Reward'
+                title={intl.get('staking.totalReward')}
               />
               <CommonFormItem form={form} formName='account' disabled={true}
                 options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
-                title='Account'
+                title={intl.get('Common.storeman')}
               />
               <CommonFormItem form={form} formName='withdrawableAmount' disabled={true}
                 options={{ initialValue: record.unclaimed, rules: [{ required: true }] }}

@@ -200,7 +200,7 @@ class LanguageIntl {
       {
         key: 'groupId',
         dataIndex: 'groupId',
-        title: intl.get('Storeman.group'),
+        title: intl.get('Storeman.groupUpper'),
       },
       {
         key: 'startTime',

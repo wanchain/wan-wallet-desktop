@@ -201,14 +201,14 @@ class InForm extends Component {
         >
           <Spin spinning={spin} size="large">
             <div className="validator-bg">
-              <div className="stakein-title">Storeman Account</div>
+              <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
               <CommonFormItem form={form} formName='storeman' disabled={true}
                 options={{ initialValue: record.wkAddr, rules: [{ required: true }] }}
-                title='Storeman'
+                title={intl.get('Common.storeman')}
               />
               <CommonFormItem form={form} formName='stake' disabled={true}
                 options={{ initialValue: record.stake, rules: [{ required: true }] }}
-                title='Stake'
+                title={intl.get('staking.myStake')}
               />
               <CommonFormItem form={form} formName='withdrawable' disabled={true}
                 options={{ initialValue: record.reward, rules: [{ required: true }] }}
@@ -230,7 +230,7 @@ class InForm extends Component {
               <CommonFormItem form={form} formName='fee' disabled={true}
                 options={{ initialValue: this.state.fee + ' WAN' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title="Gas Fee"
+                title={intl.get('CrossChainTransForm.estimateFee')}
               />
               { settings.reinput_pwd && <PwdForm form={form}/> }
             </div>

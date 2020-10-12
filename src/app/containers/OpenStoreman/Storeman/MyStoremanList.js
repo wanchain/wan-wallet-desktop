@@ -60,8 +60,11 @@ class MyStoremanList extends Component {
           const text = <span>{intl.get('StakeInForm.more')}</span>;
           const content = (
             <div>
-              <p>{intl.get('Storeman.group')}: {record.groupIdName}</p>
-              <p>{intl.get('Storeman.storeman')}: {record.wkAddr}</p>
+              <p><span className={style.popoverTitle}>{intl.get('Storeman.currgroup')}</span>: <span>{record.groupIdName}</span></p>
+              {
+                record.nextGroupIdName && <p><span className={style.popoverTitle}>{intl.get('Storeman.nextGroup')}</span>: <span>{record.nextGroupIdName}</span></p>
+              }
+              <p><span className={style.popoverTitle}>{intl.get('Storeman.storeman')}</span>: <span>{record.wkAddr}</span></p>
             </div>
           );
           return (

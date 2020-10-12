@@ -216,7 +216,7 @@ class ModifyForm extends Component {
   render () {
     const { isExit } = this.state;
     const { onCancel, form, settings, record, addrInfo, spin } = this.props;
-    let title = isExit ? 'Storeman Exit' : 'Storeman Top-up';
+    let title = intl.get(isExit ? 'TransHistory.Storeman-stakeOut' : 'TransHistory.StakeAppend');
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
     let showConfirmItem = { groupId: true, crosschain: true, account: true, amount: !isExit };
 
@@ -230,14 +230,14 @@ class ModifyForm extends Component {
         >
           <Spin spinning={spin} size="large">
             <div className="validator-bg">
-              <div className="stakein-title">Storeman Account</div>
+              <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
               <CommonFormItem form={form} formName='crosschain' disabled={true}
                 options={{ initialValue: record.crosschain, rules: [{ required: true }] }}
-                title='Cross Chain'
+                title={intl.get('Common.crossChain')}
               />
               <CommonFormItem form={form} formName='groupId' disabled={true}
                 options={{ initialValue: record.groupIdName, rules: [{ required: true }] }}
-                title='Group ID'
+                title={intl.get('Storeman.group')}
               />
             </div>
             <div className="validator-bg">
@@ -264,7 +264,7 @@ class ModifyForm extends Component {
               <CommonFormItem form={form} formName='fee' disabled={true}
                 options={{ initialValue: this.state.fee + ' WAN' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title="Gas Fee"
+                title={intl.get('CrossChainTransForm.estimateFee')}
               />
               {settings.reinput_pwd && <PwdForm form={form} />}
             </div>

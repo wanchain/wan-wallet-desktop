@@ -305,10 +305,10 @@ class OsmDelegateInForm extends Component {
         >
           <Spin spinning={!spin} size="large">
             <div className="validator-bg">
-              <div className="stakein-title">Storeman's Account</div>
+              <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
               <div className="validator-line">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={6}><span className="stakein-name">Cross Chain</span></Col>
+                  <Col span={6}><span className="stakein-name">{intl.get('Common.crossChain')}</span></Col>
                   <Col span={18}>
                     <Form layout="inline" id="osmChainSelect">
                       <Form.Item>
@@ -334,7 +334,7 @@ class OsmDelegateInForm extends Component {
               </div>
               <div className="validator-line">
                 <Row type="flex" justify="space-around" align="middle" className="storeman">
-                  <Col span={6}><span className="stakein-name">Storeman</span></Col>
+                  <Col span={6}><span className="stakein-name">{intl.get('Common.storeman')}</span></Col>
                   <Col span={15}>
                     <Form layout="inline" id="osmNameSelect">
                       <Form.Item>
@@ -365,13 +365,13 @@ class OsmDelegateInForm extends Component {
               <CommonFormItem form={form} formName='quota' disabled={true}
                 options={{ initialValue: '0' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title='Capacity'
+                title={intl.get('CrossChainTransForm.quota')}
                 colSpan={colSpan}
               />
               <CommonFormItem form={form} formName='delegationFee' disabled={true}
                 options={{ initialValue: '0' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title='Delegation Fee'
+                title={intl.get('ValidatorRegister.feeRate')}
                 colSpan={colSpan}
               />
             </div>
@@ -396,7 +396,7 @@ class OsmDelegateInForm extends Component {
               <CommonFormItem form={form} formName='fee' disabled={true}
                 options={{ initialValue: this.state.fee + ' WAN' }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title="Gas Fee"
+                title={intl.get('CrossChainTransForm.estimateFee')}
                 colSpan={colSpan}
               />
               {settings.reinput_pwd && <PwdForm form={form} />}

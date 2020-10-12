@@ -28,12 +28,12 @@ class DelegationConfirmForm extends Component {
           ]}
         >
           <div className="withdraw-bg">
-            <div className="withdraw-title">Storeman Account</div>
+            <div className="withdraw-title">{intl.get('Storeman.storemanAccount')}</div>
             {
               crosschain &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Cross Chain</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('Common.crossChain')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.crosschain}</span></Col>
                 </Row>
               </div>
@@ -42,7 +42,7 @@ class DelegationConfirmForm extends Component {
               storeman &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Storeman Account</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('Common.storeman')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.wkAddr}</span></Col>
                 </Row>
               </div>
@@ -51,7 +51,7 @@ class DelegationConfirmForm extends Component {
               groupId &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Group ID</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('Storeman.group')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.groupId}</span></Col>
                 </Row>
               </div>
@@ -60,7 +60,7 @@ class DelegationConfirmForm extends Component {
               delegationFee &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Delegation Fee</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('ValidatorRegister.feeRate')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.delegationFee}</span></Col>
                 </Row>
               </div>
@@ -69,7 +69,7 @@ class DelegationConfirmForm extends Component {
               withdrawable &&
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
-                  <Col span={LEFT}><span className="withdraw-name">Withdrawable Amount</span></Col>
+                  <Col span={LEFT}><span className="withdraw-name">{intl.get('staking.unclaimAmount')}</span></Col>
                   <Col span={RIGHT}><span className="withdraw-addr">{record.reward}</span></Col>
                 </Row>
               </div>
