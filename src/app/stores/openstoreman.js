@@ -37,7 +37,7 @@ class OpenStoreman {
 
   @computed get groupListData () {
     let data = [];
-    this.storemanGroupList.filter(v => !v.canStakeIn).forEach((item, index) => {
+    this.storemanGroupList.filter(v => v.canStakeIn).forEach((item, index) => {
       data.push({
         key: index,
         minStakeIn: fromWei(item.minStakeIn),
@@ -80,6 +80,7 @@ class OpenStoreman {
           unclaimed: item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive),
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
           status: intl.get(`Storeman.${status.toLowerCase()}`),
+          oriStatus: status.toLowerCase(),
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
           canStakeClaim: item.canStakeClaim,

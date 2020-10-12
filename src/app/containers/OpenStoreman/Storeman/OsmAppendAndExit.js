@@ -326,7 +326,7 @@ class OsmAppendAndExit extends Component {
     const { record, modifyType, enableButton } = this.props;
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} disabled={ modifyType === 'exit' && !enableButton } onClick={this.handleStateToggle} />
+        <Button className={style.modifyTopUpBtn} disabled={ record.oriStatus === 'unselected' || (modifyType === 'exit' && !enableButton) } onClick={this.handleStateToggle} />
         { this.state.visible &&
           <StoremanModifyForm txParams={this.state.txParams} spin={this.state.spin} onCancel={this.handleSend} onSend={this.handleSend} record={record} modifyType={modifyType} />
         }

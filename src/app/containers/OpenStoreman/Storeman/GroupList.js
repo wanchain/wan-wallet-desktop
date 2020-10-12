@@ -86,9 +86,11 @@ class GroupList extends Component {
   }
 
   render () {
+    let scrollObj = this.props.groupListData.length ? { x: 1200 } : {};
+
     return (
       <div className="validators">
-        <Table columns={this.getColumns()} dataSource={this.props.groupListData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
+        <Table scroll={scrollObj} columns={this.getColumns()} dataSource={this.props.groupListData} pagination={{ pageSize: 10, hideOnSinglePage: true }} />
         {this.state.validatorRegister && <StoremanRegisterForm group={this.state.selectGroup} onCancel={this.handleStateToggle} onSend={this.handleStateToggle} />}
       </div>
     );

@@ -72,9 +72,11 @@ class OsmDelegateList extends Component {
   }
 
   render() {
+    let scrollObj = this.props.delegatorListData.length ? { x: 1200 } : {};
+
     return (
       <div>
-        <Table columns={this.getColumns()} dataSource={this.props.delegatorListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table scroll={scrollObj} columns={this.getColumns()} dataSource={this.props.delegatorListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }

@@ -124,9 +124,11 @@ class MyStoremanList extends Component {
   }
 
   render () {
+    let scrollObj = this.props.storemanListData.length ? { x: 1200 } : {};
+
     return (
       <div className="validators">
-        <Table columns={this.getColumns()} dataSource={this.props.storemanListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+        <Table scroll={scrollObj} columns={this.getColumns()} dataSource={this.props.storemanListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
   }
