@@ -48,6 +48,7 @@ class DelegationCards extends Component {
               className={style.card3}
               title={intl.get('staking.unclaimAmount')}
               value={formatNum(delegationCards.withdrawableAmount[0])}
+              tail="WAN"
               // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
             />
           </Col>
