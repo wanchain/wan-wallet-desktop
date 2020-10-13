@@ -201,7 +201,7 @@ class InForm extends Component {
         <Modal visible closable={false} destroyOnClose={true} title={intl.get('TransHistory.Storeman-stakeClaim')} className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={record.unclaimed === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={record.unclaimed === 0 || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={spin} size="large">

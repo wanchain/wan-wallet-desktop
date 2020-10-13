@@ -190,13 +190,12 @@ class InForm extends Component {
     const { onCancel, form, settings, record, addrInfo, spin } = this.props;
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo);
     let showConfirmItem = { withdrawable: true, storeman: true, account: true };
-
     return (
       <div>
         <Modal visible closable={false} destroyOnClose={true} title='Delegation Claim' className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={record.reward === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={record.unclaimed === 0 || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={spin} size="large">
