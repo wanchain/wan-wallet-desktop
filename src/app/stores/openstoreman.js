@@ -61,20 +61,24 @@ class OpenStoreman {
     this.storemanListInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
+      let nextGroupInfo = this.storemanGroupList.find(v => v.nextGroupId === item.nextGroupId)
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         let rank;
         let status = storemanGroupStatus[groupInfo.status];
         let nextRank = this.selectedStoremanInfo[item.nextGroupId];
-        if (item.nextGroupId !== INIT_GROUPID && nextRank) {
+
+        if (item.nextGroupId !== INIT_GROUPID && nextRank && nextGroupInfo) {
+          status = storemanGroupStatus[nextGroupInfo.status];
           rank = [nextRank.findIndex(v => v.toLowerCase() === item.wkAddr.toLowerCase()), nextRank.length];
         } else {
           rank = [item.rank, item.selectedCount];
         }
-        if (status !== 'Selecting' && item.rank.toString() === '-1') {
+        if (status !== 'Selecting' && rank[0].toString() === '-1') {
           status = 'Unselected';
         }
+
         data.push({
           rank,
           key: index,
