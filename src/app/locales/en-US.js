@@ -680,6 +680,8 @@ const en_US = {
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeOut': 'Stake Out',
+    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-stakeIncentiveClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeAppend': 'Stake Append',
     'TransHistory.Storeman-stakeIn': 'Stake In',
     'TransHistory.StakeIn': 'Stake In',

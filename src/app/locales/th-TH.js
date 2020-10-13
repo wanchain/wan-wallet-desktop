@@ -677,6 +677,8 @@ const th_TH = {
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeOut': 'Stake Out',
+    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-stakeIncentiveClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeAppend': 'เพิ่ม Stake',
     'TransHistory.Storeman-stakeIn': 'ทำการ Stake',
     'TransHistory.StakeIn': 'ทำการ Stake',

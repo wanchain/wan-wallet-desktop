@@ -677,6 +677,8 @@ const ko_KR = {
     'TransHistory.Storeman-delegateIn': 'Delegate In',
     'TransHistory.Storeman-stakeClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeOut': 'Stake Out',
+    'TransHistory.Storeman-delegateClaim': 'Delegate Claim',
+    'TransHistory.Storeman-stakeIncentiveClaim': 'Stake Claim',
     'TransHistory.Storeman-stakeAppend': '스테이크 추가',
     'TransHistory.Storeman-stakeIn': '스케이킹 인',
     'TransHistory.StakeIn': '스케이킹 인',
