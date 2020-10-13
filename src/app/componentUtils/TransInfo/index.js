@@ -81,7 +81,7 @@ class TransInfo extends Component {
             <Col span={COLRIGHT}><Input disabled={true} placeholder={to} /></Col>
           </Row>
           {
-            (tokenStand === 'TOKEN' || approveTxHash.length !== 0) &&
+            (tokenStand === 'TOKEN' || !!approveTxHash) &&
             <Row className={style.tableRow}>
               <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.ApproveTxHash')}</Col>
               <Col span={COLRIGHT}>
@@ -130,7 +130,7 @@ class TransInfo extends Component {
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.storeman')}</Col>
             <Col span={COLRIGHT}>
-              <Input disabled={true} placeholder={storeman} />
+              <Input disabled={true} placeholder={storeman.length > 42 ? storeman.replace(/^(\w{12})\w*(\w{24})$/g, '$1****$2') : storeman} />
               <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(storeman, e)} /></Tooltip>
             </Col>
           </Row>

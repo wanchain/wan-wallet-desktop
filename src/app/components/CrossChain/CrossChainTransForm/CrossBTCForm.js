@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
-
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -92,7 +91,6 @@ class CrossBTCForm extends Component {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
             if (direction === INBOUND) {
-              // updateBTCTransParams({ toAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
               updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
             } else {
               updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
@@ -102,7 +100,6 @@ class CrossBTCForm extends Component {
         })
       } else {
         if (direction === INBOUND) {
-          // updateBTCTransParams({ toAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
           updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
         } else {
           updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
@@ -129,7 +126,12 @@ class CrossBTCForm extends Component {
               callback(intl.get('CrossChainTransForm.overQuota'));
               return;
             }
-            updateBTCTransParams({ from: getNormalPathFromUtxos(data.inputs, addrInfo, btcPath) });
+            let from = getNormalPathFromUtxos(data.inputs, addrInfo, btcPath);
+            if (from.length === 0) {
+              callback(intl.get('CrossChainTransForm.overBalance'));
+              return;
+            }
+            updateBTCTransParams({ from });
             callback();
           }).catch(() => {
             callback(intl.get('CrossChainTransForm.overBalance'));

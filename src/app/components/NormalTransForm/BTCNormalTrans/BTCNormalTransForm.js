@@ -104,7 +104,7 @@ class BTCNormalTransForm extends Component {
         })
         callback();
       }).catch(() => {
-        callback(intl.get('Common.invalidAmount'));
+        callback(intl.get('NormalTransForm.overBalance'));
       });
     } else {
       callback(intl.get('Common.invalidAmount'));
@@ -141,7 +141,7 @@ class BTCNormalTransForm extends Component {
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
-                {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkAmount }] })
+                {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
                   (<Input min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.fee')}>
