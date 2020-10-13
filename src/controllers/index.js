@@ -2292,7 +2292,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'insertStoremanTransToDB':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 let { tx, satellite } = payload;
                 await ccUtil.insertNormalTx(tx, tx.status, "external", satellite);
             } catch (e) {
@@ -2304,9 +2304,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getOpenStoremanGroupList':
             try {
-                logger.info(`Try ${action}`);
+                logger.debug(`Try ${action}`);
                 ret = await ccUtil.getOpenStoremanGroupList();
-                logger.info(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2316,9 +2316,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanStakeInfo':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanStakeInfo(payload.sender);
-                logger.info(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2328,9 +2328,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanDelegatorInfo':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanDelegatorInfo(payload.sender);
-                logger.info(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2340,9 +2340,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanGroupMember':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanGroupMember(payload.groupId);
-                logger.info(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2352,9 +2352,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanCandidates':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanCandidates(payload.groupId);
-                logger.info(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2364,9 +2364,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanStakeTotalIncentive':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanStakeTotalIncentive(payload.sender);
-                logger.info(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2376,9 +2376,9 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
 
         case 'getStoremanDelegatorTotalIncentive':
             try {
-                logger.info(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
+                logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanDelegatorTotalIncentive(payload.sender);
-                logger.info(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
