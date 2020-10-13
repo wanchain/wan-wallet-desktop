@@ -103,12 +103,12 @@ class InForm extends Component {
       BIP44Path: path,
       wkAddr: record.wkAddr,
       gasLimit: this.state.gasLimit,
-      withdrawValue: record.reward,
+      withdrawValue: record.unclaimedData,
       canDelegateClaim: record.canDelegateClaim
     };
 
     if (WALLETID.TREZOR === walletID) {
-      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateIncentiveClaim', withdrawValue: record.reward };
+      let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-delegateIncentiveClaim', withdrawValue: record.unclaimedData };
       try {
         await this.trezorTrans(path, from, satellite);
       } catch (err) {
@@ -143,7 +143,7 @@ class InForm extends Component {
         BIP44Path,
         walletID: WALLETID.TREZOR,
         wkAddr: this.props.record.wkAddr,
-        withdrawValue: this.props.record.reward,
+        withdrawValue: this.props.record.unclaimedData,
         canDelegateClaim: this.props.record.canDelegateClaim,
         from: from.indexOf(':') === -1 ? from : from.split(':')[1].trim(),
       }
@@ -195,7 +195,7 @@ class InForm extends Component {
         <Modal visible closable={false} destroyOnClose={true} title='Delegation Claim' className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button disabled={record.unclaimed === 0 || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={record.unclaimedData === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
           <Spin spinning={spin} size="large">
@@ -210,7 +210,7 @@ class InForm extends Component {
                 title={intl.get('staking.myStake')}
               />
               <CommonFormItem form={form} formName='withdrawable' disabled={true}
-                options={{ initialValue: record.reward, rules: [{ required: true }] }}
+                options={{ initialValue: record.unclaimedData, rules: [{ required: true }] }}
                 title={intl.get('staking.unclaimAmount')}
               />
             </div>

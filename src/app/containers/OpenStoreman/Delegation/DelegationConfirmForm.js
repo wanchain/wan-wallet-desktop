@@ -70,7 +70,7 @@ class DelegationConfirmForm extends Component {
               <div className="withdraw-line key-style">
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={LEFT}><span className="withdraw-name">{intl.get('staking.unclaimAmount')}</span></Col>
-                  <Col span={RIGHT}><span className="withdraw-addr">{record.reward}</span></Col>
+                  <Col span={RIGHT}><span className="withdraw-addr">{record.unclaimedData}</span></Col>
                 </Row>
               </div>
             }

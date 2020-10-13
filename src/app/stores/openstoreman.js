@@ -78,7 +78,7 @@ class OpenStoreman {
         if (status !== 'Selecting' && rank[0].toString() === '-1') {
           status = 'Unselected';
         }
-
+        let unclaimedData = item.canStakeClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive);
         data.push({
           rank,
           key: index,
@@ -92,7 +92,8 @@ class OpenStoreman {
           slash: item.slashedCount,
           activity: item.activity,
           reward: floorFun(fromWei(item.incentive), 4),
-          unclaimed: item.canStakeClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10), 4) : floorFun(fromWei(item.incentive), 4),
+          unclaimed: floorFun(unclaimedData, 4),
+          unclaimedData,
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
           status: intl.get(`Storeman.${status.toLowerCase()}`),
           oriStatus: status.toLowerCase(),
@@ -114,6 +115,7 @@ class OpenStoreman {
       if (groupInfo && accountInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
+        let unclaimedData = item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive);
         data.push({
           key: index,
           account: accountInfo.name,
@@ -122,7 +124,8 @@ class OpenStoreman {
           groupId: item.groupId,
           groupIdName: hexCharCodeToStr(item.groupId),
           reward: floorFun(fromWei(item.incentive), 4),
-          unclaimed: item.canDelegateClaim ? floorFun(new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10), 4) : floorFun(fromWei(item.incentive), 4),
+          unclaimed: floorFun(unclaimedData, 4),
+          unclaimedData,
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
           wkAddr: item.wkAddr,
@@ -153,7 +156,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue), 4) : formatNum(floorFun(fromWei(histories[item].value), 4)),
           annotate: languageIntl.language && OSMSTAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
@@ -178,7 +181,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: histories[item].withdrawValue ? histories[item].withdrawValue : formatNum(fromWei(histories[item].value)),
+          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue, 4)) : formatNum(floorFun(fromWei(histories[item].value), 4)),
           annotate: languageIntl.language && OSMDELEGATIONACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
