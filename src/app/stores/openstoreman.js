@@ -123,8 +123,8 @@ class OpenStoreman {
           stake: floorFun(fromWei(item.deposit)),
           groupId: item.groupId,
           groupIdName: hexCharCodeToStr(item.groupId),
-          reward: floorFun(fromWei(item.incentive), 4),
-          unclaimed: floorFun(unclaimedData, 4),
+          reward: floorFun(fromWei(item.incentive), 2),
+          unclaimed: floorFun(unclaimedData, 2),
           unclaimedData,
           storeman: item.wkAddr,
           crosschain: `${item.chain1[2]} <-> ${item.chain2[2]}`,
@@ -156,7 +156,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue), 4) : formatNum(floorFun(fromWei(histories[item].value), 4)),
+          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue), 2) : formatNum(floorFun(fromWei(histories[item].value), 2)),
           annotate: languageIntl.language && OSMSTAKEACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
@@ -181,7 +181,7 @@ class OpenStoreman {
           time: timeFormat(histories[item].sendTime),
           from: wanAddress.addrInfo[type][histories[item].from].name,
           fromAddress: histories[item].from,
-          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue, 4)) : formatNum(floorFun(fromWei(histories[item].value), 4)),
+          stakeAmount: histories[item].withdrawValue ? formatNum(floorFun(histories[item].withdrawValue, 2)) : formatNum(floorFun(fromWei(histories[item].value), 2)),
           annotate: languageIntl.language && OSMDELEGATIONACT.includes(annotate) ? intl.get(`TransHistory.${annotate}`) : annotate,
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
         });
