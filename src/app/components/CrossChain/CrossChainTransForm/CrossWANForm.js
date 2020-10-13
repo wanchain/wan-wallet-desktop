@@ -9,7 +9,7 @@ import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
-import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
+import { fromWei, isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
@@ -196,10 +196,6 @@ class CrossWANForm extends Component {
     })
   }
 
-  filterStoremanData = item => {
-    return item.groupId;
-  }
-
   sendAllAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
@@ -282,8 +278,11 @@ class CrossWANForm extends Component {
                 colSpan={6}
                 formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
-                selectedList={smgList}
-                filterItem={this.filterStoremanData}
+                selectedList={smgList.map(v => ({
+                  text: hexCharCodeToStr(v.groupId),
+                  value: v.groupId
+                }))}
+                isTextValueData={true}
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storeman')}
               />

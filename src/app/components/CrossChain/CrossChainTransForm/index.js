@@ -2,16 +2,15 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, AutoComplete } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
-import { fromWei, isExceedBalance, formatNumByDecimals } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
-
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
 
 @inject(stores => ({
@@ -178,10 +177,6 @@ class CrossChainTransForm extends Component {
     })
   }
 
-  filterStoremanData = item => {
-    return item.groupId;
-  }
-
   sendAllAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
@@ -263,8 +258,11 @@ class CrossChainTransForm extends Component {
                 colSpan={6}
                 formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
-                selectedList={smgList}
-                filterItem={this.filterStoremanData}
+                selectedList={smgList.map(v => ({
+                  text: hexCharCodeToStr(v.groupId),
+                  value: v.groupId
+                }))}
+                isTextValueData={true}
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storeman')}
               />
@@ -277,6 +275,20 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
+              <SelectForm
+                form={form}
+                colSpan={6}
+                formName='to'
+                addrInfo={toAccountList}
+                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
+                selectedList={selectedList}
+                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
+              />
+              {/* <AutoComplete
+                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
+                dataSource={selectedList}
+                placeholder="input here"
+              /> */}
               <SelectForm
                 form={form}
                 colSpan={6}
@@ -319,7 +331,7 @@ class CrossChainTransForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
       </div>
     );
   }

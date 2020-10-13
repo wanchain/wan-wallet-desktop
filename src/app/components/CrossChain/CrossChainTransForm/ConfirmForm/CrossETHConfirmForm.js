@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 import { INBOUND } from 'utils/settings';
+import { hexCharCodeToStr } from 'utils/support';
 
 const inputCom = <Input disabled={true} />
 
@@ -39,7 +40,7 @@ class CrossETHConfirmForm extends Component {
             {getFieldDecorator('from', { initialValue: from })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('Common.storeman')}>
-            {getFieldDecorator('storemanAccount', { initialValue: storeman.replace(/^(\w{24})\w*(\w{24})$/g, '$1****$2') })(inputCom)}
+            {getFieldDecorator('storemanAccount', { initialValue: hexCharCodeToStr(storeman) })(inputCom)}
           </Form.Item>
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
