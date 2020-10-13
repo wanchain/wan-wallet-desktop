@@ -2395,6 +2395,16 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
             break;
 
+        case 'getSelectedStoreman':
+          try {
+              ret = await ccUtil.getSelectedStoreman(payload);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+          break;
+
     }
 })
 

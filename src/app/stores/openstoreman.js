@@ -64,11 +64,19 @@ class OpenStoreman {
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
+        let rank;
         let status = storemanGroupStatus[groupInfo.status];
+        let nextRank = this.selectedStoremanInfo[item.nextGroupId];
+        if (item.nextGroupId !== INIT_GROUPID && nextRank) {
+          rank = [nextRank.findIndex(v => v.toLowerCase() === item.wkAddr.toLowerCase()), nextRank.length];
+        } else {
+          rank = [item.rank, item.selectedCount];
+        }
         if (status !== 'Selecting' && item.rank.toString() === '-1') {
           status = 'Unselected';
         }
         data.push({
+          rank,
           key: index,
           quited: item.quited,
           account: accountInfo.name,
@@ -77,7 +85,6 @@ class OpenStoreman {
           groupId: item.groupId,
           groupIdName: hexCharCodeToStr(item.groupId),
           nextGroupIdName: item.nextGroupId === INIT_GROUPID ? null : hexCharCodeToStr(item.nextGroupId),
-          rank: [item.rank, item.selectedCount],
           slash: item.slashedCount,
           activity: item.activity,
           reward: floorFun(fromWei(item.incentive), 4),
@@ -237,10 +244,9 @@ class OpenStoreman {
     let sender = Object.keys(Object.assign({}, normal, ledger, trezor));
     try {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
-      console.log(ret, 'bbbb')
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
-      let nextGroupIdArr = new Set(ret.map(v => v.nextGroupId).filter(v => v.nextGroupId !== INIT_GROUPID));
+      let nextGroupIdArr = new Set(ret.map(v => v.nextGroupId).filter(v => v !== INIT_GROUPID));
       nextGroupIdArr.forEach(async groupId => {
         let selectedStoreman = await wandWrapper('storeman_getSelectedStoreman', { groupId })
         runInAction(() => {
