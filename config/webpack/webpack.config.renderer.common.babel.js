@@ -84,13 +84,9 @@ export default {
             loader: 'less-loader',
             options: {
               modifyVars: {
-                "@primary-color": "#151625",
                 "@body-background": "#151625",
-                "@text-color": "#fff",
                 "@nav-left-bg": "#151625",
                 "@content-right-bg": "#1A1B2C",
-                "@table-header-color": "#fff",
-                "@table-row-hover-bg": "#1F2034"
               }
             }
           }
@@ -132,9 +128,9 @@ export default {
             options: {
               modules: false,
               modifyVars: {
+                "@primary-color": "#151625",
+                "@body-background": "#151625",
                 "@text-color": "#fff",
-                // "@nav-left-bg": "#151625",
-                // "@content-right-bg": "#1A1B2C",
                 "@table-header-color": "#fff",
                 "@table-row-hover-bg": "#1F2034"
               }
