@@ -20,8 +20,8 @@ const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
   language: stores.languageIntl.language,
   wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
-  tokenPairs: stores.crossChain.tokenPairs,
   currTokenPairId: stores.crossChain.currTokenPairId,
+  currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -36,12 +36,12 @@ class CrossETHForm extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { chainType, type, smgList, tokenPairs, currTokenPairId } = this.props;
+      let { chainType, type, smgList, currTokenPairId, currentTokenPairInfo: info } = this.props;
       if (smgList.length === 0) {
         return;
       }
       const storeman = smgList[0].groupId;
-      const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
+      const decimals = info.ancestorDecimals;
       let quota = '';
       if (type === INBOUND) {
         quota = await getMintQuota(chainType, currTokenPairId, storeman);
@@ -71,10 +71,9 @@ class CrossETHForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, estimateFee, tokenPairs, type, getChainAddressInfoByChain, currTokenPairId } = this.props;
-    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
-    let fromAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
-    let toAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
+    const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
+    let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
 
     form.validateFields(err => {
       if (err) {
@@ -86,7 +85,7 @@ class CrossETHForm extends Component {
       to = getValueByNameInfo(to, 'address', toAddrInfo);
       let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
-      let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
+      let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
 
       // inbound
@@ -133,10 +132,8 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    // const { decimals, balance, chainType, smgList, form, estimateFee } = this.props;
-    const { balance, chainType, smgList, form, estimateFee, from, type, tokenPairs, currTokenPairId } = this.props;
-    let tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
-    const decimals = tokenPairInfo.ancestorDecimals;
+    const { balance, chainType, smgList, form, estimateFee, from, type, currentTokenPairInfo: info } = this.props;
+    const decimals = info.ancestorDecimals;
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (type === INBOUND) {
         if (new BigNumber(value).plus(estimateFee.original).gt(balance)) {
@@ -181,15 +178,15 @@ class CrossETHForm extends Component {
   }
 
   updateLockAccounts = async (storeman, option) => {
-    let { from, form, updateTransParams, chainType, type, tokenPairs, currTokenPairId } = this.props;
-    const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
+    let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const decimals = info.ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) });
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` });
     updateTransParams(from, { storeman });
   }
 
@@ -216,24 +213,23 @@ class CrossETHForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, gasPrice, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance, type, account, tokenPairs, getChainAddressInfoByChain, currTokenPairId } = this.props;
+    const { loading, form, from, settings, smgList, gasPrice, chainType, addrInfo, symbol, tokenAddr, decimals, estimateFee, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
     const { quota } = this.state;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
-    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     if (type === INBOUND) {
-      desChain = tokenPairInfo.toChainSymbol;
-      toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
+      desChain = info.toChainSymbol;
+      toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
-      unit = tokenPairInfo.fromTokenSymbol;
+      title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      unit = info.fromTokenSymbol;
     } else {
-      desChain = tokenPairInfo.fromChainSymbol;
-      toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
+      desChain = info.fromChainSymbol;
+      toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
-      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
-      unit = tokenPairInfo.toTokenSymbol;
+      title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+      unit = info.toTokenSymbol;
     }
 
     if (smgList.length === 0) {

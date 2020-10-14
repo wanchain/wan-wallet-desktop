@@ -168,20 +168,20 @@ class CrossBTCForm extends Component {
   }
 
   updateLockAccounts = (storeman, option) => {
-    let { form, updateBTCTransParams, smgList, direction, currentTokenPairInfo } = this.props;
+    let { form, updateBTCTransParams, smgList, direction, currentTokenPairInfo: info } = this.props;
 
     if (direction === INBOUND) {
       form.setFieldsValue({
-        capacity: formatNumByDecimals(smgList[option.key].quota, 8) + ' BTC',
-        quota: formatNumByDecimals(smgList[option.key].inboundQuota, 8) + ' BTC',
+        capacity: formatNumByDecimals(smgList[option.key].quota, 8) + ` ${info.fromTokenSymbol}`,
+        quota: formatNumByDecimals(smgList[option.key].inboundQuota, 8) + ` ${info.fromTokenSymbol}`,
       });
     } else {
       form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8) + ' BTC',
+        quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8) + ` ${info.toTokenSymbol}`,
       });
     }
     let smg = smgList[option.key];
-    updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg[`${currentTokenPairInfo.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
+    updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
   }
 
   filterStoremanData = item => {
@@ -203,22 +203,21 @@ class CrossBTCForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo, getChainAddressInfoByChain } = this.props;
+    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain } = this.props;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList, unit;
-    let info = currentTokenPairInfo;
-    let toAddrInfo = getChainAddressInfoByChain(currentTokenPairInfo.toChainSymbol);
+    let toAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = toAddrInfo;
       selectedList = Object.keys(toAddrInfo.normal);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      totalFeeTitle = `${this.state.fee} ${currentTokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${currentTokenPairInfo.toChainSymbol}`;
+      totalFeeTitle = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = addrInfo;
       selectedList = Object.keys(addrInfo.normal);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${currentTokenPairInfo.toChainSymbol} + ${this.state.fee} ${currentTokenPairInfo.fromChainSymbol}`;
+      totalFeeTitle = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
     }
 
     if (smgList.length === 0) {
@@ -229,11 +228,11 @@ class CrossBTCForm extends Component {
         defaultSelectStoreman = smgList[0].btcAddress;
         capacity = formatNumByDecimals(smgList[0].quota, 8);
         quota = formatNumByDecimals(smgList[0].inboundQuota, 8);
-        unit = currentTokenPairInfo.fromTokenSymbol;
+        unit = info.fromTokenSymbol;
       } else {
-        defaultSelectStoreman = smgList[0][`${currentTokenPairInfo.toChainSymbol.toLowerCase()}Address`];
+        defaultSelectStoreman = smgList[0][`${info.toChainSymbol.toLowerCase()}Address`];
         quota = formatNumByDecimals(smgList[0].outboundQuota, 8);
-        unit = currentTokenPairInfo.toTokenSymbol;
+        unit = info.toTokenSymbol;
       }
     }
     return (

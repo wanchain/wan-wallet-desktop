@@ -61,7 +61,7 @@ class SelectChainType extends Component {
           </div>
         </Modal>
         {
-          this.state.showAddToken && <AddToken chain={this.addTokenChain} onCancel={this.onCancel} onCloseAll={this.onCloseAll} chain={this.state.chain} />
+          this.state.showAddToken && <AddToken onCancel={this.onCancel} onCloseAll={this.onCloseAll} chain={this.state.chain} />
         }
       </div>
     );

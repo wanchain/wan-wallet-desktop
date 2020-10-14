@@ -7,6 +7,7 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
@@ -17,8 +18,8 @@ const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
   settings: stores.session.settings,
   language: stores.languageIntl.language,
   from: stores.sendCrossChainParams.currentFrom,
-  tokenPairs: stores.crossChain.tokenPairs,
   currTokenPairId: stores.crossChain.currTokenPairId,
+  currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -36,12 +37,12 @@ class CrossChainTransForm extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { chainType, type, smgList, tokenPairs, currTokenPairId } = this.props;
+      let { chainType, type, smgList, currentTokenPairInfo: info, currTokenPairId } = this.props;
       if (smgList.length === 0) {
         return;
       }
       const storeman = smgList[0].groupId;
-      const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
+      const decimals = info.ancestorDecimals;
       let quota = '';
       if (type === INBOUND) {
         quota = await getMintQuota(chainType, currTokenPairId, storeman);
@@ -71,10 +72,9 @@ class CrossChainTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, estimateFee, tokenPairs, type, getChainAddressInfoByChain, currTokenPairId } = this.props;
-    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
-    let fromAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
-    let toAddrInfo = getChainAddressInfoByChain(tokenPairInfo[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
+    const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
+    let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
 
     form.validateFields(async err => {
       if (err) {
@@ -86,7 +86,7 @@ class CrossChainTransForm extends Component {
       to = getValueByNameInfo(to, 'address', toAddrInfo);
       let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
       let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
-      let toPath = (type === INBOUND ? tokenPairInfo.toChainID : tokenPairInfo.fromChainID) - Number('0x80000000'.toString(10));
+      let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
 
       if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
@@ -119,9 +119,8 @@ class CrossChainTransForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { balance, chainType, smgList, form, estimateFee, from, type, tokenPairs, currTokenPairId } = this.props;
-    let tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
-    const decimals = tokenPairInfo.ancestorDecimals;
+    const { balance, chainType, smgList, form, estimateFee, from, type, currentTokenPairInfo: info } = this.props;
+    const decimals = info.ancestorDecimals;
 
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (new BigNumber(value).gt(balance)) {
@@ -157,15 +156,15 @@ class CrossChainTransForm extends Component {
   }
 
   updateLockAccounts = async (storeman, option) => {
-    let { from, form, updateTransParams, chainType, type, tokenPairs, currTokenPairId } = this.props;
-    const decimals = tokenPairs[currTokenPairId].ancestorDecimals;
+    let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const decimals = info.ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) });
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` });
     updateTransParams(from, { storeman });
   }
 
@@ -190,29 +189,37 @@ class CrossChainTransForm extends Component {
     }
   }
 
+  onToChange = (value) => {
+    console.log('value:', value);
+  }
+
+  checkTo = (rule, value, callback) => {
+    console.log('to:', value)
+    callback();
+  }
+
   render() {
-    const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, tokenPairs, type, account, getChainAddressInfoByChain, currTokenPairId } = this.props;
+    const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
     const { quota } = this.state;
     let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList, unit;
-    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
     if (type === INBOUND) {
-      desChain = tokenPairInfo.toChainSymbol;
-      toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
-      selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.toChainSymbol).normal);
-      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
-      tokenSymbol = tokenPairInfo.fromTokenSymbol;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.fromChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
-      unit = tokenPairInfo.fromTokenSymbol;
+      desChain = info.toChainSymbol;
+      toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
+      selectedList = Object.keys(getChainAddressInfoByChain(info.toChainSymbol).normal);
+      title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
+      tokenSymbol = info.fromTokenSymbol;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      unit = info.fromTokenSymbol;
     } else {
-      desChain = tokenPairInfo.fromChainSymbol;
-      toAccountList = getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol);
-      selectedList = Object.keys(getChainAddressInfoByChain(tokenPairInfo.fromChainSymbol).normal);
-      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
-      tokenSymbol = tokenPairInfo.toTokenSymbol;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${tokenPairInfo.toChainSymbol}` : `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
-      unit = tokenPairInfo.toTokenSymbol;
+      desChain = info.fromChainSymbol;
+      toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
+      selectedList = Object.keys(getChainAddressInfoByChain(info.fromChainSymbol).normal);
+      title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
+      tokenSymbol = info.toTokenSymbol;
+      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+      unit = info.toTokenSymbol;
     }
-
+    // selectedList = selectedList.map(val => getValueByAddrInfo(val, 'name', toAccountList));
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
     } else {
@@ -275,19 +282,16 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
-              <SelectForm
+              {/* <AutoCompleteForm
                 form={form}
                 colSpan={6}
                 formName='to'
-                addrInfo={toAccountList}
-                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
-                selectedList={selectedList}
-                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
-              />
-              {/* <AutoComplete
-                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
+                initialValue={selectedList[0]}
                 dataSource={selectedList}
-                placeholder="input here"
+                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
+                options={{ rules: [{ required: true }], validator: this.checkTo }}
+                validator={this.checkTo}
+                onChange={this.onToChange}
               /> */}
               <SelectForm
                 form={form}

@@ -22,8 +22,7 @@ const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
   wanAddrInfo: stores.wanAddress.addrInfo,
   from: stores.sendCrossChainParams.currentFrom,
   transParams: stores.sendCrossChainParams.transParams,
-  tokenPairs: stores.crossChain.tokenPairs,
-  currTokenPairId: stores.crossChain.currTokenPairId,
+  currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -132,16 +131,16 @@ class CrossEOSForm extends Component {
   }
 
   updateLockAccounts = (storeman, option) => {
-    let { from, form, updateTransParams, smgList, direction, decimals } = this.props;
+    let { from, form, updateTransParams, smgList, direction, decimals, currentTokenPairInfo } = this.props;
 
     if (direction === INBOUND) {
       form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].inboundQuota, decimals),
+        quota: formatNumByDecimals(smgList[option.key].inboundQuota, decimals) + ` ${currentTokenPairInfo.fromTokenSymbol}`,
         txFeeRatio: smgList[option.key].txFeeRatio / 100 + '%'
       });
     } else {
       form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].outboundQuota, decimals)
+        quota: formatNumByDecimals(smgList[option.key].outboundQuota, decimals) + ` ${currentTokenPairInfo.toTokenSymbol}`
       });
     }
 
@@ -162,28 +161,28 @@ class CrossEOSForm extends Component {
   }
 
   render() {
-    const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, tokenPairs, currTokenPairId, addrInfo } = this.props;
+    const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, currentTokenPairInfo, addrInfo } = this.props;
     let srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit, totalFeeTitle;
-    const tokenPairInfo = Object.assign({}, tokenPairs[currTokenPairId]);
+    const info = Object.assign({}, currentTokenPairInfo);
     let txParam = transParams[from];
 
     if (direction === INBOUND) {
       fromAccount = record.address;
-      srcChain = tokenPairInfo.fromChainSymbol;
-      desChain = tokenPairInfo.toChainSymbol;
-      let toAccountList = getChainAddressInfoByChain(tokenPairInfo.toChainSymbol);
+      srcChain = info.fromChainSymbol;
+      desChain = info.toChainSymbol;
+      let toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal).map(key => toAccountList.normal[key].name);
-      title = `${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName} -> ${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.fromChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.toChainSymbol}`;
-      unit = tokenPairInfo.fromTokenSymbol;
+      title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
+      totalFeeTitle = `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      unit = info.fromTokenSymbol;
     } else {
       fromAccount = record.name;
-      srcChain = tokenPairInfo.toChainSymbol;
-      desChain = tokenPairInfo.fromChainSymbol;
+      srcChain = info.toChainSymbol;
+      desChain = info.fromChainSymbol;
       selectedList = Object.keys(addrInfo);
-      title = `${tokenPairInfo.toTokenSymbol}@${tokenPairInfo.toChainName} -> ${tokenPairInfo.fromTokenSymbol}@${tokenPairInfo.fromChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${tokenPairInfo.toChainSymbol} + ${estimateFee.destination} ${tokenPairInfo.fromChainSymbol}`;
-      unit = tokenPairInfo.toTokenSymbol;
+      title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
+      totalFeeTitle = `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+      unit = info.toTokenSymbol;
     }
 
     if (smgList.length === 0) {
