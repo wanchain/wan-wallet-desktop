@@ -111,7 +111,7 @@ class InForm extends Component {
     if (WALLETID.TREZOR === walletID) {
       let satellite = { wkAddr: record.wkAddr, annotate: 'Storeman-stakeClaim', withdrawValue: record.unclaimedData };
       try {
-        await this.trezorStoremanClaim(path, from, satellite);
+        await this.trezorTrans(path, from, satellite);
       } catch (err) {
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
         console.log(`trezorTrans Error: ${err}`)
