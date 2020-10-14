@@ -11,7 +11,6 @@ import { checkAddrType, getWalletIdByType, getTypeByWalletId } from 'utils/helpe
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-import { parse } from 'yargs';
 
 const WAN = "m/44'/5718350'/0'/0/";
 
