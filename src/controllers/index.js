@@ -2350,6 +2350,16 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
             break;
 
+        case 'getMultiStoremanGroupInfo':
+          try {
+              ret = await ccUtil.getMultiStoremanGroupInfo(payload.groupId);
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+          break;
+
         case 'getStoremanCandidates':
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);

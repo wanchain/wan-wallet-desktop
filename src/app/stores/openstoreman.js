@@ -61,14 +61,13 @@ class OpenStoreman {
     this.storemanListInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
-      let nextGroupInfo = this.storemanGroupList.find(v => v.nextGroupId === item.nextGroupId)
+      let nextGroupInfo = this.storemanGroupList.find(v => v.groupId === item.nextGroupId)
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         let rank;
         let status = storemanGroupStatus[groupInfo.status];
         let nextRank = this.selectedStoremanInfo[item.nextGroupId];
-
         if (item.nextGroupId !== INIT_GROUPID && nextRank && nextGroupInfo) {
           status = storemanGroupStatus[nextGroupInfo.status];
           rank = [nextRank.findIndex(v => v.toLowerCase() === item.wkAddr.toLowerCase()), nextRank.length];
@@ -238,9 +237,19 @@ class OpenStoreman {
   @action async getOpenStoremanGroupList () {
     try {
       let ret = await wandWrapper('storeman_getOpenStoremanGroupList');
-      runInAction(() => {
-        this.storemanGroupList = ret;
-      })
+      let groupIdArr = ret.map(v => v.groupId);
+      let missingGroup = this.storemanListInfo.map(v => v.groupId).filter(v => !groupIdArr.includes(v));
+      // Add unregister and dismiss Group
+      if (missingGroup.length) {
+        let oldGroupInfo = await wandWrapper('storeman_getMultiStoremanGroupInfo', { groupId: missingGroup })
+        runInAction(() => {
+          this.storemanGroupList = ret.concat(oldGroupInfo);
+        })
+      } else {
+        runInAction(() => {
+          this.storemanGroupList = ret;
+        })
+      }
     } catch (err) {
       console.log(`action_getOpenStoremanGroupList: ${err}`);
     }
@@ -253,6 +262,7 @@ class OpenStoreman {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
+      // Update selectedStoremanInfo
       let nextGroupIdArr = new Set(ret.map(v => v.nextGroupId).filter(v => v !== INIT_GROUPID));
       nextGroupIdArr.forEach(async groupId => {
         let selectedStoreman = await wandWrapper('storeman_getSelectedStoreman', { groupId })
