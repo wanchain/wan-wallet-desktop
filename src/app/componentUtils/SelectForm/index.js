@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Select, Row, Col } from 'antd';
-
 import { getValueByAddrInfo } from 'utils/helper';
 
 function SelectForm(props) {

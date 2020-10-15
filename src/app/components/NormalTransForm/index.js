@@ -105,9 +105,8 @@ class NormalTransForm extends Component {
       let pwd = form.getFieldValue('pwd');
       let addrAmount = getBalanceByAddr(from, addrInfo);
       let sendAmount = form.getFieldValue('amount');
-      let curFee = this.state.advanced ? form.getFieldValue('fee') : form.getFieldValue('fixFee');
+      let curFee = this.state.advanced ? form.getFieldValue('fee') : this.state.gasFee;
       let to = 'to';
-
       if (new BigNumber(addrAmount).minus(new BigNumber(curFee)).lt(new BigNumber(sendAmount))) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
@@ -151,7 +150,7 @@ class NormalTransForm extends Component {
     this.props.updateTransParams(this.props.from, { gasLimit, gasPrice, nonce });
     this.setState({
       gasFee: fee
-    })
+    });
     if (!(transType === TRANSTYPE.tokenTransfer) && this.state.disabledAmount) {
       form.setFieldsValue({
         amount: (new BigNumber(getBalanceByAddr(from, addrInfo)).minus(new BigNumber(fee))).toString(10)

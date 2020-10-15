@@ -18,7 +18,7 @@ const privateTxGasLimit = 300000;
 @observer
 class RedeemFromPrivateForm extends Component {
   state = {
-    gasPrice: 0,
+    gasPrice: this.props.minGasPrice,
     redeemCount: 1
   }
 
