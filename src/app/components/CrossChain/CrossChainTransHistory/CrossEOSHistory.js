@@ -51,6 +51,7 @@ class CrossEOSHistory extends Component {
     transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainType)}</span></div>;
     transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainType)}</span></div>;
     transColumns[4].render = (text, record) => <Tooltip title={intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}>{intl.get(`CrossChainTransHistory.${convertStatus(text)}`)}</Tooltip>;
+
     return (
       <div>
         <div className="historyCon">

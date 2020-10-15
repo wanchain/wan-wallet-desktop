@@ -282,7 +282,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.columns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} rowKey={'address'} columns={this.columns} dataSource={getTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">
