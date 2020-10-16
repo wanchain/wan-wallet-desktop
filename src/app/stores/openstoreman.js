@@ -70,7 +70,7 @@ class OpenStoreman {
         let nextRank = this.selectedStoremanInfo[item.nextGroupId];
         if (item.nextGroupId !== INIT_GROUPID && nextRank && nextGroupInfo) {
           status = storemanGroupStatus[nextGroupInfo.status];
-          rank = [nextRank.findIndex(v => v.toLowerCase() === item.wkAddr.toLowerCase()), nextRank.length];
+          rank = [nextRank.findIndex(v => v.toLowerCase() === item.wkAddr.toLowerCase()) + 1, nextRank.length];
         } else {
           rank = [item.rank, item.selectedCount];
         }
