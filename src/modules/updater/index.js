@@ -64,6 +64,7 @@ class WalletUpdater {
     });
 
     this.updater.on('update-available', (info) => {
+      this._logger.info(`info: ${JSON.stringify(info)}`);
       this._logger.info(`New version: ${info.version}`);
       this._logger.info(`skipped version: ${Settings.skippedUpdateVersion}`);
       if (Settings.skippedUpdateVersion === info.version && !this.updater.isManualCheckUpdates) {
@@ -76,7 +77,9 @@ class WalletUpdater {
       })
       this.updater.isManualCheckUpdates = false;
       
-      const releaseNote = info.releaseNotes[0].note.split('<table>')[0]
+      
+      let target = info.releaseNotes.find(obj => obj.version === info.version);
+      const releaseNote = target === undefined ? '' : target.note.split('<table>')[0];
       const updateInfo = {
         currVersion: app.getVersion(),
         releaseVersion: info.version,
@@ -106,6 +109,7 @@ class WalletUpdater {
 
     this.updater.on('error', (err) => {
       this._logger.error(`updater error: ${err.stack}`)
+      this._logger.error(`updater error: ${JSON.stringify(err)}`)
     })
     this._logger.info(`platform:  ${process.platform}`);
     if (process.platform === 'darwin' || process.platform === 'win32') {
