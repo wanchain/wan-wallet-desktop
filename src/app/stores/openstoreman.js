@@ -18,6 +18,8 @@ class OpenStoreman {
 
   @observable storemanListInfo = [];
 
+  @observable missingGroupListInfo = [];
+
   @observable storemanDelegatorInfo =[];
 
   @observable storemanMemberList = [];
@@ -61,6 +63,9 @@ class OpenStoreman {
     this.storemanListInfo.forEach((item, index) => {
       let accountInfo = getInfoByAddress(item.from, ['name', 'path'], wanAddress.addrInfo);
       let groupInfo = this.storemanGroupList.find(v => v.groupId === item.groupId);
+      if (!groupInfo) {
+        groupInfo = this.missingGroupListInfo.find(v => v.groupId === item.groupId);
+      }
       let nextGroupInfo = this.storemanGroupList.find(v => v.groupId === item.nextGroupId)
       if (accountInfo && groupInfo && accountInfo.type) {
         accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
@@ -237,19 +242,9 @@ class OpenStoreman {
   @action async getOpenStoremanGroupList () {
     try {
       let ret = await wandWrapper('storeman_getOpenStoremanGroupList');
-      let groupIdArr = ret.map(v => v.groupId);
-      let missingGroup = this.storemanListInfo.map(v => v.groupId).filter(v => !groupIdArr.includes(v));
-      // Add unregister and dismiss Group
-      if (missingGroup.length) {
-        let oldGroupInfo = await wandWrapper('storeman_getMultiStoremanGroupInfo', { groupId: missingGroup })
-        runInAction(() => {
-          this.storemanGroupList = ret.concat(oldGroupInfo);
-        })
-      } else {
-        runInAction(() => {
-          this.storemanGroupList = ret;
-        })
-      }
+      runInAction(() => {
+        this.storemanGroupList = ret;
+      })
     } catch (err) {
       console.log(`action_getOpenStoremanGroupList: ${err}`);
     }
@@ -262,6 +257,16 @@ class OpenStoreman {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
+
+      // Update missingGroupInfo
+      let missingGroup = ret.map(v => v.groupId);
+      if (missingGroup.length) {
+        let oldGroupInfo = await wandWrapper('storeman_getMultiStoremanGroupInfo', { groupId: missingGroup })
+        runInAction(() => {
+          this.missingGroupListInfo = oldGroupInfo;
+        })
+      }
+
       // Update selectedStoremanInfo
       let nextGroupIdArr = new Set(ret.map(v => v.nextGroupId).filter(v => v !== INIT_GROUPID));
       nextGroupIdArr.forEach(async groupId => {
