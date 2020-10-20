@@ -319,7 +319,7 @@ class OpenStoreman {
           item.nameShowing = item.name ? item.name : item.wkAddr;
           item.icon = item.iconData ? `data:image/${item.iconType};base64, ${item.iconData}` : ('data:image/png;base64,' + new Identicon(item.wkAddr).toString());
         })
-        this.storemanMemberList = temp.filter(v => !v.isWhite);
+        this.storemanMemberList = temp;
       })
     }).catch(err => console.log(err))
   }
