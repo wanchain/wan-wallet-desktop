@@ -751,6 +751,9 @@ const zh_CN = {
     'Storeman.enterPublicKey': '输入公钥',
     'Storeman.enterEnodeID': '输入Enode ID',
     'Storeman.repeatedPK': '重复公钥，请使用新的',
+    'Storeman.delegationClaim': '委托提取',
+    'Storeman.delegationExit': '委托退出',
+    'Storeman.delegationTopup': '追加委托',
     'Storeman.registration': '节点注册',
 }
 

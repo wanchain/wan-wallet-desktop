@@ -744,6 +744,9 @@ const pt_PT = {
     'Storeman.enterPublicKey': 'Enter Public Key',
     'Storeman.enterEnodeID': 'Enter Enode ID',
     'Storeman.repeatedPK': 'Repeated Public Key, Please use a new one',
+    'Storeman.delegationClaim': 'Delegation Claim',
+    'Storeman.delegationExit': 'Delegation Exit',
+    'Storeman.delegationTopup': 'Delegation Top-up',
     'Storeman.registration': 'Storeman Registration',
 }
 

@@ -218,7 +218,7 @@ class ModifyForm extends Component {
   render () {
     const { isExit } = this.state;
     const { onCancel, form, settings, record, addrInfo, storemanConf, spin } = this.props;
-    let title = isExit ? 'Delegation Exit' : 'Delegation Top-up';
+    let title = isExit ? intl.get('Storeman.delegationExit') : intl.get('Storeman.delegationTopup');
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
     let showConfirmItem = { storeman: true, groupId: true, crosschain: true, account: true, amount: !isExit };
 

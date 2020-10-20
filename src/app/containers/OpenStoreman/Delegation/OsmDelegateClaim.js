@@ -192,7 +192,7 @@ class InForm extends Component {
     let showConfirmItem = { withdrawable: true, storeman: true, account: true };
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title='Delegation Claim' className="validator-register-modal + spincont"
+        <Modal visible closable={false} destroyOnClose={true} title={intl.get('Storeman.delegationClaim')} className="validator-register-modal + spincont"
         footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
             <Button disabled={record.unclaimedData === '0' || spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
