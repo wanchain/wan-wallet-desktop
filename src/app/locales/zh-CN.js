@@ -726,6 +726,7 @@ const zh_CN = {
     'Storeman.unselected': '未选中',
     'Storeman.ready': '准备就绪',
     'Storeman.working': '工作中',
+    'Storeman.failed': '失败',
     'Storeman.quitting': '正在退出',
     'Storeman.quitted': '已退出',
     'Storeman.stake': '质押',
@@ -748,7 +749,9 @@ const zh_CN = {
     'Storeman.rank': '排名',
     'Storeman.slash': '惩罚',
     'Storeman.enterPublicKey': '输入公钥',
-    'Storeman.enterEnodeID': '输入Enode ID'
+    'Storeman.enterEnodeID': '输入Enode ID',
+    'Storeman.repeatedPK': '重复公钥，请使用新的',
+    'Storeman.registration': '节点注册',
 }
 
 export default zh_CN;

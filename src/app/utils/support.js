@@ -170,7 +170,7 @@ export function wandWrapper(action, options = {}) {
     wand.request(action, options, (err, ret) => {
       if (err || ret.code === false) {
         console.log(`${action} Error: ${err}`);
-        reject(err);
+        reject(err || ret);
       } else {
         resolve(ret);
       }

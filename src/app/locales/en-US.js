@@ -725,6 +725,7 @@ const en_US = {
     'Storeman.unselected': 'Not Selected',
     'Storeman.ready': 'Ready',
     'Storeman.working': 'Working',
+    'Storeman.failed': 'Failed',
     'Storeman.quitting': 'Quitting',
     'Storeman.quitted': 'Quitted',
     'Storeman.stake': 'STAKE',
@@ -747,7 +748,9 @@ const en_US = {
     'Storeman.rank': 'RANK',
     'Storeman.slash': 'SLASH',
     'Storeman.enterPublicKey': 'Enter Public Key',
-    'Storeman.enterEnodeID': 'Enter Enode ID'
+    'Storeman.enterEnodeID': 'Enter Enode ID',
+    'Storeman.repeatedPK': 'Repeated Public Key, Please use a new one',
+    'Storeman.registration': 'Storeman Registration',
 }
 
 export default en_US;

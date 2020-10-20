@@ -2,8 +2,9 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin } from 'antd';
 
+import './index.less';
 import { WALLETID } from 'utils/settings';
 import PwdForm from 'componentUtils/PwdForm';
 import { OsmTrezorTrans } from 'componentUtils/trezor';
@@ -31,6 +32,7 @@ class StoremanRegister extends Component {
     balance: '0',
     gasPrice: '0',
     gasLimit: '0',
+    spin: false,
     confirmVisible: false,
     confirmLoading: false,
   };
@@ -106,6 +108,7 @@ class StoremanRegister extends Component {
       }
       wand.request('storeman_openStoremanAction', { tx, action: ACTION, isEstimateFee: false }, (err, ret) => {
         if (err) {
+          console.error('storeman_openStoremanAction', err.desc)
           message.warn(intl.get('ValidatorRegister.registerFailed'));
         } else {
           let data = ret.result;
@@ -122,30 +125,45 @@ class StoremanRegister extends Component {
 
   showConfirmForm = () => {
     let { form, settings } = this.props;
-    form.validateFields(err => {
+    form.validateFields(async err => {
       if (err) return;
       if (new BigNumber(form.getFieldValue('balance')).minus(form.getFieldValue('amount')).lt(this.state.fee)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
 
-      let pwd = form.getFieldValue('pwd');
-      if (!settings.reinput_pwd) {
-        this.setState({ confirmVisible: true });
-      } else {
-        wand.request('phrase_checkPwd', { pwd }, err => {
-          if (err) {
-            message.warn(intl.get('Backup.invalidPassword'));
-          } else {
-            this.setState({ confirmVisible: true });
-          }
-        })
+      let { publicKey: wPk } = form.getFieldsValue(['publicKey']);
+      try {
+        this.setState({ spin: true })
+        let wkAddr = await wandWrapper('storeman_publicToAddress', { wPk });
+        let storemanInfo = await wandWrapper('storeman_getStoremanStakeInfo', { wkAddr });
+        if (storemanInfo.length !== 0 && (storemanInfo[0].deposit !== '0' || storemanInfo[0].partnerCount !== '0' || storemanInfo[0].delegatorCount !== '0')) {
+          this.setState({ spin: false })
+          message.warn(intl.get('Storeman.repeatedPK'));
+          return;
+        }
+        let pwd = form.getFieldValue('pwd');
+        if (!settings.reinput_pwd) {
+          this.setState({ confirmVisible: true });
+        } else {
+          wand.request('phrase_checkPwd', { pwd }, err => {
+            if (err) {
+              message.warn(intl.get('Backup.invalidPassword'));
+            } else {
+              this.setState({ confirmVisible: true });
+            }
+          })
+        }
+      } catch (err) {
+        this.setState({ spin: false })
+        message.warn(intl.get('network.down'));
+        console.error('StoremanRegister_showConfirmForm', err.message)
       }
     })
   }
 
   onConfirmCancel = () => {
-    this.setState({ confirmVisible: false, confirmLoading: false });
+    this.setState({ confirmVisible: false, confirmLoading: false, spin: false });
   }
 
   onSend = async () => {
@@ -176,19 +194,21 @@ class StoremanRegister extends Component {
         let { gasLimit, ...txParams } = tx
         await OsmTrezorTrans(txParams, from, ACTION, satellite);
         this.props.onSend(walletID);
-      } catch (error) {
+      } catch (err) {
+        console.error('StoremanRegister: ', err.message)
         message.warn(intl.get('WanAccount.sendTransactionFailed'));
       }
-      this.setState({ confirmVisible: false, confirmLoading: false });
+      this.setState({ confirmVisible: false, confirmLoading: false, spin: false });
     } else {
       wand.request('storeman_openStoremanAction', { tx, action: ACTION }, (err, ret) => {
         if (err) {
+          console.error('storeman_openStoremanAction: ', err.desc)
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
         } else {
           message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
         }
         this.props.updateTransHistory();
-        this.setState({ confirmVisible: false, confirmLoading: false });
+        this.setState({ confirmVisible: false, confirmLoading: false, spin: false });
         this.props.onSend();
       });
     }
@@ -202,60 +222,62 @@ class StoremanRegister extends Component {
 
     return (
       <div>
-        <Modal visible closable={false} destroyOnClose={true} title="Storeman Registration" className="validator-register-modal"
+        <Modal visible closable={false} destroyOnClose={true} title={intl.get('Storeman.registration')} className="validator-register-modal + spincont"
           footer={[
             <Button key="back" className="cancel" onClick={onCancel}>{intl.get('Common.cancel')}</Button>,
-            <Button key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
+            <Button disabled={this.state.spin} key="submit" type="primary" onClick={this.showConfirmForm}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <div className="validator-bg">
-            <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
-            <CommonFormItem form={form} formName='groupId' disabled={true}
-              options={{ initialValue: group.groupIdName }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('Storeman.group')}
-            />
-            <CommonFormItem form={form} formName='crosschain' disabled={true}
-              options={{ initialValue: group.crosschain }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('Common.crossChain')}
-            />
-            <CommonFormItem form={form} formName='publicKey'
-              options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
-              prefix={<Icon type="wallet" className="colorInput" />}
-              title={intl.get('WanAccount.publicKey')}
-              placeholder={intl.get('Storeman.enterPublicKey')}
-            />
-            <CommonFormItem form={form} formName='enodeID'
-              options={{ rules: [{ required: true, validator: this.checkEnodeId }] }}
-              prefix={<Icon type="wallet" className="colorInput" />}
-              title='Enode ID'
-              placeholder={intl.get('Storeman.enterEnodeID')}
-            />
-          </div>
-          <div className="validator-bg">
-            <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
-            <div className="validator-line">
-              <AddrSelectForm form={form} addrSelectedList={addrSelectedListFilter} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+          <Spin spinning={this.state.spin} size="large">
+            <div className="validator-bg">
+              <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
+              <CommonFormItem form={form} formName='groupId' disabled={true}
+                options={{ initialValue: group.groupIdName }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('Storeman.group')}
+              />
+              <CommonFormItem form={form} formName='crosschain' disabled={true}
+                options={{ initialValue: group.crosschain }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('Common.crossChain')}
+              />
+              <CommonFormItem form={form} formName='publicKey'
+                options={{ rules: [{ required: true, validator: this.checkPublicKey }] }}
+                prefix={<Icon type="wallet" className="colorInput" />}
+                title={intl.get('WanAccount.publicKey')}
+                placeholder={intl.get('Storeman.enterPublicKey')}
+              />
+              <CommonFormItem form={form} formName='enodeID'
+                options={{ rules: [{ required: true, validator: this.checkEnodeId }] }}
+                prefix={<Icon type="wallet" className="colorInput" />}
+                title='Enode ID'
+                placeholder={intl.get('Storeman.enterEnodeID')}
+              />
             </div>
-            <CommonFormItem form={form} formName='balance' disabled={true}
-              options={{ initialValue: this.state.balance }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('ValidatorRegister.balance')}
-            />
-            <CommonFormItem form={form} formName='amount'
-              options={{ rules: [{ required: true, validator: this.checkAmount }] }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('Common.amount')}
-              placeholder={this.props.group.minStakeIn}
-            />
-            <CommonFormItem form={form} formName='fee' disabled={true}
-              options={{ initialValue: this.state.fee + ' WAN' }}
-              prefix={<Icon type="credit-card" className="colorInput" />}
-              title={intl.get('CrossChainTransForm.estimateFee')}
-            />
-            {settings.reinput_pwd && <PwdForm form={form} />}
-          </div>
+            <div className="validator-bg">
+              <div className="stakein-title">{intl.get('ValidatorRegister.myAccount')}</div>
+              <div className="validator-line">
+                <AddrSelectForm form={form} addrSelectedList={addrSelectedListFilter} handleChange={this.onChangeAddrSelect} getValueByAddrInfoArgs={this.getValueByAddrInfoArgs} />
+              </div>
+              <CommonFormItem form={form} formName='balance' disabled={true}
+                options={{ initialValue: this.state.balance }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('ValidatorRegister.balance')}
+              />
+              <CommonFormItem form={form} formName='amount'
+                options={{ rules: [{ required: true, validator: this.checkAmount }] }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('Common.amount')}
+                placeholder={this.props.group.minStakeIn}
+              />
+              <CommonFormItem form={form} formName='fee' disabled={true}
+                options={{ initialValue: this.state.fee + ' WAN' }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.estimateFee')}
+              />
+              {settings.reinput_pwd && <PwdForm form={form} />}
+            </div>
+          </Spin>
         </Modal>
         {this.state.confirmVisible && <Confirm confirmLoading={this.state.confirmLoading} showConfirmItem={showConfirmItem} onCancel={this.onConfirmCancel} onSend={this.onSend} record={Object.assign(record, { groupIdName: group.groupIdName, account: record.myAddr })} title={intl.get('NormalTransForm.ConfirmForm.transactionConfirm')} />}
       </div>

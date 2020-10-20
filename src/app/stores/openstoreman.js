@@ -248,7 +248,7 @@ class OpenStoreman {
         this.storemanGroupList = ret;
       })
     } catch (err) {
-      console.log(`action_getOpenStoremanGroupList: ${err}`);
+      console.log(`action_getOpenStoremanGroupList: ${err.message}`);
     }
   }
 
@@ -259,7 +259,6 @@ class OpenStoreman {
       let ret = await wandWrapper('storeman_getStoremanStakeInfo', { sender });
       this.storemanListInfo = ret;
       this.storemanListInfoInfoReady = true;
-
       // Update missingGroupInfo
       let missingGroup = ret.map(v => v.groupId);
       if (missingGroup.length) {
@@ -278,7 +277,7 @@ class OpenStoreman {
         })
       });
     } catch (err) {
-      console.log(`action_getStoremanStakeInfo: ${err}`);
+      console.log(`action_getStoremanStakeInfo: ${err.message}`);
     }
   }
 
@@ -293,7 +292,7 @@ class OpenStoreman {
         this.storemanDelegatorInfoInfoReady = true;
       })
     } catch (err) {
-      console.log(`action_getStoremanDelegatorInfo: ${err}`);
+      console.log(`action_getStoremanDelegatorInfo: ${err.message}`);
     }
   }
 
@@ -335,7 +334,7 @@ class OpenStoreman {
         this.storemanStakeTotalIncentiveInfoReady = true;
       })
     } catch (err) {
-      console.log(`action_getStoremanStakeTotalIncentive: ${err}`);
+      console.log(`action_getStoremanStakeTotalIncentive: ${err.message}`);
     }
   }
 
@@ -350,7 +349,7 @@ class OpenStoreman {
         this.storemanDelegatorTotalIncentiveInfoReady = true;
       })
     } catch (err) {
-      console.log(`action_getStoremanDelegatorTotalIncentive: ${err}`);
+      console.log(`action_getStoremanDelegatorTotalIncentive: ${err.message}`);
     }
   }
 
@@ -362,7 +361,7 @@ class OpenStoreman {
           this.storemanConf = ret;
         })
       } catch (err) {
-        console.log(`action_getStoremanConf: ${err}`);
+        console.log(`action_getStoremanConf: ${err.message}`);
       }
     }
   }

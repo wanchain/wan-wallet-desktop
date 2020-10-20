@@ -2287,7 +2287,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
             break;
 
         case 'insertStoremanTransToDB':
@@ -2317,7 +2317,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
         case 'getStoremanStakeInfo':
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
-                ret = await ccUtil.getStoremanStakeInfo(payload.sender);
+                ret = await ccUtil.getStoremanStakeInfo(payload.sender, payload.wkAddr);
                 logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
