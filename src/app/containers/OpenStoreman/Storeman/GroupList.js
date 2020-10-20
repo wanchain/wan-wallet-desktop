@@ -75,10 +75,10 @@ class GroupList extends Component {
         render: (text, record) =>
           <div>
             <Row>
-              <Col span={8} align="center"><Button className={style.modifyTopUpBtn} onClick={() => this.handleStateToggle(record)} /></Col>
+              <Col span={24} align="center"><Button className={style.modifyTopUpBtn} onClick={() => this.handleStateToggle(record)} /></Col>
             </Row>
             <Row>
-              <Col span={8} className={style.modifyBtnText} align="center">{intl.get('ValidatorNode.registerValidatorNode')}</Col>
+              <Col span={8} className={style.registerBtnText} align="center">{intl.get('ValidatorNode.registerValidatorNode')}</Col>
             </Row>
           </div>
       }

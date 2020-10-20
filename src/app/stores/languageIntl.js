@@ -225,6 +225,7 @@ class LanguageIntl {
       {
         key: 'action',
         dataIndex: 'action',
+        align: 'center',
         title: intl.get('Common.action'),
       }
     ]
