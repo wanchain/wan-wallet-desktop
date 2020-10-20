@@ -30,7 +30,7 @@ class Storeman extends Component {
 
   update() {
     this.props.updateTransHistory();
-    this.props.getStoremanStakeTotalIncentive();
+    // this.props.getStoremanStakeTotalIncentive();
   }
 
   componentDidMount() {

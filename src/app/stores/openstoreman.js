@@ -206,16 +206,17 @@ class OpenStoreman {
       delegationStake: ['N/A', 'N/A', false],
       reward: ['N/A', 'N/A', false],
     };
-
+    let unexReward = fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0));
     cardsList.myStake[0] = floorFun(fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0)), 2);
     cardsList.myStake[1] = this.storemanListInfo.length;
     cardsList.myStake[2] = this.storemanListInfoInfoReady;
     cardsList.delegationStake[0] = floorFun(fromWei(this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegateDeposit).toString(10), 0)), 2);
     cardsList.delegationStake[1] = this.storemanListInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.delegatorCount).toString(10), 0);
     cardsList.delegationStake[2] = this.storemanListInfoInfoReady;
-    cardsList.reward[0] = floorFun(fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0)), 2);
-    cardsList.reward[1] = this.storemanStakeTotalIncentive.length && this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
-    cardsList.reward[2] = this.storemanStakeTotalIncentiveInfoReady;
+    // cardsList.reward[0] = floorFun(fromWei(this.storemanStakeTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0)), 2);
+    cardsList.reward[0] = floorFun(new BigNumber(unexReward).toString(10));
+    // cardsList.reward[1] = this.storemanStakeTotalIncentive.length && this.storemanStakeTotalIncentive[0] ? timeFormat(this.storemanStakeTotalIncentive[0].timestamp) : 'N/A'
+    cardsList.reward[2] = this.storemanListInfoInfoReady;
 
     return cardsList;
   }
@@ -226,15 +227,15 @@ class OpenStoreman {
       myReward: ['N/A', 'N/A'],
       withdrawableAmount: ['N/A', 'N/A'],
     };
-    let exReward = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
+    // let exReward = fromWei(this.storemanDelegatorTotalIncentive.reduce((prev, curr) => new BigNumber(prev).plus(curr.amount).toString(10), 0));
     let unexReward = fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.incentive).toString(10), 0));
     let claimableAmount = fromWei(this.delegatorListData.reduce((prev, curr) => new BigNumber(prev).plus(toWeiData(curr.unclaimedData)).toString(10), 0));
     cardsList.myStake[0] = floorFun(fromWei(this.storemanDelegatorInfo.reduce((prev, curr) => new BigNumber(prev).plus(curr.deposit).toString(10), 0)), 2);
     cardsList.myStake[1] = this.storemanDelegatorInfo.length;
     cardsList.myStake[2] = this.storemanDelegatorInfoInfoReady;
-    cardsList.myReward[0] = floorFun(new BigNumber(exReward).plus(unexReward).toString(10));
-    cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
-    cardsList.myReward[2] = this.storemanDelegatorTotalIncentiveInfoReady && this.storemanDelegatorInfoInfoReady;
+    cardsList.myReward[0] = floorFun(new BigNumber(unexReward).toString(10));
+    // cardsList.myReward[1] = this.storemanDelegatorTotalIncentive.length && this.storemanDelegatorTotalIncentive[0] ? timeFormat(this.storemanDelegatorTotalIncentive[0].timestamp) : 'N/A';
+    cardsList.myReward[2] = this.storemanDelegatorInfoInfoReady;
     cardsList.withdrawableAmount[0] = floorFun(claimableAmount);
     cardsList.withdrawableAmount[1] = this.storemanDelegatorInfoInfoReady;
 
