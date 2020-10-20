@@ -2,14 +2,13 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tag } from 'antd';
-
 import totalImg from 'static/image/eth.png';
 import TransHistory from 'components/TransHistory/ETHTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { checkAddrType, hasSameName, getWalletIdByType, createETHAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
-import style from './index.less';
+import WarningExistAddress from 'components/WarningExistAddress';
 
 const CHAINTYPE = 'ETH';
 
@@ -30,9 +29,11 @@ class EthAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      bool: true,
       isUnlock: false,
+      isExist: false,
+      address: undefined,
     }
+    this.canCreate = true;
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
   }
@@ -110,21 +111,32 @@ class EthAccount extends Component {
   }
 
   createAccount = () => {
-    const { addAddress } = this.props;
-    this.setState({
-      bool: false
-    });
-    if (this.state.bool) {
+    const { addAddress, getAddrList } = this.props;
+
+    if (this.canCreate) {
       try {
-        createETHAddr().then(addressInfo => {
+        this.canCreate = false;
+        let checkDuplicate = address => {
+          if (getAddrList.find(obj => obj.address.toLowerCase() === address.toLowerCase())) {
+            this.setState({ address, isExist: true });
+            return true;
+          }
+          return false;
+        }
+        createETHAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
-          this.setState({
-            bool: true
-          });
+          this.canCreate = true;
           message.success(intl.get('WanAccount.createAccountSuccess'));
+        }).catch((e) => {
+          this.canCreate = true;
+          if (e.message === 'exist') {
+            return;
+          }
+          message.warn(intl.get('WanAccount.createAccountFailed'));
         });
       } catch (e) {
         console.log('err:', e);
+        this.canCreate = true;
         message.warn(intl.get('WanAccount.createAccountFailed'));
       };
     }
@@ -136,6 +148,10 @@ class EthAccount extends Component {
     } else {
       this.props.updateName(row, row.wid);
     }
+  }
+
+  onCloseModal = () => {
+    this.setState({ isExist: false })
   }
 
   render() {
@@ -173,6 +189,9 @@ class EthAccount extends Component {
             <TransHistory name={['normal', 'rawKey']} />
           </Col>
         </Row>
+        {
+          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')}/>
+        }
       </div>
     );
   }

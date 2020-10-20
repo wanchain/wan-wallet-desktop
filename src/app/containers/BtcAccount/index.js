@@ -12,6 +12,7 @@ import SendNormalTrans from 'components/SendNormalTrans/SendBTCNormalTrans';
 import { hasSameName, createBTCAddr, getNewPathIndex } from 'utils/helper';
 import { BTCPATH_MAIN, BTCCHAINID, WALLETID } from 'utils/settings';
 import { EditableFormRow, EditableCell } from 'components/Rename';
+import WarningExistAddress from 'components/WarningExistAddress';
 
 @inject(stores => ({
   btcPath: stores.btcAddress.btcPath,
@@ -28,14 +29,15 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
 
 @observer
 class BtcAccount extends Component {
-  state = {
-    bool: true,
-    isUnlock: false,
-    normalTransVisiable: false
-  }
-
   constructor(props) {
     super(props);
+    this.state = {
+      isUnlock: false,
+      normalTransVisiable: false,
+      isExist: false,
+      address: undefined,
+    }
+    this.canCreate = true;
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
   }
@@ -97,24 +99,34 @@ class BtcAccount extends Component {
   }
 
   createAccount = async () => {
-    const { addAddress, btcPath } = this.props;
-    this.setState({
-      bool: false
-    });
+    const { addAddress, getAddrList, btcPath } = this.props;
 
-    if (this.state.bool) {
+    if (this.canCreate) {
       try {
+        this.canCreate = false;
+        let checkDuplicate = address => {
+          if (getAddrList.find(obj => obj.address === address)) {
+            this.setState({ address, isExist: true });
+            return true;
+          }
+          return false;
+        }
         const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
         let index = await getNewPathIndex(CHAINID, btcPath, WALLETID.NATIVE);
-        createBTCAddr(btcPath, index).then(addressInfo => {
+        createBTCAddr(btcPath, index, checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
-          this.setState({
-            bool: true
-          });
+          this.canCreate = true;
           message.success(intl.get('WanAccount.createAccountSuccess'));
+        }).catch((e) => {
+          this.canCreate = true;
+          if (e.message === 'exist') {
+            return;
+          }
+          message.warn(intl.get('WanAccount.createAccountFailed'));
         });
       } catch (e) {
         console.log('err:', e);
+        this.canCreate = true;
         message.warn(intl.get('WanAccount.createAccountFailed'));
       };
     }
@@ -126,6 +138,10 @@ class BtcAccount extends Component {
     } else {
       this.props.updateName(row, row.wid);
     }
+  }
+
+  onCloseModal = () => {
+    this.setState({ isExist: false })
   }
 
   render() {
@@ -167,6 +183,9 @@ class BtcAccount extends Component {
             <TransHistory name={['normal', 'rawKey']} />
           </Col>
         </Row>
+        {
+          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')}/>
+        }
       </div>
     );
   }

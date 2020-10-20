@@ -229,6 +229,7 @@ const th_TH = {
     'WanAccount.publicKey': 'Public Key',
     'WanAccount.createAccountFailed': 'การสร้างบัญชีล้มเหลว',
     'WanAccount.createAccountSuccess': 'การสร้างบัญชีสำเร็จ',
+    'WanAccount.newAddressExistInImportedList': 'The new address below will be created, but there is the same address has been imported.Please delete the imported address before create new address.',
 
     'EosAccount.name': 'ชื่อ',
     'EosAccount.publicKey': 'PUBLIC KEY',
@@ -481,7 +482,7 @@ const th_TH = {
     'Rename.edit': 'แก้ไข',
 
     'SendNormalTrans.hasBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือเพียงพอ',
-    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient balance:',
     'SendNormalTrans.hasNoWANBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ WAN เพียงพอ',
     'SendNormalTrans.hasNoTokenBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของโทเค็นเพียงพอ',
     'SendNormalTrans.hasNoETHBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ ETH เพียงพอ',

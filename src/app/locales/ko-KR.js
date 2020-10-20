@@ -229,6 +229,7 @@ const ko_KR = {
     'WanAccount.publicKey': '퍼블릭키',
     'WanAccount.createAccountFailed': '계정 생성이 실패하였습니다.',
     'WanAccount.createAccountSuccess': '계정 생성이 성공하였습니다.',
+    'WanAccount.newAddressExistInImportedList': 'The new address below will be created, but there is the same address has been imported.Please delete the imported address before create new address.',
 
     'EosAccount.name': '이름',
     'EosAccount.publicKey': '퍼블릭키',
@@ -481,7 +482,7 @@ const ko_KR = {
     'Rename.edit': '수정',
 
     'SendNormalTrans.hasBalance': '잔액이 충분한지 확인 바랍니다.',
-    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient balance:',
     'SendNormalTrans.hasNoWANBalance': '충분한 WAN 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoTokenBalance': '충분한 토큰 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoETHBalance': '충분한 ETH 잔액이 있는지 확인 바랍니다',

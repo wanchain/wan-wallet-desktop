@@ -229,6 +229,7 @@ const zh_CN = {
     'WanAccount.publicKey': '公钥',
     'WanAccount.createAccountFailed': '账户创建失败',
     'WanAccount.createAccountSuccess': '账户创建成功',
+    'WanAccount.newAddressExistInImportedList': '下方的地址将会被创建，但是该地址已经被导入到列表中，请先删除该导入地址后再去创建新的地址。',
 
     'EosAccount.name': '名称',
     'EosAccount.publicKey': '公钥',
@@ -484,7 +485,7 @@ const zh_CN = {
     'Rename.edit': '修改',
 
     'SendNormalTrans.hasBalance': '请确保您有足够的余额',
-    'SendNormalTrans.hasNoBalance': '请确保您有足够的{coin}余额',
+    'SendNormalTrans.hasNoBalance': '请确保您有足够的余额：',
     'SendNormalTrans.hasNoWANBalance': '请确保您有足够的WAN',
     'SendNormalTrans.hasNoTokenBalance': '请确保您有足够的token',
     'SendNormalTrans.hasNoETHBalance': '请确保您有足够的ETH',

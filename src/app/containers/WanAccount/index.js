@@ -13,6 +13,7 @@ import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
 import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
+import WarningExistAddress from 'components/WarningExistAddress';
 import arrow from 'static/image/arrow.png';
 
 const CHAINTYPE = 'WAN';
@@ -34,11 +35,13 @@ class WanAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      bool: true,
       isUnlock: false,
       expanded: false,
-      expandedRows: []
+      expandedRows: [],
+      isExist: false,
+      address: undefined,
     }
+    this.canCreate = true;
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
   }
@@ -96,26 +99,36 @@ class WanAccount extends Component {
   }
 
   createAccount = () => {
-    const { addAddress } = this.props;
-    this.setState({
-      bool: false
-    });
-    if (this.state.bool) {
+    const { addAddress, getAddrList } = this.props;
+    if (this.canCreate) {
       try {
-        createWANAddr().then(addressInfo => {
+        this.canCreate = false;
+        let checkDuplicate = address => {
+          if (getAddrList.find(obj => obj.address.toLowerCase() === address.toLowerCase())) {
+            this.setState({ address, isExist: true });
+            return true;
+          }
+          return false;
+        }
+        createWANAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
-          this.setState({
-            bool: true
-          });
+          this.canCreate = true;
           wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
             if (err) {
               console.log('Open OTA scanner failed:', err);
             }
           });
           message.success(intl.get('WanAccount.createAccountSuccess'));
+        }).catch((e) => {
+          this.canCreate = true;
+          if (e.message === 'exist') {
+            return;
+          }
+          message.warn(intl.get('WanAccount.createAccountFailed'));
         });
       } catch (e) {
         console.log('err:', e);
+        this.canCreate = true;
         message.warn(intl.get('WanAccount.createAccountFailed'));
       };
     }
@@ -274,6 +287,10 @@ class WanAccount extends Component {
     }
   }
 
+  onCloseModal = () => {
+    this.setState({ isExist: false })
+  }
+
   render() {
     const { getAllAmount, getAddrList } = this.props;
     const components = {
@@ -320,6 +337,9 @@ class WanAccount extends Component {
             <WANTransHistory name={['normal', 'import', 'rawKey']} />
           </Col>
         </Row>
+        {
+          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')}/>
+        }
       </div>
     );
   }

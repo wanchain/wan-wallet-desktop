@@ -229,6 +229,7 @@ const es_ES = {
     'WanAccount.publicKey': 'Public Key',
     'WanAccount.createAccountFailed': 'Crear cuenta fallida',
     'WanAccount.createAccountSuccess': 'Crear cuenta exitosamente',
+    'WanAccount.newAddressExistInImportedList': 'The new address below will be created, but there is the same address has been imported.Please delete the imported address before create new address.',
 
     'EosAccount.name': 'NOMBRE',
     'EosAccount.publicKey': 'LLEAVE PUBLICA',
@@ -481,7 +482,7 @@ const es_ES = {
     'Rename.edit': 'Editar',
 
     'SendNormalTrans.hasBalance': 'Asegurate de tener saldo suficiente',
-    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient {coin} balance',
+    'SendNormalTrans.hasNoBalance': 'Please make sure you have sufficient balance:',
     'SendNormalTrans.hasNoWANBalance': 'Asegúrese de tener suficiente saldo WAN',
     'SendNormalTrans.hasNoTokenBalance': 'Asegúrate de tener suficiente saldo de tokens',
     'SendNormalTrans.hasNoETHBalance': 'Asegúrese de tener suficiente saldo ETH',

@@ -10,6 +10,7 @@ import EOSTransHistory from 'components/EOSTransHistory';
 import EOSKeyPairList from './EOSKeyPairList';
 import EOSAccountList from './EOSAccountList';
 import EOSCreateAccountForm from './EOSCreateAccountForm';
+import WarningExistAddress from 'components/WarningExistAddress';
 
 const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAccountForm);
 
@@ -18,6 +19,7 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
   keyInfo: stores.eosAddress.keyInfo,
   getAmount: stores.eosAddress.getAllAmount,
   getAccount: stores.eosAddress.getAccount,
+  getKeyList: stores.eosAddress.getKeyList,
   addKey: obj => stores.eosAddress.addKey(obj),
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -25,29 +27,44 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
 
 @observer
 class EosAccount extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.updateTransHistory();
     this.props.changeTitle('WanAccount.wallet');
     this.state = {
       showCreateAccountForm: false,
+      isExist: false,
+      address: undefined,
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
   generateKeyPair = () => {
-    const { addKey } = this.props;
+    const { addKey, getKeyList } = this.props;
+
     try {
-      createEOSAddr().then(info => {
+      let checkDuplicate = key => {
+        if (getKeyList.find(obj => obj.publicKey === key)) {
+          this.setState({ address: key, isExist: true });
+          return true;
+        }
+        return false;
+      }
+      createEOSAddr(checkDuplicate).then(info => {
         addKey(info);
         message.success(intl.get('EosAccount.createKeyPairSuccess'));
+      }).catch((e) => {
+        if (e.message === 'exist') {
+          return;
+        }
+        message.warn(intl.get('WanAccount.createAccountFailed'));
       });
     } catch (e) {
       console.log('err:', e);
@@ -65,6 +82,10 @@ class EosAccount extends Component {
     this.setState({
       showCreateAccountForm: false
     })
+  }
+
+  onCloseModal = () => {
+    this.setState({ isExist: false })
   }
 
   render() {
@@ -106,7 +127,10 @@ class EosAccount extends Component {
             <EOSTransHistory name={['normal', 'import']} />
           </Col>
         </Row>
-        { this.state.showCreateAccountForm && <CreateAccountForm handleCancel={this.handleCancel} /> }
+        { this.state.showCreateAccountForm && <CreateAccountForm handleCancel={this.handleCancel} />}
+        {
+          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')} />
+        }
       </div>
     );
   }
