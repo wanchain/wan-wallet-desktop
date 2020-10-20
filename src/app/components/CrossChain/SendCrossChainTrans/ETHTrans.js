@@ -36,26 +36,26 @@ class ETHTrans extends Component {
     let desChain, origGas, destGas, storeman;
     let info = Object.assign({}, tokenPairs[chainPairId]);
     if (type === INBOUND) {
-      if (Number(balance) === 0) {
+      /* if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
         return;
-      }
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
+      } */
+      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
         message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
-      }
+      } */
       desChain = info.toChainSymbol;
       origGas = LOCKETH_GAS;
       destGas = REDEEMWETH_GAS;
     } else {
-      if (Number(balance) === 0) {
+      /* if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
-      }
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
+      } */
+      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
         message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
-      }
+      } */
       desChain = info.fromChainSymbol;
       origGas = LOCKWETH_GAS;
       destGas = REDEEMETH_GAS;
@@ -124,7 +124,7 @@ class ETHTrans extends Component {
     const { balance, from, type, account, decimals, symbol, tokenAddr, chainType } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
         {visible &&
           <CollectionCreateForm balance={balance} from={from} account={account} gasPrice={gasPrice} decimals={decimals} tokenAddr={tokenAddr} symbol={symbol} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

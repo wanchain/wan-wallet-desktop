@@ -50,26 +50,26 @@ class Trans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ chainType, tokenAddr });
     if (type === INBOUND) {
-      if (Number(balance) === 0) {
+      /* if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
       if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
         message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
-      }
+      } */
       desChain = info.toChainSymbol;
       origGas = LOCKETH_GAS;// ToDo
       destGas = REDEEMWETH_GAS;// ToDo
     } else {
-      if (Number(balance) === 0) {
+      /* if (Number(balance) === 0) {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
         return;
       }
       if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
         message.warn(intl.get('CrossChainTransForm.originNoBalance'));
         return;
-      }
+      } */
       desChain = info.fromChainSymbol;
       origGas = LOCKWETH_GAS;// ToDo
       destGas = REDEEMETH_GAS;// ToDo
@@ -134,7 +134,7 @@ class Trans extends Component {
     const { balance, from, type, account } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
         {visible &&
           <TransForm balance={balance} from={from} account={account} gasPrice={gasPrice} tokenAddr={tokenAddr} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

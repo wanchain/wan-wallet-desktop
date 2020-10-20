@@ -34,16 +34,16 @@ class EOSTrans extends Component {
     let wanGas, storeman;
     let info = Object.assign({}, currentTokenPairInfo);
     if (direction === INBOUND) {
-      if (![record.balance, record.ramAvailable, record.cpuAvailable, record.netTotal].every(item => new BigNumber(item).gt(0))) {
+      /* if (![record.balance, record.ramAvailable, record.cpuAvailable, record.netTotal].every(item => new BigNumber(item).gt(0))) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
-      }
+      } */
       wanGas = REDEEMWEOS_GAS;
     } else {
-      if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
+      /* if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
-      }
+      } */
       wanGas = LOCKWEOS_GAS;
     }
     this.setState(() => ({ visible: true, spin: true, loading: true }));
@@ -87,7 +87,7 @@ class EOSTrans extends Component {
     let balance = direction === INBOUND ? record.balance : record.amount;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
         { visible &&
           <CollectionCreateForm balance={balance} record={record} decimals={decimals} direction={direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

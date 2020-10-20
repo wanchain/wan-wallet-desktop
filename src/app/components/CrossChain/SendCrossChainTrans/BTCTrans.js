@@ -37,7 +37,7 @@ class BTCTrans extends Component {
   showModal = async () => {
     const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, feeRate, path, currentTokenPairInfo } = this.props;
     let info = Object.assign({}, currentTokenPairInfo);
-    if (direction === INBOUND) {
+    /* if (direction === INBOUND) {
       if (getAmount === 0) {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
@@ -47,7 +47,7 @@ class BTCTrans extends Component {
         message.warn(intl.get('SendNormalTrans.hasBalance'));
         return;
       }
-    }
+    } */
 
     this.setState(() => ({ visible: true, spin: true, loading: true }));
     try {
@@ -129,7 +129,7 @@ class BTCTrans extends Component {
     }
     return (
       <div>
-        <Button type="primary" {...btnStyle} onClick={this.showModal} disabled={Number(balance) === 0}>{intl.get('Common.convert')}</Button>
+        <Button type="primary" {...btnStyle} onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
         { visible &&
           <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
