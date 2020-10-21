@@ -97,7 +97,6 @@ class WANTrans extends Component {
         gasPrice,
         gasLimit: origGas,
         storeman,
-        // txFeeRatio: smgList[0].txFeeRatio,
         chainPairId: chainPairId,
       });
       this.setState(() => ({ spin: false, loading: false }));

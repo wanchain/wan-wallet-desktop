@@ -2,10 +2,8 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
-
-import style from './index.less';
-import { estimateGas } from 'utils/helper';
 import { TRANSTYPE } from 'utils/settings';
+import style from './index.less';
 
 const MinGasLimit = 21000;
 @inject(stores => ({
@@ -51,8 +49,7 @@ class AdvancedOptionForm extends Component {
 
   handleSave = () => {
     this.setState({ loading: true });
-    let from = this.props.from;
-    let form = this.props.form;
+    let { from, form } = this.props;
 
     form.validateFields((err, values) => {
       if (err) {
@@ -74,7 +71,7 @@ class AdvancedOptionForm extends Component {
     })
   }
 
-  render () {
+  render() {
     const { visible, form, minGasPrice, from, transParams, transType, chain } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
@@ -99,7 +96,7 @@ class AdvancedOptionForm extends Component {
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.gasLimit')}>
             {getFieldDecorator('gasLimit', { initialValue: gasLimit, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasLimitIsIncorrect'), validator: this.checkGasLimit }] })
-              (<InputNumber/>)}
+              (<InputNumber />)}
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.nonce')}>
             {getFieldDecorator('nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })

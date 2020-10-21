@@ -94,3 +94,4 @@ export const TOKEN_PRIORITY = {
   ETH: 2,
   EOS: 1,
 }
+export const WAN_ETH_DECIMAL = 18;

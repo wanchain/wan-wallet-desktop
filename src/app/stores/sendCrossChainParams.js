@@ -1,4 +1,4 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { CROSS_TYPE } from 'utils/settings';
 import session from './session';
 

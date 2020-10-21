@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossChainTransForm from 'components/CrossChain/CrossChainTransForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
 
@@ -50,29 +50,13 @@ class Trans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ chainType, tokenAddr });
     if (type === INBOUND) {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      }
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
       desChain = info.toChainSymbol;
-      origGas = LOCKETH_GAS;// ToDo
-      destGas = REDEEMWETH_GAS;// ToDo
+      origGas = LOCKETH_GAS;
+      destGas = REDEEMWETH_GAS;
     } else {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      }
-      if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
       desChain = info.fromChainSymbol;
-      origGas = LOCKWETH_GAS;// ToDo
-      destGas = REDEEMETH_GAS;// ToDo
+      origGas = LOCKWETH_GAS;
+      destGas = REDEEMETH_GAS;
     }
 
     this.setState({ visible: true, spin: true, loading: true });

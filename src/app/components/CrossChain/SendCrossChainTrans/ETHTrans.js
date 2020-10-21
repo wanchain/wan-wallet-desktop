@@ -32,7 +32,7 @@ class ETHTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, chainType, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
+    const { from, path, balance, record, chainType, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
     let desChain, origGas, destGas, storeman;
     let info = Object.assign({}, tokenPairs[chainPairId]);
     if (type === INBOUND) {
@@ -76,10 +76,6 @@ class ETHTrans extends Component {
       }
       this.setState({
         smgList,
-        /* estimateFee: {
-          original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
-        }, */
         estimateFee: {
           original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
@@ -91,7 +87,6 @@ class ETHTrans extends Component {
         gasPrice,
         gasLimit: origGas,
         storeman,
-        // txFeeRatio: smgList[0].txFeeRatio || 0,
         chainPairId: chainPairId,
       });
       this.setState(() => ({ spin: false, loading: false }));
