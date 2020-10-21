@@ -99,7 +99,7 @@ class OpenStoreman {
           unclaimed: floorFun(unclaimedData, 2),
           unclaimedData,
           crosschain: `${groupInfo.chain1[2]} <-> ${groupInfo.chain2[2]}`,
-          status: intl.get(`Storeman.${status.toLowerCase()}`),
+          status: languageIntl.language && intl.get(`Storeman.${status.toLowerCase()}`),
           oriStatus: status.toLowerCase(),
           wkAddr: item.wkAddr,
           canStakeOut: item.canStakeOut,
