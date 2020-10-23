@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 import style from './index.less';
 import OsmDelegateClaim from './OsmDelegateClaim'
 import DelegateAppendAndExit from './DelegateAppendAndExit';
+import Item from 'antd/lib/list/Item';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -58,7 +59,7 @@ class OsmDelegateList extends Component {
         <div>
           <Row>
             <Col span={8} align="center"><DelegateAppendAndExit record={record} modifyType='top-up' /></Col>
-            <Col span={8} align="center"><DelegateAppendAndExit enableButton={record.canDelegateOut && !record.quited} record={record} modifyType='exit' /></Col>
+            <Col span={8} align="center"><DelegateAppendAndExit enableButton={!(record.canDelegateOut && !record.quited) || record.canDelegateClaim} record={record} modifyType='exit' /></Col>
             <Col span={8} align="center"><OsmDelegateClaim record={record} /></Col>
           </Row>
           <Row>
