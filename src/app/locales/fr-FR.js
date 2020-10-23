@@ -468,6 +468,9 @@ const fr_FR = {
     'CrossChainTransForm.Status': 'Statut',
     'CrossChainTransForm.Date': 'Date',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': 'Rapid Mode',
+    'CrossChainTransForm.HTLC': 'Secure Mode',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

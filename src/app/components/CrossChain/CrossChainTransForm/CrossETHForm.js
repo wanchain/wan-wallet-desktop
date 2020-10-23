@@ -12,7 +12,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { ETHPATH, WANPATH, PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -43,6 +43,7 @@ class CrossETHForm extends Component {
       advancedVisible: false,
       advanced: false,
       advancedFee: 0,
+      fastMinCount: 0,
     }
   }
 
@@ -66,6 +67,15 @@ class CrossETHForm extends Component {
     }
   }
 
+  componentDidMount() {
+    const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
+    getFastMinCount(type === INBOUND ? info.fromChainSymbol : info.toChainSymbol, currTokenPairId).then(res => {
+      this.setState({ fastMinCount: res });
+    }).catch(err => {
+      console.log('err:', err);
+    });
+  }
+
   componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
@@ -84,7 +94,7 @@ class CrossETHForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { advanced, advancedFee } = this.state;
+    const { advanced, advancedFee, fastMinCount } = this.state;
     let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
@@ -95,6 +105,10 @@ class CrossETHForm extends Component {
       };
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
+      if (new BigNumber(sendAmount).lt(fastMinCount)) {
+        message.warn(intl.get('CrossChainTransForm.UnderFastMinimum'));
+        return;
+      }
       if (this.accountSelections.includes(to)) {
         to = getValueByNameInfo(to, 'address', toAddrInfo);
         isNativeAccount = true;

@@ -82,10 +82,6 @@ class WANTrans extends Component {
       }
       this.setState({
         smgList,
-        /* estimateFee: {
-          original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
-        }, */
         estimateFee: {
           original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
           destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
@@ -129,7 +125,7 @@ class WANTrans extends Component {
     const { balance, from, type, account, record } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal}>{intl.get('Common.convert')}</Button>
         {visible &&
           <TransForm balance={balance} from={from} account={account} gasPrice={gasPrice} tokenAddr={tokenAddr} record={record} chainType={this.props.chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

@@ -468,6 +468,9 @@ const ko_KR = {
     'CrossChainTransForm.Status': '상태',
     'CrossChainTransForm.Date': '날자',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': 'Rapid Mode',
+    'CrossChainTransForm.HTLC': 'Secure Mode',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

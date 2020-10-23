@@ -466,6 +466,9 @@ const pt_PT = {
     'CrossChainTransForm.Status': 'Status',
     'CrossChainTransForm.Date': 'Data',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': 'Rapid Mode',
+    'CrossChainTransForm.HTLC': 'Secure Mode',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

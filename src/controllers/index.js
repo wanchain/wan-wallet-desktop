@@ -1991,6 +1991,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getFastMinCount':
+            try {
+                let { chainType, tokenPairID } = payload;
+                ret = await ccUtil.getFastMinCount(chainType, tokenPairID);
+            } catch (e) {
+                logger.error('getFastMinCount failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 

@@ -468,6 +468,9 @@ const th_TH = {
     'CrossChainTransForm.Status': 'สถถานะ',
     'CrossChainTransForm.Date': 'วันที่',
     'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.FAST': 'Rapid Mode',
+    'CrossChainTransForm.HTLC': 'Secure Mode',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

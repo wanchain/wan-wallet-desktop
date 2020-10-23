@@ -1185,3 +1185,42 @@ export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
     })
   })
 }
+
+export const checkAddressByChainType = async (address, chain) => {
+  let valid = false;
+  switch (chain) {
+    case 'WAN':
+      valid = await checkWanAddr(address);
+      break;
+    case 'ETH':
+      valid = await checkETHAddr(address);
+      break;
+    case 'BTC':
+      valid = await checkBase58(address);
+      break;
+    case 'EOS':
+      try {
+        valid = await checkEosNameExist(address);
+      } catch (e) {
+        valid = false;
+      }
+      break;
+    default:
+      valid = false;
+  }
+  return valid;
+}
+
+export const getFastMinCount = (chainType, tokenPairID) => {
+  console.log('args:', chainType, tokenPairID);
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getFastMinCount', { chainType, tokenPairID }, (err, res) => {
+      // console.log('Fast min:', err, res)
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}

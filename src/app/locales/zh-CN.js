@@ -471,6 +471,7 @@ const zh_CN = {
     'CrossChainTransForm.crossType': '跨链类型',
     'CrossChainTransForm.FAST': '极速模式',
     'CrossChainTransForm.HTLC': '安全模式',
+    'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
 
     'CrossChain.selectFailed': '修改选择状态失败',
 
