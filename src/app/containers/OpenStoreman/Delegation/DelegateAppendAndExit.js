@@ -266,6 +266,7 @@ class ModifyForm extends Component {
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.amount')}
                   placeholder={record.minDelegateIn}
+                  autoFocus={true}
                 />
               }
               <CommonFormItem form={form} formName='fee' disabled={true}
