@@ -7,12 +7,15 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
-import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS } from 'utils/settings';
+import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
+import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType } from 'utils/helper';
+
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
+const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -20,6 +23,7 @@ const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
   from: stores.sendCrossChainParams.currentFrom,
   currTokenPairId: stores.crossChain.currTokenPairId,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
+  transParams: stores.sendCrossChainParams.transParams,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -28,10 +32,15 @@ const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
 class CrossChainTransForm extends Component {
   constructor(props) {
     super(props);
+    let info = props.currentTokenPairInfo;
+    this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
     this.state = {
       confirmVisible: false,
       quota: 0,
       crossType: CROSS_TYPE[0],
+      advancedVisible: false,
+      advanced: false,
+      advancedFee: 0,
     }
   }
 
@@ -73,9 +82,10 @@ class CrossChainTransForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { advanced, advancedFee } = this.state;
     let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
-
+    let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(async err => {
       if (err) {
         console.log('handleNext:', err);
@@ -83,13 +93,17 @@ class CrossChainTransForm extends Component {
       };
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      to = getValueByNameInfo(to, 'address', toAddrInfo);
+      if (this.accountSelections.includes(to)) {
+        to = getValueByNameInfo(to, 'address', toAddrInfo);
+        isNativeAccount = true;
+      } else if (this.addressSelections.includes(to)) {
+        isNativeAccount = true;
+      }
       let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
-      let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
-      toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
+      toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
-      if (isExceedBalance(origAddrAmount, estimateFee.original) || isExceedBalance(destAddrAmount, estimateFee.destination)) {
+      if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
@@ -189,42 +203,69 @@ class CrossChainTransForm extends Component {
     }
   }
 
-  onToChange = (value) => {
-    console.log('value:', value);
+  checkTo = async (rule, value, callback) => {
+    const { currentTokenPairInfo: info, type } = this.props;
+    let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+    console.log('chain:', chain);
+    if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
+      callback();
+    } else {
+      let isValid = await checkAddressByChainType(value, chain);
+      isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
+    }
   }
 
-  checkTo = (rule, value, callback) => {
-    console.log('to:', value)
-    callback();
+  onAdvanced = () => {
+    this.setState({
+      advancedVisible: true,
+    });
+  }
+
+  handleAdvancedCancel = () => {
+    this.setState({
+      advancedVisible: false,
+    });
+  }
+
+  handleSaveOption = (gasPrice, gasLimit) => {
+    this.setState({
+      advancedVisible: false,
+      advanced: true,
+      advancedFee: formatNumByDecimals(new BigNumber(gasPrice).times(gasLimit).times(BigNumber(10).pow(9)).toString(10), WAN_ETH_DECIMAL),
+    });
   }
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { quota } = this.state;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, tokenSymbol, toAccountList, unit;
+    const { quota, advancedVisible, advanced, advancedFee } = this.state;
+    let totalFeeTitle, desChain, title, tokenSymbol, toAccountList, unit, canAdvance;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
-      selectedList = Object.keys(getChainAddressInfoByChain(info.toChainSymbol).normal);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
       tokenSymbol = info.fromTokenSymbol;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      if (advanced) {
+        totalFeeTitle = `${advancedFee}  ${info.fromChainSymbol}`;
+      } else {
+        totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      }
       unit = info.fromTokenSymbol;
+      canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
-      selectedList = Object.keys(getChainAddressInfoByChain(info.fromChainSymbol).normal);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
       tokenSymbol = info.toTokenSymbol;
-      totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+      if (advanced) {
+        totalFeeTitle = `${advancedFee}  ${info.toChainSymbol}`;
+      } else {
+        totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+      }
       unit = info.toTokenSymbol;
+      canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
-    // selectedList = selectedList.map(val => getValueByAddrInfo(val, 'name', toAccountList));
-    if (smgList.length === 0) {
-      defaultSelectStoreman = '';
-    } else {
-      defaultSelectStoreman = smgList[0].groupId;
-    }
+    this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
+    let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
     return (
       <div>
@@ -282,25 +323,13 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
-              {/* <AutoCompleteForm
+              <AutoCompleteForm
                 form={form}
                 colSpan={6}
                 formName='to'
-                initialValue={selectedList[0]}
-                dataSource={selectedList}
+                dataSource={this.accountSelections}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
-                options={{ rules: [{ required: true }], validator: this.checkTo }}
-                validator={this.checkTo}
-                onChange={this.onToChange}
-              /> */}
-              <SelectForm
-                form={form}
-                colSpan={6}
-                formName='to'
-                addrInfo={toAccountList}
-                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
-                selectedList={selectedList}
-                formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
+                options={{ rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountSelections[0] }}
               />
               {/* <SelectForm
                 form={form}
@@ -332,10 +361,12 @@ class CrossChainTransForm extends Component {
               />
               <Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
+              <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
           </Spin>
         </Modal>
         <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
+        {advancedVisible && <AdvancedCrossChainModal onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
       </div>
     );
   }

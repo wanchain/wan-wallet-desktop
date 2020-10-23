@@ -7,11 +7,12 @@ import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
+import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
-import { fromWei, isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota } from 'utils/helper';
+import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -29,13 +30,18 @@ const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionFor
 
 @observer
 class CrossWANForm extends Component {
-  state = {
-    confirmVisible: false,
-    quota: 0,
-    crossType: CROSS_TYPE[0],
-    advancedVisible: false,
-    advanced: false,
-    advancedFee: 0,
+  constructor(props) {
+    super(props);
+    let info = props.currentTokenPairInfo;
+    this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
+    this.state = {
+      confirmVisible: false,
+      quota: 0,
+      crossType: CROSS_TYPE[0],
+      advancedVisible: false,
+      advanced: false,
+      advancedFee: 0,
+    }
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -76,8 +82,10 @@ class CrossWANForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { advanced, advancedFee } = this.state;
     let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
+    let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(err => {
       if (err) {
         console.log('handleNext:', err);
@@ -85,17 +93,17 @@ class CrossWANForm extends Component {
       };
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      to = getValueByNameInfo(to, 'address', toAddrInfo);
-      let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
-      let destAddrAmount = getBalanceByAddr(to, toAddrInfo);
-      let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
-      toPath = `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}`;
-
-      if (type === INBOUND && isExceedBalance(origAddrAmount, estimateFee.original, sendAmount)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
-        return;
+      if (this.accountSelections.includes(to)) {
+        to = getValueByNameInfo(to, 'address', toAddrInfo);
+        isNativeAccount = true;
+      } else if (this.addressSelections.includes(to)) {
+        isNativeAccount = true;
       }
-      if (type === OUTBOUND && isExceedBalance(origAddrAmount, estimateFee.original)) {
+      let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
+      let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
+      toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
+
+      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
         message.warn(intl.get('CrossChainTransForm.overBalance'));
         return;
       }
@@ -108,12 +116,12 @@ class CrossWANForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: { walletID: 1, path: toPath }, toAddr: to, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: { walletID: 1, path: toPath }, toAddr: to, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -205,6 +213,17 @@ class CrossWANForm extends Component {
     }
   }
 
+  checkTo = async (rule, value, callback) => {
+    const { currentTokenPairInfo: info, type } = this.props;
+    let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+    if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
+      callback();
+    } else {
+      let isValid = await checkAddressByChainType(value, chain);
+      isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
+    }
+  }
+
   onAdvanced = () => {
     this.setState({
       advancedVisible: true,
@@ -228,7 +247,7 @@ class CrossWANForm extends Component {
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, estimateFee, balance, getChainAddressInfoByChain, record, currentTokenPairInfo: info } = this.props;
     const { quota, advancedVisible, advanced, advancedFee } = this.state;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, title, fromAccount, toAccountList, unit;
+    let totalFeeTitle, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
@@ -241,6 +260,7 @@ class CrossWANForm extends Component {
         totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${estimateFee.original}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
       }
       unit = info.fromTokenSymbol;
+      canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
@@ -253,13 +273,11 @@ class CrossWANForm extends Component {
         totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${estimateFee.original}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
       }
       unit = info.toTokenSymbol;
+      canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
 
-    if (smgList.length === 0) {
-      defaultSelectStoreman = '';
-    } else {
-      defaultSelectStoreman = smgList[0].groupId;
-    }
+    this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
+    let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
     return (
       <div>
@@ -317,14 +335,13 @@ class CrossWANForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
-              <SelectForm
+              <AutoCompleteForm
                 form={form}
                 colSpan={6}
                 formName='to'
-                addrInfo={toAccountList}
-                initialValue={getValueByAddrInfo(selectedList[0], 'name', toAccountList)}
-                selectedList={selectedList}
+                dataSource={this.accountSelections}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
+                options={{ rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountSelections[0] }}
               />
               <CommonFormItem
                 form={form}
@@ -346,8 +363,7 @@ class CrossWANForm extends Component {
               />
               {type === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
-              <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
-
+              <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
           </Spin>
         </Modal>

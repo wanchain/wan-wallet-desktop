@@ -10,7 +10,7 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, PENALTYNUM, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossEOSConfirmForm';
 import { isExceedBalance, formatNumByDecimals } from 'utils/support';
-import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr, getValueByAddrInfo } from 'utils/helper';
+import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
 

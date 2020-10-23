@@ -2,7 +2,6 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
-
 import { getFullChainName } from 'utils/helper';
 import { INBOUND } from 'utils/settings';
 
