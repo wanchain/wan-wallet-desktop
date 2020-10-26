@@ -335,7 +335,7 @@ class DelegateAppendAndExit extends Component {
 
     return (
       <div>
-        <Button className={style.modifyTopUpBtn} disabled={ modifyType === 'exit' && enableButton } onClick={this.handleStateToggle} />
+        <Button className={style.modifyTopUpBtn} disabled={ enableButton } onClick={this.handleStateToggle} />
         { this.state.visible &&
           <DelegationModifyForm spin={this.state.spin} onCancel={this.handleSend} onSend={this.handleSend} record={record} modifyType={modifyType} txParams={this.state.txParams} />
         }

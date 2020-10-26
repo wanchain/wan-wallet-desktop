@@ -58,7 +58,7 @@ class OsmDelegateList extends Component {
         render: (text, record) =>
         <div>
           <Row>
-            <Col span={8} align="center"><DelegateAppendAndExit record={record} modifyType='top-up' /></Col>
+            <Col span={8} align="center"><DelegateAppendAndExit enableButton={record.quited} record={record} modifyType='top-up' /></Col>
             <Col span={8} align="center"><DelegateAppendAndExit enableButton={!(record.canDelegateOut && !record.quited) || record.canDelegateClaim} record={record} modifyType='exit' /></Col>
             <Col span={8} align="center"><OsmDelegateClaim record={record} /></Col>
           </Row>
