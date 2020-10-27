@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox, AutoComplete } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -12,7 +12,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -24,6 +24,7 @@ const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionFor
   currTokenPairId: stores.crossChain.currTokenPairId,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   transParams: stores.sendCrossChainParams.transParams,
+  coinPriceObj: stores.portfolio.coinPriceObj,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -43,6 +44,13 @@ class CrossChainTransForm extends Component {
       advancedFee: 0,
       fastMinCount: 0,
     }
+    this.operationFee = 0;
+    getFees(info[props.type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
+      this.operationFee = res[0];
+    }).catch(err => {
+      console.log('err:', err);
+      message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
+    });
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -250,20 +258,21 @@ class CrossChainTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
     const { quota, advancedVisible, advanced, advancedFee } = this.state;
-    let totalFeeTitle, desChain, title, tokenSymbol, toAccountList, unit, canAdvance;
+    let gasFee, operationFee, totalFee, desChain, title, tokenSymbol, toAccountList, quotaUnit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
       tokenSymbol = info.fromTokenSymbol;
       if (advanced) {
-        totalFeeTitle = `${advancedFee}  ${info.fromChainSymbol}`;
+        gasFee = advancedFee;
       } else {
-        totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.fromChainSymbol}` : `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+        gasFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
       }
-      unit = info.fromTokenSymbol;
+      quotaUnit = info.fromTokenSymbol;
+      feeUnit = info.fromChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
     } else {
       desChain = info.fromChainSymbol;
@@ -271,15 +280,27 @@ class CrossChainTransForm extends Component {
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
       tokenSymbol = info.toTokenSymbol;
       if (advanced) {
-        totalFeeTitle = `${advancedFee}  ${info.toChainSymbol}`;
+        gasFee = advancedFee;
       } else {
-        totalFeeTitle = this.state.crossType === CROSS_TYPE[0] ? `${new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)}  ${info.toChainSymbol}` : `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
+        gasFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
       }
-      unit = info.toTokenSymbol;
+      quotaUnit = info.toTokenSymbol;
+      feeUnit = info.toChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
+
+    // Convert the value of fee to USD
+    if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
+      totalFee = `${new BigNumber(gasFee).plus(this.operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
+      gasFee = `${new BigNumber(gasFee).times(coinPriceObj[feeUnit]).toString()} USD`;
+      operationFee = `${new BigNumber(this.operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
+    } else {
+      totalFee = `${new BigNumber(gasFee).plus(this.operationFee).toString()} ${feeUnit}`;
+      gasFee = `${gasFee} ${feeUnit}`;
+      operationFee = `${this.operationFee} ${feeUnit}`;
+    }
 
     return (
       <div>
@@ -333,7 +354,7 @@ class CrossChainTransForm extends Component {
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
+                options={{ initialValue: `${quota} ${quotaUnit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
@@ -345,24 +366,22 @@ class CrossChainTransForm extends Component {
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
                 options={{ rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountSelections[0] }}
               />
-              {/* <SelectForm
-                form={form}
-                colSpan={6}
-                formName='crossType'
-                isTextValueData={true}
-                initialValue={this.state.crossType}
-                selectedList={CROSS_TYPE.map(v => ({ value: v, text: intl.get(`CrossChainTransForm.${v}`) }))}
-                formMessage={'Type'}
-                handleChange={this.updateCrossType}
-              /> */}
               <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='totalFee'
                 disabled={true}
-                options={{ initialValue: totalFeeTitle }}
+                options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
+                suffix={<Tooltip title={
+                  <table>
+                    <tbody>
+                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                    </tbody>
+                  </table>
+                }><Icon type="exclamation-circle" /></Tooltip>}
               />
               <CommonFormItem
                 form={form}

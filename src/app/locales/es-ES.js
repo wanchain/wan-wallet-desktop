@@ -34,7 +34,7 @@ const es_ES = {
     'Common.networkError': 'Error de red. Por favor reinicie la cartera',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'La cantidad minima debe ser de { minAmount } WAN',
 
@@ -450,6 +450,8 @@ const es_ES = {
     'CrossChainTransForm.capacity': 'Capacidad',
     'CrossChainTransForm.quota': 'Capacidad restante',
     'CrossChainTransForm.estimateFee': 'Tarifa estimada',
+    'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'El costo excede el saldo. Verifique el saldo en la cadena original y en la de destino.',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'La cantidad es mayor que el saldo',
@@ -471,6 +473,7 @@ const es_ES = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

@@ -358,7 +358,7 @@ class OsmDelegateInForm extends Component {
                     </Form>
                   </Col>
                   <Col span={3} align="right" className={style['col-stakein-info']}>
-                    <a onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
+                    <a className={style['moreLink']} onClick={this.onClick}>{intl.get('StakeInForm.more')}</a>
                   </Col>
                 </Row>
               </div>

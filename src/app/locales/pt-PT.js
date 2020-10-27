@@ -34,7 +34,7 @@ const pt_PT = {
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': 'Storeman Group',
     'Common.chain': 'Chain (cadeia/blockchain)',
     'Common.amountTooLow': 'O valor mínimo deve ser { minAmount } WAN',
 
@@ -448,6 +448,8 @@ const pt_PT = {
     'CrossChainTransForm.capacity': 'Capacidade',
     'CrossChainTransForm.quota': 'Capacidade restante',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
+    'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
@@ -469,6 +471,7 @@ const pt_PT = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

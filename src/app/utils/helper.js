@@ -1212,10 +1212,20 @@ export const checkAddressByChainType = async (address, chain) => {
 }
 
 export const getFastMinCount = (chainType, tokenPairID) => {
-  console.log('args:', chainType, tokenPairID);
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getFastMinCount', { chainType, tokenPairID }, (err, res) => {
-      // console.log('Fast min:', err, res)
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}
+
+export const getFees = (chainType, chainID1, chainID2) => {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getFees', { chainType, chainID1, chainID2 }, (err, res) => {
       if (err) {
         return reject(err);
       } else {

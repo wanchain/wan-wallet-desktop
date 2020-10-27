@@ -34,7 +34,7 @@ const fr_FR = {
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
 
@@ -450,6 +450,8 @@ const fr_FR = {
     'CrossChainTransForm.capacity': 'Capacités',
     'CrossChainTransForm.quota': 'Capacités disponibles',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
+    'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'Le montant dépasse le solde.',
@@ -471,6 +473,7 @@ const fr_FR = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

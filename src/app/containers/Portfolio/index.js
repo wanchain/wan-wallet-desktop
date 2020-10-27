@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { observer, inject } from 'mobx-react';
-
 import style from './index.less';
 import wanLogo from 'static/image/wan.png';
 import ethLogo from 'static/image/eth.png';
@@ -12,7 +11,7 @@ import eosLogo from 'static/image/eos.png';
   portfolioList: stores.portfolio.portfolioList,
   tokenIconList: stores.tokens.tokenIconList,
   portfolioColumns: stores.languageIntl.portfolioColumns,
-  setCoin: (coins) => stores.portfolio.setCoin(coins),
+  setCoin: () => stores.portfolio.setCoin(),
   updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
   updateTokenBalance: () => stores.portfolio.updateTokenBalance(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),

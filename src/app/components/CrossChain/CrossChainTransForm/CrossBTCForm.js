@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -24,6 +24,7 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   transParams: stores.sendCrossChainParams.transParams,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
+  coinPriceObj: stores.portfolio.coinPriceObj,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getPathPrefix: chain => stores.tokens.getPathPrefix(chain),
@@ -57,13 +58,12 @@ class CrossBTCForm extends Component {
       };
       let origAddrAmount, destAddrAmount, origAddrFee, destAddrFee;
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let chian = info.toChainSymbol;
-      let toAddrInfo = Object.assign({}, getChainAddressInfoByChain(chian));
-      to = getValueByNameInfo(to, 'address', direction === INBOUND ? toAddrInfo : addrInfo);
+      let wanAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
+      to = getValueByNameInfo(to, 'address', direction === INBOUND ? wanAddrInfo : addrInfo);
 
       if (direction === INBOUND) {
         origAddrAmount = balance;
-        destAddrAmount = getBalanceByAddr(to, toAddrInfo);
+        destAddrAmount = getBalanceByAddr(to, wanAddrInfo);
         origAddrFee = this.state.fee;
         destAddrFee = estimateFee.destination;
         if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
@@ -71,7 +71,7 @@ class CrossBTCForm extends Component {
           return;
         }
       } else {
-        origAddrAmount = getBalanceByAddr(from, toAddrInfo);
+        origAddrAmount = getBalanceByAddr(from, wanAddrInfo);
         destAddrAmount = getBalanceByAddr(to, addrInfo);
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
@@ -91,7 +91,7 @@ class CrossBTCForm extends Component {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
             if (direction === INBOUND) {
-              updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+              updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
             } else {
               updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
             }
@@ -100,7 +100,7 @@ class CrossBTCForm extends Component {
         })
       } else {
         if (direction === INBOUND) {
-          updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + toAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+          updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
         } else {
           updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
         }
@@ -203,21 +203,43 @@ class CrossBTCForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain } = this.props;
-    let totalFeeTitle, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList, unit;
-    let toAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
+    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
+    let gasFee, operationFee, totalFee, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList, unit;
+    let wanAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
-      toAccountList = toAddrInfo;
-      selectedList = Object.keys(toAddrInfo.normal);
+      toAccountList = wanAddrInfo;
+      selectedList = Object.keys(wanAddrInfo.normal);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      totalFeeTitle = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      // totalFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+
+      // Convert the value of fee to USD
+      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
+        totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).plus(BigNumber(estimateFee.destination).times(coinPriceObj[info.toChainSymbol])).toString()} USD`;
+        gasFee = totalFee;
+        operationFee = `0 USD`;
+      } else {
+        totalFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+        gasFee = totalFee;
+        operationFee = `0 USD`;
+      }
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = addrInfo;
       selectedList = Object.keys(addrInfo.normal);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
+      // totalFee = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
+
+      // Convert the value of fee to USD
+      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
+        gasFee = `${new BigNumber(estimateFee.original).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
+        operationFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).toString()} USD`;
+        totalFee = `${new BigNumber(estimateFee.original).times(coinPriceObj[info.toChainSymbol]).plus(BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol])).toString()} USD`;
+      } else {
+        gasFee = `${estimateFee.original} ${info.toChainSymbol}`;
+        operationFee = `${this.state.fee} ${info.fromChainSymbol}`;
+        totalFee = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
+      }
     }
 
     if (smgList.length === 0) {
@@ -258,7 +280,7 @@ class CrossBTCForm extends Component {
                   colSpan={6}
                   formName='from'
                   disabled={true}
-                  options={{ initialValue: getValueByAddrInfo(from, 'name', toAddrInfo) }}
+                  options={{ initialValue: getValueByAddrInfo(from, 'name', wanAddrInfo) }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.from')}
                 />
@@ -317,9 +339,17 @@ class CrossBTCForm extends Component {
                 colSpan={6}
                 formName='totalFee'
                 disabled={true}
-                options={{ initialValue: totalFeeTitle }}
+                options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
+                suffix={<Tooltip title={
+                  <table>
+                    <tbody>
+                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                    </tbody>
+                  </table>
+                }><Icon type="exclamation-circle" /></Tooltip>}
               />
               <CommonFormItem
                 form={form}
@@ -337,7 +367,7 @@ class CrossBTCForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFeeTitle} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading} />
+        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading} />
       </div>
     );
   }

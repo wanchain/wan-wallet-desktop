@@ -2,7 +2,6 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
-
 import style from './index.less';
 import { MAIN, TESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';

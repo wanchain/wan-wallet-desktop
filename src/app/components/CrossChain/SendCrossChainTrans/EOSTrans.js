@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getSmgList, getStoremanGroupListByChainPair, getStoremanGroupList } from 'utils/helper';
+import { getGasPrice, getSmgList } from 'utils/helper';
 import { INBOUND, REDEEMWEOS_GAS, LOCKWEOS_GAS, CROSS_TYPE } from 'utils/settings';
 import CrossEOSForm from 'components/CrossChain/CrossChainTransForm/CrossEOSForm';
 
@@ -30,7 +30,7 @@ class EOSTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, record, getTokensListInfo, addCrossTransTemplate, updateTransParams, direction, tokenOrigAddr, currentTokenPairInfo } = this.props;
+    const { from, record, getTokensListInfo, addCrossTransTemplate, updateTransParams, direction, currentTokenPairInfo } = this.props;
     let wanGas, storeman;
     let info = Object.assign({}, currentTokenPairInfo);
     if (direction === INBOUND) {

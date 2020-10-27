@@ -7,7 +7,7 @@ import style from './index.less';
 import logo from 'static/image/logo.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
-import { CROSSCHAINTYPE, WALLET_CHAIN, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
+import { CROSSCHAINTYPE, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
 
 const { SubMenu, Item } = Menu;
 
@@ -18,12 +18,24 @@ const { SubMenu, Item } = Menu;
   sidebarColumns: stores.languageIntl.sidebarColumns,
   crossChainSelections: stores.crossChain.crossChainSelections,
   dAppsOnSideBar: stores.dapps.dAppsOnSideBar,
+  setCoin: () => stores.portfolio.setCoin(),
+  updateCoinPrice: () => stores.portfolio.updateCoinPrice(),
 }))
 
 @observer
 class Sidebar extends Component {
   state = {
     collapsed: false,
+  }
+
+  componentDidUpdate() {
+    this.props.setCoin();
+    this.props.updateCoinPrice();
+  }
+
+  componentDidMount() {
+    this.props.setCoin();
+    this.props.updateCoinPrice();
   }
 
   toggleMenu = () => {

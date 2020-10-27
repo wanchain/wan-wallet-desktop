@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
@@ -23,6 +23,7 @@ const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
   from: stores.sendCrossChainParams.currentFrom,
   transParams: stores.sendCrossChainParams.transParams,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
+  coinPriceObj: stores.portfolio.coinPriceObj,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
@@ -161,8 +162,8 @@ class CrossEOSForm extends Component {
   }
 
   render() {
-    const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, currentTokenPairInfo, addrInfo } = this.props;
-    let srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit, totalFeeTitle;
+    const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, currentTokenPairInfo, addrInfo, coinPriceObj } = this.props;
+    let gasFee, operationFee, totalFee, srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit;
     const info = Object.assign({}, currentTokenPairInfo);
     let txParam = transParams[from];
 
@@ -173,7 +174,6 @@ class CrossEOSForm extends Component {
       let toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal).map(key => toAccountList.normal[key].name);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
       unit = info.fromTokenSymbol;
     } else {
       fromAccount = record.name;
@@ -181,7 +181,6 @@ class CrossEOSForm extends Component {
       desChain = info.fromChainSymbol;
       selectedList = Object.keys(addrInfo);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      totalFeeTitle = `${estimateFee.original} ${info.toChainSymbol} + ${estimateFee.destination} ${info.fromChainSymbol}`;
       unit = info.toTokenSymbol;
     }
 
@@ -191,6 +190,14 @@ class CrossEOSForm extends Component {
     } else {
       quota = formatNumByDecimals(txParam.quota, decimals);
       txFeeRatio = txParam.txFeeRatio / 100 + '%';
+    }
+
+    if ((typeof coinPriceObj === 'object') && info.toChainSymbol in coinPriceObj) {
+      totalFee = `${new BigNumber(estimateFee).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
+      operationFee = `0 USD`;
+    } else {
+      totalFee = `${estimateFee} WAN`;
+      operationFee = `0 USD`;
     }
 
     return (
@@ -268,9 +275,17 @@ class CrossEOSForm extends Component {
                 colSpan={6}
                 formName='totalFee'
                 disabled={true}
-                options={{ initialValue: `${estimateFee} WAN` }}
+                options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
+                suffix={<Tooltip title={
+                  <table>
+                    <tbody>
+                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{totalFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                    </tbody>
+                  </table>
+                }><Icon type="exclamation-circle" /></Tooltip>}
               />
               <CommonFormItem
                 form={form}

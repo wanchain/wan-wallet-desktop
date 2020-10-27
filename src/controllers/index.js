@@ -2003,6 +2003,20 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'getFees':
+            try {
+                let { chainType, chainID1, chainID2 } = payload;
+                ret = await ccUtil.getFees(chainType, chainID1, chainID2);
+            } catch (e) {
+                logger.error('getFees failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+
     }
 })
 
@@ -2282,7 +2296,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 err = e
             }
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break;          
+            break;
 
         case 'openStoremanAction':
             try {
@@ -2317,7 +2331,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}`);
                 ret = await ccUtil.getOpenStoremanGroupList();
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2329,7 +2343,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanStakeInfo(payload.sender, payload.wkAddr);
-                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2341,7 +2355,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanDelegatorInfo(payload.sender);
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2353,7 +2367,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanGroupMember(payload.groupId);
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2362,20 +2376,20 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             break;
 
         case 'getMultiStoremanGroupInfo':
-          try {
-              ret = await ccUtil.getMultiStoremanGroupInfo(payload.groupId);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
-          break;
+            try {
+                ret = await ccUtil.getMultiStoremanGroupInfo(payload.groupId);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
 
         case 'getStoremanCandidates':
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanCandidates(payload.groupId);
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4): null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2387,7 +2401,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanStakeTotalIncentive(payload.sender);
-                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2399,7 +2413,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanDelegatorTotalIncentive(payload.sender);
-                logger.debug(`Return ${action}: ${ret.length ? ret: null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2417,14 +2431,14 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             break;
 
         case 'getSelectedStoreman':
-          try {
-              ret = await ccUtil.getSelectedStoreman(payload);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
-          break;
+            try {
+                ret = await ccUtil.getSelectedStoreman(payload);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
+            break;
 
     }
 })

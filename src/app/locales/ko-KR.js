@@ -34,7 +34,7 @@ const ko_KR = {
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': 'Storeman Group',
     'Common.chain': '체인',
     'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
 
@@ -450,6 +450,8 @@ const ko_KR = {
     'CrossChainTransForm.capacity': '용량',
     'CrossChainTransForm.quota': '남은 용량',
     'CrossChainTransForm.estimateFee': '예상 수수료',
+    'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': '금액이 잔액보다 큽니다.',
@@ -471,6 +473,7 @@ const ko_KR = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

@@ -15,7 +15,7 @@ import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
 class Portfolio {
   @observable coinPriceObj;
 
-  @observable defaultCoinList = {
+  defaultCoinList = {
     WAN: {
       ancestor: false,
       balance: 0,
@@ -100,10 +100,10 @@ class Portfolio {
       if (key in self.defaultCoinList) {
         return key
       } else {
-        // return item.ancestor ? item.symbol.substring(1) : item.symbol;
         return item.ancestor ? item.ancestor : item.symbol;
       }
     });
+    param = Array.from(new Set(param.concat(Object.keys(self.defaultCoinList))));
     let reconvertIds = {};
     for (let v of param) {
       if (v in self.specificTokenId_from_CoinGeckoAPI) {

@@ -34,7 +34,7 @@ const th_TH = {
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
-    'Common.storeman': 'Storeman',
+    'Common.storeman': 'Storeman Group',
     'Common.chain': 'เชน',
     'Common.amountTooLow': 'จำนวนจะต้องไม่ต่ำกว่า { minAmount } WAN',
 
@@ -450,6 +450,8 @@ const th_TH = {
     'CrossChainTransForm.capacity': 'ความจุ',
     'CrossChainTransForm.quota': 'ความจุคงเหลือ',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
+    'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'จำนวนมากกว่ายอดคงเหลือ',
@@ -471,6 +473,7 @@ const th_TH = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 
