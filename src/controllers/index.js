@@ -2298,6 +2298,16 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
+        case 'getRewardRatio':
+          try {
+              ret = await ccUtil.getRewardRatio();
+          } catch (e) {
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
+
         case 'openStoremanAction':
             try {
                 let { tx, action, isEstimateFee } = payload;
