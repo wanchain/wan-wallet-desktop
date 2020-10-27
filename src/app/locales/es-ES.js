@@ -34,7 +34,8 @@ const es_ES = {
     'Common.networkError': 'Error de red. Por favor reinicie la cartera',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'La cantidad minima debe ser de { minAmount } WAN',
 

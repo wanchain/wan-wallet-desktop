@@ -34,7 +34,8 @@ const ko_KR = {
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': 'EOS 토큰',
     'Common.convert': '변환',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': '체인',
     'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
 

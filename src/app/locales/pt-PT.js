@@ -34,7 +34,8 @@ const pt_PT = {
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain (cadeia/blockchain)',
     'Common.amountTooLow': 'O valor mínimo deve ser { minAmount } WAN',
 

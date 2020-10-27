@@ -9,7 +9,7 @@ import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { WANPATH, PENALTYNUM, INBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossEOSConfirmForm';
-import { isExceedBalance, formatNumByDecimals } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal } from 'utils/support';
 import { getFullChainName, checkAmountUnit, formatAmount, getAddrInfoByTypes, getBalanceByAddr } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossEOSConfirmForm' })(ConfirmForm);
@@ -163,7 +163,7 @@ class CrossEOSForm extends Component {
 
   render() {
     const { loading, form, from, record, settings, smgList, direction, decimals, estimateFee, balance, getChainAddressInfoByChain, transParams, currentTokenPairInfo, addrInfo, coinPriceObj } = this.props;
-    let gasFee, operationFee, totalFee, srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit;
+    let gasFee, totalFee, srcChain, desChain, selectedList, title, txFeeRatio, quota, fromAccount, unit;
     const info = Object.assign({}, currentTokenPairInfo);
     let txParam = transParams[from];
 
@@ -194,11 +194,10 @@ class CrossEOSForm extends Component {
 
     if ((typeof coinPriceObj === 'object') && info.toChainSymbol in coinPriceObj) {
       totalFee = `${new BigNumber(estimateFee).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
-      operationFee = `0 USD`;
     } else {
       totalFee = `${estimateFee} WAN`;
-      operationFee = `0 USD`;
     }
+    gasFee = `${removeRedundantDecimal(estimateFee)} WAN`;
 
     return (
       <div>
@@ -242,7 +241,7 @@ class CrossEOSForm extends Component {
                 selectedList={smgList}
                 filterItem={item => item.storemanGroup.replace(/^([a-zA-z0-9]{24})[a-zA-z0-9]{84}([a-zA-z0-9]{24})$/, '$1****$2')}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('Common.storeman')}
+                formMessage={intl.get('Common.storemanGroup')}
               />
               <CommonFormItem
                 form={form}
@@ -279,10 +278,9 @@ class CrossEOSForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
                 suffix={<Tooltip title={
-                  <table>
+                  <table className={style['suffix_table']}>
                     <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{totalFee}</td></tr>
-                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}

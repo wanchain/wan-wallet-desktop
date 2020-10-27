@@ -11,7 +11,7 @@ import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
 import { ETHPATH, WANPATH, PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
-import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
@@ -269,7 +269,7 @@ class CrossETHForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, gasPrice, chainType, estimateFee, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
+    const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
     const { quota, advancedVisible, advanced, advancedFee } = this.state;
     let gasFee, operationFee, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit;
     if (type === INBOUND) {
@@ -277,11 +277,6 @@ class CrossETHForm extends Component {
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      if (advanced) {
-        gasFee = advancedFee;
-      } else {
-        gasFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
-      }
       unit = info.fromTokenSymbol;
       feeUnit = info.fromChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
@@ -290,29 +285,22 @@ class CrossETHForm extends Component {
       toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
       selectedList = Object.keys(toAccountList.normal);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      if (advanced) {
-        gasFee = advancedFee;
-      } else {
-        gasFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
-      }
       unit = info.toTokenSymbol;
       feeUnit = info.toChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
-
+    gasFee = advanced ? advancedFee : new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
     // Convert the value of fee to USD
     if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
       totalFee = `${new BigNumber(gasFee).plus(this.operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
-      gasFee = `${new BigNumber(gasFee).times(coinPriceObj[feeUnit]).toString()} USD`;
-      operationFee = `${new BigNumber(this.operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
     } else {
       totalFee = `${new BigNumber(gasFee).plus(this.operationFee).toString()} ${feeUnit}`;
-      gasFee = `${gasFee} ${feeUnit}`;
-      operationFee = `${this.operationFee} ${feeUnit}`;
     }
+    gasFee = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
+    operationFee = `${removeRedundantDecimal(this.operationFee)} ${feeUnit}`;
 
     return (
       <div>
@@ -359,7 +347,7 @@ class CrossETHForm extends Component {
                 }))}
                 isTextValueData={true}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('Common.storeman')}
+                formMessage={intl.get('Common.storemanGroup')}
               />
               <CommonFormItem
                 form={form}
@@ -387,7 +375,7 @@ class CrossETHForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
                 suffix={<Tooltip title={
-                  <table>
+                  <table className={style['suffix_table']}>
                     <tbody>
                       <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
                       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>

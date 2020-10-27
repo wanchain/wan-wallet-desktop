@@ -34,7 +34,8 @@ const en_US = {
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Minimum amount should be { minAmount } WAN',
 

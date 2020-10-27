@@ -194,3 +194,14 @@ export function hexCharCodeToStr(hexCharCodeStr) {
   }
   return resultStr.join('');
 }
+
+export function removeRedundantDecimal(num, zeroLimit = 4) {
+  let result = num;
+  if (num > 1) {
+    result = keep2Decimals(num);
+  } else {
+    let zeroLength = /0\.(0*)/g.test(new BigNumber(num).toFixed()) ? RegExp.$1.length : 0;
+    result = roundFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + 1);
+  }
+  return new BigNumber(result).toFixed();
+}

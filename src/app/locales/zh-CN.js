@@ -35,6 +35,7 @@ const zh_CN = {
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
     'Common.storeman': '跨链节点',
+    'Common.storemanGroup': '跨链节点组',
     'Common.chain': '链名',
     'Common.amountTooLow': '最低金额是{minAmount}WAN',
 

@@ -34,7 +34,8 @@ const th_TH = {
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'เชน',
     'Common.amountTooLow': 'จำนวนจะต้องไม่ต่ำกว่า { minAmount } WAN',
 

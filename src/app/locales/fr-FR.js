@@ -34,7 +34,8 @@ const fr_FR = {
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
-    'Common.storeman': 'Storeman Group',
+    'Common.storeman': 'Storeman',
+    'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
 

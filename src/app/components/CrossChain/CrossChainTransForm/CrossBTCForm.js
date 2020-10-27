@@ -6,7 +6,7 @@ import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'ant
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
-import { isExceedBalance, formatNumByDecimals } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
@@ -216,30 +216,24 @@ class CrossBTCForm extends Component {
       // Convert the value of fee to USD
       if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
         totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).plus(BigNumber(estimateFee.destination).times(coinPriceObj[info.toChainSymbol])).toString()} USD`;
-        gasFee = totalFee;
-        operationFee = `0 USD`;
       } else {
         totalFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
-        gasFee = totalFee;
-        operationFee = `0 USD`;
       }
+      gasFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = addrInfo;
       selectedList = Object.keys(addrInfo.normal);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      // totalFee = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
 
       // Convert the value of fee to USD
       if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
-        gasFee = `${new BigNumber(estimateFee.original).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
-        operationFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).toString()} USD`;
         totalFee = `${new BigNumber(estimateFee.original).times(coinPriceObj[info.toChainSymbol]).plus(BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol])).toString()} USD`;
       } else {
-        gasFee = `${estimateFee.original} ${info.toChainSymbol}`;
-        operationFee = `${this.state.fee} ${info.fromChainSymbol}`;
         totalFee = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
       }
+      gasFee = `${removeRedundantDecimal(estimateFee.original)} ${info.toChainSymbol}`;
+      operationFee = `${removeRedundantDecimal(this.state.fee)} ${info.fromChainSymbol}`;
     }
 
     if (smgList.length === 0) {
@@ -302,7 +296,7 @@ class CrossBTCForm extends Component {
                 selectedList={smgList}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
-                formMessage={intl.get('Common.storeman')}
+                formMessage={intl.get('Common.storemanGroup')}
               />
               {
                 direction === INBOUND &&
@@ -343,10 +337,10 @@ class CrossBTCForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.estimateFee')}
                 suffix={<Tooltip title={
-                  <table>
+                  <table className={style['suffix_table']}>
                     <tbody>
                       <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
-                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                      {direction === OUTBOUND && (<tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>)}
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}
