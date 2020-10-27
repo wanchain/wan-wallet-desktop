@@ -19,12 +19,19 @@
 
 :global {
   .spincont {
-    .ant-spin-nested-loading > div > .ant-spin {
+    .ant-spin-nested-loading>div>.ant-spin {
       top: 10%;
-      position: absolute!important;
+      position: absolute !important;
     }
+
     .ant-spin-blur::after {
       opacity: 0;
     }
+  }
+}
+
+.OsmDelegateList {
+  ::-webkit-scrollbar-track {
+    box-shadow: none !important;
   }
 }

@@ -76,7 +76,7 @@ class OsmDelegateList extends Component {
     let scrollObj = this.props.delegatorListData.length ? { x: 1200 } : {};
 
     return (
-      <div>
+      <div className={style['OsmDelegateList']}>
         <Table scroll={scrollObj} columns={this.getColumns()} dataSource={this.props.delegatorListData} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
       </div>
     );
