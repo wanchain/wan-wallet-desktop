@@ -14,9 +14,7 @@ const logger = Logger.getLogger('Windows')
 class Window extends EventEmitter {
     constructor(mgr, type, opts) {
         super()
-
         opts = opts || {}
-
         this._timer = null
         this._idleChecker = null
         this._mgr = mgr
@@ -41,33 +39,28 @@ class Window extends EventEmitter {
                 webviewTag: true
             }
         }
-
         electronOptions = _.merge(electronOptions, opts.electronOptions)
 
-        this._logger.debug('Creating browser window')
-
-        this.window = new BrowserWindow(electronOptions)
-
-        this.session = this.window.webContents.session
-
-        this.webContents = this.window.webContents
-
+        this._logger.debug('Creating browser window');
+        this.window = new BrowserWindow(electronOptions);
+        this.session = this.window.webContents.session;
+        this.webContents = this.window.webContents;
         this.window.once('closed', () => {
             this._logger.debug('Closed')
             this.isShown = false
             this.isClosed = true
             this.isContentReady = false
             this.emit('closed')
-        })
-
+        });
         this.window.on('close', (e) => {
             if (this.type === 'main') {
                 let history = global.wanDb.getItemAll('crossTrans', {});
                 let BTCHistory = global.wanDb.queryComm('crossTransBtc', items => {
                     return items;
                 });
+
                 let hasPendingCrossTx = history.find((item) => {
-                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail')) {
+                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail') || item.crossType === 'FAST') {
                         return false;
                     } else {
                         this._logger.info(`Unfinished cross chain Tx: ${item.status}`);
@@ -107,7 +100,6 @@ class Window extends EventEmitter {
                 this.emit('close', e);
             }
         });
-
         this.window.on('blur', () => {
             if (this.type === 'main') {
                 let lockTimeThreshold = setting.autoLockTimeout
@@ -143,7 +135,6 @@ class Window extends EventEmitter {
                 }
             }
         })
-
         this.window.on('focus', () => {
             if (this.type === 'main') {
                 let lockTimeThreshold = setting.autoLockTimeout
@@ -186,7 +177,6 @@ class Window extends EventEmitter {
                 }
             }
         })
-
         this.webContents.once('did-finish-load', () => {
             this.isContentReady = true
 
