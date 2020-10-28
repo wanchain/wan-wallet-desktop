@@ -9,9 +9,6 @@ class ConfigFactoryService {
         this.config = {}
         this.config.network = setting.network
 
-        /* TODO */
-        this.config.network = 'testnet'
-
         if (this.config.network.includes('main')) {
             this.config.wanchain_js_testnet = false
 
