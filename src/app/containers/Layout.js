@@ -17,6 +17,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
+  checkUpdateDB: () => stores.session.checkUpdateDB(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getTokenPairs: () => stores.crossChain.getTokenPairs(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
@@ -24,6 +25,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
   updateBTCBalance: newBalanceArr => stores.btcAddress.updateBTCBalance(newBalanceArr),
   updateEOSBalance: newBalanceArr => stores.eosAddress.updateEOSBalance(newBalanceArr),
+  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
 }))
 
 @observer
@@ -77,9 +79,15 @@ class Layout extends Component {
       if (ready) {
         try {
           running = true;
+          let version = await this.props.checkUpdateDB();
+          console.log('version:', version);
+          await this.props.getMnemonic();
+          // If the user DB is not the latest version, update user account DB
+          if (version !== true) {
+            await this.props.updateUserAccountDB(version);
+          }
           await this.props.getTokensInfo();
           await this.props.getTokenPairs();
-          await this.props.getMnemonic();
           this.setState({
             initializeStep: 'Layout.initSuccess',
             loading: false

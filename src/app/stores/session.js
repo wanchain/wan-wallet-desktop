@@ -18,15 +18,17 @@ class Session {
     logout_timeout: '5',
   };
 
-  @action setChainId (id) {
+  @observable needFirstDBUpdate = false;
+
+  @action setChainId(id) {
     self.chainId = id;
   }
 
-  @action setIsFirstLogin (value) {
+  @action setIsFirstLogin(value) {
     self.isFirstLogin = value;
   }
 
-  @action getMnemonic () {
+  @action getMnemonic() {
     return new Promise((resolve, reject) => {
       wand.request('phrase_has', null, (err, val) => {
         if (!err) {
@@ -40,22 +42,22 @@ class Session {
     })
   }
 
-  @action initChainId () {
+  @action initChainId() {
     return getChainId().then((chainId) => {
       self.chainId = chainId;
       return chainId;
     });
   }
 
-  @action setMnemonicStatus (status) {
+  @action setMnemonicStatus(status) {
     self.hasMnemonicOrNot = status;
   }
 
-  @action setAuth (val) {
+  @action setAuth(val) {
     self.auth = val;
   }
 
-  @action initSettings () {
+  @action initSettings() {
     wand.request('setting_get', [{ keys: ['settings'] }], (err, ret) => {
       if (err) {
         console.log(`Init setting failed: ${JSON.stringify(err)}`);
@@ -65,13 +67,29 @@ class Session {
     })
   }
 
-  @action updateSettings (newValue) {
+  @action updateSettings(newValue) {
     wand.request('setting_set', { settings: newValue }, (err, ret) => {
       if (err) return;
       if (ret) {
         Object.assign(self.settings, newValue);
       }
     })
+  }
+
+  @action checkUpdateDB() {
+    return new Promise((resolve, reject) => {
+      wand.request('wallet_checkUpdateDB', {}, (err, ret) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(ret);
+        }
+      })
+    });
+  }
+
+  @action setNeedFirstDBUpdate(val) {
+    this.needFirstDBUpdate = !!val;
   }
 }
 

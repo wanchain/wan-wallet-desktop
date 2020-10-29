@@ -156,20 +156,28 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
         case 'unlock':
             let phrase
             try {
-                phrase = hdUtil.revealMnemonic(payload.pwd)
-                hdUtil.initializeHDWallet(phrase)
+                phrase = hdUtil.revealMnemonic(payload.pwd);
+                hdUtil.initializeHDWallet(phrase);
                 // create key file wallet
-                hdUtil.newKeyStoreWallet(payload.pwd)
+                hdUtil.newKeyStoreWallet(payload.pwd);
                 // create raw key wallet
-                hdUtil.newRawKeyWallet(payload.pwd)
+                hdUtil.newRawKeyWallet(payload.pwd);
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: true });
+            } catch (e) {
+                logger.error(e.message || e.stack);
+                err = e;
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: false });
+            }
+            break
+
+        case 'checkUpdateDB':
+            try {
                 // if the user db is not the newest version, update user db
                 const dbVersion = hdUtil.getUserTableVersion();
                 const latestVersion = walletBackend.config.dbExtConf.userTblVersion;
                 let data = true;
                 if (dbVersion !== latestVersion) {
-                    data = {
-                        version: dbVersion
-                    }
+                    data = dbVersion
                 }
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: data })
             } catch (e) {
@@ -1578,17 +1586,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getCoinsInfo':
-            try {
-                ret = setting.coins;
-            } catch (e) {
-                logger.error('getCoinsInfo failed:')
-                logger.error(e.message || e.stack)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'getTokensInfo':
             try {
                 ret = setting.tokens;
@@ -1647,24 +1644,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-
-        case 'updateCoinsInfo':
-            {
-                let { symbol, key, value } = payload;
-                try {
-                    if (key === undefined) {
-                        setting.updateCoinItem(symbol, value);
-                    } else {
-                        setting.updateCoinKeyValue(symbol, key, value);
-                    }
-                } catch (e) {
-                    logger.error('updateCoinsInfo failed:')
-                    logger.error(e.message || e.stack)
-                    err = e
-                }
-                sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
-                break
-            }
 
         case 'updateTokensInfo':
             {
@@ -2279,6 +2258,18 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+        case 'resetSettingsByOptions':
+            let { attrs } = payload;
+            try {
+                setting.resetSettingsByOptions(attrs);
+            } catch (e) {
+                logger.error('resetSettingsByOptions failed:');
+                logger.error(e.message || e.stack);
+                err = e;
+            }
+            sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
+            break;
+            
     }
 })
 

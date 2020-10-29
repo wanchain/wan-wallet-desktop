@@ -130,10 +130,11 @@ class Settings {
     })
   }
 
-  updateCoinItem(symbol, value) {
-    let network = this.get('network');
-    if (this.get(`settings.${network}.coins`)) {
-      this.set(`settings.${network}.coins["${symbol}"]`, value);
+  resetSettingsByOptions(attrs) {
+    for (let attr of attrs) {
+      if (attr in defaultConfig.settings) {
+        this.set(`settings.${attr}`, defaultConfig.settings[attr]);
+      }
     }
   }
 
@@ -144,23 +145,11 @@ class Settings {
     }
   }
 
-  updateCoinKeyValue(symbol, key, value) {
-    let network = this.get('network');
-    if (this.get(`settings.${network}.coins["${symbol}"]`)) {
-      this.set(`settings.${network}.coins["${symbol}"]["${key}"]`, value);
-    }
-  }
-
   updateTokenKeyValue(addr, key, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.tokens["${addr}"]`)) {
       this.set(`settings.${network}.tokens["${addr}"]["${key}"]`, value);
     }
-  }
-
-  updateToken(value) {
-    let network = this.get('network');
-    this.set(`settings.${network}.tokens`, value);
   }
 
   updateCcTokenSelections(id, selected) {
@@ -196,11 +185,6 @@ class Settings {
 
   get htlcAddresses() {
     return htlcAddresses[this.get('network')];
-  }
-
-  get coins() {
-    let network = this.get('network');
-    return this.get(`settings.${network}.coins`);
   }
 
   get tokens() {

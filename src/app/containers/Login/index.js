@@ -20,11 +20,12 @@ message.config({
   btcAddrInfo: stores.btcAddress.addrInfo,
   ethAddrInfo: stores.ethAddress.addrInfo,
   isFirstLogin: stores.session.isFirstLogin,
+  needFirstDBUpdate: stores.session.needFirstDBUpdate,
   setAuth: val => stores.session.setAuth(val),
   setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
-  updateUserAccountDB: () => stores.wanAddress.updateUserAccountDB()
+  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
 }))
 
 @observer
@@ -51,9 +52,9 @@ class Login extends Component {
           this.props.setIsFirstLogin(false);
         }
         this.props.setAuth(true);
-        // If the user DB is not the latest version, update user account DB
-        if (typeof val === 'object' && Object.prototype.hasOwnProperty.call(val, 'version')) {
-          await this.props.updateUserAccountDB(val.version);
+        // Upgrade DB file from V1.0.0.
+        if (this.props.needFirstDBUpdate) {
+          await this.props.updateUserAccountDB('1.0.0', true);
         }
         // Open scanner to scan the smart contract to get private tx balance.
         const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);

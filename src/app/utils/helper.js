@@ -1234,3 +1234,15 @@ export const getFees = (chainType, chainID1, chainID2) => {
     })
   });
 }
+
+export const resetSettingsByOptions = (attrs) => {
+  return new Promise((resolve, reject) => {
+    wand.request('setting_resetSettingsByOptions', { attrs }, (err, res) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(true);
+      }
+    })
+  });
+}

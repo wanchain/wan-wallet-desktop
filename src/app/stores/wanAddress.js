@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 
 import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
@@ -6,8 +7,9 @@ import { observable, action, computed, toJS } from 'mobx';
 
 import tokens from './tokens';
 import staking from './staking';
+import session from './session';
 import languageIntl from './languageIntl';
-import { checkAddrType, getWalletIdByType, getTypeByWalletId } from 'utils/helper';
+import { checkAddrType, getWalletIdByType, getTypeByWalletId, resetSettingsByOptions } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
@@ -222,87 +224,118 @@ class WanAddress {
     })
   }
 
-  @action async updateUserAccountDB(ver) {
-    let normalInfo = self.addrInfo.normal;
-    let importInfo = self.addrInfo.import;
-    let rawKeyInfo = self.addrInfo.rawKey;
-    let typeFunc = id => {
-      switch (id) {
-        case '1':
-          return 'normal';
-        case '5':
-          return 'import';
-        case '6':
-          return 'rawKey';
-      }
-    };
+  @action async updateUserAccountDB(ver, upgradeThisVersionOnly = false) {
     if (ver === undefined || ver === '') {
-      ver = 'original';
+      ver = '1.0.0';
     }
-    console.log('User table version:' + ver);
+    console.log('User DB current version:', ver);
     switch (ver) {
-      case 'original':
+      case '1.0.0':
+        // This part is in order to update the hdwallet.json file, which need to get private from sdk, and this operation need login authentication.
         try {
-          let noWaddressArr = [];
-          let setWaddress = obj => {
-            self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress);
-          };
-          let filterData = function (data, type) {
-            Object.keys(data).forEach(item => {
-              let waddress = data[item]['waddress'];
-              let name = data[item]['name'];
-              let id = getWalletIdByType(type);
-              let path = WAN + data[item]['path'];
-              // If can not get the waddress, call a request to 'address_getOne' to get the waddress
-              if (typeof waddress === 'undefined') {
-                noWaddressArr.push({ id, name, chainType: 'WAN', path });
+          console.log('Update from V1.0.0========================');
+          if (!session.hasMnemonicOrNot) {
+            session.setNeedFirstDBUpdate(false);
+          } else if (session.hasMnemonicOrNot && !session.auth) {
+            // After the user logs into the wallet, the update operation is performed.
+            session.setNeedFirstDBUpdate(true);
+          } else {
+            let normalInfo = self.addrInfo.normal;
+            let importInfo = self.addrInfo.import;
+            let rawKeyInfo = self.addrInfo.rawKey;
+            let typeFunc = id => {
+              switch (String(id)) {
+                case '1':
+                  return 'normal';
+                case '5':
+                  return 'import';
+                case '6':
+                  return 'rawKey';
               }
-            });
-          }
-          filterData(normalInfo, 'normal');
-          filterData(importInfo, 'import');
-          filterData(rawKeyInfo, 'rawKey');
-          // Insert none waddress account's waddress info into DB file.
-          if (noWaddressArr.length !== 0) {
-            await Promise.all(noWaddressArr.map(item => {
-              return new Promise((resolve, reject) => {
-                wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
-                  if (!err) {
-                    // Update the account waddress after obtaining waddress.
-                    wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
-                      if (!err && res) {
-                        setWaddress({
-                          id: item.id,
-                          address: val.address,
-                          waddress: `0x${val.waddress}`
-                        });
-                        resolve();
+            };
+            let noWaddressArr = [];
+            let setWaddress = obj => {
+              self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress); // error
+            };
+            let filterData = function (data, type) {
+              Object.keys(data).forEach(item => {
+                let waddress = data[item]['waddress'];
+                let name = data[item]['name'];
+                let id = getWalletIdByType(type);
+                let path = WAN + data[item]['path'];
+                // If can not get the waddress, call a request to 'address_getOne' to get the waddress
+                if (typeof waddress === 'undefined') {
+                  noWaddressArr.push({ id, name, chainType: 'WAN', path });
+                }
+              });
+            }
+            filterData(normalInfo, 'normal');
+            filterData(importInfo, 'import');
+            filterData(rawKeyInfo, 'rawKey');
+
+            // Insert none waddress account's waddress info into DB file.
+            if (noWaddressArr.length !== 0) {
+              try {
+                await Promise.all(noWaddressArr.map(item => {
+                  return new Promise((resolve, reject) => {
+                    wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
+                      if (!err) {
+                        // Update the account waddress after obtaining waddress.
+                        wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
+                          if (!err && res) {
+                            setWaddress({
+                              id: item.id,
+                              address: val.address,
+                              waddress: `0x${val.waddress}`
+                            });
+                            resolve();
+                          } else {
+                            console.log('Update address information failed');
+                            reject(new Error(err.desc));
+                          }
+                        })
                       } else {
-                        console.log('Update address information failed');
+                        console.log('Get one address failed', err);
                         reject(new Error(err.desc));
                       }
-                    })
-                  } else {
-                    console.log('Get one address failed', err);
-                    reject(new Error(err.desc));
-                  }
-                });
-              });
-            }));
-          }
-          // Set DB's userTblVersion
-          wand.request('wallet_setUserTblVersion', (err, val) => {
-            if (err) {
-              console.log('Set user DB version failed');
+                    });
+                  });
+                }));
+                session.setNeedFirstDBUpdate(false);
+              } catch (e) {
+                console.log('e:', e);
+                session.setNeedFirstDBUpdate(true);
+              }
+            } else {
+              session.setNeedFirstDBUpdate(false);
             }
-          });
+          }
         } catch (e) {
-          console.log('Update original user DB failed:', e);
+          console.log('Update V1.0.0 user DB failed:', e);
         }
-        break;
+        if (upgradeThisVersionOnly) {
+          break;
+        }
+      case '1.0.1':
+        try {
+          console.log('Update from V1.0.1========================');
+          await resetSettingsByOptions(['main', 'testnet']);
+        } catch (e) {
+          console.log('Update V1.0.1 user DB failed:', e);
+        }
+        if (upgradeThisVersionOnly) {
+          break;
+        }
+        break; // The latest DB version should contain `break;`, it's necessary.
       default:
         console.log('Unknown version');
     }
+    // Set DB's userTblVersion
+    wand.request('wallet_setUserTblVersion', (err, val) => {
+      if (err) {
+        console.log('Set user DB version failed');
+      }
+    });
   }
 
   @action addKeyStoreAddr({ path, name, addr, waddr }) {
