@@ -31,31 +31,39 @@ class StoremanCards extends Component {
     return (
       <div className={style.cards}>
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={6}>
             <Card className={style.card1}
               title={intl.get('ValidatorRegister.myPrincipal')}
               value={formatNum(storemanCards.myStake[0])}
               tail="WAN"
               // bottom={stakeBottom}
-              infoReady={storemanCards.myStake[2]}
+              infoReady={storemanCards.myStake[1]}
             />
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Card className={style.card2}
               title={intl.get('ValidatorRegister.myEntrusted')}
               value={formatNum(storemanCards.delegationStake[0])}
               tail="WAN"
               // bottom={delegationBottom}
-              infoReady={storemanCards.delegationStake[2]}
+              infoReady={storemanCards.delegationStake[1]}
             />
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Card className={style.card3}
               title={intl.get('staking.totalReward')}
               value={formatNum(storemanCards.reward[0])}
               tail="WAN"
               // bottom={intl.get('staking.startFrom1') + storemanCards.reward[1] + intl.get('staking.startFrom2')}
-              infoReady={storemanCards.reward[2]}
+              infoReady={storemanCards.reward[1]}
+            />
+          </Col>
+          <Col span={6}>
+            <Card
+              className={style.card4}
+              title={intl.get('staking.rewardRate')}
+              value={storemanCards.avgReward[0]}
+              infoReady={storemanCards.avgReward[1]}
             />
           </Col>
         </Row>

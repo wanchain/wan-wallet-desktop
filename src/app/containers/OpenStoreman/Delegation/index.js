@@ -16,11 +16,11 @@ const InForm = Form.create({ name: 'OsmDelegateInForm' })(OsmDelegateInForm);
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
+  getRewardRatio: () => stores.openstoreman.getRewardRatio(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   getStoremanConf: () => stores.openstoreman.getStoremanConf(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   getOpenStoremanGroupList: () => stores.openstoreman.getOpenStoremanGroupList(),
-  getStoremanDelegatorTotalIncentive: () => stores.openstoreman.getStoremanDelegatorTotalIncentive(),
 }))
 
 @observer
@@ -36,10 +36,10 @@ class Delegation extends Component {
   }
 
   update() {
+    this.props.getRewardRatio()
     this.props.getStoremanConf();
     this.props.updateTransHistory();
     this.props.getOpenStoremanGroupList();
-    // this.props.getStoremanDelegatorTotalIncentive()
 }
 
   componentDidMount () {

@@ -25,8 +25,8 @@ class DelegationCards extends Component {
     return (
       <div className={style.cards}>
         <Row gutter={16}>
-          <Col span={8}>
-            <Card infoReady={delegationCards.myStake[2]}
+          <Col span={6}>
+            <Card infoReady={delegationCards.myStake[1]}
               className={style.card1}
               title={intl.get('staking.myStake')}
               value={formatNum(delegationCards.myStake[0])}
@@ -34,8 +34,8 @@ class DelegationCards extends Component {
               // bottom={stakeBottom}
             />
           </Col>
-          <Col span={8}>
-            <Card infoReady={delegationCards.myReward[2]}
+          <Col span={6}>
+            <Card infoReady={delegationCards.myReward[1]}
               className={style.card2}
               title={intl.get('staking.totalReward')}
               value={formatNum(delegationCards.myReward[0])}
@@ -43,13 +43,20 @@ class DelegationCards extends Component {
               // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
             />
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Card infoReady={delegationCards.withdrawableAmount[1]}
               className={style.card3}
               title={intl.get('staking.unclaimAmount')}
               value={formatNum(delegationCards.withdrawableAmount[0])}
               tail="WAN"
               // bottom={intl.get('staking.startFrom1') + delegationCards.myReward[1] + intl.get('staking.startFrom2')}
+            />
+          </Col>
+          <Col span={6}>
+            <Card infoReady={delegationCards.avgReward[1]}
+              className={style.card4}
+              title={intl.get('staking.rewardRate')}
+              value={delegationCards.avgReward[0]}
             />
           </Col>
         </Row>

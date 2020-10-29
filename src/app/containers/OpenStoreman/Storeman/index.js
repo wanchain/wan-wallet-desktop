@@ -12,9 +12,9 @@ import OsmStakeHistory from './OsmStakeHistory';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
+  getRewardRatio: () => stores.openstoreman.getRewardRatio(),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  getStoremanStakeTotalIncentive: () => stores.openstoreman.getStoremanStakeTotalIncentive()
 }))
 
 @observer
@@ -29,8 +29,8 @@ class Storeman extends Component {
   }
 
   update() {
+    this.props.getRewardRatio();
     this.props.updateTransHistory();
-    // this.props.getStoremanStakeTotalIncentive();
   }
 
   componentDidMount() {
