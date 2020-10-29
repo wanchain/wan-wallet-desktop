@@ -427,7 +427,7 @@ class Tokens {
       } else { // Token
         route = `/tokens/${v.chainSymbol}/${v.account}/${v.symbol}`;
       }
-      selections[v.ancestor].children.push({
+      let child = {
         title: v.chain,
         symbol: v.symbol,
         name: v.name,
@@ -435,8 +435,10 @@ class Tokens {
         account: v.account,
         toAccount: key,
         selected: v.select,
-        isCustomToken: !!v.isCustomToken
-      });
+        isCustomToken: !!v.isCustomToken,
+        isOriginalChain: v.ancestor === v.chainSymbol
+      }
+      selections[v.ancestor].children.push(child);
     });
     return Object.values(selections).sort((m, n) => {
       return Number(TOKEN_PRIORITY[m.ancestor] === undefined ? 0 : TOKEN_PRIORITY[m.ancestor]) > Number(TOKEN_PRIORITY[n.ancestor] === undefined ? 0 : TOKEN_PRIORITY[n.ancestor]) ? -1 : 1;

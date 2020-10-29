@@ -80,7 +80,6 @@ class Layout extends Component {
         try {
           running = true;
           let version = await this.props.checkUpdateDB();
-          console.log('version:', version);
           await this.props.getMnemonic();
           // If the user DB is not the latest version, update user account DB
           if (version !== true) {

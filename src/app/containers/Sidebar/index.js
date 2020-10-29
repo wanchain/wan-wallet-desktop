@@ -124,6 +124,7 @@ class Sidebar extends Component {
               title: `@${intl.get(`Common.${c.title.toLowerCase()}`)}`,
               key: c.key,
               noCircle: true,
+              isOriginal: c.isOriginalChain,
             });
           }
         });
@@ -132,7 +133,7 @@ class Sidebar extends Component {
           key: v.key,
           icon: 'block',
           mode: 'vertical',
-          children: children
+          children: children.sort((obj1, obj2) => obj1.isOriginal < obj2.isOriginal ? 1 : -1)
         });
       }
     });
