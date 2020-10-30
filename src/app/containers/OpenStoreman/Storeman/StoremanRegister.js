@@ -218,7 +218,7 @@ class StoremanRegister extends Component {
     const { form, settings, addrSelectedList, onCancel, group, storemanListInfo } = this.props;
     let record = form.getFieldsValue(['publicKey', 'enodeID', 'myAddr', 'amount', 'crosschain']);
     let showConfirmItem = { groupId: true, publicKey: true, enodeID: true, crosschain: true, account: true, amount: true };
-    let addrSelectedListFilter = addrSelectedList.filter(v => !storemanListInfo.map(i => i.from.toLowerCase()).includes(v.toLowerCase()))
+    let addrSelectedListFilter = addrSelectedList // .filter(v => !storemanListInfo.map(i => i.from.toLowerCase()).includes(v.toLowerCase()))
 
     return (
       <div>
