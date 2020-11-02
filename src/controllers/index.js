@@ -2309,6 +2309,10 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
+                if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
+                  console.log(typeof ret.result.estimateGas)
+                  ret.result.estimateGas = ret.result.estimateGas * 2;
+                }
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
