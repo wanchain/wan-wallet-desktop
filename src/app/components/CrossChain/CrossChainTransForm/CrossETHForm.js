@@ -128,7 +128,7 @@ class CrossETHForm extends Component {
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
       if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
       if (settings.reinput_pwd) {

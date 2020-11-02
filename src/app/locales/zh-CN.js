@@ -455,6 +455,7 @@ const zh_CN = {
     'CrossChainTransForm.gasFee': 'Gas费用',
     'CrossChainTransForm.operationFee': '手续费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
+    'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保原始链余额充足',
     'CrossChainTransForm.originNoBalance': '原始链余额不足',
     'CrossChainTransForm.overTransBalance': '输入金额超过账户余额',
     'CrossChainTransForm.transInfo': '跨链交易信息',
