@@ -2310,7 +2310,6 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
                 if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
-                  console.log(typeof ret.result.estimateGas)
                   ret.result.estimateGas = ret.result.estimateGas * 2;
                 }
             } catch (e) {
