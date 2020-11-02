@@ -69,7 +69,7 @@ class OsmDelegateInForm extends Component {
     if (value) {
       let storeman = value.split('/')[0];
       let storemanInfo = storemanMemberList.find(i => i.wkAddr === storeman);
-      let groupInfo = storemanGroupList.find(i => i.groupId === storemanInfo.groupId);
+      let groupInfo = storemanGroupList.find(i => [storemanInfo.groupId, storemanInfo.nextGroupId].includes(i.groupId));
       let crosschain = storemanInfo ? `${storemanInfo.chain1[2]} <-> ${storemanInfo.chain2[2]}` : undefined;
       form.setFieldsValue({
         storeman,

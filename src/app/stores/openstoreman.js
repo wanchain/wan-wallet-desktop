@@ -317,7 +317,7 @@ class OpenStoreman {
         let temp = _.unionBy(ret.flat(), 'wkAddr');
         temp = temp.filter(v => !v.isWhite);
         temp.forEach(item => {
-          let temp = this.storemanGroupList.find(v => v.groupId === item.groupId);
+          let temp = this.storemanGroupList.find(v => [item.groupId, item.nextGroupId].includes(v.groupId));
           item.chain1 = temp.chain1;
           item.chain2 = temp.chain2;
           item.nameShowing = item.name ? item.name : item.wkAddr;
