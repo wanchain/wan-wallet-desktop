@@ -398,6 +398,44 @@ class Tokens {
     return addrList;
   }
 
+  @computed get getCCTokensListInfo() {
+    const chain = this.currTokenChain;
+    if (chain === undefined || chain === '') {
+      return [];
+    }
+    let addrInfo = this.getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
+      return;
+    }
+    let addrList = [];
+    [addrInfo.normal/* , addrInfo.ledger || {}, addrInfo.trezor || {} */].forEach(obj => {
+      Object.keys(obj).forEach(item => {
+        let balance;
+        let pathPrefix = this.getPathPrefix(chain);
+        if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
+          let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
+          if (this.tokensList && token !== undefined) {
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+          } else {
+            balance = 0
+          }
+        } else {
+          balance = 0;
+        }
+        addrList.push({
+          key: item,
+          name: obj[item].name,
+          address: item,
+          balance,
+          path: String(obj[item].path).startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
+          action: 'send',
+          amount: balance
+        });
+      });
+    });
+    return addrList;
+  }
+
   @computed get getTokenAmount() {
     if (this.currTokenAddr.length === 0) {
       return 0;

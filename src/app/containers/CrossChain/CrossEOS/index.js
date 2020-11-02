@@ -15,7 +15,7 @@ const CHAINTYPE = 'EOS';
 @inject(stores => ({
   language: stores.languageIntl.language,
   addrInfo: stores.eosAddress.accountInfo,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getNormalAccountListWithBalance: stores.eosAddress.getNormalAccountListWithBalance,
   tokenPairs: stores.crossChain.tokenPairs,
@@ -150,7 +150,7 @@ class CrossEOS extends Component {
   ];
 
   render() {
-    const { getNormalAccountListWithBalance, getTokensListInfo } = this.props;
+    const { getNormalAccountListWithBalance, getCCTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -182,7 +182,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getCCTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">
