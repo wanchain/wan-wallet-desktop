@@ -388,7 +388,7 @@ class CrossChainTransForm extends Component {
           </Spin>
         </Modal>
         <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
-        {advancedVisible && <AdvancedCrossChainModal onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
+        {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
       </div>
     );
   }
