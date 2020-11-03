@@ -3,7 +3,7 @@ import setting from '~/src/utils/Settings'
 import WalletHelper from '~/src/utils/Helper'
 
 const dataPathPrex = path.join(setting.userDataPath, 'Db')
-const DB_VERSION = '1.0.1'
+const DB_VERSION = '1.0.2'
 class ConfigFactoryService {
     _init() {
         this.config = {}
