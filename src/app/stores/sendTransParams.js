@@ -26,7 +26,7 @@ class SendTransParams {
 
   @action addTransTemplate(addr, params = {}) {
     let objKey = { writable: true, enumerable: true };
-    let gasPrice = params.chainType === 'ETH' ? 1 : self.minGasPrice;
+    let gasPrice = self.minGasPrice;
     self.currentFrom = addr;
     self.transParams[addr] = Object.defineProperties({}, {
       chainType: { value: params.chainType, ...objKey },
@@ -52,7 +52,11 @@ class SendTransParams {
 
   @action updateGasPrice(gasPrice, chainType = 'WAN') {
     self.currentGasPrice = gasPrice;
-    self.minGasPrice = 1;
+    if (chainType === 'WAN') {
+      self.minGasPrice = 1;
+    } else {
+      self.minGasPrice = Math.max(1, gasPrice / 2);
+    }
   }
 
   @action updateGasLimit(gasLimit) {
