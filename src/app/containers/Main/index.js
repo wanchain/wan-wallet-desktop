@@ -41,7 +41,7 @@ class Main extends Component {
                 </Col>
                 <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
                     {showHeader ? <MHeader /> : null}
-                    <Row className={'content' + showHeader ? '' : 'noHeaderFooter'}>{this.props.children}</Row>
+                    <Row className={`content ${showHeader ? '' : 'noHeaderFooter'}`}>{this.props.children}</Row>
                     {showHeader ? <MFooter /> : null}
                 </Col>
                 {
