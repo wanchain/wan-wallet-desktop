@@ -172,7 +172,6 @@ const fr_FR = {
     'DApp.Social': 'Social',
     'DApp.Art': 'Art',
     'DApp.Tools': 'Outils',
-    'DApp.Others': 'Autres',
     'DApp.Website': 'Site internet',
     'DApp.Creator': 'Créateurs',
 
@@ -450,6 +449,7 @@ const fr_FR = {
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',
     'CrossChainTransForm.quota': 'Capacités disponibles',
+    'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
     'CrossChainTransForm.gasFee': 'Gas Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
@@ -494,6 +494,7 @@ const fr_FR = {
     'SendNormalTrans.hasNoWANBalance': 'Veuillez vous assurer d\'avoir un solde WAN suffisant',
     'SendNormalTrans.hasNoTokenBalance': 'Veuillez vous assurer d\'avoir un solde en token suffisant',
     'SendNormalTrans.hasNoETHBalance': 'Veuillez vous assurer d\'avoir un solde ETH suffisant',
+    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': 'Temps',
     'TransHistory.from': 'De',

@@ -173,7 +173,6 @@ const zh_CN = {
     'DApp.Social': '社交',
     'DApp.Art': '艺术',
     'DApp.Tools': '工具',
-    'DApp.Others': '其他',
     'DApp.Website': '网址',
     'DApp.Creator': '创建者',
 

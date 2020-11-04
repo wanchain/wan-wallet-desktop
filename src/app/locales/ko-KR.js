@@ -172,7 +172,6 @@ const ko_KR = {
     'DApp.Social': '소셜',
     'DApp.Art': '예술',
     'DApp.Tools': '다양한서비스',
-    'DApp.Others': '기타',
     'DApp.Website': '웹사이트',
     'DApp.Creator': '크리에이터',
 
@@ -450,6 +449,7 @@ const ko_KR = {
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',
     'CrossChainTransForm.quota': '남은 용량',
+    'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': '예상 수수료',
     'CrossChainTransForm.gasFee': 'Gas Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
@@ -494,6 +494,7 @@ const ko_KR = {
     'SendNormalTrans.hasNoWANBalance': '충분한 WAN 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoTokenBalance': '충분한 토큰 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoETHBalance': '충분한 ETH 잔액이 있는지 확인 바랍니다',
+    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': '트랜잭션 시간',
     'TransHistory.from': '트랜잭션 발신자',

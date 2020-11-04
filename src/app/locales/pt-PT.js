@@ -172,7 +172,6 @@ const pt_PT = {
     'DApp.Social': 'Social',
     'DApp.Art': 'Arte',
     'DApp.Tools': 'Ferramentas',
-    'DApp.Others': 'Outros',
     'DApp.Website': 'Website',
     'DApp.Creator': 'Criador',
 
@@ -299,6 +298,7 @@ const pt_PT = {
     'EOSResourceManageForm.account': 'Conta',
     'EOSResourceManageForm.amount': 'Montante',
     'EOSResourceManageForm.type': 'Tipo',
+    'EOSResourceManageForm.accountName': 'Account Name',
 
     'EOSTransHistory.time': 'TEMPO',
     'EOSTransHistory.from': 'DE',
@@ -337,6 +337,7 @@ const pt_PT = {
     'EOSCreateAccountForm.invalidEosPublicKey': 'Chave pública da EOS inválida',
     'EOSCreateAccountForm.errorOccurred': 'Ocorreu um erro ao validar os dados do formulário',
     'EOSCreateAccountForm.validateNameFailed': 'Falha na validação do nome da conta',
+
     'EOSNormalTransForm.sendTxFailed': 'O envio da transação falhou',
     'EOSNormalTransForm.sendTxSuccess': 'Enviar transação com sucesso',
     'EOSNormalTransForm.invalidAccountName': 'Nome de conta inválido',
@@ -448,6 +449,7 @@ const pt_PT = {
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
     'CrossChainTransForm.capacity': 'Capacidade',
     'CrossChainTransForm.quota': 'Capacidade restante',
+    'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
     'CrossChainTransForm.gasFee': 'Gas Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
@@ -492,6 +494,7 @@ const pt_PT = {
     'SendNormalTrans.hasNoWANBalance': 'Por favor,verifique se você possui saldo suificiente em WAN',
     'SendNormalTrans.hasNoTokenBalance': 'Por favor,verifique se você possui saldo suficiente em token',
     'SendNormalTrans.hasNoETHBalance': 'Por favor,verifique se você tem saldo suficiente em ETH',
+    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': 'Tempo',
     'TransHistory.from': 'DE',
@@ -629,6 +632,7 @@ const pt_PT = {
     'Config.others': 'Outras opções',
     'Config.enableOfflineWallet': 'Ativar carteira offline',
     'Config.offlineWallet': 'Mostrar carteira offline na barra lateral',
+
     'staking.validatorRegister': 'Registrar Validador',
     'staking.validatorUpdate': 'Atualização do validador',
 

@@ -172,7 +172,6 @@ const th_TH = {
     'DApp.Social': 'กลุ่มสังคม',
     'DApp.Art': 'ศิลปะ',
     'DApp.Tools': 'เครื่องมือ',
-    'DApp.Others': 'อื่นๆ',
     'DApp.Website': 'เวบไซต์',
     'DApp.Creator': 'ผู้สร้าง',
 
@@ -450,6 +449,7 @@ const th_TH = {
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',
     'CrossChainTransForm.quota': 'ความจุคงเหลือ',
+    'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
     'CrossChainTransForm.gasFee': 'Gas Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
@@ -494,6 +494,7 @@ const th_TH = {
     'SendNormalTrans.hasNoWANBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ WAN เพียงพอ',
     'SendNormalTrans.hasNoTokenBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของโทเค็นเพียงพอ',
     'SendNormalTrans.hasNoETHBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ ETH เพียงพอ',
+    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': 'เวลา',
     'TransHistory.from': 'ผู้ส่ง',
