@@ -30,6 +30,24 @@ const defaultConfig = {
         },
         "2147483708-0x0000000000000000000000000000000000000000": {
           "select": true
+        },
+        "2153201998-0xc6f4465a6a521124c8e3096b62575c157999d361": {
+          "account": "0xc6f4465a6a521124c8e3096b62575c157999d361",
+          "ancestor": "FNX",
+          "chain": "Wanchain",
+          "chainSymbol": "WAN",
+          "decimals": "18",
+          "select": true,
+          "symbol": "FNX"
+        },
+        "2153201998-0xcb72ef349870780fdc4786e8c86aab5b4fa36b73": {
+          "account": "0xcb72ef349870780fdc4786e8c86aab5b4fa36b73",
+          "ancestor": "RVX",
+          "chain": "Wanchain",
+          "chainSymbol": "WAN",
+          "decimals": "18",
+          "select": true,
+          "symbol": "RVX"
         }
       },
       cc_selected: {

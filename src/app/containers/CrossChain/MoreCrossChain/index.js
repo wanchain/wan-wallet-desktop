@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Table, Row, Col } from 'antd';
 import CrossChainMiniList from './CrossChainMiniList';

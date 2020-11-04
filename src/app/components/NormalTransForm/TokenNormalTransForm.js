@@ -200,8 +200,7 @@ class TokenNormalTransForm extends Component {
   checkTokenAmount = (rule, value, callback) => {
     // To do
     let { tokenAddr, balance, getTokenInfoFromTokensListByAddr } = this.props;
-    let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
-    let decimals = tokenInfo.decimals;
+    let { decimals } = getTokenInfoFromTokensListByAddr(tokenAddr);
     if (value === undefined) {
       callback(rule.message);
       return;

@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import tokens from './tokens';
 import session from './session';
 import wanAddress from './wanAddress';
