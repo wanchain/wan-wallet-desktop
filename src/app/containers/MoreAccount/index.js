@@ -4,15 +4,17 @@ import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, Icon, Modal, message } from 'antd';
 import ChainMiniList from './ChainMiniList';
 import SelectChainType from 'componentUtils/SelectChainType';
-import { COIN_ACCOUNT } from 'utils/settings';
+import { COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
 import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
   getWalletSelections: stores.tokens.getWalletSelections,
+  tokensList: stores.tokens.tokensList,
   tokenIconList: stores.tokens.tokenIconList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   deleteCustomToken: token => stores.tokens.deleteCustomToken(token),
+  getCoinImage: (...args) => stores.tokens.getCoinImage(...args),
 }))
 
 @observer
@@ -37,9 +39,9 @@ class MoreAccount extends Component {
       align: 'center',
       ellipsis: false,
       render: (text, record) => {
-        let filtered = record.children.map(v => v.account).filter(v => v !== COIN_ACCOUNT);
+        let filtered = record.children.filter(v => v.account !== COIN_ACCOUNT && v.account !== COIN_ACCOUNT_EOS);
         return (<div className={style.tokenGrid}>
-          <div><img className={style.totalImg} src={this.props.tokenIconList[filtered.length === 0 ? COIN_ACCOUNT : filtered[0]]} /></div>
+          <div><img className={style.totalImg} src={this.props.getCoinImage(filtered.length === 0 ? '' : record.ancestor, filtered[0].account)} /></div>
           <div className={style.coinText}>{text}</div>
         </div>)
       }

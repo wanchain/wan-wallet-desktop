@@ -66,16 +66,18 @@ class Tokens {
       case 'EOS':
         self.tokenIconList[scAddr] = eosImg;
         break;
-      case 'WAN':
-        self.tokenIconList[scAddr] = wanImg;
-        break;
       default:
+        if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
+          self.tokenIconList[scAddr] = wanImg;
+          return;
+        }
         wand.request('crossChain_getRegisteredOrigToken', {
           chainType: obj.chainSymbol,
           options: {
             tokenScAddr: scAddr
           }
         }, (err, data) => {
+          // console.log('init icon:', obj.symbol, data);
           if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
             self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
           } else {
@@ -90,33 +92,21 @@ class Tokens {
     if (token === undefined) {
       return false;
     }
-    switch (token.symbol) {
-      case 'WBTC':
-        self.tokenIconList[scAddr] = btcImg;
-        break;
-      case 'WETH':
-        self.tokenIconList[scAddr] = ethImg;
-        break;
-      case 'WEOS':
-        self.tokenIconList[scAddr] = eosImg;
-        break;
-      default:
-        if (token && token.iconData) {
-          self.tokenIconList[scAddr] = `data:image/${token.iconType};base64,${token.iconData}`;
-        } else {
-          wand.request('crossChain_getRegisteredOrigToken', {
-            chainType: token.chain,
-            options: {
-              tokenScAddr: scAddr
-            }
-          }, (err, data) => {
-            if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
-              self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
-            } else {
-              self.tokenIconList[scAddr] = `data:image/${data[0].iconType};base64,${data[0].iconData}`;
-            }
-          });
+    if (token && token.iconData) {
+      self.tokenIconList[scAddr] = `data:image/${token.iconType};base64,${token.iconData}`;
+    } else {
+      wand.request('crossChain_getRegisteredOrigToken', {
+        chainType: token.chain,
+        options: {
+          tokenScAddr: scAddr
         }
+      }, (err, data) => {
+        if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
+          self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
+        } else {
+          self.tokenIconList[scAddr] = `data:image/${data[0].iconType};base64,${data[0].iconData}`;
+        }
+      });
     }
   }
 
