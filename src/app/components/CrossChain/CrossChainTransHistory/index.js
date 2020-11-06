@@ -57,7 +57,7 @@ class CrossChainTransHistory extends Component {
         <div className="historyRow">
           <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={crossChainTrans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
-        {this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record} />}
+        {this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record} convertStoreman={true} />}
       </div>
     );
   }

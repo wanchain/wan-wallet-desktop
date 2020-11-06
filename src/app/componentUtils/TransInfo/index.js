@@ -3,6 +3,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { Modal, Button, Col, Row, Input, message, Icon, Tooltip } from 'antd';
 import { MAIN, TESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET, EOSMAIN, EOSTESTNET } from 'utils/settings';
+import { hexCharCodeToStr } from 'utils/support';
 
 import style from './index.less';
 
@@ -48,6 +49,7 @@ class TransInfo extends Component {
   }
 
   render() {
+    const { convertStoreman } = this.props;
     const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
     return (
       <Modal
@@ -131,7 +133,7 @@ class TransInfo extends Component {
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.storeman')}</Col>
             <Col span={COLRIGHT}>
-              <Input disabled={true} placeholder={storeman.length > 42 ? storeman.replace(/^(\w{12})\w*(\w{24})$/g, '$1****$2') : storeman} />
+              <Input disabled={true} placeholder={convertStoreman ? hexCharCodeToStr(storeman) : (storeman.length > 42 ? storeman.replace(/^(\w{12})\w*(\w{24})$/g, '$1****$2') : storeman) } />
               <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(storeman, e)} /></Tooltip>
             </Col>
           </Row>
