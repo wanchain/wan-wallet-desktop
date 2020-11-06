@@ -37,7 +37,7 @@ const defaultConfig = {
           "chain": "Wanchain",
           "chainSymbol": "WAN",
           "decimals": "18",
-          "select": true,
+          "select": false,
           "symbol": "FNX"
         },
         "2153201998-0xcb72ef349870780fdc4786e8c86aab5b4fa36b73": {
@@ -46,7 +46,7 @@ const defaultConfig = {
           "chain": "Wanchain",
           "chainSymbol": "WAN",
           "decimals": "18",
-          "select": true,
+          "select": false,
           "symbol": "RVX"
         }
       },
