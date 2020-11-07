@@ -747,7 +747,7 @@ const es_ES = {
     'Storeman.group': 'Grupo',
     'Storeman.groupUpper': 'GRUPO',
     'Storeman.currgroup': 'GRUPO ACTUAL',
-    'Storeman.nextGroup': 'GRUPO SIGUIENTE,
+    'Storeman.nextGroup': 'GRUPO SIGUIENTE',
     'Storeman.startTime': 'START TIME',
     'Storeman.endTime': 'END TIME',
     'Storeman.delegateFee': 'Tarifa DELEGACIÓN FEE',
