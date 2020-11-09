@@ -14,7 +14,7 @@ const CollectionCreateForm = Form.create({ name: 'ETHNormalTransForm' })(ETHNorm
   transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
-  updateGasPrice: (gasPrice, chainType) => stores.sendTransParams.updateGasPrice(gasPrice, chainType),
+  updateGasPrice: (...args) => stores.sendTransParams.updateGasPrice(...args),
 }))
 
 @observer

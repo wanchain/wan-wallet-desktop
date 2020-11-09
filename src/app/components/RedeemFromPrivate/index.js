@@ -15,7 +15,7 @@ const RedeemForm = Form.create({ name: 'RedeemFromPrivateForm' })(RedeemFromPriv
   chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   transParams: stores.sendTransParams.transParams,
-  updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
+  updateGasPrice: (...args) => stores.sendTransParams.updateGasPrice(...args),
 }))
 
 @observer

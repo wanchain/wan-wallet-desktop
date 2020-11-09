@@ -55,7 +55,7 @@ class SendTransParams {
     if (chainType === 'WAN') {
       self.minGasPrice = 1;
     } else {
-      self.minGasPrice = Math.max(1, gasPrice / 2);
+      self.minGasPrice = Math.max(1, Number(gasPrice) / 2);
     }
   }
 
