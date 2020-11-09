@@ -18,7 +18,7 @@ const TokenCollectionCreateForm = Form.create({ name: 'TokenNormalTransForm' })(
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
-  updateGasPrice: (gasPrice) => stores.sendTransParams.updateGasPrice(gasPrice),
+  updateGasPrice: (...args) => stores.sendTransParams.updateGasPrice(...args),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
@@ -55,7 +55,7 @@ class SendTokenNormalTrans extends Component {
     try {
       let [nonce, gasPrice] = await Promise.all([getNonce(from, chainType), getGasPrice(chainType)]);
       updateTransParams(from, { path, nonce, gasPrice });
-      updateGasPrice(gasPrice);
+      updateGasPrice(gasPrice, chainType);
       setTimeout(() => { this.setState({ spin: false }) }, 0)
     } catch (err) {
       console.log(`Get nonce or gas price failed: ${err}`)
