@@ -202,7 +202,7 @@ class Sidebar extends Component {
     } else {
       dAppsChildren.splice(0, dAppsChildren.length - 1);
     }
-
+    console.log('sidebarColumns', sidebarColumns);
     return (
       <div>
         <div className={style.sidebar + ' sidebar'}>

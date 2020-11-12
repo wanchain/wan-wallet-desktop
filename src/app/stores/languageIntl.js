@@ -400,7 +400,7 @@ class LanguageIntl {
         title: intl.get('Common.crossChain'),
         step: '1',
         key: '/crossChain',
-        icon: 'wallet',
+        icon: 'apartment',
         children: [],
         /* children: CROSSCHAINTYPE.map(item => ({
           title: item,
@@ -425,7 +425,7 @@ class LanguageIntl {
         title: intl.get('Common.storeman'),
         step: '1',
         key: '/openstoreman',
-        icon: 'pie-chart',
+        icon: 'global',
         children: [
           {
             title: intl.get('menuConfig.delegation'),
@@ -435,6 +435,24 @@ class LanguageIntl {
           {
             title: intl.get('Common.storeman'),
             key: '/osm_storeman',
+            icon: 'block'
+          }
+        ]
+      },
+      {
+        title: intl.get('contract.menu'),
+        step: '1',
+        key: '/contract',
+        icon: 'reconciliation',
+        children: [
+          {
+            title: intl.get('contract.menuOffline'),
+            key: '/contract_offline',
+            icon: 'block'
+          },
+          {
+            title: intl.get('contract.menuOnline'),
+            key: '/contract_online',
             icon: 'block'
           }
         ]

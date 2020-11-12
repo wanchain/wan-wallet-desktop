@@ -759,6 +759,26 @@ const en_US = {
     'Storeman.delegationExit': 'Delegation Exit',
     'Storeman.delegationTopup': 'Delegation Top-up',
     'Storeman.registration': 'Storeman Registration',
+
+    'contract.menu': 'Contract',
+    'contract.menuOffline': 'Offline',
+    'contract.menuOnline': 'Online',
+    'contract.offlineTitle': 'Interact with Contract Offline',
+    'contract.onlineTitle': 'Interact with Contract Online',
+    'contract.selectAccount': 'Select / Input Account',
+    'contract.addTransaction': '+ Add Transaction',
+    'contract.buildTransaction': 'Build Transaction',
+    'contract.saveToFile': 'Save To File...',
+    'contract.contractAddress': 'Contract Address:',
+    'contract.abiFile': 'ABI json File:',
+    'contract.callMethod': 'Call Method:',
+    'contract.gasLimit': 'Gas Limit:',
+    'contract.parameters': 'Parameters:',
+    'contract.remove': '- Remove',
+    'contract.getNonce': 'Get Nonce',
+    'contract.loadOfflineData': 'Load Offline Data...',
+    'contract.offlineTransactionConfirm': 'Offline Transaction Confirm',
+    'contract.fromAddress': 'From Address:',
 }
 
 export default en_US;

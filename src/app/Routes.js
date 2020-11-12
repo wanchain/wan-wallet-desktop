@@ -25,7 +25,9 @@ import {
   DAppMarket,
   OsmDelegation,
   OsmStoreman,
-  AddDApp
+  AddDApp,
+  ContractOffline,
+  ContractOnline,
 } from './containers';
 
 const Main = withRouter(props => <Layout {...props} />);
@@ -59,6 +61,8 @@ export default () => {
           <Route path="/dAppMarket" component={DAppMarket} />
           <Route path="/osm_delegation" component={OsmDelegation} />
           <Route path="/osm_storeman" component={OsmStoreman} />
+          <Route path="/contract_offline" component={ContractOffline} />
+          <Route path="/contract_online" component={ContractOnline} />
         </Switch>
       </Main>
     </HashRouter>
