@@ -78,7 +78,10 @@ const Transaction = (props) => {
   const [paramTip, setParamTip] = useState('Waiting...');
   const [parameters, setParameters] = useState();
   const [value, setValue] = useState(0);
+  const [abiJson, setAbiJson] = useState();
+  const [methods, setMethods] = useState();
 
+  // update tx
   useEffect(() => {
     props.onModify(props.i, {
       ...props.tx,
@@ -90,6 +93,48 @@ const Transaction = (props) => {
       value
     });
   }, [contractAddress, abiFile, method, gasLimit, parameters, value]);
+
+  // update methods
+  useEffect(() => {
+    if (!abiJson || !abiJson.length) {
+      return;
+    }
+    setMethods(abiJson.filter((v) => {
+      return v.constant === false;
+    }));
+  }, [abiJson]);
+
+  // update params
+  useEffect(() => {
+    if (!method || !abiJson || !abiJson.length) {
+      return;
+    }
+    const tmp = abiJson.filter(v => v.name === method);
+    if (tmp.length === 0) {
+      return;
+    }
+    let tip = '';
+    tmp[0].inputs.forEach(v => {
+      tip += v.name + '(' + v.type + '), '
+    });
+    tip = tip.length > 0 ? tip.slice(0, tip.length - 2) : '';
+    setParamTip(tip);
+  }, [method, abiJson]);
+
+  const onUploadCheck = () => {
+    let up = document.getElementById('up');
+    if (up.value) {
+      var reader = new FileReader();
+      reader.readAsText(up.files[0], 'UTF-8');
+      setAbiFile(up.files[0].path);
+      reader.onload = (evt) => {
+        var fileString = evt.target.result;
+        let obj = JSON.parse(fileString);
+        setAbiJson(obj);
+      }
+    }
+  }
+
   return (<TxBody>
     <SmallTitle>{intl.get('NormalTransForm.ConfirmForm.nonce') + ': ' + (props.tx && props.tx.nonce ? props.tx.nonce : 0)}</SmallTitle>
     <TableContainer>
@@ -97,11 +142,23 @@ const Transaction = (props) => {
         <Col span={4}><Label>{intl.get('contract.contractAddress')}</Label></Col>
         <Col span={8}><SmallInput value={contractAddress} placeholder="Please input contract address" onChange={e => { setContractAddress(e.target.value) }} /></Col>
         <Col span={4}><Label>{intl.get('contract.abiFile')}</Label></Col>
-        <Col span={8}><SmallInput type='file' placeholder="Please select ABI file" readOnly id="up" value={abiFile} onChange={e => { setAbiFile(e.target.value) }} /></Col>
+        <Col span={8}><SmallInput type='file' placeholder="Please select ABI file" readOnly id="up" onChange={e => {
+          setTimeout(onUploadCheck, 1000);
+        }} /></Col>
       </Row>
       <Row gutter={[24, 24]}>
         <Col span={4}><Label>{intl.get('contract.callMethod')}</Label></Col>
-        <Col span={8}><SmallSelect value={method} /></Col>
+        <Col span={8}>
+          <SmallSelect value={method} onChange={(e) => { setMethod(e) }}>
+            {
+              methods
+                ? methods.map((v) => {
+                  return (<Select.Option value={v.name} key={v.name}>{v.name}</Select.Option>);
+                })
+                : null
+            }
+          </SmallSelect>
+        </Col>
         <Col span={4}><Label>{intl.get('contract.gasLimit')}</Label></Col>
         <Col span={8}><SmallInput value={gasLimit} onChange={e => { setGasLimit(e.target.value) }} /></Col>
       </Row>
@@ -117,23 +174,6 @@ const Transaction = (props) => {
     <RemoveButton type="primary"><Button onClick={() => { props.onModify(props.i, undefined) }} type="primary">{intl.get('contract.remove')}</Button></RemoveButton>
   </TxBody>);
 };
-
-// const onUploadCheck = () => {
-//   let up = document.getElementById('up');
-//   if (up.value) {
-//     clearInterval(this.timer);
-
-//     var reader = new FileReader();
-//     reader.readAsText(up.files[0], 'UTF-8');
-//     reader.onload = (evt) => {
-//       var fileString = evt.target.result;
-//       console.log('fileString', fileString);
-//       let obj = JSON.parse(fileString);
-//       this.setState({ data: obj });
-//       up.value = '';
-//     }
-//   }
-// }
 
 const Body = styled.div`
   width: auto;
