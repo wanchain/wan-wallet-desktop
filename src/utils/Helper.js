@@ -27,6 +27,7 @@ class WalletHelper {
      */
     getLogPath() {
         let logPath 
+        app.setAppLogsPath()
         if (process.platform === 'freebsd' || process.platform === 'linux' || process.platform === 'openbsd') {
             const userDataPath = app.getPath('userData')
             logPath = userDataPath + '/Logs'

@@ -7,26 +7,29 @@ import Offline from './Offline';
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
+  normalAddrList: stores.wanAddress.getNormalAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
 @observer
 class ContractOffline extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.props.changeTitle('contract.offlineTitle');
   }
 
-  componentDidMount () {
+  componentDidMount() {
 
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
   }
 
-  render () {
+  render() {
     return (
-      <Offline />
+      <Offline normalAddrList={this.props.normalAddrList} />
     );
   }
 }

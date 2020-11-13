@@ -11,4 +11,5 @@ module.exports = {
     dappStore: ['getRegisteredDapp', 'getRegisteredAds'],
     upgrade: ['start'],
     storeman: ['getRewardRatio', 'getMultiStoremanGroupInfo', 'getSelectedStoreman', 'publicToAddress', 'getStoremanConf', 'getStoremanDelegatorTotalIncentive', 'getStoremanStakeTotalIncentive', 'getStoremanDelegators', 'openStoremanAction', 'getContractData', 'insertStoremanTransToDB', 'getOpenStoremanGroupList', 'getStoremanStakeInfo', 'getStoremanDelegatorInfo', 'getStoremanGroupMember', 'getStoremanCandidates'],
+    contract: ['sendTx','setFilePath','getOutputPath','buildTx','updateNonce'],
   }

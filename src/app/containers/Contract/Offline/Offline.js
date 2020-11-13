@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
-import { Select, Input, Button, Row, Col, Tooltip } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { Select, Input, Button, Row, Col, Tooltip, message, Icon } from 'antd';
+import { wandWrapper } from '../../../utils/support';
 
 import styled from 'styled-components';
 
@@ -9,6 +9,10 @@ export default function Offline(props) {
   const [transactions, setTransactions] = useState([]);
   const [nonce, setNonce] = useState(0);
   const [gasPrice, setGasPrice] = useState(1);
+  const addresses = props.normalAddrList;
+  const [fromAddress, setFromAddress] = useState();
+  const [step, setStep] = useState('build');
+
   const modify = useCallback((i, v) => {
     setTransactions((pre) => {
       const tmp = pre.slice();
@@ -23,14 +27,66 @@ export default function Offline(props) {
       tmp[i] = v;
       return tmp;
     });
-  }, [setTransactions]);
+  }, [setTransactions, nonce]);
+
+  const buildTransaction = useCallback(() => {
+    const wallet = addresses.filter(v => v.address === fromAddress);
+    console.log('transactions', transactions);
+    const txs = transactions.map(v => {
+      let param;
+      if (v.parameters) {
+        if (v.parameters.includes('{') || v.parameters.includes('}') || v.parameters.includes('[') || v.parameters.includes(']')) {
+          // param = '[' + v.parameters + ']';
+          param = JSON.parse(v.parameters);
+        } else {
+          param = v.parameters.split(',');
+        }
+      }
+
+      console.log('param', param);
+      return {
+        toAddress: v.contractAddress ? v.contractAddress.toLowerCase() : undefined,
+        abi: v.abiJson,
+        method: v.method,
+        paras: v.parameters ? param : [],
+        value: v.value,
+      }
+    });
+    console.log('txs', txs);
+    const walletId = wallet[0].wid;
+    const path = wallet[0].path;
+    const address = wallet[0].address;
+
+    wandWrapper('contract_updateNonce', { address, nonce }).then((ret) => {
+      console.log('ret', ret);
+      wandWrapper('contract_buildTx', { walletId, path, txs }).then((ret) => {
+        console.log('ret', ret);
+        if (ret === true) {
+          message.success('Success');
+          setStep('save');
+        } else {
+          message.error('Build Failed please check SDK log');
+        }
+      }).catch(message.error);
+    }).catch(message.error);
+  }, [nonce, transactions, fromAddress, addresses]);
+
+  const saveToFile = useCallback(() => {
+    const wallet = addresses.filter(v => v.address === fromAddress);
+    const address = wallet[0].address;
+    wandWrapper('contract_getOutputPath', { address }).then((ret) => {
+      console.log('2', ret);
+      downloadFile(ret, address, nonce);
+    }).catch(message.error);
+    setStep('build');
+  }, [transactions, fromAddress, addresses, nonce]);
 
   // first empty tx
-  useEffect(() => {
-    if (transactions && transactions.length === 0) {
-      modify(0, { nonce: nonce, time: Date.now() });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (transactions && transactions.length === 0) {
+  //     modify(0, { nonce: nonce, time: Date.now() });
+  //   }
+  // }, []);
 
   // flush new nonce
   useEffect(() => {
@@ -44,21 +100,43 @@ export default function Offline(props) {
   }, [nonce]);
 
   return (<Body>
-    <Title>{intl.get('contract.selectAccount')}</Title>
-    <StyledSelect showSearch />
+    <Title>{intl.get('contract.selectAccount2')}</Title>
+    <StyledSelect onChange={(v) => { setFromAddress(v) }}>
+      {
+        addresses.map(v => {
+          return <Select.Option value={v.address} key={v.address}>{v.address}</Select.Option>
+        })
+      }
+    </StyledSelect>
     <Title>{intl.get('NormalTransForm.ConfirmForm.nonce')}</Title>
     <StyledInput value={nonce} onChange={(e) => { setNonce(e.target.value) }} />
     <Title>{intl.get('AdvancedOptionForm.gasPrice')}</Title>
     <StyledInput value={gasPrice} onChange={(e) => { setGasPrice(e.target.value) }} suffix="Gwin" />
     <InALine>
-      <StyledButton type="primary" onClick={() => {
-        modify(transactions.length, {
-          nonce: Number(nonce) + transactions.length,
-          time: Date.now()
-        });
-      }}>{intl.get('contract.addTransaction')}</StyledButton>
-      <StyledButton type="primary">{intl.get('contract.buildTransaction')}</StyledButton>
-      <StyledButton type="primary">{intl.get('contract.saveToFile')}</StyledButton>
+      {
+        fromAddress && fromAddress.length > 0
+          ? <StyledButton type="primary" onClick={() => {
+            modify(transactions.length, {
+              nonce: Number(nonce) + transactions.length,
+              time: Date.now()
+            });
+          }}>{intl.get('contract.addTransaction')}</StyledButton>
+          : <Title>{intl.get('contract.first')}</Title>
+      }
+      {
+        step === 'build' && transactions && transactions.length > 0
+          ? <StyledButton type="primary" onClick={() => {
+            buildTransaction();
+          }}>{intl.get('contract.buildTransaction')}</StyledButton>
+          : null
+      }
+      {
+        step === 'save' && transactions && transactions.length > 0
+          ? <StyledButton type="primary" onClick={() => {
+            saveToFile();
+          }}>{intl.get('contract.saveToFile')}</StyledButton>
+          : null
+      }
     </InALine>
     {
       transactions && transactions.length > 0
@@ -75,7 +153,7 @@ const Transaction = (props) => {
   const [abiFile, setAbiFile] = useState();
   const [method, setMethod] = useState();
   const [gasLimit, setGasLimit] = useState(1000000);
-  const [paramTip, setParamTip] = useState('Waiting...');
+  const [paramTip, setParamTip] = useState('Normal transaction');
   const [parameters, setParameters] = useState();
   const [value, setValue] = useState(0);
   const [abiJson, setAbiJson] = useState();
@@ -90,9 +168,10 @@ const Transaction = (props) => {
       method,
       gasLimit,
       parameters,
-      value
+      value,
+      abiJson,
     });
-  }, [contractAddress, abiFile, method, gasLimit, parameters, value]);
+  }, [contractAddress, abiFile, method, gasLimit, parameters, value, abiJson]);
 
   // update methods
   useEffect(() => {
@@ -121,8 +200,10 @@ const Transaction = (props) => {
     setParamTip(tip);
   }, [method, abiJson]);
 
+  const uploadId = 'up_' + props.tx.time.toString();
+
   const onUploadCheck = () => {
-    let up = document.getElementById('up');
+    let up = document.getElementById(uploadId);
     if (up.value) {
       var reader = new FileReader();
       reader.readAsText(up.files[0], 'UTF-8');
@@ -142,7 +223,7 @@ const Transaction = (props) => {
         <Col span={4}><Label>{intl.get('contract.contractAddress')}</Label></Col>
         <Col span={8}><SmallInput value={contractAddress} placeholder="Please input contract address" onChange={e => { setContractAddress(e.target.value) }} /></Col>
         <Col span={4}><Label>{intl.get('contract.abiFile')}</Label></Col>
-        <Col span={8}><SmallInput type='file' placeholder="Please select ABI file" readOnly id="up" onChange={e => {
+        <Col span={8}><SmallInput type='file' placeholder="Please select ABI file" readOnly id={uploadId} onChange={e => {
           setTimeout(onUploadCheck, 1000);
         }} /></Col>
       </Row>
@@ -171,8 +252,22 @@ const Transaction = (props) => {
         <Col span={8}><SmallInput suffix='WAN' value={value} onChange={e => { setValue(e.target.value) }} /></Col>
       </Row>
     </TableContainer>
-    <RemoveButton type="primary"><Button onClick={() => { props.onModify(props.i, undefined) }} type="primary">{intl.get('contract.remove')}</Button></RemoveButton>
+    <RemoveButton type="primary">
+      <Tooltip title={intl.get('contract.help')}>
+        <Icon style={{ fontSize: '20px', margin: '5px 20px 5px 5px' }} type="question-circle" />
+      </Tooltip>
+      <Button onClick={() => { props.onModify(props.i, undefined) }} type="primary">{intl.get('contract.remove')}</Button>
+    </RemoveButton>
   </TxBody>);
+};
+
+function downloadFile(dataJson, address, nonce) {
+  var downloadAnchorNode = document.createElement('a');
+  var datastr = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataJson);
+  downloadAnchorNode.setAttribute('href', datastr);
+  downloadAnchorNode.setAttribute('download', address + '_' + nonce + '.json');
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
 };
 
 const Body = styled.div`
@@ -279,4 +374,6 @@ const RemoveButton = styled.div`
   top: -268px;
   text-align: right;
   padding-right: 10px;
+  display: flex;
+  justify-content: flex-end;
 `;

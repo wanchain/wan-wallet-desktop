@@ -9,7 +9,7 @@ import Identicon from 'identicon.js';
 import BigNumber from 'bignumber.js';
 import bs58check from 'bs58check';
 import { ipcMain as ipc, app } from 'electron'
-import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
+import { hdUtil, ccUtil, btcUtil, offlineDeployer } from 'wanchain-js-sdk'
 import sleep from 'ko-sleep';
 import Logger from '~/src/utils/Logger'
 import setting from '~/src/utils/Settings'
@@ -34,6 +34,7 @@ const ROUTE_CROSSCHAIN = 'crossChain'
 const ROUTE_DAPPSTORE = 'dappStore'
 const ROUTE_SETTING = 'setting'
 const ROUTE_STOREMAN = 'storeman'
+const ROUTE_CONTRACT = 'contract'
 
 // db collection consts
 const DB_NORMAL_COLLECTION = 'normalTrans'
@@ -2269,7 +2270,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
             break;
-            
+
     }
 })
 
@@ -2290,14 +2291,14 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             break;
 
         case 'getRewardRatio':
-          try {
-              ret = await ccUtil.getRewardRatio();
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+            try {
+                ret = await ccUtil.getRewardRatio();
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'openStoremanAction':
             try {
@@ -2310,7 +2311,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
                 if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
-                  ret.result.estimateGas = ret.result.estimateGas * 2;
+                    ret.result.estimateGas = ret.result.estimateGas * 2;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2444,6 +2445,69 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err, data: ret })
             break;
 
+    }
+})
+
+ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
+    let ret, err
+    const [action, id] = actionUni.split('#')
+    console.log('contract', action, id);
+    switch (action) {
+        case 'updateNonce':
+            try {
+                let { address, nonce } = payload;
+                console.log('updateNonce', address, nonce);
+                ret = await offlineDeployer.updateNonce(address, nonce);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTRACT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'buildTx':
+            try {
+                let { walletId, path, txs } = payload;
+                console.log('buildTx', walletId, path, txs);
+                ret = await offlineDeployer.buildTx(walletId, path, txs);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTRACT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'getOutputPath':
+            try {
+                let { address } = payload;
+                console.log('getOutputPath', address);
+                ret = await offlineDeployer.getOutputPath('sendTx', address);
+                ret = fs.readFileSync(ret, { encoding: 'utf8'});
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTRACT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'setFilePath':
+            try {
+                let { inputPath } = payload;
+                console.log('setFilePath', inputPath);
+                ret = await offlineDeployer.updateNonce('sendTx', inputPath);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTRACT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+        case 'sendTx':
+            try {
+                console.log('sendTx');
+                ret = await offlineDeployer.sendTx();
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTRACT, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
     }
 })
 

@@ -168,7 +168,7 @@ export function showNA (data) {
 export function wandWrapper(action, options = {}) {
   return new Promise((resolve, reject) => {
     wand.request(action, options, (err, ret) => {
-      if (err || ret.code === false) {
+      if (err || (ret && (ret.code === false))) {
         console.log(`${action} Error: ${err}`);
         reject(err || ret);
       } else {
