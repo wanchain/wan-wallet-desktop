@@ -777,7 +777,7 @@ const en_US = {
     'contract.parameters': 'Parameters:',
     'contract.remove': '- Remove',
     'contract.getNonce': 'Get Nonce',
-    'contract.loadOfflineData': 'Load Offline Data...',
+    'contract.loadOfflineData': 'Load Offline Data:',
     'contract.offlineTransactionConfirm': 'Offline Transaction Confirm',
     'contract.fromAddress': 'From Address:',
     'contract.first': 'You have to Select your address first.',

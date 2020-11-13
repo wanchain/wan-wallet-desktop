@@ -1,18 +1,67 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
-import { Select, Input, Button, Row, Col, Tooltip, message, Icon } from 'antd';
+import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal } from 'antd';
 import { getNonce, checkWanAddr } from '../../../utils/helper';
-
+import { wandWrapper } from '../../../utils/support';
 import styled from 'styled-components';
 
 export default function Online(props) {
   const [nonce, setNonce] = useState(0);
   const addresses = props.normalAddrList;
   const [fromAddress, setFromAddress] = useState();
+  const [offlineJson, setOfflineJson] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   console.log('fromAddress', fromAddress);
+
+  const onUploadCheck = () => {
+    let up = document.getElementById('upLoad');
+    if (up.value) {
+      var reader = new FileReader();
+      reader.readAsText(up.files[0], 'UTF-8');
+      reader.onload = (evt) => {
+        var fileString = evt.target.result;
+        let obj = JSON.parse(fileString);
+        setOfflineJson(obj);
+        console.log('wandWrapper', wandWrapper, up.files[0].path)
+        wandWrapper('contract_setFilePath', { inputPath: up.files[0].path }).then((ret) => {
+          console.log('ret', ret);
+          setShowModal(true);
+        }).catch(message.error);
+      }
+    }
+  }
+
+  const OfflineModal = () => {
+    return <Modal
+      visible={showModal}
+      footer={[
+        <Button key="back" className="cancel-button" onClick={() => { setShowModal(false) }}>{intl.get('Common.cancel')}</Button>,
+        <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={() => {
+          console.log('send');
+          setLoading(true);
+          wandWrapper('contract_sendTx').then(ret => {
+            console.log('sendTx', ret);
+            if (ret) {
+              message.info('Success');
+              setShowModal(false);
+            } else {
+              message.info('Send failed, please check sdk log');
+            }
+          }).catch(message.error).finally(() => {
+            setLoading(false);
+          });
+        }}>{intl.get('Common.send')}</Button>,
+      ]}
+    >
+    </Modal>
+  }
+
   return (<Body>
     <Title>{intl.get('contract.selectAccount')}</Title>
-    <StyledSelect showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }}>
+    <OfflineModal />
+    <StyledSelect showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
       {
         addresses.map(v => {
           return <Select.Option value={v.address} key={v.address}>{v.address}</Select.Option>
@@ -24,27 +73,27 @@ export default function Online(props) {
           : null
       }
     </StyledSelect>
-    <Title>{intl.get('NormalTransForm.ConfirmForm.nonce')}</Title>
+    <Title>{intl.get('NormalTransForm.ConfirmForm.nonce')}:</Title>
     <StyledButton type="primary" onClick={() => {
-      // checkWanAddr(fromAddress).then((ret) => {
-      //   console.log('3', ret);
-      //   if (ret) {
+      checkWanAddr(fromAddress).then((ret) => {
+        if (ret) {
           getNonce(fromAddress, 'WAN').then((ret) => {
-            console.log('4', ret);
             if (ret) {
               setNonce(ret);
             } else {
               message.warn(intl.get('Offline.getInfoFailed'))
             }
           }).catch(message.error);
-      //   } else {
-      //     message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
-      //   }
-      // }).catch(message.error)
+        } else {
+          message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
+        }
+      }).catch(message.error)
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
-    <p></p>
-    <StyledButton style={{ marginLeft: '20px!important' }} type="primary">{intl.get('contract.loadOfflineData')}</StyledButton>
+    <Title style={{ marginBottom: '16px' }}>{intl.get('contract.loadOfflineData')}</Title>
+    <SmallInput type='file' placeholder={intl.get('contract.loadOfflineData')} readOnly id="upLoad" onChange={e => {
+      setTimeout(onUploadCheck, 1000);
+    }} />
   </Body>);
 }
 

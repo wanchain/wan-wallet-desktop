@@ -2491,7 +2491,7 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             try {
                 let { inputPath } = payload;
                 console.log('setFilePath', inputPath);
-                ret = await offlineDeployer.updateNonce('sendTx', inputPath);
+                ret = await offlineDeployer.setFilePath('sendTx', inputPath);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
