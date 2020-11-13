@@ -267,6 +267,7 @@ export const estimateGas = function (chainType, tx) {
 };
 
 export const checkWanAddr = function (address) {
+  console.log('checkWanAddr', address);
   return new Promise((resolve, reject) => {
     wand.request('address_isWanAddress', { address }, (err, val) => {
       if (err) {

@@ -275,7 +275,7 @@ const Body = styled.div`
   margin: 30px;
   padding: 30px;
   background-color: #ffffff16;
-  min-height: 90vh;
+  /* min-height: 90vh; */
   border-radius: 20px;
 `;
 

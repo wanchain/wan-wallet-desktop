@@ -7,6 +7,9 @@ import Online from './Online';
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
+  normalAddrList: stores.wanAddress.getNormalAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
 }))
 
@@ -26,7 +29,7 @@ class ContractOnline extends Component {
 
   render () {
     return (
-      <Online />
+      <Online normalAddrList={this.props.normalAddrList}/>
     );
   }
 }
