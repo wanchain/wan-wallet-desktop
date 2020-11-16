@@ -124,7 +124,7 @@ export default function Online(props) {
       }).catch(message.error)
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
-    <Title style={{ marginBottom: '16px' }}>{intl.get('contract.loadOfflineData')}</Title>
+    <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
     <SmallInput type='file' placeholder={intl.get('contract.loadOfflineData')} readOnly id="upLoad" onChange={e => {
       setTimeout(onUploadCheck, 1000);
     }} />
