@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { observer, inject } from 'mobx-react';
-import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
+import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo, getNetStatus } from 'utils/helper';
 import Loading from 'components/Loading';
 import { WANPATH } from 'utils/settings';
 import Transition from 'components/Transition';
@@ -61,6 +61,12 @@ class Layout extends Component {
     });
     let running = false;
     let id = setInterval(async () => {
+      console.log('waitUntilSdkReady running', running);
+      console.log('global.offlineMode', global.offlineMode);
+
+      let net = await getNetStatus();
+      console.log('netStatus', net);
+
       if (running) {
         return false;
       }
@@ -76,6 +82,18 @@ class Layout extends Component {
           initializeStep: 'Layout.initSDKFailed'
         });
       }
+      console.log('waitUntilSdkReady ready', ready);
+      console.log('global.offlineMode', !net);
+
+      if (ready && !net) {
+        this.setState({
+          initializeStep: 'Layout.initSuccess',
+          loading: false
+        });
+        clearInterval(id);
+        running = false;
+      }
+
       if (ready) {
         try {
           running = true;

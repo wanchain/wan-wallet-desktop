@@ -354,6 +354,22 @@ export const isSdkReady = function () {
   });
 };
 
+export const getNetStatus = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('query_config', {
+      param: 'netStatus'
+    }, function (err, val) {
+      console.log('getNetStatus', err, val);
+      if (err) {
+        err = 'Get SDK status failed: ' + err;
+        return reject(err);
+      } else {
+        return resolve(val['netStatus']);
+      }
+    });
+  });
+}
+
 export const checkAddrType = function (addr, addrInfo) {
   let type = false;
   if (typeof addr === 'string') {
