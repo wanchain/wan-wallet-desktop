@@ -2469,6 +2469,7 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
                 let { walletId, path, txs } = payload;
                 console.log('buildTx', walletId, path, txs);
                 ret = await offlineDeployer.buildTx(walletId, path, txs);
+                console.log('buildTx', ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

@@ -1,9 +1,38 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
-import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal } from 'antd';
+import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal, Table } from 'antd';
 import { getNonce, checkWanAddr } from '../../../utils/helper';
 import { wandWrapper } from '../../../utils/support';
 import styled from 'styled-components';
+
+const colums = [
+  {
+    title: 'Nonce',
+    dataIndex: 'nonce',
+    key: 'Nonce',
+  },
+  {
+    title: 'To',
+    dataIndex: 'toAddress',
+    key: 'toAddress',
+  },
+  {
+    title: 'Method',
+    dataIndex: 'method',
+    key: 'method',
+  },
+  {
+    title: 'Paras',
+    dataIndex: 'paras',
+    key: 'paras',
+    render: paras => <div>{JSON.stringify(paras)}</div>,
+  },
+  {
+    title: 'Value',
+    dataIndex: 'value',
+    key: 'value',
+  },
+]
 
 export default function Online(props) {
   const [nonce, setNonce] = useState(0);
@@ -35,6 +64,7 @@ export default function Online(props) {
 
   const OfflineModal = () => {
     return <Modal
+      title={intl.get('contract.offlineTransactionConfirm')}
       visible={showModal}
       footer={[
         <Button key="back" className="cancel-button" onClick={() => { setShowModal(false) }}>{intl.get('Common.cancel')}</Button>,
@@ -55,6 +85,10 @@ export default function Online(props) {
         }}>{intl.get('Common.send')}</Button>,
       ]}
     >
+      <Title>{intl.get('contract.fromAddress')}</Title>
+      <Title>{offlineJson && offlineJson.length > 0 ? offlineJson[0].sender : 'None'}</Title>
+      <p style={{ height: '20px' }}></p>
+      <StyledTable columns={colums} dataSource={offlineJson} />
     </Modal>
   }
 
@@ -203,4 +237,10 @@ const RemoveButton = styled.div`
   padding-right: 10px;
   display: flex;
   justify-content: flex-end;
+`;
+
+const StyledTable = styled(Table)`
+  .ant-table {
+    overflow: scroll!important;
+  }
 `;
