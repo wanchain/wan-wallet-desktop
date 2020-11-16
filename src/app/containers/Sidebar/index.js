@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import style from './index.less';
 import logo from 'static/image/logo.png';
+import logoOffline from 'static/image/logo-offline.png';
 import open from 'static/image/navbar-open.png';
 import collapse from 'static/image/navbar-collapse.png';
 import { CROSSCHAINTYPE, COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
@@ -207,7 +208,7 @@ class Sidebar extends Component {
       <div>
         <div className={style.sidebar + ' sidebar'}>
           <div className={style.logo}>
-            <img className={style.expandedLogo} src={logo} alt={intl.get('Sidebar.wanchain')} />
+            <img className={style.expandedLogo} src={global.offlineMode ? logoOffline : logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
           <Menu theme="dark" mode="vertical" /* subMenuCloseDelay={0.05} */ onOpenChange={this.onOpenChange} selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
             {this.renderMenu(sidebarColumns)}

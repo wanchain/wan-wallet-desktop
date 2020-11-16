@@ -81,6 +81,7 @@ class Layout extends Component {
       }
       console.log('waitUntilSdkReady ready', ready);
       console.log('global.offlineMode', !net);
+      global.offlineMode = !net;
 
       if (ready && !net) {
         this.setState({
