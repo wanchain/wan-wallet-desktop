@@ -1,7 +1,6 @@
 import { message } from 'antd';
 import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
-
 import { wandWrapper } from 'utils/support.js';
 
 const pu = require('promisefy-util');
@@ -94,7 +93,7 @@ export const OsmTrezorTrans = async (tx, from, action, satellite) => {
       to: estimateData.to,
       value: estimateData.value,
       data: estimateData.data,
-      nonce: '0x' + estimateData.nonce.toString(16),
+      nonce: '0x' + Number(estimateData.nonce).toString(16),
       gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
       gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
     };

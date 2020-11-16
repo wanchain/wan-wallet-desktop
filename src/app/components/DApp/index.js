@@ -282,7 +282,7 @@ class DApp extends Component {
       rawTx.to = msg.message.to;
       rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
       rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.nonce = '0x' + Number(nonce).toString(16);
       rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
       rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);

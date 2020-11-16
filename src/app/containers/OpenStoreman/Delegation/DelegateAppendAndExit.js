@@ -142,13 +142,12 @@ class ModifyForm extends Component {
         to: estimateData.to,
         value: estimateData.value,
         data: estimateData.data,
-        nonce: '0x' + estimateData.nonce.toString(16),
+        nonce: '0x' + Number(estimateData.nonce).toString(16),
         gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
         gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
       };
       let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);// Trezor sign
       let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-
       let params = {
         txHash,
         from: from.toLowerCase(),

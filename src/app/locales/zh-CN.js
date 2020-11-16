@@ -475,6 +475,7 @@ const zh_CN = {
     'CrossChainTransForm.FAST': '极速模式',
     'CrossChainTransForm.HTLC': '安全模式',
     'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
+    'CrossChainTransForm.FastMinimumLimit': '最小跨连交易额为',
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
 
     'CrossChain.selectFailed': '修改选择状态失败',
