@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { CROSS_TYPE } from 'utils/settings';
 import session from './session';
+import { BigNumber } from 'bignumber.js';
 
 const GASLIMIT = 21000;
 
@@ -85,6 +86,27 @@ class SendCrossChainParams {
 
     @computed get feeRate() {
       return session.chainId === 1 ? 30 : 300;
+    }
+
+    @computed get rawTx() {
+      if (Object.keys(this.transParams).length !== 0) {
+        let { to, amount, chainId, nonce, gasLimit, gasPrice } = this.transParams[this.currentFrom];
+        if (nonce === undefined) {
+          return false;
+        }
+        return {
+          to: to,
+          value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
+          data: '0x',
+          chainId: chainId,
+          nonce: '0x' + Number(nonce).toString(16),
+          gasLimit: '0x' + Number(gasLimit).toString(16),
+          gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
+          Txtype: 1
+        };
+      } else {
+        return false;
+      }
     }
 }
 

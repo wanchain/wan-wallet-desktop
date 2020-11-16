@@ -112,7 +112,7 @@ class DelegateOut extends Component {
       rawTx.to = cscContractAddr;
       rawTx.value = amountWei;
       rawTx.data = data;
-      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.nonce = '0x' + Number(nonce).toString(16);
       rawTx.gasLimit = '0x' + Number(200000).toString(16);
       rawTx.gasPrice = toWei(gasPrice, 'gwei');
       rawTx.Txtype = Number(1);

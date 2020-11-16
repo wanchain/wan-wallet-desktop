@@ -96,8 +96,8 @@ class SendTransParams {
         value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
         data: data,
         chainId: chainId,
-        nonce: '0x' + nonce.toString(16),
-        gasLimit: '0x' + gasLimit.toString(16),
+        nonce: '0x' + Number(nonce).toString(16),
+        gasLimit: '0x' + Number(gasLimit).toString(16),
         gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
         Txtype: txType
       };

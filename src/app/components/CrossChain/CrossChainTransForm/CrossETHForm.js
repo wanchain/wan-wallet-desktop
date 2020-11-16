@@ -114,7 +114,7 @@ class CrossETHForm extends Component {
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       if (new BigNumber(sendAmount).lt(fastMinCount)) {
-        message.warn(intl.get('CrossChainTransForm.UnderFastMinimum'));
+        message.warn(`${intl.get('CrossChainTransForm.FastMinimumLimit')} ${fastMinCount} ${info[(type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol')]}`, 6);
         return;
       }
       if (this.accountSelections.includes(to)) {

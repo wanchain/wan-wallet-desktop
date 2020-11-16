@@ -475,6 +475,7 @@ const ko_KR = {
     'CrossChainTransForm.FAST': '빠른 모드',
     'CrossChainTransForm.HTLC': '보안 모드',
     'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다.',
+    'CrossChainTransForm.FastMinimumLimit': 'The minimum transaction limit is',
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',

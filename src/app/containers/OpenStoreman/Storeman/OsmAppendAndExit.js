@@ -141,7 +141,7 @@ class ModifyForm extends Component {
         to: estimateData.to,
         value: estimateData.value,
         data: estimateData.data,
-        nonce: '0x' + estimateData.nonce.toString(16),
+        nonce: '0x' + Number(estimateData.nonce).toString(16),
         gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
         gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
       };

@@ -91,7 +91,7 @@ class EthAccount extends Component {
       path: params.path,
       to: params.to,
       amount: params.amount,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasLimit: `0x${Number(params.gasLimit).toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
       data: params.data

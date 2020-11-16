@@ -82,7 +82,7 @@ class TokenTrans extends Component {
       value: 0,
       data: tx.data,
       chainId: this.props.chainId,
-      nonce: '0x' + tx.nonce.toString(16),
+      nonce: '0x' + Number(tx.nonce).toString(16),
       gasLimit: tx.gasLimit,
       gasPrice: '0x' + new BigNumber(tx.gasPrice).times(BigNumber(10).pow(9)).toString(16),
       Txtype: 1
@@ -144,7 +144,7 @@ class TokenTrans extends Component {
       path: params.path,
       to: params.to,
       amount: params.token,
-      gasLimit: `0x${params.gasLimit.toString(16)}`,
+      gasLimit: `0x${Number(params.gasLimit).toString(16)}`,
       gasPrice: params.gasPrice,
       nonce: params.nonce,
       data: params.data,
@@ -190,7 +190,7 @@ class TokenTrans extends Component {
             chainId: this.props.chainId,
             to: trans.to,
             data: trans.data,
-            nonce: '0x' + trans.nonce.toString(16),
+            nonce: '0x' + Number(trans.nonce).toString(16),
             gasLimit: trans.gasLimit,
             gasPrice: '0x' + new BigNumber(trans.gasPrice).times(BigNumber(10).pow(9)).toString(16),
           }, (_err, raw) => {
