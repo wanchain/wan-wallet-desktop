@@ -770,7 +770,7 @@ const en_US = {
     'contract.addTransaction': '+ Add Transaction',
     'contract.buildTransaction': 'Build Transaction',
     'contract.saveToFile': 'Save To File...',
-    'contract.contractAddress': 'Contract Address:',
+    'contract.contractAddress': 'Contract / To Address:',
     'contract.abiFile': 'ABI json File:',
     'contract.callMethod': 'Call Method:',
     'contract.gasLimit': 'Gas Limit:',
