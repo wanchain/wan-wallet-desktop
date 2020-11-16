@@ -782,7 +782,7 @@ const zh_CN = {
     'contract.offlineTransactionConfirm': '离线交易确认',
     'contract.fromAddress': '发起交易地址:',
     'contract.first': '请先选择钱包地址',
-    'contract.help': '如果调用接口和ABI留空，则可以发送普通转账交易。 合约参数支持逗号间隔或者json字符串，如果使用json字符串方式，请讲全部参数使用[ ]包裹，例如：["abc","123"]',
+    'contract.help': '如果调用接口和ABI留空，则可以发送普通转账交易。 合约参数支持逗号间隔或者json字符串，如果使用json字符串方式，请讲全部参数使用[ ]包裹，例如：["abc","123"], 如果使用逗号间隔参数，请不要在逗号后添加空格。如果参数中有地址，请使用全小写。',
 }
 
 export default zh_CN;

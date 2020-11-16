@@ -781,7 +781,8 @@ const en_US = {
     'contract.offlineTransactionConfirm': 'Offline Transaction Confirm',
     'contract.fromAddress': 'From Address:',
     'contract.first': 'You have to Select your address first.',
-    'contract.help': 'If you leave call method and ABI file empty, it will make a normal transaction. Contract parameters support commas split value or json string. If you are using json string, please wrap your params in [ ]. such as: ["abc","123"]',
+    'contract.help': 'If you leave call method and ABI file empty, it will make a normal transaction. Contract parameters support commas split value or json string. If you are using json string, please wrap your params in [ ]. such as: ["abc","123"]. If you are using commas split format, please do not add any space after commas. Please use lower case address in parameters.',
+
 }
 
 export default en_US;

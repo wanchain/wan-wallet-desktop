@@ -758,6 +758,30 @@ const ko_KR = {
     'Storeman.delegationExit': 'Delegation Exit',
     'Storeman.delegationTopup': 'Delegation Top-up',
     'Storeman.registration': 'Storeman Registration',
+
+    'contract.menu': 'Contract',
+    'contract.menuOffline': 'Offline',
+    'contract.menuOnline': 'Online',
+    'contract.offlineTitle': 'Interact with Contract Offline',
+    'contract.onlineTitle': 'Interact with Contract Online',
+    'contract.selectAccount': 'Select / Input Address',
+    'contract.selectAccount2': 'Select Address',
+    'contract.addTransaction': '+ Add Transaction',
+    'contract.buildTransaction': 'Build Transaction',
+    'contract.saveToFile': 'Save To File...',
+    'contract.contractAddress': 'Contract / To Address:',
+    'contract.abiFile': 'ABI json File:',
+    'contract.callMethod': 'Call Method:',
+    'contract.gasLimit': 'Gas Limit:',
+    'contract.parameters': 'Parameters:',
+    'contract.remove': '- Remove',
+    'contract.getNonce': 'Get Nonce',
+    'contract.loadOfflineData': 'Load Offline Data:',
+    'contract.offlineTransactionConfirm': 'Offline Transaction Confirm',
+    'contract.fromAddress': 'From Address:',
+    'contract.first': 'You have to Select your address first.',
+    'contract.help': 'If you leave call method and ABI file empty, it will make a normal transaction. Contract parameters support commas split value or json string. If you are using json string, please wrap your params in [ ]. such as: ["abc","123"]. If you are using commas split format, please do not add any space after commas. Please use lower case address in parameters.',
+
 }
 
 export default ko_KR;

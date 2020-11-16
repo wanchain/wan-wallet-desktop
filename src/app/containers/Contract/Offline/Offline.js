@@ -200,7 +200,7 @@ const Transaction = (props) => {
     }
     let tip = '';
     tmp[0].inputs.forEach(v => {
-      tip += v.name + '(' + v.type + '), '
+      tip += v.name + '(' + v.type + '),'
     });
     tip = tip.length > 0 ? tip.slice(0, tip.length - 2) : '';
     setParamTip(tip);
