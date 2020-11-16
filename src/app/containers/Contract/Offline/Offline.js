@@ -65,10 +65,14 @@ export default function Offline(props) {
           message.success('Success');
           setStep('save');
         } else {
-          message.error('Build Failed please check SDK log');
+          message.error('Build Failed please check SDK log 1');
         }
-      }).catch(message.error);
-    }).catch(message.error);
+      }).catch(() => {
+        message.error('Failed, please check sdk log 2');
+      });
+    }).catch(() => {
+      message.error('Failed, please check sdk log 3');
+    });
   }, [nonce, transactions, fromAddress, addresses]);
 
   const saveToFile = useCallback(() => {
@@ -77,7 +81,9 @@ export default function Offline(props) {
     wandWrapper('contract_getOutputPath', { address }).then((ret) => {
       console.log('2', ret);
       downloadFile(ret, address, nonce);
-    }).catch(message.error);
+    }).catch(() => {
+      message.error('Failed, please check sdk log 4');
+    });
     setStep('build');
   }, [transactions, fromAddress, addresses, nonce]);
 

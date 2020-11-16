@@ -61,9 +61,6 @@ class Layout extends Component {
     });
     let running = false;
     let id = setInterval(async () => {
-      console.log('waitUntilSdkReady running', running);
-      console.log('global.offlineMode', global.offlineMode);
-
       let net = await getNetStatus();
       console.log('netStatus', net);
 

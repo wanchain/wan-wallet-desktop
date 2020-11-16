@@ -41,6 +41,7 @@ export default function Online(props) {
   const [offlineJson, setOfflineJson] = useState();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [offlinePath, setOfflinePath] = useState();
 
   console.log('fromAddress', fromAddress);
 
@@ -57,7 +58,9 @@ export default function Online(props) {
         wandWrapper('contract_setFilePath', { inputPath: up.files[0].path }).then((ret) => {
           console.log('ret', ret);
           setShowModal(true);
-        }).catch(message.error);
+        }).catch(() => {
+          message.error('Failed, please check sdk log 1');
+        });
       }
     }
   }
@@ -67,21 +70,25 @@ export default function Online(props) {
       title={intl.get('contract.offlineTransactionConfirm')}
       visible={showModal}
       footer={[
-        <Button key="back" className="cancel-button" onClick={() => { setShowModal(false) }}>{intl.get('Common.cancel')}</Button>,
+        <Button key="back" className="cancel-button" onClick={() => { setShowModal(false); setOfflinePath(undefined); }}>{intl.get('Common.cancel')}</Button>,
         <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={() => {
           console.log('send');
           setLoading(true);
           wandWrapper('contract_sendTx').then(ret => {
             console.log('sendTx', ret);
             if (ret) {
-              message.info('Success');
+              message.success('Success');
               setShowModal(false);
             } else {
               message.info('Send failed, please check sdk log');
             }
-          }).catch(message.error).finally(() => {
+          }).catch((err, ret) => {
+            console.log(err, ret);
+            message.error('Send failed, please check sdk log 2');
+          }).finally(() => {
             setLoading(false);
           });
+          setOfflinePath(undefined);
         }}>{intl.get('Common.send')}</Button>,
       ]}
     >
@@ -117,15 +124,20 @@ export default function Online(props) {
             } else {
               message.warn(intl.get('Offline.getInfoFailed'))
             }
-          }).catch(message.error);
+          }).catch(() => {
+            message.error('Failed, please check sdk log 3');
+          });
         } else {
           message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
         }
-      }).catch(message.error)
+      }).catch(() => {
+        message.error('Failed, please check sdk log 4');
+      })
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
-    <SmallInput type='file' placeholder={intl.get('contract.loadOfflineData')} readOnly id="upLoad" onChange={e => {
+    <SmallInput type='file' placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} readOnly id="upLoad" onChange={e => {
+      setOfflinePath(e.target.value);
       setTimeout(onUploadCheck, 1000);
     }} />
   </Body>);
