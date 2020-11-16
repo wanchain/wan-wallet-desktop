@@ -105,7 +105,7 @@ export default function Online(props) {
     <StyledSelect showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
       {
         addresses.map(v => {
-          return <Select.Option value={v.address} key={v.address}>{v.address}</Select.Option>
+          return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
         })
       }
       {

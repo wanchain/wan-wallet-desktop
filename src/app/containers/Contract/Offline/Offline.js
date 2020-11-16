@@ -105,12 +105,14 @@ export default function Offline(props) {
     });
   }, [nonce]);
 
+  console.log('addresses', addresses);
+
   return (<Body>
     <Title>{intl.get('contract.selectAccount2')}</Title>
     <StyledSelect onChange={(v) => { setFromAddress(v) }}>
       {
         addresses.map(v => {
-          return <Select.Option value={v.address} key={v.address}>{v.address}</Select.Option>
+          return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' )'}</Select.Option>
         })
       }
     </StyledSelect>
@@ -202,7 +204,7 @@ const Transaction = (props) => {
     tmp[0].inputs.forEach(v => {
       tip += v.name + '(' + v.type + '),'
     });
-    tip = tip.length > 0 ? tip.slice(0, tip.length - 2) : '';
+    tip = tip.length > 0 ? tip.slice(0, tip.length - 1) : '';
     setParamTip(tip);
   }, [method, abiJson]);
 
