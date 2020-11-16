@@ -89,6 +89,18 @@ class Sidebar extends Component {
     let walletChildren = sidebarColumns[walletIndex].children;
     let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
     let crossChainChildren = sidebarColumns[crossChainIndex].children;
+
+    if (global.offlineMode) {
+      let storemanIndex = sidebarColumns.findIndex(item => item.key === '/openstoreman');
+      sidebarColumns.splice(storemanIndex, 1);
+      stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
+      sidebarColumns.splice(stakeIndex, 1);
+      dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
+      sidebarColumns.splice(dAppsIndex, 1);
+      crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
+      sidebarColumns.splice(crossChainIndex, 1);
+    }
+
     if (offlineIndex === -1 && settings.offline_wallet) {
       sidebarColumns.push({
         title: intl.get('menuConfig.offline'),

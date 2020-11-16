@@ -105,7 +105,7 @@ export default function Offline(props) {
     });
   }, [nonce]);
 
-  console.log('addresses', addresses);
+  // console.log('addresses', addresses);
 
   return (<Body>
     <Title>{intl.get('contract.selectAccount2')}</Title>
