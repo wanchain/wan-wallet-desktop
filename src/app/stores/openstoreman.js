@@ -143,6 +143,7 @@ class OpenStoreman {
           canDelegateClaim: item.canDelegateClaim,
           canDelegateOut: item.canDelegateOut,
           deposit: item.wkStake.deposit,
+          partnerDeposit: item.wkStake.partnerDeposit,
           delegateDeposit: item.wkStake.delegateDeposit,
           minDelegateIn: fromWei(minDelegateIn),
         })
