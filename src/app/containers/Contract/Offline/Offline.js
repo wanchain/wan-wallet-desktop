@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
 import { Select, Input, Button, Row, Col, Tooltip, message, Icon } from 'antd';
 import { wandWrapper } from '../../../utils/support';
-
-import styled from 'styled-components';
+import FileSelection from 'componentUtils/FileSelection';
+import styled, { keyframes } from 'styled-components';
 
 export default function Offline(props) {
   const [transactions, setTransactions] = useState([]);
@@ -231,9 +231,7 @@ const Transaction = (props) => {
         <Col span={4}><Label>{intl.get('contract.contractAddress')}</Label></Col>
         <Col span={8}><SmallInput value={contractAddress} placeholder="Please input contract address" onChange={e => { setContractAddress(e.target.value) }} /></Col>
         <Col span={4}><Label>{intl.get('contract.abiFile')}</Label></Col>
-        <Col span={8}><SmallInput type='file' placeholder="Please select ABI file" readOnly id={uploadId} onChange={e => {
-          setTimeout(onUploadCheck, 1000);
-        }} /></Col>
+        <Col span={8}><FileSelection placeholder="Please select ABI file" id={uploadId} onChange={e => { setTimeout(onUploadCheck, 1000); }} /></Col>
       </Row>
       <Row gutter={[24, 24]}>
         <Col span={4}><Label>{intl.get('contract.callMethod')}</Label></Col>

@@ -3,6 +3,7 @@ import intl from 'react-intl-universal';
 import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal, Table } from 'antd';
 import { getNonce, checkWanAddr } from '../../../utils/helper';
 import { wandWrapper } from '../../../utils/support';
+import FileSelection from 'componentUtils/FileSelection';
 import styled from 'styled-components';
 
 const colums = [
@@ -136,7 +137,7 @@ export default function Online(props) {
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
-    <SmallInput type='file' placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} readOnly id="upLoad" onChange={e => {
+    <FileSelection placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} id="upLoad" buttonStyle={{ float: 'left' }} onChange={e => {
       setOfflinePath(e.target.value);
       setTimeout(onUploadCheck, 1000);
     }} />
