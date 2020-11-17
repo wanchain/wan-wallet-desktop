@@ -7,7 +7,7 @@ import Offline from './Offline';
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  normalAddrList: stores.wanAddress.getNormalAddrList,
+  innerAddrList: stores.wanAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -21,7 +21,6 @@ class ContractOffline extends Component {
   }
 
   componentDidMount() {
-
   }
 
   componentWillUnmount() {
@@ -29,7 +28,7 @@ class ContractOffline extends Component {
 
   render() {
     return (
-      <Offline normalAddrList={this.props.normalAddrList} />
+      <Offline normalAddrList={this.props.innerAddrList} />
     );
   }
 }
