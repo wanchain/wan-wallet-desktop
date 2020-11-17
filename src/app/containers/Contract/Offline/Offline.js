@@ -210,8 +210,7 @@ const Transaction = (props) => {
 
   const uploadId = 'up_' + props.tx.time.toString();
 
-  const onUploadCheck = () => {
-    let up = document.getElementById(uploadId);
+  const onUploadCheck = (up) => {
     if (up.value) {
       var reader = new FileReader();
       reader.readAsText(up.files[0], 'UTF-8');
@@ -231,7 +230,11 @@ const Transaction = (props) => {
         <Col span={4}><Label>{intl.get('contract.contractAddress')}</Label></Col>
         <Col span={8}><SmallInput value={contractAddress} placeholder="Please input contract address" onChange={e => { setContractAddress(e.target.value) }} /></Col>
         <Col span={4}><Label>{intl.get('contract.abiFile')}</Label></Col>
-        <Col span={8}><FileSelection placeholder="Please select ABI file" id={uploadId} onChange={e => { setTimeout(onUploadCheck, 1000); }} /></Col>
+        <Col span={8}><FileSelection placeholder="Please select ABI file" id={uploadId} onChange={e => {
+          console.log('onChange');
+          let up = document.getElementById(uploadId);
+          onUploadCheck(up);
+        }} /></Col>
       </Row>
       <Row gutter={[24, 24]}>
         <Col span={4}><Label>{intl.get('contract.callMethod')}</Label></Col>

@@ -93,6 +93,8 @@ class Sidebar extends Component {
     if (global.offlineMode) {
       let storemanIndex = sidebarColumns.findIndex(item => item.key === '/openstoreman');
       sidebarColumns.splice(storemanIndex, 1);
+      let hardwareIndex = sidebarColumns.findIndex(item => item.key === '/hardwareWallet');
+      sidebarColumns.splice(hardwareIndex, 1);
       stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
       sidebarColumns.splice(stakeIndex, 1);
       dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');

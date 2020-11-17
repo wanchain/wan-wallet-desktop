@@ -46,8 +46,7 @@ export default function Online(props) {
 
   console.log('fromAddress', fromAddress);
 
-  const onUploadCheck = () => {
-    let up = document.getElementById('upLoad');
+  const onUploadCheck = (up) => {
     if (up.value) {
       var reader = new FileReader();
       reader.readAsText(up.files[0], 'UTF-8');
@@ -139,7 +138,8 @@ export default function Online(props) {
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
     <FileSelection placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} id="upLoad" buttonStyle={{ float: 'left' }} onChange={e => {
       setOfflinePath(e.target.value);
-      setTimeout(onUploadCheck, 1000);
+      let up = document.getElementById('upLoad');
+      onUploadCheck(up);
     }} />
   </Body>);
 }
