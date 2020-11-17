@@ -74,7 +74,7 @@ class OsmDelegateInForm extends Component {
       form.setFieldsValue({
         storeman,
         crosschain,
-        quota: storemanInfo ? (new BigNumber(fromWei(storemanInfo.deposit))).plus(fromWei(storemanInfo.partnerDeposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
+        quota: storemanInfo ? (new BigNumber(fromWei(storemanInfo.deposit)).plus(fromWei(storemanInfo.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
         delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
       this.setState({ storemanInfo, minAmount: fromWei(groupInfo.minDelegateIn) });
