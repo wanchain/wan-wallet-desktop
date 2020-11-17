@@ -322,7 +322,9 @@ class OpenStoreman {
           item.chain2 = temp.chain2;
           item.nameShowing = item.name ? item.name : item.wkAddr;
           item.icon = item.iconData ? `data:image/${item.iconType};base64, ${item.iconData}` : ('data:image/png;base64,' + new Identicon(item.wkAddr).toString());
+          item.quota = (new BigNumber(fromWei(item.deposit))).plus(fromWei(item.partnerDeposit || '0')).multipliedBy(this.storemanConf.delegationMulti || '1').minus(fromWei(item.delegateDeposit || '0')).toString(10)
         })
+        temp.sort((a, b) => b.quota - a.quota)
         this.storemanMemberList = temp;
       })
     }).catch(err => console.log(err))
