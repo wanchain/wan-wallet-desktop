@@ -46,16 +46,16 @@ export default function Online(props) {
 
   console.log('fromAddress', fromAddress);
 
-  const onUploadCheck = (up) => {
-    if (up.value) {
+  const onUploadCheck = (value, files) => {
+    if (value) {
       var reader = new FileReader();
-      reader.readAsText(up.files[0], 'UTF-8');
+      reader.readAsText(files[0], 'UTF-8');
       reader.onload = (evt) => {
         var fileString = evt.target.result;
         let obj = JSON.parse(fileString);
         setOfflineJson(obj);
-        console.log('wandWrapper', wandWrapper, up.files[0].path)
-        wandWrapper('contract_setFilePath', { inputPath: up.files[0].path }).then((ret) => {
+        console.log('wandWrapper', wandWrapper, files[0].path)
+        wandWrapper('contract_setFilePath', { inputPath: files[0].path }).then((ret) => {
           console.log('ret', ret);
           setShowModal(true);
         }).catch(() => {
@@ -136,10 +136,11 @@ export default function Online(props) {
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
-    <FileSelection placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} id="upLoad" buttonStyle={{ float: 'left' }} onChange={e => {
-      setOfflinePath(e.target.value);
-      let up = document.getElementById('upLoad');
-      onUploadCheck(up);
+    <FileSelection placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
+      let value = e.target.value;
+      let files = e.target.files;
+      setOfflinePath(value);
+      setTimeout(() => { onUploadCheck(value, files) }, 1000);
     }} />
   </Body>);
 }

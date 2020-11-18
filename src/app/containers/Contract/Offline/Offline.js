@@ -210,11 +210,11 @@ const Transaction = (props) => {
 
   const uploadId = 'up_' + props.tx.time.toString();
 
-  const onUploadCheck = (up) => {
-    if (up.value) {
+  const onUploadCheck = (value, files) => {
+    if (value) {
       var reader = new FileReader();
-      reader.readAsText(up.files[0], 'UTF-8');
-      setAbiFile(up.files[0].path);
+      reader.readAsText(files[0], 'UTF-8');
+      setAbiFile(files[0].path);
       reader.onload = (evt) => {
         var fileString = evt.target.result;
         let obj = JSON.parse(fileString);
@@ -226,17 +226,17 @@ const Transaction = (props) => {
   return (<TxBody>
     <SmallTitle>{intl.get('NormalTransForm.ConfirmForm.nonce') + ': ' + (props.tx && props.tx.nonce ? props.tx.nonce : 0)}</SmallTitle>
     <TableContainer>
-      <Row gutter={[24, 24]}>
+      <Row>
         <Col span={4}><Label>{intl.get('contract.contractAddress')}</Label></Col>
         <Col span={8}><SmallInput value={contractAddress} placeholder="Please input contract address" onChange={e => { setContractAddress(e.target.value) }} /></Col>
         <Col span={4}><Label>{intl.get('contract.abiFile')}</Label></Col>
         <Col span={8}><FileSelection placeholder="Please select ABI file" id={uploadId} onChange={e => {
-          console.log('onChange');
-          let up = document.getElementById(uploadId);
-          onUploadCheck(up);
+          let value = e.target.value;
+          let files = e.target.files;
+          setTimeout(() => { onUploadCheck(value, files) }, 1000);
         }} /></Col>
       </Row>
-      <Row gutter={[24, 24]}>
+      <Row>
         <Col span={4}><Label>{intl.get('contract.callMethod')}</Label></Col>
         <Col span={8}>
           <SmallSelect value={method} onChange={(e) => { setMethod(e) }}>
@@ -252,7 +252,7 @@ const Transaction = (props) => {
         <Col span={4}><Label>{intl.get('contract.gasLimit')}</Label></Col>
         <Col span={8}><SmallInput value={gasLimit} onChange={e => { setGasLimit(e.target.value) }} /></Col>
       </Row>
-      <Row gutter={[24, 24]}>
+      <Row>
         <Col span={4}><Label>{intl.get('contract.parameters')}</Label></Col>
         <Tooltip title={paramTip}>
           <Col span={8}><SmallInput placeholder={paramTip} value={parameters} onChange={e => { setParameters(e.target.value) }} /></Col>
