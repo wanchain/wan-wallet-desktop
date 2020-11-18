@@ -303,7 +303,7 @@ class TokenNormalTransForm extends Component {
                     )}
                   </Form.Item>
               }
-              <p className="onAdvancedT" onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</p>
+              <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </Form>
           </Spin>
 

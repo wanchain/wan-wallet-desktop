@@ -228,7 +228,6 @@ class CrossChainTransForm extends Component {
   checkTo = async (rule, value, callback) => {
     const { currentTokenPairInfo: info, type } = this.props;
     let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
-    console.log('chain:', chain);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       callback();
     } else {
