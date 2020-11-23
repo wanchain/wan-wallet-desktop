@@ -55,6 +55,7 @@ export default function Online(props) {
       reader.onload = (evt) => {
         var fileString = evt.target.result;
         let obj = JSON.parse(fileString);
+        setChainType(obj[0].chain);
         setOfflineJson(obj);
         console.log('wandWrapper', wandWrapper, files[0].path)
         wandWrapper('contract_setFilePath', { inputPath: files[0].path }).then((ret) => {
@@ -76,7 +77,7 @@ export default function Online(props) {
         <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={() => {
           console.log('send');
           setLoading(true);
-          wandWrapper('contract_sendTx').then(ret => {
+          wandWrapper('contract_sendTx', { chainType }).then(ret => {
             console.log('sendTx', ret);
             if (ret) {
               message.success('Success');

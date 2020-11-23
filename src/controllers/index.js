@@ -2457,9 +2457,9 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
     switch (action) {
         case 'updateNonce':
             try {
-                let { address, nonce } = payload;
+                let { address, nonce, chainType } = payload;
                 console.log('updateNonce', address, nonce);
-                ret = await offlineDeployer.updateNonce(address, nonce);
+                ret = await offlineDeployer.updateNonce(chainType, address, nonce);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2468,9 +2468,9 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             break;
         case 'buildTx':
             try {
-                let { walletId, path, txs } = payload;
+                let { walletId, path, txs, chainType } = payload;
                 console.log('buildTx', walletId, path, txs);
-                ret = await offlineDeployer.buildTx(walletId, path, txs);
+                ret = await offlineDeployer.buildTx(chainType, walletId, path, txs);
                 console.log('buildTx', ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2480,9 +2480,9 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             break;
         case 'getOutputPath':
             try {
-                let { address } = payload;
+                let { address, chainType } = payload;
                 console.log('getOutputPath', address);
-                ret = await offlineDeployer.getOutputPath('sendTx', address);
+                ret = await offlineDeployer.getOutputPath(chainType, 'sendTx', address);
                 ret = fs.readFileSync(ret, { encoding: 'utf8'});
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2503,8 +2503,10 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             break;
         case 'sendTx':
             try {
-                console.log('sendTx');
-                ret = await offlineDeployer.sendTx();
+                let { chainType } = payload;
+
+                console.log('sendTx', chainType);
+                ret = await offlineDeployer.sendTx(chainType);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

@@ -53,6 +53,8 @@ export default function Offline(props) {
         abi: v.abiJson,
         method: v.method,
         paras: v.parameters ? param : [],
+        gasPrice: gasPrice * 1e9,
+        gasLimit: v.gasLimit,
         value: v.value,
       }
     });
@@ -61,9 +63,9 @@ export default function Offline(props) {
     const path = wallet[0].path;
     const address = wallet[0].address;
 
-    wandWrapper('contract_updateNonce', { address, nonce }).then((ret) => {
+    wandWrapper('contract_updateNonce', { address, nonce, chainType }).then((ret) => {
       console.log('ret', ret);
-      wandWrapper('contract_buildTx', { walletId, path, txs }).then((ret) => {
+      wandWrapper('contract_buildTx', { walletId, path, txs, chainType }).then((ret) => {
         console.log('ret', ret);
         if (ret === true) {
           message.success('Success');
@@ -77,14 +79,14 @@ export default function Offline(props) {
     }).catch(() => {
       message.error('Failed, please check sdk log 3');
     });
-  }, [nonce, transactions, fromAddress, addresses]);
+  }, [nonce, transactions, fromAddress, addresses, chainType, gasPrice]);
 
   const saveToFile = useCallback(() => {
     const wallet = addresses.filter(v => v.address === fromAddress);
     const address = wallet[0].address;
-    wandWrapper('contract_getOutputPath', { address }).then((ret) => {
+    wandWrapper('contract_getOutputPath', { address, chainType }).then((ret) => {
       console.log('2', ret);
-      downloadFile(ret, address, nonce);
+      downloadFile(ret, address, nonce, chainType);
     }).catch(() => {
       message.error('Failed, please check sdk log 4');
     });
@@ -158,7 +160,7 @@ export default function Offline(props) {
     {
       transactions && transactions.length > 0
         ? transactions.map((v, i) => {
-          return <Transaction onModify={modify} tx={v} i={i} key={v.time} />
+          return <Transaction onModify={modify} tx={v} i={i} key={v.time} chainType={chainType} />
         })
         : null
     }
@@ -267,7 +269,7 @@ const Transaction = (props) => {
           <Col span={8}><SmallInput placeholder={paramTip} value={parameters} onChange={e => { setParameters(e.target.value) }} /></Col>
         </Tooltip>
         <Col span={4}><Label>{intl.get('CrossChainTransForm.Value')}</Label></Col>
-        <Col span={8}><SmallInput suffix='WAN' value={value} onChange={e => { setValue(e.target.value) }} /></Col>
+        <Col span={8}><SmallInput suffix={props.chainType} value={value} onChange={e => { setValue(e.target.value) }} /></Col>
       </Row>
     </TableContainer>
     <RemoveButton type="primary">
@@ -279,11 +281,11 @@ const Transaction = (props) => {
   </TxBody>);
 };
 
-function downloadFile(dataJson, address, nonce) {
+function downloadFile(dataJson, address, nonce, chainType) {
   var downloadAnchorNode = document.createElement('a');
   var datastr = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataJson);
   downloadAnchorNode.setAttribute('href', datastr);
-  downloadAnchorNode.setAttribute('download', address + '_' + nonce + '.json');
+  downloadAnchorNode.setAttribute('download', chainType + '_' + address + '_' + nonce + '.json');
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 };
