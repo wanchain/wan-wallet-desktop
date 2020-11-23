@@ -1,11 +1,12 @@
-import React from 'react';
-import { Form, Row, Col, AutoComplete } from 'antd';
+import React, { useState } from 'react';
+import { Form, Row, Col, AutoComplete, Icon, Input } from 'antd';
+import style from './index.less';
 
 function AutoCompleteForm(props) {
   const { form, dataSource, formMessage, formName, colSpan, onChange, options } = props;
   const { getFieldDecorator } = form;
   let width = colSpan || 8;
-  // console.log('dataSource:', dataSource);
+  const [collapsed, setCollapsed] = useState(true);
   return (
     <div className="validator-line">
       <Row type="flex" justify="space-around" align="top">
@@ -18,7 +19,11 @@ function AutoCompleteForm(props) {
                   <AutoComplete
                     dataSource={dataSource}
                     onChange={onChange}
-                  />
+                    onBlur={() => setCollapsed(true)}
+                    onFocus={() => setCollapsed(false)}
+                  >
+                    <Input suffix={<Icon type={'down'} className={!collapsed && style['rotateToUp']} style={{ fontSize: '12px', transition: '0.3s' }} />} />
+                  </AutoComplete>
                 )}
             </Form.Item>
           </Form>
