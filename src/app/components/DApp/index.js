@@ -25,7 +25,7 @@ const WAN_PATH = "m/44'/5718350'/0'";
 class DApp extends Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true, preload: null };
+    this.state = { loading: true, preload: null, showCover: true, coverHide: false };
     if (!props.dAppUrl) {
       this.dAppUrl = 'https://demodex.wandevs.org/';
     } else {
@@ -39,6 +39,12 @@ class DApp extends Component {
     const preload = await this.getPreloadFile()
     this.setState({ preload: preload });
     this.addEventListeners();
+    setTimeout(() => {
+      this.setState({ showCover: false });
+    }, 2000);
+    setTimeout(() => {
+      this.setState({ coverHide: true });
+    }, 3000);
   }
 
   addEventListeners = () => {
@@ -379,6 +385,14 @@ class DApp extends Component {
           >
             Your electron doesn't support webview, please set webviewTag: true.
           </webview>
+          {
+            this.state.coverHide
+              ? null
+              : <div className={style.coverPage} style={{ opacity: this.state.showCover ? 1 : 0 }} >
+                Wanchain DApps
+              <p style={{ fontSize: '20px' }}>使用万维链桌面钱包或手机钱包，丰富多彩的万维链生态应用等你来玩！</p>
+              </div>
+          }
         </div>
       );
     } else {
