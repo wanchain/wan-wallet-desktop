@@ -9,9 +9,13 @@ export default function Offline(props) {
   const [transactions, setTransactions] = useState([]);
   const [nonce, setNonce] = useState(0);
   const [gasPrice, setGasPrice] = useState(1);
-  const addresses = props.normalAddrList;
+  const wanAddresses = props.wanAddresses;
+  const ethAddresses = props.ethAddresses;
   const [fromAddress, setFromAddress] = useState();
   const [step, setStep] = useState('build');
+  const [chainType, setChainType] = useState('WAN');
+
+  const addresses = chainType === 'WAN' ? wanAddresses : ethAddresses;
 
   const modify = useCallback((i, v) => {
     setTransactions((pre) => {
@@ -108,6 +112,11 @@ export default function Offline(props) {
   // console.log('addresses', addresses);
 
   return (<Body>
+    <Title>{intl.get('contract.selectChain')}</Title>
+    <StyledSelect value={chainType} onChange={(v) => { setChainType(v); setFromAddress(undefined) }}>
+      <Select.Option value={'WAN'} key={'WAN'}>WAN</Select.Option>
+      <Select.Option value={'ETH'} key={'ETH'}>ETH</Select.Option>
+    </StyledSelect>
     <Title>{intl.get('contract.selectAccount2')}</Title>
     <StyledSelect onChange={(v) => { setFromAddress(v) }}>
       {

@@ -37,12 +37,14 @@ const colums = [
 
 export default function Online(props) {
   const [nonce, setNonce] = useState(0);
-  const addresses = props.normalAddrList;
+  const wanAddresses = props.wanAddresses;
+  const ethAddresses = props.ethAddresses;
   const [fromAddress, setFromAddress] = useState();
   const [offlineJson, setOfflineJson] = useState();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [offlinePath, setOfflinePath] = useState();
+  const [chainType, setChainType] = useState('WAN');
 
   console.log('fromAddress', fromAddress);
 
@@ -100,13 +102,22 @@ export default function Online(props) {
   }
 
   return (<Body>
-    <Title>{intl.get('contract.selectAccount')}</Title>
     <OfflineModal />
+    <Title>{intl.get('contract.selectChain')}</Title>
+    <StyledSelect value={chainType} onChange={(v) => { setChainType(v); setFromAddress(undefined) }}>
+      <Select.Option value={'WAN'} key={'WAN'}>WAN</Select.Option>
+      <Select.Option value={'ETH'} key={'ETH'}>ETH</Select.Option>
+    </StyledSelect>
+    <Title>{intl.get('contract.selectAccount')}</Title>
     <StyledSelect showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
       {
-        addresses.map(v => {
-          return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
-        })
+        chainType === 'WAN'
+          ? wanAddresses.map(v => {
+            return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
+          })
+          : ethAddresses.map(v => {
+            return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
+          })
       }
       {
         fromAddress && fromAddress.length > 0
@@ -118,8 +129,8 @@ export default function Online(props) {
     <StyledButton type="primary" onClick={() => {
       checkWanAddr(fromAddress).then((ret) => {
         if (ret) {
-          getNonce(fromAddress, 'WAN').then((ret) => {
-            if (ret) {
+          getNonce(fromAddress, chainType).then((ret) => {
+            if (ret || ret === 0) {
               setNonce(ret);
             } else {
               message.warn(intl.get('Offline.getInfoFailed'))
@@ -136,7 +147,7 @@ export default function Online(props) {
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
-    <FileSelection placeholder={intl.get('contract.loadOfflineData')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
+    <FileSelection placeholder={intl.get('contract.loadOfflineData2')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
       let value = e.target.value;
       let files = e.target.files;
       setOfflinePath(value);
