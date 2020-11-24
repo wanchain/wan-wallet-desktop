@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
 import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal, Table } from 'antd';
-import { getNonce, checkWanAddr } from '../../../utils/helper';
+import { getNonce, checkWanAddr, getGasPrice } from '../../../utils/helper';
 import { wandWrapper } from '../../../utils/support';
 import FileSelection from 'componentUtils/FileSelection';
 import styled from 'styled-components';
@@ -37,6 +37,7 @@ const colums = [
 
 export default function Online(props) {
   const [nonce, setNonce] = useState(0);
+  const [gasPrice, setGasPrice] = useState(1);
   const wanAddresses = props.wanAddresses;
   const ethAddresses = props.ethAddresses;
   const [fromAddress, setFromAddress] = useState();
@@ -147,6 +148,27 @@ export default function Online(props) {
       })
     }}>{intl.get('contract.getNonce')}</StyledButton>
     <StyledInput readOnly value={nonce} />
+    <Title>{intl.get('AdvancedOptionForm.gasPrice')}:</Title>
+    <StyledButton type="primary" onClick={() => {
+      checkWanAddr(fromAddress).then((ret) => {
+        if (ret) {
+          getGasPrice(chainType).then((ret) => {
+            if (ret || ret === 0) {
+              setGasPrice(ret);
+            } else {
+              message.warn(intl.get('Offline.getInfoFailed'))
+            }
+          }).catch(() => {
+            message.error('Failed, please check sdk log 3');
+          });
+        } else {
+          message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
+        }
+      }).catch(() => {
+        message.error('Failed, please check sdk log 4');
+      })
+    }}>{intl.get('contract.getGasPrice')}</StyledButton>
+    <StyledInput readOnly value={gasPrice} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
     <FileSelection placeholder={intl.get('contract.loadOfflineData2')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
       let value = e.target.value;
