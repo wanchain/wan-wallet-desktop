@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Spin, Modal } from 'antd';
 import style from './index.less';
-import { WALLETID } from 'utils/settings'
+import { WALLETID } from 'utils/settings';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import {
   signPersonalMessage as trezorSignPersonalMessage,
   signTransaction as trezorSignTransaction
-} from 'componentUtils/trezor'
+} from 'componentUtils/trezor';
 import { toWei, fromWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
@@ -25,7 +25,7 @@ const WAN_PATH = "m/44'/5718350'/0'";
 class DApp extends Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true, preload: null, showCover: true, coverHide: false };
+    this.state = { loading: true, preload: null };
     if (!props.dAppUrl) {
       this.dAppUrl = 'https://demodex.wandevs.org/';
     } else {
@@ -35,16 +35,9 @@ class DApp extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ loading: true });
     const preload = await this.getPreloadFile()
     this.setState({ preload: preload });
     this.addEventListeners();
-    setTimeout(() => {
-      this.setState({ showCover: false });
-    }, 2000);
-    setTimeout(() => {
-      this.setState({ coverHide: true });
-    }, 3000);
   }
 
   addEventListeners = () => {
@@ -353,31 +346,35 @@ class DApp extends Component {
     });
   }
 
-  renderLoadTip = () => {
+  /* renderLoadTip = () => {
     return (
-      <div>
-        {/* Loading... */}
-        {/* <br />
+      <div className={style.loadingTip}>
+        Loading...
         <br />
-        If you're using it for the first time, it might take a few minutes... */}
+        <br />
+        If you're using it for the first time, it might take a few minutes...
       </div>
     );
-  }
+  } */
 
   render() {
     const preload = this.state.preload;
     if (preload) {
       return (
         <div className={style.myIframe}>
-          {this.state.loading
-            ? <Spin
-              style={{ margin: '60px 0px 0px 60px' }}
-              tip={this.renderLoadTip()}
-              size="large"
-            /> : null}
+          {
+            this.state.loading
+              ? <div className={style.mask}>
+                <Spin
+                  // tip={this.renderLoadTip()}
+                  size="large"
+                ></Spin>
+              </div> : null
+          }
+
           <webview
             id="dappView"
-            src={this.dAppUrl}
+            src={this.props.dAppUrl}
             style={{ width: '100%', height: '100%' }}
             nodeintegration="on"
             preload={preload}
@@ -385,14 +382,6 @@ class DApp extends Component {
           >
             Your electron doesn't support webview, please set webviewTag: true.
           </webview>
-          {
-            this.state.coverHide
-              ? null
-              : <div className={style.coverPage} style={{ opacity: this.state.showCover ? 1 : 0 }} >
-                Wanchain DApps
-              <p style={{ fontSize: '20px' }}>使用万维链桌面钱包或手机钱包，丰富多彩的万维链生态应用等你来玩！</p>
-              </div>
-          }
         </div>
       );
     } else {
