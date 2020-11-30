@@ -49,7 +49,7 @@ class Register extends Component {
     }]
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
@@ -115,14 +115,25 @@ class Register extends Component {
             this.setState({ loading: false });
           } else {
             try {
-              let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
-                createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
-                createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
-                createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
-              ]);
-              addWANAddress(wanAddrInfo);
-              addETHAddress(ethAddrInfo);
-              addBTCAddress(btcMainAddInfo);
+              if (global.offlineMode) {
+                let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
+                  createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
+                  createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
+                  // createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                ]);
+                addWANAddress(wanAddrInfo);
+                addETHAddress(ethAddrInfo);
+                // addBTCAddress(btcMainAddInfo);
+              } else {
+                let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
+                  createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
+                  createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
+                  createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                ]);
+                addWANAddress(wanAddrInfo);
+                addETHAddress(ethAddrInfo);
+                addBTCAddress(btcMainAddInfo);
+              }
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });
@@ -139,7 +150,7 @@ class Register extends Component {
     }
   }
 
-  render () {
+  render() {
     const { steps } = this.state;
     const { current } = this.props;
 
