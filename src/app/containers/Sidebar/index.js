@@ -80,7 +80,6 @@ class Sidebar extends Component {
 
   render() {
     const { sidebarColumns, settings, crossChainSelections, dAppsOnSideBar, getWalletSelections } = this.props;
-    const sidebarColumnsNew = sidebarColumns.slice();
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -93,26 +92,26 @@ class Sidebar extends Component {
 
     if (global.offlineMode) {
       let storemanIndex = sidebarColumns.findIndex(item => item.key === '/openstoreman');
-      sidebarColumnsNew.splice(storemanIndex, 1);
+      sidebarColumns.splice(storemanIndex, 1);
       let hardwareIndex = sidebarColumns.findIndex(item => item.key === '/hardwareWallet');
-      sidebarColumnsNew.splice(hardwareIndex, 1);
+      sidebarColumns.splice(hardwareIndex, 1);
       stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-      sidebarColumnsNew.splice(stakeIndex, 1);
+      sidebarColumns.splice(stakeIndex, 1);
       dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
-      sidebarColumnsNew.splice(dAppsIndex, 1);
+      sidebarColumns.splice(dAppsIndex, 1);
       crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
-      sidebarColumnsNew.splice(crossChainIndex, 1);
+      sidebarColumns.splice(crossChainIndex, 1);
     }
 
     if (offlineIndex === -1 && settings.offline_wallet) {
-      sidebarColumnsNew.push({
+      sidebarColumns.push({
         title: intl.get('menuConfig.offline'),
         step: '1',
         key: '/offline',
         icon: 'bank'
       })
     } else if (offlineIndex !== -1 && !settings.offline_wallet) {
-      sidebarColumnsNew.splice(offlineIndex, 1);
+      sidebarColumns.splice(offlineIndex, 1);
     }
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
@@ -226,7 +225,7 @@ class Sidebar extends Component {
             <img className={style.expandedLogo} src={global.offlineMode ? logoOffline : logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
           <Menu theme="dark" mode="vertical" /* subMenuCloseDelay={0.05} */ onOpenChange={this.onOpenChange} selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
-            {this.renderMenu(sidebarColumnsNew)}
+            {this.renderMenu(sidebarColumns)}
           </Menu>
         </div>
         <div className={style.collapseItem + ' collapseItem'}>
