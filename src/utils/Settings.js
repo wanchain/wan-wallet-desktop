@@ -26,11 +26,23 @@ const defaultConfig = {
     main: {
       tokens: {
         "2153201998-0x0000000000000000000000000000000000000000": {
-          "select": true
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "WAN",
+          "chain": "Wanchain",
+          "chainSymbol": "WAN",
+          "decimals": "18",
+          "select": true,
+          "symbol": "WAN"
         },
         "2147483708-0x0000000000000000000000000000000000000000": {
-          "select": true
-        }
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "ETH",
+          "chain": "Ethereum",
+          "chainSymbol": "ETH",
+          "decimals": "18",
+          "select": true,
+          "symbol": "ETH"
+        },
       },
       cc_selected: {
         "1": true,

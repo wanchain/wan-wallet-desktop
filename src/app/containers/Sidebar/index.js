@@ -80,6 +80,7 @@ class Sidebar extends Component {
 
   render() {
     const { sidebarColumns, settings, crossChainSelections, dAppsOnSideBar, getWalletSelections } = this.props;
+    const sidebarColumnsNew = sidebarColumns.slice();
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
@@ -92,26 +93,26 @@ class Sidebar extends Component {
 
     if (global.offlineMode) {
       let storemanIndex = sidebarColumns.findIndex(item => item.key === '/openstoreman');
-      sidebarColumns.splice(storemanIndex, 1);
+      sidebarColumnsNew.splice(storemanIndex, 1);
       let hardwareIndex = sidebarColumns.findIndex(item => item.key === '/hardwareWallet');
-      sidebarColumns.splice(hardwareIndex, 1);
+      sidebarColumnsNew.splice(hardwareIndex, 1);
       stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-      sidebarColumns.splice(stakeIndex, 1);
+      sidebarColumnsNew.splice(stakeIndex, 1);
       dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
-      sidebarColumns.splice(dAppsIndex, 1);
+      sidebarColumnsNew.splice(dAppsIndex, 1);
       crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
-      sidebarColumns.splice(crossChainIndex, 1);
+      sidebarColumnsNew.splice(crossChainIndex, 1);
     }
 
     if (offlineIndex === -1 && settings.offline_wallet) {
-      sidebarColumns.push({
+      sidebarColumnsNew.push({
         title: intl.get('menuConfig.offline'),
         step: '1',
         key: '/offline',
         icon: 'bank'
       })
     } else if (offlineIndex !== -1 && !settings.offline_wallet) {
-      sidebarColumns.splice(offlineIndex, 1);
+      sidebarColumnsNew.splice(offlineIndex, 1);
     }
 
     let index = stakeChildren.findIndex(item => item.key === '/validator');
@@ -124,7 +125,7 @@ class Sidebar extends Component {
     } else if (index !== -1 && !settings.staking_advance) {
       stakeChildren.splice(index, 1);
     }
-
+    console.log('getWalletSelections', getWalletSelections);
     // Wallet menu
     let walletList = [];
     getWalletSelections.forEach(v => {
@@ -225,7 +226,7 @@ class Sidebar extends Component {
             <img className={style.expandedLogo} src={global.offlineMode ? logoOffline : logo} alt={intl.get('Sidebar.wanchain')} />
           </div>
           <Menu theme="dark" mode="vertical" /* subMenuCloseDelay={0.05} */ onOpenChange={this.onOpenChange} selectable={true} defaultSelectedKeys={[this.props.path]} className={style.menuTreeNode}>
-            {this.renderMenu(sidebarColumns)}
+            {this.renderMenu(sidebarColumnsNew)}
           </Menu>
         </div>
         <div className={style.collapseItem + ' collapseItem'}>
