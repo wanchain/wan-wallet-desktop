@@ -102,7 +102,6 @@ class CrossWAN extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
-      // txFeeRatio: transParams.txFeeRatio
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };

@@ -82,10 +82,6 @@ class SendCrossChainParams {
     @computed get btcFee() {
       return session.chainId === 1 ? 0.0001 : 0.001;
     }
-
-    @computed get feeRate() {
-      return session.chainId === 1 ? 30 : 300;
-    }
 }
 
 const self = new SendCrossChainParams();

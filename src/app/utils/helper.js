@@ -962,9 +962,9 @@ export const createEOSAddr = async function (checkDuplicate) {
   })
 }
 
-export const btcCoinSelect = function (utxos, value) {
+export const btcCoinSelect = function (utxos, value, feeRate) {
   return new Promise((resolve, reject) => {
-    wand.request('address_btcCoinSelect', { utxos, value }, (err, data) => {
+    wand.request('address_btcCoinSelect', { utxos, value, feeRate }, (err, data) => {
       if (err) {
         console.log('btcCoinSelect: ', err)
         return reject(err);
@@ -1226,6 +1226,18 @@ export const getFastMinCount = (chainType, tokenPairID) => {
 export const getFees = (chainType, chainID1, chainID2) => {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getFees', { chainType, chainID1, chainID2 }, (err, res) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}
+
+export const estimateSmartFee = () => {
+  return new Promise((resolve, reject) => {
+    wand.request('transaction_estimateSmartFee', {}, (err, res) => {
       if (err) {
         return reject(err);
       } else {

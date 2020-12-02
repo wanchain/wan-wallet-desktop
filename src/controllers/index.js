@@ -585,8 +585,8 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
 
         case 'btcCoinSelect':
             try {
-                let feeRate = network === 'main' ? 30 : 300;
-                ret = await ccUtil.btcCoinSelect(payload.utxos, payload.value * Math.pow(10, 8), feeRate, payload.minConfParam);
+                let { utxos, value, minConfParam, feeRate } = payload;
+                ret = await ccUtil.btcCoinSelect(utxos, value * Math.pow(10, 8), feeRate, minConfParam);
             } catch (e) {
                 logger.error('btcCoinSelect failed:')
                 logger.error(e.message || e.stack)
@@ -1067,8 +1067,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
         case 'BTCNormal':
             try {
                 logger.info('Normal transaction: ' + JSON.stringify(payload));
-                payload.feeRate = network === 'main' ? 30 : 300;
-
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'BTC');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
@@ -1219,6 +1217,17 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: true })
             break;
+
+        case 'estimateSmartFee':
+            try {
+                ret = await ccUtil.estimateSmartFee();
+            } catch (e) {
+                logger.error('estimateSmartFee failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 
@@ -1994,8 +2003,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
-
-
     }
 })
 
@@ -2269,7 +2276,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
             break;
-            
+
     }
 })
 
@@ -2290,14 +2297,14 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             break;
 
         case 'getRewardRatio':
-          try {
-              ret = await ccUtil.getRewardRatio();
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+            try {
+                ret = await ccUtil.getRewardRatio();
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'openStoremanAction':
             try {
@@ -2310,7 +2317,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
                 if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
-                  ret.result.estimateGas = ret.result.estimateGas * 2;
+                    ret.result.estimateGas = ret.result.estimateGas * 2;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)

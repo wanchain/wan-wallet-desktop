@@ -19,7 +19,7 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getAllAmount,
-  transParams: stores.sendTransParams.transParams,
+  transParams: stores.sendTransParams.BTCTransParams,
   updateTransParams: paramsObj => stores.sendTransParams.updateBTCTransParams(paramsObj),
 }))
 
@@ -30,7 +30,7 @@ class BTCNormalTransForm extends Component {
     confirmVisible: false
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
@@ -96,8 +96,8 @@ class BTCNormalTransForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     if (new BigNumber(value).gt(0) && checkAmountUnit(8, value)) {
-      const { utxos, addrInfo, btcPath, updateTransParams } = this.props;
-      btcCoinSelect(utxos, value).then(data => {
+      const { utxos, addrInfo, btcPath, updateTransParams, transParams: { feeRate } } = this.props;
+      btcCoinSelect(utxos, value, feeRate).then(data => {
         updateTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
         this.setState({
           fee: formatNumByDecimals(data.fee, 8)
@@ -111,7 +111,7 @@ class BTCNormalTransForm extends Component {
     }
   }
 
-  render () {
+  render() {
     const { loading, form, settings, getAmount } = this.props;
     const { confirmVisible } = this.state;
     const { getFieldDecorator } = form;
@@ -152,13 +152,13 @@ class BTCNormalTransForm extends Component {
                 settings.reinput_pwd &&
                 <Form.Item label={intl.get('NormalTransForm.password')}>
                   {getFieldDecorator('pwd', { rules: [{ required: true, message: intl.get('NormalTransForm.pwdIsIncorrect') }] })
-                  (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
+                    (<Input.Password placeholder={intl.get('Backup.enterPassword')} prefix={<Icon type="lock" className="colorInput" />} />)}
                 </Form.Item>
               }
             </Form>
           </Spin>
         </Modal>
-        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} fee={this.state.fee} sendTrans={this.props.onSend} loading={loading}/>
+        <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} fee={this.state.fee} sendTrans={this.props.onSend} loading={loading} />
       </div>
     );
   }
