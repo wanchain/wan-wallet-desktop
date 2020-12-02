@@ -50,7 +50,7 @@ class BTCTrans extends Component {
 
     this.setState(() => ({ visible: true, spin: true, loading: true }));
     try {
-      let [gasPrice, smgList, { feerate: feeRate }] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol), estimateSmartFee()]);
+      let [gasPrice, smgList, feeRate] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol), estimateSmartFee()]);
       let originalFee, destinationFee;
       let smg = smgList[0];
 
