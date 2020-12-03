@@ -223,6 +223,7 @@ const th_TH = {
     'WanAccount.sendTransactionSuccessFully': 'โอนธุรกรรมสำเร็จแล้ว',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
+    'WanAccount.eth': 'ETH',
     'WanAccount.notSameName': 'ชื่อของแอดเดรสไม่สามารถซ้ำได้ กรุณาลองอีกครั้ง',
     'WanAccount.redeem': 'ถอนออก',
     'WanAccount.privateTxReceiverAddress': 'ที่อยู่สำหรับรับการโอนธุรกรรมแบบส่วนตัว',

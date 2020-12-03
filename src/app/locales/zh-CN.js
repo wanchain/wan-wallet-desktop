@@ -223,6 +223,7 @@ const zh_CN = {
     'WanAccount.sendTransactionSuccessFully': '交易发送成功',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
+    'WanAccount.eth': 'ETH',
     'WanAccount.notSameName': '帐户名称不能重复。请再试一次',
     'WanAccount.redeem': '提币',
     'WanAccount.privateTxReceiverAddress': '隐私地址',

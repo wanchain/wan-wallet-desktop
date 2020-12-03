@@ -21,7 +21,7 @@ const CHAINTYPE = 'ETH';
   addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateName: (arr, type) => stores.ethAddress.updateName(arr, type),
+  updateName: (obj, type) => stores.ethAddress.updateName(obj, type),
 }))
 
 @observer

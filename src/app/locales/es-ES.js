@@ -223,6 +223,7 @@ const es_ES = {
     'WanAccount.sendTransactionSuccessFully': 'Transacción enviada con éxito',
     'WanAccount.wanchain': 'Wanchain',
     'WanAccount.wan': 'WAN',
+    'WanAccount.eth': 'ETH',
     'WanAccount.notSameName': 'El nombre  de la cuenta no se puede repetir. Inténtalo de nuevo',
     'WanAccount.redeem': 'Redimir',
     'WanAccount.privateTxReceiverAddress': 'Dirección del receptor de transacciones privadas',

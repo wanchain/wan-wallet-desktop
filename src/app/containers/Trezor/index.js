@@ -65,7 +65,7 @@ class Trezor extends Component {
   }
 
   componentDidUpdate () {
-    if (this.props.trezorAddrList.length !== 0 && !this.timer) {
+    if (this.props.trezorAddrList.length !== 0 && this.timer === undefined) {
       this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
     }
   }
@@ -107,13 +107,13 @@ class Trezor extends Component {
   }
 
   render () {
-    const { trezorAddrList } = this.props;
+    const { trezorAddrList, match } = this.props;
     return (
       <div>
         {
           trezorAddrList.length === 0
             ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={getPublicKey} dPath={WAN_PATH} />
-            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={CHAIN_TYPE} />
+            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={match.params.chain || CHAIN_TYPE} />
         }
       </div>
     );

@@ -24,7 +24,7 @@ import WarningExistAddress from 'components/WarningExistAddress';
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateName: (arr, type) => stores.btcAddress.updateName(arr, type),
+  updateName: (obj, type) => stores.btcAddress.updateName(obj, type),
 }))
 
 @observer

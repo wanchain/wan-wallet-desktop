@@ -116,11 +116,11 @@ class BtcAddress {
       })
     }
 
-    @action updateName (arr, wid) {
+    @action updateName (obj, wid) {
       let type = getTypeByWalletId(wid);
-      wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
+      wand.request('account_update', { walletID: wid, path: obj.path, meta: { name: obj.name, addr: obj.address } }, (err, val) => {
         if (!err && val) {
-          self.addrInfo[type][arr.address].name = arr.name;
+          self.addrInfo[type][obj.address].name = obj.name;
         }
       })
     }

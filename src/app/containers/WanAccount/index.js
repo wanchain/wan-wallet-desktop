@@ -27,7 +27,7 @@ const CHAINTYPE = 'WAN';
   addAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
+  updateName: (obj, type) => stores.wanAddress.updateName(obj, type),
 }))
 
 @observer

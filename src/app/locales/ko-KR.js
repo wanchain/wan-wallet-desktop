@@ -223,6 +223,7 @@ const ko_KR = {
     'WanAccount.sendTransactionSuccessFully': '트랜잭션 전송이 성공적으로 완료 되었습니다.',
     'WanAccount.wanchain': '완체인',
     'WanAccount.wan': 'WAN',
+    'WanAccount.eth': 'ETH',
     'WanAccount.notSameName': ' 계정 이름은 복제가 불가 합니다. 재시도 바랍니다. ',
     'WanAccount.redeem': '인출',
     'WanAccount.privateTxReceiverAddress': '프라이빗 트랜잭션 수신자 주소',
