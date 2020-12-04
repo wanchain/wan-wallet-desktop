@@ -209,4 +209,4 @@ class CrossBTC extends Component {
   }
 }
 
-export default CrossBTC;
+export default props => <CrossBTC {...props} key={props.match.url}/>;
