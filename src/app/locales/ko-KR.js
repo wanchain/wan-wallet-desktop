@@ -344,6 +344,7 @@ const ko_KR = {
     'EOSNormalTransForm.invalid': '무효',
     'EOSNormalTransForm.recipientAccount': '수신자 계정',
     'EOSNormalTransForm.memo': '메모',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.save': '저장',

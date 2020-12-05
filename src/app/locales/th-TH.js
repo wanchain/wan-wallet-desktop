@@ -344,6 +344,7 @@ const th_TH = {
     'EOSNormalTransForm.invalid': 'ไม่ถูกต้อง',
     'EOSNormalTransForm.recipientAccount': 'บัญชีผู้รับ',
     'EOSNormalTransForm.memo': 'บันทึกหมายเหตุ',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.save': 'บันทึก',

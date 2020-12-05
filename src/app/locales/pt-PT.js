@@ -343,6 +343,7 @@ const pt_PT = {
     'EOSNormalTransForm.invalid': 'Inválid0',
     'EOSNormalTransForm.recipientAccount': 'Conta do Destinatário',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.save': 'Salvar',

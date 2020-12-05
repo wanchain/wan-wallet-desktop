@@ -130,7 +130,25 @@ class EOSNormalTransForm extends Component {
   }
 
   checkMemo = (rule, value, callback) => {
-    callback();
+    console.log('value:', value)
+    if (typeof value === 'string') {
+      let strlen = 0;
+      for (let i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 255) {
+          strlen += 3;
+        } else {
+          strlen++;
+        }
+      }
+      console.log('strlength:', strlen);
+      if (strlen <= 256) {
+        callback();
+      } else {
+        callback(intl.get('EOSNormalTransForm.invalidMemo'));
+      }
+    } else {
+      callback(intl.get('EOSNormalTransForm.invalidMemo'));
+    }
   }
 
   render() {

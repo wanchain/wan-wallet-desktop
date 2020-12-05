@@ -344,6 +344,7 @@ const zh_CN = {
     'EOSNormalTransForm.invalid': '不可用',
     'EOSNormalTransForm.recipientAccount': '接收人账户',
     'EOSNormalTransForm.memo': '备注',
+    'EOSNormalTransForm.invalidMemo': '备注不可用',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.save': '保存',

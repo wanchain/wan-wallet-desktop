@@ -344,6 +344,7 @@ const en_US = {
     'EOSNormalTransForm.invalid': 'Invalid',
     'EOSNormalTransForm.recipientAccount': 'Recipient Account',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.save': 'Save',
