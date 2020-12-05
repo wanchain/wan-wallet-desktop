@@ -94,6 +94,7 @@ class EOSNormalTransForm extends Component {
       from: data.from,
       to: data.to,
       amount: `${data.amount} EOS`,
+      memo: data.memo,
       BIP44Path: `${selectedAccount.path}`,
       walletID: selectedAccount.id,
     };
