@@ -131,7 +131,6 @@ class EOSNormalTransForm extends Component {
   }
 
   checkMemo = (rule, value, callback) => {
-    console.log('value:', value)
     if (typeof value === 'string') {
       let strlen = 0;
       for (let i = 0; i < value.length; i++) {
@@ -141,7 +140,6 @@ class EOSNormalTransForm extends Component {
           strlen++;
         }
       }
-      console.log('strlength:', strlen);
       if (strlen <= 256) {
         callback();
       } else {
