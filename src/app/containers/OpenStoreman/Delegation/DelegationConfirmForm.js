@@ -27,8 +27,8 @@ class DelegationConfirmForm extends Component {
             <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
-          {
-            this.props.type === 'delegateIn' &&
+          {// TODO
+            this.props.type === 'delegateIn' && false &&
             <Alert
               message={intl.get('Storeman.delegationWarnning')}
               type="warning"
