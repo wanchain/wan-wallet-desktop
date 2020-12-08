@@ -761,6 +761,7 @@ const zh_CN = {
     'Storeman.delegationExit': '委托退出',
     'Storeman.delegationTopup': '追加委托',
     'Storeman.registration': '节点注册',
+    'Storeman.delegationWarnning': '提示：只有等当前跨链节点工作周期结束后才能提取本金。如果想提取本金，需要在下一轮竞选之前点击“退出”按钮'
 }
 
 export default zh_CN;

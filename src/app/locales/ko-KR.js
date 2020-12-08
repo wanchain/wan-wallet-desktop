@@ -761,6 +761,7 @@ const ko_KR = {
     'Storeman.delegationExit': '위임 종료',
     'Storeman.delegationTopup': '위임 요청하기',
     'Storeman.registration': 'Storeman 등록',
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default ko_KR;

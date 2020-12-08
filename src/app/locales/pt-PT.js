@@ -760,6 +760,7 @@ const pt_PT = {
     'Storeman.delegationExit': 'Tirar delegação',
     'Storeman.delegationTopup': 'Adicionar à Delegação',
     'Storeman.registration': 'Registro do Storeman',
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default pt_PT;

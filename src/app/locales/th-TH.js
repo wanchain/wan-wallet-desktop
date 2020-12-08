@@ -761,6 +761,7 @@ const th_TH = {
     'Storeman.delegationExit': 'ออกจากการ Delegate',
     'Storeman.delegationTopup': 'เพิ่มจำนวนการ Delegate',
     'Storeman.registration': 'ลงทะเบียนเป็น Storeman',
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default th_TH;
