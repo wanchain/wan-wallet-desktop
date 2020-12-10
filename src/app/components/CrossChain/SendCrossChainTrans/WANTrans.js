@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getBalanceByAddr, getNonce, getChainId, getReadyOpenStoremanGroupListByChainPair } from 'utils/helper';
 import CrossWANForm from 'components/CrossChain/CrossChainTransForm/CrossWANForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
 
@@ -33,7 +33,7 @@ class WANTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain, chainType } = this.props;
+    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain, chainType, record } = this.props;
     if (!(chainPairId in tokenPairs)) {
       return false;
     }
@@ -70,11 +70,7 @@ class WANTrans extends Component {
     this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
+      let [nonce, chainId, gasPrice, desGasPrice, smgList] = await Promise.all([getNonce(from, chainType), getChainId(), getGasPrice(chainType), getGasPrice(desChain), getReadyOpenStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       if (smgList.length === 0) {
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
         this.setState({ visible: false, spin: false, loading: false });
@@ -94,6 +90,9 @@ class WANTrans extends Component {
         gasLimit: origGas,
         storeman,
         chainPairId: chainPairId,
+        nonce,
+        chainId,
+        from: { walletID: record.wid, path },
       });
       this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {

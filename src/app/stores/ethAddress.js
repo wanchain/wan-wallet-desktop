@@ -11,6 +11,8 @@ import { timeFormat, fromWei, formatNum } from 'utils/support';
 class EthAddress {
   @observable addrInfo = {
     normal: {},
+    ledger: {},
+    trezor: {},
     rawKey: {}
   };
 
@@ -46,7 +48,13 @@ class EthAddress {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type] || []).includes(addr.address)) {
         if (addr.name === undefined) {
-          addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          if (type === 'ledger') {
+            addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          } else if (type === 'trezor') {
+            addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          } else {
+            addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,
@@ -90,10 +98,18 @@ class EthAddress {
   @action updateETHBalance(arr) {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo['normal']);
+    let ledger = Object.keys(self.addrInfo['ledger']);
+    let trezor = Object.keys(self.addrInfo['trezor']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
         self.addrInfo['normal'][item].balance = arr[item];
+      }
+      if (ledger.includes(item) && self.addrInfo['ledger'][item].balance !== arr[item]) {
+        self.addrInfo['ledger'][item].balance = arr[item];
+      }
+      if (trezor.includes(item) && self.addrInfo['trezor'][item].balance !== arr[item]) {
+        self.addrInfo['trezor'][item].balance = arr[item];
       }
       if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
         self.addrInfo['rawKey'][item].balance = arr[item];
@@ -101,11 +117,11 @@ class EthAddress {
     })
   }
 
-  @action updateName(arr, wid) {
+  @action updateName(obj, wid) {
     let type = getTypeByWalletId(wid);
-    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase() } }, (err, val) => {
+    wand.request('account_update', { walletID: wid, path: obj.path, meta: { name: obj.name, addr: obj.address.toLowerCase() } }, (err, val) => {
       if (!err && val) {
-        self.addrInfo[type][arr.address].name = arr.name;
+        self.addrInfo[type][obj.address].name = obj.name;
       }
     })
   }
@@ -201,6 +217,40 @@ class EthAddress {
     return addrList;
   }
 
+  @computed get ledgerAddrList() {
+    let addrList = [];
+    let type = 'ledger';
+    Object.keys(self.addrInfo[type]).forEach(item => {
+      addrList.push({
+        key: item,
+        name: self.addrInfo[type][item].name,
+        address: item,
+        balance: self.addrInfo[type][item].balance,
+        path: self.addrInfo[type][item].path,
+        action: 'send',
+        wid: WALLETID.LEDGER
+      });
+    });
+    return addrList;
+  }
+
+  @computed get trezorAddrList() {
+    let addrList = [];
+    let type = 'trezor';
+    Object.keys(self.addrInfo[type]).forEach(item => {
+      addrList.push({
+        key: item,
+        name: self.addrInfo[type][item].name,
+        address: item,
+        balance: self.addrInfo[type][item].balance,
+        path: self.addrInfo[type][item].path,
+        action: 'send',
+        wid: WALLETID.TREZOR
+      });
+    });
+    return addrList;
+  }
+
   @computed get historyList() {
     let historyList = [];
     let page = self.currentPage;
@@ -213,17 +263,18 @@ class EthAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item].from) && !self.transHistory[item].transferTo) {
-        let status = self.transHistory[item].status;
-        let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
+      let data = self.transHistory[item];
+      if (addrList.includes(data.from) && !data.transferTo) {
+        let status = data.status;
+        let type = checkAddrType(data.from, self.addrInfo)
         historyList.push({
           key: item,
-          time: timeFormat(self.transHistory[item].sendTime),
-          from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: self.transHistory[item].to.toLowerCase(),
-          value: formatNum(fromWei(self.transHistory[item].value)),
+          time: timeFormat(data.sendTime),
+          from: self.addrInfo[type][data.from].name,
+          to: data.to.toLowerCase(),
+          value: formatNum(fromWei(data.value)),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item].sendTime,
+          sendTime: data.sendTime,
         });
       }
     });
@@ -242,18 +293,19 @@ class EthAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item].from) && self.transHistory[item].transferTo && (tokens.currTokenAddr.toLowerCase() === self.transHistory[item].to.toLowerCase())) {
-        let status = self.transHistory[item].status;
-        let type = checkAddrType(self.transHistory[item].from, self.addrInfo);
+      let data = self.transHistory[item];
+      if (addrList.includes(data.from) && data.transferTo && (tokens.currTokenAddr.toLowerCase() === data.to.toLowerCase())) {
+        let status = data.status;
+        let type = checkAddrType(data.from, self.addrInfo);
 
         historyList.push({
           key: item,
-          time: timeFormat(self.transHistory[item].sendTime),
-          from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: self.transHistory[item].transferTo.toLowerCase(),
-          value: formatNum(self.transHistory[item].token || 0),
+          time: timeFormat(data.sendTime),
+          from: self.addrInfo[type][data.from].name,
+          to: data.transferTo.toLowerCase(),
+          value: formatNum(data.token || 0),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item].sendTime,
+          sendTime: data.sendTime,
         });
       }
     });

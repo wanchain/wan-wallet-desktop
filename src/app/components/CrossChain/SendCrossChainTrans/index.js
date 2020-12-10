@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getReadyOpenStoremanGroupListByChainPair, getNonce, getChainId } from 'utils/helper';
 import CrossChainTransForm from 'components/CrossChain/CrossChainTransForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
 
@@ -18,7 +18,6 @@ const TransForm = Form.create({ name: 'CrossChainTransForm' })(CrossChainTransFo
     currTokenPairId: stores.crossChain.currTokenPairId,
     updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
     addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
-    getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   }
 })
 
@@ -39,7 +38,7 @@ class Trans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId, getChainAddressInfoByChain } = this.props;
+    const { from, path, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId, record } = this.props;
     if (!(currTokenPairId in tokenPairs)) {
       message.error('Token pair ID is missing.');
       return false;
@@ -62,11 +61,7 @@ class Trans extends Component {
     this.setState({ visible: true, spin: true, loading: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
+      let [nonce, chainId, gasPrice, desGasPrice, smgList] = await Promise.all([getNonce(from, chainType), getChainId(), getGasPrice(chainType), getGasPrice(desChain), getReadyOpenStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       if (smgList.length === 0) {
         this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
@@ -81,16 +76,18 @@ class Trans extends Component {
         gasPrice,
       });
       storeman = smgList[0].groupId;
-
       updateTransParams(from, {
         gasPrice,
         gasLimit: origGas,
         storeman,
         txFeeRatio: smgList[0].txFeeRatio || 0,
+        nonce,
+        chainId,
+        from: { walletID: record.wid, path },
       });
       this.setState({ spin: false, loading: false });
     } catch (err) {
-      console.log('showModal:', err)
+      console.log('showModal error:', err)
       message.warn(intl.get('network.down'));
       this.setState(() => ({ visible: false, spin: false, loading: false }));
     }
@@ -118,7 +115,7 @@ class Trans extends Component {
     const { balance, from, type, account } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} >{intl.get('Common.convert')}</Button>
         {visible &&
           <TransForm balance={balance} from={from} account={account} gasPrice={gasPrice} tokenAddr={tokenAddr} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

@@ -240,11 +240,11 @@ export const getStoremanGroupList = function (srcChainName, dstChainName) {
   })
 }
 
-export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
+export const getReadyOpenStoremanGroupListByChainPair = function (chainId1, chainId2) {
   return new Promise((resolve, reject) => {
-    wand.request('crossChain_getStoremanGroupListByChainPair', { chainId1, chainId2 }, (err, val) => {
+    wand.request('storeman_getReadyOpenStoremanGroupList', { chainId1, chainId2 }, (err, val) => {
       if (err) {
-        console.log('Get Smg list3 failed', err)
+        console.log('Get Smg failed', err)
         return reject(err);
       } else {
         return resolve(val);
@@ -1246,3 +1246,19 @@ export const resetSettingsByOptions = (attrs) => {
     })
   });
 }
+
+export const getCrossChainContractData = function (param) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getCrossChainContractData', param, (err, ret) => {
+      if (err) {
+        return reject(err);
+      } else {
+        if (ret.code) {
+          return resolve(ret);
+        } else {
+          return resolve(false);
+        }
+      }
+    })
+  })
+};

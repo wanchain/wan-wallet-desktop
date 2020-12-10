@@ -3,9 +3,12 @@ import { Button, Card, Modal, Table, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import wanUtil from 'wanchain-util';
+import ethUtil from 'ethereumjs-util';
 import style from './index.less';
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
+
+const CHAIN_TYPE = 'WAN';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -23,6 +26,8 @@ class Connect extends Component {
     this.page = 0;
     this.pageSize = 5;
     this.selectedAddrs = [];
+    this.chain = props.chainType || CHAIN_TYPE;
+    this.isWAN = this.chain === CHAIN_TYPE;
   }
 
   componentWillUnmount () {
@@ -78,13 +83,13 @@ class Connect extends Component {
 
   deriveAddresses = (start, limit, visible = false) => {
     let wallet = new HwWallet(this.publicKey, this.chainCode, this.props.dPath);
-    let hdKeys = wallet.getHdKeys(start, limit);
+    let hdKeys = wallet.getHdKeys(start, limit, this.chain);
     let addresses = [];
     hdKeys.forEach(hdKey => {
-      addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
+      addresses.push({ key: hdKey.address, address: (this.isWAN ? wanUtil.toChecksumAddress(hdKey.address) : ethUtil.toChecksumAddress(hdKey.address)), balance: 0, path: hdKey.path });
     });
     visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
-    getBalance(addresses.map(item => item.address), 'WAN').then(res => {
+    getBalance(addresses.map(item => item.address), this.isWAN ? 'WAN' : 'ETH').then(res => {
       if (res && Object.keys(res).length) {
         let addresses = this.state.addresses;
         addresses.forEach(item => {
@@ -127,7 +132,6 @@ class Connect extends Component {
 
   render () {
     const { visible, addresses } = this.state;
-
     return (
       <div>
         <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>

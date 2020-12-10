@@ -1219,6 +1219,18 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: true })
             break;
+
+        case 'insertCrossTxToDB':
+            try {
+                let { rawTx, satellite } = payload;
+                ccUtil.insertCrossTx(rawTx, rawTx.status, undefined, satellite)
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: true })
+            break;
     }
 })
 
@@ -1742,17 +1754,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getStoremanGroupListByChainPair':
-            try {
-                let { chainId1, chainId2 } = payload;
-                ret = await ccUtil.getOpenStoremanGroupList({ chainIds: [chainId1, chainId2] });
-            } catch (e) {
-                logger.error('getStoremanGroupListByChainPair failed: ' + e)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'getMintQuota':
             try {
                 let { chainType, tokenPairID, storemanGroupID } = payload;
@@ -1769,7 +1770,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { chainType, tokenPairID, storemanGroupID } = payload;
                 ret = await ccUtil.getBurnQuota(chainType, tokenPairID, storemanGroupID);
             } catch (e) {
-                logger.error('getStoremanGroupListByChainPair failed: ' + e)
+                logger.error('getBurnQuota failed: ' + e)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1784,6 +1785,28 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 }
             } catch (e) {
                 logger.error('getHtmlAddr failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'getCrossChainContractData':
+            try {
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                console.log('srcChain:', srcChain);
+                console.log('dstChain:', dstChain);
+                if (payload.type === 'REDEEM') {
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
+                if (!ret.code) {
+                    err = ret;
+                }
+            } catch (e) {
+                logger.error('crossChain failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -2269,7 +2292,7 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
             break;
-            
+
     }
 })
 
@@ -2290,14 +2313,14 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             break;
 
         case 'getRewardRatio':
-          try {
-              ret = await ccUtil.getRewardRatio();
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+            try {
+                ret = await ccUtil.getRewardRatio();
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'openStoremanAction':
             try {
@@ -2310,7 +2333,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
                 if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
-                  ret.result.estimateGas = ret.result.estimateGas * 2;
+                    ret.result.estimateGas = ret.result.estimateGas * 2;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2335,6 +2358,19 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}`);
                 ret = await ccUtil.getOpenStoremanGroupList();
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'getReadyOpenStoremanGroupList':
+            try {
+                logger.debug(`Try ${action}`);
+                let { chainId1, chainId2 } = payload;
+                ret = await ccUtil.getReadyOpenStoremanGroupList({ chainIds: [chainId1, chainId2] });
                 logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)

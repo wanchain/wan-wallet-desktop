@@ -479,6 +479,7 @@ const pt_PT = {
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': 'Sem fundos suficientes',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Falha ao obter informações de transações privadas',

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getBalanceByAddr, getNonce, getChainId, getReadyOpenStoremanGroupListByChainPair } from 'utils/helper';
 import CrossETHForm from 'components/CrossChain/CrossChainTransForm/CrossETHForm';
 import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
 
@@ -64,11 +64,7 @@ class ETHTrans extends Component {
     this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
+      let [nonce, chainId, gasPrice, desGasPrice, smgList] = await Promise.all([getNonce(from, chainType), getChainId(), getGasPrice(chainType), getGasPrice(desChain), getReadyOpenStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       if (smgList.length === 0) {
         this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
@@ -88,6 +84,9 @@ class ETHTrans extends Component {
         gasLimit: origGas,
         storeman,
         chainPairId: chainPairId,
+        nonce,
+        chainId,
+        from: { walletID: record.wid, path },
       });
       this.setState(() => ({ spin: false, loading: false }));
     } catch (err) {
@@ -119,7 +118,7 @@ class ETHTrans extends Component {
     const { balance, from, type, account, decimals, symbol, tokenAddr, chainType } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} >{intl.get('Common.convert')}</Button>
         {visible &&
           <CollectionCreateForm balance={balance} from={from} account={account} gasPrice={gasPrice} decimals={decimals} tokenAddr={tokenAddr} symbol={symbol} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

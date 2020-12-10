@@ -4,7 +4,6 @@ import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS } from 'mobx';
-
 import tokens from './tokens';
 import staking from './staking';
 import session from './session';
@@ -58,14 +57,14 @@ class WanAddress {
   @action addAddresses(type, addrArr) {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
-        if (addr.name === undefined && type === 'ledger') {
-          addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
-        }
-        if (addr.name === undefined && type === 'trezor') {
-          addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
-        }
         if (addr.name === undefined) {
-          addr.name = `WAN-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          if (type === 'ledger') {
+            addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          } else if (type === 'trezor') {
+            addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          } else {
+            addr.name = `WAN-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          }
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,
@@ -153,15 +152,15 @@ class WanAddress {
     });
   }
 
-  @action updateName(arr, wid) {
+  @action updateName(obj, wid) {
     let type = getTypeByWalletId(wid);
     if (type === 'ledger') {
-      let index = arr.path.lastIndexOf('\/') + 1
-      arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
+      let index = obj.path.lastIndexOf('\/') + 1
+      obj.path = `${obj.path.slice(0, index)}0/${obj.path.slice(index)}`;
     }
-    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' } }, (err, val) => {
+    wand.request('account_update', { walletID: wid, path: obj.path, meta: { name: obj.name, addr: obj.address.toLowerCase(), waddr: obj.waddress ? obj.waddress.toLowerCase() : '' } }, (err, val) => {
       if (!err && val) {
-        self.addrInfo[type][arr['address']]['name'] = arr.name;
+        self.addrInfo[type][obj['address']]['name'] = obj.name;
       }
     });
   }
@@ -426,7 +425,7 @@ class WanAddress {
   @computed get ledgerAddrList() {
     let addrList = [];
     let type = 'ledger';
-    Object.keys(self.addrInfo[type]).forEach((item, index) => {
+    Object.keys(self.addrInfo[type]).forEach(item => {
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
@@ -556,18 +555,19 @@ class WanAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item]['from']) && self.transHistory[item].transferTo && (tokens.currTokenAddr.toLowerCase() === self.transHistory[item].to.toLowerCase())) {
-        let status = self.transHistory[item].status;
-        let type = checkAddrType(self.transHistory[item].from, self.addrInfo);
+      let data = self.transHistory[item];
+      if (addrList.includes(data['from']) && data.transferTo && (tokens.currTokenAddr.toLowerCase() === data.to.toLowerCase())) {
+        let status = data.status;
+        let type = checkAddrType(data.from, self.addrInfo);
 
         historyList.push({
           key: item,
-          time: timeFormat(self.transHistory[item]['sendTime']),
-          from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: wanUtil.toChecksumAddress(self.transHistory[item].transferTo.toLowerCase()),
-          value: formatNum(self.transHistory[item].token || 0),
+          time: timeFormat(data['sendTime']),
+          from: self.addrInfo[type][data.from].name,
+          to: wanUtil.toChecksumAddress(data.transferTo.toLowerCase()),
+          value: formatNum(data.token || 0),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item]['sendTime'],
+          sendTime: data['sendTime'],
         });
       }
     });

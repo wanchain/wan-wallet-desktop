@@ -480,6 +480,7 @@ const ko_KR = {
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': '보유량이 없습니다.',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '프라이빗 트랜잭션 정보를 가져오는데 실패 하였습니다.',

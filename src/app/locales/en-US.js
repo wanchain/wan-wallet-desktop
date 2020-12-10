@@ -480,6 +480,7 @@ const en_US = {
     'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',

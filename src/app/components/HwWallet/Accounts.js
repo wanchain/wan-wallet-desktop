@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-
 import { formatNum } from 'utils/support';
 import { hasSameName } from 'utils/helper';
 import TransHistory from 'components/TransHistory';
@@ -11,17 +10,28 @@ import SendNormalTrans from 'components/SendNormalTrans';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import style from './index.less';
 
+const CHAIN_TYPE = 'WAN';
+
 @inject(stores => ({
   rawTx: stores.sendTransParams.rawTx,
-  addrInfo: stores.wanAddress.addrInfo,
+  addrWANInfo: stores.wanAddress.addrInfo,
+  addrETHInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
-  updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  updateWANName: (obj, type) => stores.wanAddress.updateName(obj, type),
+  updateETHName: (obj, type) => stores.ethAddress.updateName(obj, type),
+  updateWANTransHistory: () => stores.wanAddress.updateTransHistory(),
+  updateETHTransHistory: () => stores.ethAddress.updateTransHistory(),
 }))
 
 @observer
 class Accounts extends Component {
+  constructor (props) {
+    super(props);
+    this.chain = props.chainType || CHAIN_TYPE;
+    this.isWAN = this.chain === CHAIN_TYPE;
+  }
+
   columns = [
     {
       dataIndex: 'name',
@@ -59,19 +69,23 @@ class Accounts extends Component {
 
   handleSave = row => {
     let type = this.props.name[0];
-    if (hasSameName(type, row, this.props.addrInfo)) {
+    if (hasSameName(type, row, this.props[this.isWAN ? 'addrWANInfo' : 'addrETHInfo'])) {
       message.warn(intl.get('WanAccount.notSameName'));
     } else {
-      this.props.updateName(row, row.wid);
+      this.props[this.isWAN ? 'updateWANName' : 'updateETHName'](row, row.wid);
     }
   }
 
   handleSend = from => {
-    const { rawTx } = this.props;
+    const { rawTx, chainType } = this.props;
     let params = this.props.transParams[from];
     return new Promise((resolve, reject) => {
       this.props.signTransaction(params.path, rawTx, (_err, raw) => {
-        wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
+        if (_err !== null) {
+          reject(_err);
+          return;
+        }
+        wand.request('transaction_raw', { raw, chainType }, (err, txHash) => {
           if (err) {
             message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
             console.log(err);
@@ -80,13 +94,13 @@ class Accounts extends Component {
             let params = {
               txHash,
               from: from.toLowerCase(),
-              srcSCAddrKey: 'WAN',
+              srcSCAddrKey: 'WAN', // To do
               srcChainType: 'WAN',
               tokenSymbol: 'WAN',
               ...rawTx
             }
             wand.request('transaction_insertTransToDB', { rawTx: params }, () => {
-              this.props.updateTransHistory();
+              this.props[this.isWAN ? 'updateWANTransHistory' : 'updateETHTransHistory']();
             })
             resolve();
             console.log('Tx Hash:', txHash);

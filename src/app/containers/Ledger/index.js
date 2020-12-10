@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
 import intl from 'react-intl-universal';
-
 import style from './index.less';
 import { WALLETID } from 'utils/settings';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
@@ -10,34 +9,45 @@ import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
 const WAN_PATH = "m/44'/5718350'/0'";
+const ETH_PATH = "m/44'/60'/0'";
 const CHAIN_TYPE = 'WAN';
 const LEDGER = 'ledger';
 
 @inject(stores => ({
-  addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
-  ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  ledgerWANAddrList: stores.wanAddress.ledgerAddrList,
+  ledgerETHAddrList: stores.ethAddress.ledgerAddrList,
+  updateWANTransHistory: () => stores.wanAddress.updateTransHistory(),
+  updateETHTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr),
+  addWANLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr),
+  addETHLedgerAddr: newAddr => stores.ethAddress.addAddresses(LEDGER, newAddr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
 }))
 
 @observer
 class Ledger extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
+    this.chain = props.match.params.chain || CHAIN_TYPE;
+    this.isWAN = this.chain === CHAIN_TYPE;
     this.props.changeTitle('Ledger.ledger');
-    this.props.setCurrTokenChain('WAN');
+    this.props.setCurrTokenChain(this.chain);
   }
 
-  componentDidUpdate () {
-    if (this.props.ledgerAddrList.length !== 0 && !this.timer) {
-      this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  componentDidUpdate() {
+    if (this.props[`ledger${this.props.match.params.chain || CHAIN_TYPE}AddrList`].length !== 0 && this.timer === undefined) {
+      this.timer = setInterval(() => this.props[`update${this.props.match.params.chain || CHAIN_TYPE}TransHistory`](), 5000);
     }
   }
 
-  componentWillUnmount () {
+  componentDidMount() {
+    if (this.props[`ledger${this.chain}AddrList`].length !== 0 && this.timer === undefined) {
+      this.timer = setInterval(() => this.props[`update${this.chain || CHAIN_TYPE}TransHistory`](), 5000);
+    }
+  }
+
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -53,7 +63,6 @@ class Ledger extends Component {
   }
 
   connectAndGetPublicKey = callback => {
-    console.log('connect to ledger')
     wand.request('wallet_connectToLedger', {}, (err, val) => {
       if (err) {
         callback(err, val);
@@ -70,7 +79,7 @@ class Ledger extends Component {
   getPublicKey = callback => {
     wand.request('wallet_getPubKeyChainId', {
       walletID: WALLETID.LEDGER,
-      path: WAN_PATH
+      path: this.isWAN ? WAN_PATH : ETH_PATH
     }, (err, val) => {
       callback(err, val);
     });
@@ -78,14 +87,19 @@ class Ledger extends Component {
 
   signTransaction = (path, tx, callback) => {
     let rawTx = new WanRawTx(tx).serialize();
-
     message.info(intl.get('Ledger.signTransactionInLedger'));
+    console.log('sign param:', { walletID: WALLETID.LEDGER, path: path, rawTx: rawTx });
     wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn(intl.get('Ledger.signTransactionFailed'));
-        callback(err, null);
 
-        console.log(`Sign Failed: ${err}`);
+        /* err: {
+          cat: "EthAppPleaseEnableContractData"
+          desc: "Please enable Contract data on the Ethereum app Settings"
+        } */
+
+        callback(err, null);
+        console.log(`Sign Failed:`, err);
       } else {
         tx.v = sig.v;
         tx.r = sig.r;
@@ -99,9 +113,10 @@ class Ledger extends Component {
   }
 
   setAddresses = newAddr => {
-    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+    wand.request('account_getAll', { chainID: this.isWAN ? 5718350 : 60 }, (err, ret) => {
       if (err) return;
       let hdInfoFromDb = [];
+      console.log('getAll:', ret);
       Object.values(ret.accounts).forEach(item => {
         if (item[WALLETID.LEDGER]) {
           hdInfoFromDb.push(item[WALLETID.LEDGER]);
@@ -113,22 +128,22 @@ class Ledger extends Component {
           item.name = matchValue.name;
         }
       });
-      this.props.addLedgerAddr(newAddr)
+      this.props[`add${this.chain}LedgerAddr`](newAddr)
     })
   }
 
-  render () {
-    const { ledgerAddrList } = this.props;
+  render() {
+    const ledgerAddrList = this.props[`ledger${this.chain}AddrList`];
     return (
       <div>
         {
           ledgerAddrList.length === 0
-            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={WAN_PATH} />
-            : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} chainType={this.chain} dPath={this.isWAN ? WAN_PATH : ETH_PATH} />
+            : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={this.chain} />
         }
       </div>
     );
   }
 }
 
-export default Ledger;
+export default props => <Ledger {...props} key={props.match.params.chain}/>;

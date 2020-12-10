@@ -480,6 +480,7 @@ const es_ES = {
     'CrossChainTransForm.getOperationFeeFailed': 'Error al obtener la tarifa de operación.',
 
     'CrossChain.selectFailed': 'Error al actualizar el estado de selección.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': 'No hay fondos suficientes',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'Obtener información de transacción privada fallida',

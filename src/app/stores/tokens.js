@@ -12,7 +12,7 @@ import eosAddress from './eosAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY, WALLETID } from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -199,6 +199,13 @@ class Tokens {
     let trezor = addressObj.trezor || {};
     let addresses = Object.assign({}, normal, ledger, trezor);
     Object.keys(addresses).forEach(item => {
+      let wid = WALLETID.NATIVE;
+      if (Object.prototype.hasOwnProperty.call(ledger, item)) {
+        wid = WALLETID.LEDGER;
+      }
+      if (Object.prototype.hasOwnProperty.call(trezor, item)) {
+        wid = WALLETID.TREZOR;
+      }
       let balance = addresses[item].balance;
       addrList.push({
         key: item,
@@ -207,7 +214,8 @@ class Tokens {
         balance,
         path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
-        amount: balance
+        amount: balance,
+        wid
       });
     });
     return addrList;
@@ -221,8 +229,10 @@ class Tokens {
 
     let addrList = [];
     let normal = addressObj.normal;
-    let ledger = addressObj.ledger || {};
-    let trezor = addressObj.trezor || {};
+    // let ledger = addressObj.ledger || {};
+    // let trezor = addressObj.trezor || {};
+    let ledger = chain === 'WAN' ? (addressObj.ledger || {}) : {};
+    let trezor = chain === 'WAN' ? (addressObj.trezor || {}) : {};
     let addresses = Object.assign({}, normal, ledger, trezor);
     Object.keys(addresses).forEach(item => {
       let balance;
@@ -236,6 +246,13 @@ class Tokens {
       } else {
         balance = 0;
       }
+      let wid = WALLETID.NATIVE;
+      if (Object.prototype.hasOwnProperty.call(ledger, item)) {
+        wid = WALLETID.LEDGER;
+      }
+      if (Object.prototype.hasOwnProperty.call(trezor, item)) {
+        wid = WALLETID.TREZOR;
+      }
       addrList.push({
         key: item,
         name: addresses[item].name,
@@ -243,7 +260,8 @@ class Tokens {
         balance,
         path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
         action: 'send',
-        amount: balance
+        amount: balance,
+        wid
       });
     });
     return addrList;
@@ -388,7 +406,7 @@ class Tokens {
     return addrList;
   }
 
-  @computed get getCCTokensListInfo() {
+  @computed get getCCTokensListInfo() { // Normal accounts only
     const chain = this.currTokenChain;
     if (chain === undefined || chain === '') {
       return [];
@@ -398,7 +416,7 @@ class Tokens {
       return;
     }
     let addrList = [];
-    [addrInfo.normal/* , addrInfo.ledger || {}, addrInfo.trezor || {} */].forEach(obj => {
+    [addrInfo.normal].forEach(obj => {
       Object.keys(obj).forEach(item => {
         let balance;
         let pathPrefix = this.getPathPrefix(chain);
@@ -420,6 +438,52 @@ class Tokens {
           path: String(obj[item].path).startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance
+        });
+      });
+    });
+    return addrList;
+  }
+
+  @computed get getCCTokensListInfoWithHW() { // Ledger & Trezor accounts included
+    const chain = this.currTokenChain;
+    if (chain === undefined || chain === '') {
+      return [];
+    }
+    let addrInfo = this.getChainAddressInfoByChain(chain);
+    if (addrInfo === undefined) {
+      return;
+    }
+    let addrList = [];
+    [addrInfo.normal, addrInfo.ledger || {}, addrInfo.trezor || {}].forEach(obj => {
+      Object.keys(obj).forEach(item => {
+        let balance;
+        let pathPrefix = this.getPathPrefix(chain);
+        if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
+          let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
+          if (this.tokensList && token !== undefined) {
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+          } else {
+            balance = 0
+          }
+        } else {
+          balance = 0;
+        }
+        let wid = WALLETID.NATIVE;
+        if (Object.prototype.hasOwnProperty.call(addrInfo.ledger, item)) {
+          wid = WALLETID.LEDGER;
+        }
+        if (Object.prototype.hasOwnProperty.call(addrInfo.trezor, item)) {
+          wid = WALLETID.TREZOR;
+        }
+        addrList.push({
+          key: item,
+          name: obj[item].name,
+          address: item,
+          balance,
+          path: String(obj[item].path).startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
+          action: 'send',
+          amount: balance,
+          wid
         });
       });
     });

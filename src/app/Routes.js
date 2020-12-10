@@ -49,8 +49,8 @@ export default () => {
           <Route path="/crossEOS/:tokenPairId" component={CrossEOS} />
           <Route path="/moreCrossChain" component={MoreCrossChain} />
           <Route path="/settings" component={Settings} />
-          <Route path="/trezor" component={Trezor} />
-          <Route path="/ledger" component={Ledger} />
+          <Route path="/trezor/:chain" component={Trezor} />
+          <Route path="/ledger/:chain" component={Ledger} />
           <Route path="/offline" component={Offline} />
           <Route path="/delegation" component={Delegation} />
           <Route path="/validator" component={Validator} />

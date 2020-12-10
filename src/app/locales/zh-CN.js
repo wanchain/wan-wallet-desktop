@@ -480,6 +480,7 @@ const zh_CN = {
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
 
     'CrossChain.selectFailed': '修改选择状态失败',
+    'CrossChain.getContractDataFailed': '获取合约数据失败',
 
     'RedeemFromPrivate.noSufficientFunds': '账户余额不足',
     'RedeemFromPrivate.getPrivateTxInfoFailed': '获取隐私交易信息失败',

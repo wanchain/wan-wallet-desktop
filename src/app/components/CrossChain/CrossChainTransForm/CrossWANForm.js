@@ -34,7 +34,8 @@ class CrossWANForm extends Component {
   constructor(props) {
     super(props);
     let info = props.currentTokenPairInfo;
-    this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
+    let addrInfo = props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol);
+    this.addressSelections = Object.keys(addrInfo.normal);
     this.state = {
       confirmVisible: false,
       quota: 0,

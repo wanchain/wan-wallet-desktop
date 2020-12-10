@@ -480,6 +480,7 @@ const fr_FR = {
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': 'Fonds insuffisants',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'L\'obtention des informations de transaction privée a échoué',

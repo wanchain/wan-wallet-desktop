@@ -480,6 +480,7 @@ const th_TH = {
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
+    'CrossChain.getContractDataFailed': 'Get contract data failed',
 
     'RedeemFromPrivate.noSufficientFunds': 'ยอดคงเหลือไม่เพียงพอ',
     'RedeemFromPrivate.getPrivateTxInfoFailed': 'ไม่สามารถดึงข้อมูลธุรกรรมแบบปกปิดตัวตนได้',

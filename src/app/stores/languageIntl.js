@@ -387,12 +387,32 @@ class LanguageIntl {
           {
             title: intl.get('menuConfig.ledger'),
             key: '/ledger',
-            icon: 'block'
+            icon: 'block',
+            children: [
+              {
+                title: intl.get('WanAccount.wan'),
+                key: '/ledger/WAN',
+              },
+              {
+                title: intl.get('WanAccount.eth'),
+                key: '/ledger/ETH',
+              }
+            ]
           },
           {
             title: intl.get('menuConfig.trezor'),
             key: '/trezor',
-            icon: 'block'
+            icon: 'block',
+            children: [
+              {
+                title: intl.get('WanAccount.wan'),
+                key: '/trezor/WAN',
+              },
+              {
+                title: intl.get('WanAccount.eth'),
+                key: '/trezor/ETH',
+              }
+            ]
           }
         ]
       },
