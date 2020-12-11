@@ -11,6 +11,7 @@ import {
 import { toWei, fromWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
+import styled from 'styled-components';
 
 const { confirm } = Modal;
 
@@ -57,7 +58,7 @@ class DApp extends Component {
 
     webview.addEventListener('dom-ready', function (e) {
       this.setState({ loading: false });
-      webview.openDevTools();
+      // webview.openDevTools();
     }.bind(this));
 
     webview.addEventListener('ipc-message', function (event) {
@@ -112,39 +113,11 @@ class DApp extends Component {
   }
 
   async getAddresses(msg) {
-    msg.err = null;
-    msg.val = [];
-
-    try {
-      let chainID = 5718350;
-      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
-      let addrs = [];
-      for (var account in val.accounts) {
-        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
-          addrs.push(val.accounts[account]['1'].addr);
-        }
-      }
-      let addrAll = this.props.addrSelectedList.slice();
-      for (var i = 0, len = addrAll.length; i < len; i++) {
-        const addr = addrAll[i];
-        addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
-        addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
-
-        this.addresses[addrAll[i]] = {};
-        if (addr.indexOf('Ledger') !== -1) {
-          this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
-        } else if (addr.indexOf('Trezor') !== -1) {
-          this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
-        } else {
-          this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
-        }
-      }
-      msg.val = addrAll;
-    } catch (error) {
-      console.log(error);
-      msg.err = error;
-    }
-    this.sendToDApp(msg);
+    await this.showAddresses(msg, async (msg) => {
+      this.sendToDApp(msg);
+    }, async (msg) => {
+      this.sendToDApp(msg);
+    });
   }
 
   loadNetworkId(msg) {
@@ -434,12 +407,52 @@ class DApp extends Component {
     });
   }
 
-  async showAddresses(type, msg, onOk, onCancel) {
+  async showAddresses(msg, onOk, onCancel) {
     let title = intl.get('HwWallet.Connect.selectAddress');
+    let addrAll = [];
+    msg.err = null;
+    msg.val = [];
+    try {
+      let chainID = 5718350;
+      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
+      let addrs = [];
+      for (var account in val.accounts) {
+        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
+          addrs.push(val.accounts[account]['1'].addr);
+        }
+      }
+      addrAll = this.props.addrSelectedList.slice();
+      for (var i = 0, len = addrAll.length; i < len; i++) {
+        const addr = addrAll[i];
+        addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
+        addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
+
+        this.addresses[addrAll[i]] = {};
+        if (addr.indexOf('Ledger') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
+        } else if (addr.indexOf('Trezor') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
+        } else {
+          this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
+        }
+      }
+      msg.val = [addrAll[0]];
+    } catch (error) {
+      console.log(error);
+      msg.err = error;
+    }
 
     confirm({
       title: title,
-      content: <Select></Select>,
+      content: <StyledSelect defaultValue={addrAll[0]} onChange={e => {
+        msg.val = [e];
+      }}>
+        {
+          addrAll.map(v => {
+            return (<Option key={v} value={v}>{v}</Option>);
+          })
+        }
+      </StyledSelect>,
       okText: intl.get('ValidatorRegister.acceptAgency'),
       cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
       async onOk() {
@@ -490,5 +503,13 @@ class DApp extends Component {
     }
   }
 }
+
+const StyledSelect = styled(Select)`
+  .ant-select-selection {
+    border: none!important;
+  }
+  margin-top: 30px!important;
+  margin-bottom: 20px!important;
+`;
 
 export default DApp;
