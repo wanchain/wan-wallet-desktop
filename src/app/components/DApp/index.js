@@ -17,6 +17,7 @@ const { confirm } = Modal;
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
 @inject(stores => ({
+  chainId: stores.session.chainId,
   addrSelectedList: stores.wanAddress.addrSelectedList,
   addrInfo: stores.wanAddress.addrInfo,
 }))
@@ -54,7 +55,7 @@ class DApp extends Component {
 
     webview.addEventListener('dom-ready', function (e) {
       this.setState({ loading: false });
-      // webview.openDevTools();
+      webview.openDevTools();
     }.bind(this));
 
     webview.addEventListener('ipc-message', function (event) {
@@ -90,6 +91,10 @@ class DApp extends Component {
       case 'sendTransaction':
         msg.message = args[2];
         this.sendTransaction(msg);
+        break;
+      case 'signTransaction':
+        msg.message = args[2];
+        this.signTransaction(msg);
         break;
       default:
         console.log('unknown method.');
@@ -298,6 +303,61 @@ class DApp extends Component {
     this.sendToDApp(msg);
   }
 
+  async nativeSignTransaction(msg, wallet) {
+    let gasPrice = await getGasPrice('wan');
+    let amountInWei = new BigNumber(msg.message.value)
+    let trans = {
+      walletID: wallet.id,
+      chainType: 'WAN',
+      symbol: 'WAN',
+      path: wallet.path,
+      to: msg.message.to,
+      amount: amountInWei.div(1e18),
+      gasLimit: msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`,
+      gasPrice: msg.message.gasPrice ? fromWei(msg.message.gasPrice, 'Gwei') : `0x${(gasPrice * (10 ** 9)).toString(16)}`,
+      data: msg.message.data
+    };
+    console.log('wallet_signTransaction input', { walletID: wallet.id, path: wallet.path, rawTx: trans });
+    wand.request('wallet_signTransaction', { walletID: wallet.id, path: wallet.path, rawTx: trans }, function (err, tx) {
+      console.log('wallet_signTransaction return', 'err', err, 'ret', tx);
+      if (err) {
+        console.log('error printed inside callback: ', err)
+        msg.err = err;
+      } else {
+        msg.val = tx;
+      }
+      this.sendToDApp(msg);
+    }.bind(this)
+    );
+  }
+
+  async trezorSignTransaction(msg, wallet) {
+    let chainId = await getChainId();
+    try {
+      let nonce = await getNonce(msg.message.from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let data = msg.message.data;
+      let amountWei = msg.message.value;
+      let rawTx = {};
+      rawTx.from = msg.message.from;
+      rawTx.to = msg.message.to;
+      rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+      rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
+      msg.val = raw;
+    } catch (error) {
+      console.log(error)
+      msg.err = error;
+    }
+
+    this.sendToDApp(msg);
+  }
+
   async sendTransaction(msg) {
     await this.showConfirm('send', msg, async (msg) => {
       msg.err = null;
@@ -314,6 +374,29 @@ class DApp extends Component {
         await this.trezorSendTransaction(msg, wallet);
       } else {
         await this.nativeSendTransaction(msg, wallet);
+      }
+    }, async (msg) => {
+      msg.err = 'The user rejects in the wallet.';
+      this.sendToDApp(msg);
+    });
+  }
+
+  async signTransaction(msg) {
+    await this.showConfirm('send', msg, async (msg) => {
+      msg.err = null;
+      msg.val = null;
+      if (!msg.message || !msg.message.from) {
+        msg.err = 'can not find from address.';
+        this.sendToDApp(msg);
+        return;
+      }
+
+      const wallet = await this.getWalletFromAddress(msg.message.from);
+
+      if (wallet.id === WALLETID.TREZOR) {
+        await this.trezorSignTransaction(msg, wallet);
+      } else {
+        await this.nativeSignTransaction(msg, wallet);
       }
     }, async (msg) => {
       msg.err = 'The user rejects in the wallet.';
