@@ -269,16 +269,26 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 logger.info('Sign transaction:');
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-
-                try {
-                    let ret = await hdWallet.sec256k1sign(path, rawTx);
-                    sig.r = '0x' + ret.r.toString('hex');
-                    sig.s = '0x' + ret.s.toString('hex');
-                    sig.v = '0x' + ret.v.toString('hex');
-                } catch (e) {
-                    logger.error(e.message || e.stack)
-                    err = e
+                if (walletID === 1) {
+                    rawTx.Txtype='0x1';
+                    const chain = hdUtil.getChain('WAN');
+                    let ret = await chain.signTransaction(walletID, rawTx, path);
+                    console.log('ret', ret);
+                    sig = '0x' + ret.toString('hex');
+                    console.log('sig', sig);
+                } else {
+                    try {
+                        let ret = await hdWallet.sec256k1sign(path, rawTx);
+                        sig.r = '0x' + ret.r.toString('hex');
+                        sig.s = '0x' + ret.s.toString('hex');
+                        sig.v = '0x' + ret.v.toString('hex');
+                    } catch (e) {
+                        logger.error(e.message || e.stack)
+                        err = e
+                    }
                 }
+
+                
 
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
                 break
