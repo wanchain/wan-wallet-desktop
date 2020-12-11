@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin, Modal } from 'antd';
+import { Spin, Modal, Select } from 'antd';
 import style from './index.less';
 import { WALLETID } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
@@ -13,6 +13,8 @@ import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
 
 const { confirm } = Modal;
+
+const Option = Select.Option;
 
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
@@ -304,21 +306,23 @@ class DApp extends Component {
   }
 
   async nativeSignTransaction(msg, wallet) {
+    let chainId = await getChainId();
+    let nonce = await getNonce(msg.message.from, 'wan');
     let gasPrice = await getGasPrice('wan');
-    let amountInWei = new BigNumber(msg.message.value)
-    let trans = {
-      walletID: wallet.id,
-      chainType: 'WAN',
-      symbol: 'WAN',
-      path: wallet.path,
-      to: msg.message.to,
-      amount: amountInWei.div(1e18),
-      gasLimit: msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`,
-      gasPrice: msg.message.gasPrice ? fromWei(msg.message.gasPrice, 'Gwei') : `0x${(gasPrice * (10 ** 9)).toString(16)}`,
-      data: msg.message.data
-    };
-    console.log('wallet_signTransaction input', { walletID: wallet.id, path: wallet.path, rawTx: trans });
-    wand.request('wallet_signTransaction', { walletID: wallet.id, path: wallet.path, rawTx: trans }, function (err, tx) {
+    let data = msg.message.data;
+    let amountWei = msg.message.value;
+    let rawTx = {};
+    rawTx.from = msg.message.from;
+    rawTx.to = msg.message.to;
+    rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
+    rawTx.data = data;
+    rawTx.nonce = '0x' + nonce.toString(16);
+    rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+    rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
+    rawTx.Txtype = Number(1);
+    rawTx.chainId = chainId;
+    console.log('wallet_signTransaction input', { walletID: wallet.id, path: wallet.path, rawTx });
+    wand.request('wallet_signTransaction', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
       console.log('wallet_signTransaction return', 'err', err, 'ret', tx);
       if (err) {
         console.log('error printed inside callback: ', err)
@@ -345,7 +349,7 @@ class DApp extends Component {
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
-      rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
+      rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
@@ -430,6 +434,23 @@ class DApp extends Component {
     });
   }
 
+  async showAddresses(type, msg, onOk, onCancel) {
+    let title = intl.get('HwWallet.Connect.selectAddress');
+
+    confirm({
+      title: title,
+      content: <Select></Select>,
+      okText: intl.get('ValidatorRegister.acceptAgency'),
+      cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
+      async onOk() {
+        await onOk(msg);
+      },
+      async onCancel() {
+        await onCancel(msg);
+      },
+    });
+  }
+
   renderLoadTip = () => {
     return (
       <div>
@@ -458,7 +479,7 @@ class DApp extends Component {
             style={{ width: '100%', height: '100%' }}
             nodeintegration="on"
             preload={preload}
-            allowpopups="on"
+            allowpopups={true}
           >
             Your electron doesn't support webview, please set webviewTag: true.
           </webview>
