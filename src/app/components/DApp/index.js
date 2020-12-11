@@ -479,7 +479,7 @@ class DApp extends Component {
             style={{ width: '100%', height: '100%' }}
             nodeintegration="on"
             preload={preload}
-            allowpopups={true}
+            allowpopups="on"
           >
             Your electron doesn't support webview, please set webviewTag: true.
           </webview>
