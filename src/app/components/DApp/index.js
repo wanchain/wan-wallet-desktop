@@ -294,9 +294,9 @@ class DApp extends Component {
     rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
     rawTx.Txtype = Number(1);
     rawTx.chainId = chainId;
-    console.log('wallet_signTransaction input', { walletID: wallet.id, path: wallet.path, rawTx });
-    wand.request('wallet_signTransaction', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
-      console.log('wallet_signTransaction return', 'err', err, 'ret', tx);
+    console.log('wallet_signTx input', { walletID: wallet.id, path: wallet.path, rawTx });
+    wand.request('wallet_signTx', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
+      console.log('wallet_signTx return', 'err', err, 'ret', tx);
       if (err) {
         console.log('error printed inside callback: ', err)
         msg.err = err;

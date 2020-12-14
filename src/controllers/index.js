@@ -261,32 +261,37 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
+        case 'signTx': // new added for wanswap inside
+            {
+                let sig = {};
+                let { walletID, path, rawTx } = payload;
+
+                logger.info('Sign transaction:');
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
+                const chain = hdUtil.getChain('WAN');
+                let ret = await chain.signTransaction(walletID, rawTx, path);
+                sig = '0x' + ret.toString('hex');
+                console.log('sig', sig);
+
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
+                break
+            }
+    
         case 'signTransaction':
             {
                 let sig = {};
                 let { walletID, path, rawTx } = payload;
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
-
-                logger.info('Sign transaction:');
-                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-                if (walletID === 1) {
-                    const chain = hdUtil.getChain('WAN');
-                    let ret = await chain.signTransaction(walletID, rawTx, path);
-                    sig = '0x' + ret.toString('hex');
-                    console.log('sig', sig);
-                } else {
-                    try {
-                        let ret = await hdWallet.sec256k1sign(path, rawTx);
-                        sig.r = '0x' + ret.r.toString('hex');
-                        sig.s = '0x' + ret.s.toString('hex');
-                        sig.v = '0x' + ret.v.toString('hex');
-                    } catch (e) {
-                        logger.error(e.message || e.stack)
-                        err = e
-                    }
-                }
-
                 
+                try {
+                    let ret = await hdWallet.sec256k1sign(path, rawTx);
+                    sig.r = '0x' + ret.r.toString('hex');
+                    sig.s = '0x' + ret.s.toString('hex');
+                    sig.v = '0x' + ret.v.toString('hex');
+                } catch (e) {
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
 
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
                 break
