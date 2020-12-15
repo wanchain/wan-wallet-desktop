@@ -67,6 +67,7 @@ class App extends Component {
         message.warn(intl.get('HwWallet.disconnected'));
         wand.request('wallet_deleteLedger');
         stores.wanAddress.updateAddress(val.Device.toLowerCase());
+        stores.ethAddress.updateAddress(val.Device.toLowerCase());
       }
     });
 

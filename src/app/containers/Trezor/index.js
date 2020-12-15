@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import TrezorConnect, { DEVICE_EVENT, DEVICE } from 'trezor-connect';
 import { observer, inject } from 'mobx-react';
 import { Icon } from 'antd';
-import { signTransaction, getPublicKey, WAN_PATH } from 'componentUtils/trezor'
+import { signTransaction, getPublicKey } from 'componentUtils/trezor'
 import style from './index.less';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
@@ -11,6 +11,8 @@ import ConnectHwWallet from 'components/HwWallet/Connect';
 const WALLET_ID = 0x03;
 const TREZOR = 'trezor';
 const CHAIN_TYPE = 'WAN';
+const WAN_PATH = "m/44'/5718350'/0'/0";
+const ETH_PATH = "m/44'/60'/0'/0";
 
 // Initialize TrezorConnect
 TrezorConnect.init({
@@ -38,20 +40,27 @@ TrezorConnect.init({
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
-  trezorAddrList: stores.wanAddress.trezorAddrList,
-  updateAddress: type => stores.wanAddress.updateAddress(type),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
+  trezorWANAddrList: stores.wanAddress.trezorAddrList,
+  trezorETHAddrList: stores.ethAddress.trezorAddrList,
+  updateWANAddress: type => stores.wanAddress.updateAddress(type),
+  updateETHAddress: type => stores.ethAddress.updateAddress(type),
+  updateWANTransHistory: () => stores.wanAddress.updateTransHistory(),
+  updateETHTransHistory: () => stores.ethAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr),
+  addWANTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr),
+  addETHTrezorAddr: newAddr => stores.ethAddress.addAddresses(TREZOR, newAddr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
 }))
 
 @observer
 class Trezor extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
+    this.chain = props.match.params.chain || CHAIN_TYPE;
+    this.isWAN = this.chain === CHAIN_TYPE;
     this.props.changeTitle('Trezor.trezor');
-    this.props.setCurrTokenChain('WAN');
+    this.props.setCurrTokenChain(this.chain);
+
     // Declare trezor event
     TrezorConnect.on(DEVICE_EVENT, (event) => {
       if (event.type === DEVICE.CONNECT) {
@@ -59,18 +68,18 @@ class Trezor extends Component {
       } else if (event.type === DEVICE.DISCONNECT) {
         console.log('Trezor disconnected');
         // clear trezor list
-        this.props.updateAddress('trezor');
+        this.props[this.isWAN ? 'updateWANAddress' : 'updateETHAddress']('trezor');
       }
     });
   }
 
-  componentDidUpdate () {
-    if (this.props.trezorAddrList.length !== 0 && this.timer === undefined) {
-      this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
+  componentDidUpdate() {
+    if (this.props[this.isWAN ? 'trezorWANAddrList' : 'trezorETHAddrList'].length !== 0 && this.timer === undefined) {
+      this.timer = setInterval(() => this.props[this.isWAN ? 'updateWANTransHistory' : 'updateETHTransHistory'](), 5000);
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
 
@@ -81,14 +90,14 @@ class Trezor extends Component {
   instruction = () => {
     return (
       <div>
-        <p className="com-gray">1. {intl.get('Trezor.installBridge')} <Icon type='link' onClick={this.handleClick}/></p>
+        <p className="com-gray">1. {intl.get('Trezor.installBridge')} <Icon type='link' onClick={this.handleClick} /></p>
         <p className="com-gray">2. {intl.get('Trezor.connectTrezorWalletToComputer')}</p>
       </div>
     )
   }
 
   setAddresses = newAddr => {
-    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+    wand.request('account_getAll', { chainID: this.isWAN ? 5718350 : 60 }, (err, ret) => {
       if (err) return;
       const hdInfoFromDb = [];
       Object.values(ret.accounts).forEach(item => {
@@ -102,22 +111,27 @@ class Trezor extends Component {
           item.name = matchValue.name;
         }
       });
-      this.props.addTrezorAddr(newAddr)
+      this.props[this.isWAN ? 'addWANTrezorAddr' : 'addETHTrezorAddr'](newAddr)
     })
   }
 
-  render () {
-    const { trezorAddrList, match } = this.props;
+  getPublicKey = (cb) => {
+    getPublicKey(cb, this.isWAN ? WAN_PATH : ETH_PATH);
+  }
+
+  render() {
+    const { trezorWANAddrList, trezorETHAddrList, match } = this.props;
+    let trezorAddrList = this.isWAN ? trezorWANAddrList : trezorETHAddrList;
     return (
       <div>
         {
           trezorAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={getPublicKey} dPath={WAN_PATH} />
-            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={match.params.chain || CHAIN_TYPE} />
+            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.getPublicKey} chainType={this.chain} dPath={this.isWAN ? WAN_PATH : ETH_PATH} />
+            : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={this.chain} />
         }
       </div>
     );
   }
 }
 
-export default Trezor;
+export default props => <Trezor {...props} key={props.match.params.chain}/>;

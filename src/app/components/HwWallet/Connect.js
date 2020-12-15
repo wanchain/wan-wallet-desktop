@@ -96,10 +96,10 @@ class Connect extends Component {
           if (Object.keys(res).includes(item.address)) {
             item.balance = res[item.address];
           }
-        })
+        });
         this.setState({
           addresses
-        })
+        });
       }
     }).catch(err => {
       console.log('Derive addresses failed:', err);

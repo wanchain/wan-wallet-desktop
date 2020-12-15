@@ -229,10 +229,8 @@ class Tokens {
 
     let addrList = [];
     let normal = addressObj.normal;
-    // let ledger = addressObj.ledger || {};
-    // let trezor = addressObj.trezor || {};
-    let ledger = chain === 'WAN' ? (addressObj.ledger || {}) : {};
-    let trezor = chain === 'WAN' ? (addressObj.trezor || {}) : {};
+    let ledger = addressObj.ledger || {};
+    let trezor = addressObj.trezor || {};
     let addresses = Object.assign({}, normal, ledger, trezor);
     Object.keys(addresses).forEach(item => {
       let balance;

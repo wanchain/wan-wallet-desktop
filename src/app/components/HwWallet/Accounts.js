@@ -5,9 +5,12 @@ import intl from 'react-intl-universal';
 import { formatNum } from 'utils/support';
 import { hasSameName } from 'utils/helper';
 import TransHistory from 'components/TransHistory';
+import ETHTransHistory from 'components/TransHistory/ETHTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
+import SendETHNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
 import { EditableFormRow, EditableCell } from 'components/Rename';
+import { ETHCHAINID } from 'utils/settings';
 import style from './index.less';
 
 const CHAIN_TYPE = 'WAN';
@@ -18,6 +21,7 @@ const CHAIN_TYPE = 'WAN';
   addrETHInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
+  network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateWANName: (obj, type) => stores.wanAddress.updateName(obj, type),
   updateETHName: (obj, type) => stores.ethAddress.updateName(obj, type),
   updateWANTransHistory: () => stores.wanAddress.updateTransHistory(),
@@ -26,7 +30,7 @@ const CHAIN_TYPE = 'WAN';
 
 @observer
 class Accounts extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.chain = props.chainType || CHAIN_TYPE;
     this.isWAN = this.chain === CHAIN_TYPE;
@@ -47,7 +51,11 @@ class Accounts extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
+      render: (text, record) => {
+        return (
+          <div>{this.props.chainType === CHAIN_TYPE ? <SendNormalTrans path={record.path} from={record.address} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx={true} /> : <SendETHNormalTrans path={record.path} from={record.address} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx={true} />}</div>
+        )
+      }
     }
   ];
 
@@ -77,8 +85,11 @@ class Accounts extends Component {
   }
 
   handleSend = from => {
-    const { rawTx, chainType } = this.props;
+    const { rawTx, chainType, network } = this.props;
     let params = this.props.transParams[from];
+    if (chainType === 'ETH') {
+      rawTx.chainId = network === 'main' ? ETHCHAINID.MAIN : ETHCHAINID.TEST;
+    }
     return new Promise((resolve, reject) => {
       this.props.signTransaction(params.path, rawTx, (_err, raw) => {
         if (_err !== null) {
@@ -86,31 +97,31 @@ class Accounts extends Component {
           return;
         }
         wand.request('transaction_raw', { raw, chainType }, (err, txHash) => {
+          console.log('txHash:', txHash);
           if (err) {
             message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
-            console.log(err);
+            console.log('error:', err);
             reject(err);
           } else {
             let params = {
               txHash,
               from: from.toLowerCase(),
-              srcSCAddrKey: 'WAN', // To do
-              srcChainType: 'WAN',
-              tokenSymbol: 'WAN',
+              srcSCAddrKey: chainType,
+              srcChainType: chainType,
+              tokenSymbol: chainType,
               ...rawTx
             }
             wand.request('transaction_insertTransToDB', { rawTx: params }, () => {
               this.props[this.isWAN ? 'updateWANTransHistory' : 'updateETHTransHistory']();
             })
             resolve();
-            console.log('Tx Hash:', txHash);
           }
         });
       });
     })
   }
 
-  render () {
+  render() {
     const { name, addresses } = this.props;
     const components = {
       body: {
@@ -122,7 +133,6 @@ class Accounts extends Component {
     this.props.language && this.columnsTree.forEach(col => {
       col.title = intl.get(`HwWallet.Accounts.${col.dataIndex}`)
     })
-
     return (
       <div className="account">
         <Row className="mainBody">
@@ -132,7 +142,7 @@ class Accounts extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TransHistory name={name}/>
+            {this.isWAN ? <TransHistory name={name} /> : <ETHTransHistory name={name} />}
           </Col>
         </Row>
       </div>

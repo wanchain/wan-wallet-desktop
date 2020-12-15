@@ -5,22 +5,27 @@ import { wandWrapper } from 'utils/support.js';
 
 const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
+const EthTx = require('ethereumjs-tx');
 
 export const WAN_PATH = "m/44'/5718350'/0'/0";
 
 export const signTransaction = (path, tx, callback) => {
+  const transaction = {
+    to: tx.to,
+    value: tx.value,
+    data: tx.data,
+    chainId: tx.chainId,
+    nonce: tx.nonce,
+    gasLimit: tx.gasLimit,
+    gasPrice: tx.gasPrice,
+  }
+  const isWAN = path.startsWith(`m/44'/5718350`);
+  if (isWAN) {
+    transaction.txType = tx.Txtype; // txType is only for WAN
+  }
   TrezorConnect.ethereumSignTransaction({
     path: path,
-    transaction: {
-      to: tx.to,
-      value: tx.value,
-      data: tx.data,
-      chainId: tx.chainId,
-      nonce: tx.nonce,
-      gasLimit: tx.gasLimit,
-      gasPrice: tx.gasPrice,
-      txType: tx.Txtype
-    }
+    transaction: transaction
   }).then((result) => {
     if (!result.success) {
       message.warn(intl.get('Trezor.signTransactionFailed'));
@@ -31,16 +36,18 @@ export const signTransaction = (path, tx, callback) => {
     tx.v = result.payload.v;
     tx.r = result.payload.r;
     tx.s = result.payload.s;
-    let eTx = new WanTx(tx);
+    let eTx = isWAN ? new WanTx(tx) : new EthTx(tx);
     let signedTx = '0x' + eTx.serialize().toString('hex');
-    console.log('Signed transaction: ', signedTx);
     callback(null, signedTx);
-  }).catch(err => callback(err));
+  }).catch(err => {
+    console.log('trezor sign error:', err)
+    return callback(err);
+  });
 }
 
-export const getPublicKey = callback => {
+export const getPublicKey = (callback, path = WAN_PATH) => {
   TrezorConnect.getPublicKey({
-    path: WAN_PATH
+    path: path
   }).then(result => {
     if (result.success) {
       callback(null, result.payload);

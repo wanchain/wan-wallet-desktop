@@ -4,10 +4,11 @@ import { message } from 'antd';
 import intl from 'react-intl-universal';
 import style from './index.less';
 import { WALLETID } from 'utils/settings';
-import { WanTx, WanRawTx } from 'utils/hardwareUtils'
+import { WanTx, WanRawTx, EthRawTx } from 'utils/hardwareUtils';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
+const EthTx = require('ethereumjs-tx');
 const WAN_PATH = "m/44'/5718350'/0'";
 const ETH_PATH = "m/44'/60'/0'";
 const CHAIN_TYPE = 'WAN';
@@ -86,27 +87,24 @@ class Ledger extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
-    let rawTx = new WanRawTx(tx).serialize();
+    const isWAN = path.startsWith(`m/44'/5718350`);
+    if (!isWAN) {
+      delete tx.Txtype;
+    }
+    let rawTx = this.isWAN ? new WanRawTx(tx).serialize() : new EthRawTx(tx).serialize();
     message.info(intl.get('Ledger.signTransactionInLedger'));
-    console.log('sign param:', { walletID: WALLETID.LEDGER, path: path, rawTx: rawTx });
-    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx: rawTx }, (err, sig) => {
+    // console.log('sign param:', isWAN, { walletID: WALLETID.LEDGER, path, rawTx: rawTx });
+    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path, rawTx: rawTx }, (err, sig) => {
       if (err) {
         message.warn(intl.get('Ledger.signTransactionFailed'));
-
-        /* err: {
-          cat: "EthAppPleaseEnableContractData"
-          desc: "Please enable Contract data on the Ethereum app Settings"
-        } */
-
         callback(err, null);
         console.log(`Sign Failed:`, err);
       } else {
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;
-        let wTx = new WanTx(tx);
+        let wTx = isWAN ? new WanTx(tx) : new EthTx(tx);
         let signedTx = '0x' + wTx.serialize().toString('hex');
-        console.log('Signed tx: ', signedTx);
         callback(null, signedTx);
       }
     });
@@ -116,7 +114,6 @@ class Ledger extends Component {
     wand.request('account_getAll', { chainID: this.isWAN ? 5718350 : 60 }, (err, ret) => {
       if (err) return;
       let hdInfoFromDb = [];
-      console.log('getAll:', ret);
       Object.values(ret.accounts).forEach(item => {
         if (item[WALLETID.LEDGER]) {
           hdInfoFromDb.push(item[WALLETID.LEDGER]);
@@ -128,12 +125,12 @@ class Ledger extends Component {
           item.name = matchValue.name;
         }
       });
-      this.props[`add${this.chain}LedgerAddr`](newAddr)
+      this.props[this.isWAN ? 'addWANLedgerAddr' : 'addETHLedgerAddr'](newAddr)
     })
   }
 
   render() {
-    const ledgerAddrList = this.props[`ledger${this.chain}AddrList`];
+    const ledgerAddrList = this.props[this.isWAN ? 'ledgerWANAddrList' : 'ledgerETHAddrList'];
     return (
       <div>
         {
@@ -146,4 +143,4 @@ class Ledger extends Component {
   }
 }
 
-export default props => <Ledger {...props} key={props.match.params.chain}/>;
+export default props => <Ledger {...props} key={props.match.params.chain} />;

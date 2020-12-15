@@ -8,6 +8,11 @@ export const BTCCHAINID = {
   TEST: 1,
 }
 
+export const ETHCHAINID = {
+  MAIN: 1,
+  TEST: 4,
+}
+
 export const WALLETID = {
   NATIVE: 0x01,
   LEDGER: 0x02,

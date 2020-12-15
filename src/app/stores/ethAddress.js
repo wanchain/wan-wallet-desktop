@@ -1,9 +1,10 @@
 
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { BigNumber } from 'bignumber.js';
 import tokens from './tokens';
 import languageIntl from './languageIntl';
+import ethUtil from 'ethereumjs-util';
 import { checkAddrType, getTypeByWalletId } from 'utils/helper';
 import { ETHPATH, WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum } from 'utils/support';
@@ -72,17 +73,18 @@ class EthAddress {
     }
     wand.request('transaction_showRecords', (err, val) => {
       if (!err && val.length !== 0) {
-        let tmpTransHistory = {};
+        let tmp = {};
         val = val.filter(item => item.chainType === 'ETH');
         val.forEach(item => {
+          item.from = ethUtil.toChecksumAddress(item.from);
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
-            tmpTransHistory[item.txHash] = item;
+            tmp[item.txHash] = item;
           }
           if (item.txHash === '' && item.status === 'Failed') {
-            tmpTransHistory[item.hashX] = item;
+            tmp[item.hashX] = item;
           }
         });
-        self.transHistory = tmpTransHistory;
+        self.transHistory = tmp;
       }
     })
   }
@@ -256,17 +258,17 @@ class EthAddress {
     let page = self.currentPage;
     let addrList = [];
     if (self.selectedAddr) {
-      addrList = self.selectedAddr
+      addrList = self.selectedAddr;
     } else {
       page.forEach(name => {
-        addrList = addrList.concat(Object.keys(self.addrInfo[name]))
+        addrList = addrList.concat(Object.keys(self.addrInfo[name]));
       })
     }
     Object.keys(self.transHistory).forEach(item => {
       let data = self.transHistory[item];
       if (addrList.includes(data.from) && !data.transferTo) {
         let status = data.status;
-        let type = checkAddrType(data.from, self.addrInfo)
+        let type = checkAddrType(data.from, self.addrInfo);
         historyList.push({
           key: item,
           time: timeFormat(data.sendTime),
