@@ -1844,16 +1844,13 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
                 if (payload.type === 'REDEEM') {
-                    if (sourceSymbol === 'WAN') {
-                        payload.input.feeHard = feeHard
-                    }
+                    payload.input.feeRate = await ccUtil.estimateSmartFee();
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 if (payload.type === 'REVOKE') {
-                    if (sourceSymbol === 'BTC') {
-                        payload.input.feeHard = feeHard
-                    }
+                    payload.input.feeRate =  await ccUtil.estimateSmartFee();
                 }
+                console.log('CC BTC:', payload.type, payload);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;
