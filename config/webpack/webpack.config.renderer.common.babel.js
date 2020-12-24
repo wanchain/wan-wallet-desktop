@@ -27,15 +27,7 @@ export default {
           {
             loader: "babel-loader",
             options: {
-              cacheDirectory: true,
-              presets: ['@babel/preset-env'],
-              plugins: [
-                '@babel/transform-runtime',
-                ['import', {
-                  libraryName: 'antd',
-                  style: true
-                }]
-              ]
+              cacheDirectory: true
             }
           }
         ].concat(isEnvProduction ? [] : [{
