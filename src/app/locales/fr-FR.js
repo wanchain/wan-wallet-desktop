@@ -475,7 +475,7 @@ const fr_FR = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Mode RAPIDE',
     'CrossChainTransForm.HTLC': 'Mode SECURISÉ',
-    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale.',
+    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',

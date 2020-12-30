@@ -474,7 +474,7 @@ const pt_PT = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Modo rápido',
     'CrossChainTransForm.HTLC': 'Modo seguro',
-    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação.',
+    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',

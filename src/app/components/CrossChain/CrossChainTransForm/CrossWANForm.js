@@ -112,7 +112,7 @@ class CrossWANForm extends Component {
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       if (new BigNumber(sendAmount).lt(fastMinCount)) {
-        message.warn(intl.get('CrossChainTransForm.UnderFastMinimum'));
+        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(fastMinCount, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
         return;
       }
       if (this.accountSelections.includes(to)) {
