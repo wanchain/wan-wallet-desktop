@@ -31,6 +31,7 @@ const th_TH = {
     'Common.create': 'สร้างแอดเดรส',
     'Common.balance': 'ยอดคงเหลือ',
     'Common.sendFailed': 'เครือข่ายไม่เสถียร กรุณาลองอีกครั้ง',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',

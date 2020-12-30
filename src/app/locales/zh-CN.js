@@ -31,6 +31,7 @@ const zh_CN = {
     'Common.create': '创建',
     'Common.balance': '余额',
     'Common.sendFailed': '网络不稳定，发送失败，请稍后再试',
+    'Common.sendFailedForInsufficientFunds': '发送交易失败，请确保您有足够的余额。',
     'Common.networkError': '网络故障，请重启钱包',
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',

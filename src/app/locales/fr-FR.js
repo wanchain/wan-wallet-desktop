@@ -31,6 +31,7 @@ const fr_FR = {
     'Common.create': 'Créer',
     'Common.balance': 'Solde',
     'Common.sendFailed': 'Connexion internet instable. Veuillez réessayer',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',

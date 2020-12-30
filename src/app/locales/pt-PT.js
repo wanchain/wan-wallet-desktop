@@ -31,6 +31,7 @@ const pt_PT = {
     'Common.create': 'Criar',
     'Common.balance': 'Saldo',
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',

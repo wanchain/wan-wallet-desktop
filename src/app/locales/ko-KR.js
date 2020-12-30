@@ -31,6 +31,7 @@ const ko_KR = {
     'Common.create': '생성',
     'Common.balance': '자산 합계',
     'Common.sendFailed': '네트워크가 안정적이지 않습니다. 다시 시도해보십시오.',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': '이오스 토큰',
     'Common.convert': '변환',

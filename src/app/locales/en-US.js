@@ -31,6 +31,7 @@ const en_US = {
     'Common.create': 'Create',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
