@@ -11,7 +11,7 @@ import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
 import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
-import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
@@ -46,7 +46,7 @@ class CrossChainTransForm extends Component {
     }
     this.operationFee = 0;
     getFees(info[props.type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
-      this.operationFee = res[0];
+      this.operationFee = fromWei(res[0]);
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
