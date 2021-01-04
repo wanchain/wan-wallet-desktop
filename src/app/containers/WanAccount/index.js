@@ -165,10 +165,15 @@ class WanAccount extends Component {
           console.log('Send transaction failed:', err);
           reject(err);
         } else {
-          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
-          resolve();
-          this.props.updateTransHistory();
           console.log('Tx hash: ', txHash);
+          if (txHash.code === false) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            reject(txHash.result);
+          } else {
+            message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+            resolve();
+          }
+          this.props.updateTransHistory();
         }
       });
     });
