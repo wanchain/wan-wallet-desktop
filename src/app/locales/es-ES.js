@@ -356,6 +356,8 @@ const es_ES = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce incorrecto',
     'AdvancedOptionForm.inputData': 'Ingrese Datos',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Datos de entrada incorrectas',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copia exitosamente',
     'CopyAndQrcode.privateKey': 'Llave privado',

@@ -12,7 +12,7 @@ import history from 'static/image/history.png';
   chainId: stores.session.chainId,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
-  crossBTCTrans: stores.crossChain.crossBTCTrans,
+  crossChainTrans: stores.crossChain.crossChainTrans,
   transColumns: stores.languageIntl.transColumns,
   updateCrossTrans: () => stores.crossChain.updateCrossTrans(),
 }))
@@ -45,7 +45,7 @@ class CrossBTCHistory extends Component {
   }
 
   render () {
-    const { crossBTCTrans } = this.props;
+    const { crossChainTrans } = this.props;
     let transColumns = cloneDeep(this.props.transColumns);
     transColumns[1].render = (text, record) => <div className={style.textHeight} title={record.fromAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.srcChainAddr)}</span></div>;
     transColumns[2].render = (text, record) => <div className={style.textHeight} title={record.toAddr}>{text} <br /> <span className={style.chainText}>{getFullChainName(record.dstChainAddr)}</span></div>;
@@ -57,7 +57,7 @@ class CrossBTCHistory extends Component {
           <img src={history} /><span>{intl.get('TransHistory.transactionHistory')}</span>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={crossBTCTrans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={transColumns} dataSource={crossChainTrans} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
         { this.state.visible && <TransInfo handleCancel={this.handleCancel} record={this.state.record} /> }
       </div>

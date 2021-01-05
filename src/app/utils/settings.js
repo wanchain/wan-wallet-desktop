@@ -95,3 +95,4 @@ export const TOKEN_PRIORITY = {
   EOS: 1,
 }
 export const WAN_ETH_DECIMAL = 18;
+export const MAX_BTC_FEE_RATE = 2000;

@@ -356,6 +356,8 @@ const th_TH = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce ไม่ถูกต้อง',
     'AdvancedOptionForm.inputData': 'กรอกข้อมูล',
     'AdvancedOptionForm.inputDataIsIncorrect': 'ข้อมูลที่กรอกไม่ถูกต้อง',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
     'CopyAndQrcode.privateKey': 'Private Key',

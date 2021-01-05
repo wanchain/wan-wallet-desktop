@@ -355,6 +355,8 @@ const pt_PT = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce está incorreto',
     'AdvancedOptionForm.inputData': 'Insira dados',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Dados inseridos estão incorretos',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
     'CopyAndQrcode.privateKey': 'Chave privada',

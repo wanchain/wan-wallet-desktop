@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getBalanceByAddr, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossWANForm from 'components/CrossChain/CrossChainTransForm/CrossWANForm';
-import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS, FAST_GAS } from 'utils/settings';
+import { FAST_GAS } from 'utils/settings';
 
 const TransForm = Form.create({ name: 'CrossWANForm' })(CrossWANForm);
 
@@ -14,7 +14,6 @@ const TransForm = Form.create({ name: 'CrossWANForm' })(CrossWANForm);
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
-  getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
 }))
 
 @observer
@@ -24,53 +23,24 @@ class WANTrans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    },
+    estimateFee: 0,
     tokenAddr: '',
     gasPrice: 0,
   }
 
   showModal = async () => {
-    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain, chainType } = this.props;
+    const { from, path, addCrossTransTemplate, updateTransParams, tokenPairs, chainPairId, chainType } = this.props;
     if (!(chainPairId in tokenPairs)) {
       return false;
     }
     let info = Object.assign({}, tokenPairs[chainPairId]);
-    let desChain, origGas, destGas, storeman;
+    let storeman;
     let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
-    if (type === INBOUND) {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      } */
-      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
-      desChain = info.toChainSymbol;
-      origGas = LOCKETH_GAS;// ToDo
-      destGas = REDEEMWETH_GAS;// ToDo
-    } else {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      } */
-      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
-      desChain = info.fromChainSymbol;
-      origGas = LOCKWETH_GAS;// ToDo
-      destGas = REDEEMETH_GAS;// ToDo
-    }
-
     this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       smgList = smgList.filter(obj => {
         let now = Date.now();
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
@@ -82,16 +52,13 @@ class WANTrans extends Component {
       }
       this.setState({
         smgList,
-        estimateFee: {
-          original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
-        },
+        estimateFee: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
         gasPrice,
       });
       storeman = smgList[0].groupId;
       updateTransParams(from, {
         gasPrice,
-        gasLimit: origGas,
+        gasLimit: FAST_GAS,
         storeman,
         chainPairId: chainPairId,
       });

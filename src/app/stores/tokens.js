@@ -77,7 +77,6 @@ class Tokens {
             tokenScAddr: scAddr
           }
         }, (err, data) => {
-          // console.log('init icon:', obj.symbol, data);
           if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
             self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
           } else {
@@ -229,7 +228,7 @@ class Tokens {
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
         let tokenInfo = this.getTokenInfoFromTokensListByAddr(SCAddress);
         if (self.tokensList && tokenInfo) {
-          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item], tokenInfo.decimals)
+          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item.toLowerCase()], tokenInfo.decimals)
         } else {
           balance = 0
         }
@@ -367,7 +366,7 @@ class Tokens {
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
           let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
           if (this.tokensList && token !== undefined) {
-            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item.toLowerCase()], token.decimals)
           } else {
             balance = 0
           }
@@ -405,7 +404,7 @@ class Tokens {
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
           let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
           if (this.tokensList && token !== undefined) {
-            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item.toLowerCase()], token.decimals)
           } else {
             balance = 0
           }

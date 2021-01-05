@@ -39,9 +39,7 @@ class AdvancedCrossChainOptionForm extends Component {
         this.setState({ loading: false });
         return;
       };
-      console.log('values:', values);
-      let gasPrice = form.getFieldValue('gasPrice');
-      let gasLimit = form.getFieldValue('gasLimit');
+      const { gasPrice, gasLimit } = values;
       try {
         updateTransParams(from, { gasPrice, gasLimit });
         this.setState({ loading: false });

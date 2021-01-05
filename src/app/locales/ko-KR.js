@@ -356,6 +356,8 @@ const ko_KR = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce 입력이 잘못 되었습니다.',
     'AdvancedOptionForm.inputData': '데이터를 입력하세요',
     'AdvancedOptionForm.inputDataIsIncorrect': '데이터 입력이 잘못 되었습니다.',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
     'CopyAndQrcode.privateKey': 'Private Key',

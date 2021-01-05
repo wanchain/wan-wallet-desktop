@@ -356,6 +356,8 @@ const en_US = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce is incorrect',
     'AdvancedOptionForm.inputData': 'Input Data',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Input data is incorrect',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copied successfully',
     'CopyAndQrcode.privateKey': 'Private Key',
@@ -456,7 +458,7 @@ const en_US = {
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
     'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance on original chain',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
-    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.overTransBalance': 'Insufficient balance',
     'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
     'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
     'CrossChainTransForm.overQuota': 'The amount is greater than the remaining capacity of the storeman',

@@ -9,7 +9,7 @@ import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
-import { ETHPATH, WANPATH, PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL } from 'utils/settings';
+import { PENALTYNUM, CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
@@ -39,7 +39,6 @@ class CrossETHForm extends Component {
     this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
     this.state = {
       confirmVisible: false,
-      quota: 0,
       crossType: CROSS_TYPE[0],
       advancedVisible: false,
       advanced: false,
@@ -55,7 +54,7 @@ class CrossETHForm extends Component {
     });
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  /* async componentDidUpdate(prevProps, prevState) {
     if (prevProps.smgList !== this.props.smgList) {
       let { chainType, type, smgList, currTokenPairId, currentTokenPairInfo: info } = this.props;
       if (smgList.length === 0) {
@@ -73,7 +72,7 @@ class CrossETHForm extends Component {
         quota: formatNumByDecimals(quota, decimals)
       })
     }
-  }
+  } */
 
   componentDidMount() {
     const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
@@ -127,7 +126,7 @@ class CrossETHForm extends Component {
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
-      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
+      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee)) {
         message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
@@ -161,7 +160,7 @@ class CrossETHForm extends Component {
     const decimals = info.ancestorDecimals;
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (type === INBOUND) {
-        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee.original).gt(balance)) {
+        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee).gt(balance)) {
           callback(intl.get('CrossChainTransForm.overTransBalance'));
         } else {
           callback();
@@ -173,14 +172,6 @@ class CrossETHForm extends Component {
           callback();
         }
       } else {
-        /* if (type === OUTBOUND) {
-          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
-          let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();// Outbound: crosschain fee + gas fee
-          form.setFieldsValue({
-            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
-          });
-        } */
         callback();
       }
     } else {
@@ -204,14 +195,14 @@ class CrossETHForm extends Component {
 
   updateLockAccounts = async (storeman, option) => {
     let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
-    const decimals = info.ancestorDecimals;
+    /* const decimals = info.ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` });
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` }); */
     updateTransParams(from, { storeman });
   }
 
@@ -270,7 +261,7 @@ class CrossETHForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { quota, advancedVisible, advanced, advancedFee } = this.state;
+    const { /* quota, */ advancedVisible, advanced, advancedFee } = this.state;
     let gasFee, operationFee, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
@@ -349,7 +340,7 @@ class CrossETHForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
               />
-              <CommonFormItem
+              {/* <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='quota'
@@ -357,7 +348,7 @@ class CrossETHForm extends Component {
                 options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
-              />
+              /> */}
               <AutoCompleteForm
                 form={form}
                 colSpan={6}

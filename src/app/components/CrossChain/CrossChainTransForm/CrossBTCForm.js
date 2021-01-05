@@ -6,13 +6,17 @@ import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'ant
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
-import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal, hexCharCodeToStr } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import { INBOUND, OUTBOUND } from 'utils/settings';
+import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
+import OptionForm from 'components/AdvancedCrossChainOptionForm/AdvancedBTCCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getNormalPathFromUtxos, getValueByAddrInfo, getValueByNameInfo } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getNormalPathFromUtxos, getValueByAddrInfo, getValueByNameInfo, getCrossChainContractData } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
+const AdvancedOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(OptionForm);
+const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(outboundOptionForm);
 
 @inject(stores => ({
   utxos: stores.btcAddress.utxos,
@@ -25,6 +29,8 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   coinPriceObj: stores.portfolio.coinPriceObj,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  currTokenPairId: stores.crossChain.currTokenPairId,
+  updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getPathPrefix: chain => stores.tokens.getPathPrefix(chain),
@@ -32,13 +38,18 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 
 @observer
 class CrossBTCForm extends Component {
-  state = {
-    fee: 0,
-    confirmVisible: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      fee: 0,
+      confirmVisible: false,
+      advancedVisible: false,
+      feeRate: 0
+    }
   }
 
   componentWillUnmount() {
-    this.setState = (state, callback) => {
+    this.setState = () => {
       return false;
     };
   }
@@ -50,20 +61,18 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, smgList, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix } = this.props;
-    form.validateFields(err => {
+    const { updateBTCTransParams, updateTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix } = this.props;
+    form.validateFields((err, { pwd, amount: sendAmount, to }) => {
       if (err) {
         console.log('handleNext:', err);
         return;
       };
       let origAddrAmount, destAddrAmount, origAddrFee, destAddrFee;
-      let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let wanAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
-      to = getValueByNameInfo(to, 'address', direction === INBOUND ? wanAddrInfo : addrInfo);
-
+      let otherAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
+      to = getValueByNameInfo(to, 'address', direction === INBOUND ? otherAddrInfo : addrInfo);
       if (direction === INBOUND) {
         origAddrAmount = balance;
-        destAddrAmount = getBalanceByAddr(to, wanAddrInfo);
+        destAddrAmount = getBalanceByAddr(to, otherAddrInfo);
         origAddrFee = this.state.fee;
         destAddrFee = estimateFee.destination;
         if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
@@ -71,7 +80,7 @@ class CrossBTCForm extends Component {
           return;
         }
       } else {
-        origAddrAmount = getBalanceByAddr(from, wanAddrInfo);
+        origAddrAmount = getBalanceByAddr(from, otherAddrInfo);
         destAddrAmount = getBalanceByAddr(to, addrInfo);
         origAddrFee = estimateFee.originalFee;
         destAddrFee = this.state.fee;
@@ -91,51 +100,55 @@ class CrossBTCForm extends Component {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
             if (direction === INBOUND) {
-              updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+              updateBTCTransParams({ to: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
             } else {
-              updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+              updateTransParams(from, { to: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
             }
             this.setState({ confirmVisible: true });
           }
         })
       } else {
         if (direction === INBOUND) {
-          updateBTCTransParams({ wanAddress: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + wanAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
+          updateBTCTransParams({ to: { walletID: 1, path: getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[to].path }, toAddr: to, value: formatAmount(sendAmount) });
         } else {
-          updateBTCTransParams({ crossAddr: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
+          updateTransParams(from, { to: { walletID: 1, path: btcPath + addrInfo.normal[to].path }, toAddr: to, amount: formatAmount(sendAmount) });
         }
         this.setState({ confirmVisible: true });
       }
     });
   }
 
-  checkAmount = (rule, value, callback) => {
-    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee, balance, BTCCrossTransParams: { feeRate } } = this.props;
-    let { quota } = form.getFieldsValue(['quota']);
+  sendTrans = () => {
+    this.props.onSend(this.props.from);
+  }
+
+  checkAmount = async (rule, value, callback) => {
+    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, btcFee, balance, BTCCrossTransParams: transParams, currTokenPairId: tokenPairID, currentTokenPairInfo: info } = this.props;
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
         if (direction === INBOUND) {
-          btcCoinSelect(utxos, value, feeRate).then(data => {
-            let fee = formatNumByDecimals(data.fee, 8);
+          let from = Object.keys(addrInfo.normal).map(key => ({
+            path: `${btcPath}${addrInfo.normal[key].path}`,
+            walletID: 1
+          }));
+          updateBTCTransParams({ from });
+          try {
+            let getFee = await this.getFee(from, value);
+            if (getFee.code === false) {
+              callback(intl.get('CrossChainTransForm.overBalance'));
+              return;
+            }
+            let fee = formatNumByDecimals(getFee.result.fee, 8);
             this.setState({ fee });
             if (isExceedBalance(balance, fee, value)) {
               callback(intl.get('CrossChainTransForm.overBalance'));
               return;
             }
-            if (isExceedBalance(quota.split(' ')[0], value)) {
-              callback(intl.get('CrossChainTransForm.overQuota'));
-              return;
-            }
-            let from = getNormalPathFromUtxos(data.inputs, addrInfo, btcPath);
-            if (from.length === 0) {
-              callback(intl.get('CrossChainTransForm.overBalance'));
-              return;
-            }
-            updateBTCTransParams({ from });
             callback();
-          }).catch(() => {
+          } catch (e) {
+            console.log('get Fee error:', e);
             callback(intl.get('CrossChainTransForm.overBalance'));
-          });
+          }
         } else {
           if (isExceedBalance(balance, value)) {
             callback(intl.get('CrossChainTransForm.overBalance'));
@@ -153,6 +166,26 @@ class CrossBTCForm extends Component {
     }
   }
 
+  getFee = (from, value) => {
+    const { direction, BTCCrossTransParams: transParams, currTokenPairId: tokenPairID, currentTokenPairInfo: info, getPathPrefix, getChainAddressInfoByChain, form, addrInfo } = this.props;
+    let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol)
+    let to = getValueByNameInfo(form.getFieldsValue(['to']).to, 'address', direction === INBOUND ? otherAddrInfo : addrInfo);
+    let input = {
+      from,
+      tokenPairID,
+      value,
+      feeRate: transParams.feeRate,
+      changeAddress: transParams.changeAddress,
+      storeman: transParams.storeman,
+      to: {
+        walletID: 1,
+        path: getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[to].path
+      }
+    }
+    let param = direction === INBOUND ? { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' } : { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' };
+    return getCrossChainContractData(param);
+  }
+
   checkQuota = (rule, value, callback) => {
     value = value.split(' ')[0];
     if (new BigNumber(value).gt(0)) {
@@ -167,26 +200,13 @@ class CrossBTCForm extends Component {
     }
   }
 
-  updateLockAccounts = (storeman, option) => {
-    let { form, updateBTCTransParams, smgList, direction, currentTokenPairInfo: info } = this.props;
-
-    if (direction === INBOUND) {
-      form.setFieldsValue({
-        capacity: formatNumByDecimals(smgList[option.key].quota, 8) + ` ${info.fromTokenSymbol}`,
-        quota: formatNumByDecimals(smgList[option.key].inboundQuota, 8) + ` ${info.fromTokenSymbol}`,
-      });
-    } else {
-      form.setFieldsValue({
-        quota: formatNumByDecimals(smgList[option.key].outboundQuota, 8) + ` ${info.toTokenSymbol}`,
-      });
-    }
-    let smg = smgList[option.key];
-    updateBTCTransParams({ btcAddress: smg.btcAddress, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], smgBtcAddr: smg.smgBtcAddr });
+  updateLockAccounts = (storeman) => {
+    let { updateBTCTransParams } = this.props;
+    updateBTCTransParams({ storeman });
   }
 
   filterStoremanData = item => {
-    let { currentTokenPairInfo } = this.props;
-    return item[this.props.direction === INBOUND ? 'btcAddress' : `${currentTokenPairInfo.toChainSymbol.toLowerCase()}Address`];
+    return item.groupId;
   }
 
   sendAllAmount = e => {
@@ -202,16 +222,48 @@ class CrossBTCForm extends Component {
     }
   }
 
+  onAdvanced = () => {
+    this.setState({
+      advancedVisible: true,
+    });
+  }
+
+  handleAdvancedCancel = () => {
+    this.setState({
+      advancedVisible: false,
+    });
+  }
+
+  handleInBoundSaveOption = (feeRate) => {
+    const { updateBTCTransParams, form } = this.props;
+    this.setState({
+      advancedVisible: false,
+      feeRate
+    });
+    updateBTCTransParams({ feeRate });
+    form.setFieldsValue({
+      amount: form.getFieldValue('amount')
+    });
+    form.validateFields(['amount']);
+  }
+
+  handleOutBoundSaveOption = (gasPrice, gasLimit) => {
+    this.props.updateBTCTransParams({ gasPrice, gasLimit });
+    this.setState({
+      advancedVisible: false,
+    });
+  }
+
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
-    let gasFee, operationFee, totalFee, desChain, selectedList, defaultSelectStoreman, capacity, quota, title, toAccountList, unit;
-    let wanAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
+    const { advancedVisible, feeRate } = this.state;
+    let gasFee, operationFee, totalFee, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
+    let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
-      toAccountList = wanAddrInfo;
-      selectedList = Object.keys(wanAddrInfo.normal);
+      toAccountList = otherAddrInfo;
+      selectedList = Object.keys(otherAddrInfo.normal);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      // totalFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
 
       // Convert the value of fee to USD
       if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
@@ -238,19 +290,15 @@ class CrossBTCForm extends Component {
 
     if (smgList.length === 0) {
       defaultSelectStoreman = '';
-      capacity = quota = 0;
     } else {
       if (direction === INBOUND) {
-        defaultSelectStoreman = smgList[0].btcAddress;
-        capacity = formatNumByDecimals(smgList[0].quota, 8);
-        quota = formatNumByDecimals(smgList[0].inboundQuota, 8);
         unit = info.fromTokenSymbol;
       } else {
-        defaultSelectStoreman = smgList[0][`${info.toChainSymbol.toLowerCase()}Address`];
-        quota = formatNumByDecimals(smgList[0].outboundQuota, 8);
         unit = info.toTokenSymbol;
       }
+      defaultSelectStoreman = smgList[0].groupId;
     }
+
     return (
       <div>
         <Modal
@@ -265,7 +313,7 @@ class CrossBTCForm extends Component {
             <Button disabled={this.props.spin} key="submit" type="primary" onClick={this.handleNext}>{intl.get('Common.next')}</Button>,
           ]}
         >
-          <Spin spinning={this.props.spin} size="large" /* tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} */ className="loadingData">
+          <Spin spinning={this.props.spin} size="large" className="loadingData">
             <div className="validator-bg">
               {
                 direction !== INBOUND &&
@@ -274,7 +322,7 @@ class CrossBTCForm extends Component {
                   colSpan={6}
                   formName='from'
                   disabled={true}
-                  options={{ initialValue: getValueByAddrInfo(from, 'name', wanAddrInfo) }}
+                  options={{ initialValue: getValueByAddrInfo(from, 'name', otherAddrInfo) }}
                   prefix={<Icon type="credit-card" className="colorInput" />}
                   title={intl.get('Common.from')}
                 />
@@ -293,31 +341,14 @@ class CrossBTCForm extends Component {
                 colSpan={6}
                 formName='storemanAccount'
                 initialValue={defaultSelectStoreman}
-                selectedList={smgList}
+                selectedList={smgList.map(v => ({
+                  text: hexCharCodeToStr(v.groupId),
+                  value: v.groupId
+                }))}
+                isTextValueData={true}
                 filterItem={this.filterStoremanData}
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
-              />
-              {
-                direction === INBOUND &&
-                <CommonFormItem
-                  form={form}
-                  colSpan={6}
-                  formName='capacity'
-                  disabled={true}
-                  options={{ initialValue: `${capacity} ${unit}` }}
-                  prefix={<Icon type="credit-card" className="colorInput" />}
-                  title={intl.get('CrossChainTransForm.capacity')}
-                />
-              }
-              <CommonFormItem
-                form={form}
-                colSpan={6}
-                formName='quota'
-                disabled={true}
-                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
-                prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('CrossChainTransForm.quota')}
               />
               <SelectForm
                 form={form}
@@ -358,10 +389,13 @@ class CrossBTCForm extends Component {
                 direction === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
               }
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
+              <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.props.onSend} from={from} loading={loading} />
+        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        { advancedVisible && direction === INBOUND && <AdvancedOptionForm chainType={'BTC'} value={feeRate || this.props.BTCCrossTransParams.feeRate} onCancel={this.handleAdvancedCancel} onSave={this.handleInBoundSaveOption} from={from} />}
+        { advancedVisible && direction === OUTBOUND && <AdvancedOutboundOptionForm chainType={info.toChainSymbol} onCancel={this.handleAdvancedCancel} onSave={this.handleOutBoundSaveOption} from={from} />}
       </div>
     );
   }

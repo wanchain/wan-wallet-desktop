@@ -91,6 +91,7 @@ class EthAddress {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo['normal']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
+
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
         self.addrInfo['normal'][item].balance = arr[item];

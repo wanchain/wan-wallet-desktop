@@ -1799,11 +1799,36 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getCrossChainContractData':
+            try {
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                console.log('srcChain:', srcChain);
+                console.log('dstChain:', dstChain);
+                if (payload.type === 'REDEEM') {
+                    payload.input.x = ccUtil.hexAdd0x(payload.input.x);
+                }
+                ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
+                console.log('get ret:', ret)
+                if (!ret.code) {
+                    err = ret;
+                }
+            } catch (e) {
+                logger.error('crossChain failed:');
+                logger.error(e);
+                // logger.error(e.message || e.stack);
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'crossChain':
             try {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
+                console.log('----------------------');
                 console.log('srcChain:', srcChain);
                 console.log('dstChain:', dstChain);
                 if (payload.type === 'REDEEM') {
@@ -1823,9 +1848,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossBTC':
             try {
-                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input } = payload;
-                let srcChain = sourceSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol);
-                let dstChain = destinationSymbol === 'WAN' ? null : global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol);
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
+                let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 let feeHard = network === 'main' ? 10000 : 100000;
                 if (payload.type === 'LOCK' && sourceSymbol === 'WAN') {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
@@ -2342,6 +2367,18 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}`);
                 ret = await ccUtil.getOpenStoremanGroupList();
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_STOREMAN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
+
+        case 'getReadyOpenStoremanGroupList':
+            try {
+                logger.debug(`Try ${action}`);
+                ret = await ccUtil.getReadyOpenStoremanGroupList();
                 logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)

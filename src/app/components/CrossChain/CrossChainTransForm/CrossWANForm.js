@@ -53,7 +53,7 @@ class CrossWANForm extends Component {
     });
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  /* async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
       let { chainType, type, smgList, currTokenPairId, currentTokenPairInfo: info } = this.props;
       if (smgList.length === 0) {
@@ -67,11 +67,12 @@ class CrossWANForm extends Component {
       } else {
         quota = await getBurnQuota(chainType, currTokenPairId, storeman);
       }
+      console.log('quota:', quota);
       this.setState({
         quota: formatNumByDecimals(quota, decimals)
       })
     }
-  }
+  } */
 
   componentDidMount() {
     const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
@@ -125,7 +126,7 @@ class CrossWANForm extends Component {
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
-      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
+      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee)) {
         message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
@@ -159,7 +160,7 @@ class CrossWANForm extends Component {
     const decimals = info.ancestorDecimals;
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (type === INBOUND) {
-        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee.original).gt(balance)) {
+        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee).gt(balance)) {
           callback(intl.get('CrossChainTransForm.overTransBalance'));
         } else {
           callback();
@@ -171,14 +172,6 @@ class CrossWANForm extends Component {
           callback();
         }
       } else {
-        /* if (type === OUTBOUND) {
-          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
-          let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();// Outbound: crosschain fee + gas fee
-          form.setFieldsValue({
-            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
-          });
-        } */
         callback();
       }
     } else {
@@ -202,14 +195,14 @@ class CrossWANForm extends Component {
 
   updateLockAccounts = async (storeman) => {
     let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
-    const decimals = info.ancestorDecimals;
+    /* const decimals = info.ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` });
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` }); */
     updateTransParams(from, { storeman });
   }
 
@@ -289,7 +282,7 @@ class CrossWANForm extends Component {
       feeUnit = info.toChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
-    gasFee = advanced ? advancedFee : estimateFee.original;
+    gasFee = advanced ? advancedFee : estimateFee;
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
@@ -349,7 +342,7 @@ class CrossWANForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
               />
-              <CommonFormItem
+              {/* <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='quota'
@@ -357,7 +350,7 @@ class CrossWANForm extends Component {
                 options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
-              />
+              /> */}
               <AutoCompleteForm
                 form={form}
                 colSpan={6}

@@ -37,7 +37,7 @@ class CrossChainTransForm extends Component {
     this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
     this.state = {
       confirmVisible: false,
-      quota: 0,
+      // quota: 0,
       crossType: CROSS_TYPE[0],
       advancedVisible: false,
       advanced: false,
@@ -53,7 +53,7 @@ class CrossChainTransForm extends Component {
     });
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  /* async componentDidUpdate(prevProps, prevState) {
     if (prevProps.smgList !== this.props.smgList) {
       let { chainType, type, smgList, currentTokenPairInfo: info, currTokenPairId } = this.props;
       if (smgList.length === 0) {
@@ -71,7 +71,7 @@ class CrossChainTransForm extends Component {
         quota: formatNumByDecimals(quota, decimals)
       })
     }
-  }
+  } */
 
   componentDidMount() {
     const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
@@ -125,7 +125,7 @@ class CrossChainTransForm extends Component {
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
-      if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
+      if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee)) {
         message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
@@ -165,9 +165,9 @@ class CrossChainTransForm extends Component {
         /* if (type === OUTBOUND) {
           let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
           let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString(); // Outbound: crosschain fee + gas fee
+          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee).toString(); // Outbound: crosschain fee + gas fee
           form.setFieldsValue({
-            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
+            totalFee: `${newOriginalFee} WAN + ${estimateFee} ETH`,
           });
         } */
         callback();
@@ -193,14 +193,14 @@ class CrossChainTransForm extends Component {
 
   updateLockAccounts = async (storeman, option) => {
     let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
-    const decimals = info.ancestorDecimals;
+    /* const decimals = info.ancestorDecimals;
     let quota = '';
     if (type === INBOUND) {
       quota = await getMintQuota(chainType, currTokenPairId, storeman);
     } else {
       quota = await getBurnQuota(chainType, currTokenPairId, storeman);
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` });
+    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` }); */
     updateTransParams(from, { storeman });
   }
 
@@ -258,7 +258,7 @@ class CrossChainTransForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { quota, advancedVisible, advanced, advancedFee } = this.state;
+    const { /* quota, */ advancedVisible, advanced, advancedFee } = this.state;
     let gasFee, operationFee, totalFee, desChain, title, tokenSymbol, toAccountList, quotaUnit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
@@ -337,7 +337,7 @@ class CrossChainTransForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
               />
-              <CommonFormItem
+              {/* <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='quota'
@@ -345,7 +345,7 @@ class CrossChainTransForm extends Component {
                 options={{ initialValue: `${quota} ${quotaUnit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
-              />
+              /> */}
               <AutoCompleteForm
                 form={form}
                 colSpan={6}

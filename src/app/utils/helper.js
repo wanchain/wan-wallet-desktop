@@ -253,6 +253,19 @@ export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
   })
 }
 
+export const getReadyOpenStoremanGroupListByChainPair = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('storeman_getReadyOpenStoremanGroupList', {}, (err, val) => {
+      if (err) {
+        console.log('Get Smg failed', err)
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+}
+
 export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
     wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
@@ -1226,6 +1239,7 @@ export const getFastMinCount = (chainType, tokenPairID) => {
 export const getFees = (chainType, chainID1, chainID2) => {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getFees', { chainType, chainID1, chainID2 }, (err, res) => {
+      console.log('getFees:', err, res)
       if (err) {
         return reject(err);
       } else {
@@ -1258,3 +1272,20 @@ export const resetSettingsByOptions = (attrs) => {
     })
   });
 }
+
+export const getCrossChainContractData = function (param) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getCrossChainContractData', param, (err, ret) => {
+      console.log('CC data:', err, ret)
+      if (err) {
+        return reject(err);
+      } else {
+        if (ret.code) {
+          return resolve(ret);
+        } else {
+          return resolve(false);
+        }
+      }
+    })
+  })
+};

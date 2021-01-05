@@ -120,22 +120,24 @@ class WanAddress {
     let importArr = Object.keys(self.addrInfo['import']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
     keys.forEach(item => {
-      if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
-        self.addrInfo['normal'][item].balance = arr[item];
+      let wanAddress = wanUtil.toChecksumAddress(item);
+      if (normal.includes(wanAddress) && self.addrInfo['normal'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['normal'][wanAddress].balance = arr[item];
       }
-      if (ledger.includes(item) && self.addrInfo['ledger'][item].balance !== arr[item]) {
-        self.addrInfo['ledger'][item].balance = arr[item];
+      if (ledger.includes(wanAddress) && self.addrInfo['ledger'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['ledger'][wanAddress].balance = arr[item];
       }
-      if (trezor.includes(item) && self.addrInfo['trezor'][item].balance !== arr[item]) {
-        self.addrInfo['trezor'][item].balance = arr[item];
+      if (trezor.includes(wanAddress) && self.addrInfo['trezor'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['trezor'][wanAddress].balance = arr[item];
       }
-      if (importArr.includes(item) && self.addrInfo['import'][item].balance !== arr[item]) {
-        self.addrInfo['import'][item].balance = arr[item];
+      if (importArr.includes(wanAddress) && self.addrInfo['import'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['import'][wanAddress].balance = arr[item];
       }
-      if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
-        self.addrInfo['rawKey'][item].balance = arr[item];
+      if (rawKey.includes(wanAddress) && self.addrInfo['rawKey'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['rawKey'][wanAddress].balance = arr[item];
       }
     });
+
     if (!(parr instanceof Object)) {
       return;
     }
@@ -380,6 +382,7 @@ class WanAddress {
     let normalArr = self.addrInfo['normal'];
     let importArr = self.addrInfo['import'];
     let rawKeyArr = self.addrInfo['rawKey'];
+    console.log('LIST:', JSON.parse(JSON.stringify(self.addrInfo)));
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
       Object.keys(obj).forEach((item) => {

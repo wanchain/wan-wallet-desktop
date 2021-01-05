@@ -356,6 +356,8 @@ const fr_FR = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Le nonce est incorrect',
     'AdvancedOptionForm.inputData': 'Données d\'entrée',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Les données d\'entrée sont incorrectes',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copier avec succès',
     'CopyAndQrcode.privateKey': 'Clé privée',
