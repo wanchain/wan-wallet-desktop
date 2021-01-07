@@ -43,7 +43,7 @@ export default () => {
           <Route path="/tokens/:chain/:tokenAddr/:symbol" component={TokenTrans} />
           <Route path="/MoreAccount" component={MoreAccount} />
           <Route path="/crossChain/:tokenPairId" component={CrossChain} />
-          <Route path="/CrossWAN/:tokenPairId" component={CrossWAN} />
+          <Route path="/crossWAN/:tokenPairId" component={CrossWAN} />
           <Route path="/crossETH/:tokenPairId" component={CrossETH} />
           <Route path="/crossBTC/:tokenPairId" component={CrossBTC} />
           <Route path="/crossEOS/:tokenPairId" component={CrossEOS} />

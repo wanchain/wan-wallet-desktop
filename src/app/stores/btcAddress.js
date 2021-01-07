@@ -78,22 +78,23 @@ class BtcAddress {
     })
   }
 
-  @action updateTransHistory (initialize = false) {
+  @action updateTransHistory(initialize = false) {
     if (initialize) {
       self.transHistory = {};
     }
-    wand.request('transaction_showBTCRecords', (err, val) => {
+    wand.request('transaction_showRecords', (err, val) => {
       if (!err && val.length !== 0) {
-        let tmpTransHistory = {};
+        let tmp = {};
+        val = val.filter(item => item.chainType === 'BTC');
         val.forEach(item => {
           if (item.txHash && (item.txHash !== item.hashX || item.status === 'Failed')) {
-            tmpTransHistory[item.txHash] = item;
+            tmp[item.txHash] = item;
           }
           if (item.txHash === undefined) {
-            tmpTransHistory[item.hashX] = item;
+            tmp[item.hashX] = item;
           }
         });
-        self.transHistory = tmpTransHistory;
+        self.transHistory = tmp;
       }
     })
   }
@@ -217,18 +218,20 @@ class BtcAddress {
     return addrList;
   }
 
-  @computed get historyList () {
+  @computed get historyList() {
     let historyList = [];
+    // console.log('his:', JSON.parse(JSON.stringify(self.transHistory)));
     Object.keys(self.transHistory).forEach(item => {
-      let status = self.transHistory[item].status;
-      if (self.transHistory[item].crossAddress === undefined) {
+      let data = self.transHistory[item];
+      let status = data.status;
+      if (data.crossAddress === undefined) {
         historyList.push({
           key: item,
-          time: timeFormat(self.transHistory[item].time / 1000),
-          to: self.transHistory[item].to,
-          value: formatNum(self.transHistory[item].value),
+          time: timeFormat(data.sendTime / 1000),
+          to: data.to,
+          value: formatNum(data.value),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item].time,
+          sendTime: data.sendTime,
         });
       }
     });

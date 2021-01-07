@@ -1194,19 +1194,6 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
 
-        case 'showBTCRecords':
-            try {
-                ret = global.wanDb.queryComm(DB_BTC_COLLECTION, items => {
-                    return items
-                })
-            } catch (e) {
-                logger.error(e.message || e.stack)
-                err = e
-            }
-
-            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break;
-
         case 'insertTransToDB':
             try {
                 ccUtil.insertNormalTx(payload.rawTx, undefined, undefined, payload.satellite);
