@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import intl from 'react-intl-universal';
 
 import { WALLET_CHAIN, CROSSCHAINTYPE, THIRD_PARTY_OPEN } from 'utils/settings';
@@ -7,6 +7,10 @@ class LanguageIntl {
   @observable language = 'en_US';
 
   @observable title = 'Portfolio.portfolio';
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setLanguage(language) {
     self.language = language;
@@ -44,7 +48,7 @@ class LanguageIntl {
         key: 'status'
       }
     ]
-  };
+  }
 
   @computed get transBTCColumns() {
     return self.language && [
@@ -66,7 +70,7 @@ class LanguageIntl {
         key: 'status'
       }
     ]
-  };
+  }
 
   @computed get privateTransColumns() {
     return self.language && [
@@ -97,7 +101,7 @@ class LanguageIntl {
         key: 'status'
       }
     ]
-  };
+  }
 
   @computed get stakingColumns() {
     return self.language && [
@@ -127,7 +131,7 @@ class LanguageIntl {
         key: 'status'
       }
     ]
-  };
+  }
 
   @computed get validatorColumns() {
     return self.language && [
@@ -356,7 +360,7 @@ class LanguageIntl {
         key: 'status'
       }
     ]
-  };
+  }
 
   @computed get sidebarColumns () {
     let sidebar = self.language && [

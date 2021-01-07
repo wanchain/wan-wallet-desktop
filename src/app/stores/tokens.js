@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import Identicon from 'identicon.js';
 import btcImg from 'static/image/btc.png';
 import ethImg from 'static/image/eth.png';
@@ -26,6 +26,10 @@ class Tokens {
   @observable tokenIconList = {};
 
   @observable walletSelections = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action updateTokenSelectedStatus(tokenAddress, selected) {
     wand.request('crossChain_updateTokensInfo', { addr: tokenAddress, key: 'select', value: selected }, (err, data) => {

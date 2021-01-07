@@ -1,4 +1,4 @@
-
+import { configure } from 'mobx';
 import session from './session';
 import mnemonic from './mnemonic';
 import portfolio from './portfolio';
@@ -14,6 +14,8 @@ import tokens from './tokens';
 import crossChain from './crossChain';
 import dapps from './dapps';
 import openstoreman from './openstoreman';
+
+configure({ enforceActions: 'never' });
 
 export default {
   session,

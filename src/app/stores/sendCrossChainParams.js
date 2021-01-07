@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import { CROSS_TYPE } from 'utils/settings';
 import session from './session';
 
@@ -34,6 +34,10 @@ class SendCrossChainParams {
   @observable minGasPrice = 1;
 
   @observable currentGasPrice = 10;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addCrossTransTemplate(addr, params = {}) {
     let gasPrice = 1;

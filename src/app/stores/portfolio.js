@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, toJS } from 'mobx';
+import { observable, action, computed, runInAction, toJS, makeObservable } from 'mobx';
 import axios from 'axios';
 import intl from 'react-intl-universal';
 
@@ -45,6 +45,10 @@ class Portfolio {
   @observable tokenIds_from_CoinGeckoAPI = {}
 
   @observable coinList = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setCoin() {
     self.coinList = Object.assign({}, self.getToken);

@@ -2,7 +2,7 @@ import pu from 'promisefy-util';
 import Identicon from 'identicon.js';
 import BigNumber from 'bignumber.js';
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import { STAKEACT } from 'utils/settings'
 import { getAddrByTypes, getInfoByAddress, checkAddrType } from 'utils/helper';
 import { fromWei, dateFormat, timeFormat, daysAgo, formatNum } from 'utils/support';
@@ -34,6 +34,10 @@ class Staking {
   rewardRate = 0;
 
   epochID = 0;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action async updateStakeInfo () {
     let addrList = [];

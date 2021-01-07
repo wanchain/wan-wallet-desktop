@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import languageIntl from './languageIntl';
 import { EOSPATH, WALLETID } from 'utils/settings';
 import { getTypeByWalletId } from 'utils/helper';
@@ -22,6 +22,10 @@ class EosAddress {
   @observable selectedAccount = {};
 
   @observable transHistory = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addKey(newKey) {
     self.keyInfo['normal'][newKey.publicKey] = {

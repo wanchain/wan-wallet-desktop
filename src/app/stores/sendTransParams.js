@@ -1,4 +1,4 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import BigNumber from 'bignumber.js';
 import { roundFun } from 'utils/support'
 
@@ -24,6 +24,10 @@ class SendTransParams {
   @observable minGasPrice = 1;
 
   @observable currentGasPrice = 10;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addTransTemplate(addr, params = {}) {
     let objKey = { writable: true, enumerable: true };

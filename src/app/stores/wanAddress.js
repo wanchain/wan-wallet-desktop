@@ -3,7 +3,7 @@
 import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 
 import tokens from './tokens';
 import staking from './staking';
@@ -30,6 +30,10 @@ class WanAddress {
   @observable selectedAddr = '';
 
   @observable transHistory = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
@@ -59,13 +63,13 @@ class WanAddress {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
         if (addr.name === undefined && type === 'ledger') {
-          addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `Ledger${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         if (addr.name === undefined && type === 'trezor') {
-          addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `Trezor${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         if (addr.name === undefined) {
-          addr.name = `WAN-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `WAN-Account${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,

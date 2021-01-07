@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import tokens from './tokens';
 import session from './session';
 import wanAddress from './wanAddress';
@@ -19,6 +19,10 @@ class CrossChain {
   @observable tokenPairs = {};
 
   @observable crossChainSelections = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setCurrSymbol(symbol) {
     this.currSymbol = symbol;
