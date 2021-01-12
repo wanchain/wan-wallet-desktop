@@ -762,6 +762,8 @@ const zh_CN = {
     'Storeman.delegationExit': '委托退出',
     'Storeman.delegationTopup': '追加委托',
     'Storeman.registration': '节点注册',
+
+    'MoreAccount.inputSearchText': '请输入搜索信息',
 }
 
 export default zh_CN;

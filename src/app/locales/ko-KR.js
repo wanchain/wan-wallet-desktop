@@ -762,6 +762,8 @@ const ko_KR = {
     'Storeman.delegationExit': '위임 종료',
     'Storeman.delegationTopup': '위임 요청하기',
     'Storeman.registration': 'Storeman 등록',
+
+    'MoreAccount.inputSearchText': 'Input search text',
 }
 
 export default ko_KR;

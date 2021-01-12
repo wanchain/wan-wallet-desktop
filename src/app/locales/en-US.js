@@ -762,6 +762,8 @@ const en_US = {
     'Storeman.delegationExit': 'Delegation Exit',
     'Storeman.delegationTopup': 'Delegation Top-up',
     'Storeman.registration': 'Storeman Registration',
+
+    'MoreAccount.inputSearchText': 'Input search text',
 }
 
 export default en_US;

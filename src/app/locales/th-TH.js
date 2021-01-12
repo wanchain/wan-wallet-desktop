@@ -762,6 +762,8 @@ const th_TH = {
     'Storeman.delegationExit': 'ออกจากการ Delegate',
     'Storeman.delegationTopup': 'เพิ่มจำนวนการ Delegate',
     'Storeman.registration': 'ลงทะเบียนเป็น Storeman',
+
+    'MoreAccount.inputSearchText': 'Input search text',
 }
 
 export default th_TH;

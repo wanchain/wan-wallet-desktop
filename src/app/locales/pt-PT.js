@@ -761,6 +761,8 @@ const pt_PT = {
     'Storeman.delegationExit': 'Tirar delegação',
     'Storeman.delegationTopup': 'Adicionar à Delegação',
     'Storeman.registration': 'Registro do Storeman',
+
+    'MoreAccount.inputSearchText': 'Input search text',
 }
 
 export default pt_PT;
