@@ -9,9 +9,9 @@ import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
-import { ETHPATH, WANPATH, PENALTYNUM, INBOUND, OUTBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL } from 'utils/settings';
+import { INBOUND, OUTBOUND, CROSS_TYPE, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
-import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
 import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
@@ -44,14 +44,8 @@ class CrossWANForm extends Component {
       advanced: false,
       advancedFee: 0,
       fastMinCount: 0,
+      operationFee: 0,
     }
-    this.operationFee = 0;
-    getFees(info[props.type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
-      this.operationFee = res[0];
-    }).catch(err => {
-      console.log('err:', err);
-      message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
-    });
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -81,6 +75,12 @@ class CrossWANForm extends Component {
     }).catch(err => {
       console.log('err:', err);
     });
+    getFees(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
+      this.setState({ operationFee: fromWei(res[0]) });
+    }).catch(err => {
+      console.log('err:', err);
+      message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
+    });
   }
 
   componentWillUnmount() {
@@ -100,9 +100,8 @@ class CrossWANForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { advanced, advancedFee, fastMinCount } = this.state;
-    let fromAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol']);
+    const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { fastMinCount } = this.state;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(err => {
@@ -113,23 +112,19 @@ class CrossWANForm extends Component {
 
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       if (new BigNumber(sendAmount).lt(fastMinCount)) {
-        message.warn(`${intl.get('CrossChainTransForm.FastMinimumLimit')} ${fastMinCount} ${info[(type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol')]}`, 6);
+        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(fastMinCount, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
         return;
       }
+
       if (this.accountSelections.includes(to)) {
         to = getValueByNameInfo(to, 'address', toAddrInfo);
         isNativeAccount = true;
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
       }
-      let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
-      if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
-        message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
-        return;
-      }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -155,31 +150,27 @@ class CrossWANForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { balance, smgList, form, estimateFee, type, currentTokenPairInfo: info } = this.props;
-    const { advanced, advancedFee } = this.state;
+    const { balance, from, estimateFee, type, currentTokenPairInfo: info, getChainAddressInfoByChain } = this.props;
+    const { advanced, advancedFee, operationFee } = this.state;
     const decimals = info.ancestorDecimals;
     if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
       if (type === INBOUND) {
-        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee.original).gt(balance)) {
+        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee.original).plus(operationFee).gt(balance)) {
           callback(intl.get('CrossChainTransForm.overTransBalance'));
         } else {
           callback();
         }
       } else if (type === OUTBOUND) {
+        let fromAddrInfo = getChainAddressInfoByChain(info['toChainSymbol']);
+        let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
         if (new BigNumber(value).gt(balance)) {
           callback(intl.get('CrossChainTransForm.overTransBalance'));
+        } else if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original, operationFee)) {
+          callback(intl.get('CrossChainTransForm.overOriginalBalance'));
         } else {
           callback();
         }
       } else {
-        /* if (type === OUTBOUND) {
-          let { storemanAccount } = form.getFieldsValue(['storemanAccount']);
-          let smg = smgList.find(item => (item.wanAddress || item.smgWanAddr) === storemanAccount);
-          let newOriginalFee = new BigNumber(value).multipliedBy(smg.coin2WanRatio).multipliedBy(smg.txFeeRatio).dividedBy(PENALTYNUM).dividedBy(PENALTYNUM).plus(estimateFee.original).toString();// Outbound: crosschain fee + gas fee
-          form.setFieldsValue({
-            totalFee: `${newOriginalFee} WAN + ${estimateFee.destination} ETH`,
-          });
-        } */
         callback();
       }
     } else {
@@ -269,8 +260,8 @@ class CrossWANForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, estimateFee, balance, getChainAddressInfoByChain, record, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { quota, advancedVisible, advanced, advancedFee } = this.state;
-    let gasFee, operationFee, totalFee, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance, feeUnit;
+    const { quota, advancedVisible, advanced, advancedFee, operationFee } = this.state;
+    let gasFee, totalFee, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
@@ -296,12 +287,12 @@ class CrossWANForm extends Component {
 
     // Convert the value of fee to USD
     if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
-      totalFee = `${new BigNumber(gasFee).plus(this.operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
+      totalFee = `${new BigNumber(gasFee).plus(operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
     } else {
-      totalFee = `${new BigNumber(gasFee).plus(this.operationFee).toString()} ${feeUnit}`;
+      totalFee = `${new BigNumber(gasFee).plus(operationFee).toString()} ${feeUnit}`;
     }
     gasFee = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
-    operationFee = `${removeRedundantDecimal(this.operationFee)} ${feeUnit}`;
+    let operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${feeUnit}`;
 
     return (
       <div>
@@ -379,7 +370,7 @@ class CrossWANForm extends Component {
                   <table className={style['suffix_table']}>
                     <tbody>
                       <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
-                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}

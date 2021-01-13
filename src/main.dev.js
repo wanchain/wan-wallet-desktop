@@ -6,7 +6,7 @@
 
 import env from 'dotenv'
 import path from 'path'
-import { app, dialog } from 'electron'
+import { app, dialog, shell } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
@@ -147,5 +147,19 @@ app.on('window-all-closed', function () {
 app.on('activate', async function () {
   if (mainWindow === null) {
     await createMain()
+  }
+})
+
+// Listen for web contents being created
+app.on('web-contents-created', (e, contents) => {
+
+  // Check for a webview
+  if (contents.getType() == 'webview') {
+
+    // Listen for any new window events
+    contents.on('new-window', (e, url) => {
+      e.preventDefault()
+      shell.openExternal(url)
+    })
   }
 })

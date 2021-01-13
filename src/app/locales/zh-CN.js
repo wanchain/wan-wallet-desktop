@@ -31,6 +31,7 @@ const zh_CN = {
     'Common.create': '创建',
     'Common.balance': '余额',
     'Common.sendFailed': '网络不稳定，发送失败，请稍后再试',
+    'Common.sendFailedForInsufficientFunds': '发送交易失败，请确保您有足够的余额。',
     'Common.networkError': '网络故障，请重启钱包',
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
@@ -345,6 +346,7 @@ const zh_CN = {
     'EOSNormalTransForm.invalid': '不可用',
     'EOSNormalTransForm.recipientAccount': '接收人账户',
     'EOSNormalTransForm.memo': '备注',
+    'EOSNormalTransForm.invalidMemo': '备注不可用',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.save': '保存',
@@ -455,9 +457,9 @@ const zh_CN = {
     'CrossChainTransForm.gasFee': 'Gas费用',
     'CrossChainTransForm.operationFee': '手续费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
-    'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保原始链余额充足',
+    'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保余额充足',
     'CrossChainTransForm.originNoBalance': '原始链余额不足',
-    'CrossChainTransForm.overTransBalance': '输入金额超过账户余额',
+    'CrossChainTransForm.overTransBalance': '账户余额不足',
     'CrossChainTransForm.transInfo': '跨链交易信息',
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
     'CrossChainTransForm.overQuota': '输入的金额超出Storeman的剩余配额',
@@ -476,7 +478,6 @@ const zh_CN = {
     'CrossChainTransForm.FAST': '极速模式',
     'CrossChainTransForm.HTLC': '安全模式',
     'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
-    'CrossChainTransForm.FastMinimumLimit': '最小跨连交易额为',
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
 
     'CrossChain.selectFailed': '修改选择状态失败',
@@ -763,6 +764,7 @@ const zh_CN = {
     'Storeman.delegationExit': '委托退出',
     'Storeman.delegationTopup': '追加委托',
     'Storeman.registration': '节点注册',
+    'Storeman.delegationWarnning': '提示：只有等当前跨链节点工作周期结束后才能提取本金。如果想提取本金，需要在下一轮竞选之前点击“退出”按钮'
 }
 
 export default zh_CN;

@@ -31,6 +31,7 @@ const en_US = {
     'Common.create': 'Create',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
@@ -345,6 +346,7 @@ const en_US = {
     'EOSNormalTransForm.invalid': 'Invalid',
     'EOSNormalTransForm.recipientAccount': 'Recipient Account',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.save': 'Save',
@@ -455,9 +457,9 @@ const en_US = {
     'CrossChainTransForm.gasFee': 'Gas Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
-    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance on original chain',
+    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
-    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.overTransBalance': 'Insufficient balance',
     'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
     'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
     'CrossChainTransForm.overQuota': 'The amount is greater than the remaining capacity of the storeman',
@@ -475,8 +477,7 @@ const en_US = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
-    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
-    'CrossChainTransForm.FastMinimumLimit': 'The minimum transaction limit is',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit',
     'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
@@ -763,6 +764,7 @@ const en_US = {
     'Storeman.delegationExit': 'Delegation Exit',
     'Storeman.delegationTopup': 'Delegation Top-up',
     'Storeman.registration': 'Storeman Registration',
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default en_US;

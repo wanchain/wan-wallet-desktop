@@ -31,6 +31,7 @@ const th_TH = {
     'Common.create': 'สร้างแอดเดรส',
     'Common.balance': 'ยอดคงเหลือ',
     'Common.sendFailed': 'เครือข่ายไม่เสถียร กรุณาลองอีกครั้ง',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
@@ -345,6 +346,7 @@ const th_TH = {
     'EOSNormalTransForm.invalid': 'ไม่ถูกต้อง',
     'EOSNormalTransForm.recipientAccount': 'บัญชีผู้รับ',
     'EOSNormalTransForm.memo': 'บันทึกหมายเหตุ',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.save': 'บันทึก',
@@ -476,7 +478,6 @@ const th_TH = {
     'CrossChainTransForm.FAST': 'เน้นความเร็ว',
     'CrossChainTransForm.HTLC': 'เน้นความปลอดภัย',
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
-    'CrossChainTransForm.FastMinimumLimit': 'The minimum transaction limit is',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
@@ -763,6 +764,7 @@ const th_TH = {
     'Storeman.delegationExit': 'ออกจากการ Delegate',
     'Storeman.delegationTopup': 'เพิ่มจำนวนการ Delegate',
     'Storeman.registration': 'ลงทะเบียนเป็น Storeman',
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default th_TH;

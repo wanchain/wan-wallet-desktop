@@ -231,10 +231,15 @@ class TokenTrans extends Component {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
               reject(false); // eslint-disable-line prefer-promise-reject-errors
             } else {
+              if (txHash.code === false) {
+                message.warn(intl.get('WanAccount.sendTransactionFailed'));
+                reject(txHash.result);
+              } else {
+                message.success(intl.get('Send.transSuccess'));
+                resolve(txHash)
+              }
               this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
               console.log('Tx hash: ', txHash);
-              message.success(intl.get('Send.transSuccess'));
-              resolve(txHash)
             }
           });
           break;

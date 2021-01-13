@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getSmgList, getGasPrice } from 'utils/helper';
+import { getSmgList, getGasPrice, estimateSmartFee } from 'utils/helper';
 import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
@@ -15,7 +15,6 @@ const GASLIMIT = 300000;
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getNormalAmount,
-  feeRate: stores.sendCrossChainParams.feeRate,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
@@ -35,7 +34,7 @@ class BTCTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, feeRate, path, currentTokenPairInfo } = this.props;
+    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, path, currentTokenPairInfo } = this.props;
     let info = Object.assign({}, currentTokenPairInfo);
     /* if (direction === INBOUND) {
       if (getAmount === 0) {
@@ -51,7 +50,7 @@ class BTCTrans extends Component {
 
     this.setState(() => ({ visible: true, spin: true, loading: true }));
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol)]);
+      let [gasPrice, smgList, feeRate] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol), estimateSmartFee()]);
       let originalFee, destinationFee;
       let smg = smgList[0];
 
@@ -71,6 +70,7 @@ class BTCTrans extends Component {
         originalFee = new BigNumber(gasPrice).times(LOCKWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
         destinationFee = 0;
         updateBTCTransParams({
+          feeRate,
           from: {
             walletID: 1,
             path

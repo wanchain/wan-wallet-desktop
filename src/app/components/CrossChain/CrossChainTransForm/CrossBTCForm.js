@@ -22,9 +22,9 @@ const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
   language: stores.languageIntl.language,
   btcFee: stores.sendCrossChainParams.btcFee,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
-  transParams: stores.sendCrossChainParams.transParams,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   coinPriceObj: stores.portfolio.coinPriceObj,
+  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getPathPrefix: chain => stores.tokens.getPathPrefix(chain),
@@ -110,12 +110,12 @@ class CrossBTCForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee, balance } = this.props;
+    const { utxos, addrInfo, btcPath, updateBTCTransParams, minCrossBTC, form, direction, btcFee, balance, BTCCrossTransParams: { feeRate } } = this.props;
     let { quota } = form.getFieldsValue(['quota']);
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
         if (direction === INBOUND) {
-          btcCoinSelect(utxos, value).then(data => {
+          btcCoinSelect(utxos, value, feeRate).then(data => {
             let fee = formatNumByDecimals(data.fee, 8);
             this.setState({ fee });
             if (isExceedBalance(balance, fee, value)) {
@@ -181,7 +181,7 @@ class CrossBTCForm extends Component {
       });
     }
     let smg = smgList[option.key];
-    updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
+    updateBTCTransParams({ btcAddress: smg.btcAddress, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], smgBtcAddr: smg.smgBtcAddr });
   }
 
   filterStoremanData = item => {

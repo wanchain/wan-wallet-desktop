@@ -14,6 +14,7 @@ class SendTransParams {
     changeAddress: '',
     to: '',
     value: 0,
+    feeRate: 0,
   };
 
   @observable gasLimit = GASLIMIT;

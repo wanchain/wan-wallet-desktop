@@ -90,9 +90,14 @@ class BtcAccount extends Component {
           console.log(err);
           reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
-          // this.props.updateTransHistory();
           console.log('Tx hash: ', txHash);
-          resolve(txHash)
+          if (txHash.code === false) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            reject(txHash.result);
+          } else {
+            // this.props.updateTransHistory();
+            resolve(txHash)
+          }
         }
       });
     })
@@ -184,7 +189,7 @@ class BtcAccount extends Component {
           </Col>
         </Row>
         {
-          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')}/>
+          this.state.isExist && <WarningExistAddress title={intl.get('Common.warning')} address={this.state.address} onCloseModal={this.onCloseModal} text={intl.get('WanAccount.newAddressExistInImportedList')} />
         }
       </div>
     );
