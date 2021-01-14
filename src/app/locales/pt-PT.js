@@ -31,6 +31,7 @@ const pt_PT = {
     'Common.create': 'Criar',
     'Common.balance': 'Saldo',
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
@@ -343,6 +344,7 @@ const pt_PT = {
     'EOSNormalTransForm.invalid': 'Inválid0',
     'EOSNormalTransForm.recipientAccount': 'Conta do Destinatário',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.save': 'Salvar',
@@ -455,7 +457,7 @@ const pt_PT = {
     'CrossChainTransForm.gasFee': 'Taxa do Gás',
     'CrossChainTransForm.operationFee': 'Taxa de operação',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
-    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance on original chain',
+    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
     'CrossChainTransForm.transInfo': 'Informações sobre transações cross-chain',
@@ -475,7 +477,7 @@ const pt_PT = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Modo rápido',
     'CrossChainTransForm.HTLC': 'Modo seguro',
-    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação.',
+    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
@@ -763,6 +765,8 @@ const pt_PT = {
     'Storeman.registration': 'Registro do Storeman',
 
     'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default pt_PT;

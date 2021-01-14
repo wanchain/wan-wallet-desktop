@@ -31,6 +31,7 @@ const ko_KR = {
     'Common.create': '생성',
     'Common.balance': '자산 합계',
     'Common.sendFailed': '네트워크가 안정적이지 않습니다. 다시 시도해보십시오.',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': '이오스 토큰',
     'Common.convert': '변환',
@@ -344,6 +345,7 @@ const ko_KR = {
     'EOSNormalTransForm.invalid': '무효',
     'EOSNormalTransForm.recipientAccount': '수신자 계정',
     'EOSNormalTransForm.memo': '메모',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.save': '저장',
@@ -476,7 +478,7 @@ const ko_KR = {
     'CrossChainTransForm.crossType': '크로스 타입',
     'CrossChainTransForm.FAST': '빠른 모드',
     'CrossChainTransForm.HTLC': '보안 모드',
-    'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다.',
+    'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다',
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',
@@ -764,6 +766,8 @@ const ko_KR = {
     'Storeman.registration': 'Storeman 등록',
 
     'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default ko_KR;

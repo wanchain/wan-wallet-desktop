@@ -406,6 +406,7 @@ class OsmDelegateInForm extends Component {
         {
           this.state.confirmVisible &&
           <Confirm
+            type="delegateIn"
             onSend={this.onSend}
             record={this.state.record}
             onCancel={this.onConfirmCancel}

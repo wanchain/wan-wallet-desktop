@@ -261,15 +261,28 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: ret })
                 break
             }
+        case 'signTx': // new added for wanswap inside
+            {
+                let sig = {};
+                let { walletID, path, rawTx } = payload;
+
+                logger.info('Sign transaction:');
+                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
+                const chain = hdUtil.getChain('WAN');
+                let ret = await chain.signTransaction(walletID, rawTx, path);
+                sig = '0x' + ret.toString('hex');
+                console.log('sig', sig);
+
+                sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
+                break
+            }
+    
         case 'signTransaction':
             {
                 let sig = {};
                 let { walletID, path, rawTx } = payload;
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
-
-                logger.info('Sign transaction:');
-                logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-
+                
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
                     sig.r = '0x' + ret.r.toString('hex');
@@ -1843,16 +1856,13 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
                 if (payload.type === 'REDEEM') {
-                    if (sourceSymbol === 'WAN') {
-                        payload.input.feeHard = feeHard
-                    }
+                    payload.input.feeRate = await ccUtil.estimateSmartFee();
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 if (payload.type === 'REVOKE') {
-                    if (sourceSymbol === 'BTC') {
-                        payload.input.feeHard = feeHard
-                    }
+                    payload.input.feeRate =  await ccUtil.estimateSmartFee();
                 }
+                console.log('CC BTC:', payload.type, payload);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
                 if (!ret.code) {
                     err = ret;

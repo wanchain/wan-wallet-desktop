@@ -80,7 +80,7 @@ class SendCrossChainParams {
   }
 
   @computed get minCrossBTC() {
-    return session.chainId === 1 ? 0.0002 : 0.002;
+    return 0.002;
   }
 
   @computed get btcFee() {

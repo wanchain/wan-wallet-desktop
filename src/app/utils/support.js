@@ -52,6 +52,10 @@ export function floorFun (value, n = 2) {
   return Math.floor(value * Math.pow(10, n)) / Math.pow(10, n);
 }
 
+export function ceilFun (value, n = 2) {
+  return Math.ceil(value * Math.pow(10, n)) / Math.pow(10, n);
+}
+
 export function timeFormat (time) {
   const current = new Date(time * 1000);
   let date = ('0' + current.getDate()).substr(-2);
@@ -195,13 +199,13 @@ export function hexCharCodeToStr(hexCharCodeStr) {
   return resultStr.join('');
 }
 
-export function removeRedundantDecimal(num, zeroLimit = 4) {
+export function removeRedundantDecimal(num, left = 1, zeroLimit = 4, isCeil = true) {
   let result = num;
   if (num > 1) {
-    result = keep2Decimals(num);
+    result = isCeil ? (Math.ceil(num * 100) / 100) : keep2Decimals(num);
   } else {
     let zeroLength = /0\.(0*)/g.test(new BigNumber(num).toFixed()) ? RegExp.$1.length : 0;
-    result = roundFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + 1);
+    result = isCeil ? ceilFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + left) : roundFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + left);
   }
   return new BigNumber(result).toFixed();
 }

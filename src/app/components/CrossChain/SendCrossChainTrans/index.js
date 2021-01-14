@@ -29,10 +29,7 @@ class Trans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    },
+    estimateFee: 0,
     tokenAddr: '',
     chainType: '',
     gasPrice: 0,

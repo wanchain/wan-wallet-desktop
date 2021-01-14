@@ -31,6 +31,7 @@ const fr_FR = {
     'Common.create': 'Créer',
     'Common.balance': 'Solde',
     'Common.sendFailed': 'Connexion internet instable. Veuillez réessayer',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
@@ -344,6 +345,7 @@ const fr_FR = {
     'EOSNormalTransForm.invalid': 'Invalide',
     'EOSNormalTransForm.recipientAccount': 'Compte Destinataire',
     'EOSNormalTransForm.memo': 'Mémo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.save': 'Sauvegarder',
@@ -476,7 +478,7 @@ const fr_FR = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Mode RAPIDE',
     'CrossChainTransForm.HTLC': 'Mode SECURISÉ',
-    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale.',
+    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
@@ -764,6 +766,8 @@ const fr_FR = {
     'Storeman.registration': 'Storeman enregistrement',
 
     'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default fr_FR;

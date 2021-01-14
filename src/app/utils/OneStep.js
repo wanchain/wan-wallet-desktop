@@ -232,15 +232,14 @@ const OneStep = {
             this.sending.delete(trans_data.hashX);
           });
         }
-      } else if (['WAN', 'BTC'].includes(trans_data.chain)) { // if (['WAN', 'BTC'].includes(trans_data.tokenStand)) {  // if (['WAN', 'BTC'].includes(trans_data.chain)) { // BTC
+      } else if (trans_data.tokenStand === 'BTC') {
         let input = {
           x: trans_data.x,
           hashX: trans_data.hashX,
           tokenPairID: trans_data.tokenPairID,
         }
-        if (trans_data.tokenStand === 'BTC') {
+        if (trans_data.srcChainType === 'BTC') {
           input.from = trans_data.from;
-          // console.log('BTC revoke:', trans_data)
           wand.request('crossChain_crossBTC', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
             if (err) {
               this.sending.delete(trans_data.hashX);
