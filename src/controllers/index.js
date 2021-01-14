@@ -540,11 +540,12 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             const { addr, chainType } = payload
             try {
                 if (_.isArray(addr) && addr.length > 1) {
-                    const addresses = addr.map(item => `0x${item}`)
+                    let addresses = ['XRP'].includes(chainType) ? addr : addr.map(item => `0x${item}`);
                     balance = await ccUtil.getMultiBalances(addresses, chainType)
                 } else {
-                    balance = await ccUtil.getBalance(`0x${addr}`, chainType)
-                    balance = { [`0x${addr}`]: balance }
+                    let address = ['XRP'].includes(chainType) ? addr : `0x${addr}`;
+                    balance = await ccUtil.getBalance(address, chainType);
+                    balance = { [address]: balance }
                 }
             } catch (e) {
                 logger.error('Get balance failed:');
@@ -1088,6 +1089,18 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break;
+
+        case 'XRPNormal':
+          try {
+              logger.info('XRP Normal transaction: ' + JSON.stringify(payload));
+              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'XRP');
+              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+          } catch (e) {
+              logger.error('Send transaction failed: ' + e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break;
 
         case 'EOSNormal':
             try {
