@@ -3,9 +3,9 @@ import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, DECIMALS } from 'utils/settings';
 
-import { fromWei, isNumber } from 'utils/support';
+import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
@@ -57,7 +57,7 @@ export const wanPubKey2Address = function (pubKey) {
 }
 
 export const getBalance = function (arr, chainType = 'WAN') {
-  const addrArr = arr.map(item => item.substr(2));
+  const addrArr = ['XRP'].includes(chainType) ? arr : arr.map(item => item.substr(2));
 
   return new Promise((resolve, reject) => {
     let thisVal
@@ -68,7 +68,7 @@ export const getBalance = function (arr, chainType = 'WAN') {
         return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {
-          thisVal[item] = fromWei(thisVal[item]);
+          thisVal[item] = ['XRP'].includes(chainType) ? formatNumByDecimals(thisVal[item], DECIMALS[chainType]) : fromWei(thisVal[item]);
         });
         return resolve(thisVal);
       }
@@ -932,6 +932,36 @@ export const createETHAddr = async function (checkDuplicate) {
               start: index.toString(),
               name,
               address: `0x${data.address}`
+            }
+            resolve(addressInfo);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
+export const createXRPAddr = async function (checkDuplicate) {
+  let CHAINID = 144;
+  let index = await getNewPathIndex(CHAINID, XRPPATH, WALLETID.NATIVE);
+  let path = `${XRPPATH}${index}`;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'XRP', path }, async (err, data) => {
+      if (!err) {
+        if (checkDuplicate instanceof Function && checkDuplicate(data.address)) {
+          return reject(new Error('exist'));
+        }
+        let name = await getNewAccountName(CHAINID, 'XRP-Account');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: data.address } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              start: index.toString(),
+              name,
+              address: data.address
             }
             resolve(addressInfo);
           } else {
