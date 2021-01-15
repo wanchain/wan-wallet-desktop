@@ -67,16 +67,11 @@ class SendCrossChainParams {
 
     @action updateTransParams (addr, paramsObj) {
       Object.keys(paramsObj).forEach(item => {
-        if (item === 'gasPrice') {
-          self.transParams[addr].gasPrice = Math.max(paramsObj.gasPrice, self.transParams[addr].gasPrice)
-        } else {
-          self.transParams[addr][item] = paramsObj[item];
-        }
+        self.transParams[addr][item] = paramsObj[item];
       });
     }
 
     @computed get minCrossBTC() {
-      // return session.chainId === 1 ? 0.0002 : 0.002;
       return 0.002;
     }
 
