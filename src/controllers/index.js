@@ -757,15 +757,15 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'isXrpAddress':
-          let ret1;
+          let isXrpAddress;
           try {
-              ret1 = await ccUtil.isXrpAddress(payload.address);
+            isXrpAddress = await ccUtil.isXrpAccount(payload.address);
           } catch (e) {
               logger.error(e.message || e.stack)
               err = e
           }
 
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: ret1 })
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: isXrpAddress })
           break
 
         case 'isValidatorAddress':

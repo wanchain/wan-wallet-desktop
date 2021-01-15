@@ -305,6 +305,19 @@ export const checkETHAddr = function (address) {
   })
 };
 
+export const checkXRPAddr = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isXrpAddress', { address }, (err, val) => {
+      if (err) {
+        console.log('Check XRP address failed ', err);
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};
+
 export const checkBase58 = function (address) {
   return new Promise((resolve, reject) => {
     try {
