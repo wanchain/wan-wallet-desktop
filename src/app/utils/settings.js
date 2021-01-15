@@ -49,6 +49,9 @@ export const TESTNET = 'https://testnet.wanscan.org';
 export const BTCMAIN = 'https://www.blockchain.com/btc';
 export const BTCTESTNET = 'https://www.blockchain.com/btc-testnet';
 
+export const XRPMAIN = 'https://livenet.xrpl.org/transactions';
+export const XRPTESTNET = 'https://testnet.xrpl.org/transactions';
+
 export const ETHMAIN = 'https://etherscan.io';
 export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 
