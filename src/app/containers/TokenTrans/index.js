@@ -41,7 +41,6 @@ message.config({
 class TokenTrans extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('WanAccount.wallet');
     this.init(props.tokenAddr, props.chain);
   }
 
@@ -55,6 +54,7 @@ class TokenTrans extends Component {
   }
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
     this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
     this.timer = setInterval(() => {

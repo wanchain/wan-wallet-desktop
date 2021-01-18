@@ -10,7 +10,6 @@ const XRPConfirmForm = observer(({ visible, onCancel, sendTrans, from, form, fee
   const { languageIntl, sendTransParams: { XRPTransParams } } = useContext(MobXProviderContext)
   const { getFieldDecorator } = form;
   const [loading, setLoading] = useState(false);
-  console.log(XRPTransParams, 'kkkkkkkkkkkkkkkkkkkkkkkkkkk')
   const handleClick = () => {
     setLoading(true);
     sendTrans();

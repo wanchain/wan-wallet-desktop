@@ -20,12 +20,8 @@ import eosLogo from 'static/image/eos.png';
 
 @observer
 class Portfolio extends Component {
-  constructor(props) {
-    super(props);
-    this.props.changeTitle('Portfolio.portfolio');
-  }
-
   componentDidMount() {
+    this.props.changeTitle('Portfolio.portfolio');
     this.props.setCoin();
     this.props.updateCoinPrice();
     this.props.updateTokenBalance();

@@ -28,11 +28,11 @@ class Delegation extends Component {
 
   constructor (props) {
     super(props);
-    this.props.changeTitle('staking.title');
     this.props.updateTransHistory();
   }
 
   componentDidMount () {
+    this.props.changeTitle('staking.title');
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateStakeInfo();

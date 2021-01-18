@@ -43,7 +43,6 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
           }
         })
       } else {
-        console.log(tag, 'cccccccccccccccc')
         updateXRPTransParams({ to, value: amount, tag })
         setConfirmVisible(true);
       }

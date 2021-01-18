@@ -30,7 +30,6 @@ class EosAccount extends Component {
   constructor(props) {
     super(props);
     this.props.updateTransHistory();
-    this.props.changeTitle('WanAccount.wallet');
     this.state = {
       showCreateAccountForm: false,
       isExist: false,
@@ -39,6 +38,7 @@ class EosAccount extends Component {
   }
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 

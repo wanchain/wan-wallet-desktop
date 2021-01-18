@@ -35,7 +35,6 @@ class EthAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -74,6 +73,7 @@ class EthAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 

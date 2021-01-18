@@ -30,6 +30,9 @@ class MoreAccount extends Component {
       deleteObj: {},
       filterText: '',
     }
+  }
+
+  componentDidMount() {
     this.props.changeTitle('MoreTokens.tokenList');
   }
 

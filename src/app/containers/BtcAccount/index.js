@@ -39,7 +39,6 @@ class BtcAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -74,6 +73,7 @@ class BtcAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 

@@ -30,10 +30,10 @@ class Validator extends Component {
   constructor(props) {
     super(props);
     this.props.updateTransHistory();
-    this.props.changeTitle('validator.title');
   }
 
   componentDidMount() {
+    this.props.changeTitle('validator.title');
     this.props.updateStakeInfo();
     this.timer = setInterval(() => {
       this.props.updateTransHistory();

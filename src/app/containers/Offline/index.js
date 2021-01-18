@@ -32,12 +32,8 @@ class Offline extends Component {
     from: ''
   }
 
-  constructor (props) {
-    super(props);
-    this.props.changeTitle('menuConfig.offline');
-  }
-
   componentDidMount () {
+    this.props.changeTitle('menuConfig.offline');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 

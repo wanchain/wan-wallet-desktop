@@ -27,8 +27,11 @@ const LEDGER = 'ledger';
 class Ledger extends Component {
   constructor (props) {
     super(props);
-    this.props.changeTitle('Ledger.ledger');
     this.props.setCurrTokenChain('WAN');
+  }
+
+  componentDidMount() {
+    this.props.changeTitle('Ledger.ledger');
   }
 
   componentDidUpdate () {
