@@ -40,6 +40,9 @@ const en_US = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Minimum amount should be { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'connecting to server',
     'Layout.connected': 'connected to server',

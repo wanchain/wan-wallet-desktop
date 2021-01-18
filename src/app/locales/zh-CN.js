@@ -40,6 +40,9 @@ const zh_CN = {
     'Common.storemanGroup': '跨链节点组',
     'Common.chain': '链名',
     'Common.amountTooLow': '最低金额是{minAmount}WAN',
+    'Common.availableBalance': '可用金额是{availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',

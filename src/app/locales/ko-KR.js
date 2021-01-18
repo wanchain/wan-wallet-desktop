@@ -40,6 +40,9 @@ const ko_KR = {
     'Common.storemanGroup': 'Storeman 그룹',
     'Common.chain': '체인',
     'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',

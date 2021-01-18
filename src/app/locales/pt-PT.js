@@ -40,6 +40,9 @@ const pt_PT = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain (cadeia/blockchain)',
     'Common.amountTooLow': 'O valor mínimo deve ser { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',

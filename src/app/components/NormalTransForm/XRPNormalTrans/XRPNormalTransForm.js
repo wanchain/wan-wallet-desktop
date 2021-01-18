@@ -141,10 +141,10 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
               </Form.Item>
             <Form.Item label={intl.get('Common.amount')}>
               {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: checkAmount }] })
-                (<Input disabled={disabledAmount} min={0} placeholder={`可用余额${useAvailableBalance}`} prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                (<Input disabled={disabledAmount} min={0} placeholder={intl.get('Common.availableBalance', { availableBalance: useAvailableBalance })} prefix={<Icon type="credit-card" className="colorInput" />} />)}
               <Checkbox onChange={sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
             </Form.Item>
-            <Form.Item label={'Destination Tag'}>
+            <Form.Item label={intl.get('Xrp.destinationTag')}>
               {getFieldDecorator('tag', { rules: [{ message: intl.get('NormalTransForm.amountIsIncorrect'), validator: checkDestinationTag }] })
                 (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
             </Form.Item>

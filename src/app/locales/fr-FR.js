@@ -40,6 +40,9 @@ const fr_FR = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',

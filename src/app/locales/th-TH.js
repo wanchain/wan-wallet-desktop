@@ -40,6 +40,9 @@ const th_TH = {
     'Common.storemanGroup': 'กลุ่ม Storeman',
     'Common.chain': 'เชน',
     'Common.amountTooLow': 'จำนวนจะต้องไม่ต่ำกว่า { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
