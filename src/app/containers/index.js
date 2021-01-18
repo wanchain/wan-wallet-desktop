@@ -21,6 +21,7 @@ export { default as AddDApp } from './AddDApp';
 export { default as DApps } from './DApps';
 export { default as CrossEOS } from './CrossChain/CrossEOS';
 export { default as EosAccount } from './EosAccount';
+export { default as XrpAccount } from './XrpAccount';
 export { default as DAppMarket } from './DAppMarket';
 export { default as OsmDelegation } from './OpenStoreman/Delegation';
 export { default as OsmStoreman } from './OpenStoreman/Storeman';

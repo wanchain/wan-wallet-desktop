@@ -24,6 +24,7 @@ const es_ES = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'Opciones',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancelar',

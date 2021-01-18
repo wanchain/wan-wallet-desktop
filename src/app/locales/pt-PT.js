@@ -24,6 +24,7 @@ const pt_PT = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'Opções',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancelar',

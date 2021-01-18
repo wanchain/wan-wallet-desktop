@@ -28,10 +28,10 @@ class Sidebar extends Component {
     collapsed: false,
   }
 
-  componentDidUpdate() {
-    this.props.setCoin();
-    this.props.updateCoinPrice();
-  }
+  // componentDidUpdate() {
+  //   this.props.setCoin();
+  //   this.props.updateCoinPrice();
+  // }
 
   componentDidMount() {
     this.props.setCoin();

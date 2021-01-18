@@ -5,7 +5,7 @@ import { Button, Input, message, Modal } from 'antd';
 
 import style from './index.less';
 import { BTCPATH_TEST, WANPATH } from 'utils/settings';
-import { openScanOTA, createBTCAddr, createETHAddr } from 'utils/helper';
+import { openScanOTA, createBTCAddr, createETHAddr, createXRPAddr } from 'utils/helper';
 
 message.config({
   duration: 2,
@@ -19,12 +19,14 @@ message.config({
   language: stores.languageIntl.language,
   btcAddrInfo: stores.btcAddress.addrInfo,
   ethAddrInfo: stores.ethAddress.addrInfo,
+  xrpAddrInfo: stores.xrpAddress.addrInfo,
   isFirstLogin: stores.session.isFirstLogin,
   needFirstDBUpdate: stores.session.needFirstDBUpdate,
   setAuth: val => stores.session.setAuth(val),
   setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
+  addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
   updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
 }))
 
@@ -73,6 +75,14 @@ class Login extends Component {
         if (!Object.keys(this.props.ethAddrInfo.normal).length) {
           createETHAddr().then(addressInfo => {
             this.props.addETHAddress(addressInfo);
+          }).catch(err => {
+            console.log(err);
+          })
+        }
+
+        if (!Object.keys(this.props.xrpAddrInfo.normal).length) {
+          createXRPAddr().then(addressInfo => {
+            this.props.addXRPAddress(addressInfo);
           }).catch(err => {
             console.log(err);
           })

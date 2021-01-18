@@ -8,7 +8,7 @@ import InputPwd from 'components/Mnemonic/InputPwd';
 import ShowPhrase from 'components/Mnemonic/ShowPhrase';
 import ConfirmPhrase from 'components/Mnemonic/ConfirmPhrase';
 
-import { createFirstAddr, createBTCAddr } from 'utils/helper';
+import { createFirstAddr, createBTCAddr, createXRPAddr } from 'utils/helper';
 import { WANPATH, ETHPATH, WALLETID, BTCPATH_MAIN, BTCPATH_TEST } from 'utils/settings';
 import { checkCryptographic, checkPhrase } from 'utils/support';
 
@@ -30,6 +30,7 @@ const Step = Steps.Step;
   addWANAddress: newAddr => stores.wanAddress.addAddress(newAddr),
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   addBTCAddress: newAddr => stores.btcAddress.addAddress(newAddr),
+  addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
 }))
 
@@ -100,7 +101,7 @@ class Register extends Component {
   }
 
   done = () => {
-    const { chainId, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress } = this.props;
+    const { chainId, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, addXRPAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       this.setState({ loading: true });
       wand.request('phrase_import', { phrase: mnemonic, pwd }, err => {
@@ -115,14 +116,16 @@ class Register extends Component {
             this.setState({ loading: false });
           } else {
             try {
-              let [wanAddrInfo, ethAddrInfo, btcMainAddInfo] = await Promise.all([
+              let [wanAddrInfo, ethAddrInfo, btcMainAddInfo, xrpAddrInfo] = await Promise.all([
                 createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
                 createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
                 createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                createXRPAddr(),
               ]);
               addWANAddress(wanAddrInfo);
               addETHAddress(ethAddrInfo);
               addBTCAddress(btcMainAddInfo);
+              addXRPAddress(xrpAddrInfo);
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });

@@ -24,6 +24,7 @@ const th_TH = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'ตัวเลือก',
     'Common.ok': 'ตกลง',
     'Common.cancel': 'ยกเลิก',

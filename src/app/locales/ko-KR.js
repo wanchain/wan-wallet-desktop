@@ -24,6 +24,7 @@ const ko_KR = {
     'Common.ethereum': '이더리움',
     'Common.bitcoin': '비트코인',
     'Common.eos': '이오스',
+    'Common.ripple': 'Ripple',
     'Common.options': '옵션',
     'Common.ok': '확인',
     'Common.cancel': '취소',

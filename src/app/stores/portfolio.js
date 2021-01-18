@@ -6,6 +6,7 @@ import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import xrpAddress from './xrpAddress';
 import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -35,6 +36,11 @@ class Portfolio {
       ancestor: false,
       balance: 0,
       chain: intl.get('Common.eos'),
+    },
+    XRP: {
+      ancestor: false,
+      balance: 0,
+      chain: intl.get('Common.ripple'),
     }
   };
 
@@ -163,6 +169,9 @@ class Portfolio {
               break;
             case 'EOS':
               val.balance = eosAddress.getAllAmount;
+              break;
+            case 'XRP':
+              val.balance = xrpAddress.getAllAmount;
               break;
           }
         } else {

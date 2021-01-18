@@ -26,6 +26,7 @@ class App extends Component {
         stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
+        stores.xrpAddress.getUserAccountFromDB();
         stores.eosAddress.getUserKeyFromDB();
         stores.dapps.updateLocalDApps();
         clearInterval(id);
@@ -102,6 +103,9 @@ class App extends Component {
           break;
         case 'EOS':
           stores.eosAddress.addRawKey(data);
+            break;
+        case 'XRP':
+          stores.xrpAddress.addRawKey(data);
             break;
       }
     })

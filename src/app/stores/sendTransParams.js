@@ -17,6 +17,14 @@ class SendTransParams {
     feeRate: 0,
   };
 
+  @observable XRPTransParams = {
+    from: '',
+    tag: '',
+    to: '',
+    value: 0,
+    BIP44Path: '',
+  };
+
   @observable gasLimit = GASLIMIT;
 
   @observable defaultGasPrice = 10;
@@ -52,6 +60,12 @@ class SendTransParams {
   @action updateBTCTransParams(paramsObj) {
     Object.keys(paramsObj).forEach(item => {
       self.BTCTransParams[item] = paramsObj[item];
+    });
+  }
+
+  @action updateXRPTransParams(paramsObj) {
+    Object.keys(paramsObj).forEach(item => {
+      self.XRPTransParams[item] = paramsObj[item];
     });
   }
 

@@ -433,6 +433,11 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                                 paramsObj1 = { name: accountName, publicKey: addr.address }
                                 paramsObj2 = { type, path: newPath, name: accountName, publicKey: addr.address }
                                 break;
+                            case 'XRP':
+                                isValidAddress = await ccUtil.isXrpAccount(addr.address);
+                                paramsObj1 = { name: accountName, addr: addr.address }
+                                paramsObj2 = { type, path: newPath, name: accountName, addr: addr.address }
+                                break;
                         }
                         if (isValidAddress) {
                             hdUtil.createUserAccount(wid, newPath, paramsObj1);
@@ -858,7 +863,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 try {
                     let { key, type } = payload;
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(key) : Buffer.from(key, 'hex');
-                    ret = ethUtil.isValidPrivate(rawPriv);
+                    ret = type === 'XRP' ? true : ethUtil.isValidPrivate(rawPriv);
+                    // TODO: choose ecdsa-secp256k1 (default) or ed25519.
+                    // ccUtil.isValidXRPSecret(key)
                 } catch (e) {
                     console.log('isValidPrivateKey Error:', e);
                     logger.error(e.message || e.stack);
@@ -2745,6 +2752,9 @@ const getChainIdByType = function (type, isTestNet = false) {
         case 'EOS':
             ID = 194;
             break;
+        case 'XRP':
+          ID = 144;
+          break;
     }
     return ID;
 }
