@@ -57,7 +57,7 @@ class Window extends EventEmitter {
                 let history = global.wanDb.getItemAll('crossTrans', {});
 
                 let hasPendingCrossTx = history.find((item) => {
-                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail') || item.crossType === 'FAST') {
+                    if (item.status === 'Redeemed' || item.status === 'Revoked' || item.status.toLowerCase().includes('fail') || item.crossType === 'FAST' || item.tokenStand === 'BTC') {
                         return false;
                     } else {
                         this._logger.info(`Unfinished cross chain Tx: ${item.status}`);
