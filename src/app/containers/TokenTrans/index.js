@@ -55,11 +55,12 @@ class TokenTrans extends Component {
 
   componentDidMount() {
     this.props.changeTitle('WanAccount.wallet');
-    this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
-    this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
+    const { tokenAddr, chain } = this.props;
+    this.props.getChainStoreInfoByChain(chain).updateTransHistory();
+    this.props.updateTokensBalance(tokenAddr, chain);
     this.timer = setInterval(() => {
-      this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory(); // Don't delete this.props.
-      this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
+      this.props.getChainStoreInfoByChain(chain).updateTransHistory();
+      this.props.updateTokensBalance(tokenAddr, chain);
     }, 5000);
   }
 

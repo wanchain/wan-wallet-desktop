@@ -386,7 +386,6 @@ class WanAddress {
     let normalArr = self.addrInfo['normal'];
     let importArr = self.addrInfo['import'];
     let rawKeyArr = self.addrInfo['rawKey'];
-    console.log('LIST:', JSON.parse(JSON.stringify(self.addrInfo)));
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
       Object.keys(obj).forEach((item) => {
@@ -477,7 +476,7 @@ class WanAddress {
     }
     Object.keys(self.transHistory).forEach(item => {
       let data = self.transHistory[item];
-      if (addrList.includes(data['from'])) {
+      if (addrList.includes(data['from']) && !('transferTo' in data)) {
         let status = data.status;
         let type = checkAddrType(data['from'], self.addrInfo);
         historyList.push({

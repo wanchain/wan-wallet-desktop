@@ -218,7 +218,7 @@ class EthAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item].from) && !self.transHistory[item].transferTo) {
+      if (addrList.includes(self.transHistory[item].from) && !('transferTo' in self.transHistory[item])) {
         let status = self.transHistory[item].status;
         let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
         historyList.push({

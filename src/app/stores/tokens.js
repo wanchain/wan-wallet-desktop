@@ -187,7 +187,16 @@ class Tokens {
         console.log('stores_getTokensBalance:', err);
         return;
       }
-      self.tokensBalance[tokenScAddr] = data;
+      let addresses = Object.keys(data);
+      if (addresses.length === 0) {
+        self.tokensBalance[tokenScAddr] = data;
+      } else {
+        let obj = {};
+        addresses.forEach(key => {
+          obj[key.toLowerCase()] = data[key];
+        });
+        self.tokensBalance[tokenScAddr] = obj;
+      }
     })
   }
 

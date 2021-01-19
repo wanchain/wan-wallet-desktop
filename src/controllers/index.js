@@ -1968,9 +1968,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     canRevoke: []
                 };
                 let crossCollection = global.wanDb.getItemAll('crossTrans', {});
-                let crossBTCCollection = global.wanDb.getItemAll('crossTransBtc', {});
-
-                crossCollection.concat(crossBTCCollection).forEach(record => {
+                crossCollection.forEach(record => {
                     if (ccUtil.canRedeem(record).code) {
                         record.redeemTryCount = 1;
                         ret.canRedeem.push(record);

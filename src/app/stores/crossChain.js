@@ -1,11 +1,9 @@
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import tokens from './tokens';
-import session from './session';
 import wanAddress from './wanAddress';
-import btcAddress from './btcAddress';
-import { getInfoByAddress, getInfoByPath } from 'utils/helper';
-import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
+import { getInfoByAddress } from 'utils/helper';
+import { timeFormat, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 import { TOKEN_PRIORITY } from 'utils/settings';
 import { message } from 'antd';
 
@@ -45,6 +43,7 @@ class CrossChain {
   @action getTokenPairs() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
+        console.log('get data:', err, data)
         if (err) {
           console.log('getTokenPairs failed: ', err);
           reject(err)

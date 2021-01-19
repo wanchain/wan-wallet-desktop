@@ -40,23 +40,34 @@ class TokenTransHistory extends Component {
   }
 
   componentDidMount() {
-    this.props.getChainStoreInfoByChain(this.props.currTokenChain).setCurrPage(this.props.name || []);
+    if (this.props.currTokenChain !== '') {
+      this.props.getChainStoreInfoByChain(this.props.currTokenChain).setCurrPage(this.props.name || []);
+    }
   }
+
+  /* componentDidUpdate(prevProps, prevState) {
+    console.log('Did Update:', prevProps, prevState);
+  } */
 
   render() {
     const { name, getChainStoreInfoByChain, currTokenChain } = this.props;
-    let tokenAddress = getChainStoreInfoByChain(currTokenChain);
-    let addrInfo = tokenAddress.addrInfo;
-    let tokenTransferHistoryList = tokenAddress.tokenTransferHistoryList;
-    let selectedAddr = tokenAddress.selectedAddr;
     let addrList = [];
+    let selectedAddr;
     let dataSource;
-    if (name) {
-      name.forEach(val => {
-        addrList = addrList.concat(Object.entries(addrInfo[val] || []).map(v => ({ address: v[0], name: v[1].name })));
-      });
+    if (currTokenChain === '') {
+      dataSource = [];
+    } else {
+      let tokenAddress = getChainStoreInfoByChain(currTokenChain);
+      let addrInfo = tokenAddress.addrInfo;
+      let tokenTransferHistoryList = tokenAddress.tokenTransferHistoryList;
+      selectedAddr = tokenAddress.selectedAddr;
+      if (name) {
+        name.forEach(val => {
+          addrList = addrList.concat(Object.entries(addrInfo[val] || []).map(v => ({ address: v[0], name: v[1].name })));
+        });
+      }
+      dataSource = tokenTransferHistoryList;
     }
-    dataSource = tokenTransferHistoryList;
     return (
       <div>
         <div className="historyCon" id="tokenAddrSelect">

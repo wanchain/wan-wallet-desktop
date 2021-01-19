@@ -28,11 +28,6 @@ class Sidebar extends Component {
     collapsed: false,
   }
 
-  // componentDidUpdate() {
-  //   this.props.setCoin();
-  //   this.props.updateCoinPrice();
-  // }
-
   componentDidMount() {
     this.props.setCoin();
     this.props.updateCoinPrice();
@@ -202,7 +197,6 @@ class Sidebar extends Component {
     } else {
       dAppsChildren.splice(0, dAppsChildren.length - 1);
     }
-
     return (
       <div>
         <div className={style.sidebar + ' sidebar'}>
