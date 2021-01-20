@@ -456,7 +456,8 @@ export const checkAmountUnit = function (decimals, amount) {
   if (amount === '0') {
     return true;
   }
-  let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
+  let amountStr = new BigNumber(amount).toString(10);
+  let decimalLen = amountStr.includes('.') ? (amountStr.length - amountStr.indexOf('.') - 1) : 0;
   return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
 }
 
@@ -1235,6 +1236,19 @@ export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
     wand.request('crossChain_getBurnQuota', { chainType, tokenPairID, storemanGroupID }, (err, res) => {
       if (err) {
         return resolve(false);
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}
+
+export const getQuota = function (chainType, groupId, tokenPairIdArray) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getQuota', { chainType, groupId, tokenPairIdArray }, (err, res) => {
+      console.log('getQuota:', err, res)
+      if (err) {
+        return reject(new Error('get quota failed'));
       } else {
         return resolve(res);
       }

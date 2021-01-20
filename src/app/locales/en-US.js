@@ -484,6 +484,7 @@ const en_US = {
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit',
     'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 

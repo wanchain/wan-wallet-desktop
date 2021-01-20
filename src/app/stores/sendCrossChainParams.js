@@ -19,7 +19,6 @@ class SendCrossChainParams {
     btcAddress: '',
     storeman: '',
     wanAddress: '',
-    gasPrice: '',
     gas: '',
     crossAddr: '',
     amount: 0,

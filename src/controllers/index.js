@@ -276,13 +276,13 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 sendResponse([ROUTE_WALLET, [action, id].join('#')].join('_'), event, { err: err, data: sig })
                 break
             }
-    
+
         case 'signTransaction':
             {
                 let sig = {};
                 let { walletID, path, rawTx } = payload;
                 let hdWallet = hdUtil.getWalletSafe().getWallet(walletID);
-                
+
                 try {
                     let ret = await hdWallet.sec256k1sign(path, rawTx);
                     sig.r = '0x' + ret.r.toString('hex');
@@ -762,16 +762,16 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'isXrpAddress':
-          let isXrpAddress;
-          try {
-            isXrpAddress = await ccUtil.isXrpAccount(payload.address);
-          } catch (e) {
-              logger.error(e.message || e.stack)
-              err = e
-          }
+            let isXrpAddress;
+            try {
+                isXrpAddress = await ccUtil.isXrpAccount(payload.address);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
 
-          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: isXrpAddress })
-          break
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: isXrpAddress })
+            break
 
         case 'isValidatorAddress':
             try {
@@ -1110,16 +1110,16 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
             break;
 
         case 'XRPNormal':
-          try {
-              logger.info('XRP Normal transaction: ' + JSON.stringify(payload));
-              let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'XRP');
-              ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
-          } catch (e) {
-              logger.error('Send transaction failed: ' + e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break;
+            try {
+                logger.info('XRP Normal transaction: ' + JSON.stringify(payload));
+                let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'XRP');
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
+            } catch (e) {
+                logger.error('Send transaction failed: ' + e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break;
 
         case 'EOSNormal':
             try {
@@ -1816,6 +1816,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getQuota':
+            try {
+                let { chainType, groupId, tokenPairIdArray } = payload;
+                ret = await ccUtil.getStoremanGroupQuota(chainType, groupId, tokenPairIdArray);
+            } catch (e) {
+                logger.error('getQuota failed: ' + e);
+                err = e;
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret });
+            break;
+
         case 'getHtmlAddr':
             try {
                 if (payload && payload.symbol) {
@@ -1892,7 +1903,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 if (payload.type === 'REVOKE') {
-                    payload.input.feeRate =  await ccUtil.estimateSmartFee();
+                    payload.input.feeRate = await ccUtil.estimateSmartFee();
                 }
                 console.log('CC BTC:', payload.type, payload);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
@@ -2751,8 +2762,8 @@ const getChainIdByType = function (type, isTestNet = false) {
             ID = 194;
             break;
         case 'XRP':
-          ID = 144;
-          break;
+            ID = 144;
+            break;
     }
     return ID;
 }

@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 import { getReadyOpenStoremanGroupListByChainPair, getGasPrice, estimateSmartFee } from 'utils/helper';
-import { INBOUND, OUTBOUND, REDEEMWETH_GAS, LOCKWETH_GAS, LOCKETH_GAS } from 'utils/settings';
+import { INBOUND, OUTBOUND, FAST_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
 const CollectionCreateForm = Form.create({ name: 'CrossBTCForm' })(CrossBTCForm);
@@ -28,10 +28,7 @@ class BTCTrans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    }
+    estimateFee: 0
   }
 
   showModal = async () => {
@@ -41,40 +38,35 @@ class BTCTrans extends Component {
       addCrossTransTemplate(from, { chainType, path });
     }
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getReadyOpenStoremanGroupListByChainPair()]);
+      let smgList = await getReadyOpenStoremanGroupListByChainPair();
       if (smgList.length === 0) {
         this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
         return;
       }
-      let originalFee, destinationFee;
+      let estimateFee;
       let smgId = smgList[0].groupId;
       if (direction === INBOUND) {
-        originalFee = 0;
-        destinationFee = new BigNumber(gasPrice).times(REDEEMWETH_GAS).times(2.5).div(BigNumber(10).pow(9)).toString(10);
+        estimateFee = 0;
         let feeRate = await estimateSmartFee();
         updateBTCTransParams({
           feeRate,
           changeAddress: from,
           storeman: smgId,
-          gasPrice,
         });
       } else {
-        originalFee = new BigNumber(gasPrice).times(LOCKWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
-        destinationFee = 0;
+        let gasPrice = await getGasPrice(info.toChainSymbol);
+        estimateFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
         updateTransParams(from, {
           gasPrice,
-          gasLimit: LOCKETH_GAS,
+          gasLimit: FAST_GAS,
           storeman: smgId,
         });
       }
 
       this.setState({
         smgList,
-        estimateFee: {
-          original: originalFee,
-          destination: destinationFee
-        },
+        estimateFee,
         spin: false,
         loading: false,
       });

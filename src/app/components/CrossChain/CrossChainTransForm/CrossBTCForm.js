@@ -12,7 +12,7 @@ import { INBOUND, OUTBOUND } from 'utils/settings';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import OptionForm from 'components/AdvancedCrossChainOptionForm/AdvancedBTCCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, btcCoinSelect, getNormalPathFromUtxos, getValueByAddrInfo, getValueByNameInfo, getCrossChainContractData } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getCrossChainContractData, getQuota } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 const AdvancedOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(OptionForm);
@@ -24,7 +24,6 @@ const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOpt
   btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
-  btcFee: stores.sendCrossChainParams.btcFee,
   minCrossBTC: stores.sendCrossChainParams.minCrossBTC,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   coinPriceObj: stores.portfolio.coinPriceObj,
@@ -44,7 +43,28 @@ class CrossBTCForm extends Component {
       fee: 0,
       confirmVisible: false,
       advancedVisible: false,
-      feeRate: 0
+      feeRate: 0,
+      minQuota: 0,
+      maxQuota: 0,
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.smgList !== this.props.smgList) {
+      let { smgList, direction, currTokenPairId, currentTokenPairInfo: info } = this.props;
+      try {
+        const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
+        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [currTokenPairId]);
+        const decimals = info.ancestorDecimals;
+        this.setState({
+          minQuota: formatNumByDecimals(minQuota, decimals),
+          maxQuota: formatNumByDecimals(maxQuota, decimals)
+        })
+      } catch (e) {
+        console.log('e:', e);
+        message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
+        this.props.onCancel();
+      }
     }
   }
 
@@ -67,24 +87,25 @@ class CrossBTCForm extends Component {
         console.log('handleNext:', err);
         return;
       };
-      let origAddrAmount, destAddrAmount, origAddrFee, destAddrFee;
+      const { minQuota, maxQuota, fee } = this.state;
+      if (new BigNumber(sendAmount).lt(minQuota)) {
+        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[direction === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
+        return;
+      }
+
+      if (new BigNumber(sendAmount).gt(maxQuota)) {
+        message.warn(intl.get('CrossChainTransForm.overQuota'));
+        return;
+      }
       let otherAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
       to = getValueByNameInfo(to, 'address', direction === INBOUND ? otherAddrInfo : addrInfo);
       if (direction === INBOUND) {
-        origAddrAmount = balance;
-        destAddrAmount = getBalanceByAddr(to, otherAddrInfo);
-        origAddrFee = this.state.fee;
-        destAddrFee = estimateFee.destination;
-        if (isExceedBalance(origAddrAmount, origAddrFee, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
+        if (isExceedBalance(balance, fee, sendAmount)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
       } else {
-        origAddrAmount = getBalanceByAddr(from, otherAddrInfo);
-        destAddrAmount = getBalanceByAddr(to, addrInfo);
-        origAddrFee = estimateFee.originalFee;
-        destAddrFee = this.state.fee;
-        if (isExceedBalance(origAddrAmount, origAddrFee) || isExceedBalance(balance, sendAmount) || isExceedBalance(destAddrAmount, destAddrFee)) {
+        if (isExceedBalance(balance, sendAmount) || isExceedBalance(getBalanceByAddr(from, otherAddrInfo), estimateFee)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
@@ -123,7 +144,7 @@ class CrossBTCForm extends Component {
   }
 
   checkAmount = async (rule, value, callback) => {
-    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, btcFee, balance, BTCCrossTransParams: transParams, currTokenPairId: tokenPairID, currentTokenPairInfo: info } = this.props;
+    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance } = this.props;
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
         if (direction === INBOUND) {
@@ -154,7 +175,6 @@ class CrossBTCForm extends Component {
             callback(intl.get('CrossChainTransForm.overBalance'));
             return;
           }
-          this.setState({ fee: btcFee });
           callback();
         }
       } else {
@@ -200,8 +220,21 @@ class CrossBTCForm extends Component {
     }
   }
 
-  updateLockAccounts = (storeman) => {
-    let { updateBTCTransParams } = this.props;
+  updateLockAccounts = async (storeman) => {
+    const { updateBTCTransParams, direction, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    try {
+      const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
+      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [currTokenPairId]);
+      const decimals = info.ancestorDecimals;
+      this.setState({
+        minQuota: formatNumByDecimals(minQuota, decimals),
+        maxQuota: formatNumByDecimals(maxQuota, decimals)
+      });
+    } catch (e) {
+      console.log('e:', e);
+      message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
+      this.props.onCancel();
+    }
     updateBTCTransParams({ storeman });
   }
 
@@ -257,7 +290,7 @@ class CrossBTCForm extends Component {
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
     const { advancedVisible, feeRate } = this.state;
-    let gasFee, operationFee, totalFee, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
+    let gasFee, totalFee, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
     let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
@@ -266,12 +299,12 @@ class CrossBTCForm extends Component {
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
 
       // Convert the value of fee to USD
-      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
-        totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).plus(BigNumber(estimateFee.destination).times(coinPriceObj[info.toChainSymbol])).toString()} USD`;
+      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj) {
+        totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).toString()} USD`;
       } else {
-        totalFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+        totalFee = `${this.state.fee} ${info.fromChainSymbol}`;
       }
-      gasFee = `${this.state.fee} ${info.fromChainSymbol} + ${estimateFee.destination} ${info.toChainSymbol}`;
+      gasFee = `${this.state.fee} ${info.fromChainSymbol}`;
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = addrInfo;
@@ -279,13 +312,12 @@ class CrossBTCForm extends Component {
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
 
       // Convert the value of fee to USD
-      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj && info.toChainSymbol in coinPriceObj) {
-        totalFee = `${new BigNumber(estimateFee.original).times(coinPriceObj[info.toChainSymbol]).plus(BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol])).toString()} USD`;
+      if ((typeof coinPriceObj === 'object') && info.toChainSymbol in coinPriceObj) {
+        totalFee = `${new BigNumber(estimateFee).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
       } else {
-        totalFee = `${estimateFee.original} ${info.toChainSymbol} + ${this.state.fee} ${info.fromChainSymbol}`;
+        totalFee = `${estimateFee} ${info.toChainSymbol}`;
       }
-      gasFee = `${removeRedundantDecimal(estimateFee.original)} ${info.toChainSymbol}`;
-      operationFee = `${removeRedundantDecimal(this.state.fee)} ${info.fromChainSymbol}`;
+      gasFee = `${removeRedundantDecimal(estimateFee)} ${info.toChainSymbol}`;
     }
 
     if (smgList.length === 0) {
@@ -350,6 +382,15 @@ class CrossBTCForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
               />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='quota'
+                disabled={true}
+                options={{ initialValue: `${this.state.maxQuota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.quota')}
+              />
               <SelectForm
                 form={form}
                 colSpan={6}
@@ -371,7 +412,6 @@ class CrossBTCForm extends Component {
                   <table className={style['suffix_table']}>
                     <tbody>
                       <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
-                      {direction === OUTBOUND && (<tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFee}</td></tr>)}
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}

@@ -484,6 +484,7 @@ const th_TH = {
     'CrossChainTransForm.HTLC': 'เน้นความปลอดภัย',
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
 

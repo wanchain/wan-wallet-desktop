@@ -12,7 +12,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { INBOUND, OUTBOUND, CROSS_TYPE, WAN_ETH_DECIMAL } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, getMintQuota, getBurnQuota, checkAddressByChainType, getFastMinCount, getFees } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, checkAddressByChainType, getFees, getQuota } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -37,44 +37,37 @@ class CrossWANForm extends Component {
     this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
     this.state = {
       confirmVisible: false,
-      quota: 0,
       crossType: CROSS_TYPE[0],
       advancedVisible: false,
       advanced: false,
       advancedFee: 0,
-      fastMinCount: 0,
       operationFee: 0,
+      minQuota: 0,
+      maxQuota: 0,
     }
   }
 
-  /* async componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { chainType, type, smgList, currTokenPairId, currentTokenPairInfo: info } = this.props;
-      if (smgList.length === 0) {
-        return;
+      let { smgList, direction, currTokenPairId, currentTokenPairInfo: info } = this.props;
+      try {
+        const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
+        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [currTokenPairId]);
+        const decimals = info.ancestorDecimals;
+        this.setState({
+          minQuota: formatNumByDecimals(minQuota, decimals),
+          maxQuota: formatNumByDecimals(maxQuota, decimals)
+        })
+      } catch (e) {
+        console.log('e:', e);
+        message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
+        this.props.onCancel();
       }
-      const storeman = smgList[0].groupId;
-      const decimals = info.ancestorDecimals;
-      let quota = '';
-      if (type === INBOUND) {
-        quota = await getMintQuota(chainType, currTokenPairId, storeman);
-      } else {
-        quota = await getBurnQuota(chainType, currTokenPairId, storeman);
-      }
-      console.log('quota:', quota);
-      this.setState({
-        quota: formatNumByDecimals(quota, decimals)
-      })
     }
-  } */
+  }
 
   componentDidMount() {
-    const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
-    getFastMinCount(type === INBOUND ? info.fromChainSymbol : info.toChainSymbol, currTokenPairId).then(res => {
-      this.setState({ fastMinCount: res });
-    }).catch(err => {
-      console.log('err:', err);
-    });
+    const { currentTokenPairInfo: info, type } = this.props;
     getFees(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
       this.setState({ operationFee: fromWei(res[0]) });
     }).catch(err => {
@@ -101,18 +94,22 @@ class CrossWANForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { fastMinCount } = this.state;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
-    form.validateFields(err => {
+    form.validateFields((err, { pwd, amount: sendAmount, to }) => {
       if (err) {
         console.log('handleNext:', err);
         return;
       };
+      const { minQuota, maxQuota } = this.state;
 
-      let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      if (new BigNumber(sendAmount).lt(fastMinCount)) {
-        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(fastMinCount, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
+      if (new BigNumber(sendAmount).lt(minQuota)) {
+        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
+        return;
+      }
+
+      if (new BigNumber(sendAmount).gt(maxQuota)) {
+        message.warn(intl.get('CrossChainTransForm.overQuota'));
         return;
       }
 
@@ -193,15 +190,19 @@ class CrossWANForm extends Component {
   }
 
   updateLockAccounts = async (storeman) => {
-    let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
-    /* const decimals = info.ancestorDecimals;
-    let quota = '';
-    if (type === INBOUND) {
-      quota = await getMintQuota(chainType, currTokenPairId, storeman);
-    } else {
-      quota = await getBurnQuota(chainType, currTokenPairId, storeman);
+    let { from, updateTransParams, chainType, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    try {
+      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [currTokenPairId]);
+      const decimals = info.ancestorDecimals;
+      this.setState({
+        minQuota: formatNumByDecimals(minQuota, decimals),
+        maxQuota: formatNumByDecimals(maxQuota, decimals)
+      });
+    } catch (e) {
+      console.log('e:', e);
+      message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
+      this.props.onCancel();
     }
-    form.setFieldsValue({ quota: formatNumByDecimals(quota, decimals) + ` ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}` }); */
     updateTransParams(from, { storeman });
   }
 
@@ -260,7 +261,7 @@ class CrossWANForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, estimateFee, balance, getChainAddressInfoByChain, record, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { quota, advancedVisible, advanced, advancedFee, operationFee } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee } = this.state;
     let gasFee, totalFee, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
@@ -341,15 +342,15 @@ class CrossWANForm extends Component {
                 handleChange={this.updateLockAccounts}
                 formMessage={intl.get('Common.storemanGroup')}
               />
-              {/* <CommonFormItem
+              <CommonFormItem
                 form={form}
                 colSpan={6}
                 formName='quota'
                 disabled={true}
-                options={{ initialValue: `${quota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
+                options={{ initialValue: `${this.state.maxQuota} ${unit}`, rules: [{ validator: this.checkQuota }] }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
-              /> */}
+              />
               <AutoCompleteForm
                 form={form}
                 colSpan={6}

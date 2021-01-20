@@ -483,6 +483,7 @@ const pt_PT = {
     'CrossChainTransForm.HTLC': 'Modo seguro',
     'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
 
