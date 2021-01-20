@@ -198,7 +198,7 @@ const Transaction = (props) => {
       return;
     }
     setMethods(abiJson.filter((v) => {
-      return v.constant === false;
+      return (v.constant && (v.constant === false)) || (v.stateMutability && v.stateMutability !== 'view');
     }));
   }, [abiJson]);
 
