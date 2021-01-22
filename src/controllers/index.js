@@ -1049,7 +1049,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     BIP44Path: path,
                     walletID: walletID,
                     nonce: nonce,
-                    data: data,
+                    data: str2Hex(data),
                     satellite: satellite
                 }
 
@@ -2766,4 +2766,8 @@ const getChainIdByType = function (type, isTestNet = false) {
             break;
     }
     return ID;
+}
+const str2Hex = (str = '0x') => {
+    str = str.trim().replace(/^0x/g, '');
+    return '0x' + Buffer.from(str, 'utf8').toString('hex');
 }

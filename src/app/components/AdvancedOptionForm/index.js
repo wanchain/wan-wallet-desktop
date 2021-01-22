@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
 import { TRANSTYPE } from 'utils/settings';
+
 import style from './index.less';
 
 const MinGasLimit = 21000;
@@ -36,7 +37,7 @@ class AdvancedOptionForm extends Component {
   }
 
   checkInputData = (rule, value, callback) => {
-    if (value.slice(0, 2) === '0x' && value.length % 2 === 0) {
+    if (value.slice(0, 2) === '0x') {
       callback();
     } else {
       callback(intl.get('AdvancedOptionForm.inputDataIsIncorrect'));
@@ -51,15 +52,11 @@ class AdvancedOptionForm extends Component {
     this.setState({ loading: true });
     let { from, form } = this.props;
 
-    form.validateFields((err, values) => {
+    form.validateFields((err, { gasPrice, gasLimit, nonce, inputData: data }) => {
       if (err) {
         this.setState({ loading: false });
         return;
       };
-      let gasPrice = this.props.form.getFieldValue('gasPrice');
-      let gasLimit = this.props.form.getFieldValue('gasLimit');
-      let nonce = this.props.form.getFieldValue('nonce');
-      let data = this.props.form.getFieldValue('inputData');
       try {
         this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
         this.setState({ loading: false });
