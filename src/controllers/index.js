@@ -2768,6 +2768,9 @@ const getChainIdByType = function (type, isTestNet = false) {
     return ID;
 }
 const str2Hex = (str = '0x') => {
-    str = str.trim().replace(/^0x/g, '');
+    str = str.trim();
+    if(/^0x/.test(str)) {
+        return str;
+    }
     return '0x' + Buffer.from(str, 'utf8').toString('hex');
 }

@@ -46,7 +46,7 @@ class SendTransParams {
       gasPrice: { value: gasPrice, ...objKey },
       gasLimit: { value: GASLIMIT, ...objKey },
       nonce: { value: '', ...objKey },
-      data: { value: '0x', ...objKey },
+      data: { value: '', ...objKey },
       chainId: { value: params.chainId, ...objKey },
       txType: { value: 1, ...objKey },
       path: { value: '', ...objKey },

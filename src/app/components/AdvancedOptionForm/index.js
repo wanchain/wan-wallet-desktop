@@ -37,10 +37,13 @@ class AdvancedOptionForm extends Component {
   }
 
   checkInputData = (rule, value, callback) => {
-    if (value.slice(0, 2) === '0x') {
+    value = value.toString().trim();
+    if ((/^0x([0-9a-fA-F]{2})*$/g).test(value)) {
       callback();
-    } else {
+    } else if ((/^0x/g).test(value)) {
       callback(intl.get('AdvancedOptionForm.inputDataIsIncorrect'));
+    } else {
+      callback();
     }
   }
 

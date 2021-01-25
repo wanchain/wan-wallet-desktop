@@ -208,8 +208,3 @@ export function removeRedundantDecimal(num, left = 1, zeroLimit = 4, isCeil = tr
   }
   return new BigNumber(result).toFixed();
 }
-
-export function UTF8ToUni(str) {
-  // eslint-disable-next-line no-control-regex
-  return str.replace((/[^\u0000-\u00FF]/g), function ($0) { return escape($0).replace(/(%u)(\w{4})/gi, '$2') });
-}
