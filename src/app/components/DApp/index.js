@@ -72,6 +72,9 @@ class DApp extends Component {
   }
 
   componentWillUnmount() {
+    if (typeof (this.selectAddressModal) === 'object' && 'destroy' in this.selectAddressModal) {
+      this.selectAddressModal.destroy();
+    }
   }
 
   handlerDexMessage(args) {
@@ -442,17 +445,19 @@ class DApp extends Component {
       msg.err = error;
     }
 
-    confirm({
+    this.selectAddressModal = confirm({
       title: title,
-      content: <StyledSelect defaultValue={addrAll[0]} onChange={e => {
-        msg.val = [e];
-      }}>
-        {
-          addrAll.map(v => {
-            return (<Option key={v} value={v}>{v}</Option>);
-          })
-        }
-      </StyledSelect>,
+      content: (
+        <StyledSelect defaultValue={addrAll[0]} onChange={e => {
+          msg.val = [e];
+        }}>
+          {
+            addrAll.map(v => {
+              return (<Option key={v} value={v}>{v}</Option>);
+            })
+          }
+        </StyledSelect>
+      ),
       okText: intl.get('ValidatorRegister.acceptAgency'),
       cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
       async onOk() {
