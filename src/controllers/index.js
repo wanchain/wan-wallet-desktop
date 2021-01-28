@@ -1252,7 +1252,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
 
         case 'estimateSmartFee':
             try {
-                ret = await ccUtil.estimateSmartFee();
+                ret = await ccUtil.estimateSmartFee(payload.chainType);
             } catch (e) {
                 logger.error('estimateSmartFee failed:')
                 logger.error(e.message || e.stack)
@@ -1899,11 +1899,11 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.value = ccUtil.calculateLocWanFeeWei(payload.input.amount * 100000000, global.btc2WanRatio, payload.input.txFeeRatio);
                 }
                 if (payload.type === 'REDEEM') {
-                    payload.input.feeRate = await ccUtil.estimateSmartFee();
+                    payload.input.feeRate = await ccUtil.estimateSmartFee('BTC');
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 if (payload.type === 'REVOKE') {
-                    payload.input.feeRate = await ccUtil.estimateSmartFee();
+                    payload.input.feeRate = await ccUtil.estimateSmartFee('BTC');
                 }
                 console.log('CC BTC:', payload.type, payload);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);

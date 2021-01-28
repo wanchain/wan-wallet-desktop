@@ -48,7 +48,7 @@ class BTCTrans extends Component {
       let smgId = smgList[0].groupId;
       if (direction === INBOUND) {
         estimateFee = 0;
-        let feeRate = await estimateSmartFee();
+        let feeRate = await estimateSmartFee('BTC');
         updateBTCTransParams({
           feeRate,
           changeAddress: from,

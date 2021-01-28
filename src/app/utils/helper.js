@@ -1306,9 +1306,9 @@ export const getFees = (chainType, chainID1, chainID2) => {
   });
 }
 
-export const estimateSmartFee = () => {
+export const estimateSmartFee = chainType => {
   return new Promise((resolve, reject) => {
-    wand.request('transaction_estimateSmartFee', {}, (err, res) => {
+    wand.request('transaction_estimateSmartFee', { chainType }, (err, res) => {
       if (err) {
         return reject(err);
       } else {

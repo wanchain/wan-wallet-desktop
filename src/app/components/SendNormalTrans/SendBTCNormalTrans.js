@@ -30,7 +30,7 @@ class SendBTCNormalTrans extends Component {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
-    let feeRate = await estimateSmartFee();
+    let feeRate = await estimateSmartFee('BTC');
     updateBTCTransParams({ changeAddress: from, feeRate });
     this.setState({ visible: true });
     setTimeout(() => { this.setState({ spin: false }) }, 0);
