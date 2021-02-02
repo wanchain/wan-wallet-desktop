@@ -15,14 +15,14 @@ const CHAINTYPE = 'XRP';
 const columsTemplate = [
   { dataIndex: 'name', editable: true },
   { dataIndex: 'address' },
-  { dataIndex: 'balance', sorter: (a, b) => a.balance - b.balance },
+  { dataIndex: 'balance', sorter: (a, b) => a.orignBalance - b.orignBalance },
   { dataIndex: 'action' },
 ];
 const components = { body: { cell: EditableCell, row: EditableFormRow } };
 
 const AddrFunc = (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>
 
-const SendTrans = (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} chainType={CHAINTYPE} /></div>
+const SendTrans = (text, record) => <div><SendNormalTrans record={record} /></div>
 
 const XrpAccount = observer(() => {
   const { languageIntl, xrpAddress: { addrInfo, updateName, getAddrList, addAddress, getAllAmount } } = useContext(MobXProviderContext)

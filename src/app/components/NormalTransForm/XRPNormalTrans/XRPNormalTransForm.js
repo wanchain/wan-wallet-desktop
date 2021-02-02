@@ -1,22 +1,34 @@
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { observer, MobXProviderContext } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin } from 'antd';
 
 import style from '../index.less';
+import useAsync from 'hooks/useAsync';
 import { checkAmountUnit, checkXRPAddr } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 
 const MINBALANCE = '20';
-const DEFAULTFEE = '0.000012';
+const DEFAULTFEE = '0.000012'
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
-const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSend }) => {
+const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCancel, onSend }) => {
   const { languageIntl, session: { reinput_pwd }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const { status: estimateSmartFeeStatus, value: estimateSmartFee } = useAsync('transaction_estimateSmartFee', DEFAULTFEE, true, { chainType: 'XRP' });
+  const spin = useMemo(() => {
+    return estimateSmartFeeStatus === 'pending';
+  }, [estimateSmartFeeStatus])
+
   const { getFieldDecorator } = form;
+
+  useEffect(() => {
+    if (estimateSmartFeeStatus === 'error') {
+      message.warn(intl.get('network.down'));
+    }
+  }, [estimateSmartFeeStatus])
 
   const handleNext = () => {
     form.validateFields(err => {
@@ -25,7 +37,7 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
         return;
       };
       let { pwd, amount, to, tag } = form.getFieldsValue(['pwd', 'amount', 'to', 'tag']);
-      if (new BigNumber(balance).lt(20)) {
+      if (new BigNumber(orignBalance).lt(20)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -50,9 +62,9 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
   }
 
   const useAvailableBalance = useMemo(() => {
-    let tmp = new BigNumber(balance).minus(DEFAULTFEE).minus(MINBALANCE);
+    let tmp = new BigNumber(orignBalance).minus(estimateSmartFee.toString()).minus(MINBALANCE);
     return tmp.lt(0) ? '0' : tmp.toString(10);
-  }, [balance])
+  }, [orignBalance, estimateSmartFee])
 
   const checkToXRPAddr = (rule, value, callback) => {
     if (value) {
@@ -136,7 +148,7 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
                 (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.fee')}>
-                {getFieldDecorator('fee', { initialValue: DEFAULTFEE })
+                {getFieldDecorator('fee', { initialValue: estimateSmartFee })
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
             <Form.Item label={intl.get('Common.amount')}>
@@ -160,7 +172,7 @@ const XRPNormalTransForm = observer(({ spin, from, form, onCancel, balance, onSe
       </Modal>
       {
         confirmVisible &&
-        <Confirm visible={true} onCancel={handleConfirmCancel} sendTrans={onSend} from={from} fee={DEFAULTFEE}/>
+        <Confirm visible={true} onCancel={handleConfirmCancel} sendTrans={onSend} from={from} fee={estimateSmartFee}/>
       }
     </React.Fragment>
   )

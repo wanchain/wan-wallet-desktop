@@ -8,29 +8,23 @@ import XRPNormalTransForm from 'components/NormalTransForm/XRPNormalTrans/XRPNor
 
 const CollectionCreateForm = Form.create({ name: 'XRPNormalTransForm' })(XRPNormalTransForm);
 
-const SendETHNormalTrans = observer(({ from, balance, path }) => {
-  const { languageIntl, session: { chainId }, sendTransParams: { updateXRPTransParams, XRPTransParams } } = useContext(MobXProviderContext)
-  const [spin, setSpin] = useState(true);
+const SendETHNormalTrans = observer(({ record }) => {
+  const { orignBalance, address: from, path, balance } = record
+  const { languageIntl, session, sendTransParams: { updateXRPTransParams, XRPTransParams } } = useContext(MobXProviderContext)
   const [visible, setVisible] = useState(false);
 
   const showModal = async () => {
-    if (BigNumber(balance).eq('0')) {
+    if (BigNumber(orignBalance).eq('0')) {
       message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
       return;
     }
     setVisible(true);
     try {
-      updateXRPTransParams({ from, chainId, BIP44Path: path });
-      setSpin(false);
+      updateXRPTransParams({ from, chainId: session.chainId, BIP44Path: path });
     } catch (err) {
       console.log(`showModal: ${err}`)
       message.warn(intl.get('network.down'));
     }
-  }
-
-  const handleCancel = () => {
-    setSpin(true);
-    setVisible(false);
   }
 
   const sendTrans = () => {
@@ -58,7 +52,6 @@ const SendETHNormalTrans = observer(({ from, balance, path }) => {
     sendTrans().catch(err => {
       console.log(err);
     }).finally(() => {
-      setSpin(true);
       setVisible(false);
     });
   }
@@ -68,7 +61,7 @@ const SendETHNormalTrans = observer(({ from, balance, path }) => {
       <Button type="primary" onClick={showModal}>{intl.get('Common.send')}</Button>
       {
         visible &&
-        <CollectionCreateForm from={from} balance={balance} onCancel={handleCancel} onSend={handleSend} spin={spin}/>
+        <CollectionCreateForm from={from} balance={balance} orignBalance={orignBalance} onCancel={() => setVisible(false)} onSend={handleSend}/>
       }
     </React.Fragment>
   );

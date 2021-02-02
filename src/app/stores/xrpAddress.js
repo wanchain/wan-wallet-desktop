@@ -22,6 +22,7 @@ class XrpAddress {
       getAllAmount: computed,
       getAddrList: computed,
       historyList: computed,
+      getNormalAddrList: computed,
       addAddress: action,
       deleteAddress: action,
       updateAddress: action,
@@ -39,6 +40,24 @@ class XrpAddress {
     return sum.toString();
   }
 
+  get getNormalAddrList() {
+    let addrList = [];
+    let normalArr = Object.keys(self.addrInfo.normal);
+    normalArr.forEach(item => {
+      let type = 'normal';
+      addrList.push({
+        key: item,
+        name: self.addrInfo[type][item].name,
+        address: item,
+        balance: self.addrInfo[type][item].balance,
+        path: `${XRPPATH}${self.addrInfo[type][item].path}`,
+        action: 'send',
+        wid: WALLETID.NATIVE
+      });
+    });
+    return addrList;
+  }
+
   get getAddrList() {
     let addrList = [];
     let normalArr = self.addrInfo['normal'];
@@ -52,6 +71,7 @@ class XrpAddress {
           name: obj[item].name,
           address: item,
           balance: formatNum(obj[item].balance),
+          orignBalance: obj[item].balance,
           path: `${XRPPATH}${obj[item].path}`,
           action: 'send',
           wid: walletID

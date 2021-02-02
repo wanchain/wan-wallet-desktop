@@ -10,6 +10,7 @@ const XRPTransHistory = observer(() => {
   const { languageIntl, session: { chainId }, xrpAddress: { historyList, updateTransHistory } } = useContext(MobXProviderContext)
 
   useEffect(() => {
+    updateTransHistory()
     const timer = setInterval(() => updateTransHistory(), 5000);
     return () => clearInterval(timer);
   }, [])
