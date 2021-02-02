@@ -453,6 +453,7 @@ const th_TH = {
     'NormalTransForm.sendAll': 'ส่งยอดที่มีอยู่ทั้งหมด',
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',

@@ -453,6 +453,7 @@ const es_ES = {
     'NormalTransForm.sendAll': 'Enviar todo',
     'NormalTransForm.password': 'Contraseña',
     'NormalTransForm.pwdIsIncorrect': 'Contraseña incorrecta',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirma la transacción en Cross Chain',
     'CrossChainTransForm.capacity': 'Capacidad',

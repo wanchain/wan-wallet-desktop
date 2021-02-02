@@ -453,6 +453,7 @@ const zh_CN = {
     'NormalTransForm.sendAll': '发送全部',
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
+    'NormalTransForm.destinationTagRule': 'Destination Tag格式不正确',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',

@@ -453,6 +453,7 @@ const fr_FR = {
     'NormalTransForm.sendAll': 'Tout envoyer',
     'NormalTransForm.password': 'Mot de passe',
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',
