@@ -487,7 +487,7 @@ const fr_FR = {
     'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',

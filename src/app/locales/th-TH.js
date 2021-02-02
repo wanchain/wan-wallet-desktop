@@ -487,7 +487,7 @@ const th_TH = {
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
