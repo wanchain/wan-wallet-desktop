@@ -46,6 +46,7 @@ class CrossBTCForm extends Component {
       feeRate: 0,
       minQuota: 0,
       maxQuota: 0,
+      receive: 0,
     }
   }
 
@@ -155,8 +156,9 @@ class CrossBTCForm extends Component {
           updateBTCTransParams({ from });
           try {
             let getFee = await this.getFee(from, value);
+            console.log('BTC getFee:', getFee);
             if (getFee.code === false) {
-              callback(intl.get('CrossChainTransForm.overBalance'));
+              callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
               return;
             }
             let fee = formatNumByDecimals(getFee.result.fee, 8);
@@ -165,16 +167,18 @@ class CrossBTCForm extends Component {
               callback(intl.get('CrossChainTransForm.overBalance'));
               return;
             }
+            this.setState({ receive: new BigNumber(value).minus(fee).toString() });
             callback();
           } catch (e) {
             console.log('get Fee error:', e);
-            callback(intl.get('CrossChainTransForm.overBalance'));
+            callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
           }
         } else {
           if (isExceedBalance(balance, value)) {
             callback(intl.get('CrossChainTransForm.overBalance'));
             return;
           }
+          this.setState({ receive: value });
           callback();
         }
       } else {
@@ -289,7 +293,7 @@ class CrossBTCForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
-    const { advancedVisible, feeRate } = this.state;
+    const { advancedVisible, feeRate, receive } = this.state;
     let gasFee, totalFee, desChain, selectedList, defaultSelectStoreman, title, toAccountList, unit;
     let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
@@ -411,7 +415,7 @@ class CrossBTCForm extends Component {
                 suffix={<Tooltip title={
                   <table className={style['suffix_table']}>
                     <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{gasFee}</td></tr>
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}
@@ -424,6 +428,15 @@ class CrossBTCForm extends Component {
                 placeholder={0}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='receive'
+                disabled={true}
+                options={{ initialValue: `${receive} ${unit}` }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.youWillReceive')}
               />
               {
                 direction === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)

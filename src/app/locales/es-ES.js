@@ -461,6 +461,7 @@ const es_ES = {
     'CrossChainTransForm.txFeeRatio': 'Ratio de tarifa',
     'CrossChainTransForm.estimateFee': 'Tarifa estimada',
     'CrossChainTransForm.gasFee': 'Tarifa del Gas',
+    'CrossChainTransForm.networkFee': 'Network Fee',
     'CrossChainTransForm.operationFee': 'Tarifa de Operaciones',
     'CrossChainTransForm.overBalance': 'El costo excede el saldo. Verifique el saldo en la cadena original y en la de destino.',
     'CrossChainTransForm.overOriginalBalance': 'El coste excede el saldo. Por favor, verifique el saldo en la cadena original',
@@ -486,6 +487,8 @@ const es_ES = {
     'CrossChainTransForm.UnderFastMinimum': 'Menos del límite mínimo de transacciones',
     'CrossChainTransForm.getOperationFeeFailed': 'Error al obtener la tarifa de operación.',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Error al actualizar el estado de selección.',
 

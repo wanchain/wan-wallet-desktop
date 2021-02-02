@@ -461,6 +461,7 @@ const fr_FR = {
     'CrossChainTransForm.txFeeRatio': 'Ratio de frais',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
     'CrossChainTransForm.gasFee': 'Frais de gas',
+    'CrossChainTransForm.networkFee': 'Network Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.overOriginalBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale',
@@ -486,6 +487,8 @@ const fr_FR = {
     'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
 

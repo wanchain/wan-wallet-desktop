@@ -235,6 +235,7 @@ const pt_PT = {
     'WanAccount.createAccountFailed': 'Falha na criação da conta ',
     'WanAccount.createAccountSuccess': 'Criar conta com sucesso',
     'WanAccount.newAddressExistInImportedList': 'O novo endereço abaixo será criado, mas o mesmo endereço foi importado. Exclua o endereço importado antes de criar um novo endereço.',
+
     'EosAccount.name': 'NOME',
     'EosAccount.publicKey': 'CHAVE PÚBLICA',
     'EosAccount.account': 'CONTA',
@@ -452,6 +453,7 @@ const pt_PT = {
     'NormalTransForm.sendAll': 'Enviar tudo',
     'NormalTransForm.password': 'Senha',
     'NormalTransForm.pwdIsIncorrect': 'Senha está incorreta',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
     'CrossChainTransForm.capacity': 'Capacidade',
@@ -459,6 +461,7 @@ const pt_PT = {
     'CrossChainTransForm.txFeeRatio': 'Taxa do Ratio',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
     'CrossChainTransForm.gasFee': 'Taxa do Gás',
+    'CrossChainTransForm.networkFee': 'Network Fee',
     'CrossChainTransForm.operationFee': 'Taxa de operação',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
     'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
@@ -484,6 +487,8 @@ const pt_PT = {
     'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
 

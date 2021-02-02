@@ -461,6 +461,7 @@ const zh_CN = {
     'CrossChainTransForm.txFeeRatio': '比率',
     'CrossChainTransForm.estimateFee': '估算的费用',
     'CrossChainTransForm.gasFee': 'Gas费用',
+    'CrossChainTransForm.networkFee': '网络费用',
     'CrossChainTransForm.operationFee': '手续费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
     'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保余额充足',
@@ -485,7 +486,9 @@ const zh_CN = {
     'CrossChainTransForm.HTLC': '安全模式',
     'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
-    'CrossChainTransForm.getQuotaFailed': '获取剩余配额数据失败.',
+    'CrossChainTransForm.getQuotaFailed': '获取剩余配额数据失败',
+    'CrossChainTransForm.getNetworkFeeFailed': '获取网络费用数据失败',
+    'CrossChainTransForm.youWillReceive': '您将收到',
 
     'CrossChain.selectFailed': '修改选择状态失败',
 

@@ -461,6 +461,7 @@ const ko_KR = {
     'CrossChainTransForm.txFeeRatio': '비용 비율',
     'CrossChainTransForm.estimateFee': '예상 수수료',
     'CrossChainTransForm.gasFee': '가스 비용',
+    'CrossChainTransForm.networkFee': 'Network Fee',
     'CrossChainTransForm.operationFee': '운영 비용',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.overOriginalBalance': '비용이 잔액을 초과합니다. 기존 체인의 잔액을 확인 바랍니다.',
@@ -486,6 +487,8 @@ const ko_KR = {
     'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다',
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',
 

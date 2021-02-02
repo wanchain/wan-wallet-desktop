@@ -461,6 +461,7 @@ const th_TH = {
     'CrossChainTransForm.txFeeRatio': 'อัตราส่วนค่าธรรมเนียม',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
     'CrossChainTransForm.gasFee': 'ค่าแก๊ส',
+    'CrossChainTransForm.networkFee': 'Network Fee',
     'CrossChainTransForm.operationFee': 'ค่าธรรมเนียมการจัดการ',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
     'CrossChainTransForm.overOriginalBalance': 'ยอดบัญชีไม่พอค่าใช้จ่าย กรุณาตรวจสอบยอดบัญชีจากเชนต้นทาง',
@@ -486,6 +487,8 @@ const th_TH = {
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
     'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
 
