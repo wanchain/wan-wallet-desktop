@@ -4,11 +4,13 @@ import Identicon from 'identicon.js';
 import btcImg from 'static/image/btc.png';
 import ethImg from 'static/image/eth.png';
 import eosImg from 'static/image/eos.png';
+import xrpImg from 'static/image/xrp.png';
 import wanImg from 'static/image/wan.png';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import xrpAddress from './xrpAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -70,6 +72,9 @@ class Tokens {
       case 'EOS':
         self.tokenIconList[scAddr] = eosImg;
         break;
+      // case 'XRP':
+      //   self.tokenIconList[scAddr] = xrpImg;
+      //   break;
       default:
         if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
           self.tokenIconList[scAddr] = wanImg;
@@ -294,6 +299,10 @@ class Tokens {
           normalArr = Object.keys(eosAddress.keyInfo['normal']);
           rawKeyArr = Object.keys(eosAddress.keyInfo['rawKey']);
           break;
+        case 'XRP':
+          normalArr = Object.keys(xrpAddress.keyInfo.normal);
+          rawKeyArr = Object.keys(xrpAddress.keyInfo.rawKey);
+          break;
         default:
         // console.log('Default.....');
       }
@@ -490,7 +499,7 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
     if (chain === undefined) {
       return undefined;
     }
@@ -505,7 +514,7 @@ class Tokens {
   }
 
   getChainStoreInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {

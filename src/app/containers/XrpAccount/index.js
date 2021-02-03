@@ -3,7 +3,7 @@ import { Button, Table, Row, Col, Tag, message } from 'antd';
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { observer, MobXProviderContext } from 'mobx-react';
 
-import totalImg from 'static/image/eth.png';
+import totalImg from 'static/image/xrp.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { hasSameName, createXRPAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
