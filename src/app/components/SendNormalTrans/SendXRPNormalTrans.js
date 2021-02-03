@@ -15,7 +15,7 @@ const SendETHNormalTrans = observer(({ record }) => {
 
   const showModal = async () => {
     if (BigNumber(orignBalance).eq('0')) {
-      message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
+      message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
     setVisible(true);
