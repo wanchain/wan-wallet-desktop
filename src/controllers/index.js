@@ -548,7 +548,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     let addresses = ['XRP'].includes(chainType) ? addr : addr.map(item => `0x${item}`);
                     balance = await ccUtil.getMultiBalances(addresses, chainType)
                 } else {
-                    let address = ['XRP'].includes(chainType) ? addr : `0x${addr}`;
+                    let address = ['XRP'].includes(chainType) ? addr[0] : `0x${addr}`;
                     balance = await ccUtil.getBalance(address, chainType);
                     balance = { [address]: balance }
                 }
