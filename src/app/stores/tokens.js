@@ -72,9 +72,9 @@ class Tokens {
       case 'EOS':
         self.tokenIconList[scAddr] = eosImg;
         break;
-      // case 'XRP':
-      //   self.tokenIconList[scAddr] = xrpImg;
-      //   break;
+      case 'XRP':
+        self.tokenIconList[scAddr] = xrpImg;
+        break;
       default:
         if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
           self.tokenIconList[scAddr] = wanImg;
