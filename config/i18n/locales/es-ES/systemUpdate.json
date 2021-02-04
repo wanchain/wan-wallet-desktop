@@ -3,6 +3,7 @@
     "head": "Actualizacion de software",
     "newVersion": "Una nueva version de WAN Wallet esta disponible!",
     "version": "La version de $1 ya esta disponible, su version actual es $2. <br> ¿Desea actualizar ahora?",
+    "hardUpgradeWarningText": "This version has a major upgrade. Please upgrade to the latest version or you will not be able to use WAN wallet.",
     "release": "Notas de version",
     "info": "$1",
     "no": "Recuérdame más tarde",

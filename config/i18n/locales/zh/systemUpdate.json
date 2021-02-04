@@ -3,6 +3,7 @@
     "head": "软件升级",
     "newVersion": "WAN钱包版本有更新!",
     "version": "WAN钱包版本$1可用, 你的当前版本是$2，<br>是否更新？",
+    "hardUpgradeWarningText": "当前存在较大更新，请升级至最新版本，否则您将无法继续使用轻钱包",
     "release": "新版本更新说明：",
     "info": "$1",
     "no": "稍后提醒我",

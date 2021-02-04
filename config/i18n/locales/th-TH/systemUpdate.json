@@ -3,6 +3,7 @@
     "head": "อัพเดทซอฟต์แวร์",
     "newVersion": "ตอนนี้มีกระเป๋า WAN เวอร์ชั่นใหม่แล้ว!",
     "version": "กระเป๋า WAN เวอร์ชั่น $1 ซึ่งเป็นเวอร์ชั่นใหม่พร้อมให้อัพเดทแล้ว กระเป๋าของคุณปัจจุบันเวอร์ชั่น $2. <br>คุณต้องการอัพเดทตอนนี้หรือไม่?",
+    "hardUpgradeWarningText": "This version has a major upgrade. Please upgrade to the latest version or you will not be able to use WAN wallet.",
     "release": "หมายเหตุการพัฒนา:",
     "info": "$1",
     "no": "เตือนฉันอีกครั้ง",
