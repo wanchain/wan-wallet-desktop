@@ -16,7 +16,7 @@ const CHAINTYPE = 'BTC';
   language: stores.languageIntl.language,
   getNormalAddrList: stores.btcAddress.getNormalAddrList,
   getAmount: stores.btcAddress.getNormalAmount,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
@@ -167,7 +167,7 @@ class CrossBTC extends Component {
   ];
 
   render() {
-    const { getNormalAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo } = this.props;
     let from = getNormalAddrList.length ? getNormalAddrList[0].address : '';
 
     this.props.language && this.inboundColumns.forEach(col => {
@@ -196,7 +196,7 @@ class CrossBTC extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getCCTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">

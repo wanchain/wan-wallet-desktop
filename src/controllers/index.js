@@ -2308,12 +2308,12 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
                 if (!tx.gasLimit) {
                     tx.gasLimit = 2000000;
                 }
-                let gasPrice = await ccUtil.getGasPrice('wan');
-                tx.gasPrice = web3.utils.fromWei(gasPrice, 'gwei');
+                // let gasPrice = await ccUtil.getGasPrice('wan');
+                tx.gasPrice = '1'; // web3.utils.fromWei(gasPrice, 'gwei');
                 logger.info(`Open Storeman ${action}, isEstimateFee:${isEstimateFee}` + JSON.stringify(tx));
                 ret = await global.crossInvoker.invokeOpenStoremanTrans(action, tx, isEstimateFee);
                 if (action === 'delegateClaim' && isEstimateFee === false && ret.result) {
-                    ret.result.estimateGas = ret.result.estimateGas * 2;
+                  ret.result.estimateGas = ret.result.estimateGas * 2;
                 }
             } catch (e) {
                 logger.error(e.message || e.stack)

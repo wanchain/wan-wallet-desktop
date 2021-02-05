@@ -33,7 +33,7 @@ class Main extends Component {
     }
 
     render() {
-        const showHeader = !(location.pathname.includes('dapp') || location.pathname.includes('AddDApp'));
+        const showHeader = !(location.hash.includes('dapp') || location.hash.includes('AddDApp'));
         return (
             <Row className="container">
                 <Col className={style['nav-left'] + ' ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
@@ -41,7 +41,7 @@ class Main extends Component {
                 </Col>
                 <Col id="main-content" className={'main ' + (this.state.collapsed ? 'nav-collapsed' : '')}>
                     {showHeader ? <MHeader /> : null}
-                    <Row className="content">{this.props.children}</Row>
+                    <Row className={`content ${showHeader ? '' : 'noHeaderFooter'}`}>{this.props.children}</Row>
                     {showHeader ? <MFooter /> : null}
                 </Col>
                 {

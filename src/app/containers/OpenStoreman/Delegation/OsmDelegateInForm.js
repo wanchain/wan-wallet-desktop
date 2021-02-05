@@ -74,7 +74,7 @@ class OsmDelegateInForm extends Component {
       form.setFieldsValue({
         storeman,
         crosschain,
-        quota: storemanInfo ? new BigNumber(fromWei(storemanInfo.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
+        quota: storemanInfo ? (new BigNumber(fromWei(storemanInfo.deposit)).plus(fromWei(storemanInfo.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
         delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
       this.setState({ storemanInfo, minAmount: fromWei(groupInfo.minDelegateIn) });
@@ -285,7 +285,7 @@ class OsmDelegateInForm extends Component {
     let storemanListSelect = storemanMemberList.filter(i => {
       let crosschain = this.state.crosschain;
       return !crosschain || crosschain === `${i.chain1[2]} <-> ${i.chain2[2]}`;
-    }).map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />{v.nameShowing}</div>);
+    }).map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />&nbsp;&nbsp;{v.nameShowing}</div>);
 
     let crosschainListSelect = groupChainInfo.filter(i => {
       let storemanInfo = this.state.storemanInfo;

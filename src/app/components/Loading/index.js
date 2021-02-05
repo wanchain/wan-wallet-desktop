@@ -17,7 +17,7 @@ class Loading extends Component {
   componentDidMount() {
     this.timer = setInterval(() => {
       let currePercent = this.state.percent;
-      let tmp = 10 + parseFloat(currePercent);
+      let tmp = 5 + parseFloat(currePercent);
       if (tmp === 100) {
         tmp = 99.9
         clearInterval(this.timer);

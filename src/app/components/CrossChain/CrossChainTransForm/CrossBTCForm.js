@@ -181,7 +181,7 @@ class CrossBTCForm extends Component {
       });
     }
     let smg = smgList[option.key];
-    updateBTCTransParams({ btcAddress: smg.btcAddress, changeAddress: storeman, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
+    updateBTCTransParams({ btcAddress: smg.btcAddress, storeman: smg[`${info.toChainSymbol.toLowerCase()}Address`], feeRate: smg.txFeeRatio, smgBtcAddr: smg.smgBtcAddr });
   }
 
   filterStoremanData = item => {

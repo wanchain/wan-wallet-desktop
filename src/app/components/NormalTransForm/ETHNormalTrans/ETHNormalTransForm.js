@@ -151,6 +151,7 @@ class ETHNormalTransForm extends Component {
 
   updateGasLimit = () => {
     let data = '0x';
+    let tx = {};
     let { form, transType, from, tokenAddr } = this.props;
     let { to, amount } = form.getFieldsValue(['to', 'amount']);
     try {
@@ -159,8 +160,10 @@ class ETHNormalTransForm extends Component {
           data = encodeTransferInput(to, this.decimals, amount || 0);
           this.props.updateTransParams(from, { data });
         }
+        tx = { from, to: tokenAddr, data, value: '0x0' };
+      } else {
+        tx = { from, to, data };
       }
-      let tx = { from, to: tokenAddr, data, value: '0x0' };
       wand.request('transaction_estimateGas', { chainType: 'ETH', tx }, (err, gasLimit) => {
         if (err) {
           message.warn(intl.get('NormalTransForm.estimateGasFailed'));

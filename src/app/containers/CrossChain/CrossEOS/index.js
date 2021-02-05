@@ -15,7 +15,7 @@ const CHAINTYPE = 'EOS';
 @inject(stores => ({
   language: stores.languageIntl.language,
   addrInfo: stores.eosAddress.accountInfo,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   getNormalAccountListWithBalance: stores.eosAddress.getNormalAccountListWithBalance,
   tokenPairs: stores.crossChain.tokenPairs,
@@ -76,7 +76,7 @@ class CrossEOS extends Component {
       wand.request('crossChain_crossEOS2WAN', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, currTokenPairId }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockEOS:', err);
-          message.warn(intl.get('common.sendFailed'));
+          message.warn(intl.get('Common.sendFailed'));
           return reject(err);
         } else {
           return resolve(ret)
@@ -94,7 +94,7 @@ class CrossEOS extends Component {
       wand.request('crossChain_crossEOS2WAN', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, currTokenPairId }, (err, ret) => {
         if (err) {
           console.log('crossChain_lockEOS:', err);
-          message.warn(intl.get('common.sendFailed'));
+          message.warn(intl.get('Common.sendFailed'));
           return reject(err);
         } else {
           return resolve(ret)
@@ -150,7 +150,7 @@ class CrossEOS extends Component {
   ];
 
   render() {
-    const { getNormalAccountListWithBalance, getTokensListInfo } = this.props;
+    const { getNormalAccountListWithBalance, getCCTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -182,7 +182,7 @@ class CrossEOS extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getCCTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">

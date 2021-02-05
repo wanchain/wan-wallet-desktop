@@ -242,7 +242,7 @@ class ModifyForm extends Component {
                 <CommonFormItem form={form} formName='capacity' disabled={true} title={intl.get('CrossChainTransForm.quota')}
                   options={{
                     rules: [{ required: true }],
-                    initialValue: new BigNumber(fromWei(record.deposit)).multipliedBy(storemanConf.delegationMulti).minus(fromWei(record.delegateDeposit)).toString(10)
+                    initialValue: (new BigNumber(fromWei(record.deposit)).plus(fromWei(record.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(record.delegateDeposit)).toString(10)
                   }}
                 />
               }

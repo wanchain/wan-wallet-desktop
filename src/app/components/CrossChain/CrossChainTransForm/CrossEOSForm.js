@@ -68,7 +68,7 @@ class CrossEOSForm extends Component {
         return;
       }
       if (direction !== INBOUND && isExceedBalance(getBalanceByAddr(from, wanAddrInfo), totalFee)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
 

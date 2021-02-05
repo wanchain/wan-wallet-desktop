@@ -126,7 +126,7 @@ class CrossChainTransForm extends Component {
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
       if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
 
@@ -139,12 +139,12 @@ class CrossChainTransForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: { walletID: 1, path: toPath }, toAddr: to, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: { walletID: 1, path: toPath }, toAddr: to, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -228,7 +228,6 @@ class CrossChainTransForm extends Component {
   checkTo = async (rule, value, callback) => {
     const { currentTokenPairInfo: info, type } = this.props;
     let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
-    console.log('chain:', chain);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       callback();
     } else {
@@ -388,7 +387,7 @@ class CrossChainTransForm extends Component {
           </Spin>
         </Modal>
         <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
-        {advancedVisible && <AdvancedCrossChainModal onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
+        {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
       </div>
     );
   }

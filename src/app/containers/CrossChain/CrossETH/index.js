@@ -17,7 +17,7 @@ const CHAINTYPE = 'ETH';
   language: stores.languageIntl.language,
   getNormalAddrList: stores.ethAddress.getNormalAddrList,
   getAmount: stores.ethAddress.getNormalAmount,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
@@ -180,7 +180,7 @@ class CrossETH extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -205,7 +205,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getCCTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">

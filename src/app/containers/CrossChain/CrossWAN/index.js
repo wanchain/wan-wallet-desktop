@@ -16,10 +16,8 @@ const CHAINTYPE = 'WAN';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.wanAddress.getNormalAddrList,
-  ledgerAddrList: stores.wanAddress.ledgerAddrList,
-  trezorAddrList: stores.wanAddress.trezorAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
-  getTokensListInfo: stores.tokens.getTokensListInfo,
+  getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
   tokenPairs: stores.crossChain.tokenPairs,
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
@@ -181,7 +179,7 @@ class CrossWAN extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, ledgerAddrList, trezorAddrList, getTokensListInfo } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
@@ -197,7 +195,7 @@ class CrossWAN extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList, trezorAddrList)} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList} />
           </Col>
         </Row>
         <Row className="title">
@@ -205,7 +203,7 @@ class CrossWAN extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getTokensListInfo} />
+            <Table className="content-wrap" pagination={false} columns={this.outboundColumns} dataSource={getCCTokensListInfo} />
           </Col>
         </Row>
         <Row className="mainBody">

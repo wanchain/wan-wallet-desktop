@@ -7,7 +7,8 @@ import style from './index.less';
 @inject(stores => ({
   language: stores.languageIntl.language,
   tokensList: stores.tokens.tokensList,
-  addCustomToken: tokenInfo => stores.tokens.addCustomToken(tokenInfo)
+  addCustomToken: tokenInfo => stores.tokens.addCustomToken(tokenInfo),
+  initTokenIcon: obj => stores.tokens.initTokenIcon(obj)
 }))
 
 @observer
@@ -52,7 +53,7 @@ class AddToken extends Component {
   }
 
   handleAddToken = () => {
-    const { tokensList, addCustomToken, chain } = this.props;
+    const { tokensList, addCustomToken, initTokenIcon, chain } = this.props;
     let { tokenAddr, tokenInfo } = this.state;
     tokenAddr = tokenAddr.toLowerCase();
     const key = `${Number('0x80000000'.toString(10)) + (chain === 'WAN' ? 5718350 : 60)}-${tokenAddr}`;
@@ -75,6 +76,7 @@ class AddToken extends Component {
         message.warn(intl.get('Config.addTokenAddrErr'));
       } else {
         addCustomToken(token);
+        initTokenIcon(token);
         message.success(intl.get('TransHistory.success'));
       }
       this.props.onCloseAll();

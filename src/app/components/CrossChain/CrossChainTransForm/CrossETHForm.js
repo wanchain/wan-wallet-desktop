@@ -128,7 +128,7 @@ class CrossETHForm extends Component {
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
       if (type === OUTBOUND && isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee.original)) {
-        message.warn(intl.get('CrossChainTransForm.overBalance'));
+        message.warn(intl.get('CrossChainTransForm.overOriginalBalance'));
         return;
       }
       if (settings.reinput_pwd) {
@@ -399,7 +399,7 @@ class CrossETHForm extends Component {
           </Spin>
         </Modal>
         { this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
-        {advancedVisible && <AdvancedCrossChainModal onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
+        {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
       </div>
     );
   }
