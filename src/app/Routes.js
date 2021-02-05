@@ -15,6 +15,7 @@ import {
   EthAccount,
   BtcAccount,
   EosAccount,
+  XrpAccount,
   CrossChain,
   CrossWAN,
   CrossETH,
@@ -42,10 +43,11 @@ export default () => {
           <Route path="/btcAccount" component={BtcAccount} />
           <Route path="/ethAccount" component={EthAccount} />
           <Route path="/eosAccount" component={EosAccount} />
+          <Route path="/xrpAccount" component={XrpAccount} />
           <Route path="/tokens/:chain/:tokenAddr/:symbol" component={TokenTrans} />
           <Route path="/MoreAccount" component={MoreAccount} />
           <Route path="/crossChain/:tokenPairId" component={CrossChain} />
-          <Route path="/CrossWAN/:tokenPairId" component={CrossWAN} />
+          <Route path="/crossWAN/:tokenPairId" component={CrossWAN} />
           <Route path="/crossETH/:tokenPairId" component={CrossETH} />
           <Route path="/crossBTC/:tokenPairId" component={CrossBTC} />
           <Route path="/crossEOS/:tokenPairId" component={CrossEOS} />

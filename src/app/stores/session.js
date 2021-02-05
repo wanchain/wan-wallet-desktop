@@ -1,4 +1,4 @@
-import { observable, action, toJS } from 'mobx';
+import { observable, action, toJS, makeObservable } from 'mobx';
 import { getChainId } from 'utils/helper';
 
 class Session {
@@ -19,6 +19,10 @@ class Session {
   };
 
   @observable needFirstDBUpdate = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setChainId(id) {
     self.chainId = id;

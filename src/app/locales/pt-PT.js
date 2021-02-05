@@ -24,6 +24,7 @@ const pt_PT = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'Opções',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancelar',
@@ -31,6 +32,7 @@ const pt_PT = {
     'Common.create': 'Criar',
     'Common.balance': 'Saldo',
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
@@ -38,6 +40,9 @@ const pt_PT = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain (cadeia/blockchain)',
     'Common.amountTooLow': 'O valor mínimo deve ser { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',
@@ -230,6 +235,7 @@ const pt_PT = {
     'WanAccount.createAccountFailed': 'Falha na criação da conta ',
     'WanAccount.createAccountSuccess': 'Criar conta com sucesso',
     'WanAccount.newAddressExistInImportedList': 'O novo endereço abaixo será criado, mas o mesmo endereço foi importado. Exclua o endereço importado antes de criar um novo endereço.',
+
     'EosAccount.name': 'NOME',
     'EosAccount.publicKey': 'CHAVE PÚBLICA',
     'EosAccount.account': 'CONTA',
@@ -343,6 +349,7 @@ const pt_PT = {
     'EOSNormalTransForm.invalid': 'Inválid0',
     'EOSNormalTransForm.recipientAccount': 'Conta do Destinatário',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Opções avançadas',
     'AdvancedOptionForm.save': 'Salvar',
@@ -355,6 +362,8 @@ const pt_PT = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce está incorreto',
     'AdvancedOptionForm.inputData': 'Insira dados',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Dados inseridos estão incorretos',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Cópia feita com sucesso',
     'CopyAndQrcode.privateKey': 'Chave privada',
@@ -444,6 +453,7 @@ const pt_PT = {
     'NormalTransForm.sendAll': 'Enviar tudo',
     'NormalTransForm.password': 'Senha',
     'NormalTransForm.pwdIsIncorrect': 'Senha está incorreta',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
     'CrossChainTransForm.capacity': 'Capacidade',
@@ -451,9 +461,11 @@ const pt_PT = {
     'CrossChainTransForm.txFeeRatio': 'Taxa do Ratio',
     'CrossChainTransForm.estimateFee': 'Taxa estimada',
     'CrossChainTransForm.gasFee': 'Taxa do Gás',
+    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
+    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'Taxa de operação',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
-    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance on original chain',
+    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
     'CrossChainTransForm.transInfo': 'Informações sobre transações cross-chain',
@@ -473,8 +485,11 @@ const pt_PT = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Modo rápido',
     'CrossChainTransForm.HTLC': 'Modo seguro',
-    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação.',
+    'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
 
@@ -783,6 +798,10 @@ const pt_PT = {
     'Storeman.delegationExit': 'Tirar delegação',
     'Storeman.delegationTopup': 'Adicionar à Delegação',
     'Storeman.registration': 'Registro do Storeman',
+
+    'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default pt_PT;

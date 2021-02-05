@@ -35,7 +35,6 @@ class EthAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -74,6 +73,7 @@ class EthAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
@@ -103,8 +103,15 @@ class EthAccount extends Component {
           console.log(err);
           reject(false); // eslint-disable-line prefer-promise-reject-errors
         } else {
+          if (txHash.code === false) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            reject(txHash.result);
+          } else {
+            message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+            resolve(txHash)
+          }
           this.props.updateTransHistory();
-          resolve(txHash)
+          console.log('Tx hash: ', txHash);
         }
       }.bind(this));
     })

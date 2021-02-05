@@ -94,6 +94,7 @@ class EOSNormalTransForm extends Component {
       from: data.from,
       to: data.to,
       amount: `${data.amount} EOS`,
+      memo: String(data.memo).trim(),
       BIP44Path: `${selectedAccount.path}`,
       walletID: selectedAccount.id,
     };
@@ -130,7 +131,25 @@ class EOSNormalTransForm extends Component {
   }
 
   checkMemo = (rule, value, callback) => {
-    callback();
+    if (value.length === 0) {
+      callback();
+    } else if (typeof value === 'string') {
+      let strlen = 0;
+      for (let i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 255) {
+          strlen += 3;
+        } else {
+          strlen++;
+        }
+      }
+      if (strlen <= 256) {
+        callback();
+      } else {
+        callback(intl.get('EOSNormalTransForm.invalidMemo'));
+      }
+    } else {
+      callback(intl.get('EOSNormalTransForm.invalidMemo'));
+    }
   }
 
   render() {

@@ -221,7 +221,7 @@ class ModifyForm extends Component {
     let title = isExit ? intl.get('Storeman.delegationExit') : intl.get('Storeman.delegationTopup');
     let balance = getValueByAddrInfo(record.myAddress.addr, 'balance', addrInfo)
     let showConfirmItem = { storeman: true, groupId: true, crosschain: true, account: true, amount: !isExit };
-
+    let initialQuotaValue = (new BigNumber(fromWei(record.deposit)).plus(fromWei(record.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(record.delegateDeposit))
     return (
       <div>
         <Modal visible closable={false} destroyOnClose={true} title={title} className="validator-register-modal + spincont"
@@ -242,7 +242,7 @@ class ModifyForm extends Component {
                 <CommonFormItem form={form} formName='capacity' disabled={true} title={intl.get('CrossChainTransForm.quota')}
                   options={{
                     rules: [{ required: true }],
-                    initialValue: (new BigNumber(fromWei(record.deposit)).plus(fromWei(record.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(record.delegateDeposit)).toString(10)
+                    initialValue: initialQuotaValue.gte('0') ? initialQuotaValue.toString(10) : '0'
                   }}
                 />
               }
@@ -332,7 +332,6 @@ class DelegateAppendAndExit extends Component {
 
   render () {
     const { record, modifyType, enableButton } = this.props;
-
     return (
       <div>
         <Button className={style.modifyTopUpBtn} disabled={ enableButton } onClick={this.handleStateToggle} />

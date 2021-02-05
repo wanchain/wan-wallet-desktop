@@ -349,7 +349,7 @@ class OsmDelegateInForm extends Component {
                             optionFilterProp="children"
                             onChange={this.onStoremanChange}
                             getPopupContainer={() => document.getElementById('osmNameSelect')}
-                            filterOption={(input, option) => option.props.children.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            filterOption={(input, option) => option.props.children.props.children[2].toLowerCase().indexOf(input.toLowerCase()) >= 0}
                           >
                             {storemanListSelect.map((item, index) => <Select.Option value={item.props.value} key={index}>{item}</Select.Option>)}
                           </Select>
@@ -406,6 +406,7 @@ class OsmDelegateInForm extends Component {
         {
           this.state.confirmVisible &&
           <Confirm
+            type="delegateIn"
             onSend={this.onSend}
             record={this.state.record}
             onCancel={this.onConfirmCancel}

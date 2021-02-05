@@ -35,7 +35,6 @@ class DAppMarket extends Component {
       searchbarWords: '',
       search: '',
     };
-    this.props.changeTitle('DApp.dAppMarket');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,6 +46,7 @@ class DAppMarket extends Component {
   }
 
   componentDidMount() {
+    this.props.changeTitle('DApp.dAppMarket');
     this.props.updateDApps({ chainTyps: 'WAN', language: this.props.language })
   }
 

@@ -32,7 +32,7 @@ class TransInfo extends Component {
         href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
         break;
       case 'BTC':
-        href = this.props.chainId === 1 ? `${BTCMAIN}/tx/${hash}` : `${BTCTESTNET}/tx/${hash}`;
+        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
         break;
       case 'EOS':
         href = this.props.chainId === 1 ? `${EOSMAIN}/transaction/${hash}` : `${EOSTESTNET}/transaction/${hash}`;
@@ -73,7 +73,7 @@ class TransInfo extends Component {
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.chain')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={['TOKEN', 'EOS', 'WAN', 'ETH'].includes(tokenStand) ? srcChainType : srcChainAddr} /></Col>
+            <Col span={COLRIGHT}><Input disabled={true} placeholder={srcChainType} /></Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('Common.from')}</Col>

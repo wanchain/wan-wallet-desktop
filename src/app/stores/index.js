@@ -1,4 +1,4 @@
-
+import { configure } from 'mobx';
 import session from './session';
 import mnemonic from './mnemonic';
 import portfolio from './portfolio';
@@ -6,6 +6,7 @@ import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import eosAddress from './eosAddress';
 import btcAddress from './btcAddress';
+import xrpAddress from './xrpAddress';
 import languageIntl from './languageIntl';
 import sendTransParams from './sendTransParams';
 import sendCrossChainParams from './sendCrossChainParams';
@@ -15,6 +16,8 @@ import crossChain from './crossChain';
 import dapps from './dapps';
 import openstoreman from './openstoreman';
 
+configure({ enforceActions: 'never' });
+
 export default {
   session,
   mnemonic,
@@ -23,6 +26,7 @@ export default {
   ethAddress,
   eosAddress,
   btcAddress,
+  xrpAddress,
   sendTransParams,
   sendCrossChainParams,
   staking,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin, Modal } from 'antd';
+import { Spin, Modal, Select } from 'antd';
 import style from './index.less';
 import { WALLETID } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
@@ -11,12 +11,16 @@ import {
 import { toWei, fromWei } from 'utils/support.js';
 import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
+import styled from 'styled-components';
 
 const { confirm } = Modal;
+
+const { Option } = Select;
 
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
 @inject(stores => ({
+  chainId: stores.session.chainId,
   addrSelectedList: stores.wanAddress.addrSelectedList,
   addrInfo: stores.wanAddress.addrInfo,
 }))
@@ -68,6 +72,9 @@ class DApp extends Component {
   }
 
   componentWillUnmount() {
+    if (typeof (this.selectAddressModal) === 'object' && 'destroy' in this.selectAddressModal) {
+      this.selectAddressModal.destroy();
+    }
   }
 
   handlerDexMessage(args) {
@@ -91,6 +98,10 @@ class DApp extends Component {
         msg.message = args[2];
         this.sendTransaction(msg);
         break;
+      case 'signTransaction':
+        msg.message = args[2];
+        this.signTransaction(msg);
+        break;
       default:
         console.log('unknown method.');
         break;
@@ -105,39 +116,11 @@ class DApp extends Component {
   }
 
   async getAddresses(msg) {
-    msg.err = null;
-    msg.val = [];
-
-    try {
-      let chainID = 5718350;
-      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
-      let addrs = [];
-      for (var account in val.accounts) {
-        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
-          addrs.push(val.accounts[account]['1'].addr);
-        }
-      }
-      let addrAll = this.props.addrSelectedList.slice();
-      for (var i = 0, len = addrAll.length; i < len; i++) {
-        const addr = addrAll[i];
-        addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
-        addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
-
-        this.addresses[addrAll[i]] = {};
-        if (addr.indexOf('Ledger') !== -1) {
-          this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
-        } else if (addr.indexOf('Trezor') !== -1) {
-          this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
-        } else {
-          this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
-        }
-      }
-      msg.val = addrAll;
-    } catch (error) {
-      console.log(error);
-      msg.err = error;
-    }
-    this.sendToDApp(msg);
+    await this.showAddresses(msg, async (msg) => {
+      this.sendToDApp(msg);
+    }, async (msg) => {
+      this.sendToDApp(msg);
+    });
   }
 
   loadNetworkId(msg) {
@@ -298,6 +281,63 @@ class DApp extends Component {
     this.sendToDApp(msg);
   }
 
+  async nativeSignTransaction(msg, wallet) {
+    let chainId = await getChainId();
+    let nonce = await getNonce(msg.message.from, 'wan');
+    let gasPrice = await getGasPrice('wan');
+    let data = msg.message.data;
+    let amountWei = msg.message.value;
+    let rawTx = {};
+    rawTx.from = msg.message.from;
+    rawTx.to = msg.message.to;
+    rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
+    rawTx.data = data;
+    rawTx.nonce = '0x' + nonce.toString(16);
+    rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+    rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
+    rawTx.Txtype = Number(1);
+    rawTx.chainId = chainId;
+    console.log('wallet_signTx input', { walletID: wallet.id, path: wallet.path, rawTx });
+    wand.request('wallet_signTx', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
+      console.log('wallet_signTx return', 'err', err, 'ret', tx);
+      if (err) {
+        console.log('error printed inside callback: ', err)
+        msg.err = err;
+      } else {
+        msg.val = tx;
+      }
+      this.sendToDApp(msg);
+    }.bind(this)
+    );
+  }
+
+  async trezorSignTransaction(msg, wallet) {
+    let chainId = await getChainId();
+    try {
+      let nonce = await getNonce(msg.message.from, 'wan');
+      let gasPrice = await getGasPrice('wan');
+      let data = msg.message.data;
+      let amountWei = msg.message.value;
+      let rawTx = {};
+      rawTx.from = msg.message.from;
+      rawTx.to = msg.message.to;
+      rawTx.value = amountWei ? '0x' + Number(amountWei).toString(16) : '0x00';
+      rawTx.data = data;
+      rawTx.nonce = '0x' + nonce.toString(16);
+      rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
+      rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
+      rawTx.Txtype = Number(1);
+      rawTx.chainId = chainId;
+      let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
+      msg.val = raw;
+    } catch (error) {
+      console.log(error)
+      msg.err = error;
+    }
+
+    this.sendToDApp(msg);
+  }
+
   async sendTransaction(msg) {
     await this.showConfirm('send', msg, async (msg) => {
       msg.err = null;
@@ -321,6 +361,29 @@ class DApp extends Component {
     });
   }
 
+  async signTransaction(msg) {
+    await this.showConfirm('send', msg, async (msg) => {
+      msg.err = null;
+      msg.val = null;
+      if (!msg.message || !msg.message.from) {
+        msg.err = 'can not find from address.';
+        this.sendToDApp(msg);
+        return;
+      }
+
+      const wallet = await this.getWalletFromAddress(msg.message.from);
+
+      if (wallet.id === WALLETID.TREZOR) {
+        await this.trezorSignTransaction(msg, wallet);
+      } else {
+        await this.nativeSignTransaction(msg, wallet);
+      }
+    }, async (msg) => {
+      msg.err = 'The user rejects in the wallet.';
+      this.sendToDApp(msg);
+    });
+  }
+
   async getPreloadFile() {
     return pu.promisefy(wand.request, ['setting_getDAppInjectFile']);
   }
@@ -336,6 +399,65 @@ class DApp extends Component {
     confirm({
       title: title,
       content: intl.get('dAppConfirm.warn'),
+      okText: intl.get('ValidatorRegister.acceptAgency'),
+      cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
+      async onOk() {
+        await onOk(msg);
+      },
+      async onCancel() {
+        await onCancel(msg);
+      },
+    });
+  }
+
+  async showAddresses(msg, onOk, onCancel) {
+    let title = intl.get('HwWallet.Connect.selectAddress');
+    let addrAll = [];
+    msg.err = null;
+    msg.val = [];
+    try {
+      let chainID = 5718350;
+      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
+      let addrs = [];
+      for (var account in val.accounts) {
+        if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
+          addrs.push(val.accounts[account]['1'].addr);
+        }
+      }
+      addrAll = this.props.addrSelectedList.slice();
+      for (var i = 0, len = addrAll.length; i < len; i++) {
+        const addr = addrAll[i];
+        addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
+        addrAll[i] = addrAll[i].replace(/^trezor: /, '').toLowerCase();
+
+        this.addresses[addrAll[i]] = {};
+        if (addr.indexOf('Ledger') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.LEDGER;
+        } else if (addr.indexOf('Trezor') !== -1) {
+          this.addresses[addrAll[i]].walletID = WALLETID.TREZOR;
+        } else {
+          this.addresses[addrAll[i]].walletID = WALLETID.NATIVE;
+        }
+      }
+      msg.val = [addrAll[0]];
+    } catch (error) {
+      console.log(error);
+      msg.err = error;
+    }
+
+    this.selectAddressModal = confirm({
+      title: title,
+      content: (
+        <StyledSelect defaultValue={addrAll[0]} onChange={e => {
+          msg.val = [e];
+        }}>
+          {
+            addrAll.map(v => {
+              return (<Option key={v} value={v}>{v}</Option>);
+            })
+          }
+        </StyledSelect>
+      ),
       okText: intl.get('ValidatorRegister.acceptAgency'),
       cancelText: intl.get('ValidatorRegister.notAcceptAgency'),
       async onOk() {
@@ -386,5 +508,13 @@ class DApp extends Component {
     }
   }
 }
+
+const StyledSelect = styled(Select)`
+  .ant-select-selection {
+    border: none!important;
+  }
+  margin-top: 30px!important;
+  margin-bottom: 20px!important;
+`;
 
 export default DApp;

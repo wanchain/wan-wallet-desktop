@@ -1,11 +1,9 @@
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import tokens from './tokens';
-import session from './session';
 import wanAddress from './wanAddress';
-import btcAddress from './btcAddress';
-import { getInfoByAddress, getInfoByPath } from 'utils/helper';
-import { timeFormat, fromWei, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
+import { getInfoByAddress } from 'utils/helper';
+import { timeFormat, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 import { TOKEN_PRIORITY } from 'utils/settings';
 import { message } from 'antd';
 
@@ -19,6 +17,10 @@ class CrossChain {
   @observable tokenPairs = {};
 
   @observable crossChainSelections = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setCurrSymbol(symbol) {
     this.currSymbol = symbol;
@@ -41,6 +43,7 @@ class CrossChain {
   @action getTokenPairs() {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_getTokenPairs', {}, async (err, data) => {
+        console.log('get data:', err, data)
         if (err) {
           console.log('getTokenPairs failed: ', err);
           reject(err)
@@ -218,17 +221,17 @@ class CrossChain {
     let tokenData = this.tokenPairs[this.currTokenPairId];
     this.crossTrans.forEach((item, index) => {
       if ([tokenData.fromAccount, tokenData.toAccount].includes(item.srcChainAddr) && [tokenData.fromAccount, tokenData.toAccount].includes(item.dstChainAddr) && item.lockTxHash !== '') {
-        let from = item.srcChainType;
-        let to = item.dstChainType;
+        let fromChainType = item.srcChainType;
+        let toChainType = item.dstChainType;
         trans.push({
-          key: index,
+          key: item.hashX,
           hashX: item.hashX,
           storeman: item.storeman,
           secret: item.x,
           time: timeFormat(item.sendTime),
-          from: getInfoByAddress(item.fromAddr, ['name'], tokens.getChainAddressInfoByChain(from)).name || item.fromAddr,
+          from: getInfoByAddress(item.fromAddr, ['name'], tokens.getChainAddressInfoByChain(fromChainType)).name || item.fromAddr,
           fromAddr: item.fromAddr,
-          to: getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(to)).name || item.toAddr,
+          to: getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(toChainType)).name || item.toAddr,
           toAddr: item.toAddr,
           value: formatNum(formatNumByDecimals(item.contractValue, decimals)),
           status: item.status,
@@ -244,40 +247,6 @@ class CrossChain {
       }
     });
     return trans.sort((a, b) => b.sendTime - a.sendTime);
-  }
-
-  @computed get crossBTCTrans() {
-    let crossBTCTrans = [];
-    Object.values(btcAddress.transHistory).filter(val => val.crossAddress !== undefined).forEach((item, index) => {
-      let inbound = item.chain === 'BTC';
-      let fromAddrInfo = inbound ? btcAddress.addrInfo : wanAddress.addrInfo;
-      let toAddrInfo = inbound ? wanAddress.addrInfo : btcAddress.addrInfo;
-      let redeemTxHash = inbound ? `0x${item.refundTxHash}` : item.btcRefundTxHash;
-      let revokeTxHash = inbound ? item.btcRevokeTxHash : `0x${item.revokeTxHash}`;
-      let fromInfo = getInfoByPath(item.from, fromAddrInfo);
-      let toInfo = getInfoByPath(inbound ? item.wanAddress : item.btcCrossAddr, toAddrInfo);
-      crossBTCTrans.push({
-        key: index,
-        hashX: item.hashX,
-        storeman: inbound ? wand.btcUtil.hash160ToAddress(item.storeman, 'pubkeyhash', session.chainId === 1 ? 'mainnet' : 'testnet') : item.storeman,
-        secret: item.x,
-        time: timeFormat(item.time),
-        from: fromInfo.name,
-        fromAddr: fromInfo.address,
-        to: toInfo.name,
-        toAddr: toInfo.address,
-        value: formatNum(formatNumByDecimals(item.value, 8)),
-        status: item.status,
-        sendTime: item.time,
-        srcChainAddr: item.chain,
-        dstChainAddr: item.chain === 'BTC' ? 'WAN' : 'BTC',
-        lockTxHash: inbound ? item.btcLockTxHash : `0x${item.lockTxHash}`,
-        redeemTxHash: redeemTxHash || 'NULL',
-        revokeTxHash: revokeTxHash || 'NULL',
-        noticeTxHash: `0x${item.btcNoticeTxhash}` || 'NULL'
-      });
-    });
-    return crossBTCTrans.sort((a, b) => b.sendTime - a.sendTime);
   }
 
   @computed get crossEOSTrans() {

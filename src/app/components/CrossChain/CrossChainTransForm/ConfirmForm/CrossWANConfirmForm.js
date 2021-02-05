@@ -16,8 +16,8 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossWANConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, type } = this.props;
-    const { amount, toAddr, storeman, crossType } = this.props.transParams[from];
+    const { form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, type } = this.props;
+    const { amount, toAddr, storeman } = this.props.transParams[from];
     const chainPairId = transParams[from].chainPairId;
     const info = Object.assign({}, tokenPairs[chainPairId]);
     let fromChain = type === INBOUND ? info.fromChainName : info.toChainName;
@@ -45,9 +45,6 @@ class CrossWANConfirmForm extends Component {
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
-          {/* <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
-            {getFieldDecorator('crossType', { initialValue: intl.get(`CrossChainTransForm.${crossType}`) })(inputCom)}
-          </Form.Item> */}
           <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
             {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}
           </Form.Item>

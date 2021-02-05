@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 
 class Mnemonic {
   @observable pwd = '';
@@ -12,6 +12,10 @@ class Mnemonic {
   @observable mnemonic = '';
 
   @observable newPhrase = [];
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setPwd (pwd) {
     self.pwd = pwd;

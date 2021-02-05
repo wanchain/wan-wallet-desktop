@@ -48,3 +48,5 @@ nsis:
   installerIcon: build/icons/icon.ico
 
 afterSign: scripts/notarize.js
+
+afterAllArtifactBuild: scripts/afterBuild.js

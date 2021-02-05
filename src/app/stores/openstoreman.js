@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
-import { observable, action, computed, runInAction, toJS } from 'mobx';
+import { observable, action, computed, runInAction, toJS, makeObservable } from 'mobx';
 
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
@@ -43,6 +43,10 @@ class OpenStoreman {
   @observable storemanStakeTotalIncentiveInfoReady = false;
 
   @observable storemanDelegatorTotalIncentiveInfoReady = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @computed get groupListData () {
     let data = [];

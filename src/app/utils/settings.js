@@ -49,6 +49,9 @@ export const TESTNET = 'https://testnet.wanscan.org';
 export const BTCMAIN = 'https://www.blockchain.com/btc';
 export const BTCTESTNET = 'https://www.blockchain.com/btc-testnet';
 
+export const XRPMAIN = 'https://livenet.xrpl.org/transactions';
+export const XRPTESTNET = 'https://testnet.xrpl.org/transactions';
+
 export const ETHMAIN = 'https://etherscan.io';
 export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 
@@ -59,6 +62,7 @@ export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
 export const BTCPATH_TEST = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";
 export const EOSPATH = "m/44'/194'/0'/0/";
+export const XRPPATH = "m/44'/144'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
 
 export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
@@ -71,7 +75,7 @@ export const FAKEVAL = '1';
 export const FAKEADDR = '0x0000000000000000000000000000000000000003';
 export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';
 
-export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH', 'EOS'];
+export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH', 'EOS', 'XRP'];
 export const CROSSCHAINTYPE = ['WAN', 'BTC', 'ETH', 'EOS'];
 
 export const MAX_CONFIRM_BLKS = 100000000;
@@ -92,6 +96,11 @@ export const TOKEN_PRIORITY = {
   WAN: 4,
   BTC: 3,
   ETH: 2,
-  EOS: 1,
+  XRP: 1,
+  EOS: 0,
 }
 export const WAN_ETH_DECIMAL = 18;
+export const MAX_BTC_FEE_RATE = 2000;
+export const DECIMALS = {
+  XRP: 6
+}

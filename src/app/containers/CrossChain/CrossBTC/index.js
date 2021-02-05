@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import { INBOUND, OUTBOUND } from 'utils/settings';
+import { INBOUND, OUTBOUND, CROSS_TYPE } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 import { formatNum } from 'utils/support';
@@ -17,6 +17,7 @@ const CHAINTYPE = 'BTC';
   getNormalAddrList: stores.btcAddress.getNormalAddrList,
   getAmount: stores.btcAddress.getNormalAmount,
   getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
+  transParams: stores.sendCrossChainParams.transParams,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   tokenPairs: stores.crossChain.tokenPairs,
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
@@ -61,17 +62,15 @@ class CrossBTC extends Component {
     let transParams = this.props.BTCCrossTransParams;
     let input = {
       from: transParams.from,
+      tokenPairID,
       value: transParams.value,
       feeRate: transParams.feeRate,
       changeAddress: transParams.changeAddress,
-      smgBtcAddr: transParams.smgBtcAddr,
       storeman: transParams.storeman,
-      wanAddress: transParams.wanAddress,
-      gasPrice: transParams.gasPrice,
-      gas: transParams.gas,
+      to: transParams.to,
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+      wand.request('crossChain_crossChain', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         this.props.updateTransHistory();
         if (err) {
           console.log('BTC inbound lock:', err);
@@ -88,22 +87,22 @@ class CrossBTC extends Component {
     })
   }
 
-  outboundHandleSend = () => {
-    const { match } = this.props;
-    let tokenPairID = match.params.tokenPairId;
+  outboundHandleSend = (from) => {
+    let tokenPairID = this.props.match.params.tokenPairId;
     let info = this.info;
-    let transParams = this.props.BTCCrossTransParams;
+    let transParams = this.props.transParams[from];
     let input = {
       from: transParams.from,
+      to: transParams.to,
       amount: transParams.amount,
-      crossAddr: transParams.crossAddr,
       gasPrice: transParams.gasPrice,
-      gas: transParams.gas,
-      txFeeRatio: transParams.txFeeRatio,
-      storeman: transParams.storeman
+      gasLimit: transParams.gasLimit,
+      storeman: transParams.storeman,
+      tokenPairID: tokenPairID,
+      crossType: CROSS_TYPE[0]
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossBTC', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+      wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
@@ -162,7 +161,7 @@ class CrossBTC extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={CHAINTYPE} direction={OUTBOUND} /></div>
+      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} direction={OUTBOUND} /></div>
     }
   ];
 
@@ -183,7 +182,7 @@ class CrossBTC extends Component {
         <Row className="title">
           <Col span={12} className="col-left"><img className="totalImg" src={totalImg} /><span className="wanTotal">{this.info.fromTokenSymbol} </span><span className={style.chain}>{this.info.fromChainName}</span></Col>
           <Col span={12} className="col-right">
-            <BTCTrans from={from} handleSend={this.inboundHandleSend} direction={INBOUND} chainType={CHAINTYPE} />
+            <BTCTrans from={from} handleSend={this.inboundHandleSend} direction={INBOUND} chainType={this.info.fromChainSymbol} />
           </Col>
         </Row>
         <Row className="mainBody">
@@ -209,4 +208,4 @@ class CrossBTC extends Component {
   }
 }
 
-export default CrossBTC;
+export default props => <CrossBTC {...props} key={props.match.url} />;

@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
 import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
 import CrossChainTransForm from 'components/CrossChain/CrossChainTransForm';
-import { INBOUND, LOCKETH_GAS, REDEEMWETH_GAS, LOCKWETH_GAS, REDEEMETH_GAS } from 'utils/settings';
+import { INBOUND, FAST_GAS } from 'utils/settings';
 
 const TransForm = Form.create({ name: 'CrossChainTransForm' })(CrossChainTransForm);
 
@@ -29,10 +29,7 @@ class Trans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    },
+    estimateFee: 0,
     tokenAddr: '',
     chainType: '',
     gasPrice: 0,
@@ -46,23 +43,12 @@ class Trans extends Component {
     }
     let info = Object.assign({}, tokenPairs[currTokenPairId]);
     let chainType = type === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
-    let desChain, origGas, destGas, storeman;
     let tokenAddr = info.toAccount;
     this.setState({ chainType, tokenAddr });
-    if (type === INBOUND) {
-      desChain = info.toChainSymbol;
-      origGas = LOCKETH_GAS;
-      destGas = REDEEMWETH_GAS;
-    } else {
-      desChain = info.fromChainSymbol;
-      origGas = LOCKWETH_GAS;
-      destGas = REDEEMETH_GAS;
-    }
-
     this.setState({ visible: true, spin: true, loading: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       smgList = smgList.filter(obj => {
         let now = Date.now();
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
@@ -74,17 +60,13 @@ class Trans extends Component {
       }
       this.setState({
         smgList,
-        estimateFee: {
-          original: new BigNumber(gasPrice).times(origGas).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(destGas).div(BigNumber(10).pow(9)).toString(10)
-        },
+        estimateFee: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
         gasPrice,
       });
-      storeman = smgList[0].groupId;
-
+      let storeman = smgList[0].groupId;
       updateTransParams(from, {
         gasPrice,
-        gasLimit: origGas,
+        gasLimit: FAST_GAS,
         storeman,
         txFeeRatio: smgList[0].txFeeRatio || 0,
       });
@@ -118,7 +100,7 @@ class Trans extends Component {
     const { balance, from, type, account } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} >{intl.get('Common.convert')}</Button>
         {visible &&
           <TransForm balance={balance} from={from} account={account} gasPrice={gasPrice} tokenAddr={tokenAddr} chainType={chainType} type={type} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }

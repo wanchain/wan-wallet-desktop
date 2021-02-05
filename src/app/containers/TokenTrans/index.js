@@ -41,7 +41,6 @@ message.config({
 class TokenTrans extends Component {
   constructor(props) {
     super(props);
-    this.props.changeTitle('WanAccount.wallet');
     this.init(props.tokenAddr, props.chain);
   }
 
@@ -55,11 +54,13 @@ class TokenTrans extends Component {
   }
 
   componentDidMount() {
-    this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
-    this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
+    this.props.changeTitle('WanAccount.wallet');
+    const { tokenAddr, chain } = this.props;
+    this.props.getChainStoreInfoByChain(chain).updateTransHistory();
+    this.props.updateTokensBalance(tokenAddr, chain);
     this.timer = setInterval(() => {
-      this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory(); // Don't delete this.props.
-      this.props.updateTokensBalance(this.props.tokenAddr, this.props.chain);
+      this.props.getChainStoreInfoByChain(chain).updateTransHistory();
+      this.props.updateTokensBalance(tokenAddr, chain);
     }, 5000);
   }
 
@@ -231,10 +232,15 @@ class TokenTrans extends Component {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
               reject(false); // eslint-disable-line prefer-promise-reject-errors
             } else {
+              if (txHash.code === false) {
+                message.warn(intl.get('WanAccount.sendTransactionFailed'));
+                reject(txHash.result);
+              } else {
+                message.success(intl.get('Send.transSuccess'));
+                resolve(txHash)
+              }
               this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
               console.log('Tx hash: ', txHash);
-              message.success(intl.get('Send.transSuccess'));
-              resolve(txHash)
             }
           });
           break;

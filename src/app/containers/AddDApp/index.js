@@ -25,6 +25,9 @@ class AddDApp extends Component {
       showAddForm: false,
       addDisabled: true,
     }
+  }
+
+  componentDidMount() {
     this.props.changeTitle('DApp.addTitle');
   }
 

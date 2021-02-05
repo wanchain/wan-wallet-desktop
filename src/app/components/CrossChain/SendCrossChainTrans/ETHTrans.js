@@ -24,47 +24,18 @@ class ETHTrans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    },
+    estimateFee: 0,
     gasPrice: 0,
   }
 
   showModal = async () => {
     const { from, path, balance, record, chainType, addCrossTransTemplate, updateTransParams, type, tokenPairs, chainPairId, getChainAddressInfoByChain } = this.props;
-    let desChain, origGas, destGas, storeman;
     let info = Object.assign({}, tokenPairs[chainPairId]);
-    if (type === INBOUND) {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoETHBalance'));
-        return;
-      } */
-      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.fromChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
-      desChain = info.toChainSymbol;
-      origGas = LOCKETH_GAS;
-      destGas = REDEEMWETH_GAS;
-    } else {
-      /* if (Number(balance) === 0) {
-        message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));
-        return;
-      } */
-      /* if (Number(getBalanceByAddr(from, getChainAddressInfoByChain(info.toChainSymbol))) === 0) {
-        message.warn(intl.get('CrossChainTransForm.originNoBalance'));
-        return;
-      } */
-      desChain = info.fromChainSymbol;
-      origGas = LOCKWETH_GAS;
-      destGas = REDEEMETH_GAS;
-    }
 
     this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, desGasPrice, smgList] = await Promise.all([getGasPrice(chainType), getGasPrice(desChain), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
       smgList = smgList.filter(obj => {
         let now = Date.now();
         return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
@@ -76,16 +47,13 @@ class ETHTrans extends Component {
       }
       this.setState({
         smgList,
-        estimateFee: {
-          original: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
-          destination: new BigNumber(desGasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10)
-        },
+        estimateFee: new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10),
         gasPrice,
       });
-      storeman = smgList[0].groupId;
+      let storeman = smgList[0].groupId;
       updateTransParams(from, {
         gasPrice,
-        gasLimit: origGas,
+        gasLimit: FAST_GAS,
         storeman,
         chainPairId: chainPairId,
       });

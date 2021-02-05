@@ -8,6 +8,7 @@ const inputCom = <Input disabled={true} />
 
 @inject(stores => ({
   language: stores.languageIntl.language,
+  transParams: stores.sendCrossChainParams.transParams,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
 }))
@@ -15,16 +16,18 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossBTCConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, chainType, totalFeeTitle, handleCancel, direction, currentTokenPairInfo: info } = this.props;
-    const { value, toAddr, storeman, btcAddress, amount } = this.props.BTCCrossTransParams;
-    let desChain, storemanAccount, sendValue, symbol;
-
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, totalFeeTitle, handleCancel, direction, currentTokenPairInfo: info } = this.props;
+    let desChain, storemanAccount, sendValue, symbol, toAddr;
     if (direction === INBOUND) {
+      const { value, storeman } = this.props.BTCCrossTransParams;
+      toAddr = this.props.BTCCrossTransParams.toAddr;
       symbol = info.fromTokenSymbol;
       desChain = info.toChainName;
       sendValue = value;
-      storemanAccount = btcAddress;
+      storemanAccount = storeman;
     } else {
+      const { storeman, amount } = this.props.transParams[from];
+      toAddr = this.props.transParams[from].toAddr;
       symbol = info.toTokenSymbol;
       desChain = info.fromChainName;
       sendValue = amount;

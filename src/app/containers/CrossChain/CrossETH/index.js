@@ -83,7 +83,11 @@ class CrossETH extends Component {
             message.success(intl.get('Send.transSuccess'));
             return resolve(ret);
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            if (ret.includes('insufficient funds')) {
+              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
+            } else {
+              message.warn(intl.get('Common.sendFailed'));
+            }
             return reject(ret);
           }
         }
@@ -121,7 +125,11 @@ class CrossETH extends Component {
             message.success(intl.get('Send.transSuccess'));
             return resolve(ret);
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            if (ret.includes('insufficient funds')) {
+              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
+            } else {
+              message.warn(intl.get('Common.sendFailed'));
+            }
             return reject(ret);
           }
         }

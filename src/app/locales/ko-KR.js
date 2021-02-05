@@ -24,6 +24,7 @@ const ko_KR = {
     'Common.ethereum': '이더리움',
     'Common.bitcoin': '비트코인',
     'Common.eos': '이오스',
+    'Common.ripple': 'Ripple',
     'Common.options': '옵션',
     'Common.ok': '확인',
     'Common.cancel': '취소',
@@ -31,6 +32,7 @@ const ko_KR = {
     'Common.create': '생성',
     'Common.balance': '자산 합계',
     'Common.sendFailed': '네트워크가 안정적이지 않습니다. 다시 시도해보십시오.',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': '이오스 토큰',
     'Common.convert': '변환',
@@ -38,6 +40,9 @@ const ko_KR = {
     'Common.storemanGroup': 'Storeman 그룹',
     'Common.chain': '체인',
     'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',
@@ -344,6 +349,7 @@ const ko_KR = {
     'EOSNormalTransForm.invalid': '무효',
     'EOSNormalTransForm.recipientAccount': '수신자 계정',
     'EOSNormalTransForm.memo': '메모',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': '고급 옵션',
     'AdvancedOptionForm.save': '저장',
@@ -356,6 +362,8 @@ const ko_KR = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce 입력이 잘못 되었습니다.',
     'AdvancedOptionForm.inputData': '데이터를 입력하세요',
     'AdvancedOptionForm.inputDataIsIncorrect': '데이터 입력이 잘못 되었습니다.',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': '복사 성공',
     'CopyAndQrcode.privateKey': 'Private Key',
@@ -445,6 +453,7 @@ const ko_KR = {
     'NormalTransForm.sendAll': '모두 전송',
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',
@@ -452,6 +461,8 @@ const ko_KR = {
     'CrossChainTransForm.txFeeRatio': '비용 비율',
     'CrossChainTransForm.estimateFee': '예상 수수료',
     'CrossChainTransForm.gasFee': '가스 비용',
+    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
+    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': '운영 비용',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.overOriginalBalance': '비용이 잔액을 초과합니다. 기존 체인의 잔액을 확인 바랍니다.',
@@ -474,8 +485,11 @@ const ko_KR = {
     'CrossChainTransForm.crossType': '크로스 타입',
     'CrossChainTransForm.FAST': '빠른 모드',
     'CrossChainTransForm.HTLC': '보안 모드',
-    'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다.',
+    'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다',
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',
 
@@ -784,6 +798,10 @@ const ko_KR = {
     'Storeman.delegationExit': '위임 종료',
     'Storeman.delegationTopup': '위임 요청하기',
     'Storeman.registration': 'Storeman 등록',
+
+    'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default ko_KR;

@@ -3,7 +3,7 @@
 import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 
 import tokens from './tokens';
 import staking from './staking';
@@ -30,6 +30,10 @@ class WanAddress {
   @observable selectedAddr = '';
 
   @observable transHistory = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
@@ -59,13 +63,13 @@ class WanAddress {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
         if (addr.name === undefined && type === 'ledger') {
-          addr.name = `Ledger${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `Ledger${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         if (addr.name === undefined && type === 'trezor') {
-          addr.name = `Trezor${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `Trezor${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         if (addr.name === undefined) {
-          addr.name = `WAN-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `WAN-Account${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,
@@ -120,22 +124,24 @@ class WanAddress {
     let importArr = Object.keys(self.addrInfo['import']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
     keys.forEach(item => {
-      if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
-        self.addrInfo['normal'][item].balance = arr[item];
+      let wanAddress = wanUtil.toChecksumAddress(item);
+      if (normal.includes(wanAddress) && self.addrInfo['normal'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['normal'][wanAddress].balance = arr[item];
       }
-      if (ledger.includes(item) && self.addrInfo['ledger'][item].balance !== arr[item]) {
-        self.addrInfo['ledger'][item].balance = arr[item];
+      if (ledger.includes(wanAddress) && self.addrInfo['ledger'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['ledger'][wanAddress].balance = arr[item];
       }
-      if (trezor.includes(item) && self.addrInfo['trezor'][item].balance !== arr[item]) {
-        self.addrInfo['trezor'][item].balance = arr[item];
+      if (trezor.includes(wanAddress) && self.addrInfo['trezor'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['trezor'][wanAddress].balance = arr[item];
       }
-      if (importArr.includes(item) && self.addrInfo['import'][item].balance !== arr[item]) {
-        self.addrInfo['import'][item].balance = arr[item];
+      if (importArr.includes(wanAddress) && self.addrInfo['import'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['import'][wanAddress].balance = arr[item];
       }
-      if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
-        self.addrInfo['rawKey'][item].balance = arr[item];
+      if (rawKey.includes(wanAddress) && self.addrInfo['rawKey'][wanAddress].balance !== arr[item]) {
+        self.addrInfo['rawKey'][wanAddress].balance = arr[item];
       }
     });
+
     if (!(parr instanceof Object)) {
       return;
     }
@@ -470,7 +476,7 @@ class WanAddress {
     }
     Object.keys(self.transHistory).forEach(item => {
       let data = self.transHistory[item];
-      if (addrList.includes(data['from'])) {
+      if (addrList.includes(data['from']) && !('transferTo' in data)) {
         let status = data.status;
         let type = checkAddrType(data['from'], self.addrInfo);
         historyList.push({

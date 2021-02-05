@@ -24,6 +24,7 @@ const th_TH = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'ตัวเลือก',
     'Common.ok': 'ตกลง',
     'Common.cancel': 'ยกเลิก',
@@ -31,6 +32,7 @@ const th_TH = {
     'Common.create': 'สร้างแอดเดรส',
     'Common.balance': 'ยอดคงเหลือ',
     'Common.sendFailed': 'เครือข่ายไม่เสถียร กรุณาลองอีกครั้ง',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
@@ -38,6 +40,9 @@ const th_TH = {
     'Common.storemanGroup': 'กลุ่ม Storeman',
     'Common.chain': 'เชน',
     'Common.amountTooLow': 'จำนวนจะต้องไม่ต่ำกว่า { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
@@ -344,6 +349,7 @@ const th_TH = {
     'EOSNormalTransForm.invalid': 'ไม่ถูกต้อง',
     'EOSNormalTransForm.recipientAccount': 'บัญชีผู้รับ',
     'EOSNormalTransForm.memo': 'บันทึกหมายเหตุ',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'ตัวเลือกขั้นสูง',
     'AdvancedOptionForm.save': 'บันทึก',
@@ -356,6 +362,8 @@ const th_TH = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce ไม่ถูกต้อง',
     'AdvancedOptionForm.inputData': 'กรอกข้อมูล',
     'AdvancedOptionForm.inputDataIsIncorrect': 'ข้อมูลที่กรอกไม่ถูกต้อง',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'คัดลอกเรียบร้อยแล้ว',
     'CopyAndQrcode.privateKey': 'Private Key',
@@ -445,6 +453,7 @@ const th_TH = {
     'NormalTransForm.sendAll': 'ส่งยอดที่มีอยู่ทั้งหมด',
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',
@@ -452,6 +461,8 @@ const th_TH = {
     'CrossChainTransForm.txFeeRatio': 'อัตราส่วนค่าธรรมเนียม',
     'CrossChainTransForm.estimateFee': 'ค่าธรรมเนียมโดยประเมิน',
     'CrossChainTransForm.gasFee': 'ค่าแก๊ส',
+    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
+    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'ค่าธรรมเนียมการจัดการ',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
     'CrossChainTransForm.overOriginalBalance': 'ยอดบัญชีไม่พอค่าใช้จ่าย กรุณาตรวจสอบยอดบัญชีจากเชนต้นทาง',
@@ -476,6 +487,9 @@ const th_TH = {
     'CrossChainTransForm.HTLC': 'เน้นความปลอดภัย',
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
 
@@ -784,6 +798,10 @@ const th_TH = {
     'Storeman.delegationExit': 'ออกจากการ Delegate',
     'Storeman.delegationTopup': 'เพิ่มจำนวนการ Delegate',
     'Storeman.registration': 'ลงทะเบียนเป็น Storeman',
+
+    'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default th_TH;

@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Row, Col } from 'antd';
+import { Button, Modal, Row, Col, Alert } from 'antd';
 import { formatNum, formatLongText } from 'utils/support';
 
 import 'components/Staking/ValidatorConfirmForm/index.less';
@@ -27,6 +27,15 @@ class DelegationConfirmForm extends Component {
             <Button loading={!!confirmLoading} key="submit" type="primary" onClick={onSend}>{intl.get('Common.send')}</Button>,
           ]}
         >
+          {// TODO
+            this.props.type === 'delegateIn' && false &&
+            <Alert
+              message={intl.get('Storeman.delegationWarnning')}
+              type="warning"
+              closable
+              className="alert-text"
+            />
+          }
           <div className="withdraw-bg">
             <div className="withdraw-title">{intl.get('Storeman.storemanAccount')}</div>
             {

@@ -98,6 +98,7 @@ class CrossChain extends Component {
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         if (err) {
+          console.log('CC tx error:', err)
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -109,7 +110,11 @@ class CrossChain extends Component {
             message.success(intl.get('Send.transSuccess'));
             return resolve(ret);
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            if (ret.includes('insufficient funds')) {
+              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
+            } else {
+              message.warn(intl.get('Common.sendFailed'));
+            }
             return reject(ret);
           }
         }
@@ -147,7 +152,11 @@ class CrossChain extends Component {
             message.success(intl.get('Send.transSuccess'));
             return resolve(ret);
           } else {
-            message.success(intl.get('Common.sendFailed'));
+            if (ret.includes('insufficient funds')) {
+              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
+            } else {
+              message.warn(intl.get('Common.sendFailed'));
+            }
             return reject(ret);
           }
         }

@@ -1,14 +1,16 @@
 import BigNumber from 'bignumber.js';
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import Identicon from 'identicon.js';
 import btcImg from 'static/image/btc.png';
 import ethImg from 'static/image/eth.png';
 import eosImg from 'static/image/eos.png';
+import xrpImg from 'static/image/xrp.png';
 import wanImg from 'static/image/wan.png';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import xrpAddress from './xrpAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -26,6 +28,10 @@ class Tokens {
   @observable tokenIconList = {};
 
   @observable walletSelections = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action updateTokenSelectedStatus(tokenAddress, selected) {
     wand.request('crossChain_updateTokensInfo', { addr: tokenAddress, key: 'select', value: selected }, (err, data) => {
@@ -66,6 +72,9 @@ class Tokens {
       case 'EOS':
         self.tokenIconList[scAddr] = eosImg;
         break;
+      case 'XRP':
+        self.tokenIconList[scAddr] = xrpImg;
+        break;
       default:
         if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
           self.tokenIconList[scAddr] = wanImg;
@@ -77,7 +86,6 @@ class Tokens {
             tokenScAddr: scAddr
           }
         }, (err, data) => {
-          // console.log('init icon:', obj.symbol, data);
           if (err || data.length === 0 || !(Object.prototype.hasOwnProperty.call(data[0], 'iconData') && Object.prototype.hasOwnProperty.call(data[0], 'iconType'))) {
             self.tokenIconList[scAddr] = `data:image/png;base64,${new Identicon(scAddr).toString()}`;
           } else {
@@ -184,7 +192,16 @@ class Tokens {
         console.log('stores_getTokensBalance:', err);
         return;
       }
-      self.tokensBalance[tokenScAddr] = data;
+      let addresses = Object.keys(data);
+      if (addresses.length === 0) {
+        self.tokensBalance[tokenScAddr] = data;
+      } else {
+        let obj = {};
+        addresses.forEach(key => {
+          obj[key.toLowerCase()] = data[key];
+        });
+        self.tokensBalance[tokenScAddr] = obj;
+      }
     })
   }
 
@@ -229,7 +246,7 @@ class Tokens {
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
         let tokenInfo = this.getTokenInfoFromTokensListByAddr(SCAddress);
         if (self.tokensList && tokenInfo) {
-          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item], tokenInfo.decimals)
+          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item.toLowerCase()], tokenInfo.decimals)
         } else {
           balance = 0
         }
@@ -281,6 +298,10 @@ class Tokens {
           // console.log('EOS Balance:', item)
           normalArr = Object.keys(eosAddress.keyInfo['normal']);
           rawKeyArr = Object.keys(eosAddress.keyInfo['rawKey']);
+          break;
+        case 'XRP':
+          normalArr = Object.keys(xrpAddress.keyInfo.normal);
+          rawKeyArr = Object.keys(xrpAddress.keyInfo.rawKey);
           break;
         default:
         // console.log('Default.....');
@@ -367,7 +388,7 @@ class Tokens {
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
           let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
           if (this.tokensList && token !== undefined) {
-            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item.toLowerCase()], token.decimals)
           } else {
             balance = 0
           }
@@ -405,7 +426,7 @@ class Tokens {
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
           let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
           if (this.tokensList && token !== undefined) {
-            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item], token.decimals)
+            balance = formatNumByDecimals(this.tokensBalance[this.currTokenAddr][item.toLowerCase()], token.decimals)
           } else {
             balance = 0
           }
@@ -478,7 +499,7 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
     if (chain === undefined) {
       return undefined;
     }
@@ -493,7 +514,7 @@ class Tokens {
   }
 
   getChainStoreInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {

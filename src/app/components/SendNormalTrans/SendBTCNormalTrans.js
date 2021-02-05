@@ -2,6 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
+import { estimateSmartFee } from 'utils/helper';
 
 import BTCNormalTransForm from 'components/NormalTransForm/BTCNormalTrans/BTCNormalTransForm'
 
@@ -29,7 +30,8 @@ class SendBTCNormalTrans extends Component {
       message.warn(intl.get('SendNormalTrans.hasBalance'));
       return;
     }
-    updateBTCTransParams({ changeAddress: from });
+    let feeRate = await estimateSmartFee('BTC');
+    updateBTCTransParams({ changeAddress: from, feeRate });
     this.setState({ visible: true });
     setTimeout(() => { this.setState({ spin: false }) }, 0);
   }

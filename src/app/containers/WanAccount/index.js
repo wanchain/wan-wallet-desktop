@@ -43,7 +43,6 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    this.props.changeTitle('WanAccount.wallet');
   }
 
   columns = [
@@ -91,6 +90,7 @@ class WanAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
@@ -165,10 +165,15 @@ class WanAccount extends Component {
           console.log('Send transaction failed:', err);
           reject(err);
         } else {
-          message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
-          resolve();
-          this.props.updateTransHistory();
           console.log('Tx hash: ', txHash);
+          if (txHash.code === false) {
+            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+            reject(txHash.result);
+          } else {
+            message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+            resolve();
+          }
+          this.props.updateTransHistory();
         }
       });
     });

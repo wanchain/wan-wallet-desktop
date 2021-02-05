@@ -125,13 +125,19 @@
     }
 }
 
+.settingContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 4px 20px 12px 20px;
+}
+
 .addCustom {
+    // width: 50%;
     height: 50px;
     color: rgba(255, 255, 255, 0.7);
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin: 4px 20px 12px 20px;
     font-size: 18px;
     background-color: #1f2034;
 
@@ -140,6 +146,19 @@
         cursor: pointer;
         color: rgba(255, 255, 255, 1);
         font-size: 20px;
+    }
+}
+
+.searchField {
+    width: 100% !important;
+    height: 40px;
+    top: 5px;
+
+    :global {
+        .ant-input {
+            width: 100% !important;
+            padding-left: 24px;
+        }
     }
 }
 

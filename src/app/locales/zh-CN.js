@@ -24,6 +24,7 @@ const zh_CN = {
     'Common.ethereum': '以太坊',
     'Common.bitcoin': '比特币',
     'Common.eos': '柚子链',
+    'Common.ripple': '瑞波',
     'Common.options': '选项',
     'Common.cancel': '取消',
     'Common.ok': '确定',
@@ -31,6 +32,7 @@ const zh_CN = {
     'Common.create': '创建',
     'Common.balance': '余额',
     'Common.sendFailed': '网络不稳定，发送失败，请稍后再试',
+    'Common.sendFailedForInsufficientFunds': '发送交易失败，请确保您有足够的余额。',
     'Common.networkError': '网络故障，请重启钱包',
     'Common.eosTokens': 'EOS 代币',
     'Common.convert': '转换',
@@ -38,6 +40,9 @@ const zh_CN = {
     'Common.storemanGroup': '跨链节点组',
     'Common.chain': '链名',
     'Common.amountTooLow': '最低金额是{minAmount}WAN',
+    'Common.availableBalance': '可用金额是{availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',
@@ -344,6 +349,7 @@ const zh_CN = {
     'EOSNormalTransForm.invalid': '不可用',
     'EOSNormalTransForm.recipientAccount': '接收人账户',
     'EOSNormalTransForm.memo': '备注',
+    'EOSNormalTransForm.invalidMemo': '备注不可用',
 
     'AdvancedOptionForm.advancedOptions': '高级选项',
     'AdvancedOptionForm.save': '保存',
@@ -356,6 +362,8 @@ const zh_CN = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce输入不正确',
     'AdvancedOptionForm.inputData': '附加数据',
     'AdvancedOptionForm.inputDataIsIncorrect': '附加数据输入不正确',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': '复制成功',
     'CopyAndQrcode.privateKey': '私钥',
@@ -445,6 +453,7 @@ const zh_CN = {
     'NormalTransForm.sendAll': '发送全部',
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
+    'NormalTransForm.destinationTagRule': 'Destination Tag格式不正确',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',
@@ -452,11 +461,13 @@ const zh_CN = {
     'CrossChainTransForm.txFeeRatio': '比率',
     'CrossChainTransForm.estimateFee': '估算的费用',
     'CrossChainTransForm.gasFee': 'Gas费用',
+    'CrossChainTransForm.userNetworkFee': '用户网络费用',
+    'CrossChainTransForm.crossChainNetworkFee': '跨链网络费用',
     'CrossChainTransForm.operationFee': '手续费用',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
-    'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保原始链余额充足',
+    'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保余额充足',
     'CrossChainTransForm.originNoBalance': '原始链余额不足',
-    'CrossChainTransForm.overTransBalance': '输入金额超过账户余额',
+    'CrossChainTransForm.overTransBalance': '账户余额不足',
     'CrossChainTransForm.transInfo': '跨链交易信息',
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
     'CrossChainTransForm.overQuota': '输入的金额超出Storeman的剩余配额',
@@ -476,6 +487,9 @@ const zh_CN = {
     'CrossChainTransForm.HTLC': '安全模式',
     'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
+    'CrossChainTransForm.getQuotaFailed': '获取剩余配额数据失败',
+    'CrossChainTransForm.getNetworkFeeFailed': '获取网络费用数据失败',
+    'CrossChainTransForm.youWillReceive': '您将收到',
 
     'CrossChain.selectFailed': '修改选择状态失败',
 
@@ -761,28 +775,9 @@ const zh_CN = {
     'Storeman.delegationTopup': '追加委托',
     'Storeman.registration': '节点注册',
 
-    'contract.menu': '合约交互',
-    'contract.menuOffline': '离线',
-    'contract.menuOnline': '在线',
-    'contract.offlineTitle': '合约离线交互',
-    'contract.onlineTitle': '合约在线交互',
-    'contract.selectAccount': '选择或输入地址',
-    'contract.selectAccount2': '选择地址',
-    'contract.addTransaction': '+ 增加交易',
-    'contract.buildTransaction': '构建交易',
-    'contract.saveToFile': '保存到文件...',
-    'contract.contractAddress': '合约 / 目的地址:',
-    'contract.abiFile': 'ABI json 文件:',
-    'contract.callMethod': '调用接口:',
-    'contract.gasLimit': 'Gas Limit:',
-    'contract.parameters': '参数:',
-    'contract.remove': '- 移除',
-    'contract.getNonce': '获取 Nonce',
-    'contract.loadOfflineData': '加载离线数据:',
-    'contract.offlineTransactionConfirm': '离线交易确认',
-    'contract.fromAddress': '发起交易地址:',
-    'contract.first': '请先选择钱包地址',
-    'contract.help': '如果调用接口和ABI留空，则可以发送普通转账交易。 合约参数支持逗号间隔或者json字符串，如果使用json字符串方式，请讲全部参数使用[ ]包裹，例如：["abc","123"], 如果使用逗号间隔参数，请不要在逗号后添加空格。如果参数中有地址，请使用全小写。',
+    'MoreAccount.inputSearchText': '请输入搜索信息',
+
+    'Storeman.delegationWarnning': '提示：只有等当前跨链节点工作周期结束后才能提取本金。如果想提取本金，需要在下一轮竞选之前点击“退出”按钮'
 }
 
 export default zh_CN;

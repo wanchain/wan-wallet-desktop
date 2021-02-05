@@ -19,8 +19,7 @@ const { TabPane } = Tabs;
 
 @observer
 class Settings extends Component {
-  constructor (props) {
-    super(props);
+  componentDidMount () {
     this.props.changeTitle('Settings.settings');
   }
 

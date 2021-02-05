@@ -50,7 +50,6 @@ TrezorConnect.init({
 class Trezor extends Component {
   constructor (props) {
     super(props);
-    this.props.changeTitle('Trezor.trezor');
     this.props.setCurrTokenChain('WAN');
     // Declare trezor event
     TrezorConnect.on(DEVICE_EVENT, (event) => {
@@ -62,6 +61,10 @@ class Trezor extends Component {
         this.props.updateAddress('trezor');
       }
     });
+  }
+
+  componentDidMount() {
+    this.props.changeTitle('Trezor.trezor');
   }
 
   componentDidUpdate () {

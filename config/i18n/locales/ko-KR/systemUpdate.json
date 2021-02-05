@@ -3,6 +3,7 @@
     "head": "소프트웨어 업그레이드",
     "newVersion": "WAN 지갑 버전이 업데이트 되었습니다.",
     "version": " WAN 지갑 버젼 $1이 사용 가능합니다. 현재 사용중이신 버젼은 $2 입니다., <br> 업데이트 하시겠습니까?",
+    "hardUpgradeWarningText": "This version has a major upgrade. Please upgrade to the latest version or you will not be able to use WAN wallet.",
     "release": "새로운 버젼 업데이트 관련사항",
     "info": "$1",
     "no": "다음에 안내 바랍니다.",

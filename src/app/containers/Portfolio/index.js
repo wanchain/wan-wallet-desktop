@@ -6,6 +6,7 @@ import wanLogo from 'static/image/wan.png';
 import ethLogo from 'static/image/eth.png';
 import btcLogo from 'static/image/btc.png';
 import eosLogo from 'static/image/eos.png';
+import xrpLogo from 'static/image/xrp.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
@@ -20,12 +21,8 @@ import eosLogo from 'static/image/eos.png';
 
 @observer
 class Portfolio extends Component {
-  constructor(props) {
-    super(props);
-    this.props.changeTitle('Portfolio.portfolio');
-  }
-
   componentDidMount() {
+    this.props.changeTitle('Portfolio.portfolio');
     this.props.setCoin();
     this.props.updateCoinPrice();
     this.props.updateTokenBalance();
@@ -53,6 +50,9 @@ class Portfolio extends Component {
         break;
       case 'EOS':
         img = eosLogo;
+        break;
+      case 'XRP':
+        img = xrpLogo;
         break;
       default:
         let scAddr = record.scAddr.replace(/^.*-/, '');

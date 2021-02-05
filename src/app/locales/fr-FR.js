@@ -24,6 +24,7 @@ const fr_FR = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'Options',
     'Common.ok': 'OK',
     'Common.cancel': 'Annuler',
@@ -31,6 +32,7 @@ const fr_FR = {
     'Common.create': 'Créer',
     'Common.balance': 'Solde',
     'Common.sendFailed': 'Connexion internet instable. Veuillez réessayer',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
     'Common.eosTokens': 'EOS tokens',
     'Common.convert': 'Convertir',
@@ -38,6 +40,9 @@ const fr_FR = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',
@@ -344,6 +349,7 @@ const fr_FR = {
     'EOSNormalTransForm.invalid': 'Invalide',
     'EOSNormalTransForm.recipientAccount': 'Compte Destinataire',
     'EOSNormalTransForm.memo': 'Mémo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.save': 'Sauvegarder',
@@ -356,6 +362,8 @@ const fr_FR = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Le nonce est incorrect',
     'AdvancedOptionForm.inputData': 'Données d\'entrée',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Les données d\'entrée sont incorrectes',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copier avec succès',
     'CopyAndQrcode.privateKey': 'Clé privée',
@@ -445,6 +453,7 @@ const fr_FR = {
     'NormalTransForm.sendAll': 'Tout envoyer',
     'NormalTransForm.password': 'Mot de passe',
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',
@@ -452,6 +461,8 @@ const fr_FR = {
     'CrossChainTransForm.txFeeRatio': 'Ratio de frais',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
     'CrossChainTransForm.gasFee': 'Frais de gas',
+    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
+    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.overOriginalBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale',
@@ -474,8 +485,11 @@ const fr_FR = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Mode RAPIDE',
     'CrossChainTransForm.HTLC': 'Mode SECURISÉ',
-    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale.',
+    'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
 
@@ -784,6 +798,10 @@ const fr_FR = {
     'Storeman.delegationExit': 'Sortie de délégation',
     'Storeman.delegationTopup': 'Recharge de délégation',
     'Storeman.registration': 'Storeman enregistrement',
+
+    'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default fr_FR;

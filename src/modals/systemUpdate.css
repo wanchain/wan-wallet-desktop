@@ -188,3 +188,12 @@ p {
     text-align: center;
     margin-left: 0.5em;
 }
+
+#buttons button:disabled:hover {
+    cursor: not-allowed;
+}
+
+#hardUpgradeWarningText {
+    display: none;
+    color: orange;
+}

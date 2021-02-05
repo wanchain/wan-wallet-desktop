@@ -3,22 +3,22 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getSmgList, getGasPrice } from 'utils/helper';
-import { INBOUND, REDEEMWETH_GAS, LOCKWETH_GAS } from 'utils/settings';
+import { getReadyOpenStoremanGroupList, getGasPrice, estimateSmartFee } from 'utils/helper';
+import { INBOUND, OUTBOUND, FAST_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
 const CollectionCreateForm = Form.create({ name: 'CrossBTCForm' })(CrossBTCForm);
-const GASLIMIT = 300000;
 
 @inject(stores => ({
   chainId: stores.session.chainId,
-  addrInfo: stores.btcAddress.addrInfo,
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getNormalAmount,
-  feeRate: stores.sendCrossChainParams.feeRate,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
-  updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj)
+  BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
+  addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
+  updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj),
+  updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
 }))
 
 @observer
@@ -28,66 +28,46 @@ class BTCTrans extends Component {
     loading: false,
     visible: false,
     smgList: [],
-    estimateFee: {
-      original: 0,
-      destination: 0,
-    }
+    estimateFee: 0
   }
 
   showModal = async () => {
-    const { from, getTokensListInfo, updateBTCTransParams, direction, getAmount, feeRate, path, currentTokenPairInfo } = this.props;
-    let info = Object.assign({}, currentTokenPairInfo);
-    /* if (direction === INBOUND) {
-      if (getAmount === 0) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
-        return;
-      }
-    } else {
-      if (new BigNumber((getTokensListInfo.find(item => item.address === from)).amount).isEqualTo(0)) {
-        message.warn(intl.get('SendNormalTrans.hasBalance'));
-        return;
-      }
-    } */
-
+    const { from, updateBTCTransParams, updateTransParams, direction, path, currentTokenPairInfo: info, addCrossTransTemplate, chainType } = this.props;
     this.setState(() => ({ visible: true, spin: true, loading: true }));
+    if (direction === OUTBOUND) {
+      addCrossTransTemplate(from, { chainType, path });
+    }
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(info.toChainSymbol), getSmgList(info.fromChainSymbol)]);
-      let originalFee, destinationFee;
-      let smg = smgList[0];
-
+      let smgList = await getReadyOpenStoremanGroupList();
+      smgList = smgList.filter(smg => Number(smg.curve1) === 0 || Number(smg.curve2) === 0);
+      if (smgList.length === 0) {
+        this.setState(() => ({ visible: false, spin: false, loading: false }));
+        message.warn(intl.get('SendNormalTrans.smgUnavailable'));
+        return;
+      }
+      let estimateFee;
+      let smgId = smgList[0].groupId;
       if (direction === INBOUND) {
-        originalFee = 0;
-        destinationFee = new BigNumber(gasPrice).times(REDEEMWETH_GAS).times(2.5).div(BigNumber(10).pow(9)).toString(10);
+        estimateFee = 0;
+        let feeRate = await estimateSmartFee('BTC');
         updateBTCTransParams({
           feeRate,
-          btcAddress: smg.btcAddress,
           changeAddress: from,
-          storeman: smg.wanAddress,
-          smgBtcAddr: smg.smgBtcAddr,
-          gasPrice: gasPrice,
-          gas: GASLIMIT
+          storeman: smgId,
         });
       } else {
-        originalFee = new BigNumber(gasPrice).times(LOCKWETH_GAS).div(BigNumber(10).pow(9)).toString(10)
-        destinationFee = 0;
-        updateBTCTransParams({
-          from: {
-            walletID: 1,
-            path
-          },
-          txFeeRatio: smg.txFeeRatio,
-          storeman: smg.wanAddress,
-          gasPrice: gasPrice,
-          gas: GASLIMIT
+        let gasPrice = await getGasPrice(info.toChainSymbol);
+        estimateFee = new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
+        updateTransParams(from, {
+          gasPrice,
+          gasLimit: FAST_GAS,
+          storeman: smgId,
         });
       }
 
       this.setState({
         smgList,
-        estimateFee: {
-          original: originalFee,
-          destination: destinationFee
-        },
+        estimateFee,
         spin: false,
         loading: false,
       });
@@ -106,32 +86,30 @@ class BTCTrans extends Component {
     this.formRef = formRef;
   }
 
-  handleSend = () => {
+  handleSend = (from) => {
     this.setState({ loading: true });
-    this.props.handleSend().then(() => {
+    this.props.handleSend(from).then(() => {
       this.setState({ visible: false, loading: false, spin: true });
     }).catch(() => {
       this.setState({ visible: false, loading: false, spin: true });
     });
   }
 
-  render () {
+  render() {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
     const { from, getAmount, direction, getTokensListInfo } = this.props;
-    let balance, btnStyle;
+    let balance;
     if (direction === INBOUND) {
-      btnStyle = {};
       balance = getAmount;
     } else {
-      btnStyle = {};
       let item = getTokensListInfo.find(item => item.address === from);
       balance = item ? item.amount : '0';
     }
     return (
       <div>
-        <Button type="primary" {...btnStyle} onClick={this.showModal} /* disabled={Number(balance) === 0} */>{intl.get('Common.convert')}</Button>
+        <Button type="primary" onClick={this.showModal} >{intl.get('Common.convert')}</Button>
         { visible &&
-          <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );

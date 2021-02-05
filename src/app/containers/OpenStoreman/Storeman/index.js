@@ -25,7 +25,6 @@ class Storeman extends Component {
       validatorRegister: false,
     }
     this.props.updateTransHistory();
-    this.props.changeTitle('Common.storeman');
   }
 
   update() {
@@ -34,6 +33,7 @@ class Storeman extends Component {
   }
 
   componentDidMount() {
+    this.props.changeTitle('Common.storeman');
     this.update();
     this.timer = setInterval(() => {
       this.update();

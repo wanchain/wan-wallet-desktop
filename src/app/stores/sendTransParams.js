@@ -1,4 +1,4 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import BigNumber from 'bignumber.js';
 import { roundFun } from 'utils/support'
 
@@ -14,6 +14,15 @@ class SendTransParams {
     changeAddress: '',
     to: '',
     value: 0,
+    feeRate: 0,
+  };
+
+  @observable XRPTransParams = {
+    from: '',
+    tag: '',
+    to: '',
+    value: 0,
+    BIP44Path: '',
   };
 
   @observable gasLimit = GASLIMIT;
@@ -24,6 +33,10 @@ class SendTransParams {
 
   @observable currentGasPrice = 10;
 
+  constructor() {
+    makeObservable(this);
+  }
+
   @action addTransTemplate(addr, params = {}) {
     let objKey = { writable: true, enumerable: true };
     let gasPrice = self.minGasPrice;
@@ -33,7 +46,7 @@ class SendTransParams {
       gasPrice: { value: gasPrice, ...objKey },
       gasLimit: { value: GASLIMIT, ...objKey },
       nonce: { value: '', ...objKey },
-      data: { value: '0x', ...objKey },
+      data: { value: '', ...objKey },
       chainId: { value: params.chainId, ...objKey },
       txType: { value: 1, ...objKey },
       path: { value: '', ...objKey },
@@ -47,6 +60,12 @@ class SendTransParams {
   @action updateBTCTransParams(paramsObj) {
     Object.keys(paramsObj).forEach(item => {
       self.BTCTransParams[item] = paramsObj[item];
+    });
+  }
+
+  @action updateXRPTransParams(paramsObj) {
+    Object.keys(paramsObj).forEach(item => {
+      self.XRPTransParams[item] = paramsObj[item];
     });
   }
 

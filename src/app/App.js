@@ -4,13 +4,12 @@ import { Provider } from 'mobx-react';
 import { message } from 'antd';
 import { AppContainer } from 'react-hot-loader';
 import intl from 'react-intl-universal';
-
-import './global.less';
 import Router from './Routes';
 import stores from './stores';
 import locales from './locales';
 import OneStep from 'utils/OneStep';
 import { initEmitterHandler, regEmitterHandler, isSdkReady, getAllUndoneCrossTrans } from 'utils/helper';
+import './global.less';
 
 class App extends Component {
   constructor (props) {
@@ -23,9 +22,9 @@ class App extends Component {
         stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
         stores.session.initSettings();
         stores.portfolio.updateCoinsList_from_CoinGeckoAPI();
-        stores.portfolio.updateCoinPrice();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
+        stores.xrpAddress.getUserAccountFromDB();
         stores.eosAddress.getUserKeyFromDB();
         stores.dapps.updateLocalDApps();
         clearInterval(id);
@@ -102,6 +101,9 @@ class App extends Component {
           break;
         case 'EOS':
           stores.eosAddress.addRawKey(data);
+            break;
+        case 'XRP':
+          stores.xrpAddress.addRawKey(data);
             break;
       }
     })

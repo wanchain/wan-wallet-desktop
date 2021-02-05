@@ -179,7 +179,7 @@ export default (i18n) => {
                         .catch(err => {
                             logger.info('check updates failed');
                             logger.info(err);
-                            dialog .showMessageBox({
+                            dialog.showMessageBox({
                                 title: i18n.t('main.checkUpdatesDialog.title'),
                                 type: 'info',
                                 message: i18n.t('main.checkUpdatesDialog.message')

@@ -3,9 +3,9 @@ import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, DECIMALS } from 'utils/settings';
 
-import { fromWei, isNumber } from 'utils/support';
+import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
@@ -57,7 +57,7 @@ export const wanPubKey2Address = function (pubKey) {
 }
 
 export const getBalance = function (arr, chainType = 'WAN') {
-  const addrArr = arr.map(item => item.substr(2));
+  const addrArr = ['XRP'].includes(chainType) ? arr : arr.map(item => item.substr(2));
 
   return new Promise((resolve, reject) => {
     let thisVal
@@ -68,7 +68,7 @@ export const getBalance = function (arr, chainType = 'WAN') {
         return reject(err)
       } else {
         Object.keys(thisVal).forEach(item => {
-          thisVal[item] = fromWei(thisVal[item]);
+          thisVal[item] = ['XRP'].includes(chainType) ? formatNumByDecimals(thisVal[item], DECIMALS[chainType]) : fromWei(thisVal[item]);
         });
         return resolve(thisVal);
       }
@@ -253,6 +253,19 @@ export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
   })
 }
 
+export const getReadyOpenStoremanGroupList = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('storeman_getReadyOpenStoremanGroupList', {}, (err, val) => {
+      if (err) {
+        console.log('Get Smg failed', err)
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    });
+  })
+}
+
 export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
     wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
@@ -284,6 +297,19 @@ export const checkETHAddr = function (address) {
     wand.request('address_isEthAddress', { address }, (err, val) => {
       if (err) {
         console.log('Check ETH address failed ', err);
+        return reject(err);
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+};
+
+export const checkXRPAddr = function (address) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_isXrpAddress', { address }, (err, val) => {
+      if (err) {
+        console.log('Check XRP address failed ', err);
         return reject(err);
       } else {
         return resolve(val);
@@ -446,7 +472,8 @@ export const checkAmountUnit = function (decimals, amount) {
   if (amount === '0') {
     return true;
   }
-  let decimalLen = amount.toString().length - amount.toString().indexOf('.') - 1;
+  let amountStr = new BigNumber(amount).toString(10);
+  let decimalLen = amountStr.includes('.') ? (amountStr.length - amountStr.indexOf('.') - 1) : 0;
   return !!(amount >= 1 / (10 ** decimals)) && decimalLen <= decimals;
 }
 
@@ -948,6 +975,36 @@ export const createETHAddr = async function (checkDuplicate) {
   })
 }
 
+export const createXRPAddr = async function (checkDuplicate) {
+  let CHAINID = 144;
+  let index = await getNewPathIndex(CHAINID, XRPPATH, WALLETID.NATIVE);
+  let path = `${XRPPATH}${index}`;
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'XRP', path }, async (err, data) => {
+      if (!err) {
+        if (checkDuplicate instanceof Function && checkDuplicate(data.address)) {
+          return reject(new Error('exist'));
+        }
+        let name = await getNewAccountName(CHAINID, 'XRP-Account');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: data.address } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              start: index.toString(),
+              name,
+              address: data.address
+            }
+            resolve(addressInfo);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
 export const createEOSAddr = async function (checkDuplicate) {
   let CHAINID = 194;
   let index = await getNewPathIndex(CHAINID, EOSPATH, WALLETID.NATIVE);
@@ -978,9 +1035,9 @@ export const createEOSAddr = async function (checkDuplicate) {
   })
 }
 
-export const btcCoinSelect = function (utxos, value) {
+export const btcCoinSelect = function (utxos, value, feeRate) {
   return new Promise((resolve, reject) => {
-    wand.request('address_btcCoinSelect', { utxos, value }, (err, data) => {
+    wand.request('address_btcCoinSelect', { utxos, value, feeRate }, (err, data) => {
       if (err) {
         console.log('btcCoinSelect: ', err)
         return reject(err);
@@ -1202,6 +1259,19 @@ export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
   })
 }
 
+export const getQuota = function (chainType, groupId, symbolArray) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getQuota', { chainType, groupId, symbolArray }, (err, res) => {
+      // console.log('getQuota:', err, res)
+      if (err) {
+        return reject(new Error('get quota failed'));
+      } else {
+        return resolve(res);
+      }
+    })
+  })
+}
+
 export const checkAddressByChainType = async (address, chain) => {
   let valid = false;
   switch (chain) {
@@ -1251,6 +1321,18 @@ export const getFees = (chainType, chainID1, chainID2) => {
   });
 }
 
+export const estimateSmartFee = chainType => {
+  return new Promise((resolve, reject) => {
+    wand.request('transaction_estimateSmartFee', { chainType }, (err, res) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}
+
 export const resetSettingsByOptions = (attrs) => {
   return new Promise((resolve, reject) => {
     wand.request('setting_resetSettingsByOptions', { attrs }, (err, res) => {
@@ -1262,3 +1344,20 @@ export const resetSettingsByOptions = (attrs) => {
     })
   });
 }
+
+export const getCrossChainContractData = function (param) {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getCrossChainContractData', param, (err, ret) => {
+      console.log('CC data:', err, ret);
+      if (err) {
+        return reject(err);
+      } else {
+        if (ret.code) {
+          return resolve(ret);
+        } else {
+          return resolve(false);
+        }
+      }
+    })
+  })
+};

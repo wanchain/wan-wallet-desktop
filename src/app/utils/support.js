@@ -3,15 +3,15 @@ import { BigNumber } from 'bignumber.js';
 
 const web3 = new Web3();
 
-export function fromWei (data, unit = 'ether') {
+export function fromWei(data, unit = 'ether') {
   return web3.utils.fromWei(data.toString(), unit);
 }
 
-export function toWeiData (data, unit = 'ether') {
+export function toWeiData(data, unit = 'ether') {
   return web3.utils.toWei(data.toString(), unit);
 }
 
-export function formatNumByDecimals (value, decimals) {
+export function formatNumByDecimals(value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;
   }
@@ -21,38 +21,42 @@ export function formatNumByDecimals (value, decimals) {
   return new BigNumber(value).dividedBy(10 ** decimals).toString(10);
 }
 
-export function keep2Decimals (value) {
+export function keep2Decimals(value) {
   return Math.round(value * 100) / 100;
 }
 
-export function toWei (data, unit) {
+export function toWei(data, unit) {
   return '0x' + web3.utils.toBN(web3.utils.toWei(data, unit)).toString(16);
 }
 
-export function checkCryptographic (pwd) {
+export function checkCryptographic(pwd) {
   let reg = new RegExp('(?=^[^\\s]*$)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[\\S]{6,}');
 
   return reg.test(pwd);
 }
 
-export function checkPhrase (phrase) {
+export function checkPhrase(phrase) {
   let formatPhrase = phrase.split(' ');
   return formatPhrase.length === 12 && formatPhrase.every(val => /^[a-z]{1,}$/.test(val));
 }
 
-export function randomSort (arr) {
+export function randomSort(arr) {
   return arr.sort(() => Math.random() > 0.5 ? -1 : 1);
 }
 
-export function roundFun (value, n) {
+export function roundFun(value, n) {
   return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
 }
 
-export function floorFun (value, n = 2) {
+export function floorFun(value, n = 2) {
   return Math.floor(value * Math.pow(10, n)) / Math.pow(10, n);
 }
 
-export function timeFormat (time) {
+export function ceilFun(value, n = 2) {
+  return Math.ceil(value * Math.pow(10, n)) / Math.pow(10, n);
+}
+
+export function timeFormat(time) {
   const current = new Date(time * 1000);
   let date = ('0' + current.getDate()).substr(-2);
   let hours = ('0' + current.getHours()).substr(-2);
@@ -62,25 +66,25 @@ export function timeFormat (time) {
   return `${current.getFullYear()}-${month}-${date} ${hours}:${minutes}:${secondes}`;
 }
 
-export function daysAgo (time) {
+export function daysAgo(time) {
   let data = (new Date().getTime() / 1000 - time) / (24 * 3600);
   return Math.round(data);
 }
 
-export function dateFormat (time) {
+export function dateFormat(time) {
   const current = new Date(time * 1000);
   let date = ('0' + current.getDate()).substr(-2);
   let month = ('0' + (current.getMonth() + 1)).substr(-2);
   return `${current.getFullYear()}-${month}-${date}`;
 }
 
-export function isNumber (val) {
+export function isNumber(val) {
   let regPos = /^\d+(\.\d+)?$/; // 非负浮点数
   let regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; // 负浮点数
   return !!(regPos.test(val) || regNeg.test(val));
 }
 
-export function formatNum (num) {
+export function formatNum(num) {
   if (num && num !== 'N/A') {
     if (num < 1) {
       return new BigNumber(num).toFixed();
@@ -95,7 +99,7 @@ export function formatNum (num) {
   }
 }
 
-export function normalNum (num, type = 'string') {
+export function normalNum(num, type = 'string') {
   let tempNum;
   if (num) {
     if (typeof num === 'number') {
@@ -128,7 +132,7 @@ export function isSameString(a, b) {
   }
 }
 
-export function promiseTimeout (ms, p, desc) {
+export function promiseTimeout(ms, p, desc) {
   // Create a promise that rejects in <ms> milliseconds
   let id;
   let timeout = new Promise((resolve, reject) => {
@@ -157,7 +161,7 @@ export function formatLongText(data, len = '8') {
   }
 }
 
-export function showNA (data) {
+export function showNA(data) {
   if (data === '0' || data === 0) {
     return 'N/A';
   } else {
@@ -178,30 +182,29 @@ export function wandWrapper(action, options = {}) {
   })
 }
 
-export function hexCharCodeToStr(hexCharCodeStr) {
-  let trimedStr = hexCharCodeStr.trim();
-  let rawStr = trimedStr.substr(0, 2).toLowerCase() === '0x' ? trimedStr.substr(2) : trimedStr;
-  let len = rawStr.length;
-  if (len % 2 !== 0) {
-      return '';
+export function hexCharCodeToStr(str) {
+  str = str.trim().replace(/^0x/g, '');
+  if (str.length % 2 !== 0) {
+    return '';
   }
-  let resultStr = [];
-  for (var i = 0; i < len; i = i + 2) {
-      let tmpStr = rawStr.substr(i, 2);
-      if (tmpStr !== '00') {
-        resultStr.push(String.fromCharCode(parseInt(tmpStr, 16)));
-      }
+  let tempstr = '';
+  try {
+    tempstr = decodeURIComponent(str.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
+  } catch (err) {
+    for (var b = 0; b < str.length; b = b + 2) {
+      tempstr = tempstr + String.fromCharCode(parseInt(str.substr(b, 2), 16));
+    }
   }
-  return resultStr.join('');
+  return tempstr;
 }
 
-export function removeRedundantDecimal(num, zeroLimit = 4) {
+export function removeRedundantDecimal(num, left = 1, zeroLimit = 4, isCeil = true) {
   let result = num;
   if (num > 1) {
-    result = keep2Decimals(num);
+    result = isCeil ? (Math.ceil(num * 100) / 100) : keep2Decimals(num);
   } else {
     let zeroLength = /0\.(0*)/g.test(new BigNumber(num).toFixed()) ? RegExp.$1.length : 0;
-    result = roundFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + 1);
+    result = isCeil ? ceilFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + left) : roundFun(num, zeroLength <= zeroLimit ? zeroLength + 2 : zeroLength + left);
   }
   return new BigNumber(result).toFixed();
 }

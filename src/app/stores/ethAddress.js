@@ -1,6 +1,6 @@
 
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import { BigNumber } from 'bignumber.js';
 import tokens from './tokens';
 import languageIntl from './languageIntl';
@@ -19,6 +19,10 @@ class EthAddress {
   @observable selectedAddr = '';
 
   @observable transHistory = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action addAddress(newAddr) {
     self.addrInfo['normal'][newAddr.address] = {
@@ -46,7 +50,7 @@ class EthAddress {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type] || []).includes(addr.address)) {
         if (addr.name === undefined) {
-          addr.name = `ETH-Account${parseInt((/[0-9]+$/).exec(addr.path)[0]) + 1}`;
+          addr.name = `ETH-Account${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
         self.addrInfo[type][addr.address] = {
           name: addr.name,
@@ -91,6 +95,7 @@ class EthAddress {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo['normal']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
+
     keys.forEach(item => {
       if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
         self.addrInfo['normal'][item].balance = arr[item];
@@ -213,7 +218,7 @@ class EthAddress {
       })
     }
     Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item].from) && !self.transHistory[item].transferTo) {
+      if (addrList.includes(self.transHistory[item].from) && !('transferTo' in self.transHistory[item])) {
         let status = self.transHistory[item].status;
         let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
         historyList.push({

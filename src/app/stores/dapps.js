@@ -1,4 +1,4 @@
-import { observable, action, computed, autorun, toJS } from 'mobx';
+import { observable, action, computed, autorun, toJS, makeObservable } from 'mobx';
 
 import languageIntl from './languageIntl';
 import { ALLCATEGORIES } from 'utils/settings';
@@ -11,6 +11,10 @@ class DApps {
   @observable showDisclaimer = true;
 
   @observable currentDappInfo;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @computed get dAppsOnSideBar() {
     let list = [];

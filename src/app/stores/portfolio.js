@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, toJS } from 'mobx';
+import { observable, action, computed, runInAction, makeObservable } from 'mobx';
 import axios from 'axios';
 import intl from 'react-intl-universal';
 
@@ -6,6 +6,7 @@ import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
+import xrpAddress from './xrpAddress';
 import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -35,6 +36,11 @@ class Portfolio {
       ancestor: false,
       balance: 0,
       chain: intl.get('Common.eos'),
+    },
+    XRP: {
+      ancestor: false,
+      balance: 0,
+      chain: intl.get('Common.ripple'),
     }
   };
 
@@ -45,6 +51,10 @@ class Portfolio {
   @observable tokenIds_from_CoinGeckoAPI = {}
 
   @observable coinList = {};
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action setCoin() {
     self.coinList = Object.assign({}, self.getToken);
@@ -159,6 +169,9 @@ class Portfolio {
               break;
             case 'EOS':
               val.balance = eosAddress.getAllAmount;
+              break;
+            case 'XRP':
+              val.balance = xrpAddress.getAllAmount;
               break;
           }
         } else {

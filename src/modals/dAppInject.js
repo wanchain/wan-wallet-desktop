@@ -46,6 +46,18 @@ class Web3Eth {
     this.sendToHost([msg.method, msg.id, msg.message]);
   }
 
+  signTx(tx, cb) {
+    const msg = {
+      method: "signTransaction",
+      id: uuid(),
+      cb: cb,
+      message: tx,
+    };
+
+    this.saveCb(msg);
+    this.sendToHost([msg.method, msg.id, msg.message]);
+  }
+
   getChainId(cb) {
     const msg = {
       method: "loadNetworkId",

@@ -14,6 +14,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   addrInfo: stores.wanAddress.addrInfo,
   ethAddrInfo: stores.ethAddress.addrInfo,
   btcAddrInfo: stores.btcAddress.addrInfo,
+  xrpAddrInfo: stores.xrpAddress.addrInfo,
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   getMnemonic: () => stores.session.getMnemonic(),
@@ -25,6 +26,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
   updateBTCBalance: newBalanceArr => stores.btcAddress.updateBTCBalance(newBalanceArr),
   updateEOSBalance: newBalanceArr => stores.eosAddress.updateEOSBalance(newBalanceArr),
+  updateXRPBalance: newBalanceArr => stores.xrpAddress.updateXRPBalance(newBalanceArr),
   updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
 }))
 
@@ -41,6 +43,7 @@ class Layout extends Component {
       this.updateETHBalanceForInter();
       this.updateBTCBalanceForInter();
       this.updateEOSBalanceForInter();
+      this.updateXRPBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
   }
@@ -146,6 +149,19 @@ class Layout extends Component {
     getBalance(allAddr, 'ETH').then(res => {
       if (res && Object.keys(res).length) {
         this.props.updateETHBalance(res);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  updateXRPBalanceForInter = () => {
+    const { xrpAddrInfo } = this.props;
+    const allAddr = (Object.values(xrpAddrInfo).map(item => Object.keys(item))).flat();
+    if (Array.isArray(allAddr) && allAddr.length === 0) return;
+    getBalance(allAddr, 'XRP').then(res => {
+      if (res && Object.keys(res).length) {
+        this.props.updateXRPBalance(res);
       }
     }).catch(err => {
       console.log(err);

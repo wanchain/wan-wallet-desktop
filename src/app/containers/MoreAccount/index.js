@@ -1,12 +1,13 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Table, Row, Col, Icon, Modal, message } from 'antd';
+import { Table, Row, Col, Icon, Modal, message, Input, Tag } from 'antd';
 import ChainMiniList from './ChainMiniList';
 import SelectChainType from 'componentUtils/SelectChainType';
 import { COIN_ACCOUNT, COIN_ACCOUNT_EOS } from 'utils/settings';
 import style from './index.less';
 
+const { Search } = Input;
 @inject(stores => ({
   language: stores.languageIntl.language,
   getWalletSelections: stores.tokens.getWalletSelections,
@@ -27,7 +28,11 @@ class MoreAccount extends Component {
       showAddToken: false,
       showDeleteToken: false,
       deleteObj: {},
+      filterText: '',
     }
+  }
+
+  componentDidMount() {
     this.props.changeTitle('MoreTokens.tokenList');
   }
 
@@ -71,7 +76,7 @@ class MoreAccount extends Component {
     });
   }
 
-  handleDelete =(data) => {
+  handleDelete = (data) => {
     this.setState({
       deleteObj: data,
       showDeleteToken: true
@@ -101,40 +106,87 @@ class MoreAccount extends Component {
     });
   }
 
-  render() {
+  searchChange = (e) => {
+    let value = e.target.value;
+    this.setState({
+      filterText: value.trim()
+    })
+  }
+
+  getTokenList = () => {
     let { getWalletSelections } = this.props;
+    let text = this.state.filterText.trim().toLowerCase();
+    let lists = [];
+    if (text.length === 0) {
+      return getWalletSelections;
+    }
+    getWalletSelections.forEach(obj => {
+      if (new RegExp(text).test(obj.ancestor.toLowerCase())) {
+        lists.push(obj);
+      } else {
+        if (obj.children.length > 0) {
+          let list = null;
+          obj.children.forEach(child => {
+            if (new RegExp(text).test(child.symbol.toLowerCase())) {
+              if (list === null) {
+                list = {
+                  ancestor: obj.ancestor,
+                  key: obj.key,
+                  symbol: obj.symbol,
+                  children: []
+                }
+              }
+              list.children.push(child);
+            }
+          })
+          if (list !== null) {
+            lists.push(list);
+          }
+        }
+      }
+    });
+    return lists;
+  }
+
+  closeFilter = () => {
+    this.setState({ filterText: '' });
+  }
+
+  render() {
     return (
       <div className={style['moreCrossChain']}>
         <Row>
-          <Col>
+          <Col className={style['settingContainer']}>
             <div className={style['addCustom']} onClick={this.handleAddToken}>
-              <Icon type="plus" style={{ fontWeight: 'bold' }}/>
+              <Icon type="plus" style={{ fontWeight: 'bold' }} />
             </div>
+            <div></div>
+            <Search className={style['searchField']} placeholder={intl.get('MoreAccount.inputSearchText')} onChange={this.searchChange} />
           </Col>
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={getWalletSelections} />
+            <Table className="content-wrap" mode={'horizontal'} childrenColumnName={'unset'} showHeader={false} pagination={false} columns={this.columns} dataSource={this.getTokenList()} />
           </Col>
         </Row>
         {
           this.state.showAddToken && <SelectChainType onCancel={this.onCancel} />
         }
         <Modal
-            title={intl.get('Config.deleteConfirm')}
-            visible={this.state.showDeleteToken}
-            onOk={this.deleteConfirm}
-            onCancel={this.deleteCancel}
-            closable={false}
-            okText={intl.get('Common.ok')}
-            cancelText={intl.get('Common.cancel')}
-            bodyStyle={{ textAlign: 'center' }}
-          >
-            <div className={style.deleteMsg}>
-              <span className={style.deleteConfirmMsg}>{intl.get('CopyAndQrcode.confirmText')} : </span>
-              <span className={style.symbolSty}>{this.state.deleteObj.symbol}</span>
-            </div>
-          </Modal>
+          title={intl.get('Config.deleteConfirm')}
+          visible={this.state.showDeleteToken}
+          onOk={this.deleteConfirm}
+          onCancel={this.deleteCancel}
+          closable={false}
+          okText={intl.get('Common.ok')}
+          cancelText={intl.get('Common.cancel')}
+          bodyStyle={{ textAlign: 'center' }}
+        >
+          <div className={style.deleteMsg}>
+            <span className={style.deleteConfirmMsg}>{intl.get('CopyAndQrcode.confirmText')} : </span>
+            <span className={style.symbolSty}>{this.state.deleteObj.symbol}</span>
+          </div>
+        </Modal>
       </div>
     );
   }

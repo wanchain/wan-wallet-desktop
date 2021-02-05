@@ -27,15 +27,7 @@ export default {
           {
             loader: "babel-loader",
             options: {
-              cacheDirectory: true,
-              presets: ['@babel/preset-env'],
-              plugins: [
-                '@babel/transform-runtime',
-                ['import', {
-                  libraryName: 'antd',
-                  style: true
-                }]
-              ]
+              cacheDirectory: true
             }
           }
         ].concat(isEnvProduction ? [] : [{
@@ -174,6 +166,7 @@ export default {
       componentUtils: resolve('src/app/componentUtils/'),
       containers: resolve('src/app/containers/'),
       utils: resolve('src/app/utils/'),
+      hooks: resolve('src/app/hooks/'),
       "react-dom": "@hot-loader/react-dom"
     }
   },

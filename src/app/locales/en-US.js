@@ -24,6 +24,7 @@ const en_US = {
     'Common.ethereum': 'Ethereum',
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
+    'Common.ripple': 'Ripple',
     'Common.options': 'Options',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancel',
@@ -31,6 +32,7 @@ const en_US = {
     'Common.create': 'Create',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
+    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
@@ -38,6 +40,9 @@ const en_US = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Minimum amount should be { minAmount } WAN',
+    'Common.availableBalance': 'Available Balance is {availableBalance}',
+
+    'Xrp.destinationTag': 'Destination Tag',
 
     'Layout.connecting': 'connecting to server',
     'Layout.connected': 'connected to server',
@@ -344,6 +349,7 @@ const en_US = {
     'EOSNormalTransForm.invalid': 'Invalid',
     'EOSNormalTransForm.recipientAccount': 'Recipient Account',
     'EOSNormalTransForm.memo': 'Memo',
+    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
 
     'AdvancedOptionForm.advancedOptions': 'Advanced Options',
     'AdvancedOptionForm.save': 'Save',
@@ -356,6 +362,8 @@ const en_US = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Nonce is incorrect',
     'AdvancedOptionForm.inputData': 'Input Data',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Input data is incorrect',
+    'AdvancedOptionForm.feeRate': 'Fee Rate',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copied successfully',
     'CopyAndQrcode.privateKey': 'Private Key',
@@ -445,6 +453,7 @@ const en_US = {
     'NormalTransForm.sendAll': 'Send Everything',
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
+    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirm Cross Chain Transaction',
     'CrossChainTransForm.capacity': 'Capacity',
@@ -452,11 +461,13 @@ const en_US = {
     'CrossChainTransForm.txFeeRatio': 'Fee Ratio',
     'CrossChainTransForm.estimateFee': 'Estimated Fee',
     'CrossChainTransForm.gasFee': 'Gas Fee',
+    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
+    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
-    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance on original chain',
+    'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',
-    'CrossChainTransForm.overTransBalance': 'The amount is greater than the balance',
+    'CrossChainTransForm.overTransBalance': 'Insufficient balance',
     'CrossChainTransForm.transInfo': 'Cross Chain Transaction Information',
     'CrossChainTransForm.invalidAmount': 'Please input amount equal to or greater than ',
     'CrossChainTransForm.overQuota': 'The amount is greater than the remaining capacity of the storeman',
@@ -474,8 +485,11 @@ const en_US = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
-    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit.',
+    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit',
     'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
+    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Update selection status failed.',
 
@@ -786,6 +800,9 @@ const en_US = {
     'contract.help': 'If you leave call method and ABI file empty, it will make a normal transaction. Contract parameters support commas split value or json string. If you are using json string, please wrap your params in [ ]. such as: ["abc","123"]. If you are using commas split format, please do not add any space after commas. Please use lower case address in parameters.',
     'contract.selectChain': 'Select Chain:',
     'contract.getGasPrice': 'Get Gas Price',
+    'MoreAccount.inputSearchText': 'Input search text',
+
+    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default en_US;
