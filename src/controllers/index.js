@@ -1818,8 +1818,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'getQuota':
             try {
-                let { chainType, groupId, tokenPairIdArray } = payload;
-                ret = await ccUtil.getStoremanGroupQuota(chainType, groupId, tokenPairIdArray);
+                let { chainType, groupId, symbolArray } = payload;
+                ret = await ccUtil.getStoremanGroupQuota(chainType, groupId, symbolArray);
             } catch (e) {
                 logger.error('getQuota failed: ' + e);
                 err = e;
@@ -1852,6 +1852,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
+                console.log('---------------C data----------------')
+                console.log(srcChain, dstChain, type, input, false);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
                 console.log('get ret:', ret)
                 if (!ret.code) {

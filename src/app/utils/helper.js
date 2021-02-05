@@ -253,7 +253,7 @@ export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
   })
 }
 
-export const getReadyOpenStoremanGroupListByChainPair = function () {
+export const getReadyOpenStoremanGroupList = function () {
   return new Promise((resolve, reject) => {
     wand.request('storeman_getReadyOpenStoremanGroupList', {}, (err, val) => {
       if (err) {
@@ -1243,10 +1243,10 @@ export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
   })
 }
 
-export const getQuota = function (chainType, groupId, tokenPairIdArray) {
+export const getQuota = function (chainType, groupId, symbolArray) {
   return new Promise((resolve, reject) => {
-    wand.request('crossChain_getQuota', { chainType, groupId, tokenPairIdArray }, (err, res) => {
-      console.log('getQuota:', err, res)
+    wand.request('crossChain_getQuota', { chainType, groupId, symbolArray }, (err, res) => {
+      // console.log('getQuota:', err, res)
       if (err) {
         return reject(new Error('get quota failed'));
       } else {
@@ -1296,7 +1296,6 @@ export const getFastMinCount = (chainType, tokenPairID) => {
 export const getFees = (chainType, chainID1, chainID2) => {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getFees', { chainType, chainID1, chainID2 }, (err, res) => {
-      console.log('getFees:', err, res)
       if (err) {
         return reject(err);
       } else {
@@ -1333,7 +1332,7 @@ export const resetSettingsByOptions = (attrs) => {
 export const getCrossChainContractData = function (param) {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getCrossChainContractData', param, (err, ret) => {
-      console.log('CC data:', err, ret)
+      console.log('CC data:', err, ret);
       if (err) {
         return reject(err);
       } else {

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getReadyOpenStoremanGroupListByChainPair, getGasPrice, estimateSmartFee } from 'utils/helper';
+import { getReadyOpenStoremanGroupList, getGasPrice, estimateSmartFee } from 'utils/helper';
 import { INBOUND, OUTBOUND, FAST_GAS } from 'utils/settings';
 import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm';
 
@@ -38,7 +38,8 @@ class BTCTrans extends Component {
       addCrossTransTemplate(from, { chainType, path });
     }
     try {
-      let smgList = await getReadyOpenStoremanGroupListByChainPair();
+      let smgList = await getReadyOpenStoremanGroupList();
+      smgList = smgList.filter(smg => Number(smg.curve1) === 0 || Number(smg.curve2) === 0);
       if (smgList.length === 0) {
         this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
