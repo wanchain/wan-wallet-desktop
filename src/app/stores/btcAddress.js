@@ -227,7 +227,7 @@ class BtcAddress {
       if (data.crossAddress === undefined) {
         historyList.push({
           key: item,
-          time: timeFormat(data.sendTime / 1000),
+          time: timeFormat(data.sendTime),
           to: data.to,
           value: formatNum(data.value),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
