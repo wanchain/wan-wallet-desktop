@@ -68,6 +68,7 @@ class CrossBTC extends Component {
       changeAddress: transParams.changeAddress,
       storeman: transParams.storeman,
       to: transParams.to,
+      crossType: CROSS_TYPE[0]
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
