@@ -767,7 +767,7 @@ const es_ES = {
     'Storeman.delegateFee': 'Tarifa DELEGACIÓN FEE',
     'Storeman.rank': 'RANK',
     'Storeman.slash': 'SLASH',
-    
+
     'contract.menu': 'Contract',
     'contract.menuOffline': 'Offline',
     'contract.menuOnline': 'Online',
