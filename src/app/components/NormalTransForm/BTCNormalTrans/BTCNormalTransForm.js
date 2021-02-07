@@ -8,7 +8,7 @@ import { Button, Modal, Form, Input, Icon, message, Spin } from 'antd';
 import style from '../index.less';
 import { formatNumByDecimals } from 'utils/support';
 import ConfirmForm from 'components/NormalTransForm/BTCNormalTrans/BTCConfirmForm';
-import { checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos } from 'utils/helper';
+import { checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos, checkBech32 } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
@@ -80,17 +80,29 @@ class BTCNormalTransForm extends Component {
     });
   }
 
-  checkToBase58 = (rule, value, callback) => {
-    const { normal, rawKey } = this.props.addrInfo;
+  checkBTCAddress = async (rule, value, callback) => {
+    let isBech32 = await checkBech32(value);
+    if ((this.checkToBase58(value) || isBech32) && this.isNotNativeAddress(value)) {
+      callback();
+    } else {
+      callback(intl.get('NormalTransForm.invalidAddress'));
+    }
+  }
+
+  checkToBase58 = (value) => {
     try {
       bs58check.decode(value);
-      if (Object.keys(normal).filter(item => new BigNumber(normal[item].balance).gte('0')).concat(Object.keys(rawKey).filter(item => new BigNumber(rawKey[item].balance).gte('0'))).includes(value)) {
-        callback(intl.get('NormalTransForm.invalidAddress'));
-      } else {
-        callback();
-      }
     } catch (error) {
-      callback(intl.get('NormalTransForm.invalidAddress'));
+      return false;
+    }
+  }
+
+  isNotNativeAddress = (value) => {
+    const { normal, rawKey } = this.props.addrInfo;
+    if (Object.keys(normal).filter(item => new BigNumber(normal[item].balance).gte('0')).concat(Object.keys(rawKey).filter(item => new BigNumber(rawKey[item].balance).gte('0'))).includes(value)) {
+      return false;
+    } else {
+      return true;
     }
   }
 
@@ -137,7 +149,7 @@ class BTCNormalTransForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToBase58 }] })
+                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkBTCAddress }] })
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>

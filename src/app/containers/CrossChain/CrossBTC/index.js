@@ -103,7 +103,6 @@ class CrossBTC extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
-        console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
           console.log('BTC outbound lock:', err);

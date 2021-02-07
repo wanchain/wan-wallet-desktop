@@ -3,6 +3,7 @@ import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
+import bech32 from 'bech32';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, DECIMALS } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
@@ -325,6 +326,17 @@ export const checkBase58 = function (address) {
       resolve(true);
     } catch (error) {
       reject(error);
+    }
+  });
+}
+
+export const checkBech32 = function (address) {
+  return new Promise((resolve, reject) => {
+    try {
+      bech32.decode(address);
+      resolve(true);
+    } catch (error) {
+      resolve(false);
     }
   });
 }
