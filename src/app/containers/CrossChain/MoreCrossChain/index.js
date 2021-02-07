@@ -65,12 +65,14 @@ class MoreCrossChain extends Component {
 
   getCCTokenList = () => {
     let { getCrossChainTokenList } = this.props;
+    // TODO: Remove XRP tokenPairID
+    let getCrossChainTokenListWithFilter = getCrossChainTokenList.filter(v => v.chain !== 'XRP')
     let text = this.state.filterText.trim().toLowerCase();
     let lists = [];
     if (text.length === 0) {
-      return getCrossChainTokenList;
+      return getCrossChainTokenListWithFilter;
     }
-    getCrossChainTokenList.forEach(obj => {
+    getCrossChainTokenListWithFilter.forEach(obj => {
       if (new RegExp(text).test(obj.chain.toLowerCase())) {
         lists.push(obj);
       } else {
