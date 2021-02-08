@@ -169,7 +169,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
               visibleTag &&
               <Form.Item label={intl.get('Xrp.destinationTag')}>
                 {getFieldDecorator('tag', { rules: [{ message: intl.get('NormalTransForm.destinationTagRule'), validator: checkDestinationTag }] })
-                  (<Input min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                  (<Input min={0} placeholder='Tag' prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
             }
             {
