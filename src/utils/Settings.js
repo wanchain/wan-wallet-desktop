@@ -15,7 +15,7 @@ let _settings = undefined
 
 const defaultConfig = {
   mode: 'light',
-  network: 'main',
+  network: 'testnet',
   lang: 'en',
   skippedUpdateVersion: null,
   settings: {
@@ -256,7 +256,8 @@ class Settings {
    * @return {string} wanchain network, either mainnet or testnet
    */
   get network() {
-    if (_network) {
+    return 'testnet';
+    /* if (_network) {
       return _network
     }
 
@@ -264,7 +265,7 @@ class Settings {
       return _network = argv.network
     }
 
-    return _network = this._get('network') || defaultConfig.network
+    return _network = this._get('network') || defaultConfig.network */
   }
 
   get language() {
