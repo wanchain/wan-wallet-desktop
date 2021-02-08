@@ -454,6 +454,7 @@ const th_TH = {
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',

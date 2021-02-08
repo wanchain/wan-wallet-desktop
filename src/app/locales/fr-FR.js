@@ -454,6 +454,7 @@ const fr_FR = {
     'NormalTransForm.password': 'Mot de passe',
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',

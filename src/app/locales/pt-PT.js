@@ -454,6 +454,7 @@ const pt_PT = {
     'NormalTransForm.password': 'Senha',
     'NormalTransForm.pwdIsIncorrect': 'Senha está incorreta',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
     'CrossChainTransForm.capacity': 'Capacidade',

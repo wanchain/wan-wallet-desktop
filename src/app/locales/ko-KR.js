@@ -454,6 +454,7 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',

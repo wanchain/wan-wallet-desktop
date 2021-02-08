@@ -454,6 +454,7 @@ const zh_CN = {
     'NormalTransForm.password': '密码',
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
     'NormalTransForm.destinationTagRule': 'Destination Tag格式不正确',
+    'NormalTransForm.isNativeBtcAddress': '不允许发送交易给自己',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',

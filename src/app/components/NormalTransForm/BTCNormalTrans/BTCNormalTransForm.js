@@ -82,8 +82,12 @@ class BTCNormalTransForm extends Component {
 
   checkBTCAddress = async (rule, value, callback) => {
     let isBech32 = await checkBech32(value);
-    if ((this.checkToBase58(value) || isBech32) && this.isNotNativeAddress(value)) {
-      callback();
+    if (this.checkToBase58(value) || isBech32) {
+      if (this.isNotNativeAddress(value)) {
+        callback();
+      } else {
+        callback(intl.get('NormalTransForm.isNativeBtcAddress'));
+      }
     } else {
       callback(intl.get('NormalTransForm.invalidAddress'));
     }
@@ -92,6 +96,7 @@ class BTCNormalTransForm extends Component {
   checkToBase58 = (value) => {
     try {
       bs58check.decode(value);
+      return true;
     } catch (error) {
       return false;
     }
@@ -149,7 +154,7 @@ class BTCNormalTransForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
-                {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkBTCAddress }] })
+                {getFieldDecorator('to', { rules: [{ required: true, validator: this.checkBTCAddress }] })
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>

@@ -28,7 +28,6 @@ class TransInfo extends Component {
         href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
         break;
       case 'ETH':
-        // href = this.props.chainId === 1 ? `${ETHMAIN}/tx/${hash}` : `${ETHTESTNET}/tx/${hash}`;
         href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
         break;
       case 'BTC':
