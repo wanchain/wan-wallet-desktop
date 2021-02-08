@@ -147,9 +147,21 @@ class CrossBTCForm extends Component {
   }
 
   checkAmount = async (rule, value, callback) => {
-    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams } = this.props;
+    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams, currentTokenPairInfo: info } = this.props;
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
+        const { minQuota, maxQuota } = this.state;
+        if (new BigNumber(value).lt(minQuota)) {
+          let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[direction === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`;
+          callback(errText);
+          return;
+        }
+
+        if (new BigNumber(value).gt(maxQuota)) {
+          callback(intl.get('CrossChainTransForm.overQuota'));
+          return;
+        }
+
         if (direction === INBOUND) {
           let from = Object.keys(addrInfo.normal).map(key => ({
             path: `${btcPath}${addrInfo.normal[key].path}`,
@@ -284,6 +296,8 @@ class CrossBTCForm extends Component {
     if (e.target.checked) {
       form.setFieldsValue({
         amount: new BigNumber(balance).toString(10)
+      }, () => {
+        form.validateFields(['amount']);
       });
     } else {
       form.setFieldsValue({
@@ -313,8 +327,9 @@ class CrossBTCForm extends Component {
     updateBTCTransParams({ feeRate });
     form.setFieldsValue({
       amount: form.getFieldValue('amount')
+    }, () => {
+      form.validateFields(['amount']);
     });
-    form.validateFields(['amount']);
   }
 
   handleOutBoundSaveOption = (gasPrice, gasLimit) => {

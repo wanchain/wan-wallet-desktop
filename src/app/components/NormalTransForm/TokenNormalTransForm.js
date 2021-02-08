@@ -308,7 +308,7 @@ class TokenNormalTransForm extends Component {
 
         </Modal>
 
-        <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} />
+        <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} chain={currTokenChain} />
         {
           confirmVisible &&
           <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} chain={currTokenChain} visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
