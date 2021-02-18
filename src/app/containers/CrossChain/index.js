@@ -97,12 +97,14 @@ class CrossChain extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
+        console.log(err, ret);
         if (err) {
           console.log('CC tx error:', err)
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            // message.warn(intl.get('Common.sendFailed'));
+            message.warn(err.desc);
           }
           return reject(err);
         } else {
@@ -113,7 +115,8 @@ class CrossChain extends Component {
             if (ret.includes('insufficient funds')) {
               message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
             } else {
-              message.warn(intl.get('Common.sendFailed'));
+              // message.warn(intl.get('Common.sendFailed'));
+              message.warn(ret);
             }
             return reject(ret);
           }
@@ -140,11 +143,13 @@ class CrossChain extends Component {
 
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+        console.log(err, ret);
         if (err) {
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            // message.warn(intl.get('Common.sendFailed'));
+            message.warn(err.desc);
           }
           return reject(err);
         } else {
@@ -155,7 +160,8 @@ class CrossChain extends Component {
             if (ret.includes('insufficient funds')) {
               message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
             } else {
-              message.warn(intl.get('Common.sendFailed'));
+              // message.warn(intl.get('Common.sendFailed'));
+              message.warn(ret);
             }
             return reject(ret);
           }

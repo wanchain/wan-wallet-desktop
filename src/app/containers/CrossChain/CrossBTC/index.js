@@ -72,13 +72,15 @@ class CrossBTC extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+        console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
           console.log('BTC inbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            // message.warn(intl.get('Common.sendFailed'));
+            message.warn(err.desc);
           }
           return reject(err);
         } else {
@@ -104,13 +106,15 @@ class CrossBTC extends Component {
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+        console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
           console.log('BTC outbound lock:', err);
           if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            message.warn(intl.get('Common.sendFailed'));
+            // message.warn(intl.get('Common.sendFailed'));
+            message.warn(err.desc);
           }
           return reject(err);
         } else {
