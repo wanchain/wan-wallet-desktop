@@ -93,7 +93,7 @@ class CrossChainTransForm extends Component {
   }
 
   handleNext = () => {
-    const { updateTransParams, settings, form, from, estimateFee, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(async (err, { pwd, amount: sendAmount, to }) => {
@@ -282,7 +282,6 @@ class CrossChainTransForm extends Component {
     }
     gasFee = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
     let operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${feeUnit}`;
-
     return (
       <div>
         <Modal

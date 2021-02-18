@@ -248,7 +248,7 @@ class NormalTransForm extends Component {
   }
 
   checkToWanPrivateAddr = (value) => {
-    if (isValidChecksumOTAddress(value)) {
+    if (isValidChecksumOTAddress(value) || /^0x[0-9a-f]{132}$/i.test(value) || /^0x[0-9A-F]{132}$/i.test(value)) {
       return true;
     } else {
       return false;
