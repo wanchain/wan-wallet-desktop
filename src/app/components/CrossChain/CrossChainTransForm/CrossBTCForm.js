@@ -297,7 +297,13 @@ class CrossBTCForm extends Component {
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       callback();
     } else {
-      let isValid = await checkAddressByChainType(value, chain);
+      let isValid;
+      if (chain === 'WAN') {
+        let [isWAN, isETH] = await Promise.all([checkAddressByChainType(value, 'WAN'), checkAddressByChainType(value, 'ETH')]);
+        isValid = isWAN || isETH;
+      } else {
+        isValid = await checkAddressByChainType(value, chain);
+      }
       isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
     }
   }
