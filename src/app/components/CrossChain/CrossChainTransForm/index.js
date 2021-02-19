@@ -49,9 +49,8 @@ class CrossChainTransForm extends Component {
 
   async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { smgList, direction, currTokenPairId, currentTokenPairInfo: info } = this.props;
+      let { smgList, currentTokenPairInfo: info, chainType } = this.props;
       try {
-        const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
         let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol]);
         const decimals = info.ancestorDecimals;
         this.setState({
@@ -96,7 +95,7 @@ class CrossChainTransForm extends Component {
     const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
-    form.validateFields(async (err, { pwd, amount: sendAmount, to }) => {
+    form.validateFields(['from', 'balance', 'storemanAccount', 'quota', 'to', 'totalFee', 'amount'], { force: true }, async (err, { pwd, amount: sendAmount, to }) => {
       if (err) {
         console.log('handleNext:', err);
         return;
@@ -180,14 +179,18 @@ class CrossChainTransForm extends Component {
     }
   }
 
-  updateLockAccounts = async (storeman, option) => {
-    let { from, form, updateTransParams, chainType, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+  updateLockAccounts = async (storeman) => {
+    let { from, form, updateTransParams, chainType, type, currentTokenPairInfo: info } = this.props;
     try {
       const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol]);
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),
         maxQuota: formatNumByDecimals(maxQuota, decimals)
+      }, () => {
+        form.setFieldsValue({
+          quota: `${this.state.maxQuota} ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}`
+        })
       });
     } catch (e) {
       console.log('e:', e);

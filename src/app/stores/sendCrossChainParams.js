@@ -68,15 +68,15 @@ class SendCrossChainParams {
     });
   }
 
-    @action updateTransParams (addr, paramsObj) {
-      Object.keys(paramsObj).forEach(item => {
-        self.transParams[addr][item] = paramsObj[item];
-      });
-    }
+  @action updateTransParams(addr, paramsObj) {
+    Object.keys(paramsObj).forEach(item => {
+      self.transParams[addr][item] = paramsObj[item];
+    });
+  }
 
-    @computed get minCrossBTC() {
-      return 0.002;
-    }
+  @computed get minCrossBTC() {
+    return 0.002;
+  }
 
   @computed get btcFee() {
     return session.chainId === 1 ? 0.0001 : 0.001;

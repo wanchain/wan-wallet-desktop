@@ -59,7 +59,7 @@ class CrossBTCForm extends Component {
 
   async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { smgList, direction, currTokenPairId, currentTokenPairInfo: info } = this.props;
+      let { smgList, direction, currentTokenPairInfo: info } = this.props;
       try {
         const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
         let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol]);
@@ -359,11 +359,7 @@ class CrossBTCForm extends Component {
       feeRate
     });
     updateBTCTransParams({ feeRate });
-    form.setFieldsValue({
-      amount: form.getFieldValue('amount')
-    }, () => {
-      form.validateFields(['amount']);
-    });
+    form.validateFields(['amount'], { force: true });
   }
 
   handleOutBoundSaveOption = (gasPrice, gasLimit) => {

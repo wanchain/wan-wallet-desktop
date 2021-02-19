@@ -720,57 +720,6 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
   })
 }
 
-/* export const createWANAddrInfo = async function () {
-  let CHAINID = 5718350;
-  let index = await getNewPathIndex(CHAINID, WANPATH, WALLETID.NATIVE);
-  let path = `${WANPATH}${index}`;
-  return new Promise((resolve, reject) => {
-    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'WAN', path: path }, async (err, info) => {
-      if (!err) {
-        resolve({ info, index, path });
-      } else {
-        reject(err);
-      }
-    });
-  });
-}
-
-export const createWANAddrByPath = async function ({ info, index, path }) {
-  let CHAINID = 5718350;
-  return new Promise((resolve, reject) => {
-    getNewAccountName(CHAINID, 'WAN-Account').then(name => {
-      wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${info.address}`.toLowerCase(), waddr: `0x${info.waddress}`.toLowerCase() } }, (err, val_account_create) => {
-        if (!err && val_account_create) {
-          let addressInfo = {
-            start: index.toString(),
-            name,
-            path,
-            address: wanUtil.toChecksumAddress(`0x${info.address}`),
-            waddress: wanUtil.toChecksumOTAddress(`0x${info.waddress}`),
-          }
-          resolve(addressInfo);
-        } else {
-          reject(err);
-        }
-      });
-    })
-  });
-}
-
-export const createWANAddr = async function () {
-  return new Promise((resolve, reject) => {
-    createWANAddrInfo().then(data => {
-      createWANAddrByPath(data).then(res => {
-        resolve(res);
-      }).catch(err => {
-        reject(err);
-      });
-    }).catch(err => {
-      reject(err);
-    });
-  })
-} */
-
 export const createWANAddr = async function (checkDuplicate) {
   let index = await getNewPathIndex(5718350, WANPATH, WALLETID.NATIVE);
   let path = `${WANPATH}${index}`;
@@ -802,62 +751,6 @@ export const createWANAddr = async function (checkDuplicate) {
   })
 }
 
-/* export const createBTCAddrInfo = async function (path, index) {
-  return new Promise((resolve, reject) => {
-    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'BTC', path }, async (err, info) => {
-      console.log('a:', err, info);
-      if (!err) {
-        resolve({ info, index, path });
-      } else {
-        reject(err);
-      }
-    });
-  });
-}
-
-export const createBTCAddrByPath = async function ({ info, index, path }, CHAINID) {
-  return new Promise((resolve, reject) => {
-    getNewAccountName(CHAINID, 'BTC-Account').then(name => {
-      wand.request('address_btcImportAddress', { address: info.address }, (err, data) => {
-        if (!err) {
-          wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, addr: info.address } }, (err, val_account_create) => {
-            if (!err && val_account_create) {
-              resolve({
-                start: index.toString(),
-                name,
-                address: info.address
-              });
-            } else {
-              reject(err);
-            }
-          });
-        } else {
-          reject(err);
-        }
-      });
-    })
-  });
-}
-
-export const createBTCAddr = function (btcPath, index) {
-  let path = `${btcPath}${index}`;
-  const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
-  console.log('---:', path)
-  return new Promise((resolve, reject) => {
-    createBTCAddrInfo(path, index).then(data => {
-      console.log('data:', data)
-      createBTCAddrByPath(data, CHAINID).then(res => {
-        console.log('res:', res);
-        resolve(res);
-      }).catch(err => {
-        reject(err);
-      });
-    }).catch(err => {
-      reject(err);
-    });
-  })
-} */
-
 export const createBTCAddr = function (btcPath, index, checkDuplicate) {
   let path = `${btcPath}${index}`;
   const CHAINID = btcPath === BTCPATH_MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
@@ -868,21 +761,15 @@ export const createBTCAddr = function (btcPath, index, checkDuplicate) {
           return reject(new Error('exist'));
         }
         let name = await getNewAccountName(CHAINID, 'BTC-Account');
-        wand.request('address_btcImportAddress', { address: data.address }, (err_btcImportAddress) => {
-          if (!err_btcImportAddress) {
-            wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, addr: data.address } }, (err, val_account_create) => {
-              if (!err && val_account_create) {
-                return resolve({
-                  start: index.toString(),
-                  name,
-                  address: data.address
-                });
-              } else {
-                return reject(err);
-              }
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path, meta: { name, addr: data.address } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            return resolve({
+              start: index.toString(),
+              name,
+              address: data.address
             });
           } else {
-            return reject(err_btcImportAddress);
+            return reject(err);
           }
         });
       } else {
@@ -891,55 +778,6 @@ export const createBTCAddr = function (btcPath, index, checkDuplicate) {
     });
   })
 }
-
-/* export const createETHAddrInfo = async function () {
-  let CHAINID = 60;
-  let index = await getNewPathIndex(CHAINID, ETHPATH, WALLETID.NATIVE);
-  let path = `${ETHPATH}${index}`;
-  return new Promise((resolve, reject) => {
-    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'ETH', path }, async (err, info) => {
-      if (!err) {
-        resolve({ info, index, path });
-      } else {
-        reject(err);
-      }
-    });
-  });
-} */
-
-/* export const createETHAddrByPath = async function ({ info, index, path }) {
-  let CHAINID = 60;
-  return new Promise((resolve, reject) => {
-    getNewAccountName(CHAINID, 'ETH-Account').then(name => {
-      wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${info.address}` } }, (err, val_account_create) => {
-        if (!err && val_account_create) {
-          let addressInfo = {
-            start: index.toString(),
-            name,
-            address: `0x${info.address}`
-          }
-          resolve(addressInfo);
-        } else {
-          reject(err);
-        }
-      });
-    })
-  });
-} */
-
-/* export const createETHAddr = async function () {
-  return new Promise((resolve, reject) => {
-    createETHAddrInfo().then(data => {
-      createETHAddrByPath(data).then(res => {
-        resolve(res);
-      }).catch(err => {
-        reject(err);
-      });
-    }).catch(err => {
-      reject(err);
-    });
-  })
-} */
 
 export const createETHAddr = async function (checkDuplicate) {
   let CHAINID = 60;
@@ -1359,3 +1197,11 @@ export const getCrossChainContractData = function (param) {
     })
   })
 };
+
+export const convertCrossChainTxErrorText = (text) => {
+  if (text === 'insufficient funds for gas * price + value') {
+    return intl.get('Common.sendFailedForInsufficientFunds');
+  } else {
+    return text;
+  }
+}

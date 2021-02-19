@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Row, Col } from 'antd';
 
-function CommonFormItem (props) {
+function CommonFormItem(props) {
   const { formName, placeholder, prefix, title, form, options, disabled, sbiling, colSpan, autoFocus, suffix } = props;
   const { getFieldDecorator } = form;
   let width = colSpan || 8;
@@ -14,7 +14,7 @@ function CommonFormItem (props) {
           <Form layout="inline">
             <Form.Item>
               {getFieldDecorator(formName, options)(<Input autoFocus={autoFocus} disabled={!!disabled} placeholder={placeholder} prefix={prefix} suffix={suffix} />)}
-              { sbiling }
+              {sbiling}
             </Form.Item>
           </Form>
         </Col>

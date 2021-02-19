@@ -1856,9 +1856,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 console.log(srcChain, dstChain, type, input, false);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
                 console.log('get ret:', ret)
-                if (!ret.code) {
-                    err = ret;
-                }
             } catch (e) {
                 logger.error('crossChain failed:');
                 logger.error(e);
@@ -1880,12 +1877,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input);
-                if (!ret.code) {
-                    err = ret;
-                }
             } catch (e) {
                 logger.error('crossChain failed:')
-                logger.error(e.message || e.stack)
+                logger.error(e)
+                // logger.error(e.message || e.stack);
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })

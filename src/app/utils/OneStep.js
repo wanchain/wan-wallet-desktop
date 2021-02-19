@@ -60,7 +60,6 @@ const OneStep = {
             input.tokenPairID = trans_data.tokenPairID;
             wand.request('crossChain_crossChain', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
               if (err) {
-                // console.log('crossChain_crossChain:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -76,7 +75,6 @@ const OneStep = {
             input.tokenPairID = trans_data.tokenPairID;
             wand.request('crossChain_crossChain', { input, type: 'REDEEM', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
               if (err) {
-                // console.log('crossChain_crossChain:', err);
                 this.sending.delete(trans_data.hashX);
                 this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
                 increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.redeemTryCount + 1, isRedeem: true });
@@ -206,7 +204,6 @@ const OneStep = {
         if (trans_data.srcChainType !== 'WAN') {
           wand.request('crossChain_crossEOS', { input, type: 'REVOKE', sourceAccount: trans_data.srcChainAddr, sourceSymbol: trans_data.srcChainType, destinationAccount: trans_data.dstChainAddr, destinationSymbol: trans_data.dstChainType, tokenPairID: trans_data.tokenPairID }, (err, ret) => {
             if (err) {
-              // console.log('crossChain_crossEOS:', err);
               this.sending.delete(trans_data.hashX);
               this.retryTransArr.set(trans_data.hashX, this.retryTransArr.get(trans_data.hashX) + 1);
               increaseFailedRetryCount({ hashX: trans_data.hashX, toCount: trans_data.revokeTryCount + 1, isRedeem: false });

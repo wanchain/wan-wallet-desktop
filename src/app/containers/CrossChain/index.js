@@ -7,6 +7,7 @@ import { INBOUND, OUTBOUND, COIN_ACCOUNT } from 'utils/settings';
 import Trans from 'components/CrossChain/SendCrossChainTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory';
 import { formatNum } from 'utils/support';
+import { convertCrossChainTxErrorText } from 'utils/helper';
 import style from './index.less';
 
 @inject(stores => ({
@@ -100,25 +101,19 @@ class CrossChain extends Component {
         console.log(err, ret);
         if (err) {
           console.log('CC tx error:', err)
-          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            // message.warn(intl.get('Common.sendFailed'));
             message.warn(err.desc);
           }
-          return reject(err);
+          reject(err);
         } else {
           if (ret.code) {
             message.success(intl.get('Send.transSuccess'));
-            return resolve(ret);
+            resolve(ret);
           } else {
-            if (ret.includes('insufficient funds')) {
-              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
-            } else {
-              // message.warn(intl.get('Common.sendFailed'));
-              message.warn(ret);
-            }
-            return reject(ret);
+            message.warn(convertCrossChainTxErrorText(ret.result));
+            reject(ret);
           }
         }
       })
@@ -145,25 +140,19 @@ class CrossChain extends Component {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
         if (err) {
-          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            // message.warn(intl.get('Common.sendFailed'));
             message.warn(err.desc);
           }
-          return reject(err);
+          reject(err);
         } else {
           if (ret.code) {
             message.success(intl.get('Send.transSuccess'));
-            return resolve(ret);
+            resolve(ret);
           } else {
-            if (ret.includes('insufficient funds')) {
-              message.warn(intl.get('Common.sendFailedForInsufficientFunds'));
-            } else {
-              // message.warn(intl.get('Common.sendFailed'));
-              message.warn(ret);
-            }
-            return reject(ret);
+            message.warn(convertCrossChainTxErrorText(ret.result));
+            reject(ret);
           }
         }
       })

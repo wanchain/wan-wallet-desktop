@@ -99,13 +99,13 @@ class CrossETHForm extends Component {
     const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
-    form.validateFields(err => {
+    form.validateFields(['from', 'balance', 'storemanAccount', 'quota', 'to', 'totalFee', 'amount'], { force: true }, (err, values) => {
       if (err) {
-        console.log('handleNext:', err);
+        console.log('validate form data failed:', err);
         return;
       };
-      const { minQuota, maxQuota } = this.state;
 
+      const { minQuota, maxQuota } = this.state;
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
       if (new BigNumber(sendAmount).lt(minQuota)) {
         message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
@@ -123,6 +123,7 @@ class CrossETHForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
       }
+
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
@@ -193,14 +194,18 @@ class CrossETHForm extends Component {
     }
   }
 
-  updateLockAccounts = async (storeman, option) => {
-    let { from, updateTransParams, chainType, currTokenPairId, currentTokenPairInfo: info } = this.props;
+  updateLockAccounts = async (storeman) => {
+    let { from, form, updateTransParams, chainType, currentTokenPairInfo: info, type } = this.props;
     try {
       const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol]);
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),
         maxQuota: formatNumByDecimals(maxQuota, decimals)
+      }, () => {
+        form.setFieldsValue({
+          quota: `${this.state.maxQuota} ${type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol}`
+        })
       });
     } catch (e) {
       console.log('e:', e);

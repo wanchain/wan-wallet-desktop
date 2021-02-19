@@ -8,6 +8,7 @@ import { INBOUND, OUTBOUND, CROSS_TYPE } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 import { formatNum } from 'utils/support';
+import { convertCrossChainTxErrorText } from 'utils/helper';
 import style from './index.less';
 
 const CHAINTYPE = 'BTC';
@@ -75,16 +76,20 @@ class CrossBTC extends Component {
         console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
-          console.log('BTC inbound lock:', err);
-          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            // message.warn(intl.get('Common.sendFailed'));
             message.warn(err.desc);
           }
-          return reject(err);
+          reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            resolve(ret);
+          } else {
+            message.warn(convertCrossChainTxErrorText(ret.result));
+            reject(ret);
+          }
         }
       })
     })
@@ -109,16 +114,20 @@ class CrossBTC extends Component {
         console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
-          console.log('BTC outbound lock:', err);
-          if (err instanceof Object && err.desc && err.desc instanceof Array && err.desc.includes('ready')) {
+          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
-            // message.warn(intl.get('Common.sendFailed'));
             message.warn(err.desc);
           }
-          return reject(err);
+          reject(err);
         } else {
-          return resolve(ret)
+          if (ret.code) {
+            message.success(intl.get('Send.transSuccess'));
+            resolve(ret);
+          } else {
+            message.warn(convertCrossChainTxErrorText(ret.result));
+            reject(ret);
+          }
         }
       })
     })
