@@ -5,6 +5,8 @@ import session from './session';
 const GASLIMIT = 21000;
 
 class SendCrossChainParams {
+  @observable record = {};
+
   @observable currentFrom = '';
 
   @observable transParams = {};
@@ -24,6 +26,15 @@ class SendCrossChainParams {
     amount: 0,
     toAddr: '',
     txFeeRatio: ''
+  };
+
+  @observable XRPCrossTransParams = {
+    from: '',
+    storemanAddr: '',
+    value: 0,
+    groupId: '',
+    toWanAddress: '',
+    path: ''
   };
 
   @observable gasLimit = GASLIMIT;
@@ -71,6 +82,12 @@ class SendCrossChainParams {
   @action updateTransParams(addr, paramsObj) {
     Object.keys(paramsObj).forEach(item => {
       self.transParams[addr][item] = paramsObj[item];
+    });
+  }
+
+  @action updateXRPTransParams(paramsObj) {
+    Object.keys(paramsObj).forEach(item => {
+      self.XRPCrossTransParams[item] = paramsObj[item];
     });
   }
 

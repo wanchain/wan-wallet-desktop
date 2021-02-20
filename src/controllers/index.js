@@ -2063,6 +2063,24 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'estimatedXrpFee':
+          try {
+              let payment = ccUtil.getXrpPayment(payload)
+              let data = await ccUtil.packTransaction('XRP', { address: payload.from, payment });
+              if (data && data.instructions) {
+                ret = data.instructions.fee
+              } else {
+                ret = '0';
+                err = 'error'
+              }
+          } catch (e) {
+              logger.error('packTransaction failed:')
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
     }
 })
 

@@ -76,7 +76,7 @@ export const FAKEADDR = '0x0000000000000000000000000000000000000003';
 export const FAKESTOREMAN = '0x0000000000000000000000000000000000000004';
 
 export const WALLET_CHAIN = ['WAN', 'BTC', 'ETH', 'EOS', 'XRP'];
-export const CROSSCHAINTYPE = ['WAN', 'BTC', 'ETH', 'EOS'];
+export const CROSSCHAINTYPE = ['WAN', 'BTC', 'ETH', 'EOS', 'XRP'];
 
 export const MAX_CONFIRM_BLKS = 100000000;
 export const MIN_CONFIRM_BLKS = 0;
@@ -104,3 +104,5 @@ export const MAX_BTC_FEE_RATE = 2000;
 export const DECIMALS = {
   XRP: 6
 }
+
+export const MINXRPBALANCE = '20'

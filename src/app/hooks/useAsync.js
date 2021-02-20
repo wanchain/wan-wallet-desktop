@@ -9,7 +9,6 @@ const useAsync = (func, initValue = null, immediate = true, options = {}) => {
   const execute = useCallback(executeParams => {
     let asyncFunction = typeof func === 'string' ? wandWrapper.bind(this, func) : func;
     setStatus('pending');
-    setValue(initValue);
     setError(null);
     return asyncFunction(executeParams || options)
       .then(response => {
@@ -19,6 +18,7 @@ const useAsync = (func, initValue = null, immediate = true, options = {}) => {
       .catch(error => {
         console.log('useAsyncError', error)
         setError(error);
+        setValue(initValue);
         setStatus('error');
       });
   }, [func]);

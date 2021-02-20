@@ -10,6 +10,8 @@ import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
+const keypairs = require('ripple-keypairs')
+const elliptic = require('elliptic')
 let emitterHandlers = {};
 
 export const deserializeWanTx = data => {
@@ -1204,4 +1206,14 @@ export const convertCrossChainTxErrorText = (text) => {
   } else {
     return text;
   }
+}
+
+export const getStoremanAddrByGpk1 = function (gpk) {
+  if (!gpk) {
+    return null
+  }
+  const Secp256k1 = elliptic.ec('secp256k1');
+  const pubkey = Secp256k1.keyFromPublic('04' + gpk.slice(2), 'hex');
+  const compressed = pubkey.getPublic(true, 'hex');
+  return keypairs.deriveAddress(compressed.toUpperCase())
 }
