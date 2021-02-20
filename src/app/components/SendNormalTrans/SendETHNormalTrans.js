@@ -3,7 +3,7 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
-import ETHNormalTransForm from 'components/NormalTransForm/ETHNormalTrans/ETHNormalTransForm'
+import ETHNormalTransForm from 'components/NormalTransForm/ETHNormalTrans/ETHNormalTransForm';
 
 const CollectionCreateForm = Form.create({ name: 'ETHNormalTransForm' })(ETHNormalTransForm);
 
