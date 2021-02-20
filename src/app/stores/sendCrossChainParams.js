@@ -49,6 +49,10 @@ class SendCrossChainParams {
     makeObservable(this);
   }
 
+  @action updateRecord(record) {
+    self.record = record;
+  }
+
   @action addCrossTransTemplate(addr, params = {}) {
     let gasPrice = 1;
     self.currentFrom = addr;
