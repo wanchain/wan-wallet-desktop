@@ -778,7 +778,7 @@ const zh_CN = {
 
     'MoreAccount.inputSearchText': '请输入搜索信息',
 
-    'Storeman.delegationWarnning': '提示：只有等当前跨链节点工作周期结束后才能提取本金。如果想提取本金，需要在下一轮竞选之前点击“退出”按钮'
+    'Storeman.delegationWarning': '提示：只有等当前跨链节点工作周期结束后才能提取本金。如果想提取本金，需要在下一轮竞选之前点击“退出”按钮'
 }
 
 export default zh_CN;

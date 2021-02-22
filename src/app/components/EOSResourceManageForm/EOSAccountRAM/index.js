@@ -167,7 +167,7 @@ class EOSAccountRAM extends Component {
                 }
             } else {
                 message.error(intl.get('EOSResourceManageForm.txSentFailed'));
-                console.log('Transaction sent failed:', err);
+                console.log('Failed to send transaction:', err);
             }
             this.setState({
                 loading: false

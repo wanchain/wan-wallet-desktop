@@ -553,7 +553,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     balance = { [address]: balance }
                 }
             } catch (e) {
-                logger.error('Get balance failed:');
+                logger.error('Failed to get balance:');
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -1071,7 +1071,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
-                logger.error('Send transaction failed: ' + e.message || e.stack)
+                logger.error('Failed to send transaction: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1104,7 +1104,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
-                logger.error('Send transaction failed: ' + e.message || e.stack)
+                logger.error('Failed to send transaction: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1116,7 +1116,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'BTC');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
-                logger.error('Send transaction failed: ' + e.message || e.stack)
+                logger.error('Failed to send transaction: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1128,7 +1128,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, 'XRP');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
-                logger.error('Send transaction failed: ' + e.message || e.stack)
+                logger.error('Failed to send transaction: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
@@ -1142,7 +1142,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(EOSSYMBOL, 'EOS');
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, payload);
             } catch (e) {
-                logger.error('Send transaction failed: ' + e.message || e.stack)
+                logger.error('Failed to send transaction: ' + e.message || e.stack)
                 err = e
             }
             sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })

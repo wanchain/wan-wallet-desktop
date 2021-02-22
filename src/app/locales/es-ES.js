@@ -32,7 +32,7 @@ const es_ES = {
     'Common.create': 'Crear',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'La red no es estable. Inténtalo de nuevo',
-    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
     'Common.networkError': 'Error de red. Por favor reinicie la wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
@@ -452,7 +452,7 @@ const es_ES = {
     'NormalTransForm.sendAll': 'Enviar todo',
     'NormalTransForm.password': 'Contraseña',
     'NormalTransForm.pwdIsIncorrect': 'Contraseña incorrecta',
-    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
@@ -488,8 +488,8 @@ const es_ES = {
     'CrossChainTransForm.HTLC': 'Modo seguro',
     'CrossChainTransForm.UnderFastMinimum': 'Menos del límite mínimo de transacciones',
     'CrossChainTransForm.getOperationFeeFailed': 'Error al obtener la tarifa de operación.',
-    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Error al actualizar el estado de selección.',
@@ -556,7 +556,7 @@ const es_ES = {
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando Transaccion',
     'CrossChainTransHistory.waitingCross': 'Esperando solicitud de bloqueo ',
     'CrossChainTransHistory.Cancelled': 'Cancelado',
-    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman Locked',
     'CrossChainTransHistory.Success': 'Exito',
 
     'menuConfig.portfolio': 'Portafolio',
@@ -778,7 +778,7 @@ const es_ES = {
 
     'MoreAccount.inputSearchText': 'Input search text',
 
-    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default es_ES;

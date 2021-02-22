@@ -32,7 +32,7 @@ const th_TH = {
     'Common.create': 'สร้างแอดเดรส',
     'Common.balance': 'ยอดคงเหลือ',
     'Common.sendFailed': 'เครือข่ายไม่เสถียร กรุณาลองอีกครั้ง',
-    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
     'Common.networkError': 'เครือข่ายผิดพลาด กรุณาปิดและเปิดกระเป๋าใหม่',
     'Common.eosTokens': 'โทเค็น EOS',
     'Common.convert': 'แปลง',
@@ -452,7 +452,7 @@ const th_TH = {
     'NormalTransForm.sendAll': 'ส่งยอดที่มีอยู่ทั้งหมด',
     'NormalTransForm.password': 'รหัสผ่านกระเป๋า',
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
-    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
@@ -488,8 +488,8 @@ const th_TH = {
     'CrossChainTransForm.HTLC': 'เน้นความปลอดภัย',
     'CrossChainTransForm.UnderFastMinimum': 'ค่ามีน้อยกว่าจำนวนที่น้อยที่สุดที่จะเป็นไปได้',
     'CrossChainTransForm.getOperationFeeFailed': 'การดึงค่าธรรมเนียมการจัดการล้มเหลว',
-    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
@@ -778,7 +778,7 @@ const th_TH = {
 
     'MoreAccount.inputSearchText': 'Input search text',
 
-    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default th_TH;

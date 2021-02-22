@@ -32,7 +32,7 @@ const en_US = {
     'Common.create': 'Create',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'Network is not stable. Please try again',
-    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
     'Common.networkError': 'Network error. Please reboot wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convert',
@@ -68,7 +68,7 @@ const en_US = {
     'Register.passwordsEmpty': 'Please enter the password',
     'Register.seedPhraseIsInvalid': 'Seed phrase is invalid',
     'Register.writeSeedPhraseToDatabaseFailed': 'Failed to write seed phrase to database',
-    'Register.unlockWalletFailed': 'Unlock wallet failed',
+    'Register.unlockWalletFailed': 'Failed to unlock wallet',
     'Register.seedPhraseMismatched': 'Seed phrase not entered correctly',
     'Register.previous': 'Previous',
     'Register.done': 'Done',
@@ -93,7 +93,7 @@ const en_US = {
     'Ledger.enterPinCode': 'Enter PIN code to unlock your Ledger wallet',
     'Ledger.navigateToWanchainAPPAndEnterIntoIt': 'Navigate to Wanchain APP and enter into it',
     'Ledger.signTransactionInLedger': 'Please confirm in Ledger',
-    'Ledger.signTransactionFailed': 'Sign transaction failed. Please try again',
+    'Ledger.signTransactionFailed': 'Failed to sign transaction. Please try again',
     'Ledger.setContractDataOn': 'Make sure Contract Data is on in Wanchain APP setting',
 
     'Portfolio.portfolio': 'Portfolio',
@@ -214,7 +214,7 @@ const en_US = {
     'Trezor.trezor': 'Trezor',
     'Trezor.installBridge': 'Install Trezor Bridge from trezor.io',
     'Trezor.connectTrezorWalletToComputer': 'Connect your Trezor wallet directly to your computer',
-    'Trezor.signTransactionFailed': 'Sign transaction failed. Please try again',
+    'Trezor.signTransactionFailed': 'Failed to sign transaction. Please try again',
     'Trezor.signFailed': 'Sign failed',
 
     'WanAccount.wallet': 'Wallet',
@@ -223,7 +223,7 @@ const en_US = {
     'WanAccount.balance': 'BALANCE',
     'WanAccount.action': 'ACTION',
     'WanAccount.blank': ' ',
-    'WanAccount.sendTransactionFailed': 'Send transaction failed. Please try again',
+    'WanAccount.sendTransactionFailed': 'Failed to send transaction. Please try again',
     'WanAccount.sendBatchTransactionFailed': 'Some transactions sending failed. Please check the private history',
     'WanAccount.sendTransactionSuccessFully': 'Transaction sent successfully',
     'WanAccount.wanchain': 'Wanchain',
@@ -343,7 +343,7 @@ const en_US = {
     'EOSCreateAccountForm.errorOccurred': 'An error occurred when validating form data',
     'EOSCreateAccountForm.validateNameFailed': 'Validate account name failed',
 
-    'EOSNormalTransForm.sendTxFailed': 'Send transaction failed',
+    'EOSNormalTransForm.sendTxFailed': 'Failed to send transaction',
     'EOSNormalTransForm.sendTxSuccess': 'Send transaction successfully',
     'EOSNormalTransForm.invalidAccountName': 'Invalid account name',
     'EOSNormalTransForm.invalid': 'Invalid',
@@ -452,7 +452,7 @@ const en_US = {
     'NormalTransForm.sendAll': 'Send Everything',
     'NormalTransForm.password': 'Password',
     'NormalTransForm.pwdIsIncorrect': 'Password is incorrect',
-    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
@@ -487,15 +487,15 @@ const en_US = {
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
     'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit',
-    'CrossChainTransForm.getOperationFeeFailed': 'Get operation fee failed.',
-    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.getOperationFeeFailed': 'Failed to get operation fee',
+    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
-    'CrossChain.selectFailed': 'Update selection status failed.',
+    'CrossChain.selectFailed': 'Failed to update selection status',
 
     'RedeemFromPrivate.noSufficientFunds': 'No sufficient funds',
-    'RedeemFromPrivate.getPrivateTxInfoFailed': 'Get private transaction information failed',
+    'RedeemFromPrivate.getPrivateTxInfoFailed': 'Failed to get private transaction information',
     'RedeemFromPrivateForm.redeem': 'Redeem',
     'RedeemFromPrivateForm.PrivateAddresses': 'Private Addresses',
     'RedeemFromPrivateForm.PrivateAddress': 'Private Address',
@@ -556,7 +556,7 @@ const en_US = {
     'CrossChainTransHistory.sentHashConfirming': 'Confirming Transaction',
     'CrossChainTransHistory.waitingCross': 'Waiting For Lock Request',
     'CrossChainTransHistory.Cancelled': 'Cancelled',
-    'CrossChainTransHistory.StoremanLocked': 'StoremanLocked',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman Locked',
     'CrossChainTransHistory.Success': 'Success',
 
     'menuConfig.portfolio': 'Portfolio',
@@ -577,13 +577,13 @@ const en_US = {
     'dAppConfirm.send': 'Do you allow this DApp to sendTransaction with your wallet?',
     'dAppConfirm.warn': 'This operation may cause changes to the assets in your wallet.',
 
-    'utils.helper.getBalanceFailed': 'Get balance failed',
-    'utils.helper.getNonceFailed': 'Get nonce failed',
-    'utils.helper.getGasPriceFailed': 'Get gas price failed',
-    'utils.helper.estimateGasFailed': 'Estimate gas failed',
-    'utils.helper.checkWanAddressFailed': 'Check WAN address failed',
-    'utils.helper.getChainIdFailed': 'Get chain ID failed',
-    'utils.helper.getSdkStatusFailed': 'Get SDK status failed',
+    'utils.helper.getBalanceFailed': 'Failed to get balance',
+    'utils.helper.getNonceFailed': 'Failed to get nonce',
+    'utils.helper.getGasPriceFailed': 'Failed to get gas price',
+    'utils.helper.estimateGasFailed': 'Failed to estimate gas',
+    'utils.helper.checkWanAddressFailed': 'Failed to check WAN address',
+    'utils.helper.getChainIdFailed': 'Failed to get chain ID',
+    'utils.helper.getSdkStatusFailed': 'Failed to get SDK status',
 
     'staking.dashboard': 'Dashboard',
     'staking.title': 'Delegation',
@@ -730,8 +730,8 @@ const en_US = {
     'Offline.threeInfo': 'Paste the signed transaction from step 2 here and press the "SEND" button',
     'Offline.threeTitle': 'Input Signed Transaction',
     'Offline.sendTrans': 'Send Transaction',
-    'Offline.getInfoFailed': 'Get information failed. Please try again',
-    'Offline.sendRawTx': 'Send transaction failed. Please try again',
+    'Offline.getInfoFailed': 'Failed to get information. Please try again',
+    'Offline.sendRawTx': 'Failed to send transaction. Please try again',
     'Offline.inputRawTxText': 'Please input signed transaction',
     'Offline.linkToWebsite': 'Download the offline wallet',
 
@@ -778,7 +778,7 @@ const en_US = {
 
     'MoreAccount.inputSearchText': 'Input search text',
 
-    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default en_US;

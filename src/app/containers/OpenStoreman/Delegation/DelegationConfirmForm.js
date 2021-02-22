@@ -30,7 +30,7 @@ class DelegationConfirmForm extends Component {
           {// TODO
             this.props.type === 'delegateIn' && false &&
             <Alert
-              message={intl.get('Storeman.delegationWarnning')}
+              message={intl.get('Storeman.delegationWarning')}
               type="warning"
               closable
               className="alert-text"

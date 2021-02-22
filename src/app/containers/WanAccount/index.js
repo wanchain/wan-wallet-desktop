@@ -162,7 +162,7 @@ class WanAccount extends Component {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendTransactionFailed'));
-          console.log('Send transaction failed:', err);
+          console.log('Failed to send transaction:', err);
           reject(err);
         } else {
           console.log('Tx hash: ', txHash);
@@ -196,7 +196,7 @@ class WanAccount extends Component {
       wand.request('transaction_private', trans, (err, txHash) => {
         if (err) {
           message.warn(intl.get('WanAccount.sendBatchTransactionFailed'));
-          console.log('Send transaction failed:', err);
+          console.log('Failed to send transaction:', err);
           reject(err);
         } else {
           message.success(intl.get('WanAccount.sendTransactionSuccessFully'));

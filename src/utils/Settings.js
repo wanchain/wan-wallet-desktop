@@ -15,7 +15,7 @@ let _settings = undefined
 
 const defaultConfig = {
   mode: 'light',
-  network: 'testnet',
+  network: 'main',
   lang: 'en',
   skippedUpdateVersion: null,
   settings: {

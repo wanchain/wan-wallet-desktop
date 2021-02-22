@@ -60,7 +60,7 @@ class RedeemFromPrivate extends Component {
         }
       });
     } catch (err) {
-      console.log(`Get private transaction information failed: ${err}`)
+      console.log(`Failed to get private transaction information: ${err}`)
       message.warn(err);
     }
   }

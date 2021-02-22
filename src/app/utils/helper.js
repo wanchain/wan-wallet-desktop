@@ -193,7 +193,7 @@ export const getNonce = function (addrArr, chainType) {
   return new Promise((resolve, reject) => {
     wand.request('address_getNonce', { addr: addrArr, chainType: chainType }, (err, val) => {
       if (err) {
-        console.log('Get nonce failed', err)
+        console.log('Failed to get nonce', err)
         return reject(err);
       } else {
         let nonce = parseInt(val, 16);
@@ -207,7 +207,7 @@ export const getGasPrice = function (chainType) {
   return new Promise((resolve, reject) => {
     wand.request('query_getGasPrice', { chainType: chainType }, (err, val) => {
       if (err) {
-        console.log('Get gas price failed ', err);
+        console.log('Failed to get gas price ', err);
         return reject(err)
       } else {
         let gasPrice = new BigNumber(val).div(BigNumber(10).pow(9)).toString(10);
@@ -273,7 +273,7 @@ export const estimateGas = function (chainType, tx) {
   return new Promise((resolve, reject) => {
     wand.request('transaction_estimateGas', { chainType: chainType, tx: tx }, (err, val) => {
       if (err) {
-        console.log('Estimate gas failed ', err);
+        console.log('Failed to estimate gas ', err);
         return reject(err);
       } else {
         return resolve(val);
@@ -286,7 +286,7 @@ export const checkWanAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isWanAddress', { address }, (err, val) => {
       if (err) {
-        console.log('Check WAN address failed ', err);
+        console.log('Failed to check WAN address ', err);
         return reject(err);
       } else {
         return resolve(val);
@@ -347,7 +347,7 @@ export const checkWanValidatorAddr = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isValidatorAddress', { address: address }, (err, val) => {
       if (err) {
-        err = 'Check WAN address failed: ' + err
+        err = 'Failed to check WAN address: ' + err
         return reject(err)
       } else {
         return resolve(val);
@@ -362,7 +362,7 @@ export const getChainId = function () {
       param: 'network'
     }, function (err, val) {
       if (err) {
-        err = 'Get chain ID failed:' + err;
+        err = 'Failed to get chain ID:' + err;
         return reject(err);
       } else {
         if (val['network'].includes('main')) {
@@ -381,7 +381,7 @@ export const isSdkReady = function () {
       param: 'sdkStatus'
     }, function (err, val) {
       if (err) {
-        err = 'Get SDK status failed: ' + err;
+        err = 'Failed to get SDK status: ' + err;
         return reject(err);
       } else {
         if (val['sdkStatus'].includes('ready')) {
@@ -954,7 +954,7 @@ export const checkEosPublicKey = function (address) {
   return new Promise((resolve, reject) => {
     wand.request('address_isEosPublicKey', { address }, (err, val) => {
       if (err) {
-        console.log('Check WAN address failed ', err);
+        console.log('Failed to check WAN address ', err);
         return reject(err);
       } else {
         return resolve(val);

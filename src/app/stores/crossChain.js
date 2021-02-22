@@ -153,7 +153,7 @@ class CrossChain {
     }
     wand.request('crossChain_setCcTokenSelectStatus', { id, selected }, (err, data) => {
       if (err) {
-        console.log('Update selection status failed.', err);
+        console.log('Failed to update selection status', err);
         message.error(intl.get('CrossChain.selectFailed'));
       } else {
         let target = Object.values(this.crossChainSelections).flat(1).find(obj => obj.id === id);

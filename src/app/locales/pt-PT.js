@@ -32,7 +32,7 @@ const pt_PT = {
     'Common.create': 'Criar',
     'Common.balance': 'Saldo',
     'Common.sendFailed': 'A rede não está estável. Por favor, tente novamente',
-    'Common.sendFailedForInsufficientFunds': 'Transaction sent failed. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
     'Common.networkError': 'Erro na rede. Por favor, reinicie a carteira',
     'Common.eosTokens': 'Tokens EOS',
     'Common.convert': 'Converter',
@@ -452,7 +452,7 @@ const pt_PT = {
     'NormalTransForm.sendAll': 'Enviar tudo',
     'NormalTransForm.password': 'Senha',
     'NormalTransForm.pwdIsIncorrect': 'Senha está incorreta',
-    'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
+    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
@@ -488,8 +488,8 @@ const pt_PT = {
     'CrossChainTransForm.HTLC': 'Modo seguro',
     'CrossChainTransForm.UnderFastMinimum': 'Menor que o limite mínimo de transação',
     'CrossChainTransForm.getOperationFeeFailed': 'Falha ao obter taxa de operação.',
-    'CrossChainTransForm.getQuotaFailed': 'Get quota failed.',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Get network fee failed.',
+    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
     'CrossChainTransForm.youWillReceive': 'You will receive',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
@@ -778,7 +778,7 @@ const pt_PT = {
 
     'MoreAccount.inputSearchText': 'Input search text',
 
-    'Storeman.delegationWarnning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
 }
 
 export default pt_PT;
