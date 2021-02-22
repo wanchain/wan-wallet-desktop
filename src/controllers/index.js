@@ -615,6 +615,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'btcCoinSelectSplit':
+            try {
+                let { utxos, to: target, feeRate } = payload;
+                ret = await ccUtil.btcCoinSelectSplit(utxos, target, feeRate);
+            } catch (e) {
+                logger.error('btcCoinSelectSplit failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+
+            sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getEosAccountInfo':
             let obj = {};
             try {
@@ -2065,22 +2078,22 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             break
 
         case 'estimatedXrpFee':
-          try {
-              let payment = ccUtil.getXrpPayment(payload)
-              let data = await ccUtil.packTransaction('XRP', { address: payload.from, payment });
-              if (data && data.instructions) {
-                ret = data.instructions.fee
-              } else {
-                ret = '0';
-                err = 'error'
-              }
-          } catch (e) {
-              logger.error('packTransaction failed:')
-              logger.error(e.message || e.stack)
-              err = e
-          }
-          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-          break
+            try {
+                let payment = ccUtil.getXrpPayment(payload)
+                let data = await ccUtil.packTransaction('XRP', { address: payload.from, payment });
+                if (data && data.instructions) {
+                    ret = data.instructions.fee
+                } else {
+                    ret = '0';
+                    err = 'error'
+                }
+            } catch (e) {
+                logger.error('packTransaction failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
     }
 })
 
@@ -2784,7 +2797,7 @@ const getChainIdByType = function (type, isTestNet = false) {
 }
 const str2Hex = (str = '0x') => {
     str = str.trim();
-    if(/^0x/.test(str)) {
+    if (/^0x/.test(str)) {
         return str;
     }
     return '0x' + Buffer.from(str, 'utf8').toString('hex');

@@ -422,7 +422,6 @@ const ko_KR = {
     'NormalTransForm.ConfirmForm.inputData': '데이터를 입력하세요',
     'NormalTransForm.ConfirmForm.faceValue': '액면가',
     'NormalTransForm.ConfirmForm.count': '수량',
-
     'NormalTransForm.estimateGasFailed': ' 예상 가스가 모두 소진되었습니다. 다시 시도 바랍니다. ',
     'NormalTransForm.invalidAddress': '유효하지 않은 주소',
     'NormalTransForm.shouldBe10Times': '금액은 10으로 나눌 수 있어야합니다',
@@ -455,6 +454,7 @@ const ko_KR = {
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
+    'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',

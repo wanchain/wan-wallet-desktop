@@ -422,7 +422,6 @@ const fr_FR = {
     'NormalTransForm.ConfirmForm.inputData': 'Données d\'entrée',
     'NormalTransForm.ConfirmForm.faceValue': 'Valeur Nominale',
     'NormalTransForm.ConfirmForm.count': 'Compte',
-
     'NormalTransForm.estimateGasFailed': 'Estimation du gaz indisponible. Veuillez réessayer',
     'NormalTransForm.invalidAddress': 'Adresse invalide',
     'NormalTransForm.shouldBe10Times': 'Le montant doit être divisible par 10',
@@ -455,6 +454,7 @@ const fr_FR = {
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
+    'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',

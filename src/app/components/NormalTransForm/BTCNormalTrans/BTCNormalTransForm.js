@@ -3,12 +3,12 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, Icon, message, Spin, Checkbox } from 'antd';
 
 import style from '../index.less';
 import { formatNumByDecimals } from 'utils/support';
 import ConfirmForm from 'components/NormalTransForm/BTCNormalTrans/BTCConfirmForm';
-import { checkAmountUnit, formatAmount, btcCoinSelect, getPathFromUtxos, checkBech32 } from 'utils/helper';
+import { checkAmountUnit, formatAmount, btcCoinSelect, btcCoinSelectSplit, getPathFromUtxos, checkBech32 } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
@@ -27,7 +27,8 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 class BTCNormalTransForm extends Component {
   state = {
     fee: 0,
-    confirmVisible: false
+    confirmVisible: false,
+    sendAll: false,
   }
 
   componentWillUnmount() {
@@ -52,13 +53,11 @@ class BTCNormalTransForm extends Component {
   handleNext = () => {
     const { updateTransParams, settings } = this.props;
     let form = this.props.form;
-    form.validateFields(err => {
+    form.validateFields((err, { pwd, amount: sendAmount }) => {
       if (err) {
         console.log('handleNext', err);
         return;
       };
-      let pwd = form.getFieldValue('pwd');
-      let sendAmount = form.getFieldValue('amount');
 
       if (settings.reinput_pwd) {
         if (!pwd) {
@@ -84,6 +83,9 @@ class BTCNormalTransForm extends Component {
     let isBech32 = await checkBech32(value);
     if (this.checkToBase58(value) || isBech32) {
       if (this.isNotNativeAddress(value)) {
+        if (this.state.sendAll) {
+          this.props.form.validateFields(['amount']);
+        }
         callback();
       } else {
         callback(intl.get('NormalTransForm.isNativeBtcAddress'));
@@ -113,18 +115,62 @@ class BTCNormalTransForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     if (new BigNumber(value).gt(0) && checkAmountUnit(8, value)) {
-      const { utxos, addrInfo, btcPath, updateTransParams, transParams: { feeRate } } = this.props;
-      btcCoinSelect(utxos, value, feeRate).then(data => {
-        updateTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
-        this.setState({
-          fee: formatNumByDecimals(data.fee, 8)
-        })
-        callback();
-      }).catch(() => {
-        callback(intl.get('NormalTransForm.overBalance'));
-      });
+      const { utxos, addrInfo, btcPath, updateTransParams, transParams: { feeRate }, form } = this.props;
+      if (this.state.sendAll) {
+        let to = form.getFieldValue('to');
+        btcCoinSelectSplit(utxos, to, feeRate).then(data => {
+          updateTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+          this.setState({
+            fee: formatNumByDecimals(data.fee, 8)
+          });
+          callback();
+        }).catch((e) => {
+          console.log('error:', e);
+          callback(intl.get('NormalTransForm.overBalance'));
+        });
+      } else {
+        btcCoinSelect(utxos, value, feeRate).then(data => {
+          updateTransParams({ from: getPathFromUtxos(data.inputs, addrInfo, btcPath) });
+          this.setState({
+            fee: formatNumByDecimals(data.fee, 8)
+          })
+          callback();
+        }).catch((e) => {
+          console.log('error:', e);
+          callback(intl.get('NormalTransForm.overBalance'));
+        });
+      }
     } else {
       callback(intl.get('Common.invalidAmount'));
+    }
+  }
+
+  sendAllAmount = e => {
+    let { form, getAmount } = this.props;
+    if (e.target.checked) {
+      let isValidTo;
+      this.props.form.validateFields(['to'], (errors) => {
+        isValidTo = !errors;
+      });
+      if (!isValidTo) { // Can not send all when the to address is invalid.
+        message.warn(intl.get('NormalTransForm.inputToAddress'));
+        return false
+      };
+      this.setState({ sendAll: true }, () => {
+        form.setFieldsValue({
+          amount: getAmount
+        }, () => {
+          form.validateFields(['amount']);
+        });
+      });
+    } else {
+      this.setState({ sendAll: false }, () => {
+        form.setFieldsValue({
+          amount: 0
+        }, () => {
+          form.validateFields(['amount']);
+        });
+      });
     }
   }
 
@@ -160,6 +206,7 @@ class BTCNormalTransForm extends Component {
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
                   (<Input min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                <Checkbox checked={this.state.sendAll} onChange={this.sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fee', { initialValue: this.state.fee })

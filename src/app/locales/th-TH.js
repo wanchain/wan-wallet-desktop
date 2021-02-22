@@ -422,7 +422,6 @@ const th_TH = {
     'NormalTransForm.ConfirmForm.inputData': 'ข้อมูลที่ส่งมา',
     'NormalTransForm.ConfirmForm.faceValue': 'มูลค่าที่ตราไว้',
     'NormalTransForm.ConfirmForm.count': 'จำนวนนับ',
-
     'NormalTransForm.estimateGasFailed': 'ค่าแก๊สไม่เพียงพอต่อการดำเนินการ กรุณาลองใหม่อีกครั้ง',
     'NormalTransForm.invalidAddress': 'แอดเดรสไม่ถูกต้อง',
     'NormalTransForm.shouldBe10Times': 'จำนวนจะต้องหารด้วย 10 ลงตัว',
@@ -455,6 +454,7 @@ const th_TH = {
     'NormalTransForm.pwdIsIncorrect': 'รหัสผ่านไม่ถูกต้อง',
     'NormalTransForm.destinationTagRule': 'Destination Tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
+    'NormalTransForm.inputToAddress': 'Please enter recipient address',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',

@@ -422,7 +422,6 @@ const zh_CN = {
     'NormalTransForm.ConfirmForm.inputData': '附加数据',
     'NormalTransForm.ConfirmForm.faceValue': '面值',
     'NormalTransForm.ConfirmForm.count': '数量',
-
     'NormalTransForm.estimateGasFailed': '估算gas失败，请重试',
     'NormalTransForm.invalidAddress': '非法地址',
     'NormalTransForm.shouldBe10Times': '必须是十的倍数',
@@ -455,6 +454,7 @@ const zh_CN = {
     'NormalTransForm.pwdIsIncorrect': '密码不正确',
     'NormalTransForm.destinationTagRule': 'Destination Tag格式不正确',
     'NormalTransForm.isNativeBtcAddress': '不允许发送交易给自己',
+    'NormalTransForm.inputToAddress': '请输入接收者地址',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',

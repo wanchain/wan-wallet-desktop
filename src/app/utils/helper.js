@@ -884,6 +884,19 @@ export const btcCoinSelect = function (utxos, value, feeRate) {
   });
 }
 
+export const btcCoinSelectSplit = function (utxos, to, feeRate) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_btcCoinSelectSplit', { utxos, to, feeRate }, (err, data) => {
+      if (err) {
+        console.log('btcCoinSelectSplit: ', err)
+        return reject(err);
+      } else {
+        return resolve(data);
+      }
+    });
+  });
+}
+
 export const getPathFromUtxos = function (utxos, addrInfo, btcPath) {
   let fromArr = [];
   let addresses = new Set(utxos.map(item => item.address));
