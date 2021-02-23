@@ -114,7 +114,7 @@ class StoremanRegister extends Component {
           let data = ret.result;
           this.setState({
             gasPrice: data.gasPrice,
-            gasLimit: data.estimateGas,
+            gasLimit: new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10),
             fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
           })
         }
