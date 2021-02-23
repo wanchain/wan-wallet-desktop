@@ -35,19 +35,18 @@ class CrossEOS extends Component {
     super(props);
     const { tokenPairs, match } = props;
     const tokenPairID = match.params.tokenPairId;
-    this.props.setCurrSymbol(CHAINTYPE);
-    this.props.changeTitle('Common.crossChain');
-    this.props.setCurrTokenPairId(tokenPairID);
     this.info = tokenPairs[tokenPairID];
-    this.props.setCurrToken(this.info.toAccount);
-    this.props.setCurrTokenChain(this.info.toChainSymbol);
-    this.props.updateTransHistory();
     this.state = {
       error: false,
     }
   }
 
   componentDidMount() {
+    this.props.changeTitle('Common.crossChain');
+    this.props.setCurrSymbol(CHAINTYPE);
+    this.props.setCurrTokenPairId(this.props.match.params.tokenPairId);
+    this.props.setCurrToken(this.info.toAccount);
+    this.props.setCurrTokenChain(this.info.toChainSymbol);
     this.props.updateTransHistory();
     this.props.updateTokensBalance(this.info.toAccount, this.info.toChainSymbol);
     this.timer = setInterval(() => {

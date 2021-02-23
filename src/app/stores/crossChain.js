@@ -213,6 +213,9 @@ class CrossChain {
     let trans = [];
     let decimals = 8;
     try {
+      if (!this.currSymbol) {
+        return trans;
+      }
       decimals = this.crossChainSelections[this.currSymbol][0].ancestorDecimals;
     } catch (err) {
       console.log(err);

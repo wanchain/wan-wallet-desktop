@@ -143,7 +143,7 @@ class ModifyForm extends Component {
         data: estimateData.data,
         nonce: '0x' + estimateData.nonce.toString(16),
         gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
-        gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
+        gasLimit: '0x' + Number(new BigNumber(estimateData.gasLimit).multipliedBy(1.6).toString(10)).toString(16),
       };
       let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);// Trezor sign
       // Send modify validator info
@@ -205,7 +205,7 @@ class ModifyForm extends Component {
         let data = ret.result;
         this.setState({
           gasPrice: data.gasPrice,
-          gasLimit: data.estimateGas,
+          gasLimit: new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10),
           fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
         })
       }
@@ -310,7 +310,7 @@ class OsmAppendAndExit extends Component {
             spin: false,
             txParams: {
               gasPrice: data.gasPrice,
-              gasLimit: data.estimateGas,
+              gasLimit: new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10),
               fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
             }
           })

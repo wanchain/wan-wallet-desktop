@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table, message, Row, Col } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import BigNumber from 'bignumber.js';
 
 import { formatNum } from 'utils/support';
 import { hasSameName } from 'utils/helper';
@@ -12,7 +13,6 @@ import { EditableFormRow, EditableCell } from 'components/Rename';
 import style from './index.less';
 
 @inject(stores => ({
-  rawTx: stores.sendTransParams.rawTx,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   transParams: stores.sendTransParams.transParams,
@@ -67,8 +67,19 @@ class Accounts extends Component {
   }
 
   handleSend = from => {
-    const { rawTx } = this.props;
     let params = this.props.transParams[from];
+    let { to, amount, data, chainId, nonce, gasLimit, gasPrice, txType } = params;
+
+    let rawTx = {
+      to,
+      value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
+      data,
+      chainId: chainId,
+      nonce: '0x' + nonce.toString(16),
+      gasLimit: '0x' + gasLimit.toString(16),
+      gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
+      Txtype: txType
+    }
     return new Promise((resolve, reject) => {
       this.props.signTransaction(params.path, rawTx, (_err, raw) => {
         wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
