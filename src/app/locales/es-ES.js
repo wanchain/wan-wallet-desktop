@@ -32,7 +32,7 @@ const es_ES = {
     'Common.create': 'Crear',
     'Common.balance': 'Balance',
     'Common.sendFailed': 'La red no es estable. Inténtalo de nuevo',
-    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'No se pudo enviar la transacción. Asegúrate de tener suficiente saldo.',
     'Common.networkError': 'Error de red. Por favor reinicie la wallet',
     'Common.eosTokens': 'EOS Tokens',
     'Common.convert': 'Convertir',
@@ -40,9 +40,9 @@ const es_ES = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'La cantidad minima debe ser de { minAmount } WAN',
-    'Common.availableBalance': 'Available Balance is {availableBalance}',
+    'Common.availableBalance': 'El saldo disponible es {availableBalance}',
 
-    'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.destinationTag': 'Etiqueta de destino',
 
     'Layout.connecting': 'conectando al servidor',
     'Layout.connected': 'conectado al servidor',
@@ -72,7 +72,7 @@ const es_ES = {
     'Register.seedPhraseMismatched': 'Frase Semilla incompatible',
     'Register.previous': 'Previo',
     'Register.done': 'Concluido',
-    'Register.createFirstAddr': 'A ocurrido un error, por favor inténtalo otra vez',
+    'Register.createFirstAddr': 'Se hace producido un error, por favor inténtalo otra vez',
 
     'Backup.invalidPassword': 'Contraseña invalida. Inténtalo de nuevo',
     'Backup.copySuccessfully': 'Copia completado',
@@ -452,9 +452,9 @@ const es_ES = {
     'NormalTransForm.sendAll': 'Enviar todo',
     'NormalTransForm.password': 'Contraseña',
     'NormalTransForm.pwdIsIncorrect': 'Contraseña incorrecta',
-    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
-    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
-    'NormalTransForm.inputToAddress': 'Please enter recipient address',
+    'NormalTransForm.destinationTagRule': 'Le etiqueta de destino es incorrecta',
+    'NormalTransForm.isNativeBtcAddress': 'No está permitido enviarte a ti mismo.',
+    'NormalTransForm.inputToAddress': 'Por favor, Ingrese la dirección del destinatario',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirma la transacción en Cross Chain',
     'CrossChainTransForm.capacity': 'Capacidad',
@@ -462,8 +462,8 @@ const es_ES = {
     'CrossChainTransForm.txFeeRatio': 'Ratio de tarifa',
     'CrossChainTransForm.estimateFee': 'Tarifa estimada',
     'CrossChainTransForm.gasFee': 'Tarifa del Gas',
-    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
-    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
+    'CrossChainTransForm.userNetworkFee': 'Tarifa de red de usuario',
+    'CrossChainTransForm.crossChainNetworkFee': 'Tarifa de red del Cross-chain',
     'CrossChainTransForm.operationFee': 'Tarifa de Operaciones',
     'CrossChainTransForm.overBalance': 'El costo excede el saldo. Verifique el saldo en la cadena original y en la de destino.',
     'CrossChainTransForm.overOriginalBalance': 'El coste excede el saldo. Por favor, verifique el saldo en la cadena original',
@@ -488,9 +488,9 @@ const es_ES = {
     'CrossChainTransForm.HTLC': 'Modo seguro',
     'CrossChainTransForm.UnderFastMinimum': 'Menos del límite mínimo de transacciones',
     'CrossChainTransForm.getOperationFeeFailed': 'Error al obtener la tarifa de operación.',
-    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
-    'CrossChainTransForm.youWillReceive': 'You will receive',
+    'CrossChainTransForm.getQuotaFailed': 'Error al obtener la cuota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Error al obtener la tarifa de Red',
+    'CrossChainTransForm.youWillReceive': 'Usted recibirá',
 
     'CrossChain.selectFailed': 'Error al actualizar el estado de selección.',
 
@@ -499,7 +499,7 @@ const es_ES = {
     'RedeemFromPrivateForm.redeem': 'Redimir',
     'RedeemFromPrivateForm.PrivateAddresses': 'Dirección privada',
     'RedeemFromPrivateForm.PrivateAddress': 'Dirección privada',
-    'RedeemFromPrivateForm.Required': 'Selección al menos una direcci´pn privada',
+    'RedeemFromPrivateForm.Required': 'Selecciona al menos una dirección privada',
 
     'Rename.name': 'Nombre incorrecto',
     'Rename.edit': 'Editar',
@@ -509,7 +509,7 @@ const es_ES = {
     'SendNormalTrans.hasNoWANBalance': 'Asegúrese de tener suficiente saldo WAN',
     'SendNormalTrans.hasNoTokenBalance': 'Asegúrate de tener suficiente saldo de tokens',
     'SendNormalTrans.hasNoETHBalance': 'Asegúrese de tener suficiente saldo ETH',
-    'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
+    'SendNormalTrans.smgUnavailable': 'Storeman group indisponible',
 
     'TransHistory.time': 'HORA',
     'TransHistory.from': 'DESDE',
@@ -556,7 +556,7 @@ const es_ES = {
     'CrossChainTransHistory.sentHashConfirming': 'Confirmando Transaccion',
     'CrossChainTransHistory.waitingCross': 'Esperando solicitud de bloqueo ',
     'CrossChainTransHistory.Cancelled': 'Cancelado',
-    'CrossChainTransHistory.StoremanLocked': 'Storeman Locked',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman Bloqueado',
     'CrossChainTransHistory.Success': 'Exito',
 
     'menuConfig.portfolio': 'Portafolio',
@@ -604,7 +604,7 @@ const es_ES = {
     'staking.table.type': 'TIPO',
     'staking.delegateHistory': 'Historial de delegación',
     'staking.delegateList': 'Lista de delegación',
-    'staking.unclaimAmount': 'Claimable Amount',
+    'staking.unclaimAmount': 'Cantidad reclamable',
 
     'validator.title': 'Validador',
 
@@ -625,7 +625,7 @@ const es_ES = {
     'StakeInForm.selectName': 'Selecciona un validador',
     'StakeInForm.enterAddress': 'Por favor, introduzca dirección',
     'StakeInForm.selectAddress': 'Seleccione una dirección DE',
-    'StakeInForm.delegateInFailed': 'Delegar in fallado',
+    'StakeInForm.delegateInFailed': 'Error en Delegación',
     'StakeInForm.networkDisconnected': 'Red desconectado',
     'WithdrawForm.title': 'Registar para retirar',
     'WithdrawForm.note': 'Nota: Después de registrarse para el retiro, el saldo de staking ira a cero y el WAN staked se devolverá a su cuenta dentro de 3 epochs',
@@ -776,9 +776,9 @@ const es_ES = {
     'Storeman.delegationTopup': 'Delegación Top-up',
     'Storeman.registration': 'Registro de Storeman',
 
-    'MoreAccount.inputSearchText': 'Input search text',
+    'MoreAccount.inputSearchText': 'Introduce texto a buscar',
 
-    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Aviso: haga clic en "salir" en cualquier momento antes del final del ciclo actual de Storeman para retirar su WAN de vuelta a su wallet al finalizar el ciclo..'
 }
 
 export default es_ES;
