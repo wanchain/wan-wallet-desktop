@@ -54,6 +54,7 @@ class CrossBTCForm extends Component {
       minQuota: 0,
       maxQuota: 0,
       receive: 0,
+      sendAll: false,
     }
   }
 
@@ -90,6 +91,7 @@ class CrossBTCForm extends Component {
 
   handleNext = () => {
     const { updateBTCTransParams, updateTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix } = this.props;
+    const { sendAll } = this.state;
     let otherAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields((err, { pwd, amount: sendAmount, to }) => {
@@ -117,7 +119,7 @@ class CrossBTCForm extends Component {
       }
 
       if (direction === INBOUND) {
-        if (isExceedBalance(balance, fee, sendAmount)) {
+        if (!sendAll && isExceedBalance(balance, fee, sendAmount)) {
           message.warn(intl.get('CrossChainTransForm.overBalance'));
           return;
         }
@@ -164,7 +166,7 @@ class CrossBTCForm extends Component {
     const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams, currentTokenPairInfo: info } = this.props;
     if (new BigNumber(value).gte(minCrossBTC)) {
       if (checkAmountUnit(8, value)) {
-        const { minQuota, maxQuota } = this.state;
+        const { minQuota, maxQuota, sendAll } = this.state;
         if (new BigNumber(value).lt(minQuota)) {
           let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[direction === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`;
           callback(errText);
@@ -184,18 +186,18 @@ class CrossBTCForm extends Component {
           updateBTCTransParams({ from });
           try {
             let getFee = await this.getFee(from, value);
-            if (getFee.code === false) {
+            if (getFee === false) {
               callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
               return;
             }
             let fee = formatNumByDecimals(getFee.result.fee, 8); // user network fee
             let crossChainNetworkFee = formatNumByDecimals(getFee.result.networkFee || 0, 8); // cross-chain network fee
             this.setState({ fee, crossChainNetworkFee });
-            if (isExceedBalance(balance, fee, value)) {
+            if (!this.state.sendAll && isExceedBalance(balance, fee, value)) {
               callback(intl.get('CrossChainTransForm.overBalance'));
               return;
             }
-            this.setState({ receive: new BigNumber(value).minus(crossChainNetworkFee).toString() });
+            this.setState({ receive: new BigNumber(value).minus(crossChainNetworkFee).minus(sendAll ? fee : 0).toString() });
             callback();
           } catch (e) {
             console.log('get Fee error:', e);
@@ -210,7 +212,7 @@ class CrossBTCForm extends Component {
           try {
             let from = transParams[this.props.from].from;
             let getFee = await this.getFee(Object.assign({}, from), value);
-            if (getFee.code === false) {
+            if (getFee === false) {
               callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
               return;
             }
@@ -334,12 +336,14 @@ class CrossBTCForm extends Component {
   sendAllAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
+      this.setState({ sendAll: true });
       form.setFieldsValue({
         amount: new BigNumber(balance).toString(10)
       }, () => {
-        form.validateFields(['amount']);
+        form.validateFields(['amount'], { force: true });
       });
     } else {
+      this.setState({ sendAll: false });
       form.setFieldsValue({
         amount: 0
       });
@@ -377,7 +381,7 @@ class CrossBTCForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
-    const { advancedVisible, feeRate, receive, crossChainNetworkFee } = this.state;
+    const { advancedVisible, feeRate, receive, crossChainNetworkFee, sendAll } = this.state;
     let gasFee, totalFee, desChain, defaultSelectStoreman, title, unit, toUnit;
     let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
@@ -524,9 +528,7 @@ class CrossBTCForm extends Component {
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}
               />
-              {
-                direction === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)
-              }
+              <Checkbox checked={sendAll} onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
               <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
