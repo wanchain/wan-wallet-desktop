@@ -47,9 +47,7 @@ class NormalTransForm extends Component {
   }
 
   componentWillUnmount() {
-    this.setState = (state, callback) => {
-      return false;
-    };
+    this.setState = () => false;
   }
 
   onAdvanced = () => {
@@ -324,6 +322,9 @@ class NormalTransForm extends Component {
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
+    if (!this.props.transParams[from]) {
+      return false;
+    }
     const { gasPrice, gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
@@ -332,7 +333,7 @@ class NormalTransForm extends Component {
     return (
       <div>
         <Modal
-          visible
+          visible={true}
           wrapClassName={style.normalTransFormModal}
           destroyOnClose={true}
           closable={false}
