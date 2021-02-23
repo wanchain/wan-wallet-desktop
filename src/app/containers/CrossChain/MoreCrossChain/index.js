@@ -23,6 +23,9 @@ class MoreCrossChain extends Component {
       selectedOnly: false,
       filterText: '',
     }
+  }
+
+  componentDidMount() {
     this.props.changeTitle('MoreTokens.tokenList');
   }
 
