@@ -213,7 +213,7 @@ class CrossChain {
     let trans = [];
     let decimals = 8;
     try {
-      if (!this.currSymbol) {
+      if (this.currSymbol.length === 0) {
         return trans;
       }
       decimals = this.crossChainSelections[this.currSymbol][0].ancestorDecimals;
@@ -253,9 +253,12 @@ class CrossChain {
 
   @computed get crossEOSTrans() {
     let trans = [];
-    let decimals = this.crossChainSelections[self.currSymbol][0].ancestorDecimals;
-    self.crossTrans.forEach((item, index) => {
-      if (isSameString(item.tokenSymbol, self.currSymbol) && (item.lockTxHash !== '')) {
+    if (this.currSymbol.length === 0) {
+      return trans;
+    }
+    let decimals = this.crossChainSelections[this.currSymbol][0].ancestorDecimals;
+    this.crossTrans.forEach((item, index) => {
+      if (isSameString(item.tokenSymbol, this.currSymbol) && (item.lockTxHash !== '')) {
         trans.push({
           key: index,
           hashX: item.hashX,
