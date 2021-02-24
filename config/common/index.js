@@ -7,8 +7,8 @@ export const STATIC_PATH = '/static';
 export const APP_ROOT = 'root';
 export const APP_NAME = 'Wan Wallet';
 
-// export const LANGUAGES = ['en', 'zh', 'th-TH', 'ko-KR', 'fr-FR', 'es-ES', 'pt-PT'];
-export const LANGUAGES = ['en', 'zh', 'th-TH', 'es-ES'];
+export const LANGUAGES = ['en', 'zh', 'th-TH', 'ko-KR', 'fr-FR', 'es-ES', 'pt-PT'];
+// export const LANGUAGES = ['en', 'zh', 'th-TH', 'es-ES'];
 
 export const FALLBACK_LANG = 'en';
 export const NAMESPACE = 'translation';
