@@ -40,9 +40,9 @@ const fr_FR = {
     'Common.storemanGroup': 'Storeman Group',
     'Common.chain': 'Chain',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
-    'Common.availableBalance': 'Available Balance is {availableBalance}',
+    'Common.availableBalance': 'Le solde disponible est de {availableBalance}',
 
-    'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.destinationTag': 'Balise de destination',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',
@@ -362,8 +362,8 @@ const fr_FR = {
     'AdvancedOptionForm.nonceIsIncorrect': 'Le nonce est incorrect',
     'AdvancedOptionForm.inputData': 'Données d\'entrée',
     'AdvancedOptionForm.inputDataIsIncorrect': 'Les données d\'entrée sont incorrectes',
-    'AdvancedOptionForm.feeRate': 'Fee Rate',
-    'AdvancedOptionForm.feeRateIsIncorrect': 'Fee rate is incorrect',
+    'AdvancedOptionForm.feeRate': 'Taux de frais',
+    'AdvancedOptionForm.feeRateIsIncorrect': 'Le taux des frais est incorrect',
 
     'CopyAndQrcode.copySuccessfully': 'Copier avec succès',
     'CopyAndQrcode.privateKey': 'Clé privée',
@@ -371,7 +371,7 @@ const fr_FR = {
     'CopyAndQrcode.deleteFailedText': 'Échec de la suppression du compte',
     'CopyAndQrcode.deleteSuccessfulText': 'Suppression du compte terminée',
 
-    'MoreTokens.tokenList': 'Token List',
+    'MoreTokens.tokenList': 'Liste de jetons',
 
     'HwWallet.Accounts.name': 'NOM',
     'HwWallet.Accounts.address': 'ADRESSE',
@@ -462,9 +462,9 @@ const fr_FR = {
     'CrossChainTransForm.txFeeRatio': 'Ratio de frais',
     'CrossChainTransForm.estimateFee': 'Frais estimés',
     'CrossChainTransForm.gasFee': 'Frais de gas',
-    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
-    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
-    'CrossChainTransForm.operationFee': 'Operation Fee',
+    'CrossChainTransForm.userNetworkFee': 'Frais de réseau utilisateur',
+    'CrossChainTransForm.crossChainNetworkFee': 'Frais de réseau inter-chaînes',
+    'CrossChainTransForm.operationFee': 'Frais d\'opération',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.overOriginalBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale',
     'CrossChainTransForm.originNoBalance': 'Il n\'y a pas de solde disponible sur la chaîne d\'origine',
@@ -483,14 +483,14 @@ const fr_FR = {
     'CrossChainTransForm.Secret': 'Secret',
     'CrossChainTransForm.Status': 'Statut',
     'CrossChainTransForm.Date': 'Date',
-    'CrossChainTransForm.crossType': 'Cross Type',
+    'CrossChainTransForm.crossType': 'Type de croix',
     'CrossChainTransForm.FAST': 'Mode RAPIDE',
     'CrossChainTransForm.HTLC': 'Mode SECURISÉ',
     'CrossChainTransForm.UnderFastMinimum': 'Inférieur à la limite de transaction minimale',
     'CrossChainTransForm.getOperationFeeFailed': 'L\'obtention des frais d\'opération a échoué.',
-    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
-    'CrossChainTransForm.youWillReceive': 'You will receive',
+    'CrossChainTransForm.getQuotaFailed': 'Échec de l\'obtention du quota',
+    'CrossChainTransForm.getNetworkFeeFailed': 'Échec de l\'obtention des frais de réseau',
+    'CrossChainTransForm.youWillReceive': 'Vous allez recevoir',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
 
@@ -751,7 +751,7 @@ const fr_FR = {
     'Storeman.quitted': 'Démissionné',
     'Storeman.stake': 'STAKE',
     'Storeman.storeman': 'STOREMAN',
-    'Storeman.storemanAccount': 'Storeman Account',
+    'Storeman.storemanAccount': 'Storeman Compte',
     'Storeman.selectStoremanAccount': 'Sélectionnez le compte Storeman',
     'Storeman.crosschain': 'CROSS CHAIN',
     'Storeman.selectCrosschain': 'Sélectionnez Cross Chain',
@@ -776,9 +776,9 @@ const fr_FR = {
     'Storeman.delegationTopup': 'Recharge de délégation',
     'Storeman.registration': 'Storeman enregistrement',
 
-    'MoreAccount.inputSearchText': 'Input search text',
+    'MoreAccount.inputSearchText': 'Texte de recherche d\'entrée',
 
-    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': 'Remarque: cliquez sur «quitter» à tout moment avant la fin du cycle Storeman actuel pour retirer votre WAN de votre portefeuille à la fin du cycle.'
 }
 
 export default fr_FR;
