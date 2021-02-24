@@ -295,16 +295,16 @@ class CrossBTCForm extends Component {
 
   checkTo = async (rule, value, callback) => {
     const { currentTokenPairInfo: info, direction } = this.props;
-    let chain = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+    let toChain = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       callback();
     } else {
       let isValid;
-      if (chain === 'WAN') {
+      if (toChain === 'WAN') {
         let [isWAN, isETH] = await Promise.all([checkAddressByChainType(value, 'WAN'), checkAddressByChainType(value, 'ETH')]);
         isValid = isWAN || isETH;
       } else {
-        isValid = await checkAddressByChainType(value, chain);
+        isValid = await checkAddressByChainType(value, toChain);
       }
       isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
     }

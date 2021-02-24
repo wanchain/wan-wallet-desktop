@@ -8,7 +8,7 @@ import { Button, Modal, Form, Input, Icon, message, Spin, Checkbox } from 'antd'
 import style from '../index.less';
 import { formatNumByDecimals } from 'utils/support';
 import ConfirmForm from 'components/NormalTransForm/BTCNormalTrans/BTCConfirmForm';
-import { checkAmountUnit, formatAmount, btcCoinSelect, btcCoinSelectSplit, getPathFromUtxos, checkBech32 } from 'utils/helper';
+import { checkAmountUnit, formatAmount, btcCoinSelect, btcCoinSelectSplit, getPathFromUtxos, checkAddressByChainType } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
@@ -80,8 +80,8 @@ class BTCNormalTransForm extends Component {
   }
 
   checkBTCAddress = async (rule, value, callback) => {
-    let isBech32 = await checkBech32(value);
-    if (this.checkToBase58(value) || isBech32) {
+    let isValid = await checkAddressByChainType(value, 'BTC');
+    if (isValid) {
       if (this.isNotNativeAddress(value)) {
         if (this.state.sendAll) {
           this.props.form.validateFields(['amount']);
@@ -92,15 +92,6 @@ class BTCNormalTransForm extends Component {
       }
     } else {
       callback(intl.get('NormalTransForm.invalidAddress'));
-    }
-  }
-
-  checkToBase58 = (value) => {
-    try {
-      bs58check.decode(value);
-      return true;
-    } catch (error) {
-      return false;
     }
   }
 

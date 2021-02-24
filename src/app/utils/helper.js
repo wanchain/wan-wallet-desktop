@@ -327,7 +327,7 @@ export const checkBase58 = function (address) {
       bs58check.decode(address);
       resolve(true);
     } catch (error) {
-      reject(error);
+      resolve(false);
     }
   });
 }
@@ -1133,7 +1133,8 @@ export const checkAddressByChainType = async (address, chain) => {
       valid = await checkETHAddr(address);
       break;
     case 'BTC':
-      valid = await checkBase58(address);
+      const [valid1, valid2] = await Promise.all([checkBase58(address), checkBech32(address)]);
+      valid = valid1 || valid2;
       break;
     case 'EOS':
       try {
