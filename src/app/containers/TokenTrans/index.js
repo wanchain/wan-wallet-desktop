@@ -39,11 +39,6 @@ message.config({
 
 @observer
 class TokenTrans extends Component {
-  constructor(props) {
-    super(props);
-    this.init(props.tokenAddr, props.chain);
-  }
-
   init = (tokenAddr, chain) => {
     this.props.setCurrToken(tokenAddr);
     this.props.setCurrTokenChain(chain);
@@ -54,6 +49,7 @@ class TokenTrans extends Component {
   }
 
   componentDidMount() {
+    this.init(this.props.tokenAddr, this.props.chain);
     this.props.changeTitle('WanAccount.wallet');
     const { tokenAddr, chain } = this.props;
     this.props.getChainStoreInfoByChain(chain).updateTransHistory();

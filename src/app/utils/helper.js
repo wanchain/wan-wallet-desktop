@@ -321,6 +321,11 @@ export const checkXRPAddr = function (address) {
   })
 };
 
+export const checkBTCAddr = async function (address) {
+  const [valid1, valid2] = await Promise.all([checkBase58(address), checkBech32(address)]);
+  return valid1 || valid2;
+};
+
 export const checkBase58 = function (address) {
   return new Promise((resolve, reject) => {
     try {
@@ -1133,8 +1138,7 @@ export const checkAddressByChainType = async (address, chain) => {
       valid = await checkETHAddr(address);
       break;
     case 'BTC':
-      const [valid1, valid2] = await Promise.all([checkBase58(address), checkBech32(address)]);
-      valid = valid1 || valid2;
+      valid = await checkBTCAddr(address);
       break;
     case 'EOS':
       try {
