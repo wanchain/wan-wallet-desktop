@@ -245,88 +245,98 @@ class EosAddress {
   }
 
   @computed get normalHistoryList() {
-    let historyList = [];
-    Object.keys(self.transHistory).forEach(item => {
-      let obj = self.transHistory[item];
-      if (!obj.action) {
-        if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
-          let status = obj.status;
-          let value = `0`;
-          if (obj['value']) {
-            value = new BigNumber(obj['value'].replace(/ EOS/, '')).toString();
+    try {
+      let historyList = [];
+      Object.keys(self.transHistory).forEach(item => {
+        let obj = self.transHistory[item];
+        if (!obj.action) {
+          if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
+            let status = obj.status;
+            let value = `0`;
+            if (obj['value']) {
+              value = new BigNumber(obj['value'].replace(/ EOS/, '')).toString();
+            }
+            historyList.push({
+              key: item,
+              time: timeFormat(obj['sendTime']),
+              from: obj['from'],
+              to: obj['to'],
+              value: `${value} EOS`,
+              status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+              sendTime: obj['sendTime'],
+              txHash: obj['txHash']
+            });
           }
-          historyList.push({
-            key: item,
-            time: timeFormat(obj['sendTime']),
-            from: obj['from'],
-            to: obj['to'],
-            value: `${value} EOS`,
-            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: obj['sendTime'],
-            txHash: obj['txHash']
-          });
         }
-      }
-    });
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    } catch (e) {
+      console.log('get history list failed:', e);
+      return [];
+    }
   }
 
   @computed get resourceHistoryList() {
-    let historyList = [];
-    Object.keys(self.transHistory).forEach(item => {
-      let obj = self.transHistory[item];
-      if (obj.action) {
-        if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
-          let status = obj.status;
-          let value = '';
-          switch (obj['action']) {
-            case 'buyrambytes':
-              value = `${obj['ramBytes']} KB`;
-              break;
-            case 'sellram':
-              value = `${obj['ramBytes']} KB`;
-              break;
-            case 'newaccount':
-              let ram = obj['ramBytes'];
-              let cpu = obj['cpuAmount'];
-              let net = obj['netAmount'];
-              value = `${ram}KB/ ${Number(cpu.replace(/ EOS/, ''))}EOS/ ${Number(net.replace(/ EOS/, ''))}EOS`;
-              break;
-            case 'delegatebw':
-              if (obj['cpuAmount'] === '0.0000 EOS') {
-                value = `${obj['netAmount']}`;
-              } else {
-                value = `${obj['cpuAmount']}`;
-              }
-              break;
-            case 'undelegatebw':
-              if (obj['cpuAmount'] === '0.0000 EOS') {
-                value = `${obj['netAmount']}`;
-              } else {
-                value = `${obj['cpuAmount']}`;
-              }
-              break;
-            default:
-              value = obj['value'];
-          }
-          if (value.indexOf(' EOS') !== -1) {
+    try {
+      let historyList = [];
+      Object.keys(self.transHistory).forEach(item => {
+        let obj = self.transHistory[item];
+        if (obj.action) {
+          if (!self.historySelectedAccountName || self.historySelectedAccountName === obj['from']) {
+            let status = obj.status;
+            let value = '';
+            switch (obj['action']) {
+              case 'buyrambytes':
+                value = `${obj['ramBytes']} KB`;
+                break;
+              case 'sellram':
+                value = `${obj['ramBytes']} KB`;
+                break;
+              case 'newaccount':
+                let ram = obj['ramBytes'];
+                let cpu = obj['cpuAmount'];
+                let net = obj['netAmount'];
+                value = `${ram}KB/ ${Number(cpu.replace(/ EOS/, ''))}EOS/ ${Number(net.replace(/ EOS/, ''))}EOS`;
+                break;
+              case 'delegatebw':
+                if (obj['cpuAmount'] === '0.0000 EOS') {
+                  value = `${obj['netAmount']}`;
+                } else {
+                  value = `${obj['cpuAmount']}`;
+                }
+                break;
+              case 'undelegatebw':
+                if (obj['cpuAmount'] === '0.0000 EOS') {
+                  value = `${obj['netAmount']}`;
+                } else {
+                  value = `${obj['cpuAmount']}`;
+                }
+                break;
+              default:
+                value = obj['value'];
+            }
+            if (value.indexOf(' EOS') !== -1) {
               value = `${new BigNumber(value.replace(/ EOS/, '')).toString()} EOS`
+            }
+            historyList.push({
+              key: item,
+              time: timeFormat(obj['sendTime']),
+              from: obj['from'],
+              to: obj['to'],
+              value: value,
+              status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+              sendTime: obj['sendTime'],
+              action: obj['action'],
+              txHash: obj['txHash']
+            });
           }
-          historyList.push({
-            key: item,
-            time: timeFormat(obj['sendTime']),
-            from: obj['from'],
-            to: obj['to'],
-            value: value,
-            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: obj['sendTime'],
-            action: obj['action'],
-            txHash: obj['txHash']
-          });
         }
-      }
-    });
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    } catch (e) {
+      console.log('get history list failed:', e);
+      return [];
+    }
   }
 }
 
