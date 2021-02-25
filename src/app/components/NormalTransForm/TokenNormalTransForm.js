@@ -37,7 +37,7 @@ class TokenNormalTransForm extends Component {
     gasFee: 0,
     advanced: false,
     confirmVisible: false,
-    disabledAmount: false,
+    disableAmount: false,
     advancedVisible: false,
   }
 
@@ -88,7 +88,7 @@ class TokenNormalTransForm extends Component {
     const { updateTransParams, settings, balance, tokenAddr, currTokenChain, form, from, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(currTokenChain);
     if (addrInfo === undefined) {
-      message.warn(intl.get('Unknown token type')); // To do : i18n
+      message.warn(intl.get('Unknown token type')); // TODO : i18n
       return;
     }
     form.validateFields(err => {
@@ -117,6 +117,9 @@ class TokenNormalTransForm extends Component {
           }
         })
       } else {
+        if (this.state.advanced) {
+          this.updateInputData();
+        }
         updateTransParams(from, { to: tokenAddr, transferTo, token })
         this.setState({ confirmVisible: true });
       }
@@ -135,14 +138,11 @@ class TokenNormalTransForm extends Component {
 
   updateGasLimit = () => {
     let data = '0x';
-    let { form, tokenAddr, from, currTokenChain, getTokenInfoFromTokensListByAddr } = this.props;
-    let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
+    let { form, tokenAddr, from, currTokenChain } = this.props;
+    let { transferTo } = form.getFieldsValue(['transferTo']);
     try {
       if (transferTo) {
-        let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
-        let decimals = tokenInfo.decimals;
-        data = encodeTransferInput(transferTo, decimals, amount || 0);
-        this.props.updateTransParams(from, { data });
+        data = this.updateInputData();
       }
       let tx = { from, to: tokenAddr, data, value: '0x0' };
       wand.request('transaction_estimateGas', { chainType: currTokenChain, tx }, (err, gasLimit) => {
@@ -156,6 +156,17 @@ class TokenNormalTransForm extends Component {
     } catch (err) {
       console.log('updateGasLimit failed', err);
     }
+  }
+
+  updateInputData = () => {
+    let { form, tokenAddr, from, getTokenInfoFromTokensListByAddr, updateTransParams } = this.props;
+    let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
+    let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
+    let decimals = tokenInfo.decimals;
+    let data = encodeTransferInput(transferTo, decimals, amount || 0);
+    updateTransParams(from, { data });
+    console.log('data:', data);
+    return data;
   }
 
   checkToWANAddr = (rule, value, callback) => {
@@ -198,7 +209,6 @@ class TokenNormalTransForm extends Component {
   }
 
   checkTokenAmount = (rule, value, callback) => {
-    // To do
     let { tokenAddr, balance, getTokenInfoFromTokensListByAddr } = this.props;
     let { decimals } = getTokenInfoFromTokensListByAddr(tokenAddr);
     if (value === undefined) {
@@ -227,21 +237,21 @@ class TokenNormalTransForm extends Component {
         amount: balance.toString().replace(/,/g, '')
       });
       this.setState({
-        disabledAmount: true,
+        disableAmount: true,
       })
     } else {
       form.setFieldsValue({
         amount: 0
       });
       this.setState({
-        disabledAmount: false,
+        disableAmount: false,
       })
     }
   }
 
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, currTokenChain } = this.props;
-    const { advancedVisible, confirmVisible, advanced, disabledAmount } = this.state;
+    const { advancedVisible, confirmVisible, advanced, disableAmount } = this.state;
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
@@ -275,7 +285,7 @@ class TokenNormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
-                  (<Input disabled={disabledAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
+                  (<Input disabled={disableAmount} min={0} placeholder='0' prefix={<Icon type="credit-card" className="colorInput" />} />)}
                 <Checkbox onChange={this.sendAllTokenAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               </Form.Item>
               {
