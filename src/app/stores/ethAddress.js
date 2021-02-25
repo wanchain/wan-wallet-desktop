@@ -207,32 +207,37 @@ class EthAddress {
   }
 
   @computed get historyList() {
-    let historyList = [];
-    let page = self.currentPage;
-    let addrList = [];
-    if (self.selectedAddr) {
-      addrList = self.selectedAddr
-    } else {
-      page.forEach(name => {
-        addrList = addrList.concat(Object.keys(self.addrInfo[name]))
-      })
-    }
-    Object.keys(self.transHistory).forEach(item => {
-      if (addrList.includes(self.transHistory[item].from) && !('transferTo' in self.transHistory[item])) {
-        let status = self.transHistory[item].status;
-        let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
-        historyList.push({
-          key: item,
-          time: timeFormat(self.transHistory[item].sendTime),
-          from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: self.transHistory[item].to.toLowerCase(),
-          value: formatNum(fromWei(self.transHistory[item].value)),
-          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: self.transHistory[item].sendTime,
-        });
+    try {
+      let historyList = [];
+      let page = self.currentPage;
+      let addrList = [];
+      if (self.selectedAddr) {
+        addrList = self.selectedAddr
+      } else {
+        page.forEach(name => {
+          addrList = addrList.concat(Object.keys(self.addrInfo[name] || {}));
+        })
       }
-    });
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+      Object.keys(self.transHistory).forEach(item => {
+        if (addrList.includes(self.transHistory[item].from) && !('transferTo' in self.transHistory[item])) {
+          let status = self.transHistory[item].status;
+          let type = checkAddrType(self.transHistory[item].from, self.addrInfo)
+          historyList.push({
+            key: item,
+            time: timeFormat(self.transHistory[item].sendTime),
+            from: self.addrInfo[type][self.transHistory[item].from].name,
+            to: self.transHistory[item].to.toLowerCase(),
+            value: formatNum(fromWei(self.transHistory[item].value)),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: self.transHistory[item].sendTime,
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    } catch (e) {
+      console.log('get history list failed:', e);
+      return [];
+    }
   }
 
   @computed get tokenTransferHistoryList() {

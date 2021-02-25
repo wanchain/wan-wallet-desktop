@@ -88,23 +88,28 @@ class XrpAddress {
   }
 
   get historyList() {
-    let historyList = [];
-    Object.keys(self.transHistory).forEach(item => {
-      let data = self.transHistory[item];
-      let { status, from, successTime, sendTime, value, to } = data;
-      if (Object.values(self.addrInfo).find(item => Object.keys(item).includes(from))) {
-        historyList.push({
-          from,
-          key: item,
-          time: timeFormat((successTime || sendTime)),
-          to: to,
-          value: formatNum(value),
-          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: sendTime,
-        });
-      }
-    });
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    try {
+      let historyList = [];
+      Object.keys(self.transHistory).forEach(item => {
+        let data = self.transHistory[item];
+        let { status, from, successTime, sendTime, value, to } = data;
+        if (Object.values(self.addrInfo).find(item => Object.keys(item).includes(from))) {
+          historyList.push({
+            from,
+            key: item,
+            time: timeFormat((successTime || sendTime)),
+            to: to,
+            value: formatNum(value),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: sendTime,
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    } catch (e) {
+      console.log('get history list failed:', e);
+      return [];
+    }
   }
 
   addAddress(newAddr) {

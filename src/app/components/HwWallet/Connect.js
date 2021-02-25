@@ -88,8 +88,9 @@ class Connect extends Component {
       if (res && Object.keys(res).length) {
         let addresses = this.state.addresses;
         addresses.forEach(item => {
-          if (Object.keys(res).includes(item.address)) {
-            item.balance = res[item.address];
+          let found = Object.keys(res).find(addr => addr.toLowerCase() === item.address.toLowerCase());
+          if (found !== undefined) {
+            item.balance = res[found];
           }
         })
         this.setState({

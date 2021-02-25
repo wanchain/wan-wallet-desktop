@@ -36,11 +36,11 @@ class BtcAddress {
     self.utxos = newUtxos;
   }
 
-  @action setCurrPage (page) {
+  @action setCurrPage(page) {
     self.currentPage = page;
   }
 
-  @action addAddress (newAddr) {
+  @action addAddress(newAddr) {
     self.addrInfo.normal[newAddr.address] = {
       name: newAddr.name ? newAddr.name : `BTC-Account${Number(newAddr.start) + 1}`,
       address: newAddr.address,
@@ -54,7 +54,7 @@ class BtcAddress {
     this.updateTransHistory();
   }
 
-  @action updateAddress (type, newAddress = {}) {
+  @action updateAddress(type, newAddress = {}) {
     if (typeof type === 'string') {
       self.addrInfo[type] = newAddress;
     } else {
@@ -62,7 +62,7 @@ class BtcAddress {
     }
   }
 
-  @action addAddresses (type, addrArr) {
+  @action addAddresses(type, addrArr) {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type]).includes(addr.address)) {
         if (addr.name === undefined) {
@@ -99,7 +99,7 @@ class BtcAddress {
     })
   }
 
-  @action setSelectedAddr (addr) {
+  @action setSelectedAddr(addr) {
     if (typeof addr === 'string') {
       self.selectedAddr = [addr];
     } else {
@@ -107,7 +107,7 @@ class BtcAddress {
     }
   }
 
-  @action updateBTCBalance (arr) {
+  @action updateBTCBalance(arr) {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo.normal);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
@@ -121,7 +121,7 @@ class BtcAddress {
     })
   }
 
-  @action updateName (arr, wid) {
+  @action updateName(arr, wid) {
     let type = getTypeByWalletId(wid);
     wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
       if (!err && val) {
@@ -130,7 +130,7 @@ class BtcAddress {
     })
   }
 
-  @action getUserAccountFromDB (chainId) {
+  @action getUserAccountFromDB(chainId) {
     let chainID = chainId === CHAINID.MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
     wand.request('account_getAll', { chainID }, (err, ret) => {
       if (err) console.log('Get user from DB failed ', err);
@@ -172,7 +172,7 @@ class BtcAddress {
     };
   }
 
-  @computed get getAddrList () {
+  @computed get getAddrList() {
     let addrList = [];
     let normalArr = self.addrInfo['normal'];
     let rawKeyArr = self.addrInfo['rawKey'];
@@ -200,7 +200,7 @@ class BtcAddress {
     });
   }
 
-  @computed get getNormalAddrList () {
+  @computed get getNormalAddrList() {
     let addrList = [];
     let normalArr = Object.keys(self.addrInfo.normal);
     normalArr.forEach(item => {
@@ -219,26 +219,30 @@ class BtcAddress {
   }
 
   @computed get historyList() {
-    let historyList = [];
-    // console.log('his:', JSON.parse(JSON.stringify(self.transHistory)));
-    Object.keys(self.transHistory).forEach(item => {
-      let data = self.transHistory[item];
-      let status = data.status;
-      if (data.crossAddress === undefined) {
-        historyList.push({
-          key: item,
-          time: timeFormat(data.sendTime),
-          to: data.to,
-          value: formatNum(data.value),
-          status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-          sendTime: data.sendTime,
-        });
-      }
-    });
-    return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    try {
+      let historyList = [];
+      Object.keys(self.transHistory).forEach(item => {
+        let data = self.transHistory[item];
+        let status = data.status;
+        if (data.crossAddress === undefined) {
+          historyList.push({
+            key: item,
+            time: timeFormat(data.sendTime),
+            to: data.to,
+            value: formatNum(data.value),
+            status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
+            sendTime: data.sendTime,
+          });
+        }
+      });
+      return historyList.sort((a, b) => b.sendTime - a.sendTime);
+    } catch (e) {
+      console.log('get history list failed:', e);
+      return [];
+    }
   }
 
-  @computed get addrSelectedList () {
+  @computed get addrSelectedList() {
     let addrList = []
     Object.keys(self.addrInfo.normal).forEach(addr => {
       addrList.push(addr);
@@ -246,13 +250,13 @@ class BtcAddress {
     return addrList;
   }
 
-  @computed get getNormalAmount () {
+  @computed get getNormalAmount() {
     let sum = 0;
     Object.values({ normal: self.addrInfo.normal }).forEach(value => { sum = new BigNumber(sum).plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(curr.balance), 0)) });
     return sum.toString();
   }
 
-  @computed get getAllAmount () {
+  @computed get getAllAmount() {
     let sum = 0;
     Object.values(self.addrInfo).forEach(value => { sum = new BigNumber(sum).plus(Object.values(value).reduce((prev, curr) => new BigNumber(prev).plus(curr.balance), 0)) });
     return sum.toString();
