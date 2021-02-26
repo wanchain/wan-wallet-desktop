@@ -1,6 +1,6 @@
 import intl from 'react-intl-universal';
 import { Table, Row, Col, message } from 'antd';
-import React, { useState, useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { observer, MobXProviderContext } from 'mobx-react';
 
 import { formatNum } from 'utils/support';

@@ -29,12 +29,21 @@ class SendCrossChainParams {
   };
 
   @observable XRPCrossTransParams = {
-    from: '',
-    storemanAddr: '',
+    groupAddr: '',
+    groupName: '',
     value: 0,
     groupId: '',
-    toWanAddress: '',
-    path: ''
+    path: '',
+    from: {
+      walletID: 1,
+      path: ''
+    },
+    fromAddr: '',
+    to: {
+      walletID: 1,
+      path: ''
+    },
+    toAddr: ''
   };
 
   @observable gasLimit = GASLIMIT;

@@ -3,9 +3,9 @@ import { BigNumber } from 'bignumber.js';
 import { makeObservable, observable, computed, action } from 'mobx';
 
 import languageIntl from './languageIntl';
-import { getTypeByWalletId } from 'utils/helper';
 import { XRPPATH, WALLETID } from 'utils/settings';
 import { timeFormat, formatNum } from 'utils/support';
+import { getTypeByWalletId, checkXRPAddrType } from 'utils/helper';
 
 class XrpAddress {
   addrInfo = {
@@ -94,14 +94,16 @@ class XrpAddress {
         let data = self.transHistory[item];
         let { status, from, successTime, sendTime, value, to } = data;
         if (Object.values(self.addrInfo).find(item => Object.keys(item).includes(from))) {
+          let type = checkXRPAddrType(self.transHistory[item].from, self.addrInfo);
           historyList.push({
-            from,
+            from: self.addrInfo[type][self.transHistory[item].from].name,
+            fromAddr: from,
             key: item,
             time: timeFormat((successTime || sendTime)),
             to: to,
             value: formatNum(value),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
-            sendTime: sendTime,
+            sendTime,
           });
         }
       });

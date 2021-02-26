@@ -414,6 +414,20 @@ export const checkAddrType = function (addr, addrInfo) {
   }
 }
 
+export const checkXRPAddrType = function (addr, addrInfo) {
+  let type = false;
+  if (typeof addr === 'string') {
+    Object.keys(addrInfo).forEach(item => {
+      let has = Object.keys(addrInfo[item]).find(val => val.toLowerCase() === addr.toLowerCase());
+      if (has) {
+        type = item;
+        return type;
+      }
+    })
+    return type
+  }
+}
+
 export const hasSameName = function (type, record, addrInfo) {
   let tmp;
   let bool = false;

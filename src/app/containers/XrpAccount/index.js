@@ -113,7 +113,7 @@ const XrpAccount = observer(() => {
       </Row>
       <Row className="mainBody">
         <Col>
-          <TransHistory />
+          <TransHistory name={['normal', 'rawKey']}/>
         </Col>
       </Row>
       {
