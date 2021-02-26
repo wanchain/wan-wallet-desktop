@@ -137,7 +137,7 @@ class XrpAddress {
 
   updateName(arr, wid) {
     let type = getTypeByWalletId(wid);
-    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase() } }, (err, val) => {
+    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address } }, (err, val) => {
       if (!err && val) {
         self.addrInfo[type][arr.address].name = arr.name;
       }
