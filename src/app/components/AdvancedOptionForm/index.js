@@ -61,7 +61,11 @@ class AdvancedOptionForm extends Component {
         return;
       };
       try {
-        this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
+        if (this.props.transType === TRANSTYPE.tokenTransfer) {
+          this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
+        } else {
+          this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
+        }
         this.setState({ loading: false });
         this.props.onSave();
       } catch (e) {
@@ -75,6 +79,7 @@ class AdvancedOptionForm extends Component {
     const { visible, form, minGasPrice, from, transParams, transType, chain } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
+    const isToken = transType === TRANSTYPE.tokenTransfer;
     return (
       <Modal
         destroyOnClose={true}
@@ -102,11 +107,11 @@ class AdvancedOptionForm extends Component {
             {getFieldDecorator('nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
               (<InputNumber min={0} />)}
           </Form.Item>
-          <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
+          {!isToken && <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
             {getFieldDecorator(
               'inputData', { initialValue: data, rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
-              (<Input.TextArea disabled={transType === TRANSTYPE.tokenTransfer} />)}
-          </Form.Item>
+              (<Input.TextArea disabled={isToken} />)}
+          </Form.Item>}
         </Form>
       </Modal>
     );

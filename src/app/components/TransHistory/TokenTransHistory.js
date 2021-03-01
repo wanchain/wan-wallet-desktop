@@ -64,6 +64,7 @@ class TokenTransHistory extends Component {
       }
       dataSource = tokenTransferHistoryList;
     }
+
     return (
       <div>
         <div className="historyCon" id="tokenAddrSelect">
