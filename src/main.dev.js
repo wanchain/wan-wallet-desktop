@@ -4,46 +4,68 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import env from 'dotenv'
-import path from 'path'
-import { app, dialog, shell } from 'electron'
-import setting from '~/src/utils/Settings'
-import menuFactoryService from '~/src/services/menuFactory'
-import i18n, { i18nOptions } from '~/config/i18n'
-import Logger from '~/src/utils/Logger'
-import windowStateKeeper from 'electron-window-state'
-import { Windows, walletBackend, updater } from '~/src/modules'
+import env from 'dotenv';
+import path from 'path';
+import { app, dialog, shell } from 'electron';
+import setting from '~/src/utils/Settings';
+import menuFactoryService from '~/src/services/menuFactory';
+import i18n, { i18nOptions } from '~/config/i18n';
+import Logger from '~/src/utils/Logger';
+import windowStateKeeper from 'electron-window-state';
+import { Windows, walletBackend, updater } from '~/src/modules';
 
-env.config()
+env.config();
 
-const logger = Logger.getLogger('main')
+const logger = Logger.getLogger('main');
 
 // register i18n event handlers
 i18n.on('languageChanged', () => {
-  menuFactoryService.buildMenu(i18n)
-  Windows.broadcast('notification', 'language', setting.language)
-})
+  menuFactoryService.buildMenu(i18n);
+  Windows.broadcast('notification', 'language', setting.language);
+});
 
 i18n.on('loaded', (loaded) => {
-  i18n.changeLanguage(setting.language)
-  i18n.off('loaded')
-})
+  i18n.changeLanguage(setting.language);
+  i18n.off('loaded');
+});
 
 i18n.init(i18nOptions, (err) => {
   if (err) {
-    logger.error('i18n change language error')
+    logger.error('i18n change language error');
   }
-})
+});
 
-let mainWindow
+function resetOldBtcSymbol() {
+  const oldBTC = 'wanBTC';
+  const newBTC = 'wanOBTC';
+
+  // mainnet
+  let main_wan_btc = setting.get('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol');
+  console.log('main:', main_wan_btc);
+  if (main_wan_btc === oldBTC) {
+    console.log('change main')
+    setting.set('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol', newBTC);
+  }
+
+  //testnet
+  let test_wan_btc = setting.get('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol');
+  console.log('test:', test_wan_btc);
+  if (test_wan_btc === oldBTC) {
+    console.log('change test')
+    setting.set('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol', newBTC);
+  }
+}
+resetOldBtcSymbol();
+
+let mainWindow;
 
 async function createMain() {
-  logger.info('creating main window...')
+  logger.info('creating main window...');
 
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1440,
     defaultHeight: 768
-  })
+  });
 
   const opts = {
     primary: true,
@@ -60,95 +82,95 @@ async function createMain() {
         preload: setting.isDev ? path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
       }
     }
-  }
+  };
 
   console.log('setting.isDev:', setting.isDev);
 
   if (process.platform === 'linux') {
-    opts.electronOptions.icon = path.join(__dirname, 'icons', 'icon-512x512.png')
+    opts.electronOptions.icon = path.join(__dirname, 'icons', 'icon-512x512.png');
   }
 
-  mainWindow = Windows.create('main', opts)
+  mainWindow = Windows.create('main', opts);
 
-  mainWindowState.manage(mainWindow.window)
+  mainWindowState.manage(mainWindow.window);
 
   if (setting.isDev) {
-    mainWindow.load('http://localhost:7000/dist/index.html')
+    mainWindow.load('http://localhost:7000/dist/index.html');
   } else {
-    mainWindow.load(`file://${__dirname}/index.html`)
+    mainWindow.load(`file://${__dirname}/index.html`);
   }
 
   // Open the DevTools under development.
   if (setting.isDev) {
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
   }
 
   mainWindow.on('ready', () => {
-    logger.info('ready to show main window')
+    logger.info('ready to show main window');
 
-    mainWindow.show()
-    Windows.broadcast('notification', 'language', setting.language)
+    mainWindow.show();
+    Windows.broadcast('notification', 'language', setting.language);
     if (global.chainManager) {
       sendReadyNotifications();
     } else {
-      Windows.broadcast('notification', 'sdk', 'init')
+      Windows.broadcast('notification', 'sdk', 'init');
     }
   })
 
   mainWindow.on('closed', function () {
-    mainWindow = null
-  })
+    mainWindow = null;
+  });
 }
 
 function sendReadyNotifications() {
-  Windows.broadcast('notification', 'sdk', 'ready')
-  Windows.broadcast('notification', 'network', setting.network)
+  Windows.broadcast('notification', 'sdk', 'ready');
+  Windows.broadcast('notification', 'network', setting.network);
 }
 
 // prevent crashed and close gracefully
 process.on('uncaughtException', (err) => {
-  logger.error(`UNCAUGHT EXCEPTION ${err.stack}`)
-  app.quit()
-})
+  logger.error(`UNCAUGHT EXCEPTION ${err.stack}`);
+  app.quit();
+});
 
 async function onReady() {
   // 1. initiate windows manager
-  Windows.init()
+  Windows.init();
 
   // 2. register handler for walletbackend init 
   walletBackend.on('initiationDone', async () => {
-    sendReadyNotifications()
-  })
+    sendReadyNotifications();
+  });
 
   if (process.env.NODE_ENV !== 'production') {
-    Windows.addDevToolsExtension()
+    Windows.addDevToolsExtension();
   }
 
   // 3. create main window for frontend renderering, hide this window in the first place
-  await createMain()
+  await createMain();
 
   // 4. init wallet sdk
-  await walletBackend.init()
+  await walletBackend.init();
 
   // check updates only if under production mode
   if (process.env.NODE_ENV === 'production') {
-    updater.start()
+    updater.start();
   }
 }
 
 // This method will be called when Electron has done everything 
 // initialization and ready for creating browser windows
-app.on('ready', onReady)
+app.on('ready', onReady);
 
 app.on('window-all-closed', function () {
-  app.quit()
-})
+  app.quit();
+});
 
 app.on('activate', async function () {
   if (mainWindow === null) {
-    await createMain()
+    await createMain();
   }
-})
+});
 
 // Listen for web contents being created
 app.on('web-contents-created', (e, contents) => {
@@ -158,8 +180,8 @@ app.on('web-contents-created', (e, contents) => {
 
     // Listen for any new window events
     contents.on('new-window', (e, url) => {
-      e.preventDefault()
-      shell.openExternal(url)
-    })
+      e.preventDefault();
+      shell.openExternal(url);
+    });
   }
-})
+});
