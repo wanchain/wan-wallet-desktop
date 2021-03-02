@@ -223,15 +223,15 @@ class TokenNormalTransForm extends Component {
   sendAllTokenAmount = e => {
     let { form, balance } = this.props;
     if (e.target.checked) {
-      if (!this.state.advanced) {
-        this.updateGasLimit();
-      }
       form.setFieldsValue({
         amount: balance.toString().replace(/,/g, '')
       });
       this.setState({
         disabledAmount: true,
       })
+      if (!this.state.advanced) {
+        this.updateGasLimit();
+      }
     } else {
       form.setFieldsValue({
         amount: 0
