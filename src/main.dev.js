@@ -41,17 +41,13 @@ function resetOldBtcSymbol() {
 
   // mainnet
   let main_wan_btc = setting.get('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol');
-  console.log('main:', main_wan_btc);
   if (main_wan_btc === oldBTC) {
-    console.log('change main')
     setting.set('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol', newBTC);
   }
 
   //testnet
   let test_wan_btc = setting.get('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol');
-  console.log('test:', test_wan_btc);
   if (test_wan_btc === oldBTC) {
-    console.log('change test')
     setting.set('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol', newBTC);
   }
 }
