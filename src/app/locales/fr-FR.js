@@ -751,7 +751,7 @@ const fr_FR = {
     'Storeman.quitted': 'Démissionné',
     'Storeman.stake': 'STAKE',
     'Storeman.storeman': 'STOREMAN',
-    'Storeman.storemanAccount': 'Storeman Account',
+    'Storeman.storemanAccount': 'Storeman Compte',
     'Storeman.selectStoremanAccount': 'Sélectionnez le compte Storeman',
     'Storeman.crosschain': 'CROSS CHAIN',
     'Storeman.selectCrosschain': 'Sélectionnez Cross Chain',
