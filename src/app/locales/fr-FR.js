@@ -32,15 +32,15 @@ const fr_FR = {
     'Common.create': 'Créer',
     'Common.balance': 'Solde',
     'Common.sendFailed': 'Connexion internet instable. Veuillez réessayer',
-    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': 'Échec de l\'envoi de la transaction. Veuillez vous assurer d\'avoir un solde suffisant.',
     'Common.networkError': 'Erreurs de connexion. Veuillez redémarrer le portefeuille.',
-    'Common.eosTokens': 'EOS tokens',
+    'Common.eosTokens': 'Token EOS',
     'Common.convert': 'Convertir',
     'Common.storeman': 'Storeman',
     'Common.storemanGroup': 'Storeman Group',
-    'Common.chain': 'Chain',
+    'Common.chain': 'Chaine',
     'Common.amountTooLow': 'Le montant minimum doit être { minAmount } WAN',
-    'Common.availableBalance': 'Le solde disponible est de {availableBalance}',
+    'Common.availableBalance': 'Le solde disponible est {availableBalance}',
 
     'Xrp.destinationTag': 'Balise de destination',
 
@@ -349,7 +349,7 @@ const fr_FR = {
     'EOSNormalTransForm.invalid': 'Invalide',
     'EOSNormalTransForm.recipientAccount': 'Compte Destinataire',
     'EOSNormalTransForm.memo': 'Mémo',
-    'EOSNormalTransForm.invalidMemo': 'Invalid memo',
+    'EOSNormalTransForm.invalidMemo': 'Mémo invalide',
 
     'AdvancedOptionForm.advancedOptions': 'Options avancées',
     'AdvancedOptionForm.save': 'Sauvegarder',
@@ -452,9 +452,9 @@ const fr_FR = {
     'NormalTransForm.sendAll': 'Tout envoyer',
     'NormalTransForm.password': 'Mot de passe',
     'NormalTransForm.pwdIsIncorrect': 'Mot de passe incorrecte',
-    'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
-    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
-    'NormalTransForm.inputToAddress': 'Please enter recipient address',
+    'NormalTransForm.destinationTagRule': 'La balise de destination est incorrecte',
+    'NormalTransForm.isNativeBtcAddress': 'Il n\'est pas permis d\' envoyer a soit-meme',
+    'NormalTransForm.inputToAddress': 'Veuillez saisir l\'adresse du destinataire',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',
@@ -751,7 +751,7 @@ const fr_FR = {
     'Storeman.quitted': 'Démissionné',
     'Storeman.stake': 'STAKE',
     'Storeman.storeman': 'STOREMAN',
-    'Storeman.storemanAccount': 'Storeman Compte',
+    'Storeman.storemanAccount': 'Storeman Account',
     'Storeman.selectStoremanAccount': 'Sélectionnez le compte Storeman',
     'Storeman.crosschain': 'CROSS CHAIN',
     'Storeman.selectCrosschain': 'Sélectionnez Cross Chain',
@@ -778,7 +778,7 @@ const fr_FR = {
 
     'MoreAccount.inputSearchText': 'Texte de recherche d\'entrée',
 
-    'Storeman.delegationWarning': 'Remarque: cliquez sur «quitter» à tout moment avant la fin du cycle Storeman actuel pour retirer votre WAN de votre portefeuille à la fin du cycle.'
+    'Storeman.delegationWarning': 'Remarque: cliquez sur «quitter» à tout moment avant la fin du cycle actuel de Storeman pour retirer vos WAN de votre portefeuille à la fin du cycle.'
 }
 
 export default fr_FR;
