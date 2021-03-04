@@ -64,14 +64,6 @@ class TokenTrans extends Component {
     clearInterval(this.timer);
   }
 
-  componentWillReceiveProps(newProps) {
-    let addr = newProps.match.params.tokenAddr;
-    let chain = newProps.match.params.chain;
-    if (addr !== this.props.currTokenAddr) {
-      this.init(addr, chain);
-    }
-  }
-
   sendLedgerTrans = (path, tx) => {
     message.info(intl.get('Ledger.signTransactionInLedger'));
     let rawTx = {
@@ -128,7 +120,7 @@ class TokenTrans extends Component {
     const { chain, symbol, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(chain);
     if (addrInfo === undefined) {
-      message.warn(intl.get('Unknown token type')); // To do : i18n
+      console.log('Unknown token type');
       return;
     }
 

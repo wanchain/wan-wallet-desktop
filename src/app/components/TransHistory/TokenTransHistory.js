@@ -17,6 +17,18 @@ const Option = Select.Option;
 
 @observer
 class TokenTransHistory extends Component {
+  componentDidMount() {
+    if (this.props.currTokenChain !== '') {
+      this.props.getChainStoreInfoByChain(this.props.currTokenChain).setCurrPage(this.props.name || []);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.currTokenChain !== this.props.currTokenChain) {
+      this.props.getChainStoreInfoByChain(this.props.currTokenChain).setCurrPage(this.props.name || []);
+    }
+  }
+
   onChange = value => {
     this.props.getChainStoreInfoByChain(this.props.currTokenChain).setSelectedAddr(value);
   }
@@ -37,12 +49,6 @@ class TokenTransHistory extends Component {
         href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
     }
     wand.shell.openExternal(href);
-  }
-
-  componentDidMount() {
-    if (this.props.currTokenChain !== '') {
-      this.props.getChainStoreInfoByChain(this.props.currTokenChain).setCurrPage(this.props.name || []);
-    }
   }
 
   render() {

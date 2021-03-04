@@ -3,11 +3,10 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
-
-import style from './index.less';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkWanAddr, checkETHAddr, checkBTCAddr, getBalanceByAddr, checkAmountUnit, encodeTransferInput } from 'utils/helper';
+import style from './index.less';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
@@ -88,19 +87,23 @@ class TokenNormalTransForm extends Component {
     const { updateTransParams, settings, balance, tokenAddr, currTokenChain, form, from, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(currTokenChain);
     if (addrInfo === undefined) {
-      message.warn(intl.get('Unknown token type')); // To do : i18n
+      console.log('Unknown token type');
       return;
     }
-    form.validateFields(err => {
+    form.validateFields((err, values) => {
       if (err) {
         console.log('TokenNormalTransForm_handleNext', err);
         return;
       };
-      let { pwd, amount: token, transferTo } = form.getFieldsValue(['pwd', 'amount', 'transferTo']);
+      let { pwd, amount: token, transferTo } = values;
       let addrAmount = getBalanceByAddr(from, addrInfo);
       if (new BigNumber(addrAmount).lt(this.state.gasFee) || new BigNumber(balance).lt(token)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
+      }
+
+      if (this.state.advanced) {
+        this.getNewData();
       }
 
       if (settings.reinput_pwd) {
@@ -112,12 +115,12 @@ class TokenNormalTransForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: tokenAddr, transferTo, token })
+            updateTransParams(from, { to: tokenAddr, transferTo, token });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: tokenAddr, transferTo, token })
+        updateTransParams(from, { to: tokenAddr, transferTo, token });
         this.setState({ confirmVisible: true });
       }
     });
@@ -135,14 +138,11 @@ class TokenNormalTransForm extends Component {
 
   updateGasLimit = () => {
     let data = '0x';
-    let { form, tokenAddr, from, currTokenChain, getTokenInfoFromTokensListByAddr } = this.props;
-    let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
+    let { form, tokenAddr, from, currTokenChain } = this.props;
+    let { transferTo } = form.getFieldsValue(['transferTo']);
     try {
       if (transferTo) {
-        let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
-        let decimals = tokenInfo.decimals;
-        data = encodeTransferInput(transferTo, decimals, amount || 0);
-        this.props.updateTransParams(from, { data });
+        data = this.getNewData();
       }
       let tx = { from, to: tokenAddr, data, value: '0x0' };
       wand.request('transaction_estimateGas', { chainType: currTokenChain, tx }, (err, gasLimit) => {
@@ -154,8 +154,19 @@ class TokenNormalTransForm extends Component {
         }
       });
     } catch (err) {
-      console.log('updateGasLimit failed', err);
+      console.log('updateGasLimit failed');
     }
+  }
+
+  getNewData = () => {
+    let data = '0x';
+    let { form, tokenAddr, from, getTokenInfoFromTokensListByAddr } = this.props;
+    let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
+    let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
+    let decimals = tokenInfo.decimals;
+    data = encodeTransferInput(transferTo, decimals, amount || 0);
+    this.props.updateTransParams(from, { data });
+    return data;
   }
 
   checkToWANAddr = (rule, value, callback) => {
@@ -198,7 +209,6 @@ class TokenNormalTransForm extends Component {
   }
 
   checkTokenAmount = (rule, value, callback) => {
-    // To do
     let { tokenAddr, balance, getTokenInfoFromTokensListByAddr } = this.props;
     let { decimals } = getTokenInfoFromTokensListByAddr(tokenAddr);
     if (value === undefined) {

@@ -197,6 +197,7 @@ class Sidebar extends Component {
     } else {
       dAppsChildren.splice(0, dAppsChildren.length - 1);
     }
+
     return (
       <div>
         <div className={style.sidebar + ' sidebar'}>
