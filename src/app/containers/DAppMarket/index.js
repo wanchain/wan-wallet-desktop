@@ -37,10 +37,10 @@ class DAppMarket extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { language } = this.props;
     const { selectType } = this.state;
-    if (language !== nextProps.language) {
+    if (language !== prevProps.language) {
       this.setState({ selectType });
     }
   }
