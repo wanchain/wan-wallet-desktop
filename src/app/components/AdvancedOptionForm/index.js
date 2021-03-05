@@ -2,11 +2,12 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, InputNumber, Input, message } from 'antd';
-import { TRANSTYPE } from 'utils/settings';
-
+import { TRANSTYPE, DEBOUNCE_DURATION } from 'utils/settings';
+import { converter } from 'utils/helper';
+import { debounce } from 'lodash';
 import style from './index.less';
 
-const MinGasLimit = 21000;
+const MIN_GAS_LIMIT = 21000;
 @inject(stores => ({
   language: stores.languageIntl.language,
   minGasPrice: stores.sendTransParams.minGasPrice,
@@ -21,7 +22,7 @@ class AdvancedOptionForm extends Component {
   }
 
   checkGasLimit = (rule, value, callback) => {
-    if (Number.isInteger(value) && value >= MinGasLimit) {
+    if (Number.isInteger(value) && value >= MIN_GAS_LIMIT) {
       callback();
     } else {
       callback(intl.get('AdvancedOptionForm.gasLimitIsIncorrect'));
@@ -36,15 +37,35 @@ class AdvancedOptionForm extends Component {
     }
   }
 
-  checkInputData = (rule, value, callback) => {
+  checkInputData = debounce((rule, value, callback) => {
     value = value.toString().trim();
     if ((/^0x([0-9a-fA-F]{2})*$/g).test(value)) {
+      this.estimateGas();
       callback();
     } else if ((/^0x/g).test(value)) {
       callback(intl.get('AdvancedOptionForm.inputDataIsIncorrect'));
     } else {
+      this.estimateGas();
       callback();
     }
+  }, DEBOUNCE_DURATION)
+
+  estimateGas = () => {
+    const { estimateGas, form } = this.props;
+    const inputs = form.getFieldsValue(['nonce', 'gasPrice', 'gasLimit', 'inputData']);
+    estimateGas(inputs).then(result => {
+      if (result) {
+        const { gas, data } = result;
+        converter(data, 'hex', 'utf8').then(res => {
+          let inputData = form.getFieldValue('inputData');
+          if (res === inputData) {
+            form.setFieldsValue({
+              gasLimit: Math.max(gas, MIN_GAS_LIMIT)
+            });
+          }
+        });
+      }
+    });
   }
 
   handleCancel = () => {
@@ -75,6 +96,8 @@ class AdvancedOptionForm extends Component {
     const { visible, form, minGasPrice, from, transParams, transType, chain } = this.props;
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
+    const isToken = transType === TRANSTYPE.tokenTransfer;
+
     return (
       <Modal
         destroyOnClose={true}
@@ -89,24 +112,31 @@ class AdvancedOptionForm extends Component {
         ]}
       >
         <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-          <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}> {
-            getFieldDecorator('gasPrice', { initialValue: gasPrice, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasPriceIsIncorrect') }] })
-              (<InputNumber min={minGasPrice} />)
-          }
+          <Form.Item label={intl.get('AdvancedOptionForm.gasPrice') + ' (' + (chain === 'ETH' ? 'Gwei' : intl.get('AdvancedOptionForm.gwin')) + ')'}>
+            {
+              getFieldDecorator('gasPrice', { initialValue: gasPrice, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasPriceIsIncorrect') }] })
+                (<InputNumber min={minGasPrice} />)
+            }
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.gasLimit')}>
-            {getFieldDecorator('gasLimit', { initialValue: gasLimit, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasLimitIsIncorrect'), validator: this.checkGasLimit }] })
-              (<InputNumber />)}
+            {
+              getFieldDecorator('gasLimit', { initialValue: gasLimit, rules: [{ required: true, message: intl.get('AdvancedOptionForm.gasLimitIsIncorrect'), validator: this.checkGasLimit }] })
+                (<InputNumber />)
+            }
           </Form.Item>
           <Form.Item label={intl.get('AdvancedOptionForm.nonce')}>
-            {getFieldDecorator('nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
-              (<InputNumber min={0} />)}
+            {
+              getFieldDecorator('nonce', { initialValue: nonce, rules: [{ required: true, message: intl.get('AdvancedOptionForm.nonceIsIncorrect'), validator: this.checkNonce }] })
+                (<InputNumber min={0} />)
+            }
           </Form.Item>
-          <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
-            {getFieldDecorator(
-              'inputData', { initialValue: data, rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
-              (<Input.TextArea disabled={transType === TRANSTYPE.tokenTransfer} />)}
-          </Form.Item>
+          {!isToken && <Form.Item label={intl.get('AdvancedOptionForm.inputData')}>
+            {
+              getFieldDecorator(
+                'inputData', { initialValue: data, rules: [{ required: true, message: intl.get('AdvancedOptionForm.inputDataIsIncorrect'), validator: this.checkInputData }] })
+                (<Input.TextArea disabled={isToken} />)
+            }
+          </Form.Item>}
         </Form>
       </Modal>
     );

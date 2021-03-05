@@ -52,7 +52,7 @@ class EthAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} walletID={record.wid} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>
     }
   ];
 
@@ -96,6 +96,7 @@ class EthAccount extends Component {
       nonce: params.nonce,
       data: params.data
     };
+
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, function (err, txHash) {
         if (err) {
@@ -162,17 +163,17 @@ class EthAccount extends Component {
   }
 
   render() {
-    const { getAllAmount, getAddrList } = this.props;
+    const { getAllAmount, getAddrList, language } = this.props;
     const components = {
       body: {
         cell: EditableCell,
         row: EditableFormRow,
       },
     };
-
-    this.props.language && this.columnsTree.forEach(col => {
+    language && this.columnsTree.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
-    })
+    });
+
     return (
       <div className="account">
         <Row className="title">

@@ -3,11 +3,9 @@ import { message, Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { TRANSTYPE } from 'utils/settings';
-import NormalTransForm from 'components/NormalTransForm';
 import TokenNormalTransForm from 'components/NormalTransForm/TokenNormalTransForm';
 import { getNonce, getGasPrice, getBalanceByAddr } from 'utils/helper';
 
-const CollectionCreateForm = Form.create({ name: 'NormalTransForm' })(NormalTransForm);
 const TokenCollectionCreateForm = Form.create({ name: 'TokenNormalTransForm' })(TokenNormalTransForm);
 
 @inject(stores => ({
@@ -84,10 +82,10 @@ class SendTokenNormalTrans extends Component {
   render() {
     const { visible, loading, spin } = this.state;
     const { tokenAddr, transType, balance } = this.props;
+
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
-        { visible && !tokenAddr && <CollectionCreateForm balance={balance} tokenAddr={tokenAddr} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
         { visible && tokenAddr && <TokenCollectionCreateForm balance={balance} transType={transType} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx}/> }
       </div>
     );

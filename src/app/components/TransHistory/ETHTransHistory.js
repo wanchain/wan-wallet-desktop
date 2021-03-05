@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Table, Select } from 'antd';
 
 import history from 'static/image/history.png';
-import { ETHMAIN, ETHTESTNET, TRANSTYPE } from 'utils/settings';
+import { ETHMAIN, ETHTESTNET } from 'utils/settings';
 
 const Option = Select.Option;
 
@@ -15,7 +15,6 @@ const Option = Select.Option;
   historyList: stores.ethAddress.historyList,
   selectedAddr: stores.ethAddress.selectedAddr,
   transColumns: stores.languageIntl.transColumns,
-  tokenTransferHistoryList: stores.ethAddress.tokenTransferHistoryList,
   setCurrPage: page => stores.ethAddress.setCurrPage(page),
   setSelectedAddr: addr => stores.ethAddress.setSelectedAddr(addr)
 }))
@@ -37,18 +36,11 @@ class ETHTransHistory extends Component {
   }
 
   render () {
-    const { addrInfo, historyList, name, transType, tokenTransferHistoryList } = this.props;
-    let dataSource;
+    const { addrInfo, historyList, name } = this.props;
     let addrList = [];
 
     if (name) {
       name.forEach(val => { addrList = addrList.concat(Object.entries(addrInfo[val]).map(v => ({ address: v[0], name: v[1].name }))) });
-    }
-
-    if (transType === TRANSTYPE.tokenTransfer) {
-      dataSource = tokenTransferHistoryList;
-    } else {
-      dataSource = historyList;
     }
 
     return (
@@ -70,7 +62,7 @@ class ETHTransHistory extends Component {
           </Select>
         </div>
         <div className="historyRow">
-          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.props.transColumns} dataSource={dataSource} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+          <Table onRow={record => ({ onClick: this.onClickRow.bind(this, record) })} columns={this.props.transColumns} dataSource={historyList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
         </div>
       </div>
     );

@@ -1249,3 +1249,35 @@ export const getStoremanAddrByGpk1 = function (gpk) {
   const compressed = pubkey.getPublic(true, 'hex');
   return keypairs.deriveAddress(compressed.toUpperCase())
 }
+
+export const estimateGasForNormalTrans = function (param) {
+  return new Promise((resolve, reject) => {
+    param.isSend = false;
+    wand.request('transaction_normal', param, (err, ret) => {
+      if (err) {
+        resolve(false);
+      } else {
+        if (ret.code) {
+          resolve({
+            data: ret.result.data,
+            gas: (ret.result || {}).estimateGas || false
+          });
+        } else {
+          resolve(false);
+        }
+      }
+    });
+  });
+};
+
+export const converter = function (str, from, to) {
+  return new Promise((resolve, reject) => {
+    wand.request('transaction_converter', { str, from, to }, (err, ret) => {
+      if (err) {
+        resolve(false);
+      } else {
+        resolve(ret);
+      }
+    });
+  });
+}

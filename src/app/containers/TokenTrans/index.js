@@ -127,6 +127,7 @@ class TokenTrans extends Component {
     let params = this.props.transParams[from];
     const { chain, symbol, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(chain);
+
     if (addrInfo === undefined) {
       message.warn(intl.get('Unknown token type')); // To do : i18n
       return;
@@ -150,6 +151,7 @@ class TokenTrans extends Component {
         token: params.token
       }
     };
+
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'ledger':

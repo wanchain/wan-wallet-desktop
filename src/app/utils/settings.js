@@ -105,4 +105,5 @@ export const DECIMALS = {
   XRP: 6
 }
 
-export const MINXRPBALANCE = '20'
+export const MINXRPBALANCE = '20';
+export const DEBOUNCE_DURATION = 600;

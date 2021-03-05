@@ -63,7 +63,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} walletID={record.wid} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '13%'
     },
     {

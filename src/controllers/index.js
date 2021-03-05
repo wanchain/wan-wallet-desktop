@@ -1,21 +1,21 @@
-import fs from 'fs'
-import _ from 'lodash'
-import path from 'path'
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 import Web3 from 'web3';
 import keccak from 'keccak';
-import fsExtra from 'fs-extra'
+import fsExtra from 'fs-extra';
 import wanUtil from 'wanchain-util';
 import Identicon from 'identicon.js';
 import BigNumber from 'bignumber.js';
 import bs58check from 'bs58check';
-import { ipcMain as ipc, app } from 'electron'
-import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk'
+import { ipcMain as ipc, app } from 'electron';
+import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk';
 import sleep from 'ko-sleep';
-import Logger from '~/src/utils/Logger'
-import setting from '~/src/utils/Settings'
+import Logger from '~/src/utils/Logger';
+import setting from '~/src/utils/Settings';
 import { dateFormat } from '~/src/app/utils/support';
-import { Windows, walletBackend } from '~/src/modules'
-import menuFactoryService from '~/src/services/menuFactory'
+import { Windows, walletBackend } from '~/src/modules';
+import menuFactoryService from '~/src/services/menuFactory';
 
 const web3 = new Web3();
 const ethUtil = require('ethereumjs-util');
@@ -23,24 +23,24 @@ const logger = Logger.getLogger('controllers');
 const COIN_ACCOUNT = '0x0000000000000000000000000000000000000000';
 
 // route consts
-const ROUTE_PHRASE = 'phrase'
-const ROUTE_WALLET = 'wallet'
-const ROUTE_ADDRESS = 'address'
-const ROUTE_ACCOUNT = 'account'
-const ROUTE_TX = 'transaction'
-const ROUTE_QUERY = 'query'
-const ROUTE_STAKING = 'staking'
-const ROUTE_CROSSCHAIN = 'crossChain'
-const ROUTE_DAPPSTORE = 'dappStore'
-const ROUTE_SETTING = 'setting'
-const ROUTE_STOREMAN = 'storeman'
+const ROUTE_PHRASE = 'phrase';
+const ROUTE_WALLET = 'wallet';
+const ROUTE_ADDRESS = 'address';
+const ROUTE_ACCOUNT = 'account';
+const ROUTE_TX = 'transaction';
+const ROUTE_QUERY = 'query';
+const ROUTE_STAKING = 'staking';
+const ROUTE_CROSSCHAIN = 'crossChain';
+const ROUTE_DAPPSTORE = 'dappStore';
+const ROUTE_SETTING = 'setting';
+const ROUTE_STOREMAN = 'storeman';
 
 // db collection consts
-const DB_NORMAL_COLLECTION = 'normalTrans'
-const DB_BTC_COLLECTION = 'crossTransBtc'
+const DB_NORMAL_COLLECTION = 'normalTrans';
+const DB_BTC_COLLECTION = 'crossTransBtc';
 
 // wallet path consts
-const WANBIP44Path = "m/44'/5718350'/0'/0/"
+const WANBIP44Path = "m/44'/5718350'/0'/0/";
 
 // chain ID consts
 const WAN_ID = 5718350;
@@ -1046,12 +1046,14 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
     switch (action) {
         case 'normal':
             try {
-                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite } = payload
+                let { walletID, chainType, symbol, path, to, amount, gasPrice, gasLimit, nonce, data, satellite, isSend = undefined } = payload
                 let from = await hdUtil.getAddress(walletID, chainType, path);
                 let fromAddr = from.address;
+
                 if (fromAddr.indexOf('0x') === -1) {
                     fromAddr = '0x' + fromAddr;
                 }
+
                 let input = {
                     symbol: symbol,
                     from: fromAddr,
@@ -1062,13 +1064,12 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     BIP44Path: path,
                     walletID: walletID,
                     nonce: nonce,
-                    data: str2Hex(data),
+                    data: converter(data, 'utf8', 'hex'),
                     satellite: satellite
                 }
-
                 logger.info('Normal transaction: ' + JSON.stringify(input));
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, chainType);
-                ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
+                ret = await global.crossInvoker.invokeNormalTrans(srcChain, input, isSend);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
                 logger.error('Failed to send transaction: ' + e.message || e.stack)
@@ -1268,6 +1269,18 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 ret = await ccUtil.estimateSmartFee(payload.chainType);
             } catch (e) {
                 logger.error('estimateSmartFee failed:')
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_TX, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'converter':
+            try {
+                const { str, from, to } = payload;
+                ret = converter(str, from, to);
+            } catch (e) {
+                logger.error('convert failed:')
                 logger.error(e.message || e.stack)
                 err = e
             }
@@ -2795,10 +2808,16 @@ const getChainIdByType = function (type, isTestNet = false) {
     }
     return ID;
 }
-const str2Hex = (str = '0x') => {
+
+const converter = (str, from, to) => {
     str = str.trim();
-    if (/^0x/.test(str)) {
-        return str;
+    if (from === 'hex') {
+        if (/^0x/.test(str)) {
+            str = str.substr(2);
+        }
+        return Buffer.from(str, from).toString(to);
     }
-    return '0x' + Buffer.from(str, 'utf8').toString('hex');
+    if (to === 'hex') {
+        return '0x' + Buffer.from(str, 'utf8').toString('hex');
+    }
 }

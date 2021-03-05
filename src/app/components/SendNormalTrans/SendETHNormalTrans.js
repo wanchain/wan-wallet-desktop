@@ -64,12 +64,13 @@ class SendETHNormalTrans extends Component {
 
   render () {
     const { visible, loading, spin } = this.state;
+    const { balance, walletID } = this.props;
 
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>{intl.get('Common.send')}</Button>
         { visible &&
-          <CollectionCreateForm tokenAddr={this.props.tokenAddr} balance={this.props.balance} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
+          <CollectionCreateForm balance={balance} walletID={walletID} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin}/>
         }
       </div>
     );
