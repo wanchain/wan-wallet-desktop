@@ -8,7 +8,8 @@ import style from './index.less';
   language: stores.languageIntl.language,
   tokensList: stores.tokens.tokensList,
   addCustomToken: tokenInfo => stores.tokens.addCustomToken(tokenInfo),
-  initTokenIcon: obj => stores.tokens.initTokenIcon(obj)
+  initTokenIcon: obj => stores.tokens.initTokenIcon(obj),
+  updateTokenIDs: () => stores.portfolio.updateTokenIDs(),
 }))
 
 @observer
@@ -53,7 +54,7 @@ class AddToken extends Component {
   }
 
   handleAddToken = () => {
-    const { tokensList, addCustomToken, initTokenIcon, chain } = this.props;
+    const { tokensList, addCustomToken, initTokenIcon, updateTokenIDs, chain } = this.props;
     let { tokenAddr, tokenInfo } = this.state;
     tokenAddr = tokenAddr.toLowerCase();
     const key = `${Number('0x80000000'.toString(10)) + (chain === 'WAN' ? 5718350 : 60)}-${tokenAddr}`;
@@ -77,6 +78,7 @@ class AddToken extends Component {
       } else {
         addCustomToken(token);
         initTokenIcon(token);
+        updateTokenIDs();
         message.success(intl.get('TransHistory.success'));
       }
       this.props.onCloseAll();

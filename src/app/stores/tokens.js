@@ -349,6 +349,10 @@ class Tokens {
     return list.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }
 
+  @computed get allTokenAddress() {
+    return Object.keys(this.tokensList).map(key => key.split('-')[1]);
+  }
+
   @computed get getWalletTokenList() {
     return this.walletTokensList.slice();
   }

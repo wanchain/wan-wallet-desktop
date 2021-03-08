@@ -17,10 +17,12 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   xrpAddrInfo: stores.xrpAddress.addrInfo,
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
+  tokensList: stores.tokens.tokensList,
   getMnemonic: () => stores.session.getMnemonic(),
   checkUpdateDB: () => stores.session.checkUpdateDB(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getTokenPairs: () => stores.crossChain.getTokenPairs(),
+  updateTokenIDs: () => stores.portfolio.updateTokenIDs(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
   updateETHBalance: newBalanceArr => stores.ethAddress.updateETHBalance(newBalanceArr),
@@ -90,6 +92,8 @@ class Layout extends Component {
           }
           await this.props.getTokensInfo();
           await this.props.getTokenPairs();
+          this.props.updateTokenIDs();
+
           this.setState({
             initializeStep: 'Layout.initSuccess',
             loading: false

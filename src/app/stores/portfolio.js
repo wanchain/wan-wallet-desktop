@@ -1,14 +1,12 @@
 import { observable, action, computed, runInAction, makeObservable } from 'mobx';
 import axios from 'axios';
 import intl from 'react-intl-universal';
-
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
 import tokens from './tokens';
-
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
@@ -44,11 +42,7 @@ class Portfolio {
     }
   };
 
-  @observable specificTokenId_from_CoinGeckoAPI = {
-    FNX: 'finnexus',
-  }
-
-  @observable tokenIds_from_CoinGeckoAPI = {}
+  @observable tokenIds_CoinGecko = {}
 
   @observable coinList = {};
 
@@ -58,6 +52,20 @@ class Portfolio {
 
   @action setCoin() {
     self.coinList = Object.assign({}, self.getToken);
+  }
+
+  @action updateTokenIDs() {
+    wand.request('address_getRegisteredCoinGecko', { address: [...tokens.allTokenAddress] }, (err, data) => {
+      if (err) {
+        console.log('updateTokenIDs failed:', err);
+      } else {
+        let obj = {};
+        (data instanceof Array ? data : []).forEach(item => {
+          obj[item.symbol] = item.id;
+        });
+        this.tokenIds_CoinGecko = obj;
+      }
+    });
   }
 
   @computed get getToken() {
@@ -76,59 +84,25 @@ class Portfolio {
     return obj;
   }
 
-  @action updateCoinsList_from_CoinGeckoAPI() {
-    axios({
-      method: 'GET',
-      url: 'https://api.coingecko.com/api/v3/coins/list'
-    })
-      .then(res => {
-        if (res.status === 200) {
-          runInAction(() => {
-            for (let obj of res.data) {
-              this.tokenIds_from_CoinGeckoAPI[obj.symbol] = obj.id
-            }
-            this.updateCoinPrice();
-          })
-        } else {
-          console.log('Get coin list failed!');
-          setTimeout(() => {
-            this.updateCoinsList_from_CoinGeckoAPI();
-          }, 5000);
-        }
-      })
-      .catch((error) => {
-        console.log('Get coin list from coingecko failed!', error);
-        setTimeout(() => {
-          this.updateCoinsList_from_CoinGeckoAPI();
-        }, 5000);
-      });
-  }
-
   @action updateCoinPrice() {
     let param = Object.keys(self.coinList).map(key => {
       let item = self.coinList[key];
-      if (key in self.defaultCoinList) {
-        return key
-      } else {
-        return item.ancestor ? item.ancestor : item.symbol;
-      }
+      return item.ancestor ? item.ancestor : item.symbol;
     });
     param = Array.from(new Set(param.concat(Object.keys(self.defaultCoinList))));
     let reconvertIds = {};
     for (let v of param) {
-      if (v in self.specificTokenId_from_CoinGeckoAPI) {
-        reconvertIds[self.specificTokenId_from_CoinGeckoAPI[v]] = v;
-      } else if (v.toLowerCase() in self.tokenIds_from_CoinGeckoAPI) {
-        reconvertIds[self.tokenIds_from_CoinGeckoAPI[v.toLowerCase()]] = v;
+      if (v.toLowerCase() in self.tokenIds_CoinGecko) {
+        reconvertIds[self.tokenIds_CoinGecko[v.toLowerCase()]] = v;
       }
     }
-    let convertedParam = Object.keys(reconvertIds);
-    if (convertedParam.length === 0) return;
+    let ID_arr = Object.keys(reconvertIds);
+    if (ID_arr.length === 0) return;
     axios({
       method: 'GET',
       url: 'https://api.coingecko.com/api/v3/simple/price',
       params: {
-        ids: convertedParam.join(),
+        ids: ID_arr.join(),
         vs_currencies: 'usd',
       }
     })

@@ -889,6 +889,21 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
             break;
 
+        case 'getRegisteredCoinGecko':
+            {
+                let ret;
+                try {
+                    let { address } = payload;
+                    ret = await ccUtil.getRegisteredCoinGecko({ address });
+                } catch (e) {
+                    console.log('getRegisteredCoinGecko Error:', e);
+                    logger.error(e.message || e.stack);
+                    err = e;
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err, data: ret });
+            }
+            break;
+
     }
 })
 
