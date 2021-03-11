@@ -21,6 +21,7 @@ import {
   CrossETH,
   CrossBTC,
   CrossEOS,
+  CrossXRP,
   MoreCrossChain,
   DApps,
   DAppMarket,
@@ -49,6 +50,7 @@ export default () => {
           <Route path="/crossETH/:tokenPairId" component={CrossETH} />
           <Route path="/crossBTC/:tokenPairId" component={CrossBTC} />
           <Route path="/crossEOS/:tokenPairId" component={CrossEOS} />
+          <Route path="/crossXRP/:tokenPairId" component={CrossXRP} />
           <Route path="/moreCrossChain" component={MoreCrossChain} />
           <Route path="/settings" component={Settings} />
           <Route path="/trezor" component={Trezor} />

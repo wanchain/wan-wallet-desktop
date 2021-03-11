@@ -16,6 +16,7 @@ export { default as CrossChain } from './CrossChain';
 export { default as CrossWAN } from './CrossChain/CrossWAN';
 export { default as CrossETH } from './CrossChain/CrossETH';
 export { default as CrossBTC } from './CrossChain/CrossBTC';
+export { default as CrossXRP } from './CrossChain/CrossXRP';
 export { default as MoreCrossChain } from './CrossChain/MoreCrossChain';
 export { default as AddDApp } from './AddDApp';
 export { default as DApps } from './DApps';

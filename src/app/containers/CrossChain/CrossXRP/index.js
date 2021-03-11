@@ -10,6 +10,7 @@ import { INBOUND, OUTBOUND } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import useTokenPairsInfo from 'hooks/useTokenPairsInfo';
 import XRPTrans from 'components/CrossChain/SendCrossChainTrans/XRPTrans';
+import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossXRPHistory';
 
 const CrossXRP = observer(({ match }) => {
   const { languageIntl, xrpAddress: { getNormalAddrList }, tokens } = useContext(MobXProviderContext)
@@ -107,7 +108,7 @@ const CrossXRP = observer(({ match }) => {
         </Row>
         <Row className="mainBody">
           <Col>
-            {/** <CrossChainTransHistory name={['normal']} symbol='ETH' /> */ }
+            <CrossChainTransHistory name={['normal']} symbol='XRP' />
           </Col>
         </Row>
     </div>

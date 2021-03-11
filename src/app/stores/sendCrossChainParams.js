@@ -43,7 +43,8 @@ class SendCrossChainParams {
       walletID: 1,
       path: ''
     },
-    toAddr: ''
+    toAddr: '',
+    networkFee: '0'
   };
 
   @observable gasLimit = GASLIMIT;

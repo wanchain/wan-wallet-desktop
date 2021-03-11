@@ -2122,6 +2122,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
+
+        case 'estimateNetworkFee':
+          try {
+              let { chainType, feeType, options } = payload
+              ret = await ccUtil.estimateNetworkFee(chainType, feeType, options);
+          } catch (e) {
+              logger.error('estimateNetworkFee failed:')
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
     }
 })
 

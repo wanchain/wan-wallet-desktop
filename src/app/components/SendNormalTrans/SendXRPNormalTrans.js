@@ -8,7 +8,7 @@ import XRPNormalTransForm from 'components/NormalTransForm/XRPNormalTrans/XRPNor
 
 const CollectionCreateForm = Form.create({ name: 'XRPNormalTransForm' })(XRPNormalTransForm);
 
-const SendETHNormalTrans = observer(({ record }) => {
+const SendXRPNormalTrans = observer(({ record }) => {
   const { orignBalance, address: from, path, balance } = record
   const { languageIntl, session, sendTransParams: { updateXRPTransParams, XRPTransParams } } = useContext(MobXProviderContext)
   const [visible, setVisible] = useState(false);
@@ -67,4 +67,4 @@ const SendETHNormalTrans = observer(({ record }) => {
   );
 })
 
-export default SendETHNormalTrans;
+export default SendXRPNormalTrans;
