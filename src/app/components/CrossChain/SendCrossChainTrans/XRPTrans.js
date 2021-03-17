@@ -10,12 +10,13 @@ import CrossXRPForm from 'components/CrossChain/CrossChainTransForm/CrossXRPForm
 const CollectionCreateForm = Form.create({ name: 'CrossXRPForm' })(CrossXRPForm);
 
 const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }) => {
-  const { languageIntl, sendCrossChainParams: { updateRecord, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
+  const { languageIntl, crossChain, sendCrossChainParams: { updateRecord, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
   const [visible, toggleVisible] = useToggle(false);
 
   const showModal = () => {
     updateRecord(Object.assign(record, { type }));
-    updateXRPTransParams({ from: { walletID: 1, path: record.path }, fromAddr: record.address });
+    const chainType = type === INBOUND ? crossChain.currentTokenPairInfo.fromChainSymbol : crossChain.currentTokenPairInfo.toChainSymbol;
+    updateXRPTransParams({ from: { walletID: 1, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
     toggleVisible()
   }
 
@@ -25,10 +26,16 @@ const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }
       crossType: CROSS_TYPE[0],
       to: XRPCrossTransParams.to,
       from: XRPCrossTransParams.from,
-      value: XRPCrossTransParams.value,
       storeman: XRPCrossTransParams.groupId,
-      smgXrpAddr: XRPCrossTransParams.groupAddr,
-      networkFee: XRPCrossTransParams.networkFee,
+    }
+    if (type === INBOUND) {
+      input.value = XRPCrossTransParams.value;
+      input.smgXrpAddr = XRPCrossTransParams.groupAddr;
+      input.networkFee = XRPCrossTransParams.networkFee;
+    } else {
+      input.amount = XRPCrossTransParams.value;
+      input.gasPrice = XRPCrossTransParams.gasPrice;
+      input.gasLimit = XRPCrossTransParams.gasLimit;
     }
     const info = type === INBOUND ? {
       sourceSymbol: tokenPairsInfo.fromChainSymbol,

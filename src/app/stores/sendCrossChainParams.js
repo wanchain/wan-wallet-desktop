@@ -1,5 +1,5 @@
 import { observable, action, computed, makeObservable } from 'mobx';
-import { CROSS_TYPE } from 'utils/settings';
+import { CROSS_TYPE, FAST_GAS } from 'utils/settings';
 import session from './session';
 
 const GASLIMIT = 21000;
@@ -44,7 +44,11 @@ class SendCrossChainParams {
       path: ''
     },
     toAddr: '',
-    networkFee: '0'
+    networkFee: '0',
+    gasPrice: 1,
+    gasLimit: FAST_GAS,
+    chainType: '',
+    tokenPairID: ''
   };
 
   @observable gasLimit = GASLIMIT;

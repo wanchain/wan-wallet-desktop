@@ -9,6 +9,8 @@ const MinGasLimit = 21000;
   language: stores.languageIntl.language,
   minGasPrice: stores.sendCrossChainParams.minGasPrice,
   transParams: stores.sendCrossChainParams.transParams,
+  XRPCrossTransParams: stores.sendCrossChainParams.XRPCrossTransParams,
+  updateXRPTransParams: paramsObj => stores.sendCrossChainParams.updateXRPTransParams(paramsObj),
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
 }))
 
@@ -33,7 +35,7 @@ class AdvancedCrossChainOptionForm extends Component {
 
   handleSave = () => {
     this.setState({ loading: true });
-    let { from, form, updateTransParams, onSave } = this.props;
+    let { from, form, updateTransParams, onSave, updateXRPTransParams, symbol } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         this.setState({ loading: false });
@@ -41,7 +43,7 @@ class AdvancedCrossChainOptionForm extends Component {
       };
       const { gasPrice, gasLimit } = values;
       try {
-        updateTransParams(from, { gasPrice, gasLimit });
+        symbol === 'XRP' ? updateXRPTransParams({ gasPrice, gasLimit }) : updateTransParams(from, { gasPrice, gasLimit });
         this.setState({ loading: false });
         onSave(gasPrice, gasLimit);
       } catch (e) {
@@ -52,9 +54,9 @@ class AdvancedCrossChainOptionForm extends Component {
   }
 
   render() {
-    const { form, minGasPrice, from, transParams, chainType } = this.props;
+    const { form, minGasPrice, from, transParams, chainType, XRPCrossTransParams, symbol } = this.props;
     const { getFieldDecorator } = form;
-    const { gasPrice, gasLimit } = transParams[from];
+    const { gasPrice, gasLimit } = symbol === 'XRP' ? XRPCrossTransParams : transParams[from];
     return (
       <Modal
         destroyOnClose={true}

@@ -5,7 +5,7 @@ import { observer, MobXProviderContext } from 'mobx-react';
 
 import style from '../index.less';
 
-const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, fee, toName }) => {
+const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, userNetWorkFee, toName, crosschainNetWorkFee }) => {
   const { languageIntl, sendCrossChainParams: { XRPCrossTransParams, record } } = useContext(MobXProviderContext)
   const { getFieldDecorator } = form;
   const [loading, setLoading] = useState(false);
@@ -43,8 +43,12 @@ const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, fee,
           {getFieldDecorator('amount', { initialValue: XRPCrossTransParams.value })
             (<Input disabled={true} />)}
         </Form.Item>
-        <Form.Item label={intl.get('NormalTransForm.fee')}>
-          {getFieldDecorator('fee', { initialValue: fee })
+        <Form.Item label={intl.get('CrossChainTransForm.userNetworkFee')}>
+          {getFieldDecorator('userNetWorkFee', { initialValue: userNetWorkFee })
+            (<Input disabled={true} />)}
+        </Form.Item>
+        <Form.Item label={intl.get('CrossChainTransForm.crossChainNetworkFee')}>
+          {getFieldDecorator('crosschainNetWorkFee', { initialValue: crosschainNetWorkFee })
             (<Input disabled={true} />)}
         </Form.Item>
       </Form>

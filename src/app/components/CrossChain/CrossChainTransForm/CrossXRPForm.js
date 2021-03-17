@@ -1,4 +1,3 @@
-import { throttle } from 'lodash';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import React, { useState, useContext, useMemo, useEffect } from 'react';
@@ -11,12 +10,14 @@ import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
+import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
 import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo } from 'utils/helper';
-import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 
-const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
+const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
+const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOptionForm' })(outboundOptionForm);
 
 const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const { languageIntl, crossChain, tokens, session: { settings }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
@@ -24,28 +25,36 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const { type, name, balance, address } = record;
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [receivedAmount, setReceivedAmount] = useState('0');
+  const [advancedVisible, setAdvancedVisible] = useState(false);
+  const [sendAll, setSendAll] = useState(false);
+
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getOpenStoremanGroupList', [], true);
-  const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_estimateNetworkFee', '0', true, { chainType: 'XRP', feeType: 'lock', options: { toChainType: 'WAN' } });
+  const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_estimateNetworkFee', '0', true, { chainType: 'XRP', feeType: type === INBOUND ? 'lock' : 'release', options: { toChainType: toChainSymbol } });
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
+  const { status: fetchGasPrice, value: gasPrice } = useAsync('query_getGasPrice', '0', type === OUTBOUND, { chainType: toChainSymbol });
 
   const info = type === INBOUND ? {
+    feeSymbol: fromChainSymbol,
     desChain: toChainSymbol,
     toAccountList: tokens.getChainAddressInfoByChain(toChainSymbol),
     title: <p>{fromTokenSymbol}@{fromChainName} <Icon type="arrow-right" /> {toTokenSymbol}@{toChainName}</p>,
     unit: fromTokenSymbol,
     feeUnit: fromChainSymbol,
+    toUnit: toTokenSymbol
   } : {
+    feeSymbol: toChainSymbol,
     desChain: fromChainSymbol,
     toAccountList: tokens.getChainAddressInfoByChain(fromChainSymbol),
     title: <p>{toTokenSymbol}@{toChainName} <Icon type="arrow-right" /> {fromTokenSymbol}@{fromChainName}</p>,
     unit: toTokenSymbol,
-    feeUnit: toChainSymbol
+    feeUnit: toChainSymbol,
+    toUnit: fromTokenSymbol
   }
 
   const spin = useMemo(() => {
-    return [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus].includes('pending');
-  }, [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus])
+    return [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus].includes('pending');
+  }, [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus])
 
   const maxQuota = useMemo(() => {
     return formatNumByDecimals(quotaList[0].maxQuota, ancestorDecimals)
@@ -55,13 +64,32 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     return formatNumByDecimals(quotaList[0].minQuota, ancestorDecimals)
   }, [quotaList])
 
-  const totalFeeInUSD = useMemo(() => {
-    if ((typeof coinPriceObj === 'object') && fromChainSymbol in coinPriceObj) {
-      return `${new BigNumber(estimatedFee).times(coinPriceObj[fromChainSymbol]).toString(10)} USD`;
+  const fee = useMemo(() => {
+    let tmp;
+    if (type === INBOUND) {
+      tmp = estimatedFee;
     } else {
-      return `${estimatedFee} ${fromChainSymbol}`;
+      tmp = new BigNumber(gasPrice).div(BigNumber(10).pow(9)).times(XRPCrossTransParams.gasLimit).div(BigNumber(10).pow(9)).toString(10);
     }
-  }, [estimatedFee])
+    return tmp;
+  }, [estimatedFee, gasPrice, XRPCrossTransParams.gasLimit])
+
+  const totalFeeInUSD = useMemo(() => {
+    let symbol = type === INBOUND ? fromChainSymbol : toChainSymbol;
+    if ((typeof coinPriceObj === 'object') && symbol in coinPriceObj) {
+      return `${new BigNumber(fee).times(coinPriceObj[symbol]).toString(10)} USD`;
+    } else {
+      return `${fee} ${symbol}`;
+    }
+  }, [fee, coinPriceObj]);
+
+  const userNetWorkFee = useMemo(() => {
+    return `${fee} ${info.feeSymbol}`
+  }, [fee])
+
+  const crosschainNetWorkFee = useMemo(() => {
+    return `${formatNumByDecimals(networkFee, ancestorDecimals)} ${info.unit}`
+  }, [networkFee])
 
   useEffect(() => {
     if (form.getFieldValue('amount')) {
@@ -95,14 +123,13 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     if (fetchFeeStatus === 'error') {
       message.warn(intl.get('network.down'));
     }
-  }, [fetchGroupListStatus, fetchQuotaStatus, fetchFeeStatus])
+    if (fetchGasPrice === 'error') {
+      message.warn(intl.get('network.down'));
+    }
+  }, [fetchGroupListStatus, fetchQuotaStatus, fetchFeeStatus, fetchGasPrice])
 
   const addressSelections = Object.keys(info.toAccountList.normal);
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
-  const useAvailableBalance = useMemo(() => {
-    let tmp = new BigNumber(balance).minus(estimatedFee).minus(MINXRPBALANCE);
-    return tmp.lt(0) ? '0' : tmp.toString(10);
-  }, [balance])
 
   const handleNext = () => {
     form.validateFields(err => {
@@ -158,7 +185,6 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
   const checkAmount = (rule, value, callback) => {
     try {
-      console.log(value, 'iiiiiiiiiiiiiiiii')
       const message = intl.get('NormalTransForm.amountIsIncorrect');
       if (new BigNumber(value).lte(0) || !checkAmountUnit(6, value)) {
         callback(message);
@@ -173,29 +199,42 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         callback(intl.get('CrossChainTransForm.overQuota'))
         return;
       }
-      throttle(() => {
-        console.log(value, 'zzzzzzzzzzzzzzzzzzzzzzzzz')
-        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) })
-        if (new BigNumber(useAvailableBalance).minus(value).lt(0)) {
+
+      if (type === INBOUND) {
+        if (new BigNumber(balance).minus(MINXRPBALANCE).minus(value).lt(0)) {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
-        callback();
-      }, 20000, {
-        leading: true,
-        trailing: false
-      })()
+        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) })
+      } else {
+        if (new BigNumber(balance).minus(value).lt(0)) {
+          callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+          return;
+        }
+        setReceivedAmount(new BigNumber(value).minus(formatNumByDecimals(networkFee, ancestorDecimals)).toString(10));
+      }
+      callback();
     } catch (err) {
       callback(message);
     }
   }
 
-  const sendAllAmount = () => {
-    console.log('sendAllAmount')
+  const sendAllAmount = e => {
+    if (e.target.checked) {
+      setSendAll(true);
+      let availableBalance = type === INBOUND ? new BigNumber(balance).minus(MINXRPBALANCE).toString(10) : balance
+      form.setFieldsValue({ amount: availableBalance }, () => {
+        form.validateFields(['amount'], { force: true });
+      });
+    } else {
+      setSendAll(false)
+      form.setFieldsValue({ amount: 0 });
+    }
   }
 
-  const handleConfirmCancel = () => {
-    setConfirmVisible(false);
+  const handleOutBoundSaveOption = (gasPrice, gasLimit) => {
+    updateXRPTransParams({ gasPrice, gasLimit });
+    setAdvancedVisible(false);
   }
 
   return (
@@ -270,7 +309,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               suffix={<Tooltip title={
                 <table className={style['suffix_table']}>
                   <tbody>
-                    <tr><td>{intl.get('CrossChainTransForm.userNetworkFee')}:</td><td>{`${estimatedFee} ${info.unit}`}</td></tr>
+                    <tr><td>{intl.get('CrossChainTransForm.userNetworkFee')}:</td><td>{userNetWorkFee}</td></tr>
                   </tbody>
                 </table>
               }><Icon type="exclamation-circle" /></Tooltip>}
@@ -289,26 +328,25 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               colSpan={6}
               formName='receive'
               disabled={true}
-              options={{ initialValue: `${receivedAmount} ${info.unit}` }}
+              options={{ initialValue: `${receivedAmount} ${info.toUnit}` }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('CrossChainTransForm.youWillReceive')}
               suffix={<Tooltip title={
                 <table className={style['suffix_table']}>
                   <tbody>
-                    <tr><td>{intl.get('CrossChainTransForm.crossChainNetworkFee')}:</td><td>{`${networkFee} ${info.unit}`}</td></tr>
+                    <tr><td>{intl.get('CrossChainTransForm.crossChainNetworkFee')}:</td><td>{crosschainNetWorkFee}</td></tr>
                   </tbody>
                 </table>
               }><Icon type="exclamation-circle" /></Tooltip>}
             />
-            {type === OUTBOUND && (<Checkbox onChange={sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
+            <Checkbox checked={sendAll} onChange={sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
             {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
+            {type === OUTBOUND && <p className="onAdvancedT"><span onClick={() => setAdvancedVisible(true)}>{intl.get('NormalTransForm.advancedOptions')}</span></p>}
           </div>
         </Spin>
       </Modal>
-      {
-        confirmVisible &&
-        <Confirm visible={true} fee={estimatedFee} onCancel={handleConfirmCancel} sendTrans={onSend} toName={form.getFieldValue('to')}/>
-      }
+      { confirmVisible && <Confirm visible={true} userNetWorkFee={userNetWorkFee} crosschainNetWorkFee={crosschainNetWorkFee} onCancel={() => setConfirmVisible(false)} sendTrans={onSend} toName={form.getFieldValue('to')}/> }
+      { advancedVisible && type === OUTBOUND && <AdvancedOutboundOptionForm symbol={'XRP'} chainType={toChainSymbol} onCancel={() => setAdvancedVisible(false)} onSave={handleOutBoundSaveOption} from={address} />}
     </React.Fragment>
   )
 });
