@@ -1911,9 +1911,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
-                console.log('----------------------');
-                console.log('srcChain:', srcChain);
-                console.log('dstChain:', dstChain);
+                if (destinationSymbol === 'XRP') {
+                  input.LedgerVersion = await ccUtil.getLedgerVersion(destinationSymbol);
+                }
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
@@ -2123,10 +2123,10 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'estimateNetworkFee':
+        case 'getCrossChainFees':
           try {
-              let { chainType, feeType, options } = payload
-              ret = await ccUtil.estimateNetworkFee(chainType, feeType, options);
+              let { chainType, chainIds } = payload
+              ret = await ccUtil.getCrossChainFees(chainType, chainIds);
           } catch (e) {
               logger.error('estimateNetworkFee failed:')
               logger.error(e.message || e.stack)

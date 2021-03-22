@@ -86,7 +86,7 @@ const CrossXRP = observer(({ match }) => {
     tokens.updateTokensBalance(tokenPairsInfo.toAccount, tokenPairsInfo.toChainSymbol);
     let timer = setInterval(() => { tokens.updateTokensBalance(tokenPairsInfo.toAccount, tokenPairsInfo.toChainSymbol) }, 5000);
     return () => clearInterval(timer)
-  }, [])
+  }, [match.params.tokenPairId])
 
   return (
     <div className="account">

@@ -12,7 +12,7 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
-import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE } from 'utils/settings';
+import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
 import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo } from 'utils/helper';
 
@@ -21,7 +21,7 @@ const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOpt
 
 const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const { languageIntl, crossChain, tokens, session: { settings }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
-  const { toChainSymbol, fromTokenSymbol, fromChainName, toTokenSymbol, toChainName, fromChainSymbol, ancestorDecimals } = crossChain.currentTokenPairInfo
+  const { toChainSymbol, fromTokenSymbol, fromChainName, toTokenSymbol, toChainName, fromChainSymbol, ancestorDecimals, fromChainID, toChainID } = crossChain.currentTokenPairInfo
   const { type, name, balance, address } = record;
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [receivedAmount, setReceivedAmount] = useState('0');
@@ -29,7 +29,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [sendAll, setSendAll] = useState(false);
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getOpenStoremanGroupList', [], true);
-  const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_estimateNetworkFee', '0', true, { chainType: 'XRP', feeType: type === INBOUND ? 'lock' : 'release', options: { toChainType: toChainSymbol } });
+  const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_getCrossChainFees', '0', true, { chainType: 'XRP', chainIds: [fromChainID, toChainID] });
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
   const { status: fetchGasPrice, value: gasPrice } = useAsync('query_getGasPrice', '0', type === OUTBOUND, { chainType: toChainSymbol });
@@ -88,7 +88,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [fee])
 
   const crosschainNetWorkFee = useMemo(() => {
-    return `${formatNumByDecimals(networkFee, ancestorDecimals)} ${info.unit}`
+    return `${formatNumByDecimals(networkFee.lockFee, ancestorDecimals)} ${info.unit}`
   }, [networkFee])
 
   useEffect(() => {
@@ -100,14 +100,14 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   useEffect(() => {
     let groupId = smgList[0] ? smgList[0].groupId : '0x';
     if (groupId === '0x') return;
-    executeGetQuota({ chainType: fromChainSymbol, groupId, symbolArray: fromTokenSymbol })
+    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
     updateXRPTransParams({ groupAddr: getStoremanAddrByGpk1(smgList[0][`gpk${Number(smgList[0].curve2 === '0') + 1}`]), groupId: smgList[0].groupId, groupName: hexCharCodeToStr(smgList[0].groupId) })
   }, [smgList])
 
   useEffect(() => {
     if (fetchFeeStatus === 'success') {
       let value = form.getFieldValue('amount');
-      setReceivedAmount(new BigNumber(value).minus(estimatedFee).minus(formatNumByDecimals(networkFee, ancestorDecimals)).toString(10))
+      setReceivedAmount(new BigNumber(value).minus(formatNumByDecimals(networkFee.lockFee, ancestorDecimals)).toString(10))
     }
   }, [fetchFeeStatus])
 
@@ -139,10 +139,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       };
       const { pwd, amount } = form.getFieldsValue(['pwd', 'amount']);
       const isNativeAccount = addressSelections.concat(accountSelections).includes(form.getFieldValue('to'));
-      const toPathPrefix = type === INBOUND ? WANPATH : XRPPATH;
+      const desPath = info.desChain === 'WAN' ? WANPATH : ETHPATH;
+      const toPathPrefix = type === INBOUND ? desPath : XRPPATH;
       const to = isNativeAccount ? { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` } : form.getFieldValue('to');
       const toAddr = isNativeAccount ? getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) : form.getFieldValue('to');
-      const params = { value: amount, to, toAddr, networkFee }
+      const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -164,7 +165,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }
 
   const updateLockAccounts = groupId => {
-    executeGetQuota({ chainType: fromChainSymbol, groupId, symbolArray: fromTokenSymbol })
+    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
     const smgInfo = smgList.find(v => v.groupId === groupId) || {};
     updateXRPTransParams({ groupAddr: getStoremanAddrByGpk1(smgInfo[`gpk${Number(smgInfo.curve2 === '0') + 1}`]), groupId, groupName: hexCharCodeToStr(smgInfo.groupId) });
   }
@@ -190,8 +191,9 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         callback(message);
         return;
       }
-      if (new BigNumber(value).lt(minQuota)) {
-        let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${minQuota} ${type === INBOUND ? fromTokenSymbol : toTokenSymbol}`;
+      if (new BigNumber(value).lt(minQuota) || new BigNumber(value).lte(formatNumByDecimals(networkFee.lockFee, ancestorDecimals))) {
+        let val = Math.max(value, formatNumByDecimals(networkFee.lockFee, ancestorDecimals))
+        let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${val} ${info.unit}`;
         callback(errText);
         return;
       }
@@ -211,7 +213,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
-        setReceivedAmount(new BigNumber(value).minus(formatNumByDecimals(networkFee, ancestorDecimals)).toString(10));
+        setReceivedAmount(new BigNumber(value).minus(formatNumByDecimals(networkFee.lockFee, ancestorDecimals)).toString(10));
       }
       callback();
     } catch (err) {

@@ -84,7 +84,7 @@
     "styled-components": "^5.2.1",
     "trezor-connect": "8.0.12",
     "uuid": "^3.3.2",
-    "wanchain-js-sdk": "git+https://github.com/wanchain/wanchain-js-sdk.git#1.5-release",
+    "wanchain-js-sdk": "git+https://github.com/wanchain/wanchain-js-sdk.git#1.5-dev",
     "wanchain-util": "git+https://github.com/wanchain/wanchain-util.git#v1.2.1",
     "wanchainjs-tx": "^1.5.0",
     "wanchainjs-util": "^5.2.1",
