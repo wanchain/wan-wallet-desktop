@@ -14,7 +14,9 @@ import xrpAddress from './xrpAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY,
+  FNX_POOL_MAINNET, FNX_POOL_TESTNET, FNX_TOKEN_MAINNET, FNX_TOKEN_TESTNET,
+  CFNX_POOL_MAINNET, CFNX_POOL_TESTNET, CFNX_TOKEN_MAINNET, CFNX_TOKEN_TESTNET } from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -325,6 +327,26 @@ class Tokens {
       if (err) {
         console.log('crossChain_updateTokensInfo: ', err);
       } else {
+        // rewrite for fnx
+        if (value.account === FNX_POOL_TESTNET) {
+          console.log('1');
+          value.account = FNX_TOKEN_TESTNET;
+          value.symbol = 'FNX';
+        }
+        if (value.account === FNX_POOL_MAINNET) {
+          console.log('2');
+          value.account = FNX_TOKEN_MAINNET;
+          value.symbol = 'FNX';
+        }
+        if (value.account === CFNX_POOL_MAINNET) {
+          console.log('3');
+          value.account = CFNX_TOKEN_MAINNET;
+        }
+        if (value.account === CFNX_POOL_TESTNET) {
+          console.log('4');
+          value.account = CFNX_TOKEN_TESTNET;
+        }
+
         this.tokensList[addr] = value;
       }
     });
@@ -499,7 +521,14 @@ class Tokens {
   }
 
   getTokenInfoFromTokensListByAddr(addr) {
-    return Object.values(this.tokensList).find(obj => obj.account === addr);
+    let ret = Object.values(this.tokensList).find(obj => obj.account === addr);
+
+    // add for FNX crosschain
+    if (!ret) {
+      ret = Object.keys(this.tokensList).find(key => key.includes(addr));
+      ret = this.tokensList[ret];
+    }
+    return ret;
   }
 
   getChainAddressInfoByChain(chain) {

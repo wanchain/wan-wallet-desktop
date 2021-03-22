@@ -6,6 +6,7 @@ import { getInfoByAddress } from 'utils/helper';
 import { timeFormat, formatNum, formatNumByDecimals, isSameString } from 'utils/support';
 import { TOKEN_PRIORITY } from 'utils/settings';
 import { message } from 'antd';
+import { FNX_POOL_TESTNET } from '../utils/settings';
 
 class CrossChain {
   @observable currSymbol = '';
@@ -65,6 +66,12 @@ class CrossChain {
             if (v.ancestorSymbol === 'NS') {
               continue;
             }
+
+            // rewrite for testnet FNX
+            if (v.toAccount === FNX_POOL_TESTNET) {
+              v.toTokenSymbol = 'FNX'
+            }
+
             tokenPairs[v.id] = {
               ancestorDecimals: v.ancestorDecimals,
               ancestorSymbol: v.ancestorSymbol,
