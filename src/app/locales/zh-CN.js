@@ -486,7 +486,7 @@ const zh_CN = {
     'CrossChainTransForm.crossType': '跨链类型',
     'CrossChainTransForm.FAST': '极速模式',
     'CrossChainTransForm.HTLC': '安全模式',
-    'CrossChainTransForm.UnderFastMinimum': '低于最小跨连交易额',
+    'CrossChainTransForm.UnderFastMinimum': '最小跨链金额是',
     'CrossChainTransForm.getOperationFeeFailed': '获取手续费用额度失败',
     'CrossChainTransForm.getQuotaFailed': '获取剩余配额数据失败',
     'CrossChainTransForm.getNetworkFeeFailed': '获取网络费用数据失败',

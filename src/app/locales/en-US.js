@@ -486,7 +486,7 @@ const en_US = {
     'CrossChainTransForm.crossType': 'Cross Type',
     'CrossChainTransForm.FAST': 'Rapid Mode',
     'CrossChainTransForm.HTLC': 'Secure Mode',
-    'CrossChainTransForm.UnderFastMinimum': 'Less than the minimum transaction limit',
+    'CrossChainTransForm.UnderFastMinimum': 'The minimum amount is',
     'CrossChainTransForm.getOperationFeeFailed': 'Failed to get operation fee',
     'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
     'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
