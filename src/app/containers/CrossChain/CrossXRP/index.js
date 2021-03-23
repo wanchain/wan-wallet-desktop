@@ -36,7 +36,7 @@ const CrossXRP = observer(({ match }) => {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><XRPTrans record={record} type={INBOUND} tokenPairsInfo={tokenPairsInfo} tokenPairID={match.params.tokenPairId}/></div>
+      render: (text, record) => <div><XRPTrans record={record} type={INBOUND} /></div>
     }
   ];
 
@@ -61,7 +61,7 @@ const CrossXRP = observer(({ match }) => {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><XRPTrans record={record} type={OUTBOUND} tokenPairsInfo={tokenPairsInfo} tokenPairID={match.params.tokenPairId}/></div>
+      render: (text, record) => <div><XRPTrans record={record} type={OUTBOUND} /></div>
     }
   ];
 

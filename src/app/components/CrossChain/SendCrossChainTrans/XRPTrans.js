@@ -9,15 +9,17 @@ import CrossXRPForm from 'components/CrossChain/CrossChainTransForm/CrossXRPForm
 
 const CollectionCreateForm = Form.create({ name: 'CrossXRPForm' })(CrossXRPForm);
 
-const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }) => {
+const XRPTrans = observer(({ record, type }) => {
   const { languageIntl, crossChain, sendCrossChainParams: { updateRecord, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
   const [visible, toggleVisible] = useToggle(false);
+  const tokenPairID = crossChain.currTokenPairId;
+  const tokenPairsInfo = crossChain.tokenPairs[tokenPairID];
 
   const showModal = () => {
     updateRecord(Object.assign(record, { type }));
     const chainType = type === INBOUND ? crossChain.currentTokenPairInfo.fromChainSymbol : crossChain.currentTokenPairInfo.toChainSymbol;
     updateXRPTransParams({ from: { walletID: 1, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
-    toggleVisible()
+    toggleVisible();
   }
 
   const handleSend = () => {
@@ -53,6 +55,7 @@ const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', trans, (err, txHash) => {
         if (err) {
+          console.log('crossChain_crossChain_XRP_err:', err)
           if (err instanceof Object && err.desc && err.desc.includes('ready')) {
             message.warn(intl.get('Common.networkError'));
           } else {
@@ -61,6 +64,7 @@ const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }
           toggleVisible();
         } else {
           if (txHash.code === false) {
+            console.log('crossChain_crossChain_XRP_txHash:', txHash)
             message.warn(intl.get('WanAccount.sendTransactionFailed'));
             toggleVisible();
           } else {
@@ -78,7 +82,7 @@ const XRPTrans = observer(({ record, type, symbol, tokenPairsInfo, tokenPairID }
       <Button type="primary" onClick={showModal}>{intl.get('Common.convert')}</Button>
       {
         visible &&
-        <CollectionCreateForm symbol={symbol} toggleVisible={toggleVisible} onSend={handleSend}/>
+        <CollectionCreateForm toggleVisible={toggleVisible} onSend={handleSend}/>
       }
     </React.Fragment>
   )
