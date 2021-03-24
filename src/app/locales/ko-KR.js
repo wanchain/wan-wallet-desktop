@@ -32,7 +32,7 @@ const ko_KR = {
     'Common.create': '생성',
     'Common.balance': '자산 합계',
     'Common.sendFailed': '네트워크가 안정적이지 않습니다. 다시 시도해보십시오.',
-    'Common.sendFailedForInsufficientFunds': 'Failed to send transaction. Please make sure you have sufficient balance.',
+    'Common.sendFailedForInsufficientFunds': '트랜잭션 전송에 실패했습니다. 잔액을 확인 바랍니다.',
     'Common.networkError': '네트워크 오류가 생겼습니다. 지갑을 리부트 해보십시오',
     'Common.eosTokens': '이오스 토큰',
     'Common.convert': '변환',
@@ -40,7 +40,7 @@ const ko_KR = {
     'Common.storemanGroup': 'Storeman 그룹',
     'Common.chain': '체인',
     'Common.amountTooLow': '최소 합계는 { minAmount } WAN이어야 합니다.',
-    'Common.availableBalance': 'Available Balance is {availableBalance}',
+    'Common.availableBalance': '사용 가능한 잔액은 {availableBalance}',
 
     'Xrp.destinationTag': 'Destination Tag',
 
@@ -453,8 +453,8 @@ const ko_KR = {
     'NormalTransForm.password': '비밀번호',
     'NormalTransForm.pwdIsIncorrect': '비밀번호가 틀렸습니다. ',
     'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
-    'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
-    'NormalTransForm.inputToAddress': 'Please enter recipient address',
+    'NormalTransForm.isNativeBtcAddress': '자신한테 전송 불가 입니다.',
+    'NormalTransForm.inputToAddress': '수신인의 주소를 입력 바랍니다.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',
@@ -462,8 +462,8 @@ const ko_KR = {
     'CrossChainTransForm.txFeeRatio': '비용 비율',
     'CrossChainTransForm.estimateFee': '예상 수수료',
     'CrossChainTransForm.gasFee': '가스 비용',
-    'CrossChainTransForm.userNetworkFee': 'User Network Fee',
-    'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
+    'CrossChainTransForm.userNetworkFee': '사용자 네트워크 수수료',
+    'CrossChainTransForm.crossChainNetworkFee': '크로스체인 네트워크 수수료',
     'CrossChainTransForm.operationFee': '운영 비용',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.overOriginalBalance': '비용이 잔액을 초과합니다. 기존 체인의 잔액을 확인 바랍니다.',
@@ -488,9 +488,9 @@ const ko_KR = {
     'CrossChainTransForm.HTLC': '보안 모드',
     'CrossChainTransForm.UnderFastMinimum': '최소 트랜재션 제한보다 적습니다',
     'CrossChainTransForm.getOperationFeeFailed': '운영비용 가져오기를 실패하였습니다.',
-    'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
-    'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
-    'CrossChainTransForm.youWillReceive': 'You will receive',
+    'CrossChainTransForm.getQuotaFailed': '용량 가져오기를 실패하였습니다.',
+    'CrossChainTransForm.getNetworkFeeFailed': '네트워크 수수료 가져오기를 실패하였습니다.',
+    'CrossChainTransForm.youWillReceive': '당신이 받게 될 것은',
 
     'CrossChain.selectFailed': '선택된 상황을 업데이트함을 실패 하였습니다.',
 
@@ -556,7 +556,7 @@ const ko_KR = {
     'CrossChainTransHistory.sentHashConfirming': '거래 확인중',
     'CrossChainTransHistory.waitingCross': '잠금 요청을 기다리는 중',
     'CrossChainTransHistory.Cancelled': '취소 되었습니다',
-    'CrossChainTransHistory.StoremanLocked': 'Storeman Locked',
+    'CrossChainTransHistory.StoremanLocked': 'Storeman 잠김',
     'CrossChainTransHistory.Success': '성공',
 
     'menuConfig.portfolio': '자산',
@@ -776,9 +776,9 @@ const ko_KR = {
     'Storeman.delegationTopup': '위임 요청하기',
     'Storeman.registration': 'Storeman 등록',
 
-    'MoreAccount.inputSearchText': 'Input search text',
+    'MoreAccount.inputSearchText': '검색 텍스트 입력',
 
-    'Storeman.delegationWarning': 'Notice:  Click "exit" any time before the end of current Storeman cycle to withdraw your WAN back to your wallet at cycle end time.'
+    'Storeman.delegationWarning': '알림: 현재 Storeman 주기가 끝나기 전에 언제든지 "종료"를 클릭하여 주기 종료시간에 지갑으로 WAN을 인출하십시오.'
 }
 
 export default ko_KR;

@@ -3,11 +3,10 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
-
-import style from './index.less';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { checkWanAddr, checkETHAddr, checkBTCAddr, getBalanceByAddr, checkAmountUnit, encodeTransferInput } from 'utils/helper';
+import style from './index.less';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
@@ -91,16 +90,20 @@ class TokenNormalTransForm extends Component {
       message.warn(intl.get('Unknown token type')); // TODO : i18n
       return;
     }
-    form.validateFields(err => {
+    form.validateFields((err, values) => {
       if (err) {
         console.log('TokenNormalTransForm_handleNext', err);
         return;
       };
-      let { pwd, amount: token, transferTo } = form.getFieldsValue(['pwd', 'amount', 'transferTo']);
+      let { pwd, amount: token, transferTo } = values;
       let addrAmount = getBalanceByAddr(from, addrInfo);
       if (new BigNumber(addrAmount).lt(this.state.gasFee) || new BigNumber(balance).lt(token)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
+      }
+
+      if (this.state.advanced) {
+        this.getNewData();
       }
 
       if (settings.reinput_pwd) {
@@ -112,7 +115,7 @@ class TokenNormalTransForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: tokenAddr, transferTo, token })
+            updateTransParams(from, { to: tokenAddr, transferTo, token });
             this.setState({ confirmVisible: true });
           }
         })
@@ -142,7 +145,7 @@ class TokenNormalTransForm extends Component {
     let { transferTo } = form.getFieldsValue(['transferTo']);
     try {
       if (transferTo) {
-        data = this.updateInputData();
+        data = this.getNewData();
       }
       let tx = { from, to: tokenAddr, data, value: '0x0' };
       wand.request('transaction_estimateGas', { chainType: currTokenChain, tx }, (err, gasLimit) => {
@@ -154,18 +157,18 @@ class TokenNormalTransForm extends Component {
         }
       });
     } catch (err) {
-      console.log('updateGasLimit failed', err);
+      console.log('updateGasLimit failed');
     }
   }
 
-  updateInputData = () => {
-    let { form, tokenAddr, from, getTokenInfoFromTokensListByAddr, updateTransParams } = this.props;
+  getNewData = () => {
+    let data = '0x';
+    let { form, tokenAddr, from, getTokenInfoFromTokensListByAddr } = this.props;
     let { transferTo, amount } = form.getFieldsValue(['transferTo', 'amount']);
     let tokenInfo = getTokenInfoFromTokensListByAddr(tokenAddr);
     let decimals = tokenInfo.decimals;
-    let data = encodeTransferInput(transferTo, decimals, amount || 0);
-    updateTransParams(from, { data });
-    console.log('data:', data);
+    data = encodeTransferInput(transferTo, decimals, amount || 0);
+    this.props.updateTransParams(from, { data });
     return data;
   }
 
@@ -239,6 +242,9 @@ class TokenNormalTransForm extends Component {
       this.setState({
         disableAmount: true,
       })
+      if (!this.state.advanced) {
+        this.updateGasLimit();
+      }
     } else {
       form.setFieldsValue({
         amount: 0
@@ -315,7 +321,6 @@ class TokenNormalTransForm extends Component {
               <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </Form>
           </Spin>
-
         </Modal>
 
         <AdvancedOption transType={this.props.transType} visible={advancedVisible} onCancel={this.handleAdvancedCancel} onSave={this.handleSave} from={from} chain={currTokenChain} />

@@ -82,7 +82,11 @@ class AdvancedOptionForm extends Component {
         return;
       };
       try {
-        this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
+        if (this.props.transType === TRANSTYPE.tokenTransfer) {
+          this.props.updateTransParams(from, { gasLimit, gasPrice, nonce });
+        } else {
+          this.props.updateTransParams(from, { gasLimit, gasPrice, nonce, data });
+        }
         this.setState({ loading: false });
         this.props.onSave();
       } catch (e) {
@@ -97,7 +101,6 @@ class AdvancedOptionForm extends Component {
     const { getFieldDecorator } = form;
     const { gasLimit, gasPrice, nonce, data } = transParams[from];
     const isToken = transType === TRANSTYPE.tokenTransfer;
-
     return (
       <Modal
         destroyOnClose={true}

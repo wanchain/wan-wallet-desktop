@@ -64,14 +64,6 @@ class TokenTrans extends Component {
     clearInterval(this.timer);
   }
 
-  componentWillReceiveProps(newProps) {
-    let addr = newProps.match.params.tokenAddr;
-    let chain = newProps.match.params.chain;
-    if (addr !== this.props.currTokenAddr) {
-      this.init(addr, chain);
-    }
-  }
-
   sendLedgerTrans = (path, tx) => {
     message.info(intl.get('Ledger.signTransactionInLedger'));
     let rawTx = {
@@ -129,7 +121,7 @@ class TokenTrans extends Component {
     let addrInfo = getChainAddressInfoByChain(chain);
 
     if (addrInfo === undefined) {
-      message.warn(intl.get('Unknown token type')); // To do : i18n
+      console.log('Unknown token type');
       return;
     }
 
@@ -226,6 +218,7 @@ class TokenTrans extends Component {
         case 'import':
         case 'rawKey':
           wand.request('transaction_tokenNormal', trans, (err, txHash) => {
+            console.log('Token res:', err, txHash);
             if (err) {
               message.warn(intl.get('WanAccount.sendTransactionFailed'));
               reject(false); // eslint-disable-line prefer-promise-reject-errors
@@ -238,7 +231,6 @@ class TokenTrans extends Component {
                 resolve(txHash)
               }
               this.props.getChainStoreInfoByChain(this.props.chain).updateTransHistory();
-              console.log('Tx hash: ', txHash);
             }
           });
           break;

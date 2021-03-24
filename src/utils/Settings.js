@@ -309,8 +309,10 @@ class Settings {
   _get(key) {
     let val = this._db.get(key).value();
     if (!val) {
-      val = defaultConfig[key];
-      this._set(key, defaultConfig[key]);
+      if (key in defaultConfig) {
+        val = defaultConfig[key];
+        this._set(key, defaultConfig[key]);
+      }
     }
     return val;
   }

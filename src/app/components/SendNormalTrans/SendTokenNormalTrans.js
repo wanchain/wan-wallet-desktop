@@ -12,9 +12,7 @@ const TokenCollectionCreateForm = Form.create({ name: 'TokenNormalTransForm' })(
   chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   tokensBalance: stores.tokens.tokensBalance,
-  transParams: stores.sendTransParams.transParams,
   addTransTemplate: (addr, params) => stores.sendTransParams.addTransTemplate(addr, params),
-  updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   updateGasPrice: (...args) => stores.sendTransParams.updateGasPrice(...args),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
@@ -32,7 +30,7 @@ class SendTokenNormalTrans extends Component {
     const { from, path, tokenAddr, chainType, chainId, addTransTemplate, updateTransParams, updateGasPrice, transType, tokensBalance, getChainAddressInfoByChain } = this.props;
     let addrInfo = getChainAddressInfoByChain(chainType);
     if (addrInfo === undefined) {
-      message.warn(intl.get('Unknown token type')); // To do : i18n
+      console.log('Unknown token type');
       return;
     }
 
@@ -41,6 +39,7 @@ class SendTokenNormalTrans extends Component {
       message.warn(intl.get('SendNormalTrans.hasNoBalance') + chainType);
       return;
     }
+
     if (transType === TRANSTYPE.tokenTransfer) {
       if (!tokensBalance[tokenAddr] || tokensBalance[tokenAddr][from] === '0') {
         message.warn(intl.get('SendNormalTrans.hasNoTokenBalance'));

@@ -129,9 +129,10 @@ class OsmDelegateInForm extends Component {
           message.warn(intl.get('NormalTransForm.estimateGasFailed'));
         } else {
           let data = ret.result;
+          data.estimateGas = new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10);
           this.setState({
             gasPrice: data.gasPrice,
-            gasLimit: new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10),
+            gasLimit: data.estimateGas,
             fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
           })
         }

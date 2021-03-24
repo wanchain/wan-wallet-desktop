@@ -283,11 +283,12 @@ class OsmClaim extends Component {
         message.warn(intl.get('NormalTransForm.estimateGasFailed'));
       } else {
         let data = ret.result;
+        data.estimateGas = '1000000';
         this.setState({
           spin: false,
           txParams: {
             gasPrice: data.gasPrice,
-            gasLimit: new BigNumber(data.estimateGas).multipliedBy(1.6).toString(10),
+            gasLimit: data.estimateGas,
             fee: fromWei(new BigNumber(data.gasPrice).multipliedBy(data.estimateGas).toString(10))
           }
         })

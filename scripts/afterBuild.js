@@ -1,3 +1,9 @@
+const os = require('os');
+
 exports.default = function () {
-    return ['upgrade.json'];
+    if(os.type() === 'Windows_NT') {
+        return ['upgrade.json'];
+    } else {
+        return [];
+    }
 }
