@@ -8,7 +8,7 @@ import { BTCMAIN, BTCTESTNET } from 'utils/settings';
 import history from 'static/image/history.png';
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   language: stores.languageIntl.language,
   historyList: stores.btcAddress.historyList,
   transColumns: stores.languageIntl.transBTCColumns,
@@ -23,7 +23,7 @@ class BTCTransHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${BTCMAIN}/tx/${record.key}` : `${BTCTESTNET}/tx/${record.key}`
+    let href = this.props.isMainNetwork ? `${BTCMAIN}/tx/${record.key}` : `${BTCTESTNET}/tx/${record.key}`
     wand.shell.openExternal(href);
   }
 

@@ -9,7 +9,6 @@ import TransInfo from 'componentUtils/TransInfo';
 import history from 'static/image/history.png';
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   crossEOSTrans: stores.crossChain.crossEOSTrans,
   transColumns: stores.languageIntl.transColumns,
@@ -34,8 +33,6 @@ class CrossEOSHistory extends Component {
   }
 
   onClickRow = record => {
-    // let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`
-    // wand.shell.openExternal(href);
     this.setState({ visible: true, record })
   }
 

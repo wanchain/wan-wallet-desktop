@@ -4,12 +4,12 @@ import { observer, inject } from 'mobx-react';
 import { Modal, Button, Col, Row, Input } from 'antd';
 
 import style from './index.less';
-import { MAIN, TESTNET } from 'utils/settings'
+import { WANMAIN, WANTESTNET } from 'utils/settings'
 
 const centerStyle = { textAlign: 'center' };
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   language: stores.languageIntl.language,
 }))
 
@@ -17,7 +17,7 @@ const centerStyle = { textAlign: 'center' };
 class DAppInfo extends Component {
   handleJumpToWebsite = (url, prefix) => {
     if (prefix) {
-      url = this.props.chainId === 1 ? `${MAIN}/address/${url}` : `${TESTNET}/address/${url}`
+      url = this.props.isMainNetwork ? `${WANMAIN}/address/${url}` : `${WANTESTNET}/address/${url}`
     }
     wand.shell.openExternal(url);
   }

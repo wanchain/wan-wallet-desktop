@@ -4,13 +4,13 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
-import { MAIN, TESTNET } from 'utils/settings';
+import { WANMAIN, WANTESTNET } from 'utils/settings';
 import history from 'static/image/history.png';
 
 const Option = Select.Option;
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   historyList: stores.wanAddress.historyList,
@@ -45,13 +45,13 @@ class WANTransHistory extends Component {
   onClickRow = record => {
     let href = '';
     if (this.state.type === 'all') {
-      href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
+      href = this.props.isMainNetwork ? `${WANMAIN}/tx/${record.key}` : `${WANTESTNET}/tx/${record.key}`;
     } else {
       if (record.txHash === '') {
         message.warn('No txHash');
         return false;
       }
-      href = this.props.chainId === 1 ? `${MAIN}/tx/${record.txHash}` : `${TESTNET}/tx/${record.txHash}`;
+      href = this.props.isMainNetwork ? `${WANMAIN}/tx/${record.txHash}` : `${WANTESTNET}/tx/${record.txHash}`;
     }
     wand.shell.openExternal(href);
   }

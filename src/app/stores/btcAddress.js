@@ -1,12 +1,12 @@
 
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS, makeObservable } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import { BigNumber } from 'bignumber.js';
 
 import languageIntl from './languageIntl';
 import { timeFormat, formatNum, formatNumByDecimals } from 'utils/support';
 import { getTypeByWalletId } from 'utils/helper';
-import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, CHAINID, BTCCHAINID } from 'utils/settings';
+import { BTCPATH_MAIN, BTCPATH_TEST, WALLETID, BTCCHAINID, MAIN } from 'utils/settings';
 
 import session from './session';
 
@@ -29,7 +29,7 @@ class BtcAddress {
   }
 
   @computed get btcPath() {
-    return session.chainId === CHAINID.MAIN ? BTCPATH_MAIN : BTCPATH_TEST;
+    return session.isMainNetwork ? BTCPATH_MAIN : BTCPATH_TEST;
   }
 
   @action updateUtxos(newUtxos) {
@@ -130,8 +130,8 @@ class BtcAddress {
     })
   }
 
-  @action getUserAccountFromDB(chainId) {
-    let chainID = chainId === CHAINID.MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
+  @action getUserAccountFromDB(network) {
+    let chainID = network === MAIN ? BTCCHAINID.MAIN : BTCCHAINID.TEST;
     wand.request('account_getAll', { chainID }, (err, ret) => {
       if (err) console.log('Get user from DB failed ', err);
       if (ret.accounts && Object.keys(ret.accounts).length) {

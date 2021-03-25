@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Icon, Select, message, Row, Col, Avatar } from 'antd';
 import style from './index.less';
-import { MAIN, TESTNET, WALLETID } from 'utils/settings'
+import { WANMAIN, WANTESTNET, WALLETID } from 'utils/settings'
 import StakeConfirmForm from 'components/Staking/StakeConfirmForm';
 import { toWei } from 'utils/support.js';
 import { BigNumber } from 'bignumber.js';
@@ -18,7 +18,7 @@ const RIGHT = 18;
 
 @inject(stores => ({
   settings: stores.session.settings,
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   getNormalAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
@@ -359,7 +359,7 @@ class DelegateInForm extends Component {
   }
 
   onClick = () => {
-    let href = this.props.chainId === 1 ? `${MAIN}/vlds` : `${TESTNET}/vlds`;
+    let href = this.props.isMainNetwork ? `${WANMAIN}/vlds` : `${WANTESTNET}/vlds`;
     wand.shell.openExternal(href);
   }
 

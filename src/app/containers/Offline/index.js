@@ -12,7 +12,6 @@ import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx } from 'utils/hel
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),

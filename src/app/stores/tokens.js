@@ -568,7 +568,7 @@ class Tokens {
         pathPrefix = EOSPATH;
         break;
       case 'BTC':
-        if (session.chainId === 1) {
+        if (session.isMainNetwork) {
           pathPrefix = BTCPATH_MAIN;
         } else {
           pathPrefix = BTCPATH_TEST;

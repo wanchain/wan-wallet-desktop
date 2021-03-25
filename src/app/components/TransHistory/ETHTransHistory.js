@@ -9,7 +9,7 @@ import { ETHMAIN, ETHTESTNET } from 'utils/settings';
 const Option = Select.Option;
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   historyList: stores.ethAddress.historyList,
@@ -31,7 +31,7 @@ class ETHTransHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${ETHMAIN}/tx/${record.key}` : `${ETHTESTNET}/tx/${record.key}`
+    let href = this.props.isMainNetwork ? `${ETHMAIN}/tx/${record.key}` : `${ETHTESTNET}/tx/${record.key}`
     wand.shell.openExternal(href);
   }
 

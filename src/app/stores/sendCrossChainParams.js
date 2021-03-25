@@ -114,7 +114,7 @@ class SendCrossChainParams {
   }
 
   @computed get btcFee() {
-    return session.chainId === 1 ? 0.0001 : 0.001;
+    return session.isMainNetwork ? 0.0001 : 0.001;
   }
 }
 

@@ -7,7 +7,7 @@ import style from './index.less';
 
 @inject(stores => ({
     language: stores.languageIntl.language,
-    chainId: stores.session.chainId,
+    isMainNetwork: stores.session.isMainNetwork,
     setImportedUserAccount: (...args) => stores.eosAddress.setImportedUserAccount(...args),
     getUserKeyFromDB: () => stores.eosAddress.getUserKeyFromDB(),
 }))
@@ -27,7 +27,7 @@ class EOSImportAccountForm extends Component {
             };
             const accounts = form.getFieldValue('accounts');
             const path = selectedRow.path.includes(EOSPATH) ? `${selectedRow.path}` : `${EOSPATH}${selectedRow.path}`;
-            const network = this.props.chainId === 1 ? `mainnet` : `testnet`;
+            const network = this.props.isMainNetwork ? `mainnet` : `testnet`;
             const wid = selectedRow.wid;
             this.props.setImportedUserAccount(accounts, network, wid, path, selectedRow.publicKey).then(() => {
                 this.props.getUserKeyFromDB();

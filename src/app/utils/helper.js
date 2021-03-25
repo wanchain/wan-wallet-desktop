@@ -4,7 +4,7 @@ import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
 import bech32 from 'bech32';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, DECIMALS } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, BSCPATH_MAIN, BSCPATH_TEST, DECIMALS, MAIN, CHAINID } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
 
@@ -361,22 +361,34 @@ export const checkWanValidatorAddr = function (address) {
   })
 };
 
-export const getChainId = function () {
+export const getNetwork = function () {
   return new Promise((resolve, reject) => {
     wand.request('query_config', {
       param: 'network'
     }, function (err, val) {
       if (err) {
-        err = 'Failed to get chain ID:' + err;
-        return reject(err);
+        err = 'Failed to get network:' + err;
+        reject(err);
       } else {
-        if (val['network'].includes('main')) {
-          return resolve(1);
-        } else {
-          return resolve(3);
-        }
+        resolve(val['network']);
       }
     });
+  });
+};
+
+export const getChainId = function () {
+  return new Promise((resolve, reject) => {
+    getNetwork()
+      .then(res => {
+        if (res === MAIN) {
+          return resolve(CHAINID.MAIN);
+        } else {
+          return resolve(CHAINID.TEST);
+        }
+      }).catch(err => {
+        err = 'Failed to get chain ID:' + err;
+        return reject(err);
+      });
   });
 };
 

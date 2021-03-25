@@ -11,7 +11,6 @@ const TransForm = Form.create({ name: 'CrossChainTransForm' })(CrossChainTransFo
 
 @inject(stores => {
   return {
-    chainId: stores.session.chainId,
     language: stores.languageIntl.language,
     transParams: stores.sendCrossChainParams.transParams,
     tokenPairs: stores.crossChain.tokenPairs,

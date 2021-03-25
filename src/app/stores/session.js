@@ -1,11 +1,18 @@
-import { observable, action, toJS, makeObservable } from 'mobx';
-import { getChainId } from 'utils/helper';
+import { observable, action, computed, makeObservable } from 'mobx';
+import { MAIN, TESTNET } from 'utils/settings';
+import { getChainId, getNetwork } from 'utils/helper';
 
 class Session {
   @observable hasMnemonicOrNot = false;
 
-  // 1 for main net, 3 for test net
-  @observable chainId = 1;
+  // WAN & ETH: 1 for main net, 3 for test net
+  @observable chainId = 1; // TODO: Delete this param
+
+  @observable network = MAIN; // main, testnet
+
+  @computed get isMainNetwork() {
+    return this.network === MAIN;
+  }
 
   @observable auth = false;
 
@@ -28,6 +35,10 @@ class Session {
     self.chainId = id;
   }
 
+  @action setNetwork(net) {
+    self.network = net;
+  }
+
   @action setIsFirstLogin(value) {
     self.isFirstLogin = value;
   }
@@ -47,9 +58,16 @@ class Session {
   }
 
   @action initChainId() {
-    return getChainId().then((chainId) => {
+    return getChainId().then(chainId => {
       self.chainId = chainId;
       return chainId;
+    });
+  }
+
+  @action initNetwork() {
+    return getNetwork().then(net => {
+      self.network = net;
+      return net;
     });
   }
 

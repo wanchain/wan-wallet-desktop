@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { Table, Select, Radio, message, Icon, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
+import { EOSMAIN, EOSTESTNET } from 'utils/settings';
 import style from './index.less';
 import history from 'static/image/history.png';
 
 const { Option } = Select;
-const MAIN = 'https://bloks.io';
-const TESTNET = 'https://jungle.bloks.io';
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   language: stores.languageIntl.language,
   accountInfo: stores.eosAddress.accountInfo,
   normalHistoryList: stores.eosAddress.normalHistoryList,
@@ -44,7 +43,7 @@ class EOSTransHistory extends Component {
     if (record.status === 'Failed') {
       return;
     }
-    let href = this.props.chainId === 1 ? `${MAIN}/transaction/${record.txHash}` : `${TESTNET}/transaction/${record.txHash}`;
+    let href = this.props.isMainNetwork ? `${EOSMAIN}/transaction/${record.txHash}` : `${EOSTESTNET}/transaction/${record.txHash}`;
     wand.shell.openExternal(href);
   }
 

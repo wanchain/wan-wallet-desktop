@@ -1,4 +1,7 @@
-export const CHAINID = {
+export const MAIN = 'main';
+export const TESTNET = 'testnet';
+
+export const CHAINID = { // WAN, ETH
   MAIN: 1,
   TEST: 3,
 }
@@ -6,6 +9,11 @@ export const CHAINID = {
 export const BTCCHAINID = {
   MAIN: 0,
   TEST: 1,
+}
+
+export const BSCCHAINID = {
+  MAIN: 56,
+  TEST: 97,
 }
 
 export const WALLETID = {
@@ -43,8 +51,8 @@ export const REVOKEWETH_GAS = '250000';
 
 export const FAST_GAS = '350000';
 
-export const MAIN = 'https://www.wanscan.org';
-export const TESTNET = 'https://testnet.wanscan.org';
+export const WANMAIN = 'https://www.wanscan.org';
+export const WANTESTNET = 'https://testnet.wanscan.org';
 
 export const BTCMAIN = 'https://www.blockchain.com/btc';
 export const BTCTESTNET = 'https://www.blockchain.com/btc-testnet';
@@ -64,6 +72,7 @@ export const ETHPATH = "m/44'/60'/0'/0/";
 export const EOSPATH = "m/44'/194'/0'/0/";
 export const XRPPATH = "m/44'/144'/0'/0/";
 export const WANPATH = "m/44'/5718350'/0'/0/";
+export const BSCPATH = "m/44'/60'/0'/0/";
 
 export const STAKEACT = ['StakeIn', 'StakeRegister', 'StakeUpdate', 'StakeAppend', 'StakeUpdateFeeRate'];
 export const OSMSTAKEACT = ['Storeman-stakeIn', 'Storeman-stakeAppend', 'Storeman-stakeOut', 'Storeman-stakeClaim', 'Storeman-stakeIncentiveClaim'];

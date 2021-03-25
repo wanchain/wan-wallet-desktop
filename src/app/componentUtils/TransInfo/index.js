@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { Modal, Button, Col, Row, Input, message, Icon, Tooltip } from 'antd';
-import { MAIN, TESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET, EOSMAIN, EOSTESTNET } from 'utils/settings';
+import { WANMAIN, WANTESTNET, ETHMAIN, ETHTESTNET, BTCMAIN, BTCTESTNET, EOSMAIN, EOSTESTNET } from 'utils/settings';
 import { hexCharCodeToStr } from 'utils/support';
 
 import style from './index.less';
@@ -11,7 +11,7 @@ const COLLEFT = 5;
 const COLRIGHT = 19;
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   language: stores.languageIntl.language,
 }))
 
@@ -25,19 +25,19 @@ class TransInfo extends Component {
     let href = '';
     switch (chain) {
       case 'WAN':
-        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+        href = this.props.isMainNetwork ? `${WANMAIN}/tx/${hash}` : `${WANTESTNET}/tx/${hash}`;
         break;
       case 'ETH':
-        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+        href = this.props.isMainNetwork ? `${WANMAIN}/tx/${hash}` : `${WANTESTNET}/tx/${hash}`;
         break;
       case 'BTC':
-        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+        href = this.props.isMainNetwork ? `${WANMAIN}/tx/${hash}` : `${WANTESTNET}/tx/${hash}`;
         break;
       case 'EOS':
-        href = this.props.chainId === 1 ? `${EOSMAIN}/transaction/${hash}` : `${EOSTESTNET}/transaction/${hash}`;
+        href = this.props.isMainNetwork ? `${EOSMAIN}/transaction/${hash}` : `${EOSTESTNET}/transaction/${hash}`;
         break;
       default:
-        href = this.props.chainId === 1 ? `${MAIN}/tx/${hash}` : `${TESTNET}/tx/${hash}`;
+        href = this.props.isMainNetwork ? `${WANMAIN}/tx/${hash}` : `${WANTESTNET}/tx/${hash}`;
     }
     wand.shell.openExternal(href);
   }

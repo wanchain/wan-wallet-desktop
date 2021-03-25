@@ -8,7 +8,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
-import { WALLETID, TRANSTYPE, MAIN, TESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
+import { WALLETID, TRANSTYPE, WANMAIN, WANTESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor';
 import { formatNum } from 'utils/support';
 import style from './index.less';
@@ -20,6 +20,7 @@ message.config({
 
 @inject(stores => ({
   chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   language: stores.languageIntl.language,
   getTokenAmount: stores.tokens.getTokenAmount,
   currTokenAddr: stores.tokens.currTokenAddr,
@@ -239,20 +240,20 @@ class TokenTrans extends Component {
   }
 
   onClickTokenAddress = () => {
-    let { chainId, tokenAddr, currTokenChain } = this.props;
+    let { isMainNetwork, tokenAddr, currTokenChain } = this.props;
     let prefix = '';
     switch (currTokenChain) {
       case 'WAN':
-        prefix = chainId === 1 ? MAIN : TESTNET;
+        prefix = isMainNetwork ? WANMAIN : WANTESTNET;
         break;
       case 'ETH':
-        prefix = chainId === 1 ? ETHMAIN : ETHTESTNET;
+        prefix = isMainNetwork ? ETHMAIN : ETHTESTNET;
         break;
       case 'BTC':
-        prefix = chainId === 1 ? BTCMAIN : BTCTESTNET;
+        prefix = isMainNetwork ? BTCMAIN : BTCTESTNET;
         break;
       default:
-        prefix = chainId === 1 ? MAIN : TESTNET;
+        prefix = isMainNetwork ? WANMAIN : WANTESTNET;
     }
     wand.shell.openExternal(`${prefix}/token/${tokenAddr}`);
   }

@@ -19,7 +19,8 @@ class App extends Component {
     let id = setInterval(async () => {
       let ready = await isSdkReady();
       if (ready) {
-        stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
+        stores.session.initChainId();
+        stores.session.initNetwork().then(network => stores.btcAddress.getUserAccountFromDB(network));
         stores.session.initSettings();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
@@ -77,6 +78,7 @@ class App extends Component {
         stores.session.setAuth(false);
         // stores.tokens.getTokensInfo();
         stores.session.setChainId(net.includes('main') ? 1 : 3);
+        stores.session.setNetwork(net);
         stores.wanAddress.updateAddress(['ledger', 'trezor']);
         stores.wanAddress.updateTransHistory(true);
         stores.session.setIsFirstLogin(true)

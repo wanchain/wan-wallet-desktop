@@ -4,14 +4,14 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 
 import style from './index.less';
-import { MAIN, TESTNET, TRANSTYPE } from 'utils/settings';
+import { WANMAIN, WANTESTNET, TRANSTYPE } from 'utils/settings';
 
 import history from 'static/image/history.png';
 
 const Option = Select.Option;
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   currTokenChain: stores.tokens.currTokenChain,
@@ -36,7 +36,7 @@ class TransHistory extends Component {
   }
 
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`
+    let href = this.props.isMainNetwork ? `${WANMAIN}/tx/${record.key}` : `${WANTESTNET}/tx/${record.key}`
     wand.shell.openExternal(href);
   }
 

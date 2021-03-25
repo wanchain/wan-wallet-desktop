@@ -9,7 +9,6 @@ import TransInfo from 'componentUtils/TransInfo';
 import history from 'static/image/history.png';
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   crossChainTrans: stores.crossChain.crossChainTrans,
   transColumns: stores.languageIntl.transColumns,

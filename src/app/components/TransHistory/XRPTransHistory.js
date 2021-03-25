@@ -10,7 +10,7 @@ const Option = Select.Option;
 
 const XRPTransHistory = observer(({ name }) => {
   const [selectedAddr, setSelectedAddr] = useState('')
-  const { languageIntl, session: { chainId }, xrpAddress: { addrInfo, historyList, updateTransHistory } } = useContext(MobXProviderContext)
+  const { languageIntl, session: { isMainNetwork }, xrpAddress: { addrInfo, historyList, updateTransHistory } } = useContext(MobXProviderContext)
 
   useEffect(() => {
     updateTransHistory()
@@ -19,7 +19,7 @@ const XRPTransHistory = observer(({ name }) => {
   }, [])
 
   const onClickRow = record => {
-    let href = chainId === 1 ? `${XRPMAIN}/${record.key}` : `${XRPTESTNET}/${record.key}`
+    let href = isMainNetwork ? `${XRPMAIN}/${record.key}` : `${XRPTESTNET}/${record.key}`
     wand.shell.openExternal(href);
   }
 

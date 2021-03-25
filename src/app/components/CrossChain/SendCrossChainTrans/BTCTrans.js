@@ -10,7 +10,6 @@ import CrossBTCForm from 'components/CrossChain/CrossChainTransForm/CrossBTCForm
 const CollectionCreateForm = Form.create({ name: 'CrossBTCForm' })(CrossBTCForm);
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getNormalAmount,
   getTokensListInfo: stores.tokens.getTokensListInfo,

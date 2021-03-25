@@ -17,7 +17,7 @@ const Step = Steps.Step;
 @inject(stores => ({
   pwd: stores.mnemonic.pwd,
   method: stores.mnemonic.method,
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   current: stores.mnemonic.current,
   mnemonic: stores.mnemonic.mnemonic,
   newPhrase: stores.mnemonic.newPhrase,
@@ -101,7 +101,7 @@ class Register extends Component {
   }
 
   done = () => {
-    const { chainId, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, addXRPAddress } = this.props;
+    const { isMainNetwork, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, addXRPAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       this.setState({ loading: true });
       wand.request('phrase_import', { phrase: mnemonic, pwd }, err => {
@@ -119,7 +119,7 @@ class Register extends Component {
               let [wanAddrInfo, ethAddrInfo, btcMainAddInfo, xrpAddrInfo] = await Promise.all([
                 createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
                 createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
-                createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                createBTCAddr(isMainNetwork ? BTCPATH_MAIN : BTCPATH_TEST, 0),
                 createXRPAddr(),
               ]);
               addWANAddress(wanAddrInfo);

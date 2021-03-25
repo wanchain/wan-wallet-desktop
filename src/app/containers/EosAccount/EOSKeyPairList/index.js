@@ -17,7 +17,6 @@ const CHAINID = 194;
   language: stores.languageIntl.language,
   getKeyList: stores.eosAddress.getKeyList,
   accountInfo: stores.eosAddress.accountInfo,
-  chainId: stores.session.chainId,
   updateKeyName: (arr, type) => stores.eosAddress.updateKeyName(arr, type),
 }))
 

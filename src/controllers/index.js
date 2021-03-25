@@ -377,7 +377,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                 try {
                     let { pk, pk2, type } = payload;
                     let wid = WALLET_ID_RAWKEY;
-                    let chainID = getChainIdByType(type.toUpperCase(), network !== 'main');
+                    let chainID = getPathIdByType(type.toUpperCase(), network !== 'main');
                     let rawPriv = (type === 'BTC' || type === 'EOS') ? btcUtil.getHexByPrivateKey(pk) : Buffer.from(pk, 'hex');
                     let address = await hdUtil.getAddressByPrivateKey(wid, type.toUpperCase(), rawPriv);
                     let existAddress = await hdUtil.checkIsExist(((type === 'ETH' || type === 'WAN') ? `0x${address}` : address), chainID);
@@ -2814,7 +2814,7 @@ async function retryRun(func, ...params) {
     throw new Error('rpc get error 30 times reached');
 }
 
-const getChainIdByType = function (type, isTestNet = false) {
+const getPathIdByType = function (type, isTestNet = false) {
     let ID
     switch (type) {
         case 'WAN':
@@ -2823,6 +2823,7 @@ const getChainIdByType = function (type, isTestNet = false) {
         case 'BTC':
             ID = isTestNet ? 1 : 0;
             break;
+        case 'BSC':
         case 'ETH':
             ID = 60;
             break;

@@ -12,7 +12,6 @@ const RedeemForm = Form.create({ name: 'RedeemFromPrivateForm' })(RedeemFromPriv
 
 @inject(stores => ({
   language: stores.languageIntl.language,
-  chainId: stores.session.chainId,
   addrInfo: stores.wanAddress.addrInfo,
   transParams: stores.sendTransParams.transParams,
   updateGasPrice: (...args) => stores.sendTransParams.updateGasPrice(...args),

@@ -10,7 +10,6 @@ import CrossEOSForm from 'components/CrossChain/CrossChainTransForm/CrossEOSForm
 const CollectionCreateForm = Form.create({ name: 'CrossEOSForm' })(CrossEOSForm);
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
   language: stores.languageIntl.language,
   getTokensListInfo: stores.tokens.getTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,

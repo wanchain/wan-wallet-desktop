@@ -5,10 +5,10 @@ import { observer, inject } from 'mobx-react';
 import { cloneDeep } from 'lodash';
 import style from './index.less';
 import history from 'static/image/history.png';
-import { MAIN, TESTNET } from 'utils/settings';
+import { WANMAIN, WANTESTNET } from 'utils/settings';
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   historyList: stores.openstoreman.delegationHistoryList,
@@ -18,7 +18,7 @@ import { MAIN, TESTNET } from 'utils/settings';
 @observer
 class OsmDelegationHistory extends Component {
   onClickRow = record => {
-    let href = this.props.chainId === 1 ? `${MAIN}/tx/${record.key}` : `${TESTNET}/tx/${record.key}`;
+    let href = this.props.isMainNetwork ? `${WANMAIN}/tx/${record.key}` : `${WANTESTNET}/tx/${record.key}`;
     wand.shell.openExternal(href);
   }
 

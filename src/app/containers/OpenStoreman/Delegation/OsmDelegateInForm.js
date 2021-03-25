@@ -8,7 +8,7 @@ import localStyle from './index.less'; // Do not delete this line
 import PwdForm from 'componentUtils/PwdForm';
 import { fromWei, wandWrapper } from 'utils/support.js';
 import { signTransaction } from 'componentUtils/trezor';
-import { MAIN, TESTNET, WALLETID } from 'utils/settings';
+import { WANMAIN, WANTESTNET, WALLETID } from 'utils/settings';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AddrSelectForm from 'componentUtils/AddrSelectForm';
 import DelegationConfirmForm from './DelegationConfirmForm';
@@ -21,7 +21,7 @@ const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'DelegationConfirmForm' })(DelegationConfirmForm);
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  isMainNetwork: stores.session.isMainNetwork,
   settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   storemanConf: stores.openstoreman.storemanConf,
@@ -231,7 +231,7 @@ class OsmDelegateInForm extends Component {
   }
 
   onClick = () => {
-    let href = this.props.chainId === 1 ? `${MAIN}/storemangroups` : `${TESTNET}/storemangroups`;
+    let href = this.props.isMainNetwork ? `${WANMAIN}/storemangroups` : `${WANTESTNET}/storemangroups`;
     wand.shell.openExternal(href);
   }
 

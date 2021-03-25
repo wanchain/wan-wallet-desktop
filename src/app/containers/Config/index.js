@@ -11,7 +11,6 @@ const PwdConfirmForm = Form.create({ name: 'PasswordConfirmForm' })(PasswordConf
 @inject(stores => ({
   settings: stores.session.settings,
   language: stores.languageIntl.language,
-  network: stores.session.chainId === 1 ? 'main' : 'testnet',
   updateSettings: newValue => stores.session.updateSettings(newValue),
 }))
 
