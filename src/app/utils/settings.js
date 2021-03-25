@@ -118,10 +118,10 @@ export const MINXRPBALANCE = '20';
 export const DEBOUNCE_DURATION = 600;
 
 export const FNX_POOL_TESTNET = '0xcbf7eab1639c175545a0d8b24ac47ea36a2720ed';
-export const FNX_POOL_MAINNET = '0xcbf7eab1639c175545a0d8b24ac47ea36a2720ed';
+export const FNX_POOL_MAINNET = '0xdab498c11f19b25611331cebffd840576d1dc86d';
 
 export const FNX_TOKEN_TESTNET = '0x0664b5e161a741bcdec503211beeec1e8d0edb37';
-export const FNX_TOKEN_MAINNET = '0x0664b5e161a741bcdec503211beeec1e8d0edb37';
+export const FNX_TOKEN_MAINNET = '0xef9cd7882c067686691b6ff49e650b43afbbcc6b';
 
 export const CFNX_POOL_TESTNET = '0xfdbc6f64407bd15f36fbedf2dfbd9d93ee61309c';
 export const CFNX_POOL_MAINNET = '0xfdbc6f64407bd15f36fbedf2dfbd9d93ee61309c';
