@@ -25,6 +25,7 @@ const pt_PT = {
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
     'Common.ripple': 'XRPL',
+    'Common.bsc': 'BSC',
     'Common.options': 'Opções',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancelar',

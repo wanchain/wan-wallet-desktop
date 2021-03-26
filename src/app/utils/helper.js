@@ -243,19 +243,6 @@ export const getStoremanGroupList = function (srcChainName, dstChainName) {
   })
 }
 
-export const getStoremanGroupListByChainPair = function (chainId1, chainId2) {
-  return new Promise((resolve, reject) => {
-    wand.request('crossChain_getStoremanGroupListByChainPair', { chainId1, chainId2 }, (err, val) => {
-      if (err) {
-        console.log('Get Smg list3 failed', err)
-        return reject(err);
-      } else {
-        return resolve(val);
-      }
-    });
-  })
-}
-
 export const getReadyOpenStoremanGroupList = function () {
   return new Promise((resolve, reject) => {
     wand.request('storeman_getReadyOpenStoremanGroupList', {}, (err, val) => {
@@ -263,6 +250,9 @@ export const getReadyOpenStoremanGroupList = function () {
         console.log('Get Smg failed', err)
         return reject(err);
       } else {
+        if (val instanceof Array && val.length > 1) {
+          val.sort((front, behind) => front.groupId > behind.groupId);
+        }
         return resolve(val);
       }
     });
@@ -966,6 +956,8 @@ export const getFullChainName = function (chainType = '') {
       return intl.get('Common.eos');
     case 'XRP':
       return intl.get('Common.ripple');
+    case 'BNB':
+      return intl.get('Common.bsc');
   }
 }
 

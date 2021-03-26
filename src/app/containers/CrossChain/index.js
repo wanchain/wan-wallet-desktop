@@ -97,6 +97,7 @@ class CrossChain extends Component {
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };
+
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
@@ -156,7 +157,7 @@ class CrossChain extends Component {
           }
         }
       })
-    })
+    });
   }
 
   inboundColumns = [
@@ -227,7 +228,7 @@ class CrossChain extends Component {
     let fromAddresses = info.fromAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.fromChainSymbol, info.fromChainID) : getTokensListInfo_2way(info.fromChainSymbol, info.fromChainID, info.fromAccount);
     let toAddresses = info.toAccount === COIN_ACCOUNT ? getCoinsListInfo_2way(info.toChainSymbol, info.toChainID) : getTokensListInfo_2way(info.toChainSymbol, info.toChainID, info.toAccount);
 
-    return this.state.error ? <div className="errorComponent">An error occurred in this component.</div> : (<div className="account">
+    return this.state.error ? (<div className="errorComponent">An error occurred in this component.</div>) : (<div className="account">
       <Row className="title">
         <Col span={12} className="col-left"><img className="totalImg" src={getCoinImage(info.ancestorSymbol, info.fromAccount)} /><span className="wanTotal">{info.fromTokenSymbol}</span><span className={style.chain}>{info.fromChainName}</span></Col>
       </Row>

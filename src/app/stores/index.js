@@ -7,6 +7,7 @@ import ethAddress from './ethAddress';
 import eosAddress from './eosAddress';
 import btcAddress from './btcAddress';
 import xrpAddress from './xrpAddress';
+import bnbAddress from './bnbAddress';
 import languageIntl from './languageIntl';
 import sendTransParams from './sendTransParams';
 import sendCrossChainParams from './sendCrossChainParams';
@@ -27,6 +28,7 @@ export default {
   eosAddress,
   btcAddress,
   xrpAddress,
+  bnbAddress,
   sendTransParams,
   sendCrossChainParams,
   staking,

@@ -118,7 +118,21 @@ class CrossChainTransForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
       }
-      let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
+
+      let toPath;
+      if (type === INBOUND) {
+        if (info.toChainSymbol === 'BNB') { // BNB coin type id is the same with ETH, both are 60.
+          toPath = 60;
+        } else {
+          toPath = info.toChainID - Number('0x80000000'.toString(10));
+        }
+      } else {
+        if (info.fromChainSymbol === 'BNB') {
+          toPath = 60;
+        } else {
+          toPath = info.fromChainID - Number('0x80000000'.toString(10));
+        }
+      }
       toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
 
       if (settings.reinput_pwd) {

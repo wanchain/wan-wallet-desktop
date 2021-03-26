@@ -25,6 +25,7 @@ const zh_CN = {
     'Common.bitcoin': '比特币',
     'Common.eos': '柚子链',
     'Common.ripple': '瑞波',
+    'Common.bsc': '币安智能链',
     'Common.options': '选项',
     'Common.cancel': '取消',
     'Common.ok': '确定',

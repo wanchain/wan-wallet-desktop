@@ -158,6 +158,7 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data,
     };
+
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {

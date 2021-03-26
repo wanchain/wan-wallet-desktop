@@ -73,6 +73,8 @@ class SendTransParams {
     self.currentGasPrice = gasPrice;
     if (chainType === 'WAN') {
       self.minGasPrice = 1;
+    } else if (chainType === 'BNB') {
+      self.minGasPrice = Math.max(1, parseInt(Number(gasPrice)));
     } else {
       self.minGasPrice = Math.max(1, parseInt(Number(gasPrice) / 2));
     }

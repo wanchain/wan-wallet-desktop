@@ -12,6 +12,7 @@ export { default as TokenTrans } from './TokenTrans';
 export { default as MoreAccount } from './MoreAccount';
 export { default as EthAccount } from './EthAccount';
 export { default as BtcAccount } from './BtcAccount';
+export { default as BnbAccount } from './BnbAccount';
 export { default as CrossChain } from './CrossChain';
 export { default as CrossWAN } from './CrossChain/CrossWAN';
 export { default as CrossETH } from './CrossChain/CrossETH';

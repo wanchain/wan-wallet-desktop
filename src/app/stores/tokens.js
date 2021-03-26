@@ -6,17 +6,21 @@ import ethImg from 'static/image/eth.png';
 import eosImg from 'static/image/eos.png';
 import xrpImg from 'static/image/xrp.png';
 import wanImg from 'static/image/wan.png';
+import bnbImg from 'static/image/bnb.png';
 import wanAddress from './wanAddress';
 import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
+import bnbAddress from './bnbAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY,
+import {
+  WANPATH, ETHPATH, BSCPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY,
   FNX_POOL_MAINNET, FNX_POOL_TESTNET, FNX_TOKEN_MAINNET, FNX_TOKEN_TESTNET,
-  CFNX_POOL_MAINNET, CFNX_POOL_TESTNET, CFNX_TOKEN_MAINNET, CFNX_TOKEN_TESTNET } from 'utils/settings';
+  CFNX_POOL_MAINNET, CFNX_POOL_TESTNET, CFNX_TOKEN_MAINNET, CFNX_TOKEN_TESTNET
+} from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -77,6 +81,9 @@ class Tokens {
       case 'XRP':
         self.tokenIconList[scAddr] = xrpImg;
         break;
+      case 'BNB':
+        self.tokenIconList[scAddr] = bnbImg;
+        break;
       default:
         if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
           self.tokenIconList[scAddr] = wanImg;
@@ -121,6 +128,7 @@ class Tokens {
   }
 
   getCoinImage = (chain, addr = false) => {
+    console.log('img:', chain)
     let img;
     switch (chain.toUpperCase()) {
       case 'WAN':
@@ -134,6 +142,9 @@ class Tokens {
         break;
       case 'EOS':
         img = eosImg;
+        break;
+      case 'BNB':
+        img = bnbImg;
         break;
       default:
         if (addr) {
@@ -224,7 +235,7 @@ class Tokens {
         name: addresses[item].name,
         address: item,
         balance,
-        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${chain === 'BNB' ? 60 : (Number(chainID) - Number('0x80000000'.toString(10)))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -260,7 +271,7 @@ class Tokens {
         name: addresses[item].name,
         address: item,
         balance,
-        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${Number(chainID) - Number('0x80000000'.toString(10))}'/0'/0/${addresses[item].path}`,
+        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${chain === 'BNB' ? 60 : (Number(chainID) - Number('0x80000000'.toString(10)))}'/0'/0/${addresses[item].path}`,
         action: 'send',
         amount: balance
       });
@@ -304,6 +315,11 @@ class Tokens {
         case 'XRP':
           normalArr = Object.keys(xrpAddress.keyInfo.normal);
           rawKeyArr = Object.keys(xrpAddress.keyInfo.rawKey);
+          break;
+        case 'BNB':
+          normalArr = Object.keys(bnbAddress.addrInfo['normal'] || {});
+          importArr = Object.keys(bnbAddress.addrInfo['import'] || {});
+          rawKeyArr = Object.keys(bnbAddress.addrInfo['rawKey'] || {});
           break;
         default:
         // console.log('Default.....');
@@ -421,6 +437,7 @@ class Tokens {
         } else {
           balance = 0;
         }
+
         addrList.push({
           key: item,
           name: obj[item].name,
@@ -486,6 +503,7 @@ class Tokens {
 
   @computed get getWalletSelections() {
     let selections = {};
+    // console.log('tokensList:', JSON.parse(JSON.stringify(this.tokensList)))
     Object.keys(this.tokensList).forEach(key => {
       let v = this.tokensList[key];
       if (!selections[v.ancestor]) {
@@ -515,6 +533,7 @@ class Tokens {
       }
       selections[v.ancestor].children.push(child);
     });
+
     return Object.values(selections).sort((m, n) => {
       return Number(TOKEN_PRIORITY[m.ancestor] === undefined ? 0 : TOKEN_PRIORITY[m.ancestor]) > Number(TOKEN_PRIORITY[n.ancestor] === undefined ? 0 : TOKEN_PRIORITY[n.ancestor]) ? -1 : 1;
     });
@@ -532,7 +551,7 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress, bnbAddress };
     if (chain === undefined) {
       return undefined;
     }
@@ -547,7 +566,7 @@ class Tokens {
   }
 
   getChainStoreInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress, bnbAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {
@@ -573,6 +592,9 @@ class Tokens {
         } else {
           pathPrefix = BTCPATH_TEST;
         }
+        break;
+      case 'BNB':
+        pathPrefix = BSCPATH;
         break;
       default:
         pathPrefix = WANPATH;

@@ -106,6 +106,26 @@ class Sidebar extends Component {
 
     // Wallet menu
     let walletList = [];
+
+    // Add BNB
+    if (getWalletSelections.every(item => item.key !== 'BNB')) {
+      getWalletSelections.push({
+        ancestor: 'BNB',
+        key: 'BNB',
+        symbol: 'BNB',
+        children: [{
+          account: '0x0000000000000000000000000000000000000000',
+          isCustomToken: false,
+          isOriginalChain: true,
+          key: '/bnbAccount',
+          selected: true,
+          symbol: 'BNB',
+          title: 'BSC',
+          toAccount: '2147483708-0x0000000000000000000000000000000000000000'
+        }]
+      });
+    }
+
     getWalletSelections.forEach(v => {
       if (v.children.length === 0) {
         return false;

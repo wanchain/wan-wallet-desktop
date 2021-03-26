@@ -66,6 +66,9 @@ export const ETHTESTNET = 'https://rinkeby.etherscan.io';
 export const EOSMAIN = 'https://bloks.io';
 export const EOSTESTNET = 'https://jungle.bloks.io';
 
+export const BNBMAIN = 'https://bscscan.com';
+export const BNBTESTNET = 'https://testnet.bscscan.com';
+
 export const BTCPATH_MAIN = "m/44'/0'/0'/0/";
 export const BTCPATH_TEST = "m/44'/1'/0'/0/";
 export const ETHPATH = "m/44'/60'/0'/0/";

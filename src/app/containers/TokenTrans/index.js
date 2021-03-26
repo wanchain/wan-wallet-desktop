@@ -8,7 +8,7 @@ import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendTokenNormalTrans from 'components/SendNormalTrans/SendTokenNormalTrans';
 import { WanTx, WanRawTx } from 'utils/hardwareUtils'
 import { checkAddrType, getWalletIdByType, getFullChainName } from 'utils/helper';
-import { WALLETID, TRANSTYPE, WANMAIN, WANTESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
+import { WALLETID, TRANSTYPE, WANMAIN, WANTESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET, BNBMAIN, BNBTESTNET } from 'utils/settings';
 import { signTransaction } from 'componentUtils/trezor';
 import { formatNum } from 'utils/support';
 import style from './index.less';
@@ -251,6 +251,9 @@ class TokenTrans extends Component {
         break;
       case 'BTC':
         prefix = isMainNetwork ? BTCMAIN : BTCTESTNET;
+        break;
+      case 'BNB':
+        prefix = isMainNetwork ? BNBMAIN : BNBTESTNET;
         break;
       default:
         prefix = isMainNetwork ? WANMAIN : WANTESTNET;

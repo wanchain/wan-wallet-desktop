@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getReadyOpenStoremanGroupList } from 'utils/helper';
 import CrossChainTransForm from 'components/CrossChain/CrossChainTransForm';
 import { INBOUND, FAST_GAS } from 'utils/settings';
 
@@ -17,7 +17,6 @@ const TransForm = Form.create({ name: 'CrossChainTransForm' })(CrossChainTransFo
     currTokenPairId: stores.crossChain.currTokenPairId,
     updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
     addCrossTransTemplate: (addr, params) => stores.sendCrossChainParams.addCrossTransTemplate(addr, params),
-    getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   }
 })
 
@@ -35,7 +34,7 @@ class Trans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, balance, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId, getChainAddressInfoByChain } = this.props;
+    const { from, path, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId } = this.props;
     if (!(currTokenPairId in tokenPairs)) {
       message.error('Token pair ID is missing.');
       return false;
@@ -47,11 +46,7 @@ class Trans extends Component {
     this.setState({ visible: true, spin: true, loading: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {
         this.setState(() => ({ visible: false, spin: false, loading: false }));
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));

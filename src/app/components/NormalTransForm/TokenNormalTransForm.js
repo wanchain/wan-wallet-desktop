@@ -121,7 +121,7 @@ class TokenNormalTransForm extends Component {
         })
       } else {
         if (this.state.advanced) {
-          this.updateInputData();
+          this.getNewData();
         }
         updateTransParams(from, { to: tokenAddr, transferTo, token })
         this.setState({ confirmVisible: true });
@@ -178,9 +178,11 @@ class TokenNormalTransForm extends Component {
       callback(rule.message);
       return;
     }
+
     if (value.toLowerCase() === tokenAddr.toLowerCase()) {
       callback(rule.message);
     }
+
     let checkFunc = null;
     switch (currTokenChain) {
       case 'WAN':
@@ -191,6 +193,9 @@ class TokenNormalTransForm extends Component {
         break;
       case 'BTC':
         checkFunc = checkBTCAddr;
+        break;
+      case 'BNB':
+        checkFunc = checkETHAddr;
         break;
       default:
         callback(rule.message);

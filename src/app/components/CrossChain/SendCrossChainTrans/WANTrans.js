@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { message, Button, Form } from 'antd';
-import { getGasPrice, getStoremanGroupListByChainPair } from 'utils/helper';
+import { getGasPrice, getReadyOpenStoremanGroupList } from 'utils/helper';
 import CrossWANForm from 'components/CrossChain/CrossChainTransForm/CrossWANForm';
 import { FAST_GAS } from 'utils/settings';
 
@@ -40,11 +40,7 @@ class WANTrans extends Component {
     this.setState({ visible: true, loading: true, spin: true });
     addCrossTransTemplate(from, { chainType, path });
     try {
-      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getStoremanGroupListByChainPair(info.fromChainID, info.toChainID)]);
-      smgList = smgList.filter(obj => {
-        let now = Date.now();
-        return obj.status === '5' && (now > obj.startTime * 1000) && (now < obj.endTime * 1000);
-      });
+      let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {
         message.warn(intl.get('SendNormalTrans.smgUnavailable'));
         this.setState({ visible: false, spin: false, loading: false });

@@ -1824,17 +1824,6 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
-        case 'getStoremanGroupListByChainPair':
-            try {
-                let { chainId1, chainId2 } = payload;
-                ret = await ccUtil.getOpenStoremanGroupList({ chainIds: [chainId1, chainId2] });
-            } catch (e) {
-                logger.error('getStoremanGroupListByChainPair failed: ' + e)
-                err = e
-            }
-            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
-            break
-
         case 'getMintQuota':
             try {
                 let { chainType, tokenPairID, storemanGroupID } = payload;
@@ -1851,7 +1840,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 let { chainType, tokenPairID, storemanGroupID } = payload;
                 ret = await ccUtil.getBurnQuota(chainType, tokenPairID, storemanGroupID);
             } catch (e) {
-                logger.error('getStoremanGroupListByChainPair failed: ' + e)
+                logger.error('getBurnQuota failed: ' + e)
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })

@@ -1,7 +1,7 @@
 import { observable, action, computed, makeObservable } from 'mobx';
 import intl from 'react-intl-universal';
 
-import { WALLET_CHAIN, CROSSCHAINTYPE, THIRD_PARTY_OPEN } from 'utils/settings';
+import { THIRD_PARTY_OPEN } from 'utils/settings';
 
 class LanguageIntl {
   @observable language = 'en_US';
@@ -376,11 +376,6 @@ class LanguageIntl {
         key: '/wallet',
         icon: 'wallet',
         children: [],
-        /* children: WALLET_CHAIN.map(item => ({
-          title: item,
-          key: `/${item.toLowerCase()}Account`,
-          icon: 'block'
-        })) */
       },
       {
         title: intl.get('menuConfig.hardwareWallet'),
@@ -406,11 +401,6 @@ class LanguageIntl {
         key: '/crossChain',
         icon: 'wallet',
         children: [],
-        /* children: CROSSCHAINTYPE.map(item => ({
-          title: item,
-          key: `/cross${item}`,
-          icon: 'block'
-        })) */
       },
       {
         title: intl.get('menuConfig.galaxyPos'),

@@ -25,6 +25,7 @@ const en_US = {
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
     'Common.ripple': 'XRPL',
+    'Common.bsc': 'BSC',
     'Common.options': 'Options',
     'Common.ok': 'OK',
     'Common.cancel': 'Cancel',
