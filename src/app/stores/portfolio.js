@@ -55,7 +55,8 @@ class Portfolio {
   }
 
   @action updateTokenIDs() {
-    wand.request('address_getRegisteredCoinGecko', { address: [...tokens.allTokenAddress] }, (err, data) => {
+    let symbols = Array.from(new Set(tokens.allTokenSymbols));
+    wand.request('address_getRegisteredCoinGecko', { symbol: symbols }, (err, data) => {
       if (err) {
         console.log('updateTokenIDs failed:', err);
       } else {
@@ -90,6 +91,9 @@ class Portfolio {
       return item.ancestor ? item.ancestor : item.symbol;
     });
     param = Array.from(new Set(param.concat(Object.keys(self.defaultCoinList))));
+    console.log('param:', param);
+    console.log('tokenIds_CoinGecko:', self.tokenIds_CoinGecko);
+
     let reconvertIds = {};
     for (let v of param) {
       if (v.toLowerCase() in self.tokenIds_CoinGecko) {
@@ -97,6 +101,7 @@ class Portfolio {
       }
     }
     let ID_arr = Object.keys(reconvertIds);
+    console.log('ID:', ID_arr);
     if (ID_arr.length === 0) return;
     axios({
       method: 'GET',
@@ -107,6 +112,7 @@ class Portfolio {
       }
     })
       .then((res) => {
+        console.log('Pricesss:', res)
         if (res.status === 200) {
           runInAction(() => {
             self.coinPriceObj = {};
@@ -176,6 +182,7 @@ class Portfolio {
       portfolio: { value: '0%', writable: true },
       scAddr: { value: self.coinList[key].scAddr, writable: true },
     }));
+
     if (self.coinPriceObj) {
       let amountValue = 0;
       Object.keys(self.coinList).forEach((key, index) => {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Select } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import { WANMAIN, WANTESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET } from 'utils/settings';
+import { WANMAIN, WANTESTNET, BTCMAIN, BTCTESTNET, ETHMAIN, ETHTESTNET, BNBMAIN, BNBTESTNET } from 'utils/settings';
 import history from 'static/image/history.png';
 
 const Option = Select.Option;
@@ -44,6 +44,9 @@ class TokenTransHistory extends Component {
         break;
       case 'BTC':
         href = this.props.isMainNetwork ? `${BTCMAIN}/tx/${record.key}` : `${BTCTESTNET}/tx/${record.key}`;
+        break;
+      case 'BNB':
+        href = this.props.isMainNetwork ? `${BNBMAIN}/tx/${record.key}` : `${BNBTESTNET}/tx/${record.key}`;
         break;
       default:
         href = this.props.isMainNetwork ? `${WANMAIN}/tx/${record.key}` : `${WANTESTNET}/tx/${record.key}`;
