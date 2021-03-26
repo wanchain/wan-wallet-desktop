@@ -510,6 +510,7 @@ const zh_CN = {
     'SendNormalTrans.hasNoWANBalance': '请确保您有足够的WAN',
     'SendNormalTrans.hasNoTokenBalance': '请确保您有足够的token',
     'SendNormalTrans.hasNoETHBalance': '请确保您有足够的ETH',
+    'SendNormalTrans.hasNoBNBBalance': '请确保您有足够的BNB',
     'SendNormalTrans.smgUnavailable': '无可用的storeman组',
 
     'TransHistory.time': '时间',

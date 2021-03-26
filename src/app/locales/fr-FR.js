@@ -510,6 +510,7 @@ const fr_FR = {
     'SendNormalTrans.hasNoWANBalance': 'Veuillez vous assurer d\'avoir un solde WAN suffisant',
     'SendNormalTrans.hasNoTokenBalance': 'Veuillez vous assurer d\'avoir un solde en jeton suffisant',
     'SendNormalTrans.hasNoETHBalance': 'Veuillez vous assurer d\'avoir un solde ETH suffisant',
+    'SendNormalTrans.hasNoBNBBalance': 'Veuillez vous assurer d\'avoir un solde BNB suffisant',
     'SendNormalTrans.smgUnavailable': 'Storeman group pas disponible',
 
     'TransHistory.time': 'Temps',

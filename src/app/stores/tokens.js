@@ -128,7 +128,6 @@ class Tokens {
   }
 
   getCoinImage = (chain, addr = false) => {
-    console.log('img:', chain)
     let img;
     switch (chain.toUpperCase()) {
       case 'WAN':
@@ -534,9 +533,28 @@ class Tokens {
       selections[v.ancestor].children.push(child);
     });
 
-    return Object.values(selections).sort((m, n) => {
+    let result = Object.values(selections).sort((m, n) => {
       return Number(TOKEN_PRIORITY[m.ancestor] === undefined ? 0 : TOKEN_PRIORITY[m.ancestor]) > Number(TOKEN_PRIORITY[n.ancestor] === undefined ? 0 : TOKEN_PRIORITY[n.ancestor]) ? -1 : 1;
     });
+
+    // Add BNB
+    result.push({
+      ancestor: 'BNB',
+      key: 'BNB',
+      symbol: 'BNB',
+      children: [{
+        account: '0x0000000000000000000000000000000000000000',
+        isCustomToken: false,
+        isOriginalChain: true,
+        key: '/bnbAccount',
+        selected: true,
+        symbol: 'BNB',
+        title: 'BSC',
+        toAccount: '2147483708-0x0000000000000000000000000000000000000000'
+      }]
+    });
+
+    return result;
   }
 
   getTokenInfoFromTokensListByAddr(addr) {

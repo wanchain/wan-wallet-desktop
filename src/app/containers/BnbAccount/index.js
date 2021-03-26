@@ -2,26 +2,26 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tag } from 'antd';
-import totalImg from 'static/image/eth.png';
-import TransHistory from 'components/TransHistory/ETHTransHistory';
+import totalImg from 'static/image/bnb.png';
+import TransHistory from 'components/TransHistory/BNBTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
-import SendNormalTrans from 'components/SendNormalTrans/SendETHNormalTrans';
+import SendNormalTrans from 'components/SendNormalTrans/SendBNBNormalTrans';
 import { checkAddrType, hasSameName, getWalletIdByType, createETHAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import WarningExistAddress from 'components/WarningExistAddress';
 
-const CHAINTYPE = 'ETH';
+const CHAINTYPE = 'BNB';
 
 @inject(stores => ({
-  addrInfo: stores.ethAddress.addrInfo,
+  addrInfo: stores.bnbAddress.addrInfo,
   language: stores.languageIntl.language,
-  getAddrList: stores.ethAddress.getAddrList,
-  getAllAmount: stores.ethAddress.getAllAmount,
+  getAddrList: stores.bnbAddress.getAddrList,
+  getAllAmount: stores.bnbAddress.getAllAmount,
   transParams: stores.sendTransParams.transParams,
-  addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
-  updateTransHistory: () => stores.ethAddress.updateTransHistory(),
+  addAddress: newAddr => stores.bnbAddress.addAddress(newAddr),
+  updateTransHistory: () => stores.bnbAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
-  updateName: (arr, type) => stores.ethAddress.updateName(arr, type),
+  updateName: (arr, type) => stores.bnbAddress.updateName(arr, type),
 }))
 
 @observer
@@ -115,11 +115,11 @@ class BnbAccount extends Component {
           console.log('Tx hash: ', txHash);
         }
       }.bind(this));
-    })
+    });
   }
 
   createAccount = () => {
-    const { addAddress, getAddrList } = this.props;
+    /* const { addAddress, getAddrList } = this.props;
 
     if (this.canCreate) {
       try {
@@ -147,7 +147,7 @@ class BnbAccount extends Component {
         this.canCreate = true;
         message.warn(intl.get('WanAccount.createAccountFailed'));
       };
-    }
+    } */
   }
 
   handleSave = row => {
@@ -180,8 +180,8 @@ class BnbAccount extends Component {
           <Col span={12} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
             <span className="wanTotal">{getAllAmount}</span>
-            <span className="wanTex">{'ETH'}</span>
-            <Tag className="symbol">{intl.get('Common.ethereum')}</Tag>
+            <span className="wanTex">{'BNB'}</span>
+            <Tag className="symbol">{intl.get('Common.bsc')}</Tag>
           </Col>
           <Col span={12} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>

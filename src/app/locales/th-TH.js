@@ -510,6 +510,7 @@ const th_TH = {
     'SendNormalTrans.hasNoWANBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ WAN เพียงพอ',
     'SendNormalTrans.hasNoTokenBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของโทเค็นเพียงพอ',
     'SendNormalTrans.hasNoETHBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ ETH เพียงพอ',
+    'SendNormalTrans.hasNoBNBBalance': 'กรุณาตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือของ BNB เพียงพอ',
     'SendNormalTrans.smgUnavailable': 'กลุ่ม Storeman ไม่สามารถใช้งานได้',
 
     'TransHistory.time': 'เวลา',

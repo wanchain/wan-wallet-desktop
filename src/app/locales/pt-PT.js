@@ -510,6 +510,7 @@ const pt_PT = {
     'SendNormalTrans.hasNoWANBalance': 'Por favor,verifique se você possui saldo suificiente em WAN',
     'SendNormalTrans.hasNoTokenBalance': 'Por favor,verifique se você possui saldo suficiente em token',
     'SendNormalTrans.hasNoETHBalance': 'Por favor,verifique se você tem saldo suficiente em ETH',
+    'SendNormalTrans.hasNoBNBBalance': 'Por favor,verifique se você tem saldo suficiente em BNB',
     'SendNormalTrans.smgUnavailable': 'Grupo Storeman indisponível',
 
     'TransHistory.time': 'Tempo',

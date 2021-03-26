@@ -510,6 +510,7 @@ const en_US = {
     'SendNormalTrans.hasNoWANBalance': 'Please make sure you have sufficient WAN balance',
     'SendNormalTrans.hasNoTokenBalance': 'Please make sure you have sufficient token balance',
     'SendNormalTrans.hasNoETHBalance': 'Please make sure you have sufficient ETH balance',
+    'SendNormalTrans.hasNoBNBBalance': 'Please make sure you have sufficient BNB balance',
     'SendNormalTrans.smgUnavailable': 'Storeman group unavailable',
 
     'TransHistory.time': 'TIME',

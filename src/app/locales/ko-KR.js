@@ -510,6 +510,7 @@ const ko_KR = {
     'SendNormalTrans.hasNoWANBalance': '충분한 WAN 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoTokenBalance': '충분한 토큰 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.hasNoETHBalance': '충분한 ETH 잔액이 있는지 확인 바랍니다',
+    'SendNormalTrans.hasNoBNBBalance': '충분한 BNB 잔액이 있는지 확인 바랍니다',
     'SendNormalTrans.smgUnavailable': 'Storeman 그룹 불가능',
 
     'TransHistory.time': '트랜잭션 시간',
