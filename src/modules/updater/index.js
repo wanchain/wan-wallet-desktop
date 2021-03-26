@@ -56,7 +56,7 @@ class WalletUpdater {
             return false;
           }
         } else {
-          this._logger.info('Upgrade.json is not found.');
+          this._logger.info('Upgrade.json is not found or the value of lowestCompatibleVersion is empty.');
           this._logger.info('Normal Upgrade');
           return 'soft';
         }
