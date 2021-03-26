@@ -29,6 +29,7 @@ const XRPTrans = observer(({ record, type }) => {
       to: XRPCrossTransParams.to,
       from: XRPCrossTransParams.from,
       storeman: XRPCrossTransParams.groupId,
+      receivedAmount: XRPCrossTransParams.receivedAmount,
     }
     if (type === INBOUND) {
       input.value = XRPCrossTransParams.value;

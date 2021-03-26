@@ -48,7 +48,8 @@ class SendCrossChainParams {
     gasPrice: 1,
     gasLimit: FAST_GAS,
     chainType: '',
-    tokenPairID: ''
+    tokenPairID: '',
+    receivedAmount: '0'
   };
 
   @observable gasLimit = GASLIMIT;

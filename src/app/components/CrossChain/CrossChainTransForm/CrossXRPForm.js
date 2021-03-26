@@ -14,7 +14,7 @@ import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo } from 'utils/helper';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
 const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOptionForm' })(outboundOptionForm);
@@ -27,6 +27,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [receivedAmount, setReceivedAmount] = useState('0');
   const [advancedVisible, setAdvancedVisible] = useState(false);
   const [sendAll, setSendAll] = useState(false);
+  const [handleNextStatus, setHandleNextStatus] = useState(false);
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getOpenStoremanGroupList', [], true);
   const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_getCrossChainFees', '0', true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, chainIds: [fromChainID, toChainID] });
@@ -38,7 +39,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     feeSymbol: fromChainSymbol,
     desChain: toChainSymbol,
     toAccountList: tokens.getChainAddressInfoByChain(toChainSymbol),
-    title: <p>{fromTokenSymbol}@{fromChainName} <Icon type="arrow-right" /> {toTokenSymbol}@{toChainName}</p>,
+    title: `${fromTokenSymbol}@${fromChainName} -> ${toTokenSymbol}@${toChainName}`,
     unit: fromTokenSymbol,
     feeUnit: fromChainSymbol,
     toUnit: toTokenSymbol
@@ -46,15 +47,15 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     feeSymbol: toChainSymbol,
     desChain: fromChainSymbol,
     toAccountList: tokens.getChainAddressInfoByChain(fromChainSymbol),
-    title: <p>{toTokenSymbol}@{toChainName} <Icon type="arrow-right" /> {fromTokenSymbol}@{fromChainName}</p>,
+    title: `${toTokenSymbol}@${toChainName} -> ${fromTokenSymbol}@${fromChainName}`,
     unit: toTokenSymbol,
     feeUnit: toChainSymbol,
     toUnit: fromTokenSymbol
   }
 
   const spin = useMemo(() => {
-    return [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus].includes('pending');
-  }, [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus])
+    return [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus].includes('pending') || handleNextStatus;
+  }, [fetchGroupListStatus, fetchQuotaStatus, fetchNetworkFeeStatus, fetchGasPrice, fetchFeeStatus, handleNextStatus])
 
   const maxQuota = useMemo(() => {
     return formatNumByDecimals(quotaList[0].maxQuota, ancestorDecimals)
@@ -131,19 +132,26 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const addressSelections = Object.keys(info.toAccountList.normal);
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
+  const checkXRPBalance = (addr, type) => {
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).gte('20') || (new BigNumber(val[addr]).lt('20') && new BigNumber(receivedAmount).gte('20'))).catch(() => false) : Promise.resolve(true)
+  }
+
   const handleNext = () => {
+    setHandleNextStatus(true)
     form.validateFields(err => {
       if (err) {
         console.log('handleNext', err);
+        setHandleNextStatus(false)
         return;
       };
+
       const { pwd, amount } = form.getFieldsValue(['pwd', 'amount']);
       const isNativeAccount = addressSelections.concat(accountSelections).includes(form.getFieldValue('to'));
       const desPath = info.desChain === 'WAN' ? WANPATH : ETHPATH;
       const toPathPrefix = type === INBOUND ? desPath : XRPPATH;
       const to = isNativeAccount ? { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` } : form.getFieldValue('to');
       const toAddr = isNativeAccount ? getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) : form.getFieldValue('to');
-      const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee }
+      const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee, receivedAmount }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -153,13 +161,27 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateXRPTransParams(params);
-            setConfirmVisible(true);
+            checkXRPBalance(toAddr, type).then(ret => {
+              setHandleNextStatus(false)
+              if (ret) {
+                updateXRPTransParams(params);
+                setConfirmVisible(true);
+              } else {
+                message.warn('The destination address is not activated. Please ensure that the amount of destination address is greater than 20')
+              }
+            })
           }
         })
       } else {
-        updateXRPTransParams(params);
-        setConfirmVisible(true);
+        checkXRPBalance(toAddr, type).then(ret => {
+          setHandleNextStatus(false)
+          if (ret) {
+            updateXRPTransParams(params);
+            setConfirmVisible(true);
+          } else {
+            message.warn('The destination address is not activated. Please ensure that the amount of destination address is greater than 20')
+          }
+        })
       }
     });
   }
@@ -336,7 +358,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               suffix={<Tooltip title={
                 <table className={style['suffix_table']}>
                   <tbody>
-                    <tr><td>{intl.get('CrossChainTransForm.crossChainNetworkFee')}:</td><td>{crosschainNetWorkFee}</td></tr>
+                    <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{crosschainNetWorkFee}</td></tr>
                   </tbody>
                 </table>
               }><Icon type="exclamation-circle" /></Tooltip>}

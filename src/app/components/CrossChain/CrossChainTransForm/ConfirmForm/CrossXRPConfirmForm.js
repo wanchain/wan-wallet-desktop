@@ -47,7 +47,7 @@ const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, user
           {getFieldDecorator('userNetWorkFee', { initialValue: userNetWorkFee })
             (<Input disabled={true} />)}
         </Form.Item>
-        <Form.Item label={intl.get('CrossChainTransForm.crossChainNetworkFee')}>
+        <Form.Item label={intl.get('CrossChainTransForm.operationFee')}>
           {getFieldDecorator('crosschainNetWorkFee', { initialValue: crosschainNetWorkFee })
             (<Input disabled={true} />)}
         </Form.Item>
