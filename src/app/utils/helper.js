@@ -955,7 +955,7 @@ export const getFullChainName = function (chainType = '') {
     case 'EOS':
       return intl.get('Common.eos');
     case 'XRP':
-      return intl.get('Common.ripple');
+      return intl.get('Common.xrpl');
     case 'BNB':
       return intl.get('Common.bsc');
   }

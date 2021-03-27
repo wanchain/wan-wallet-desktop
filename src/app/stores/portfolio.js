@@ -38,7 +38,7 @@ class Portfolio {
     XRP: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.ripple'),
+      chain: intl.get('Common.xrpl'),
     }
   };
 
