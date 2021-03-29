@@ -91,8 +91,6 @@ class Portfolio {
       return item.ancestor ? item.ancestor : item.symbol;
     });
     param = Array.from(new Set(param.concat(Object.keys(self.defaultCoinList))));
-    console.log('param:', param);
-    console.log('tokenIds_CoinGecko:', self.tokenIds_CoinGecko);
 
     let reconvertIds = {};
     for (let v of param) {
@@ -101,7 +99,6 @@ class Portfolio {
       }
     }
     let ID_arr = Object.keys(reconvertIds);
-    console.log('ID:', ID_arr);
     if (ID_arr.length === 0) return;
     axios({
       method: 'GET',
@@ -112,7 +109,6 @@ class Portfolio {
       }
     })
       .then((res) => {
-        console.log('Pricesss:', res)
         if (res.status === 200) {
           runInAction(() => {
             self.coinPriceObj = {};

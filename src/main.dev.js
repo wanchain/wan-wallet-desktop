@@ -6,7 +6,7 @@
 
 import env from 'dotenv';
 import path from 'path';
-import { app, dialog, shell } from 'electron';
+import { app, shell } from 'electron';
 import setting from '~/src/utils/Settings';
 import menuFactoryService from '~/src/services/menuFactory';
 import i18n, { i18nOptions } from '~/config/i18n';
@@ -40,15 +40,23 @@ function resetOldBtcSymbol() {
   const newBTC = 'wanOBTC';
 
   // mainnet
-  let main_wan_btc = setting.get('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol');
-  if (main_wan_btc === oldBTC) {
-    setting.set('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol', newBTC);
+  let main_wan_btc = setting.get('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7');
+  if (typeof(main_wan_btc) === 'object') {
+    if (main_wan_btc.symbol === undefined) {
+      setting.remove('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7');
+    } else if (main_wan_btc.symbol === oldBTC) {
+      setting.set('settings.main.tokens.2153201998-0xd15e200060fc17ef90546ad93c1c61bfefdc89c7.symbol', newBTC);
+    }
   }
 
   //testnet
-  let test_wan_btc = setting.get('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol');
-  if (test_wan_btc === oldBTC) {
-    setting.set('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol', newBTC);
+  let test_wan_btc = setting.get('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd');
+  if (typeof(test_wan_btc) === 'object') {
+    if (test_wan_btc.symbol === undefined) {
+      setting.remove('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd');
+    } else if (test_wan_btc.symbol === oldBTC) {
+      setting.set('settings.testnet.tokens.2153201998-0x89a3e1494bc3db81dadc893ded7476d33d47dcbd.symbol', newBTC);
+    }
   }
 }
 resetOldBtcSymbol();
