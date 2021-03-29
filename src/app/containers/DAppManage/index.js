@@ -85,7 +85,7 @@ class DAppManage extends Component {
       dataIndex: 'operation',
       render: (text, record) =>
         this.state.rows.length >= 1 ? (
-          <a onClick={() => this.handleDelete(record.key)}>{intl.get('DApp.delButton')}</a>
+          <a className={style['delete']} onClick={() => this.handleDelete(record.key)}>{intl.get('DApp.delButton')}</a>
         ) : null,
     },
   ]
