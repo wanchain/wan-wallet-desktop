@@ -473,6 +473,7 @@ const fr_FR = {
     'CrossChainTransForm.overTransBalance': 'Le montant dépasse le solde.',
     'CrossChainTransForm.transInfo': 'Information de transaction Cross Chain',
     'CrossChainTransForm.invalidAmount': 'Veuillez saisir un montant supérieur ou égal à ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'Le montant dépasse la capacité disponible de Storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'Vers',

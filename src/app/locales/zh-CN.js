@@ -473,6 +473,7 @@ const zh_CN = {
     'CrossChainTransForm.overTransBalance': '账户余额不足',
     'CrossChainTransForm.transInfo': '跨链交易信息',
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
+    'CrossChainTransForm.invalidAmount1': '请输入金额大于 ',
     'CrossChainTransForm.overQuota': '输入的金额超出Storeman的剩余配额',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': '接收方',

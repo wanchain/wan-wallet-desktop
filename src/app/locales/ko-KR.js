@@ -473,6 +473,7 @@ const ko_KR = {
     'CrossChainTransForm.overTransBalance': '금액이 잔액보다 큽니다.',
     'CrossChainTransForm.transInfo': '크로스체인 거래 정보',
     'CrossChainTransForm.invalidAmount': '금액을 같거나 이상으로 입력하십시오: ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': '금액이 상점 storeman의 남은 용량보다 큽니다.',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'To',

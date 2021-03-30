@@ -473,6 +473,7 @@ const th_TH = {
     'CrossChainTransForm.overTransBalance': 'จำนวนมากกว่ายอดคงเหลือ',
     'CrossChainTransForm.transInfo': 'รายละเอียดธุรกรรม Cross Chain',
     'CrossChainTransForm.invalidAmount': 'กรุณากรอกจำนวนที่มากกว่าหรือเท่ากับ ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'จำนวนมากกว่าจำนวนความจุคงเหลือของ Storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'ถึง',

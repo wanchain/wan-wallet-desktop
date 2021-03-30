@@ -226,7 +226,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       }
       if (new BigNumber(value).lt(minQuota) || new BigNumber(value).lte(formatNumByDecimals(networkFee.lockFee, ancestorDecimals))) {
         let val = Math.max(value, formatNumByDecimals(networkFee.lockFee, ancestorDecimals))
-        let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${val} ${info.unit}`;
+        let errText = `${intl.get('CrossChainTransForm.invalidAmount1')}: ${val} ${info.unit}`;
         callback(errText);
         return;
       }

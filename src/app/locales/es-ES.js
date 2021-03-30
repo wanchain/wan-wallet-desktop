@@ -473,6 +473,7 @@ const es_ES = {
     'CrossChainTransForm.overTransBalance': 'La cantidad es mayor que el saldo',
     'CrossChainTransForm.transInfo': 'Información de transacciones de cadena cruzada',
     'CrossChainTransForm.invalidAmount': 'Ingrese una cantidad igual o mayor que ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'La cantidad es mayor que la capacidad restante del Storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'A',

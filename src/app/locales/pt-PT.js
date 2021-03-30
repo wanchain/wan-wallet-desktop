@@ -473,6 +473,7 @@ const pt_PT = {
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
     'CrossChainTransForm.transInfo': 'Informações sobre transações cross-chain',
     'CrossChainTransForm.invalidAmount': 'Insira um valor igual ou superior a',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'A quantidade é maior que a capacidade restante do storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'Para',
