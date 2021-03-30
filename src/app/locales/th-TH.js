@@ -44,6 +44,7 @@ const th_TH = {
     'Common.availableBalance': 'ยอดคงเหลือ {availableBalance}',
 
     'Xrp.destinationTag': 'Tag ปลายทาง',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',

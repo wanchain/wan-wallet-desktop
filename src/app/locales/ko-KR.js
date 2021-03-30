@@ -44,6 +44,7 @@ const ko_KR = {
     'Common.availableBalance': '사용 가능한 잔액은 {availableBalance}',
 
     'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',

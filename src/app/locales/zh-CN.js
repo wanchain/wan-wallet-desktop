@@ -44,6 +44,7 @@ const zh_CN = {
     'Common.availableBalance': '可用金额是{availableBalance}',
 
     'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.notExistAccount': '目标帐户不存在，因此您必须发送至少21个XRP',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',

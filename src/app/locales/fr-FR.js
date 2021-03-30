@@ -44,6 +44,7 @@ const fr_FR = {
     'Common.availableBalance': 'Le solde disponible est {availableBalance}',
 
     'Xrp.destinationTag': 'Balise de destination',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',

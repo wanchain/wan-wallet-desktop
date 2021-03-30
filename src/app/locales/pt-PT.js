@@ -44,6 +44,7 @@ const pt_PT = {
     'Common.availableBalance': 'O saldo disponível é {availableBalance}',
 
     'Xrp.destinationTag': 'Tag de Destino',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',

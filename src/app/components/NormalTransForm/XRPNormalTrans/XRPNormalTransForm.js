@@ -6,7 +6,7 @@ import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin } from 'antd'
 
 import style from '../index.less';
 import useAsync from 'hooks/useAsync';
-import { checkAmountUnit, checkXRPAddr } from 'utils/helper';
+import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 
 const MINBALANCE = '20';
@@ -17,6 +17,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const { languageIntl, session: { settings }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [minSendAmount, setMinSendAmount] = useState('0');
   const [visibleTag, setVisibleTag] = useState(false);
   const { status: estimateSmartFeeStatus, value: estimateSmartFee } = useAsync('transaction_estimateSmartFee', DEFAULTFEE, true, { chainType: 'XRP' });
   const spin = useMemo(() => {
@@ -77,6 +78,12 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
           setVisibleTag(false)
           callback(rule.message)
         }
+      }).then(() => getBalance([value], 'XRP')).then(val => {
+        let value = new BigNumber(Object.values(val)[0])
+        value.minus('21').lt('0') && setMinSendAmount(new BigNumber('21').minus(value).toString(10))
+        if (form.getFieldValue('amount') !== undefined) {
+          form.validateFields(['amount'])
+        }
       }).catch(err => {
         console.log('checkToXRPAddrErr:', err);
         setVisibleTag(false)
@@ -90,15 +97,19 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
 
   const checkAmount = (rule, value, callback) => {
     if (value === undefined) {
-      callback(rule.message);
+      callback(intl.get('NormalTransForm.amountIsIncorrect'));
       return;
     }
     if (new BigNumber(value).lte(0) || !checkAmountUnit(6, value)) {
-      callback(rule.message);
+      callback(intl.get('NormalTransForm.amountIsIncorrect'));
       return;
     }
     if (new BigNumber(useAvailableBalance).minus(value).lt(0)) {
-      callback(rule.message);
+      callback(intl.get('NormalTransForm.amountIsIncorrect'));
+      return;
+    }
+    if (form.getFieldValue('to') && new BigNumber(value).lt(minSendAmount)) {
+      callback(intl.get('Xrp.notExistAccount'))
       return;
     }
     callback();
@@ -161,7 +172,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
             <Form.Item label={intl.get('Common.amount')}>
-              {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: checkAmount }] })
+              {getFieldDecorator('amount', { rules: [{ required: true, validator: checkAmount }] })
                 (<Input disabled={disabledAmount} min={0} placeholder={intl.get('Common.availableBalance', { availableBalance: useAvailableBalance })} prefix={<Icon type="credit-card" className="colorInput" />} />)}
               <Checkbox onChange={sendAllAmount}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
             </Form.Item>
