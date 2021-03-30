@@ -14,7 +14,7 @@ import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance } from 'utils/helper';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
 const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOptionForm' })(outboundOptionForm);
@@ -133,7 +133,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
   const checkXRPBalance = (addr, type) => {
-    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).gte('20') || (new BigNumber(val[addr]).lt('20') && new BigNumber(receivedAmount).gte('20'))).catch(() => false) : Promise.resolve(true)
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).gte('21') || (new BigNumber(val[addr]).lt('21') && new BigNumber(receivedAmount).gte('21'))).catch(() => false) : Promise.resolve(true)
   }
 
   const handleNext = () => {
@@ -146,11 +146,22 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       };
 
       const { pwd, amount } = form.getFieldsValue(['pwd', 'amount']);
-      const isNativeAccount = addressSelections.concat(accountSelections).includes(form.getFieldValue('to'));
+      const isNativeAddress = addressSelections.includes(form.getFieldValue('to'));
+      const isNativeAccount = accountSelections.includes(form.getFieldValue('to'));
       const desPath = info.desChain === 'WAN' ? WANPATH : ETHPATH;
       const toPathPrefix = type === INBOUND ? desPath : XRPPATH;
-      const to = isNativeAccount ? { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` } : form.getFieldValue('to');
-      const toAddr = isNativeAccount ? getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) : form.getFieldValue('to');
+      let to, toAddr;
+      if (isNativeAddress || isNativeAccount) {
+        if (isNativeAccount) {
+          to = { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` };
+          toAddr = getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList);
+        } else {
+          to = { walletID: 1, path: `${toPathPrefix}${(getInfoByAddress(form.getFieldValue('to'), ['path'], info.toAccountList)).path}` };
+          toAddr = form.getFieldValue('to')
+        }
+      } else {
+        to = toAddr = form.getFieldValue('to');
+      }
       const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee, receivedAmount }
       if (settings.reinput_pwd) {
         if (!pwd) {
@@ -167,7 +178,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
                 updateXRPTransParams(params);
                 setConfirmVisible(true);
               } else {
-                message.warn('The destination address is not activated. Please ensure that the amount of destination address is greater than 20')
+                message.warn(intl.get('Xrp.notExistAccount'))
               }
             })
           }
@@ -179,7 +190,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
             updateXRPTransParams(params);
             setConfirmVisible(true);
           } else {
-            message.warn('The destination address is not activated. Please ensure that the amount of destination address is greater than 20')
+            message.warn(intl.get('Xrp.notExistAccount'))
           }
         })
       }
