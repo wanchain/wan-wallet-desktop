@@ -562,6 +562,7 @@ const ko_KR = {
     'CrossChainTransHistory.Cancelled': '취소 되었습니다',
     'CrossChainTransHistory.StoremanLocked': 'Storeman 잠김',
     'CrossChainTransHistory.Success': '성공',
+    'CrossChainTransHistory.Failed': '트랜잭션 실패',
 
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',

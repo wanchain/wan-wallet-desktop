@@ -562,6 +562,7 @@ const pt_PT = {
     'CrossChainTransHistory.Cancelled': 'Cancelado',
     'CrossChainTransHistory.StoremanLocked': 'Storemanbloqueado',
     'CrossChainTransHistory.Success': 'Sucesso',
+    'CrossChainTransHistory.Failed': 'ERRO',
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',

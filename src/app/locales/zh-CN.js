@@ -562,6 +562,7 @@ const zh_CN = {
     'CrossChainTransHistory.Cancelled': '已撤销',
     'CrossChainTransHistory.StoremanLocked': 'Storeman锁定',
     'CrossChainTransHistory.Success': '成功',
+    'CrossChainTransHistory.Failed': '失败',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

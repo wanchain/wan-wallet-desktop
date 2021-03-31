@@ -562,6 +562,7 @@ const th_TH = {
     'CrossChainTransHistory.Cancelled': 'ยกเลิก',
     'CrossChainTransHistory.StoremanLocked': 'Storeman ทำการล็อคแล้ว',
     'CrossChainTransHistory.Success': 'สำเร็จ',
+    'CrossChainTransHistory.Failed': 'ผิดพลาด',
 
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',

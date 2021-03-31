@@ -562,6 +562,7 @@ const en_US = {
     'CrossChainTransHistory.Cancelled': 'Cancelled',
     'CrossChainTransHistory.StoremanLocked': 'Storeman Locked',
     'CrossChainTransHistory.Success': 'Success',
+    'CrossChainTransHistory.Failed': 'Failed',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Wallet',
