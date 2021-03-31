@@ -44,6 +44,7 @@ const fr_FR = {
     'Common.availableBalance': 'Le solde disponible est {availableBalance}',
 
     'Xrp.destinationTag': 'Balise de destination',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'connexion au serveur',
     'Layout.connected': 'serveur connecté',
@@ -472,6 +473,7 @@ const fr_FR = {
     'CrossChainTransForm.overTransBalance': 'Le montant dépasse le solde.',
     'CrossChainTransForm.transInfo': 'Information de transaction Cross Chain',
     'CrossChainTransForm.invalidAmount': 'Veuillez saisir un montant supérieur ou égal à ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'Le montant dépasse la capacité disponible de Storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'Vers',
@@ -560,6 +562,7 @@ const fr_FR = {
     'CrossChainTransHistory.Cancelled': 'Annulé',
     'CrossChainTransHistory.StoremanLocked': 'Storeman verrouillé',
     'CrossChainTransHistory.Success': 'Succès',
+    'CrossChainTransHistory.Failed': 'Échoué',
 
     'menuConfig.portfolio': 'Portfolio',
     'menuConfig.wallet': 'Portefeuille',

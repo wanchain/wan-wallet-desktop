@@ -159,7 +159,6 @@ class Layout extends Component {
     const allAddr = (Object.values(ethAddrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalance(allAddr, 'BNB').then(res => {
-      // console.log('BNB b:', res);
       if (res && Object.keys(res).length) {
         this.props.updateBNBBalance(res);
       }

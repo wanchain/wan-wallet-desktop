@@ -44,6 +44,7 @@ const th_TH = {
     'Common.availableBalance': 'ยอดคงเหลือ {availableBalance}',
 
     'Xrp.destinationTag': 'Tag ปลายทาง',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'กำลังเชื่อมต่อกับเซิฟเวอร์',
     'Layout.connected': 'เชื่อมต่อกับเซิฟเวอร์แล้ว',
@@ -472,6 +473,7 @@ const th_TH = {
     'CrossChainTransForm.overTransBalance': 'จำนวนมากกว่ายอดคงเหลือ',
     'CrossChainTransForm.transInfo': 'รายละเอียดธุรกรรม Cross Chain',
     'CrossChainTransForm.invalidAmount': 'กรุณากรอกจำนวนที่มากกว่าหรือเท่ากับ ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'จำนวนมากกว่าจำนวนความจุคงเหลือของ Storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'ถึง',
@@ -560,6 +562,7 @@ const th_TH = {
     'CrossChainTransHistory.Cancelled': 'ยกเลิก',
     'CrossChainTransHistory.StoremanLocked': 'Storeman ทำการล็อคแล้ว',
     'CrossChainTransHistory.Success': 'สำเร็จ',
+    'CrossChainTransHistory.Failed': 'ผิดพลาด',
 
     'menuConfig.portfolio': 'พอร์ตฟอลิโอ',
     'menuConfig.wallet': 'กระเป๋าของฉัน',

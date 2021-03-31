@@ -44,6 +44,7 @@ const zh_CN = {
     'Common.availableBalance': '可用金额是{availableBalance}',
 
     'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.notExistAccount': '目标帐户不存在，因此您必须发送至少21个XRP',
 
     'Layout.connecting': '正在连接服务器',
     'Layout.connected': '连接服务器成功',
@@ -472,6 +473,7 @@ const zh_CN = {
     'CrossChainTransForm.overTransBalance': '账户余额不足',
     'CrossChainTransForm.transInfo': '跨链交易信息',
     'CrossChainTransForm.invalidAmount': '请输入金额等于或大于 ',
+    'CrossChainTransForm.invalidAmount1': '请输入金额大于 ',
     'CrossChainTransForm.overQuota': '输入的金额超出Storeman的剩余配额',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': '接收方',
@@ -560,6 +562,7 @@ const zh_CN = {
     'CrossChainTransHistory.Cancelled': '已撤销',
     'CrossChainTransHistory.StoremanLocked': 'Storeman锁定',
     'CrossChainTransHistory.Success': '成功',
+    'CrossChainTransHistory.Failed': '失败',
 
     'menuConfig.portfolio': '我的资产',
     'menuConfig.wallet': '钱包',

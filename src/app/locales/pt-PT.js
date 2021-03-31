@@ -44,6 +44,7 @@ const pt_PT = {
     'Common.availableBalance': 'O saldo disponível é {availableBalance}',
 
     'Xrp.destinationTag': 'Tag de Destino',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': 'conectando ao servidor',
     'Layout.connected': 'conectado ao servidor',
@@ -472,6 +473,7 @@ const pt_PT = {
     'CrossChainTransForm.overTransBalance': 'O valor é maior que o saldo',
     'CrossChainTransForm.transInfo': 'Informações sobre transações cross-chain',
     'CrossChainTransForm.invalidAmount': 'Insira um valor igual ou superior a',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': 'A quantidade é maior que a capacidade restante do storeman',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'Para',
@@ -560,6 +562,7 @@ const pt_PT = {
     'CrossChainTransHistory.Cancelled': 'Cancelado',
     'CrossChainTransHistory.StoremanLocked': 'Storemanbloqueado',
     'CrossChainTransHistory.Success': 'Sucesso',
+    'CrossChainTransHistory.Failed': 'ERRO',
 
     'menuConfig.portfolio': 'Portfólio',
     'menuConfig.wallet': 'CARTEIRA',

@@ -44,6 +44,7 @@ const ko_KR = {
     'Common.availableBalance': '사용 가능한 잔액은 {availableBalance}',
 
     'Xrp.destinationTag': 'Destination Tag',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 21 XRP',
 
     'Layout.connecting': '서버 접속중',
     'Layout.connected': '서버 접속완료',
@@ -472,6 +473,7 @@ const ko_KR = {
     'CrossChainTransForm.overTransBalance': '금액이 잔액보다 큽니다.',
     'CrossChainTransForm.transInfo': '크로스체인 거래 정보',
     'CrossChainTransForm.invalidAmount': '금액을 같거나 이상으로 입력하십시오: ',
+    'CrossChainTransForm.invalidAmount1': 'Please input amount greater than ',
     'CrossChainTransForm.overQuota': '금액이 상점 storeman의 남은 용량보다 큽니다.',
     'CrossChainTransForm.HashX': 'HashX',
     'CrossChainTransForm.To': 'To',
@@ -560,6 +562,7 @@ const ko_KR = {
     'CrossChainTransHistory.Cancelled': '취소 되었습니다',
     'CrossChainTransHistory.StoremanLocked': 'Storeman 잠김',
     'CrossChainTransHistory.Success': '성공',
+    'CrossChainTransHistory.Failed': '트랜잭션 실패',
 
     'menuConfig.portfolio': '자산',
     'menuConfig.wallet': '지갑',
