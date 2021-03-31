@@ -53,12 +53,21 @@ class AdvancedOptionForm extends Component {
   estimateGas = () => {
     const { estimateGas, form } = this.props;
     const inputs = form.getFieldsValue(['nonce', 'gasPrice', 'gasLimit', 'inputData']);
+
     estimateGas(inputs).then(result => {
-      if (result) {
-        const { gas, data } = result;
-        converter(data, 'hex', 'utf8').then(res => {
-          let inputData = form.getFieldValue('inputData');
-          if (res === inputData) {
+      const { gas, data } = result;
+      let inputData = form.getFieldValue('inputData');
+
+      // Set the gasLimit when the information is belong to the latest inputData.
+      if ((/^0x/g).test(inputData)) {
+        if (data === inputData) {
+          form.setFieldsValue({
+            gasLimit: Math.max(gas, MIN_GAS_LIMIT)
+          });
+        }
+      } else {
+        converter(inputData).then(res => {
+          if (data === res) {
             form.setFieldsValue({
               gasLimit: Math.max(gas, MIN_GAS_LIMIT)
             });

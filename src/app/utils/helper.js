@@ -1274,7 +1274,7 @@ export const estimateGasForNormalTrans = function (param) {
   });
 };
 
-export const converter = function (str, from, to) {
+export const converter = function (str, from = 'utf8', to = 'hex') {
   return new Promise((resolve, reject) => {
     wand.request('transaction_converter', { str, from, to }, (err, ret) => {
       if (err) {
