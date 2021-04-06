@@ -6,7 +6,7 @@ import tokens from './tokens';
 import languageIntl from './languageIntl';
 import { checkAddrType, getTypeByWalletId } from 'utils/helper';
 import { ETHPATH, WALLETID } from 'utils/settings';
-import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { timeFormat, fromWei, formatNum, toChecksumAddress } from 'utils/support';
 
 class EthAddress {
   @observable addrInfo = {
@@ -34,7 +34,7 @@ class EthAddress {
   }
 
   @action deleteAddress(type, addr) {
-    delete self.addrInfo[type][addr];
+    delete self.addrInfo[type][toChecksumAddress(addr)];
     this.updateTransHistory();
   }
 
@@ -71,6 +71,7 @@ class EthAddress {
         let tmpTransHistory = {};
         val = val.filter(item => item.chainType === 'ETH');
         val.forEach(item => {
+          item.from = toChecksumAddress(item.from);
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
             tmpTransHistory[item.txHash] = item;
           }
@@ -95,13 +96,13 @@ class EthAddress {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo['normal']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
-
     keys.forEach(item => {
-      if (normal.includes(item) && self.addrInfo['normal'][item].balance !== arr[item]) {
-        self.addrInfo['normal'][item].balance = arr[item];
+      let ethAddress = toChecksumAddress(item);
+      if (normal.includes(ethAddress) && self.addrInfo['normal'][ethAddress].balance !== arr[item]) {
+        self.addrInfo['normal'][ethAddress].balance = arr[item];
       }
-      if (rawKey.includes(item) && self.addrInfo['rawKey'][item].balance !== arr[item]) {
-        self.addrInfo['rawKey'][item].balance = arr[item];
+      if (rawKey.includes(ethAddress) && self.addrInfo['rawKey'][ethAddress].balance !== arr[item]) {
+        self.addrInfo['rawKey'][ethAddress].balance = arr[item];
       }
     })
   }
@@ -133,12 +134,12 @@ class EthAddress {
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
             if (['1', '5', '6'].includes(id)) {
-              let address = info[path][id].addr;
-              self.addrInfo[typeFunc(id)][address.toLowerCase()] = {
+              let address = toChecksumAddress(info[path][id].addr);
+              self.addrInfo[typeFunc(id)][address] = {
                 name: info[path][id].name,
                 balance: 0,
                 path: path.substr(path.lastIndexOf('\/') + 1),
-                address: address.toLowerCase()
+                address
               }
             }
           })
@@ -148,6 +149,7 @@ class EthAddress {
   }
 
   @action addRawKey({ path, name, addr }) {
+    addr = toChecksumAddress(addr);
     self.addrInfo['rawKey'][addr] = {
       name: name,
       balance: '0',
@@ -171,7 +173,7 @@ class EthAddress {
         addrList.push({
           key: item,
           name: obj[item].name,
-          address: item,
+          address: toChecksumAddress(item),
           balance: formatNum(obj[item].balance),
           path: `${ETHPATH}${obj[item].path}`,
           action: 'send',
@@ -196,7 +198,7 @@ class EthAddress {
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
-        address: item,
+        address: toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: `${ETHPATH}${self.addrInfo[type][item].path}`,
         action: 'send',
@@ -226,7 +228,7 @@ class EthAddress {
             key: item,
             time: timeFormat(self.transHistory[item].sendTime),
             from: self.addrInfo[type][self.transHistory[item].from].name,
-            to: self.transHistory[item].to.toLowerCase(),
+            to: toChecksumAddress(self.transHistory[item].to.toLowerCase()),
             value: formatNum(fromWei(self.transHistory[item].value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: self.transHistory[item].sendTime,
@@ -260,7 +262,7 @@ class EthAddress {
           key: item,
           time: timeFormat(self.transHistory[item].sendTime),
           from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: self.transHistory[item].transferTo.toLowerCase(),
+          to: toChecksumAddress(self.transHistory[item].transferTo.toLowerCase()),
           value: formatNum(self.transHistory[item].token || 0),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           sendTime: self.transHistory[item].sendTime,
