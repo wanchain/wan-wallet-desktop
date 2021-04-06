@@ -6,6 +6,7 @@ import wanUtil from 'wanchain-util';
 import style from './index.less';
 import HwWallet from 'utils/HwWallet';
 import { getBalance } from 'utils/helper';
+import { toChecksumAddress } from 'utils/support';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
@@ -81,7 +82,7 @@ class Connect extends Component {
     let hdKeys = wallet.getHdKeys(start, limit);
     let addresses = [];
     hdKeys.forEach(hdKey => {
-      addresses.push({ key: hdKey.address, address: wanUtil.toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
+      addresses.push({ key: hdKey.address, address: toChecksumAddress(hdKey.address), balance: 0, path: hdKey.path });
     });
     visible ? this.setState({ visible: true, addresses: addresses }) : this.setState({ addresses: addresses });
     getBalance(addresses.map(item => item.address), 'WAN').then(res => {

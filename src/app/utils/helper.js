@@ -721,7 +721,7 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
             if (chainType === 'WAN') {
               addressInfo = {
                 start: '0',
-                address: wanUtil.toChecksumAddress(`0x${val_address_get.address}`),
+                address: web3.toChecksumAddress(`0x${val_address_get.address}`),
                 waddress: (`0x${val_address_get.waddress}`)
               }
 
@@ -730,7 +730,7 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
             } else {
               addressInfo = {
                 start: 0,
-                address: `0x${val_address_get.address}`
+                address: web3.toChecksumAddress(`0x${val_address_get.address}`)
               }
             }
             resolve(addressInfo);
@@ -759,7 +759,7 @@ export const createWANAddr = async function (checkDuplicate) {
               start: index.toString(),
               name,
               path,
-              address: wanUtil.toChecksumAddress(`0x${data.address}`),
+              address: web3.toChecksumAddress(`0x${data.address}`),
               waddress: wanUtil.toChecksumOTAddress(`0x${data.waddress}`),
             }
             resolve(addressInfo);
@@ -818,7 +818,7 @@ export const createETHAddr = async function (checkDuplicate) {
             let addressInfo = {
               start: index.toString(),
               name,
-              address: `0x${data.address}`
+              address: web3.toChecksumAddress(`0x${data.address}`)
             }
             resolve(addressInfo);
           } else {

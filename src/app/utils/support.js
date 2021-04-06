@@ -11,6 +11,10 @@ export function toWeiData(data, unit = 'ether') {
   return web3.utils.toWei(data.toString(), unit);
 }
 
+export function toChecksumAddress(addr) {
+  return web3.utils.toChecksumAddress(addr);
+}
+
 export function formatNumByDecimals(value, decimals) {
   if (value === undefined || decimals === undefined) {
     return 0;

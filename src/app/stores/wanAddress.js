@@ -11,7 +11,7 @@ import session from './session';
 import languageIntl from './languageIntl';
 import { checkAddrType, getWalletIdByType, getTypeByWalletId, resetSettingsByOptions } from 'utils/helper';
 import { WANPATH, WALLETID } from 'utils/settings';
-import { timeFormat, fromWei, formatNum } from 'utils/support';
+import { timeFormat, fromWei, formatNum, toChecksumAddress } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
 const WAN = "m/44'/5718350'/0'/0/";
@@ -47,7 +47,7 @@ class WanAddress {
   }
 
   @action deleteAddress(type, addr) {
-    delete self.addrInfo[type][wanUtil.toChecksumAddress(addr)];
+    delete self.addrInfo[type][toChecksumAddress(addr)];
     this.updateTransHistory();
   }
 
@@ -90,7 +90,7 @@ class WanAddress {
         let tmp = {};
         val = val.filter(item => item.chainType === 'WAN');
         val.forEach(item => {
-          item.from = wanUtil.toChecksumAddress(item.from);
+          item.from = toChecksumAddress(item.from);
           if (item.txHash !== '' && (item.txHash !== item.hashX || item.status === 'Failed')) {
             tmp[item.txHash] = item;
           }
@@ -124,7 +124,7 @@ class WanAddress {
     let importArr = Object.keys(self.addrInfo['import']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
     keys.forEach(item => {
-      let wanAddress = wanUtil.toChecksumAddress(item);
+      let wanAddress = toChecksumAddress(item);
       if (normal.includes(wanAddress) && self.addrInfo['normal'][wanAddress].balance !== arr[item]) {
         self.addrInfo['normal'][wanAddress].balance = arr[item];
       }
@@ -202,7 +202,7 @@ class WanAddress {
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
             if (['1', '5', '6'].includes(id)) {
-              let address = wanUtil.toChecksumAddress(info[path][id]['addr']);
+              let address = toChecksumAddress(info[path][id]['addr']);
               if (checkExist(address)) {
                 // Delete the duplicate account info from DB file.
                 wand.request('account_delete', { walletID: parseInt(id), path }, async (err, ret) => {
@@ -261,7 +261,7 @@ class WanAddress {
             };
             let noWaddressArr = [];
             let setWaddress = obj => {
-              self.addrInfo[typeFunc(obj.id)][wanUtil.toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress); // error
+              self.addrInfo[typeFunc(obj.id)][toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress); // error
             };
             let filterData = function (data, type) {
               Object.keys(data).forEach(item => {
@@ -356,7 +356,7 @@ class WanAddress {
   }
 
   @action addRawKey({ path, name, addr, waddr }) {
-    addr = wanUtil.toChecksumAddress(addr);
+    addr = toChecksumAddress(addr);
     self.addrInfo['rawKey'][addr] = {
       name: name,
       balance: '0',
@@ -392,7 +392,7 @@ class WanAddress {
         addrList.push({
           key: `${WAN}${obj[item].path}-${item}`,
           name: obj[item].name,
-          address: wanUtil.toChecksumAddress(item),
+          address: toChecksumAddress(item),
           waddress: obj[item].waddress,
           balance: obj[item].balance,
           wbalance: obj[item].wbalance,
@@ -419,7 +419,7 @@ class WanAddress {
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
-        address: wanUtil.toChecksumAddress(item),
+        address: toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: `${WANPATH}${self.addrInfo[type][item].path}`,
         action: 'send',
@@ -436,7 +436,7 @@ class WanAddress {
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
-        address: wanUtil.toChecksumAddress(item),
+        address: toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: self.addrInfo[type][item].path,
         action: 'send',
@@ -453,7 +453,7 @@ class WanAddress {
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
-        address: wanUtil.toChecksumAddress(item),
+        address: toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
         path: self.addrInfo[type][item].path,
         action: 'send',
@@ -484,7 +484,7 @@ class WanAddress {
             key: item,
             time: timeFormat(data['sendTime']),
             from: self.addrInfo[type][data['from']].name,
-            to: wanUtil.toChecksumAddress(data.to.toLowerCase()),
+            to: toChecksumAddress(data.to.toLowerCase()),
             value: formatNum(fromWei(data.value)),
             status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
             sendTime: data['sendTime'],
@@ -545,7 +545,7 @@ class WanAddress {
           key: item,
           time: timeFormat(self.transHistory[item]['sendTime']),
           from: self.transHistory[item].from,
-          to: wanUtil.toChecksumAddress(self.transHistory[item].to.toLowerCase()),
+          to: toChecksumAddress(self.transHistory[item].to.toLowerCase()),
           value: formatNum(fromWei(self.transHistory[item].value)),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           sendTime: self.transHistory[item]['sendTime'],
@@ -577,7 +577,7 @@ class WanAddress {
           key: item,
           time: timeFormat(self.transHistory[item]['sendTime']),
           from: self.addrInfo[type][self.transHistory[item].from].name,
-          to: wanUtil.toChecksumAddress(self.transHistory[item].transferTo.toLowerCase()),
+          to: toChecksumAddress(self.transHistory[item].transferTo.toLowerCase()),
           value: formatNum(self.transHistory[item].token || 0),
           status: languageIntl.language && ['Failed', 'Success'].includes(status) ? intl.get(`TransHistory.${status.toLowerCase()}`) : intl.get('TransHistory.pending'),
           sendTime: self.transHistory[item]['sendTime'],
