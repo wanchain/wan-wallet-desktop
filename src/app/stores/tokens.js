@@ -13,6 +13,7 @@ import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
 import bnbAddress from './bnbAddress';
+import crossChain from './crossChain';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -34,6 +35,8 @@ class Tokens {
   @observable tokenIconList = {};
 
   @observable walletSelections = {};
+
+  @observable chainBalanceList = [];
 
   constructor() {
     makeObservable(this);
@@ -344,27 +347,33 @@ class Tokens {
       } else {
         // rewrite for fnx
         if (value.account === FNX_POOL_TESTNET) {
-          console.log('1');
           value.account = FNX_TOKEN_TESTNET;
           value.symbol = 'FNX';
         }
         if (value.account === FNX_POOL_MAINNET) {
-          console.log('2');
           value.account = FNX_TOKEN_MAINNET;
           value.symbol = 'FNX';
         }
         if (value.account === CFNX_POOL_MAINNET) {
-          console.log('3');
           value.account = CFNX_TOKEN_MAINNET;
         }
         if (value.account === CFNX_POOL_TESTNET) {
-          console.log('4');
           value.account = CFNX_TOKEN_TESTNET;
         }
 
         this.tokensList[addr] = value;
       }
     });
+  }
+
+  @action updateChainBalanceList(chain) {
+    self.chainBalanceList = chain ? [chain] : (chain === '' ? [...self.selectedChain] : [])
+  }
+
+  @computed get selectedChain() {
+    let normalChainSelected = Object.values(self.getWalletSelections).filter(v => v.children.some(i => i.selected)).map(s => s.ancestor)
+    let crosschainSelected = Object.keys(crossChain.crossChainSelections).filter(v => crossChain.crossChainSelections[v].some(i => i.selected))
+    return new Set(normalChainSelected.concat(crosschainSelected))
   }
 
   @computed get getTokenList() {

@@ -25,14 +25,16 @@ const AddrFunc = (text, record) => <div className="addrText"><p className="addre
 const SendTrans = (text, record) => <div><SendNormalTrans record={record} /></div>
 
 const XrpAccount = observer(() => {
-  const { languageIntl, xrpAddress: { addrInfo, updateName, getAddrList, addAddress, getAllAmount } } = useContext(MobXProviderContext)
+  const { languageIntl, xrpAddress: { addrInfo, updateName, getAddrList, addAddress, getAllAmount }, tokens: { updateChainBalanceList } } = useContext(MobXProviderContext)
   const [address, setAddress] = useState(undefined);
   const [isExist, setIsExist] = useState(false);
   const onCloseModal = () => setIsExist(false);
   let canCreate = true;
 
   useEffect(() => {
+    updateChainBalanceList('XRP')
     languageIntl.changeTitle('WanAccount.wallet');
+    return () => updateChainBalanceList();
   }, [])
 
   const columnsTree = useMemo(() => {

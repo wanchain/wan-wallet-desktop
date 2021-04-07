@@ -83,9 +83,13 @@ const CrossXRP = observer(({ match }) => {
     tokens.setCurrToken(tokenPairsInfo.toAccount);
     tokens.setCurrTokenChain(tokenPairsInfo.toChainSymbol);
     languageIntl.changeTitle('Common.crossChain');
+    tokens.updateChainBalanceList('XRP');
     tokens.updateTokensBalance(tokenPairsInfo.toAccount, tokenPairsInfo.toChainSymbol);
     let timer = setInterval(() => { tokens.updateTokensBalance(tokenPairsInfo.toAccount, tokenPairsInfo.toChainSymbol) }, 5000);
-    return () => clearInterval(timer)
+    return () => {
+      clearInterval(timer);
+      tokens.updateChainBalanceList();
+    }
   }, [match.params.tokenPairId])
 
   return (

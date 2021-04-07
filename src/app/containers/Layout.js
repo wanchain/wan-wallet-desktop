@@ -19,6 +19,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
   tokensList: stores.tokens.tokensList,
+  chainBalanceList: stores.tokens.chainBalanceList,
   getWalletSelections: stores.tokens.getWalletSelections,
   crossChainSelections: stores.crossChain.crossChainSelections,
   getMnemonic: () => stores.session.getMnemonic(),
@@ -45,18 +46,13 @@ class Layout extends Component {
 
   componentDidMount() {
     this.wanTimer = setInterval(() => {
-      const { getWalletSelections, crossChainSelections } = this.props;
-      let normalChainSelected = Object.values(getWalletSelections).filter(v => v.children.some(i => i.selected)).map(s => s.ancestor)
-      let crosschainSelected = Object.keys(crossChainSelections).filter(v => crossChainSelections[v].some(i => i.selected))
-      let selectedChain = new Set(normalChainSelected.concat(crosschainSelected))
+      const { chainBalanceList } = this.props;
       this.updateWANBalanceForInter();
-      this.updateETHBalanceForInter();
-      this.updateBTCBalanceForInter();
-      this.updateEOSBalanceForInter();
-      this.updateBNBBalanceForInter();
-      if (selectedChain.has('XRP')) {
-        this.updateXRPBalanceForInter();
-      }
+      chainBalanceList.includes('ETH') && this.updateETHBalanceForInter();
+      chainBalanceList.includes('BTC') && this.updateBTCBalanceForInter();
+      chainBalanceList.includes('EOS') && this.updateEOSBalanceForInter();
+      chainBalanceList.includes('BNB') && this.updateBNBBalanceForInter();
+      chainBalanceList.includes('XRP') && this.updateXRPBalanceForInter();
     }, 5000);
     this.waitUntilSdkReady();
   }

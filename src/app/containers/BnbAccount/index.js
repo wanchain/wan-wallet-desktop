@@ -22,6 +22,7 @@ const CHAINTYPE = 'BNB';
   updateTransHistory: () => stores.bnbAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateName: (arr, type) => stores.bnbAddress.updateName(arr, type),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -73,12 +74,14 @@ class BnbAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.updateChainBalanceList('BNB')
     this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.props.updateChainBalanceList('')
   }
 
   handleSend = from => {
