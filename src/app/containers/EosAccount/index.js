@@ -23,6 +23,7 @@ const CreateAccountForm = Form.create({ name: 'createAccountForm' })(EOSCreateAc
   addKey: obj => stores.eosAddress.addKey(obj),
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -38,12 +39,14 @@ class EosAccount extends Component {
   }
 
   componentDidMount() {
+    this.props.updateChainBalanceList('EOS');
     this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.props.updateChainBalanceList();
   }
 
   generateKeyPair = () => {

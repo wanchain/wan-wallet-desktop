@@ -25,6 +25,7 @@ import WarningExistAddress from 'components/WarningExistAddress';
   updateTransHistory: () => stores.btcAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateName: (arr, type) => stores.btcAddress.updateName(arr, type),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -73,12 +74,14 @@ class BtcAccount extends Component {
   });
 
   componentDidMount() {
+    this.props.updateChainBalanceList('BTC');
     this.props.changeTitle('WanAccount.wallet');
     this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.props.updateChainBalanceList();
   }
 
   handleSend = () => {

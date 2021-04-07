@@ -28,6 +28,7 @@ const CHAINTYPE = 'BTC';
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -42,6 +43,7 @@ class CrossBTC extends Component {
   componentDidMount() {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(CHAINTYPE);
+    this.props.updateChainBalanceList(CHAINTYPE);
     this.props.setCurrTokenPairId(this.props.match.params.tokenPairId);
     this.props.setCurrToken(this.info.toAccount);
     this.props.setCurrTokenChain(this.info.toChainSymbol);
@@ -53,6 +55,7 @@ class CrossBTC extends Component {
   }
 
   componentWillUnmount() {
+    this.props.updateChainBalanceList();
     clearInterval(this.timer);
   }
 

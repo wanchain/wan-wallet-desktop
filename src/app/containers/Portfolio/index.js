@@ -17,23 +17,25 @@ import xrpLogo from 'static/image/xrp.png';
   updateTokenBalance: () => stores.portfolio.updateTokenBalance(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   setTokenIcon: (tokenScAddr) => stores.tokens.setTokenIcon(tokenScAddr),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
 class Portfolio extends Component {
   componentDidMount() {
     this.props.changeTitle('Portfolio.portfolio');
+    this.props.updateChainBalanceList('')
     this.props.setCoin();
     this.props.updateCoinPrice();
     this.props.updateTokenBalance();
-    this.timer = setInterval(() => {
-      this.props.updateCoinPrice();
-      this.props.updateTokenBalance();
-    }, 60000);
+    this.timer1 = setInterval(this.props.updateCoinPrice, 60000);
+    this.timer2 = setInterval(this.props.updateTokenBalance, 5000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.timer);
+    this.props.updateChainBalanceList()
+    clearInterval(this.timer1);
+    clearInterval(this.timer2);
   }
 
   TokenImgRender = (text, record) => {
