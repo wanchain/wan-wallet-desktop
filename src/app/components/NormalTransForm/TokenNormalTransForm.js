@@ -186,7 +186,7 @@ class TokenNormalTransForm extends Component {
     let checkFunc = null;
     switch (currTokenChain) {
       case 'WAN':
-        checkFunc = checkWanAddr;
+        checkFunc = addr => Promise.all([checkWanAddr(addr), checkETHAddr(addr)]).then(ret => ret[0] || ret[1]);
         break;
       case 'ETH':
         checkFunc = checkETHAddr;
