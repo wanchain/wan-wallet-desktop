@@ -36,6 +36,7 @@ message.config({
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getChainStoreInfoByChain: chain => stores.tokens.getChainStoreInfoByChain(chain),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -51,6 +52,7 @@ class TokenTrans extends Component {
 
   componentDidMount() {
     this.init(this.props.tokenAddr, this.props.chain);
+    this.props.updateChainBalanceList(this.props.chain);
     this.props.changeTitle('WanAccount.wallet');
     const { tokenAddr, chain } = this.props;
     this.props.getChainStoreInfoByChain(chain).updateTransHistory();
@@ -63,6 +65,7 @@ class TokenTrans extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.props.updateChainBalanceList()
   }
 
   sendLedgerTrans = (path, tx) => {

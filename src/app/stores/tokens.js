@@ -367,7 +367,13 @@ class Tokens {
   }
 
   @action updateChainBalanceList(chain) {
-    self.chainBalanceList = chain ? [chain] : (chain === '' ? [...self.selectedChain] : [])
+    if (typeof chain === 'string' && chain !== '') {
+      self.chainBalanceList = [chain]
+    } else if (chain instanceof Array) {
+      self.chainBalanceList = chain
+    } else {
+      self.chainBalanceList = chain === '' ? [...self.selectedChain] : []
+    }
   }
 
   @computed get selectedChain() {

@@ -25,6 +25,7 @@ import style from './index.less';
   getCoinImage: (...args) => stores.tokens.getCoinImage(...args),
   setCurrSymbol: symbol => stores.crossChain.setCurrSymbol(symbol),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -68,11 +69,13 @@ class CrossChain extends Component {
       }
     }
     updateBalance();
+    this.props.updateChainBalanceList([this.props.tokenPairs[tokenPairId].fromChainSymbol, this.props.tokenPairs[tokenPairId].toChainSymbol])
     this.timer = setInterval(updateBalance, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.props.updateChainBalanceList();
   }
 
   componentDidCatch(err, info) {

@@ -345,6 +345,7 @@ class WanAddress {
   }
 
   @action addKeyStoreAddr({ path, name, addr, waddr }) {
+    addr = toChecksumAddress(addr.toLowerCase());
     self.addrInfo['import'][addr] = {
       name: name,
       balance: '0',
