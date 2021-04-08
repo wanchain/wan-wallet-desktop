@@ -151,8 +151,8 @@ class Layout extends Component {
   }
 
   updateBNBBalanceForInter = () => {
-    const { ethAddrInfo } = this.props;
-    const allAddr = (Object.values(ethAddrInfo).map(item => Object.keys(item))).flat();
+    const { bnbAddrInfo } = this.props;
+    const allAddr = (Object.values(bnbAddrInfo).map(item => Object.keys(item))).flat();
     if (Array.isArray(allAddr) && allAddr.length === 0) return;
     getBalance(allAddr, 'BNB').then(res => {
       if (res && Object.keys(res).length) {
