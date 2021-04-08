@@ -274,24 +274,24 @@ export default (i18n) => {
                     shell.openExternal(i18n.t('main.applicationMenu.help.webURL'))
                 }
             },
-            {
-                label: i18n.t('main.applicationMenu.app.checkForUpdate'),
-                enabled: sdkInitialized,
-                click: () => {
-                    logger.info('Checking updates buttun clicked');
-                    updater.updater.isManualCheckUpdates = true;
-                    updater.updater.checkForUpdates()
-                        .catch(err => {
-                            logger.info('check updates failed');
-                            logger.info(err);
-                            dialog.showMessageBox({
-                                title: i18n.t('main.checkUpdatesDialog.title'),
-                                type: 'info',
-                                message: i18n.t('main.checkUpdatesDialog.message')
-                            });
-                        })
-                }
-            },
+            // {
+            //     label: i18n.t('main.applicationMenu.app.checkForUpdate'),
+            //     enabled: sdkInitialized,
+            //     click: () => {
+            //         logger.info('Checking updates buttun clicked');
+            //         updater.updater.isManualCheckUpdates = true;
+            //         updater.updater.checkForUpdates()
+            //             .catch(err => {
+            //                 logger.info('check updates failed');
+            //                 logger.info(err);
+            //                 dialog.showMessageBox({
+            //                     title: i18n.t('main.checkUpdatesDialog.title'),
+            //                     type: 'info',
+            //                     message: i18n.t('main.checkUpdatesDialog.message')
+            //                 });
+            //             })
+            //     }
+            // },
             {
                 label: i18n.t('main.applicationMenu.help.explorer'),
                 click: () => {
