@@ -41,7 +41,7 @@
                             <input id="oldpwd" name="oldpwd" class="form-control" type="password" required
                                 tabindex="1" />
                             <div id="kfFeedback" class="invalid-feedback">
-                                <!-- Keystore password is invalid -->
+                                Keystore password is invalid
                             </div>
                         </div>
                         <div class="form-group">
@@ -50,7 +50,7 @@
                             <input id="newpwd" name="newpwd" class="form-control" type="password" required
                                 tabindex="2" />
                             <div id="wWPwInvalid" class="invalid-feedback">
-                                <!-- WAN wallet password is invalid. -->
+                                WAN wallet password is invalid
                             </div>
                         </div>
                         <p id="chooseKf" style="margin-top: 40px; margin-bottom: 7px;">
@@ -62,7 +62,7 @@
                             <label id="kFButton" class="custom-file-label" for="keyfile" style="overflow: hidden;"
                                 tabindex="3" data-content="Browse"></label>
                             <div id="kFInvalid" class="invalid-feedback" style="margin-top: 10px;">
-                                <!-- Keystore file is invalid -->
+                                Keystore file is invalid
                             </div>
                         </div>
 
@@ -265,6 +265,21 @@
                 const keyFilePwd = formData.get('oldpwd');
                 const hdWalletPwd = formData.get('newpwd');
                 const fileDesc = formData.get('keyfile');
+                if (!keyFilePwd || !hdWalletPwd || !fileDesc) {
+                  if (!keyFilePwd) {
+                    errText.innerHTML = $.i18n('ERR_WRONG_PWD_KEYFILE');
+                  } else if (!hdWalletPwd) {
+                    errText.innerHTML = $.i18n('ERR_WRONG_PWD_WALLET');
+                  } else {
+                    errText.innerHTML = $.i18n('ERR_INVALID_KEYFILE');
+                  }
+                  alertError.classList.add('show');
+                  let timer = setTimeout(() => {
+                    alertError.classList.remove('show');
+                    clearTimeout(timer);
+                  }, 3000);
+                  return;
+                }
                 $('#mask').show();
                 wand.request('address_fromKeyFile', {
                     keyFilePwd,

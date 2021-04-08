@@ -14,31 +14,31 @@ import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
 class Portfolio {
   @observable coinPriceObj;
 
-  defaultCoinList = {
+  @observable defaultCoinList = {
     WAN: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.wanchain'),
+      // chain: intl.get('Common.wanchain'),
     },
     ETH: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.ethereum'),
+      // chain: intl.get('Common.ethereum'),
     },
     BTC: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.bitcoin'),
+      // chain: intl.get('Common.bitcoin'),
     },
     EOS: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.eos'),
+      // chain: intl.get('Common.eos'),
     },
     XRP: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.xrpl'),
+      // chain: intl.get('Common.xrpl'),
     }
   };
 
