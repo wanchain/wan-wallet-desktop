@@ -19,7 +19,7 @@ import session from './session';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import {
   WANPATH, ETHPATH, BSCPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY,
-  FNX_POOL_MAINNET, FNX_POOL_TESTNET
+  FNX_POOL_MAINNET, FNX_POOL_TESTNET, FNX_TOKEN_TESTNET, FNX_TOKEN_MAINNET
 } from 'utils/settings';
 
 class Tokens {
@@ -255,6 +255,7 @@ class Tokens {
     let ledger = addressObj.ledger || {};
     let trezor = addressObj.trezor || {};
     let addresses = Object.assign({}, normal, ledger, trezor);
+
     Object.keys(addresses).forEach(item => {
       let balance;
       if (self.tokensBalance && self.tokensBalance[SCAddress]) {
@@ -440,7 +441,6 @@ class Tokens {
         } else {
           balance = 0;
         }
-
         addrList.push({
           key: item,
           name: obj[item].name,
@@ -562,13 +562,13 @@ class Tokens {
   }
 
   getTokenInfoFromTokensListByAddr(addr) {
-    let ret = Object.values(this.tokensList).find(obj => obj.account === addr);
-
     // add for FNX crosschain
-    if (!ret) {
-      ret = Object.keys(this.tokensList).find(key => key.includes(addr));
-      ret = this.tokensList[ret];
+    if (addr === FNX_POOL_TESTNET) {
+      addr = FNX_TOKEN_TESTNET
+    } else if (addr === FNX_POOL_MAINNET) {
+      addr = FNX_TOKEN_MAINNET
     }
+    let ret = Object.values(this.tokensList).find(obj => obj.account === addr);
     return ret;
   }
 
