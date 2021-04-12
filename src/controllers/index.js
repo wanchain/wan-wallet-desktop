@@ -1115,8 +1115,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     satellite: satellite
                 }
 
-                logger.info('Normal transaction: ' + JSON.stringify(input));
-                let srcChain = await global.crossInvoker.getChainInfoByContractAddr(to, chainType);// tokenaddr chain
+                logger.info('Token normal transaction: ' + JSON.stringify(input));
+                let srcChain = await global.crossInvoker.getChainInfoByContractAddr(to, chainType);// token address, chain
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {

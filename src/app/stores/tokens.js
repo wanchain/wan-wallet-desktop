@@ -19,8 +19,7 @@ import session from './session';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import {
   WANPATH, ETHPATH, BSCPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY,
-  FNX_POOL_MAINNET, FNX_POOL_TESTNET, FNX_TOKEN_MAINNET, FNX_TOKEN_TESTNET,
-  CFNX_POOL_MAINNET, CFNX_POOL_TESTNET, CFNX_TOKEN_MAINNET, CFNX_TOKEN_TESTNET
+  FNX_POOL_MAINNET, FNX_POOL_TESTNET
 } from 'utils/settings';
 
 class Tokens {
@@ -341,26 +340,16 @@ class Tokens {
   }
 
   @action updateTokensList(addr, value) {
+    // rewrite for fnx
+    if (value.account === FNX_POOL_TESTNET || value.account === FNX_POOL_MAINNET) {
+      delete this.tokensList[addr];
+      return;
+    }
+
     wand.request('crossChain_updateTokensInfo', { addr, key: undefined, value }, (err) => {
       if (err) {
         console.log('crossChain_updateTokensInfo: ', err);
       } else {
-        // rewrite for fnx
-        if (value.account === FNX_POOL_TESTNET) {
-          value.account = FNX_TOKEN_TESTNET;
-          value.symbol = 'FNX';
-        }
-        if (value.account === FNX_POOL_MAINNET) {
-          value.account = FNX_TOKEN_MAINNET;
-          value.symbol = 'FNX';
-        }
-        if (value.account === CFNX_POOL_MAINNET) {
-          value.account = CFNX_TOKEN_MAINNET;
-        }
-        if (value.account === CFNX_POOL_TESTNET) {
-          value.account = CFNX_TOKEN_TESTNET;
-        }
-
         this.tokensList[addr] = value;
       }
     });
