@@ -20,15 +20,12 @@ class WalletBackend extends EventEmitter {
         try {
             this.logger.info('start creating walletbackend')
             this.sdk = new walletCore(this.config)
-            this.logger.info('start initing walletbackend')
             await this.sdk.init()
         } catch (e) {
             this.logger.error(e.message || e.stack) 
         }
         this.sdk.on('disconnect', this.hdWalletDisconnectHandler)
         this.sdk.on('probeloss', this.hdWalletDisconnectHandler)
-        this.logger.info('added event listeners for hardware wallet')
-        this.logger.info('register walletbackend controllers')
         require('~/src/controllers')
         this.logger.info('finish initiating walletbackend')
         this.emit('initiationDone')
