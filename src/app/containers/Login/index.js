@@ -42,7 +42,6 @@ class Login extends Component {
   }
 
   login = () => {
-    console.log('Do login');
     const pwd = this.state.pwd;
     wand.request('wallet_lock', () => {
       wand.request('wallet_unlock', { pwd: pwd }, async (err, val) => {
