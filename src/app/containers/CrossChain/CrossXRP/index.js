@@ -5,7 +5,7 @@ import { observer, MobXProviderContext } from 'mobx-react';
 
 import { formatNum } from 'utils/support';
 import style from '../CrossETH/index.less';
-import totalImg from 'static/image/eth.png';
+import totalImg from 'static/image/xrp.png';
 import { INBOUND, OUTBOUND } from 'utils/settings';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import useTokenPairsInfo from 'hooks/useTokenPairsInfo';
