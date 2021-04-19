@@ -16,6 +16,7 @@ import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'uti
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
 import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress } from 'utils/helper';
 
+const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
 const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOptionForm' })(outboundOptionForm);
 
@@ -254,6 +255,27 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }
 
+  const checkToAddr = (rule, value, callback) => {
+    try {
+      const isNativeAddress = addressSelections.includes(value);
+      const isNativeAccount = accountSelections.includes(value);
+      if (!(isNativeAddress || isNativeAccount)) {
+        if (type === INBOUND) {
+          let func = info.desChain === 'WAN' ? 'address_isWanAddress' : 'address_isEthAddress'
+          pu.promisefy(wand.request, [func, { address: value }], this).then(ret => {
+            ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
+          })
+        } else {
+          pu.promisefy(wand.request, ['address_isXrpAddress', { address: value }], this).then(ret => {
+            ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
+          })
+        }
+      }
+    } catch (err) {
+      callback(intl.get('NormalTransForm.invalidAddress'))
+    }
+  }
+
   const sendAllAmount = e => {
     if (e.target.checked) {
       setSendAll(true);
@@ -331,7 +353,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               formName='to'
               dataSource={accountSelections}
               formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(info.desChain) + ')'}
-              options={{ rules: [{ required: true }], initialValue: accountSelections[0] }}
+              options={{ rules: [{ required: true, validator: checkToAddr }], initialValue: accountSelections[0] }}
             />
             <CommonFormItem
               form={form}
