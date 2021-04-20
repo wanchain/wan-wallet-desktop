@@ -70,10 +70,8 @@ class OsmDelegateInForm extends Component {
       let storeman = value.split('/')[0];
       let storemanInfo = storemanMemberList.find(i => i.wkAddr === storeman);
       let groupInfo = storemanGroupList.find(i => [storemanInfo.groupId, storemanInfo.nextGroupId].includes(i.groupId));
-      let crosschain = storemanInfo ? `${storemanInfo.chain1[2]} <-> ${storemanInfo.chain2[2]}` : undefined;
       form.setFieldsValue({
         storeman,
-        crosschain,
         quota: storemanInfo ? (new BigNumber(fromWei(storemanInfo.deposit)).plus(fromWei(storemanInfo.partnerDeposit))).multipliedBy(storemanConf.delegationMulti).minus(fromWei(storemanInfo.delegateDeposit)).toString(10) : '0',
         delegationFee: groupInfo ? groupInfo.delegateFee / 100 + '%' : '0%',
       });
@@ -86,11 +84,6 @@ class OsmDelegateInForm extends Component {
       });
       this.setState({ storemanInfo: undefined, minAmount: '0' });
     }
-  }
-
-  onCrossChainChange = crosschain => {
-    this.props.form.setFieldsValue({ crosschain });
-    this.setState({ crosschain });
   }
 
   checkAmount = (rule, value, callback) => {
@@ -156,7 +149,7 @@ class OsmDelegateInForm extends Component {
         return;
       }
 
-      let { myAddr: account, amount, pwd, delegationFee, crosschain, storeman } = form.getFieldsValue(['myAddr', 'amount', 'pwd', 'delegationFee', 'crosschain', 'storeman']);
+      let { myAddr: account, amount, pwd, delegationFee, storeman } = form.getFieldsValue(['myAddr', 'amount', 'pwd', 'delegationFee', 'storeman']);
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -176,7 +169,7 @@ class OsmDelegateInForm extends Component {
       this.setState({
         loading: false,
         confirmVisible: true,
-        record: { amount, account, wkAddr: storeman.split('/')[0], crosschain, delegationFee, }
+        record: { amount, account, wkAddr: storeman.split('/')[0], delegationFee, }
       });
     })
   }
@@ -282,16 +275,8 @@ class OsmDelegateInForm extends Component {
   render () {
     const { storemanMemberList, form, settings, onCancel, addrSelectedList, groupChainInfo } = this.props;
     const { getFieldDecorator } = form;
-    let showConfirmItem = { storeman: true, delegationFee: true, crosschain: true, account: true, amount: true };
-    let storemanListSelect = storemanMemberList.filter(i => {
-      let crosschain = this.state.crosschain;
-      return !crosschain || crosschain === `${i.chain1[2]} <-> ${i.chain2[2]}`;
-    }).map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />&nbsp;&nbsp;{v.nameShowing}</div>);
-
-    let crosschainListSelect = groupChainInfo.filter(i => {
-      let storemanInfo = this.state.storemanInfo;
-      return !storemanInfo || storemanInfo.crosschain === i;
-    });
+    let showConfirmItem = { storeman: true, delegationFee: true, account: true, amount: true };
+    let storemanListSelect = storemanMemberList.map((v, index) => <div value={`${v.wkAddr}/${v.groupId}/${index}`}><Avatar src={v.icon} value={v.nameShowing} size="small" />&nbsp;&nbsp;{v.nameShowing}</div>);
 
     let spin = storemanMemberList.length !== 0 && groupChainInfo.length !== 0;
     let isCapacity = Number(form.getFieldValue('quota')) === 0;
@@ -307,32 +292,6 @@ class OsmDelegateInForm extends Component {
           <Spin spinning={!spin} size="large">
             <div className="validator-bg">
               <div className="stakein-title">{intl.get('Storeman.storemanAccount')}</div>
-              <div className="validator-line">
-                <Row type="flex" justify="space-around" align="middle">
-                  <Col span={6}><span className="stakein-name">{intl.get('Common.crossChain')}</span></Col>
-                  <Col span={18}>
-                    <Form layout="inline" id="osmChainSelect">
-                      <Form.Item>
-                        {getFieldDecorator('crosschain', {
-                          rules: [{ required: false }],
-                        })(
-                          <Select
-                            showSearch
-                            allowClear
-                            style={{ width: 400 }}
-                            placeholder={intl.get('Storeman.selectCrosschain')}
-                            optionFilterProp="children"
-                            onChange={this.onCrossChainChange}
-                            getPopupContainer={() => document.getElementById('osmChainSelect')}
-                          >
-                            {crosschainListSelect.map((item, index) => <Select.Option value={item} key={index}>{item}</Select.Option>)}
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Form>
-                  </Col>
-                </Row>
-              </div>
               <div className="validator-line">
                 <Row type="flex" justify="space-around" align="middle" className="storeman">
                   <Col span={6}><span className="stakein-name">{intl.get('Common.storeman')}</span></Col>

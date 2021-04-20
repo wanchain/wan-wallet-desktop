@@ -187,7 +187,7 @@ class BTCNormalTransForm extends Component {
           <Spin spinning={this.props.spin} size="large" /* tip={intl.get('Loading.transData')} indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} */ className="loadingData">
             <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
               <Form.Item label={intl.get('StakeInForm.balance')}>
-                {getFieldDecorator('balance', { initialValue: getAmount })
+                {getFieldDecorator('balance', { initialValue: getAmount + ' BTC' })
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>

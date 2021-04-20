@@ -333,7 +333,7 @@ class NormalTransForm extends Component {
                   (<Input disabled={true} placeholder={intl.get('NormalTransForm.senderAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.balance')}>
-                {getFieldDecorator('balance', { initialValue: balance })
+                {getFieldDecorator('balance', { initialValue: balance + ' WAN' })
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>

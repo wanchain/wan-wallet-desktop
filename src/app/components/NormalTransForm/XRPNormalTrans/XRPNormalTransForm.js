@@ -160,7 +160,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
                 (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
             <Form.Item label={intl.get('Common.balance')}>
-              {getFieldDecorator('balance', { initialValue: balance })
+              {getFieldDecorator('balance', { initialValue: balance + ' XRP' })
                 (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
             </Form.Item>
             <Form.Item label={intl.get('NormalTransForm.to')}>
