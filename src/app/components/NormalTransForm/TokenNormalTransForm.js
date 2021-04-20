@@ -261,7 +261,7 @@ class TokenNormalTransForm extends Component {
   }
 
   render() {
-    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, currTokenChain } = this.props;
+    const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, currTokenChain, symbol } = this.props;
     const { advancedVisible, confirmVisible, advanced, disableAmount } = this.state;
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
@@ -287,7 +287,7 @@ class TokenNormalTransForm extends Component {
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.balance')}>
-                {getFieldDecorator('balance', { initialValue: balance })
+                {getFieldDecorator('balance', { initialValue: balance + ` ${symbol}` })
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>

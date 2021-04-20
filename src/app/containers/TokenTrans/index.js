@@ -114,7 +114,7 @@ class TokenTrans extends Component {
     {
       dataIndex: 'action',
       render: (text, record) => {
-        return <div><SendTokenNormalTrans balance={typeof (record.balance) === 'string' ? record.balance.replace(/,/g, '') : record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.props.chain} transType={TRANSTYPE.tokenTransfer} /></div>
+        return <div><SendTokenNormalTrans symbol={this.props.symbol} balance={typeof (record.balance) === 'string' ? record.balance.replace(/,/g, '') : record.balance} tokenAddr={this.props.tokenAddr} from={record.address} path={record.path} handleSend={this.handleSend} chainType={this.props.chain} transType={TRANSTYPE.tokenTransfer} /></div>
       }
     }
   ];

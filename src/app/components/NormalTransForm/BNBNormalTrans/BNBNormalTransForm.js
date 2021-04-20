@@ -263,7 +263,7 @@ class BNBNormalTransForm extends Component {
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('Common.balance')}>
-                {getFieldDecorator('balance', { initialValue: balance })
+                {getFieldDecorator('balance', { initialValue: balance + ' BNB' })
                   (<Input disabled={true} prefix={<Icon type="wallet" className="colorInput" />} />)}
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
