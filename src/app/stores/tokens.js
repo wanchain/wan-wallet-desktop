@@ -253,8 +253,9 @@ class Tokens {
 
     let addrList = [];
     let normal = addressObj.normal;
-    let ledger = addressObj.ledger || {};
-    let trezor = addressObj.trezor || {};
+    // TODO: hardware crosschain
+    let ledger = {} // addressObj.ledger || {};
+    let trezor = {} // addressObj.trezor || {};
     let addresses = Object.assign({}, normal, ledger, trezor);
     Object.keys(addresses).forEach(item => {
       let balance;
