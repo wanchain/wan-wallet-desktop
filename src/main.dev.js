@@ -4,9 +4,8 @@
  * Although this does not have any windows associated, you can open windows from here
  */
 
-import env from 'dotenv';
 import path from 'path';
-import { app, shell } from 'electron';
+import { app, shell, webContents } from 'electron';
 import setting from '~/src/utils/Settings';
 import menuFactoryService from '~/src/services/menuFactory';
 import i18n, { i18nOptions } from '~/config/i18n';
@@ -14,25 +13,22 @@ import Logger from '~/src/utils/Logger';
 import windowStateKeeper from 'electron-window-state';
 import { Windows, walletBackend, updater } from '~/src/modules';
 
-env.config();
-
 const logger = Logger.getLogger('main');
 
-// register i18n event handlers
+require('dotenv').config()
+
 i18n.on('languageChanged', () => {
   menuFactoryService.buildMenu(i18n);
   Windows.broadcast('notification', 'language', setting.language);
 });
 
-i18n.on('loaded', (loaded) => {
+i18n.on('loaded', () => {
   i18n.changeLanguage(setting.language);
   i18n.off('loaded');
 });
 
-i18n.init(i18nOptions, (err) => {
-  if (err) {
-    logger.error('i18n change language error');
-  }
+i18n.init(i18nOptions, err => {
+  if (err) logger.error('i18n change language error')
 });
 
 function resetOldBtcSymbol() {
@@ -64,7 +60,7 @@ resetOldBtcSymbol();
 let mainWindow;
 
 async function createMain() {
-  logger.info('creating main window...');
+  logger.info('creating Renderer Process');
 
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1440,
@@ -76,19 +72,18 @@ async function createMain() {
     electronOptions: {
       minWidth: 1440,
       minHeight: 768,
-      width: mainWindowState.width,
-      height: mainWindowState.height,
       x: mainWindowState.x,
       y: mainWindowState.y,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
       webPreferences: {
-        nodeIntegration: setting.isDev ? true : false,
-        nativeWindowOpen: false,
+        contextIsolation: false,
+        enableRemoteModule: true,
+        nodeIntegration: setting.isDev,
         preload: setting.isDev ? path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
       }
     }
   };
-
-  console.log('setting.isDev:', setting.isDev);
 
   if (process.platform === 'linux') {
     opts.electronOptions.icon = path.join(__dirname, 'icons', 'icon-512x512.png');
@@ -104,13 +99,14 @@ async function createMain() {
     mainWindow.load(`file://${__dirname}/index.html`);
   }
 
-  // Open the DevTools under development.
-  if (setting.isDev) {
-    mainWindow.webContents.openDevTools();
-  }
-
   mainWindow.on('ready', () => {
     logger.info('ready to show main window');
+
+    // Open the DevTools under development.
+    if (setting.isDev) {
+      const guest = webContents.fromId(mainWindow.id)
+      guest.openDevTools();
+    }
 
     mainWindow.show();
     Windows.broadcast('notification', 'language', setting.language);
@@ -121,9 +117,7 @@ async function createMain() {
     }
   })
 
-  mainWindow.on('closed', function () {
-    mainWindow = null;
-  });
+  mainWindow.on('closed', () => mainWindow = null);
 }
 
 function sendReadyNotifications() {
@@ -147,7 +141,7 @@ async function onReady() {
   });
 
   if (process.env.NODE_ENV !== 'production') {
-    Windows.addDevToolsExtension();
+    // Windows.addDevToolsExtension();
   }
 
   // 3. create main window for frontend renderering, hide this window in the first place

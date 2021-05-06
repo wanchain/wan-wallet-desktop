@@ -41,7 +41,6 @@ class Window extends EventEmitter {
         }
         electronOptions = _.merge(electronOptions, opts.electronOptions);
 
-        this._logger.debug('Creating browser window');
         this.window = new BrowserWindow(electronOptions);
         this.session = this.window.webContents.session;
         this.webContents = this.window.webContents;
@@ -49,7 +48,7 @@ class Window extends EventEmitter {
             this._logger.debug('Closed');
             this.isShown = false;
             this.isClosed = true;
-            this.isContentReady = false;
+            // this.isContentReady = false;
             this.emit('closed');
         });
         this.window.on('close', (e) => {
@@ -89,14 +88,11 @@ class Window extends EventEmitter {
             if (this.type === 'main') {
                 let lockTimeThreshold = setting.autoLockTimeout;
                 if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME
-                this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`);
 
                 if (global.chainManager && !this.isClosed) {
                     if (this._idleChecker) {
-                        this._logger.info('main window losing focus, clear idle time checker');
                         try {
                             clearInterval(this._idleChecker);
-                            this._logger.info('idle checker cleared');
                         } catch (e) {
                             this._logger.error(e.message || e.stack);
                         }
@@ -104,7 +100,6 @@ class Window extends EventEmitter {
                         this._idleChecker = null;
                     }
 
-                    this._logger.info('main window losing focus, start an away-from-main-window timer');
                     if (this._timer !== null) {
                         this._logger.info('Remain a timer should be cleared:' + this._timer);
                         clearTimeout(this._timer);
@@ -115,7 +110,6 @@ class Window extends EventEmitter {
                         this._mgr.broadcast('notification', 'uiAction', 'lockWallet');
                         clearTimeout(this._timer);
                         this._timer = null;
-                        this._logger.info('away-from-main-window timer cleared');
                     }, lockTimeThreshold);
                 }
             }
@@ -124,15 +118,12 @@ class Window extends EventEmitter {
             if (this.type === 'main') {
                 let lockTimeThreshold = setting.autoLockTimeout;
                 if (!lockTimeThreshold) lockTimeThreshold = MAX_LOCKTIME;
-                this._logger.info(`lockTimeThreshold: , ${lockTimeThreshold}`);
 
                 if (this._timer) {
-                    this._logger.info('main window getting focus again, clear away-from-main-window timer');
                     let timer = this._timer;
 
                     try {
                         clearTimeout(timer);
-                        this._logger.info('away-from-main-window timer cleared');
                     } catch (e) {
                         this._logger.error(e.message || e.stack);
                     }
@@ -141,7 +132,6 @@ class Window extends EventEmitter {
                 }
 
                 if (global.chainManager) {
-                    this._logger.info('start an interval checker for idle time');
                     if (this._idleChecker !== null) {
                         this._logger.info('Remain a idle timer should be cleared:' + this._idleChecker);
                         clearInterval(this._idleChecker);
@@ -163,21 +153,21 @@ class Window extends EventEmitter {
             }
         })
         this.webContents.once('did-finish-load', () => {
-            this.isContentReady = true;
+            // this.isContentReady = true;
 
             this._logger.debug(`Content loaded, id: ${this.id}`);
 
-            if (opts.sendData) {
-                if (_.isString(opts.sendData)) {
-                    this.send(opts.sendData);
-                } else if (_.isObject(opts.sendData)) {
-                    for (const key in opts.sendData) {
-                        if ({}.hasOwnProperty.call(opts.sendData, key)) {
-                            this.send(key, opts.sendData[key]);
-                        }
-                    }
-                }
-            }
+            // if (opts.sendData) {
+            //     if (_.isString(opts.sendData)) {
+            //         this.send(opts.sendData);
+            //     } else if (_.isObject(opts.sendData)) {
+            //         for (const key in opts.sendData) {
+            //             if ({}.hasOwnProperty.call(opts.sendData, key)) {
+            //                 this.send(key, opts.sendData[key]);
+            //             }
+            //         }
+            //     }
+            // }
 
             if (opts.show) {
                 this.show();
@@ -247,7 +237,6 @@ class Windows {
     init() {
         ipc.on('main_setWindowId', (e) => {
             const id = e.sender.id;
-            logger.info(`Set window id, ${id}`);
             const bwnd = BrowserWindow.fromWebContents(e.sender);
 
             const wnd = _.find(this._windows, (w) => {
@@ -262,9 +251,7 @@ class Windows {
         })
     }
 
-    create(type, options) {
-        options = options || {};
-
+    create(type, options = {}) {
         const existing = this.getByType(type);
 
         if (existing) {
@@ -297,6 +284,8 @@ class Windows {
                 useContentSize: true,
                 autoHideMenuBar: true,
                 webPreferences: {
+                    contextIsolation: false,
+                    enableRemoteModule: true,
                     webSecurity: true,
                     preload: setting.isDev ? `${__dirname}/../preload` : `${__dirname}/preload.js`,
                     textAreasAreResizable: false,
