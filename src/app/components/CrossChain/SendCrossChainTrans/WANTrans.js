@@ -29,7 +29,7 @@ class WANTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, addCrossTransTemplate, updateTransParams, tokenPairs, chainPairId, chainType } = this.props;
+    const { from, path, addCrossTransTemplate, updateTransParams, tokenPairs, chainPairId, chainType, record } = this.props;
     if (!(chainPairId in tokenPairs)) {
       return false;
     }
@@ -38,7 +38,7 @@ class WANTrans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
     this.setState({ visible: true, loading: true, spin: true });
-    addCrossTransTemplate(from, { chainType, path });
+    addCrossTransTemplate(from, { chainType, path, walletID: record.wid });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {

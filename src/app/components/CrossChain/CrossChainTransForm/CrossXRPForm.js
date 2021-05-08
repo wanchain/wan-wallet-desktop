@@ -12,9 +12,9 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
-import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'utils/settings';
+import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH, WALLETID } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress } from 'utils/helper';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
@@ -130,7 +130,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }, [fetchGroupListStatus, fetchQuotaStatus, fetchFeeStatus, fetchGasPrice])
 
-  const addressSelections = Object.keys(info.toAccountList.normal);
+  const addressSelections = Object.keys({ ...info.toAccountList.normal, ...info.toAccountList.ledger });
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
   const checkXRPBalance = (addr, type) => {
@@ -145,23 +145,28 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         setHandleNextStatus(false)
         return;
       };
-
       const { pwd, amount } = form.getFieldsValue(['pwd', 'amount']);
       const isNativeAddress = addressSelections.includes(form.getFieldValue('to'));
       const isNativeAccount = accountSelections.includes(form.getFieldValue('to'));
       const desPath = info.desChain === 'WAN' ? WANPATH : ETHPATH;
       const toPathPrefix = type === INBOUND ? desPath : XRPPATH;
-      let to, toAddr;
+      let to, toAddr, walletID;
+      let addrType = 'normal';
+      let toValue = form.getFieldValue('to')
       if (isNativeAddress || isNativeAccount) {
         if (isNativeAccount) {
-          to = { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` };
-          toAddr = getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList);
+          addrType = getValueByNameInfoAllType(toValue, 'type', info.toAccountList);
+          walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
+          to = { walletID, path: addrType === 'normal' ? `${toPathPrefix}${getValueByNameInfo(toValue, 'path', info.toAccountList)}` : info.toAccountList[addrType][getValueByNameInfoAllType(toValue, 'address', info.toAccountList)].path };
+          toAddr = getValueByNameInfo(toValue, 'address', info.toAccountList);
         } else {
-          to = { walletID: 1, path: `${toPathPrefix}${(getInfoByAddress(form.getFieldValue('to'), ['path'], info.toAccountList)).path}` };
-          toAddr = form.getFieldValue('to')
+          addrType = getInfoByAddress(to, [], info.toAccountList).type
+          walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
+          to = { walletID, path: addrType === 'normal' ? `${toPathPrefix}${(getInfoByAddress(toValue, ['path'], info.toAccountList)).path}` : info.toAccountList[addrType][toValue].path };
+          toAddr = toValue;
         }
       } else {
-        to = toAddr = form.getFieldValue('to');
+        to = toAddr = toValue;
       }
       const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee, receivedAmount }
       if (settings.reinput_pwd) {
@@ -264,12 +269,14 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           let func = info.desChain === 'WAN' ? 'address_isWanAddress' : 'address_isEthAddress'
           pu.promisefy(wand.request, [func, { address: value }], this).then(ret => {
             ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          })
+          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         } else {
           pu.promisefy(wand.request, ['address_isXrpAddress', { address: value }], this).then(ret => {
-            ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          })
+            (ret[0] || ret[1]) ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
+          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         }
+      } else {
+        callback()
       }
     } catch (err) {
       callback(intl.get('NormalTransForm.invalidAddress'))

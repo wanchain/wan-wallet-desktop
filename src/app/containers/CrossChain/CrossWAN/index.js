@@ -17,6 +17,7 @@ const CHAINTYPE = 'WAN';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.wanAddress.getNormalAddrList,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
@@ -27,6 +28,7 @@ const CHAINTYPE = 'WAN';
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -41,6 +43,7 @@ class CrossWAN extends Component {
   componentDidMount() {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(CHAINTYPE);
+    this.props.updateChainBalanceList(this.info.toChainSymbol);
     this.props.setCurrTokenPairId(this.props.match.params.tokenPairId);
     this.props.setCurrToken(this.info.toAccount);
     this.props.setCurrTokenChain(this.info.toChainSymbol);
@@ -51,6 +54,7 @@ class CrossWAN extends Component {
   }
 
   componentWillUnmount() {
+    this.props.updateChainBalanceList();
     clearInterval(this.timer);
   }
 
@@ -70,6 +74,9 @@ class CrossWAN extends Component {
       crossType: transParams.crossType
     };
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
         if (err) {
@@ -151,7 +158,7 @@ class CrossWAN extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><WANTrans balance={record.balance} from={record.address} record={record} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
+      render: (text, record) => <div><WANTrans record={record} balance={record.balance} from={record.address} record={record} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
     }
   ];
 
@@ -181,7 +188,7 @@ class CrossWAN extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getCCTokensListInfo } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo, ledgerAddrList } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
@@ -197,7 +204,7 @@ class CrossWAN extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList)} />
           </Col>
         </Row>
         <Row className="title">

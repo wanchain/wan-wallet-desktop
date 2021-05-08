@@ -34,7 +34,7 @@ class Trans extends Component {
   }
 
   showModal = async () => {
-    const { from, path, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId } = this.props;
+    const { from, path, addCrossTransTemplate, updateTransParams, type, tokenPairs, currTokenPairId, record } = this.props;
     if (!(currTokenPairId in tokenPairs)) {
       message.error('Token pair ID is missing.');
       return false;
@@ -44,7 +44,7 @@ class Trans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ chainType, tokenAddr });
     this.setState({ visible: true, spin: true, loading: true });
-    addCrossTransTemplate(from, { chainType, path });
+    addCrossTransTemplate(from, { chainType, path, walletID: record.walletID });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {

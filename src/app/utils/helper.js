@@ -177,6 +177,20 @@ export const getValueByNameInfo = function (value, type, addrInfo, addrType = 'n
   }
 }
 
+export const getValueByNameInfoAllType = function (value, type, addrInfo) {
+  let val;
+  Object.keys(addrInfo).some(t => {
+    let targetVal = Object.values(addrInfo[t]).find(val => val.name === value)
+    if (targetVal) {
+      val = type === 'type' ? t : targetVal[type];
+      return true;
+    } else {
+      return false;
+    }
+  })
+  return val;
+}
+
 export const getInfoByPath = function (pathInfo, addrInfo, addrType = 'normal') {
   let value = {};
   if (pathInfo) {

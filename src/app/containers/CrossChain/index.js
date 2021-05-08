@@ -102,6 +102,9 @@ class CrossChain extends Component {
     };
 
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
         if (err) {
@@ -141,6 +144,9 @@ class CrossChain extends Component {
     };
 
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
         if (err) {
@@ -185,7 +191,7 @@ class CrossChain extends Component {
       dataIndex: 'action',
       width: '10%',
       render: (text, record) => {
-        return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
+        return <div><Trans record={record} balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.inboundHandleSend} type={INBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
       }
     }
   ];
@@ -212,7 +218,7 @@ class CrossChain extends Component {
       dataIndex: 'action',
       width: '10%',
       render: (text, record) => {
-        return <div><Trans balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
+        return <div><Trans record={record} balance={record.balance} from={record.address} account={record.name} path={record.path} handleSend={this.outboundHandleSend} type={OUTBOUND} chainPairId={this.props.match.params.tokenPairId} /></div>;
       }
     }
   ];

@@ -18,7 +18,7 @@ const XRPTrans = observer(({ record, type }) => {
   const showModal = () => {
     updateRecord(Object.assign(record, { type }));
     const chainType = type === INBOUND ? crossChain.currentTokenPairInfo.fromChainSymbol : crossChain.currentTokenPairInfo.toChainSymbol;
-    updateXRPTransParams({ from: { walletID: 1, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
+    updateXRPTransParams({ from: { walletID: record.wid || record.walletID, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
     toggleVisible();
   }
 
@@ -54,6 +54,9 @@ const XRPTrans = observer(({ record, type }) => {
     const trans = Object.assign(info, { input, tokenPairID, type: 'LOCK' })
 
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', trans, (err, txHash) => {
         if (err) {
           console.log('crossChain_crossChain_XRP_err:', err)

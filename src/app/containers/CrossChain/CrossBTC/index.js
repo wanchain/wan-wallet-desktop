@@ -113,6 +113,9 @@ class CrossBTC extends Component {
       crossType: CROSS_TYPE[0]
     };
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         console.log(err, ret);
         this.props.updateTransHistory();
@@ -177,7 +180,7 @@ class CrossBTC extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><BTCTrans from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} direction={OUTBOUND} /></div>
+      render: (text, record) => <div><BTCTrans record={record} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} direction={OUTBOUND} /></div>
     }
   ];
 

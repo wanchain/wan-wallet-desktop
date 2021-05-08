@@ -43,7 +43,7 @@ class CrossBTCForm extends Component {
     super(props);
     let info = props.currentTokenPairInfo;
     let addressInfo = props.getChainAddressInfoByChain(props.direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol);
-    this.addressSelections = Object.keys(addressInfo.normal);
+    this.addressSelections = Object.keys({ ...addressInfo.normal, ...addressInfo.ledger, ...addressInfo.trezor });
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', addressInfo));
     this.state = {
       fee: 0,
@@ -216,6 +216,7 @@ class CrossBTCForm extends Component {
               callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
               return;
             }
+
             let crossChainNetworkFee = formatNumByDecimals(getFee.result.networkFee || 0, 8); // cross-chain network fee
             this.setState({ receive: new BigNumber(value).minus(crossChainNetworkFee).toString(), crossChainNetworkFee });
             callback();

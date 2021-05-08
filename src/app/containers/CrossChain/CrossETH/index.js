@@ -110,7 +110,11 @@ class CrossETH extends Component {
       tokenPairID: tokenPairID,
       crossType: transParams.crossType
     };
+
     return new Promise((resolve, reject) => {
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
         console.log(err, ret);
         if (err) {

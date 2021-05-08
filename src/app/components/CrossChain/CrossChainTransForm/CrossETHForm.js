@@ -9,10 +9,10 @@ import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
-import { CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL } from 'utils/settings';
+import { CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfo, checkAddressByChainType, getFees, getQuota } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -36,7 +36,8 @@ class CrossETHForm extends Component {
   constructor(props) {
     super(props);
     let info = props.currentTokenPairInfo;
-    this.addressSelections = Object.keys(props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol).normal);
+    let addr = props.getChainAddressInfoByChain(props.type === INBOUND ? info.toChainSymbol : info.fromChainSymbol)
+    this.addressSelections = Object.keys({ ...addr.normal, ...addr.ledger, ...addr.trezor });
     this.state = {
       confirmVisible: false,
       crossType: CROSS_TYPE[0],
@@ -117,16 +118,21 @@ class CrossETHForm extends Component {
         return;
       }
 
+      let addrType = 'normal'
       if (this.accountSelections.includes(to)) {
-        to = getValueByNameInfo(to, 'address', toAddrInfo);
+        addrType = getValueByNameInfoAllType(to, 'type', toAddrInfo);
+        to = getValueByNameInfoAllType(to, 'address', toAddrInfo);
         isNativeAccount = true;
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
+        addrType = getInfoByAddress(to, [], toAddrInfo).type;
       }
-
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
-      toPath = isNativeAccount ? `m/44'/${toPath}'/0'/0/${toAddrInfo.normal[to].path}` : undefined;
+      toPath = isNativeAccount
+                               ? addrType === 'normal' ? `m/44'/${toPath}'/0'/0/${toAddrInfo[addrType][to].path}` : toAddrInfo[addrType][to].path
+                               : undefined;
 
+      let walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -136,12 +142,12 @@ class CrossETHForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: isNativeAccount ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: isNativeAccount ? { walletID: 1, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: isNativeAccount ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });

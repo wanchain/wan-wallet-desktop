@@ -254,29 +254,32 @@ class Tokens {
     let addrList = [];
     let normal = addressObj.normal;
     // TODO: hardware crosschain
-    let ledger = {} // addressObj.ledger || {};
-    let trezor = {} // addressObj.trezor || {};
-    let addresses = Object.assign({}, normal, ledger, trezor);
-    Object.keys(addresses).forEach(item => {
-      let balance;
-      if (self.tokensBalance && self.tokensBalance[SCAddress]) {
-        let tokenInfo = this.getTokenInfoFromTokensListByAddr(SCAddress);
-        if (self.tokensList && tokenInfo) {
-          balance = formatNumByDecimals(self.tokensBalance[SCAddress][item.toLowerCase()], tokenInfo.decimals)
+    let ledger = addressObj.ledger || {};
+    let trezor = addressObj.trezor || {};
+    [normal, ledger].forEach((obj, index) => {
+      let walletID = index + 1;
+      Object.keys(obj).forEach(item => {
+        let balance;
+        if (self.tokensBalance && self.tokensBalance[SCAddress]) {
+          let tokenInfo = this.getTokenInfoFromTokensListByAddr(SCAddress);
+          if (self.tokensList && tokenInfo) {
+            balance = formatNumByDecimals(self.tokensBalance[SCAddress][item.toLowerCase()], tokenInfo.decimals)
+          } else {
+            balance = 0
+          }
         } else {
-          balance = 0
+          balance = 0;
         }
-      } else {
-        balance = 0;
-      }
-      addrList.push({
-        key: item,
-        name: addresses[item].name,
-        address: item,
-        balance,
-        path: String(addresses[item].path).startsWith('m/') ? addresses[item].path : `m/44'/${chain === 'BNB' ? 60 : (Number(chainID) - Number('0x80000000'.toString(10)))}'/0'/0/${addresses[item].path}`,
-        action: 'send',
-        amount: balance
+        addrList.push({
+          key: item,
+          name: obj[item].name,
+          address: item,
+          balance,
+          path: String(obj[item].path).startsWith('m/') ? obj[item].path : `m/44'/${chain === 'BNB' ? 60 : (Number(chainID) - Number('0x80000000'.toString(10)))}'/0'/0/${obj[item].path}`,
+          action: 'send',
+          amount: balance,
+          walletID
+        });
       });
     });
     return addrList;
@@ -477,7 +480,8 @@ class Tokens {
       return;
     }
     let addrList = [];
-    [addrInfo.normal/* , addrInfo.ledger || {}, addrInfo.trezor || {} */].forEach(obj => {
+    [addrInfo.normal, addrInfo.ledger || {}/* , addrInfo.ledger || {}, addrInfo.trezor || {} */].forEach((obj, index) => {
+      let walletID = index + 1;
       Object.keys(obj).forEach(item => {
         let balance;
         let pathPrefix = this.getPathPrefix(chain);
@@ -498,7 +502,8 @@ class Tokens {
           balance,
           path: String(obj[item].path).startsWith('m/44') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
-          amount: balance
+          amount: balance,
+          walletID
         });
       });
     });
