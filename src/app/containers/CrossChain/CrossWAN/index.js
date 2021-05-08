@@ -27,6 +27,7 @@ const CHAINTYPE = 'WAN';
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
   updateTokensBalance: (...args) => stores.tokens.updateTokensBalance(...args),
   setCurrTokenPairId: id => stores.crossChain.setCurrTokenPairId(id),
+  updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
 }))
 
 @observer
@@ -41,6 +42,7 @@ class CrossWAN extends Component {
   componentDidMount() {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(CHAINTYPE);
+    this.props.updateChainBalanceList(this.info.toChainSymbol);
     this.props.setCurrTokenPairId(this.props.match.params.tokenPairId);
     this.props.setCurrToken(this.info.toAccount);
     this.props.setCurrTokenChain(this.info.toChainSymbol);
@@ -51,6 +53,7 @@ class CrossWAN extends Component {
   }
 
   componentWillUnmount() {
+    this.props.updateChainBalanceList();
     clearInterval(this.timer);
   }
 

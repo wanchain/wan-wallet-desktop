@@ -264,11 +264,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           let func = info.desChain === 'WAN' ? 'address_isWanAddress' : 'address_isEthAddress'
           pu.promisefy(wand.request, [func, { address: value }], this).then(ret => {
             ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          })
+          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         } else {
           pu.promisefy(wand.request, ['address_isXrpAddress', { address: value }], this).then(ret => {
-            ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          })
+            (ret[0] || ret[1]) ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
+          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         }
       }
     } catch (err) {
