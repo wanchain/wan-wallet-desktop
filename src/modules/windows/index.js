@@ -71,12 +71,12 @@ class Window extends EventEmitter {
                         buttons: [i18n.t('main.exitDialog.ok'), i18n.t('main.exitDialog.cancel')],
                         title: i18n.t('main.exitDialog.title'),
                         message: i18n.t('main.exitDialog.message'),
-                    }, (button) => {
-                        if (button === 0) {
-                            this.emit('close', e);
-                            this.window.destroy();
-                        }
-                    });
+                    }).then(button => {
+                      if (button.response === 0) {
+                          this.emit('close', e);
+                          this.window.destroy();
+                      }
+                  });
                 } else {
                     this.emit('close', e);
                 }
