@@ -192,7 +192,7 @@ class EOSNormalTransForm extends Component {
                 </Form.Item>
               }
               <Form.Item label={intl.get('EOSNormalTransForm.memo')}>
-                {getFieldDecorator('memo', { rules: [{ message: intl.get('EOSNormalTransForm.invalid'), validator: this.checkMemo }] })
+                {getFieldDecorator('memo', { initialValue: '', rules: [{ message: intl.get('EOSNormalTransForm.invalid'), validator: this.checkMemo }] })
                   (<TextArea style={{ borderRadius: '4px' }} placeholder={intl.get('EOSNormalTransForm.memo')} prefix={<Icon type="credit-card" className="colorInput" />} />)}
               </Form.Item>
             </Form>
