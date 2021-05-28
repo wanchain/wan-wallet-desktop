@@ -256,7 +256,7 @@ class Tokens {
     // TODO: hardware crosschain
     let ledger = addressObj.ledger || {};
     let trezor = addressObj.trezor || {};
-    [normal, ledger].forEach((obj, index) => {
+    [normal, ledger, trezor].forEach((obj, index) => {
       let walletID = index + 1;
       Object.keys(obj).forEach(item => {
         let balance;
@@ -480,7 +480,7 @@ class Tokens {
       return;
     }
     let addrList = [];
-    [addrInfo.normal, addrInfo.ledger || {}/* , addrInfo.ledger || {}, addrInfo.trezor || {} */].forEach((obj, index) => {
+    [addrInfo.normal, addrInfo.ledger || {}, addrInfo.trezor || {}].forEach((obj, index) => {
       let walletID = index + 1;
       Object.keys(obj).forEach(item => {
         let balance;

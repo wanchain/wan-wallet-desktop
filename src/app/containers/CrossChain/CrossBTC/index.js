@@ -4,12 +4,14 @@ import { observer, inject } from 'mobx-react';
 import { Table, Row, Col, message } from 'antd';
 import totalImg from 'static/image/btc.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
+import { crossChainTrezorTrans } from 'componentUtils/trezor';
 import { INBOUND, OUTBOUND, CROSS_TYPE } from 'utils/settings';
 import BTCTrans from 'components/CrossChain/SendCrossChainTrans/BTCTrans';
 import CrossBTCHistory from 'components/CrossChain/CrossChainTransHistory/CrossBTCHistory';
 import { formatNum } from 'utils/support';
 import { convertCrossChainTxErrorText } from 'utils/helper';
 import style from './index.less';
+import BigNumber from 'bignumber.js';
 
 const CHAINTYPE = 'BTC';
 @inject(stores => ({
@@ -110,32 +112,47 @@ class CrossBTC extends Component {
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
-      crossType: CROSS_TYPE[0]
+      crossType: CROSS_TYPE[0],
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
+
     return new Promise((resolve, reject) => {
       if (input.from.walletID === 2) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
       }
-      wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
-        console.log(err, ret);
-        this.props.updateTransHistory();
-        if (err) {
-          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
-          } else {
-            message.warn(err.desc);
-          }
+      if (input.from.walletID === 3) {
+        input.BIP44Path = input.from.path;
+        input.from = from;
+        input.toAddr = transParams.toAddr;
+        crossChainTrezorTrans({ sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID, tokenSymbol: 'BTC', tokenStand: 'BTC' }).then(() => {
+          message.success(intl.get('Send.transSuccess'));
+          resolve();
+        }).catch(err => {
+          message.warn(convertCrossChainTxErrorText(err.result));
           reject(err);
-        } else {
-          if (ret.code) {
-            message.success(intl.get('Send.transSuccess'));
-            resolve(ret);
+        })
+      } else {
+        wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+          console.log(err, ret);
+          this.props.updateTransHistory();
+          if (err) {
+            if (err instanceof Object && err.desc && err.desc.includes('ready')) {
+              message.warn(intl.get('Common.networkError'));
+            } else {
+              message.warn(err.desc);
+            }
+            reject(err);
           } else {
-            message.warn(convertCrossChainTxErrorText(ret.result));
-            reject(ret);
+            if (ret.code) {
+              message.success(intl.get('Send.transSuccess'));
+              resolve(ret);
+            } else {
+              message.warn(convertCrossChainTxErrorText(ret.result));
+              reject(ret);
+            }
           }
-        }
-      })
+        })
+      }
     })
   }
 

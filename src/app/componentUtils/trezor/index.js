@@ -123,3 +123,57 @@ export const OsmTrezorTrans = async (tx, from, action, satellite) => {
     return Promise.reject(error);
   }
 }
+
+export const crossChainTrezorTrans = async param => {
+  try {
+    let { result: estimateData } = await wandWrapper('crossChain_getCrossChainContractData', param);
+    message.info(intl.get('Ledger.signTransactionInLedger'));
+    let rawTx = {
+      from: param.input.from,
+      chainId: Number(estimateData.chainId),
+      Txtype: 1,
+      to: estimateData.to,
+      value: estimateData.value,
+      data: estimateData.data,
+      nonce: '0x' + estimateData.nonce.toString(16),
+      gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
+      gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
+    };
+    let raw = await pu.promisefy(signTransaction, [param.input.BIP44Path, rawTx], this);// Trezor sign
+    // Send register validator
+    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+    let { from, to, toAddr, storeman, tokenPairID, crossType, amountUnit } = param.input
+    let params = {
+      txHash,
+      from: from.toLowerCase(),
+      fromAddr: from.toLowerCase(),
+      to,
+      toAddr,
+      storeman,
+      tokenPairID: tokenPairID,
+      value: estimateData.value,
+      contractValue: '0x' + Number(amountUnit).toString(16),
+      crossValue: estimateData.crossValue,
+      networkFee: estimateData.networkFee,
+      gasPrice: rawTx.gasPrice,
+      gasLimit: rawTx.gasLimit,
+      nonce: rawTx.nonce,
+      srcSCAddrKey: param.sourceAccount,
+      dstSCAddrKey: param.destinationAccount,
+      srcChainType: param.sourceSymbol,
+      dstChainType: param.destinationSymbol,
+      tokenSymbol: param.tokenSymbol,
+      tokenStand: param.tokenStand,
+      crossType,
+      crossMode: 'Release',
+      smgCrossMode: 'Release',
+    };
+    // save register validator history into DB
+    await pu.promisefy(wand.request, ['crossChain_insertCrossChainTransToDB', { tx: params }], this);
+    return Promise.resolve();
+  } catch (error) {
+    console.log(error);
+    message.error(intl.get('WanAccount.sendTransactionFailed'));
+    return Promise.reject(error);
+  }
+}

@@ -132,7 +132,8 @@ class CrossETHForm extends Component {
                                ? addrType === 'normal' ? `m/44'/${toPath}'/0'/0/${toAddrInfo[addrType][to].path}` : toAddrInfo[addrType][to].path
                                : undefined;
 
-      let walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
+      let walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()];
+      let toValue = isNativeAccount && addrType !== 'trezor';
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -142,12 +143,12 @@ class CrossETHForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: isNativeAccount ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: isNativeAccount ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
         this.setState({ confirmVisible: true });
       }
     });

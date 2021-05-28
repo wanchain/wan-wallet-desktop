@@ -9,6 +9,8 @@ import WANTrans from 'components/CrossChain/SendCrossChainTrans/WANTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossWANHistory';
 import { formatNum } from 'utils/support';
 import { convertCrossChainTxErrorText } from 'utils/helper';
+import { crossChainTrezorTrans } from 'componentUtils/trezor'
+import BigNumber from 'bignumber.js';
 import style from './index.less';
 
 const CHAINTYPE = 'WAN';
@@ -18,6 +20,7 @@ const CHAINTYPE = 'WAN';
   language: stores.languageIntl.language,
   getNormalAddrList: stores.wanAddress.getNormalAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
   getAmount: stores.wanAddress.getNormalAmount,
   getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
@@ -71,31 +74,45 @@ class CrossWAN extends Component {
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
-      crossType: transParams.crossType
+      crossType: transParams.crossType,
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
     return new Promise((resolve, reject) => {
       if (input.from.walletID === 2) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
       }
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
-        console.log(err, ret);
-        if (err) {
-          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
-          } else {
-            message.warn(err.desc);
-          }
+      if (input.from.walletID === 3) {
+        input.BIP44Path = input.from.path;
+        input.from = from;
+        input.toAddr = transParams.toAddr;
+        crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK', tokenSymbol: 'WAN', tokenStand: 'WAN' }).then(() => {
+          message.success(intl.get('Send.transSuccess'));
+          resolve();
+        }).catch(err => {
+          message.warn(convertCrossChainTxErrorText(err.result));
           reject(err);
-        } else {
-          if (ret.code) {
-            message.success(intl.get('Send.transSuccess'));
-            resolve(ret);
+        })
+      } else {
+        wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
+          console.log(err, ret);
+          if (err) {
+            if (err instanceof Object && err.desc && err.desc.includes('ready')) {
+              message.warn(intl.get('Common.networkError'));
+            } else {
+              message.warn(err.desc);
+            }
+            reject(err);
           } else {
-            message.warn(convertCrossChainTxErrorText(ret.result));
-            reject(ret);
+            if (ret.code) {
+              message.success(intl.get('Send.transSuccess'));
+              resolve(ret);
+            } else {
+              message.warn(convertCrossChainTxErrorText(ret.result));
+              reject(ret);
+            }
           }
-        }
-      })
+        })
+      }
     });
   }
 
@@ -188,7 +205,7 @@ class CrossWAN extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getCCTokensListInfo, ledgerAddrList } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo, ledgerAddrList, trezorAddrList } = this.props;
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
     })
@@ -204,7 +221,7 @@ class CrossWAN extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList)} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList).concat(trezorAddrList)} />
           </Col>
         </Row>
         <Row className="title">
