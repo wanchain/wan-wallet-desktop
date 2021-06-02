@@ -1882,6 +1882,9 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
+                if (destinationSymbol === 'XRP') {
+                  ret.LedgerVersion = await ccUtil.getLedgerVersion(destinationSymbol);
+                }
                 ret.crossMode = crossMode
                 ret.smgCrossMode = smgCrossMode
                 console.log('get ret:', ret)

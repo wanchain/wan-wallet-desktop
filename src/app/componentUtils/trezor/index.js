@@ -146,9 +146,11 @@ export const OsmTrezorTrans = async (tx, from, action, satellite) => {
 
 export const crossChainTrezorTrans = async param => {
   try {
-    let approveZeroTxHash, approveTxHash
+    let approveZeroTxHash, approveTxHash;
+    let satellite = {}
     let { from, to, toAddr, storeman, tokenPairID, crossType, amountUnit, BIP44Path } = param.input
-    let { result: crossChainData, approveZeroTx, approveTx, smgCrossMode, crossMode } = await wandWrapper('crossChain_getCrossChainContractData', param);
+    let ret = await wandWrapper('crossChain_getCrossChainContractData', param);
+    let { result: crossChainData, approveZeroTx, approveTx, smgCrossMode, crossMode } = ret;
     console.log('crossChainData, approveZeroTx, approveTx:', crossChainData, approveZeroTx, approveTx)
 
     if (approveZeroTx) {
@@ -195,8 +197,11 @@ export const crossChainTrezorTrans = async param => {
     if (approveTxHash) {
       params.approveTxHash = approveTxHash;
     }
+    if (param.destinationSymbol === 'XRP' && ret.LedgerVersion) {
+      satellite.LedgerVersion = ret.LedgerVersion
+    }
     // save register validator history into DB
-    await pu.promisefy(wand.request, ['crossChain_insertCrossChainTransToDB', { tx: params }], this);
+    await pu.promisefy(wand.request, ['crossChain_insertCrossChainTransToDB', { tx: params, satellite }], this);
     return Promise.resolve();
   } catch (error) {
     console.log('crossChainTrezorTrans:', error);
