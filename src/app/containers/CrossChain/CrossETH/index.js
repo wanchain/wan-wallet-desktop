@@ -124,10 +124,7 @@ class CrossETH extends Component {
         crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK', tokenSymbol: 'ETH', tokenStand: 'ETH' }).then(() => {
           message.success(intl.get('Send.transSuccess'));
           resolve();
-        }).catch(err => {
-          message.warn(convertCrossChainTxErrorText(err.result));
-          reject(err);
-        })
+        }).catch(reject)
       } else {
         wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
           console.log(err, ret);

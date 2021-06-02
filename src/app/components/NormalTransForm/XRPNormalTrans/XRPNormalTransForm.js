@@ -18,7 +18,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [minSendAmount, setMinSendAmount] = useState('0');
-  const [visibleTag, setVisibleTag] = useState(false);
+  const [visibleTag, setVisibleTag] = useState(true);
   const { status: estimateSmartFeeStatus, value: estimateSmartFee } = useAsync('transaction_estimateSmartFee', DEFAULTFEE, true, { chainType: 'XRP' });
   const spin = useMemo(() => {
     return estimateSmartFeeStatus === 'pending';
@@ -75,7 +75,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
           callback()
           setVisibleTag(!ret[1])
         } else {
-          setVisibleTag(false)
+          setVisibleTag(true)
           callback(rule.message)
         }
       }).then(() => getBalance([value], 'XRP')).then(val => {
@@ -86,11 +86,11 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
         }
       }).catch(err => {
         console.log('checkToXRPAddrErr:', err);
-        setVisibleTag(false)
+        setVisibleTag(true)
         callback(rule.message);
       })
     } else {
-      setVisibleTag(false)
+      setVisibleTag(true)
       callback(rule.message);
     }
   }

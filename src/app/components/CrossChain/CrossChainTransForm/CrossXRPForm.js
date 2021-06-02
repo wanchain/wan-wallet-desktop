@@ -13,7 +13,7 @@ import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH, WALLETID } from 'utils/settings';
-import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
+import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum, fromWei } from 'utils/support';
 import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType } from 'utils/helper';
 
 const pu = require('promisefy-util');
@@ -100,6 +100,10 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [quotaList])
 
   useEffect(() => {
+    updateXRPTransParams({ gasPrice: fromWei(gasPrice, 'gwei') })
+  }, [gasPrice])
+
+  useEffect(() => {
     let groupId = smgList[0] ? smgList[0].groupId : '0x';
     if (groupId === '0x') return;
     executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
@@ -130,11 +134,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }, [fetchGroupListStatus, fetchQuotaStatus, fetchFeeStatus, fetchGasPrice])
 
-  const addressSelections = Object.keys({ ...info.toAccountList.normal, ...info.toAccountList.ledger });
+  const addressSelections = Object.keys({ ...info.toAccountList.normal, ...info.toAccountList.ledger, ...info.toAccountList.trezor });
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
   const checkXRPBalance = (addr, type) => {
-    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).gte('21') || (new BigNumber(val[addr]).lt('21') && new BigNumber(receivedAmount).gte('21'))).catch(() => false) : Promise.resolve(true)
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('21')).catch(() => false) : Promise.resolve(true)
   }
 
   const handleNext = () => {
@@ -157,12 +161,16 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         if (isNativeAccount) {
           addrType = getValueByNameInfoAllType(toValue, 'type', info.toAccountList);
           walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
-          to = { walletID, path: addrType === 'normal' ? `${toPathPrefix}${getValueByNameInfo(toValue, 'path', info.toAccountList)}` : info.toAccountList[addrType][getValueByNameInfoAllType(toValue, 'address', info.toAccountList)].path };
-          toAddr = getValueByNameInfo(toValue, 'address', info.toAccountList);
+          to = addrType !== 'trezor'
+                                    ? { walletID, path: addrType === 'normal' ? `${toPathPrefix}${getValueByNameInfo(toValue, 'path', info.toAccountList)}` : info.toAccountList[addrType][getValueByNameInfoAllType(toValue, 'address', info.toAccountList)].path }
+                                    : getValueByNameInfoAllType(toValue, 'address', info.toAccountList)
+          toAddr = getValueByNameInfoAllType(toValue, 'address', info.toAccountList);
         } else {
           addrType = getInfoByAddress(to, [], info.toAccountList).type
           walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
-          to = { walletID, path: addrType === 'normal' ? `${toPathPrefix}${(getInfoByAddress(toValue, ['path'], info.toAccountList)).path}` : info.toAccountList[addrType][toValue].path };
+          to = addrType !== 'trezor'
+                                    ? { walletID, path: addrType === 'normal' ? `${toPathPrefix}${(getInfoByAddress(toValue, ['path'], info.toAccountList)).path}` : info.toAccountList[addrType][toValue].path }
+                                    : toValue
           toAddr = toValue;
         }
       } else {
@@ -246,7 +254,16 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
-        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) })
+        let toAddr;
+        let toValue = form.getFieldValue('to');
+        const isNativeAddress = addressSelections.includes(toValue);
+        const isNativeAccount = accountSelections.includes(toValue);
+        if (isNativeAddress || isNativeAccount) {
+          toAddr = isNativeAccount ? getValueByNameInfoAllType(toValue, 'address', info.toAccountList) : toValue
+        } else {
+          toAddr = toValue;
+        }
+        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: toAddr })
       } else {
         if (new BigNumber(balance).minus(value).lt(0)) {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
@@ -266,8 +283,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       const isNativeAccount = accountSelections.includes(value);
       if (!(isNativeAddress || isNativeAccount)) {
         if (type === INBOUND) {
-          let func = info.desChain === 'WAN' ? 'address_isWanAddress' : 'address_isEthAddress'
-          pu.promisefy(wand.request, [func, { address: value }], this).then(ret => {
+          pu.promisefy(wand.request, ['address_isEthAddress', { address: value }], this).then(ret => {
             ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
           }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         } else {

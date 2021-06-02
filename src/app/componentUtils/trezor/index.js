@@ -1,13 +1,33 @@
 import { message } from 'antd';
 import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
-
 import { wandWrapper } from 'utils/support.js';
 
 const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
 
 export const WAN_PATH = "m/44'/5718350'/0'/0";
+
+export const trezorRawTx = async (param, BIP44Path) => {
+  try {
+    let rawTx = {
+      from: param.from,
+      chainId: Number(param.chainId),
+      Txtype: 1,
+      to: param.to,
+      value: param.value || '0x0',
+      data: param.data,
+      nonce: '0x' + param.nonce.toString(16),
+      gasPrice: '0x' + Number(param.gasPrice).toString(16),
+      gasLimit: '0x' + Number(param.gasLimit).toString(16),
+    };
+    let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);
+    return Promise.resolve({ raw, rawTx })
+  } catch (error) {
+    console.log('trezorRawTx:', error)
+    return Promise.reject(error)
+  }
+}
 
 export const signTransaction = (path, tx, callback) => {
   TrezorConnect.ethereumSignTransaction({
@@ -126,23 +146,24 @@ export const OsmTrezorTrans = async (tx, from, action, satellite) => {
 
 export const crossChainTrezorTrans = async param => {
   try {
-    let { result: estimateData } = await wandWrapper('crossChain_getCrossChainContractData', param);
-    message.info(intl.get('Ledger.signTransactionInLedger'));
-    let rawTx = {
-      from: param.input.from,
-      chainId: Number(estimateData.chainId),
-      Txtype: 1,
-      to: estimateData.to,
-      value: estimateData.value,
-      data: estimateData.data,
-      nonce: '0x' + estimateData.nonce.toString(16),
-      gasPrice: '0x' + Number(estimateData.gasPrice).toString(16),
-      gasLimit: '0x' + Number(estimateData.gasLimit).toString(16),
-    };
-    let raw = await pu.promisefy(signTransaction, [param.input.BIP44Path, rawTx], this);// Trezor sign
+    let approveZeroTxHash, approveTxHash
+    let { from, to, toAddr, storeman, tokenPairID, crossType, amountUnit, BIP44Path } = param.input
+    let { result: crossChainData, approveZeroTx, approveTx, smgCrossMode, crossMode } = await wandWrapper('crossChain_getCrossChainContractData', param);
+    console.log('crossChainData, approveZeroTx, approveTx:', crossChainData, approveZeroTx, approveTx)
+
+    if (approveZeroTx) {
+      let { raw } = await trezorRawTx(approveZeroTx, BIP44Path)
+      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      console.log('approveZeroTx:', approveZeroTxHash)
+    }
+    if (approveTx) {
+      let { raw } = await trezorRawTx(approveTx, BIP44Path)
+      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      console.log('approveTx:', approveTxHash)
+    }
+    let { raw, rawTx } = await trezorRawTx(crossChainData, BIP44Path)
     // Send register validator
     let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
-    let { from, to, toAddr, storeman, tokenPairID, crossType, amountUnit } = param.input
     let params = {
       txHash,
       from: from.toLowerCase(),
@@ -151,10 +172,10 @@ export const crossChainTrezorTrans = async param => {
       toAddr,
       storeman,
       tokenPairID: tokenPairID,
-      value: estimateData.value,
+      value: crossChainData.value,
       contractValue: '0x' + Number(amountUnit).toString(16),
-      crossValue: estimateData.crossValue,
-      networkFee: estimateData.networkFee,
+      crossValue: crossChainData.crossValue,
+      networkFee: crossChainData.networkFee,
       gasPrice: rawTx.gasPrice,
       gasLimit: rawTx.gasLimit,
       nonce: rawTx.nonce,
@@ -165,15 +186,20 @@ export const crossChainTrezorTrans = async param => {
       tokenSymbol: param.tokenSymbol,
       tokenStand: param.tokenStand,
       crossType,
-      crossMode: 'Release',
-      smgCrossMode: 'Release',
+      crossMode: crossMode || 'Release',
+      smgCrossMode: smgCrossMode || 'Release',
     };
+    if (approveZeroTxHash) {
+      params.approveZeroTxHash = approveZeroTxHash;
+    }
+    if (approveTxHash) {
+      params.approveTxHash = approveTxHash;
+    }
     // save register validator history into DB
     await pu.promisefy(wand.request, ['crossChain_insertCrossChainTransToDB', { tx: params }], this);
     return Promise.resolve();
   } catch (error) {
-    console.log(error);
-    message.error(intl.get('WanAccount.sendTransactionFailed'));
+    console.log('crossChainTrezorTrans:', error);
     return Promise.reject(error);
   }
 }

@@ -128,7 +128,6 @@ class CrossBTC extends Component {
           message.success(intl.get('Send.transSuccess'));
           resolve();
         }).catch(err => {
-          message.warn(convertCrossChainTxErrorText(err.result));
           reject(err);
         })
       } else {

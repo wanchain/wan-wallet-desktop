@@ -1877,19 +1877,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
-                console.log('srcChain:', srcChain);
-                console.log('dstChain:', dstChain);
+                let { crossMode, smgCrossMode } = global.crossInvoker.getCrossInvokerConfig(srcChain, dstChain, tokenPairID)
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);
                 }
-                console.log('---------------C data----------------')
-                console.log(srcChain, dstChain, type, input, false);
                 ret = await global.crossInvoker.invoke(srcChain, dstChain, type, input, false);
+                ret.crossMode = crossMode
+                ret.smgCrossMode = smgCrossMode
                 console.log('get ret:', ret)
             } catch (e) {
                 logger.error('crossChain failed:');
                 logger.error(e);
-                // logger.error(e.message || e.stack);
                 err = e
             }
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })

@@ -88,10 +88,7 @@ class CrossWAN extends Component {
         crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK', tokenSymbol: 'WAN', tokenStand: 'WAN' }).then(() => {
           message.success(intl.get('Send.transSuccess'));
           resolve();
-        }).catch(err => {
-          message.warn(convertCrossChainTxErrorText(err.result));
-          reject(err);
-        })
+        }).catch(reject)
       } else {
         wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
           console.log(err, ret);
