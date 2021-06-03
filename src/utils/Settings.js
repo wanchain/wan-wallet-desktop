@@ -62,6 +62,15 @@ const defaultConfig = {
         },
         "2147483708-0x0000000000000000000000000000000000000000": {
           "select": true
+        },
+        "2153201998-0x0664b5e161a741bcdec503211beeec1e8d0edb37": {
+          "account": "0x0664b5e161a741bcdec503211beeec1e8d0edb37",
+          "ancestor": "FNX",
+          "chain": "Wanchain",
+          "chainSymbol": "WAN",
+          "decimals": "18",
+          "select": false,
+          "symbol": "FNX"
         }
       },
       cc_selected: {

@@ -91,7 +91,6 @@ class Portfolio {
       return item.ancestor ? item.ancestor : item.symbol;
     });
     param = Array.from(new Set(param.concat(Object.keys(self.defaultCoinList))));
-
     let reconvertIds = {};
     for (let v of param) {
       if (v.toLowerCase() in self.tokenIds_CoinGecko) {

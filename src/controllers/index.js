@@ -1079,7 +1079,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     BIP44Path: path,
                     walletID: walletID,
                     nonce: nonce,
-                    data: converter(data, 'utf8', 'hex'),
+                    data: str2Hex(data),
                     satellite: satellite
                 }
                 logger.info('Normal transaction: ' + JSON.stringify(input));
@@ -1115,8 +1115,8 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                     satellite: satellite
                 }
 
-                logger.info('Normal transaction: ' + JSON.stringify(input));
-                let srcChain = await global.crossInvoker.getChainInfoByContractAddr(to, chainType);// tokenaddr chain
+                logger.info('Token normal transaction: ' + JSON.stringify(input));
+                let srcChain = await global.crossInvoker.getChainInfoByContractAddr(to, chainType);// token address, chain
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {
@@ -2839,6 +2839,14 @@ const getPathIdByType = function (type, isTestNet = false) {
     return ID;
 }
 
+const str2Hex = (str = '0x') => {
+    str = str.trim();
+    if (/^0x/.test(str)) {
+        return str;
+    }
+    return '0x' + Buffer.from(str, 'utf8').toString('hex');
+}
+
 const converter = (str, from, to) => {
     str = str.trim();
     if (from === 'hex') {
@@ -2848,6 +2856,6 @@ const converter = (str, from, to) => {
         return Buffer.from(str, from).toString(to);
     }
     if (to === 'hex') {
-        return '0x' + Buffer.from(str, 'utf8').toString('hex');
+        return '0x' + Buffer.from(str, from).toString('hex');
     }
 }
