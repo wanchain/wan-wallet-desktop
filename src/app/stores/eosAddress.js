@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import { observable, action, computed, toJS, makeObservable } from 'mobx';
 import languageIntl from './languageIntl';
-import { EOSPATH, WALLETID } from 'utils/settings';
+import { WALLETID } from 'utils/settings';
 import { getTypeByWalletId } from 'utils/helper';
 import { timeFormat, formatNum } from 'utils/support';
 import { BigNumber } from 'bignumber.js';

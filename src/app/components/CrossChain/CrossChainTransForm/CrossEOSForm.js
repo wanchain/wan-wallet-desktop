@@ -179,7 +179,8 @@ class CrossEOSForm extends Component {
       fromAccount = record.name;
       srcChain = info.toChainSymbol;
       desChain = info.fromChainSymbol;
-      selectedList = Object.keys(addrInfo);
+      // selectedList = Object.keys(addrInfo);
+      selectedList = Object.values(addrInfo).filter(obj => obj.id !== '6').map(obj => obj.account) || [];// Imported EOS account shouldn't be displayed in the options.
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
       unit = info.toTokenSymbol;
     }
