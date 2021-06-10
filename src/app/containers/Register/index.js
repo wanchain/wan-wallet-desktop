@@ -31,6 +31,7 @@ const Step = Steps.Step;
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   addBTCAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
+  addBNBAddress: newAddr => stores.bnbAddress.addAddress(newAddr),
   setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
 }))
 
@@ -50,7 +51,7 @@ class Register extends Component {
     }]
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
@@ -101,7 +102,7 @@ class Register extends Component {
   }
 
   done = () => {
-    const { isMainNetwork, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, addXRPAddress } = this.props;
+    const { isMainNetwork, mnemonic, newPhrase, pwd, addWANAddress, addETHAddress, addBTCAddress, addXRPAddress, addBNBAddress } = this.props;
     if (newPhrase.join(' ') === mnemonic) {
       this.setState({ loading: true });
       wand.request('phrase_import', { phrase: mnemonic, pwd }, err => {
@@ -124,6 +125,7 @@ class Register extends Component {
               ]);
               addWANAddress(wanAddrInfo);
               addETHAddress(ethAddrInfo);
+              addBNBAddress(ethAddrInfo);
               addBTCAddress(btcMainAddInfo);
               addXRPAddress(xrpAddrInfo);
               this.props.setMnemonicStatus(true);
@@ -142,7 +144,7 @@ class Register extends Component {
     }
   }
 
-  render () {
+  render() {
     const { steps } = this.state;
     const { current } = this.props;
 

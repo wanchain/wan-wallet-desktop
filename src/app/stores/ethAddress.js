@@ -1,6 +1,6 @@
 
 import intl from 'react-intl-universal';
-import { observable, action, computed, toJS, makeObservable } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 import { BigNumber } from 'bignumber.js';
 import tokens from './tokens';
 import languageIntl from './languageIntl';

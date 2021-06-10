@@ -187,7 +187,7 @@ class BnbAccount extends Component {
             <Tag className="symbol">{intl.get('Common.bsc')}</Tag>
           </Col>
           <Col span={12} className="col-right">
-            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
+            {/* <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button> */}
           </Col>
         </Row>
         <Row className="mainBody">
