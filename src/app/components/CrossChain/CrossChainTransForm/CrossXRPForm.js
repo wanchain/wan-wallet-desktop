@@ -30,7 +30,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [sendAll, setSendAll] = useState(false);
   const [handleNextStatus, setHandleNextStatus] = useState(false);
 
-  const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getOpenStoremanGroupList', [], true);
+  const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
   const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_getCrossChainFees', '0', true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, chainIds: [fromChainID, toChainID] });
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
