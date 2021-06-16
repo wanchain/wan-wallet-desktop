@@ -76,7 +76,7 @@ class SendCrossChainParams {
       source: params.chainType,
       destination: params.chainType ? params.chainType : 'WAN',
       from: {
-        walletID: 1,
+        walletID: params.walletID || 1,
         path: params.path
       },
       to: {

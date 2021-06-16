@@ -5,7 +5,9 @@ import { observer, MobXProviderContext } from 'mobx-react';
 
 import useToggle from 'hooks/useToggle';
 import { INBOUND, CROSS_TYPE } from 'utils/settings';
+import { crossChainTrezorTrans } from 'componentUtils/trezor';
 import CrossXRPForm from 'components/CrossChain/CrossChainTransForm/CrossXRPForm';
+import BigNumber from 'bignumber.js';
 
 const CollectionCreateForm = Form.create({ name: 'CrossXRPForm' })(CrossXRPForm);
 
@@ -18,7 +20,7 @@ const XRPTrans = observer(({ record, type }) => {
   const showModal = () => {
     updateRecord(Object.assign(record, { type }));
     const chainType = type === INBOUND ? crossChain.currentTokenPairInfo.fromChainSymbol : crossChain.currentTokenPairInfo.toChainSymbol;
-    updateXRPTransParams({ from: { walletID: 1, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
+    updateXRPTransParams({ from: { walletID: record.wid || record.walletID, path: record.path }, fromAddr: record.address, chainType, tokenPairID });
     toggleVisible();
   }
 
@@ -30,6 +32,7 @@ const XRPTrans = observer(({ record, type }) => {
       from: XRPCrossTransParams.from,
       storeman: XRPCrossTransParams.groupId,
       receivedAmount: XRPCrossTransParams.receivedAmount,
+      amountUnit: new BigNumber(XRPCrossTransParams.receivedAmount).multipliedBy(Math.pow(10, tokenPairsInfo.ancestorDecimals)).toString(10)
     }
     if (type === INBOUND) {
       input.value = XRPCrossTransParams.value;
@@ -54,27 +57,43 @@ const XRPTrans = observer(({ record, type }) => {
     const trans = Object.assign(info, { input, tokenPairID, type: 'LOCK' })
 
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', trans, (err, txHash) => {
-        if (err) {
-          console.log('crossChain_crossChain_XRP_err:', err)
-          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
-          } else {
-            message.warn(err.desc);
-          }
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
+      if (type !== INBOUND && input.from.walletID === 3) {
+        input.BIP44Path = input.from.path;
+        input.from = XRPCrossTransParams.fromAddr;
+        input.toAddr = XRPCrossTransParams.toAddr;
+        crossChainTrezorTrans({ tokenSymbol: 'XRP', tokenStand: 'XRP', ...trans }).then(() => {
+          message.success(intl.get('Send.transSuccess'));
+          toggleVisible()
+        }).catch(() => {
+          message.warn(intl.get('WanAccount.sendTransactionFailed'));
           toggleVisible();
-        } else {
-          if (txHash.code === false) {
-            console.log('crossChain_crossChain_XRP_txHash:', txHash)
-            message.warn(intl.get('WanAccount.sendTransactionFailed'));
+        })
+      } else {
+        wand.request('crossChain_crossChain', trans, (err, txHash) => {
+          if (err) {
+            console.log('crossChain_crossChain_XRP_err:', err)
+            if (err instanceof Object && err.desc && err.desc.includes('ready')) {
+              message.warn(intl.get('Common.networkError'));
+            } else {
+              message.warn(err.desc);
+            }
             toggleVisible();
           } else {
-            message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
-            console.log('Tx hash: ', txHash);
-            toggleVisible()
+            if (txHash.code === false) {
+              console.log('crossChain_crossChain_XRP_txHash:', txHash)
+              message.warn(intl.get('WanAccount.sendTransactionFailed'));
+              toggleVisible();
+            } else {
+              message.success(intl.get('WanAccount.sendTransactionSuccessFully'));
+              console.log('Tx hash: ', txHash);
+              toggleVisible()
+            }
           }
-        }
-      });
+        });
+      }
     })
   }
 

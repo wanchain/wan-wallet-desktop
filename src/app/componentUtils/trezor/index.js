@@ -1,13 +1,33 @@
 import { message } from 'antd';
 import intl from 'react-intl-universal';
 import TrezorConnect from 'trezor-connect';
-
 import { wandWrapper } from 'utils/support.js';
 
 const pu = require('promisefy-util');
 const WanTx = require('wanchainjs-tx');
 
 export const WAN_PATH = "m/44'/5718350'/0'/0";
+
+export const trezorRawTx = async (param, BIP44Path) => {
+  try {
+    let rawTx = {
+      from: param.from,
+      chainId: Number(param.chainId),
+      Txtype: 1,
+      to: param.to,
+      value: param.value || '0x0',
+      data: param.data,
+      nonce: '0x' + param.nonce.toString(16),
+      gasPrice: '0x' + Number(param.gasPrice).toString(16),
+      gasLimit: '0x' + Number(param.gasLimit).toString(16),
+    };
+    let raw = await pu.promisefy(signTransaction, [BIP44Path, rawTx], this);
+    return Promise.resolve({ raw, rawTx })
+  } catch (error) {
+    console.log('trezorRawTx:', error)
+    return Promise.reject(error)
+  }
+}
 
 export const signTransaction = (path, tx, callback) => {
   TrezorConnect.ethereumSignTransaction({
@@ -120,6 +140,71 @@ export const OsmTrezorTrans = async (tx, from, action, satellite) => {
   } catch (error) {
     console.log(error);
     message.error(intl.get('ValidatorRegister.registerFailed'));
+    return Promise.reject(error);
+  }
+}
+
+export const crossChainTrezorTrans = async param => {
+  try {
+    let approveZeroTxHash, approveTxHash;
+    let satellite = {}
+    let { from, to, toAddr, storeman, tokenPairID, crossType, amountUnit, BIP44Path } = param.input
+    let ret = await wandWrapper('crossChain_getCrossChainContractData', param);
+    let { result: crossChainData, approveZeroTx, approveTx, smgCrossMode, crossMode } = ret;
+    console.log('crossChainData, approveZeroTx, approveTx:', crossChainData, approveZeroTx, approveTx)
+
+    if (approveZeroTx) {
+      let { raw } = await trezorRawTx(approveZeroTx, BIP44Path)
+      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      console.log('approveZeroTx:', approveZeroTxHash)
+    }
+    if (approveTx) {
+      let { raw } = await trezorRawTx(approveTx, BIP44Path)
+      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      console.log('approveTx:', approveTxHash)
+    }
+    let { raw, rawTx } = await trezorRawTx(crossChainData, BIP44Path)
+    // Send register validator
+    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+    let params = {
+      txHash,
+      from: from.toLowerCase(),
+      fromAddr: from.toLowerCase(),
+      to,
+      toAddr,
+      storeman,
+      tokenPairID: tokenPairID,
+      value: crossChainData.value,
+      contractValue: '0x' + Number(amountUnit).toString(16),
+      crossValue: crossChainData.crossValue,
+      networkFee: crossChainData.networkFee,
+      gasPrice: rawTx.gasPrice,
+      gasLimit: rawTx.gasLimit,
+      nonce: rawTx.nonce,
+      srcSCAddrKey: param.sourceAccount,
+      dstSCAddrKey: param.destinationAccount,
+      srcChainType: param.sourceSymbol,
+      dstChainType: param.destinationSymbol,
+      tokenSymbol: param.tokenSymbol,
+      tokenStand: param.tokenStand,
+      crossType,
+      crossMode: crossMode || 'Release',
+      smgCrossMode: smgCrossMode || 'Release',
+    };
+    if (approveZeroTxHash) {
+      params.approveZeroTxHash = approveZeroTxHash;
+    }
+    if (approveTxHash) {
+      params.approveTxHash = approveTxHash;
+    }
+    if (param.destinationSymbol === 'XRP' && ret.LedgerVersion) {
+      satellite.LedgerVersion = ret.LedgerVersion
+    }
+    // save register validator history into DB
+    await pu.promisefy(wand.request, ['crossChain_insertCrossChainTransToDB', { tx: params, satellite }], this);
+    return Promise.resolve();
+  } catch (error) {
+    console.log('crossChainTrezorTrans:', error);
     return Promise.reject(error);
   }
 }

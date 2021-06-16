@@ -12,9 +12,9 @@ import CommonFormItem from 'componentUtils/CommonFormItem';
 import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
-import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH } from 'utils/settings';
-import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress } from 'utils/helper';
+import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH, WALLETID } from 'utils/settings';
+import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum, fromWei } from 'utils/support';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
@@ -30,7 +30,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [sendAll, setSendAll] = useState(false);
   const [handleNextStatus, setHandleNextStatus] = useState(false);
 
-  const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getOpenStoremanGroupList', [], true);
+  const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
   const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_getCrossChainFees', '0', true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, chainIds: [fromChainID, toChainID] });
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
@@ -100,6 +100,10 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [quotaList])
 
   useEffect(() => {
+    updateXRPTransParams({ gasPrice: fromWei(gasPrice, 'gwei') })
+  }, [gasPrice])
+
+  useEffect(() => {
     let groupId = smgList[0] ? smgList[0].groupId : '0x';
     if (groupId === '0x') return;
     executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
@@ -130,11 +134,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }, [fetchGroupListStatus, fetchQuotaStatus, fetchFeeStatus, fetchGasPrice])
 
-  const addressSelections = Object.keys(info.toAccountList.normal);
+  const addressSelections = Object.keys({ ...info.toAccountList.normal, ...info.toAccountList.ledger, ...info.toAccountList.trezor });
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
   const checkXRPBalance = (addr, type) => {
-    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).gte('21') || (new BigNumber(val[addr]).lt('21') && new BigNumber(receivedAmount).gte('21'))).catch(() => false) : Promise.resolve(true)
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('21')).catch(() => false) : Promise.resolve(true)
   }
 
   const handleNext = () => {
@@ -145,23 +149,32 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         setHandleNextStatus(false)
         return;
       };
-
       const { pwd, amount } = form.getFieldsValue(['pwd', 'amount']);
       const isNativeAddress = addressSelections.includes(form.getFieldValue('to'));
       const isNativeAccount = accountSelections.includes(form.getFieldValue('to'));
       const desPath = info.desChain === 'WAN' ? WANPATH : ETHPATH;
       const toPathPrefix = type === INBOUND ? desPath : XRPPATH;
-      let to, toAddr;
+      let to, toAddr, walletID;
+      let addrType = 'normal';
+      let toValue = form.getFieldValue('to')
       if (isNativeAddress || isNativeAccount) {
         if (isNativeAccount) {
-          to = { walletID: 1, path: `${toPathPrefix}${getValueByNameInfo(form.getFieldValue('to'), 'path', info.toAccountList)}` };
-          toAddr = getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList);
+          addrType = getValueByNameInfoAllType(toValue, 'type', info.toAccountList);
+          walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
+          to = addrType !== 'trezor'
+                                    ? { walletID, path: addrType === 'normal' ? `${toPathPrefix}${getValueByNameInfo(toValue, 'path', info.toAccountList)}` : info.toAccountList[addrType][getValueByNameInfoAllType(toValue, 'address', info.toAccountList)].path }
+                                    : getValueByNameInfoAllType(toValue, 'address', info.toAccountList)
+          toAddr = getValueByNameInfoAllType(toValue, 'address', info.toAccountList);
         } else {
-          to = { walletID: 1, path: `${toPathPrefix}${(getInfoByAddress(form.getFieldValue('to'), ['path'], info.toAccountList)).path}` };
-          toAddr = form.getFieldValue('to')
+          addrType = getInfoByAddress(to, [], info.toAccountList).type
+          walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
+          to = addrType !== 'trezor'
+                                    ? { walletID, path: addrType === 'normal' ? `${toPathPrefix}${(getInfoByAddress(toValue, ['path'], info.toAccountList)).path}` : info.toAccountList[addrType][toValue].path }
+                                    : toValue
+          toAddr = toValue;
         }
       } else {
-        to = toAddr = form.getFieldValue('to');
+        to = toAddr = toValue;
       }
       const params = { value: amount, to, toAddr, networkFee: networkFee.lockFee, receivedAmount }
       if (settings.reinput_pwd) {
@@ -241,7 +254,16 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
-        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: getValueByNameInfo(form.getFieldValue('to'), 'address', info.toAccountList) })
+        let toAddr;
+        let toValue = form.getFieldValue('to');
+        const isNativeAddress = addressSelections.includes(toValue);
+        const isNativeAccount = accountSelections.includes(toValue);
+        if (isNativeAddress || isNativeAccount) {
+          toAddr = isNativeAccount ? getValueByNameInfoAllType(toValue, 'address', info.toAccountList) : toValue
+        } else {
+          toAddr = toValue;
+        }
+        executeEstimatedFee({ from: address, to: XRPCrossTransParams.groupAddr, value, wanAddress: toAddr })
       } else {
         if (new BigNumber(balance).minus(value).lt(0)) {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
@@ -261,8 +283,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       const isNativeAccount = accountSelections.includes(value);
       if (!(isNativeAddress || isNativeAccount)) {
         if (type === INBOUND) {
-          let func = info.desChain === 'WAN' ? 'address_isWanAddress' : 'address_isEthAddress'
-          pu.promisefy(wand.request, [func, { address: value }], this).then(ret => {
+          pu.promisefy(wand.request, ['address_isEthAddress', { address: value }], this).then(ret => {
             ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
           }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         } else {
@@ -270,6 +291,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
             (ret[0] || ret[1]) ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
           }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
         }
+      } else {
+        callback()
       }
     } catch (err) {
       callback(intl.get('NormalTransForm.invalidAddress'))

@@ -2,12 +2,12 @@ import path from 'path'
 import setting from '~/src/utils/Settings'
 import WalletHelper from '~/src/utils/Helper'
 
-const dataPathPrex = path.join(setting.userDataPath, 'Db')
 const DB_VERSION = '1.0.2'
 class ConfigFactoryService {
     _init() {
         this.config = {}
         this.config.network = setting.network
+        this.dataPathPrex = path.join(setting.userDataPath, `DB${setting.mnemonic == '0' ? '' : setting.mnemonic}`)
 
         if (this.config.network.includes('main')) {
             this.config.wanchain_js_testnet = false
@@ -42,8 +42,8 @@ class ConfigFactoryService {
         }
 
         this.config.logPathPrex = WalletHelper.getLogPath()
-        this.config.databasePathPrex = path.join(dataPathPrex, `${this.config.network}DB`)
-        this.config.walletPathPrex = path.join(dataPathPrex, 'walletDB')
+        this.config.databasePathPrex = path.join(this.dataPathPrex, `${this.config.network}DB`)
+        this.config.walletPathPrex = path.join(this.dataPathPrex, 'walletDB')
         this.config.logtofile = true
         // this.config.logtofile = false
         this.config.logfile = 'wanWalletSDK'
@@ -52,7 +52,7 @@ class ConfigFactoryService {
         this.config.dbExtConf = {
             "userTblVersion": DB_VERSION
         }
-        // this.config.loglevel = 'debug'
+        this.config.loglevel = 'debug'
     }
 
     getConfig() {

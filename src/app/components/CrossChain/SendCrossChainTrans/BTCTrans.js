@@ -31,10 +31,10 @@ class BTCTrans extends Component {
   }
 
   showModal = async () => {
-    const { from, updateBTCTransParams, updateTransParams, direction, path, currentTokenPairInfo: info, addCrossTransTemplate, chainType } = this.props;
+    const { from, updateBTCTransParams, updateTransParams, direction, path, currentTokenPairInfo: info, addCrossTransTemplate, chainType, record } = this.props;
     this.setState(() => ({ visible: true, spin: true, loading: true }));
     if (direction === OUTBOUND) {
-      addCrossTransTemplate(from, { chainType, path });
+      addCrossTransTemplate(from, { chainType, path, walletID: record.walletID });
     }
     try {
       let smgList = await getReadyOpenStoremanGroupList();

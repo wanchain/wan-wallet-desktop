@@ -9,6 +9,8 @@ import { INBOUND, OUTBOUND } from 'utils/settings';
 import ETHTrans from 'components/CrossChain/SendCrossChainTrans/ETHTrans';
 import CrossChainTransHistory from 'components/CrossChain/CrossChainTransHistory/CrossETHHistory';
 import { convertCrossChainTxErrorText } from 'utils/helper';
+import { crossChainTrezorTrans } from 'componentUtils/trezor'
+import BigNumber from 'bignumber.js';
 import style from './index.less';
 
 const CHAINTYPE = 'ETH';
@@ -108,28 +110,42 @@ class CrossETH extends Component {
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
-      crossType: transParams.crossType
+      crossType: transParams.crossType,
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
-        console.log(err, ret);
-        if (err) {
-          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
+      if (input.from.walletID === 2) {
+        message.info(intl.get('Ledger.signTransactionInLedger'))
+      }
+      if (input.from.walletID === 3) {
+        input.BIP44Path = input.from.path;
+        input.from = from;
+        input.toAddr = transParams.toAddr;
+        crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK', tokenSymbol: 'ETH', tokenStand: 'ETH' }).then(() => {
+          message.success(intl.get('Send.transSuccess'));
+          resolve();
+        }).catch(reject)
+      } else {
+        wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+          console.log(err, ret);
+          if (err) {
+            if (err instanceof Object && err.desc && err.desc.includes('ready')) {
+              message.warn(intl.get('Common.networkError'));
+            } else {
+              message.warn(err.desc);
+            }
+            reject(err);
           } else {
-            message.warn(err.desc);
+            if (ret.code) {
+              message.success(intl.get('Send.transSuccess'));
+              resolve(ret);
+            } else {
+              message.warn(convertCrossChainTxErrorText(ret.result));
+              reject(ret);
+            }
           }
-          reject(err);
-        } else {
-          if (ret.code) {
-            message.success(intl.get('Send.transSuccess'));
-            resolve(ret);
-          } else {
-            message.warn(convertCrossChainTxErrorText(ret.result));
-            reject(ret);
-          }
-        }
-      })
+        })
+      }
     });
   }
 
