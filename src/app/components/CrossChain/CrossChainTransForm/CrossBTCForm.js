@@ -267,7 +267,7 @@ class CrossBTCForm extends Component {
         changeAddress: BTCCrossTransParams.changeAddress,
         storeman: BTCCrossTransParams.storeman,
         to: isNativeAccount && addrType !== 'trezor' ? {
-          walletID: 1,
+          walletID: addrType === 'normal' ? 1 : 2,
           path: addrType === 'normal' ? getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[toAddress].path : otherAddrInfo[addrType][toAddress].path
         } : toAddress
       }
