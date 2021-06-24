@@ -7,7 +7,7 @@ class ConfigFactoryService {
     _init() {
         this.config = {}
         this.config.network = setting.network
-        this.dataPathPrex = path.join(setting.userDataPath, `DB${[undefined, '0'].includes(setting.mnemonic) ? '' : setting.mnemonic}`)
+        this.dataPathPrex = path.join(setting.userDataPath, `Db${[undefined, '0'].includes(setting.mnemonic) ? '' : setting.mnemonic}`)
 
         if (this.config.network.includes('main')) {
             this.config.wanchain_js_testnet = false
