@@ -7,7 +7,7 @@ import style from './index.less';
 import TransHistory from 'components/TransHistory';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import { fromWei } from 'utils/support';
-import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx } from 'utils/helper';
+import { getGasPrice, getNonce, checkWanAddr, deserializeWanTx, checkETHAddr } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
@@ -44,8 +44,8 @@ class Offline extends Component {
     let gasPrice, nonce;
     if (this.state.addr) {
       try {
-        let ret = await checkWanAddr(this.state.addr)
-        if (!ret) {
+        let ret = await Promise.all([checkWanAddr(this.state.addr), checkETHAddr(this.state.addr)])
+        if (!(ret[0] || ret[1])) {
           message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
           return;
         }
