@@ -531,7 +531,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
         case 'getNonce':
             try {
                 logger.info('getNonce called');
-                nonce = await ccUtil.getNonce(payload.addr, payload.chainType, payload.includePending)
+                nonce = await ccUtil.getNonce(payload.addr.toLowerCase(), payload.chainType, payload.includePending)
                 logger.info('Nonce: ' + payload.addr + ',' + nonce);
             } catch (e) {
                 logger.error('getNonce failed:')
