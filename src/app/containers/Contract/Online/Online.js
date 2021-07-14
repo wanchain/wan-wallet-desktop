@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
 import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal, Table } from 'antd';
-import { getNonce, checkWanAddr, getGasPrice, getChainId, getNonceFromURL, getGasPriceFromURL, getChainIdFromURL } from '../../../utils/helper';
+import { getNonce, checkWanAddr, getGasPrice, getChainId, getNonceFromURL, getGasPriceFromURL, getChainIdFromURL, sendRawTxFromURL } from '../../../utils/helper';
 import { wandWrapper } from '../../../utils/support';
 import FileSelection from 'componentUtils/FileSelection';
 import styled from 'styled-components';
@@ -71,6 +71,7 @@ export default function Online(props) {
   }
 
   const OfflineModal = () => {
+    console.log('chainType', chainType);
     return <Modal
       title={intl.get('contract.offlineTransactionConfirm')}
       visible={showModal}
@@ -79,20 +80,53 @@ export default function Online(props) {
         <Button key="submit" type="primary" className="confirm-button" loading={loading} onClick={() => {
           console.log('send');
           setLoading(true);
-          wandWrapper('contract_sendTx', { chainType }).then(ret => {
-            console.log('sendTx', ret);
-            if (ret) {
-              message.success('Success');
-              setShowModal(false);
-            } else {
-              message.info('Send failed, please check sdk log');
-            }
-          }).catch((err, ret) => {
-            console.log(err, ret);
-            message.error('Send failed, please check sdk log 2');
-          }).finally(() => {
-            setLoading(false);
-          });
+          if (chainType === 'WAN' || chainType === 'ETH') {
+            wandWrapper('contract_sendTx', { chainType }).then(ret => {
+              console.log('sendTx', ret);
+              if (ret) {
+                message.success('Success', 20);
+                setShowModal(false);
+              } else {
+                message.info('Send failed, please check sdk log');
+              }
+            }).catch((err, ret) => {
+              console.log(err, ret);
+              message.error('Send failed, please check sdk log 2');
+            }).finally(() => {
+              setLoading(false);
+            });
+          } else {
+            getChainId().then(ret => {
+              console.log('chainId', ret, offlineJson);
+              let func = async () => {
+                for (let i = 0; i < offlineJson.length; i++) {
+                  ret = await sendRawTxFromURL(chainType, Number(ret) === 3, offlineJson[i].data);
+                  console.log('ret', ret);
+                  if (!ret || !ret.status) {
+                    message.error('sendRawTxFromURL use external RPC failed' + i);
+                    console.error('sendRawTxFromURL', i, ret);
+                    return false;
+                  } else {
+                    console.log('sendRawTxFromURL', i, ret);
+                    message.success('Tx ' + i + ' Success');
+                  }
+                }
+                return true;
+              }
+              func().then(ret => {
+                console.log('sendRawTxFromURL', ret);
+                message.success('Success', 20);
+              }).catch((err) => {
+                console.error(err);
+                message.error('sendRawTxFromURL use external RPC failed');
+              }).finally(() => {
+                setLoading(false);
+                setShowModal(false);
+              });
+            }).catch(() => {
+              message.error('get network failed');
+            })
+          }
           setOfflinePath(undefined);
         }}>{intl.get('Common.send')}</Button>,
       ]}
@@ -200,7 +234,7 @@ export default function Online(props) {
       })
     }}>{intl.get('contract.getGasPrice')}</StyledButton>
     <StyledInput readOnly value={gasPrice} />
-    <Title>ChainID:</Title>
+    {/* <Title>ChainID:</Title>
     <StyledButton type="primary" onClick={() => {
       getChainId().then(ret => {
         console.log('chainId', ret);
@@ -213,7 +247,7 @@ export default function Online(props) {
         message.error('get network failed');
       });
     }}>Get Chain ID</StyledButton>
-    <StyledInput readOnly value={chainId} />
+    <StyledInput readOnly value={chainId} /> */}
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
     <FileSelection placeholder={intl.get('contract.loadOfflineData2')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
       let value = e.target.value;

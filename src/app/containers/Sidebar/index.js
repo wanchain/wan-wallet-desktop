@@ -75,27 +75,29 @@ class Sidebar extends Component {
 
   render() {
     const { sidebarColumns, settings, crossChainSelections, dAppsOnSideBar, getWalletSelections } = this.props;
+    console.log('sidebarColumns', sidebarColumns);
     let stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
     let dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
     let offlineIndex = sidebarColumns.findIndex(item => item.key === '/offline');
-    let stakeChildren = sidebarColumns[stakeIndex].children;
-    let dAppsChildren = sidebarColumns[dAppsIndex].children;
     let walletIndex = sidebarColumns.findIndex(item => item.key === '/wallet');
-    let walletChildren = sidebarColumns[walletIndex].children;
     let crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
-    let crossChainChildren = sidebarColumns[crossChainIndex].children;
+    console.log('index', stakeIndex, dAppsIndex, offlineIndex, walletIndex, crossChainIndex);
+    let stakeChildren = stakeIndex >= 0 ? sidebarColumns[stakeIndex].children : [];
+    let dAppsChildren = dAppsIndex >= 0 ? sidebarColumns[dAppsIndex].children : [];
+    let walletChildren = walletIndex >= 0 ? sidebarColumns[walletIndex].children : [];
+    let crossChainChildren = crossChainIndex >= 0 ? sidebarColumns[crossChainIndex].children : [];
 
     if (global.offlineMode) {
       let storemanIndex = sidebarColumns.findIndex(item => item.key === '/openstoreman');
-      sidebarColumns.splice(storemanIndex, 1);
+      if (storemanIndex >= 0) sidebarColumns.splice(storemanIndex, 1);
       let hardwareIndex = sidebarColumns.findIndex(item => item.key === '/hardwareWallet');
-      sidebarColumns.splice(hardwareIndex, 1);
+      if (hardwareIndex >= 0) sidebarColumns.splice(hardwareIndex, 1);
       stakeIndex = sidebarColumns.findIndex(item => item.key === '/staking');
-      sidebarColumns.splice(stakeIndex, 1);
+      if (stakeIndex >= 0) sidebarColumns.splice(stakeIndex, 1);
       dAppsIndex = sidebarColumns.findIndex(item => item.key === '/thirdPartyDapps');
-      sidebarColumns.splice(dAppsIndex, 1);
+      if (dAppsIndex >= 0) sidebarColumns.splice(dAppsIndex, 1);
       crossChainIndex = sidebarColumns.findIndex(item => item.key === '/crossChain');
-      sidebarColumns.splice(crossChainIndex, 1);
+      if (crossChainIndex >= 0) sidebarColumns.splice(crossChainIndex, 1);
     }
 
     if (offlineIndex === -1 && settings.offline_wallet) {

@@ -404,10 +404,10 @@ export const getChainInfo = (chainType, network) => {
       },
     },
     Moonbeam: {
-      // 'mainnet': {
-      //   rpcUrl: '',
-      //   chainId: 1284,
-      // },
+      mainnet: {
+        rpcUrl: '',
+        chainId: 1284,
+      },
       testnet: {
         rpcUrl: 'https://rpc.testnet.moonbeam.network',
         chainId: 1287,
@@ -433,6 +433,13 @@ export const getNonceFromURL = async (chainType, address, isTestnet) => {
   const web3 = new Web3(new Web3.providers.HttpProvider(info.rpcUrl));
   let nonce = await web3.eth.getTransactionCount(address);
   return nonce;
+}
+
+export const sendRawTxFromURL = async (chainType, isTestnet, data) => {
+  let info = getChainInfo(chainType, isTestnet ? 'testnet' : 'mainnet');
+  const web3 = new Web3(new Web3.providers.HttpProvider(info.rpcUrl));
+  let ret = await web3.eth.sendSignedTransaction(data);
+  return ret;
 }
 
 export const getGasPriceFromURL = async (chainType, isTestnet) => {

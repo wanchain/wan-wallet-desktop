@@ -4,11 +4,13 @@ import { Select, Input, Button, Row, Col, Tooltip, message, Icon } from 'antd';
 import { wandWrapper } from '../../../utils/support';
 import FileSelection from 'componentUtils/FileSelection';
 import styled, { keyframes } from 'styled-components';
+import { getChainId, getChainInfo } from '../../../utils/helper';
 
 export default function Offline(props) {
   const [transactions, setTransactions] = useState([]);
   const [nonce, setNonce] = useState(0);
   const [gasPrice, setGasPrice] = useState(1);
+  const [chainId, setChainId] = useState();
   const wanAddresses = props.wanAddresses;
   const ethAddresses = props.ethAddresses;
   const [fromAddress, setFromAddress] = useState();
@@ -16,6 +18,19 @@ export default function Offline(props) {
   const [chainType, setChainType] = useState('WAN');
 
   const addresses = chainType === 'WAN' ? wanAddresses : ethAddresses;
+
+  useEffect(() => {
+    if (!chainType) {
+      return;
+    }
+    getChainId().then(ret => {
+      let info = getChainInfo(chainType, Number(ret) === 1 ? 'mainnet' : 'testnet')
+      setChainId(info.chainId);
+    }).catch((err) => {
+      console.log('err', err);
+      message.error('get getChainId failed');
+    });
+  }, [chainType])
 
   const modify = useCallback((i, v) => {
     setTransactions((pre) => {
@@ -56,6 +71,7 @@ export default function Offline(props) {
         gasPrice: gasPrice * 1e9,
         gasLimit: v.gasLimit,
         value: v.value,
+        chainId: chainId,
       }
     });
     console.log('txs', txs);
@@ -79,7 +95,7 @@ export default function Offline(props) {
     }).catch(() => {
       message.error('Failed, please check sdk log 3');
     });
-  }, [nonce, transactions, fromAddress, addresses, chainType, gasPrice]);
+  }, [nonce, transactions, fromAddress, addresses, chainType, gasPrice, chainId]);
 
   const saveToFile = useCallback(() => {
     const wallet = addresses.filter(v => v.address === fromAddress);
@@ -118,9 +134,13 @@ export default function Offline(props) {
     <StyledSelect value={chainType} onChange={(v) => { setChainType(v); setFromAddress(undefined) }}>
       <Select.Option value={'WAN'} key={'WAN'}>WAN</Select.Option>
       <Select.Option value={'ETH'} key={'ETH'}>ETH</Select.Option>
+      <Select.Option value={'BSC'} key={'BSC'}>BSC</Select.Option>
+      <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
+      <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
+      <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
     </StyledSelect>
     <Title>{intl.get('contract.selectAccount2')}</Title>
-    <StyledSelect onChange={(v) => { setFromAddress(v) }}>
+    <StyledSelect onChange={(v) => { setFromAddress(v) }} value={fromAddress}>
       {
         addresses.map(v => {
           return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' )'}</Select.Option>
@@ -130,10 +150,12 @@ export default function Offline(props) {
     <Title>{intl.get('NormalTransForm.ConfirmForm.nonce')}</Title>
     <StyledInput value={nonce} onChange={(e) => { setNonce(e.target.value) }} />
     <Title>{intl.get('AdvancedOptionForm.gasPrice')}</Title>
-    <StyledInput value={gasPrice} onChange={(e) => { setGasPrice(e.target.value) }} suffix="Gwin" />
+    <StyledInput value={gasPrice} onChange={(e) => { setGasPrice(e.target.value) }} suffix={chainType === 'WAN' ? 'Gwin' : 'Gwei'} />
+    {/* <Title>Chain ID</Title>
+    <StyledInput value={chainId} onChange={(e) => { setChainId(e.target.value) }}/> */}
     <InALine>
       {
-        fromAddress && fromAddress.length > 0
+        fromAddress && fromAddress.length && chainId > 0
           ? <StyledButton type="primary" onClick={() => {
             modify(transactions.length, {
               nonce: Number(nonce) + transactions.length,
