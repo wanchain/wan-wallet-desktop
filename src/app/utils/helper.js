@@ -361,6 +361,98 @@ export const getChainId = function () {
   });
 };
 
+export const getChainInfo = (chainType, network) => {
+  const rpcList = {
+    WAN: {
+      mainnet: {
+        rpcUrl: 'https://nodes.wandevs.org/wan',
+        chainId: 888,
+      },
+      testnet: {
+        rpcUrl: 'https://nodes-testnet.wandevs.org/wan',
+        chainId: 999,
+      },
+    },
+    ETH: {
+      mainnet: {
+        rpcUrl: 'https://nodes.wandevs.org/eth',
+        chainId: 1,
+      },
+      testnet: {
+        rpcUrl: 'https://nodes-testnet.wandevs.org/eth',
+        chainId: 4,
+      },
+    },
+    BSC: {
+      mainnet: {
+        rpcUrl: 'https://bsc-dataseed1.binance.org',
+        chainId: 56,
+      },
+      testnet: {
+        rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+        chainId: 97,
+      },
+    },
+    Avalanche: {
+      mainnet: {
+        rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+        chainId: 43114,
+      },
+      testnet: {
+        rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
+        chainId: 43113,
+      },
+    },
+    Moonbeam: {
+      // 'mainnet': {
+      //   rpcUrl: '',
+      //   chainId: 1284,
+      // },
+      testnet: {
+        rpcUrl: 'https://rpc.testnet.moonbeam.network',
+        chainId: 1287,
+      },
+    },
+    Matic: {
+      mainnet: {
+        rpcUrl: 'https://rpc-mainnet.matic.network',
+        chainId: 137,
+      },
+      testnet: {
+        rpcUrl: 'https://rpc-mumbai.maticvigil.com',
+        chainId: 80001,
+      },
+    },
+  }
+
+  return rpcList[chainType][network];
+}
+
+export const getNonceFromURL = async (chainType, address, isTestnet) => {
+  let info = getChainInfo(chainType, isTestnet ? 'testnet' : 'mainnet');
+  const web3 = new Web3(new Web3.providers.HttpProvider(info.rpcUrl));
+  let nonce = await web3.eth.getTransactionCount(address);
+  return nonce;
+}
+
+export const getGasPriceFromURL = async (chainType, isTestnet) => {
+  let info = getChainInfo(chainType, isTestnet ? 'testnet' : 'mainnet');
+  const web3 = new Web3(new Web3.providers.HttpProvider(info.rpcUrl));
+  let ret = await web3.eth.getGasPrice() / 1e9;
+  return ret;
+}
+
+export const getChainIdFromURL = async (chainType, isTestnet) => {
+  let info = getChainInfo(chainType, isTestnet ? 'testnet' : 'mainnet');
+  try {
+    const web3 = new Web3(new Web3.providers.HttpProvider(info.rpcUrl));
+    let ret = await web3.eth.getChainId();
+    return ret;
+  } catch (err) {
+    return info.chainId;
+  }
+}
+
 export const isSdkReady = function () {
   return new Promise((resolve, reject) => {
     wand.request('query_config', {

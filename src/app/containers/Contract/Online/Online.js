@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import intl from 'react-intl-universal';
 import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Modal, Table } from 'antd';
-import { getNonce, checkWanAddr, getGasPrice } from '../../../utils/helper';
+import { getNonce, checkWanAddr, getGasPrice, getChainId, getNonceFromURL, getGasPriceFromURL, getChainIdFromURL } from '../../../utils/helper';
 import { wandWrapper } from '../../../utils/support';
 import FileSelection from 'componentUtils/FileSelection';
 import styled from 'styled-components';
@@ -46,6 +46,7 @@ export default function Online(props) {
   const [loading, setLoading] = useState(false);
   const [offlinePath, setOfflinePath] = useState();
   const [chainType, setChainType] = useState('WAN');
+  const [chainId, setChainId] = useState();
 
   console.log('fromAddress', fromAddress);
 
@@ -109,9 +110,13 @@ export default function Online(props) {
     <StyledSelect value={chainType} onChange={(v) => { setChainType(v); setFromAddress(undefined) }}>
       <Select.Option value={'WAN'} key={'WAN'}>WAN</Select.Option>
       <Select.Option value={'ETH'} key={'ETH'}>ETH</Select.Option>
+      <Select.Option value={'BSC'} key={'BSC'}>BSC</Select.Option>
+      <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
+      <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
+      <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
     </StyledSelect>
     <Title>{intl.get('contract.selectAccount')}</Title>
-    <StyledSelect showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
+    <StyledSelect value={fromAddress} showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
       {
         chainType === 'WAN'
           ? wanAddresses.map(v => {
@@ -131,15 +136,28 @@ export default function Online(props) {
     <StyledButton type="primary" onClick={() => {
       checkWanAddr(fromAddress).then((ret) => {
         if (ret) {
-          getNonce(fromAddress, chainType).then((ret) => {
-            if (ret || ret === 0) {
-              setNonce(ret);
-            } else {
-              message.warn(intl.get('Offline.getInfoFailed'))
-            }
-          }).catch(() => {
-            message.error('Failed, please check sdk log 3');
-          });
+          if (chainType === 'WAN' || chainType === 'ETH') {
+            getNonce(fromAddress, chainType).then((ret) => {
+              if (ret || ret === 0) {
+                setNonce(ret);
+              } else {
+                message.warn(intl.get('Offline.getInfoFailed'))
+              }
+            }).catch(() => {
+              message.error('Failed, please check sdk log 3');
+            });
+          } else {
+            getChainId().then(ret => {
+              console.log('chainId', ret);
+              getNonceFromURL(chainType, fromAddress, Number(ret) === 3).then(ret => {
+                setNonce(ret);
+              }).catch(() => {
+                message.error('get nonce from external RPC failed');
+              });
+            }).catch(() => {
+              message.error('get network failed');
+            });
+          }
         } else {
           message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
         }
@@ -152,15 +170,28 @@ export default function Online(props) {
     <StyledButton type="primary" onClick={() => {
       checkWanAddr(fromAddress).then((ret) => {
         if (ret) {
-          getGasPrice(chainType).then((ret) => {
-            if (ret || ret === 0) {
-              setGasPrice(ret);
-            } else {
-              message.warn(intl.get('Offline.getInfoFailed'))
-            }
-          }).catch(() => {
-            message.error('Failed, please check sdk log 3');
-          });
+          if (chainType === 'WAN' || chainType === 'ETH') {
+            getGasPrice(chainType).then((ret) => {
+              if (ret || ret === 0) {
+                setGasPrice(ret);
+              } else {
+                message.warn(intl.get('Offline.getInfoFailed'))
+              }
+            }).catch(() => {
+              message.error('Failed, please check sdk log 3');
+            });
+          } else {
+            getChainId().then(ret => {
+              console.log('chainId', ret);
+              getGasPriceFromURL(chainType, fromAddress, Number(ret) === 3).then(ret => {
+                setGasPrice(ret);
+              }).catch(() => {
+                message.error('getGasPriceFromURL from external RPC failed');
+              });
+            }).catch(() => {
+              message.error('get network failed');
+            });
+          }
         } else {
           message.warn(intl.get('NormalTransForm.addressIsIncorrect'));
         }
@@ -169,6 +200,20 @@ export default function Online(props) {
       })
     }}>{intl.get('contract.getGasPrice')}</StyledButton>
     <StyledInput readOnly value={gasPrice} />
+    <Title>ChainID:</Title>
+    <StyledButton type="primary" onClick={() => {
+      getChainId().then(ret => {
+        console.log('chainId', ret);
+        getChainIdFromURL(chainType, fromAddress, Number(ret) === 3).then(ret => {
+          setChainId(ret);
+        }).catch(() => {
+          message.error('getChainIdFromURL from external RPC failed');
+        });
+      }).catch(() => {
+        message.error('get network failed');
+      });
+    }}>Get Chain ID</StyledButton>
+    <StyledInput readOnly value={chainId} />
     <Title style={{ marginBottom: '16px', marginTop: '20px' }}>{intl.get('contract.loadOfflineData')}</Title>
     <FileSelection placeholder={intl.get('contract.loadOfflineData2')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
       let value = e.target.value;
