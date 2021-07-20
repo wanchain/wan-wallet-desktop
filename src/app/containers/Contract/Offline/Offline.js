@@ -295,7 +295,7 @@ const Transaction = (props) => {
         <Tooltip title={paramTip}>
           <Col span={8}><SmallInput placeholder={paramTip} value={parameters} onChange={e => { setParameters(e.target.value) }} /></Col>
         </Tooltip>
-        <Col span={4}><Label>{intl.get('CrossChainTransForm.Value')}</Label></Col>
+        <Col span={4}><Label>{intl.get('CrossChainTransForm.Value')}:</Label></Col>
         <Col span={8}><SmallInput suffix={props.chainType} value={value} onChange={e => { setValue(e.target.value) }} /></Col>
       </Row>
     </TableContainer>
