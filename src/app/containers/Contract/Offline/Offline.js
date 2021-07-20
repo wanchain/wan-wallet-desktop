@@ -138,6 +138,7 @@ export default function Offline(props) {
       <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
       <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
       <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
+      <Select.Option value={'Custom'} key={'Custom'}>Custom</Select.Option>
     </StyledSelect>
     <Title>{intl.get('contract.selectAccount2')}</Title>
     <StyledSelect onChange={(v) => { setFromAddress(v) }} value={fromAddress}>
@@ -151,8 +152,12 @@ export default function Offline(props) {
     <StyledInput value={nonce} onChange={(e) => { setNonce(e.target.value) }} />
     <Title>{intl.get('AdvancedOptionForm.gasPrice')}</Title>
     <StyledInput value={gasPrice} onChange={(e) => { setGasPrice(e.target.value) }} suffix={chainType === 'WAN' ? 'Gwin' : 'Gwei'} />
-    {/* <Title>Chain ID</Title>
-    <StyledInput value={chainId} onChange={(e) => { setChainId(e.target.value) }}/> */}
+    {
+      chainType === 'Custom' && <>
+        <Title>Chain ID</Title>
+        <StyledInput value={chainId} onChange={(e) => { setChainId(e.target.value) }}/>
+      </>
+    }
     <InALine>
       {
         fromAddress && fromAddress.length && chainId > 0

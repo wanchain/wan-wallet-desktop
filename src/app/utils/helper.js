@@ -423,6 +423,16 @@ export const getChainInfo = (chainType, network) => {
         chainId: 80001,
       },
     },
+    Custom: {
+      mainnet: {
+        rpcUrl: 'https://rpc-mainnet.matic.network',
+        chainId: -1,
+      },
+      testnet: {
+        rpcUrl: 'https://rpc-mumbai.maticvigil.com',
+        chainId: -1,
+      },
+    },
   }
 
   return rpcList[chainType][network];
