@@ -298,4 +298,4 @@ class TokenTrans extends Component {
   }
 }
 
-export default props => <TokenTrans {...props} symbol={props.match.params.symbol} chain={props.match.params.chain} key={props.match.params.tokenAddr} tokenAddr={props.match.params.tokenAddr} />;
+export default props => <TokenTrans {...props} symbol={props.match.params.symbol} chain={props.match.params.chain} key={`${props.match.params.chain}_${props.match.params.tokenAddr}`} tokenAddr={props.match.params.tokenAddr} />;
