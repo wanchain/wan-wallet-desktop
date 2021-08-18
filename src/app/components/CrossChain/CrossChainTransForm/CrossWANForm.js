@@ -50,9 +50,10 @@ class CrossWANForm extends Component {
 
   async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { smgList, currentTokenPairInfo: info, chainType } = this.props;
+      let { smgList, currentTokenPairInfo: info, chainType, type } = this.props;
       try {
-        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol]);
+        const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol], { targetChainType });
         const decimals = info.ancestorDecimals;
         this.setState({
           minQuota: formatNumByDecimals(minQuota, decimals),
@@ -200,7 +201,8 @@ class CrossWANForm extends Component {
   updateLockAccounts = async (storeman) => {
     let { from, form, updateTransParams, chainType, currentTokenPairInfo: info, type } = this.props;
     try {
-      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol]);
+      const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol], { targetChainType });
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),

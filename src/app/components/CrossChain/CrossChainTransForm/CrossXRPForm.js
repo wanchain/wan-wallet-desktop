@@ -106,7 +106,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   useEffect(() => {
     let groupId = smgList[0] ? smgList[0].groupId : '0x';
     if (groupId === '0x') return;
-    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
+    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP', options: { targetChainType: info.desChain } })
     updateXRPTransParams({ groupAddr: getStoremanAddrByGpk1(smgList[0][`gpk${Number(smgList[0].curve2 === '0') + 1}`]), groupId: smgList[0].groupId, groupName: hexCharCodeToStr(smgList[0].groupId) })
   }, [smgList])
 
@@ -212,7 +212,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }
 
   const updateLockAccounts = groupId => {
-    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP' })
+    executeGetQuota({ chainType: info.feeUnit, groupId, symbolArray: 'XRP', options: { targetChainType: info.desChain } })
     const smgInfo = smgList.find(v => v.groupId === groupId) || {};
     updateXRPTransParams({ groupAddr: getStoremanAddrByGpk1(smgInfo[`gpk${Number(smgInfo.curve2 === '0') + 1}`]), groupId, groupName: hexCharCodeToStr(smgInfo.groupId) });
   }

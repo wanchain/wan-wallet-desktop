@@ -55,7 +55,8 @@ class CrossETHForm extends Component {
       let { smgList, type, currTokenPairId, currentTokenPairInfo: info } = this.props;
       try {
         const chainType = type === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
-        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol]);
+        const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol], { targetChainType });
         const decimals = info.ancestorDecimals;
         this.setState({
           minQuota: formatNumByDecimals(minQuota, decimals),
@@ -204,7 +205,8 @@ class CrossETHForm extends Component {
   updateLockAccounts = async (storeman) => {
     let { from, form, updateTransParams, chainType, currentTokenPairInfo: info, type } = this.props;
     try {
-      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol]);
+      const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol], { targetChainType });
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),

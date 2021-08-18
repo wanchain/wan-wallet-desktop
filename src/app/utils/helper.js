@@ -1147,10 +1147,10 @@ export const getBurnQuota = function (chainType, tokenPairID, storemanGroupID) {
   })
 }
 
-export const getQuota = function (chainType, groupId, symbolArray) {
+export const getQuota = function (chainType, groupId, symbolArray, options) {
   return new Promise((resolve, reject) => {
-    wand.request('crossChain_getQuota', { chainType, groupId, symbolArray }, (err, res) => {
-      // console.log('getQuota:', err, res)
+    wand.request('crossChain_getQuota', { chainType, groupId, symbolArray, options }, (err, res) => {
+      // console.log('getQuota:', err, res, options)
       if (err) {
         return reject(new Error('get quota failed'));
       } else {

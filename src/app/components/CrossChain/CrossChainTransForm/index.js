@@ -50,9 +50,10 @@ class CrossChainTransForm extends Component {
 
   async componentDidUpdate(prevProps) {
     if (prevProps.smgList !== this.props.smgList) {
-      let { smgList, currentTokenPairInfo: info, chainType } = this.props;
+      let { smgList, currentTokenPairInfo: info, chainType, type } = this.props;
       try {
-        const [{ minQuota, maxQuota }] = await getQuota(((info.ancestorSymbol === 'EOS' && chainType === 'WAN') ? 'EOS' : chainType), smgList[0].groupId, [info.ancestorSymbol]);// EOS在WAN侧的做特殊处理
+        const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+        const [{ minQuota, maxQuota }] = await getQuota(((info.ancestorSymbol === 'EOS' && chainType === 'WAN') ? 'EOS' : chainType), smgList[0].groupId, [info.ancestorSymbol], { targetChainType });// EOS在WAN侧的做特殊处理
         const decimals = info.ancestorDecimals;
         this.setState({
           minQuota: formatNumByDecimals(minQuota, decimals),
@@ -203,7 +204,8 @@ class CrossChainTransForm extends Component {
   updateLockAccounts = async (storeman) => {
     let { from, form, updateTransParams, chainType, type, currentTokenPairInfo: info } = this.props;
     try {
-      const [{ minQuota, maxQuota }] = await getQuota(((info.ancestorSymbol === 'EOS' && chainType === 'WAN') ? 'EOS' : chainType), storeman, [info.ancestorSymbol]);// EOS在WAN侧的做特殊处理
+      const targetChainType = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+      const [{ minQuota, maxQuota }] = await getQuota(((info.ancestorSymbol === 'EOS' && chainType === 'WAN') ? 'EOS' : chainType), storeman, [info.ancestorSymbol], { targetChainType });// EOS在WAN侧的做特殊处理
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),

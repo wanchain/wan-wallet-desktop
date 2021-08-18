@@ -63,7 +63,8 @@ class CrossBTCForm extends Component {
       let { smgList, direction, currentTokenPairInfo: info } = this.props;
       try {
         const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
-        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol]);
+        const targetChainType = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+        let [{ minQuota, maxQuota }] = await getQuota(chainType, smgList[0].groupId, [info.ancestorSymbol], { targetChainType });
         const decimals = info.ancestorDecimals;
         this.setState({
           minQuota: formatNumByDecimals(minQuota, decimals),
@@ -325,7 +326,8 @@ class CrossBTCForm extends Component {
     const { updateBTCTransParams, updateTransParams, direction, currentTokenPairInfo: info, from } = this.props;
     try {
       const chainType = direction === INBOUND ? info.fromChainSymbol : info.toChainSymbol;
-      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol]);
+      const targetChainType = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+      const [{ minQuota, maxQuota }] = await getQuota(chainType, storeman, [info.ancestorSymbol], { targetChainType });
       const decimals = info.ancestorDecimals;
       this.setState({
         minQuota: formatNumByDecimals(minQuota, decimals),

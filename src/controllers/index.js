@@ -1848,8 +1848,8 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'getQuota':
             try {
-                let { chainType, groupId, symbolArray } = payload;
-                ret = await ccUtil.getStoremanGroupQuota(chainType, groupId, symbolArray);
+                let { chainType, groupId, symbolArray, options } = payload;
+                ret = await ccUtil.getStoremanGroupQuota(chainType, groupId, symbolArray, options);
             } catch (e) {
                 logger.error('getQuota failed: ' + e);
                 err = e;
