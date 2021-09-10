@@ -59,7 +59,6 @@ class CrossChain {
               tokens.initTokenIcon(toJS(v));
             }
           });
-
           for (let i = 0; i < data.length; i++) {
             // set tokenPairs
             let v = data[i];
@@ -145,6 +144,28 @@ class CrossChain {
             }
             tokens.updateTokensList(key2, obj);
             tokens.initTokenIcon(obj);
+          }
+          {
+            let tokenAddr = '0x37e907f611ca55f10d32e3af7407305ee93b0a10'.toLowerCase();
+            let tokenInfo = {
+              decimals: '18',
+              name: 'WAND',
+              symbol: 'WAND'
+            }
+            const key = `${Number('0x80000000'.toString(10)) + 5718350}-${tokenAddr}`;
+            let token = {
+              key,
+              account: tokenAddr,
+              ancestor: tokenInfo.symbol,
+              chain: 'Wanchain',
+              chainSymbol: 'WAN',
+              decimals: tokenInfo.decimals,
+              select: true,
+              symbol: tokenInfo.symbol,
+              isCustomToken: true
+            };
+            tokens.addCustomToken(token);
+            tokens.initTokenIcon(token);
           }
           resolve();
         }
