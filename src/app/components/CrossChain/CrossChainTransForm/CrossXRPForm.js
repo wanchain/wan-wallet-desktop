@@ -138,7 +138,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
 
   const checkXRPBalance = (addr, type) => {
-    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('21')).catch(() => false) : Promise.resolve(true)
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('11')).catch(() => false) : Promise.resolve(true)
   }
 
   const handleNext = () => {
@@ -251,7 +251,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
       if (type === INBOUND) {
         if (new BigNumber(balance).minus(MINXRPBALANCE).minus(value).lt(0)) {
-          callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+          callback(intl.get('Xrp.minAmount'));
           return;
         }
         let toAddr;

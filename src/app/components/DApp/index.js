@@ -186,7 +186,7 @@ class DApp extends Component {
       msg.err = null;
       msg.val = null;
 
-      const wallet = await this.getWalletFromAddress(msg.address);
+      const wallet = await this.getWalletFromAddress(msg.address.toLowerCase());
 
       if (wallet.id === WALLETID.TREZOR) {
         try {

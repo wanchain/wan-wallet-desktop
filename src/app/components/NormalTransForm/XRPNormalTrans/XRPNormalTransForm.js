@@ -9,7 +9,7 @@ import useAsync from 'hooks/useAsync';
 import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 
-const MINBALANCE = '20';
+const MINBALANCE = '10';
 const DEFAULTFEE = '0.000012'
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 
@@ -39,7 +39,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
         return;
       };
       let { pwd, amount, to, tag } = form.getFieldsValue(['pwd', 'amount', 'to', 'tag']);
-      if (new BigNumber(orignBalance).lt(20)) {
+      if (new BigNumber(orignBalance).lt(MINBALANCE)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -80,7 +80,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
         }
       }).then(() => getBalance([value], 'XRP')).then(val => {
         let value = new BigNumber(Object.values(val)[0])
-        value.minus('21').lt('0') && setMinSendAmount(new BigNumber('21').minus(value).toString(10))
+        value.minus('11').lt('0') && setMinSendAmount(new BigNumber('11').minus(value).toString(10))
         if (form.getFieldValue('amount') !== undefined) {
           form.validateFields(['amount'])
         }
@@ -105,7 +105,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       return;
     }
     if (new BigNumber(useAvailableBalance).minus(value).lt(0)) {
-      callback(intl.get('NormalTransForm.amountIsIncorrect'));
+      callback(intl.get('Xrp.minAmount'));
       return;
     }
     if (form.getFieldValue('to') && new BigNumber(value).lt(minSendAmount)) {
