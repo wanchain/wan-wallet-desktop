@@ -2442,7 +2442,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
         case 'openStoremanAction':
             try {
                 let { tx, action, isEstimateFee } = payload;
-                if (!tx.gasLimit) {
+                if (!tx.gasLimit || !Number(tx.gasLimit)) {
                     tx.gasLimit = 2000000;
                 }
                 // let gasPrice = await ccUtil.getGasPrice('wan');

@@ -73,7 +73,7 @@ export const getPublicKey = callback => {
 
 export const signPersonalMessage = async (path, message) => {
   let bHex = false;
-  if (message.indexOf('0x') !== -1) {
+  if (message.startsWith('0x')) {
     bHex = true;
     message = message.slice(2);
   }

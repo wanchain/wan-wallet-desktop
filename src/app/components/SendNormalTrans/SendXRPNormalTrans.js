@@ -9,7 +9,7 @@ import XRPNormalTransForm from 'components/NormalTransForm/XRPNormalTrans/XRPNor
 const CollectionCreateForm = Form.create({ name: 'XRPNormalTransForm' })(XRPNormalTransForm);
 
 const SendXRPNormalTrans = observer(({ record }) => {
-  const { orignBalance, address: from, path, balance } = record
+  const { orignBalance, address: from, path, balance, wid } = record
   const { languageIntl, session, sendTransParams: { updateXRPTransParams, XRPTransParams } } = useContext(MobXProviderContext)
   const [visible, setVisible] = useState(false);
 
@@ -20,7 +20,7 @@ const SendXRPNormalTrans = observer(({ record }) => {
     }
     setVisible(true);
     try {
-      updateXRPTransParams({ from, chainId: session.chainId, BIP44Path: path });
+      updateXRPTransParams({ from, chainId: session.chainId, BIP44Path: path, walletID: wid });
     } catch (err) {
       console.log(`showModal: ${err}`)
       message.warn(intl.get('network.down'));
