@@ -3,7 +3,7 @@ import { toChecksumOTAddress } from 'wanchain-util';
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { Button, Table, Row, Col, message, Tooltip, Icon, Tag } from 'antd';
+import { Button, Table, Row, Col, message, Tooltip, Icon, Tag, Switch } from 'antd';
 import style from './index.less';
 import totalImg from 'static/image/wan.png';
 import { WALLETID } from 'utils/settings';
@@ -11,7 +11,7 @@ import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
-import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import WarningExistAddress from 'components/WarningExistAddress';
 import arrow from 'static/image/arrow.png';
@@ -19,6 +19,7 @@ import arrow from 'static/image/arrow.png';
 const CHAINTYPE = 'WAN';
 
 @inject(stores => ({
+  settings: stores.session.settings,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   getAddrList: stores.wanAddress.getAddrList,
@@ -28,6 +29,7 @@ const CHAINTYPE = 'WAN';
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
+  updateSettings: newValue => stores.session.updateSettings(newValue),
 }))
 
 @observer
@@ -99,7 +101,7 @@ class WanAccount extends Component {
   }
 
   createAccount = () => {
-    const { addAddress, getAddrList } = this.props;
+    const { addAddress, getAddrList, settings } = this.props;
     if (this.canCreate) {
       try {
         this.canCreate = false;
@@ -113,11 +115,13 @@ class WanAccount extends Component {
         createWANAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
           this.canCreate = true;
-          wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
-            if (err) {
-              console.log('Open OTA scanner failed:', err);
-            }
-          });
+          if (settings.scan_ota) {
+            wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
+              if (err) {
+                console.log('Open OTA scanner failed:', err);
+              }
+            });
+          }
           message.success(intl.get('WanAccount.createAccountSuccess'));
         }).catch((e) => {
           this.canCreate = true;
@@ -297,8 +301,17 @@ class WanAccount extends Component {
     this.setState({ isExist: false })
   }
 
+  handleScanOTA = checked => {
+    this.props.updateSettings({ scan_ota: checked });
+    if (checked) {
+      initScanOTA();
+    } else {
+      stopScanOTA();
+    }
+  }
+
   render() {
-    const { getAllAmount, getAddrList } = this.props;
+    const { getAllAmount, getAddrList, settings } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -322,13 +335,16 @@ class WanAccount extends Component {
     return (
       <div className="account">
         <Row className={style.title + ' title'}>
-          <Col span={12} className="col-left">
+          <Col span={16} className="col-left">
             <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
             <span className="wanTotal">{getAllAmount}</span>
             <span className="wanTex">{intl.get('WanAccount.wan')}</span>
             <Tag className="symbol">{intl.get('Common.wanchain')}</Tag>
+            <Tooltip placement="top" title="The balances of all your private addresses will be scanned and updated to the latest state when you turn it on. This may take a while."><Icon style={{ marginLeft: '45px', position: 'relative', top: '2px' }} type="question-circle" /></Tooltip>
+            <span style={{ color: '#BCBCC1', display: 'inline-block', marginRight: '5px', marginLeft: '5px' }} className="wanTex">Refresh Private Balances</span>
+            <Switch size="small" checked={settings.scan_ota} className={style.switchBtn} defaultChecked onChange={this.handleScanOTA} />
           </Col>
-          <Col span={12} className="col-right">
+          <Col span={8} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>

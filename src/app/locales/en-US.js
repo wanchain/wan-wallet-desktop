@@ -653,6 +653,8 @@ const en_US = {
     'Config.others': 'Other Options',
     'Config.enableOfflineWallet': 'Enable Offline Wallet',
     'Config.offlineWallet': 'Show offline wallet in the sidebar',
+    'Config.enableScanOTA': 'Enable Scan OTA',
+    'Config.scanOTA': 'Scan OTA Address',
 
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',

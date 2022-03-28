@@ -96,10 +96,10 @@
         'downloading'
     ];
     const setLoadingPercentage = ({
-        perc
+        percent
     }) => {
-        document.getElementById('percentage').innerText = perc + '%';
-        document.getElementById('loading-bar').style.width = perc.toString() + '%';
+        document.getElementById('percentage').innerText = Number(percent).toFixed(1) + '%';
+        document.getElementById('loading-bar').style.width = Number(percent).toFixed(1) + '%';
     }
     const setWindowsLoadingPercentage = ({
         percent,

@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Input, message, Modal } from 'antd';
 
 import style from './index.less';
-import { BTCPATH_TEST, WANPATH } from 'utils/settings';
+import { WANPATH } from 'utils/settings';
 import { openScanOTA, createBTCAddr, createETHAddr, createXRPAddr } from 'utils/helper';
 
 message.config({
@@ -14,6 +14,7 @@ message.config({
 
 @inject(stores => ({
   auth: stores.session.auth,
+  settings: stores.session.settings,
   btcPath: stores.btcAddress.btcPath,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
@@ -58,10 +59,12 @@ class Login extends Component {
           await this.props.updateUserAccountDB('1.0.0', true);
         }
         // Open scanner to scan the smart contract to get private tx balance.
-        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
-        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
-        const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
-        openScanOTA([].concat(normalObj, importObj, rawKeyObj));
+        if (this.props.settings.scan_ota) {
+          const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
+          const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
+          const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
+          openScanOTA([].concat(normalObj, importObj, rawKeyObj));
+        }
 
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
           createBTCAddr(this.props.btcPath, 0).then(addressInfo => {

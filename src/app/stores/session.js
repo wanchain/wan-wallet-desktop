@@ -22,6 +22,7 @@ class Session {
     reinput_pwd: false,
     staking_advance: false,
     offline_wallet: false,
+    scan_ota: false,
     logout_timeout: '5',
   };
 

@@ -164,10 +164,10 @@ p {
 
 #loading-outer {
     display: inline-block;
-    box-sizing: border-box;
-    width: 100%;
-    margin-right: -4em;
-    padding-right: 4em;
+    width: 90%;
+    border-radius: 100px;
+    height: 8px;
+    background-color: white;
 }
 
 #loading-bar {
@@ -177,6 +177,8 @@ p {
     height: 8px;
     border-radius: 100px;
     background-image: linear-gradient(to right, rgb(16, 142, 233) 0%, rgb(135, 208, 104) 100%);
+    position: relative;
+    top: -7px;
 }
 
 #percentage {

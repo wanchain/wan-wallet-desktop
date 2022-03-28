@@ -721,7 +721,33 @@ export const openScanOTA = function (path) {
   })
 }
 
-export const createFirstAddr = function (walletID, chainType, path, name) {
+export const initScanOTA = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('address_initScanOTA', {}, function (err, res) {
+      if (err) {
+        console.log('Open OTA scanner failed:', err);
+        return reject(err);
+      } else {
+        return resolve();
+      }
+    });
+  })
+}
+
+export const stopScanOTA = function () {
+  return new Promise((resolve, reject) => {
+    wand.request('address_stopScanMultiOTA', {}, function (err, res) {
+      if (err) {
+        console.log('Stop OTA scanner failed:', err);
+        return reject(err);
+      } else {
+        return resolve();
+      }
+    });
+  })
+}
+
+export const createFirstAddr = function (walletID, chainType, path, name, scan_ota) {
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
       if (!err) {
@@ -740,7 +766,9 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
               }
 
               // Scan new account
-              openScanOTA([[1, path]]);
+              if (scan_ota) {
+                openScanOTA([[1, path]]);
+              }
             } else {
               addressInfo = {
                 start: 0,
