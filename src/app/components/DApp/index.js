@@ -294,7 +294,7 @@ class DApp extends Component {
     rawTx.data = data;
     rawTx.nonce = '0x' + nonce.toString(16);
     rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
-    rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
+    rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
     rawTx.Txtype = Number(1);
     rawTx.chainId = chainId;
     console.log('wallet_signTx input', { walletID: wallet.id, path: wallet.path, rawTx });
@@ -325,7 +325,7 @@ class DApp extends Component {
       rawTx.data = data;
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
-      rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16)}`;
+      rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
       rawTx.Txtype = Number(1);
       rawTx.chainId = chainId;
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
