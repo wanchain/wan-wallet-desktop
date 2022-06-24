@@ -6,7 +6,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon, Tag, Switch } from 'antd';
 import style from './index.less';
 import totalImg from 'static/image/wan.png';
-import { WALLETID } from 'utils/settings';
+import { WALLETID, WANPATH } from 'utils/settings';
 import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -346,7 +346,12 @@ class WanAccount extends Component {
   handleScanOTA = checked => {
     this.props.updateSettings({ scan_ota: checked });
     if (checked) {
-      initScanOTA();
+      initScanOTA().then(() => {
+        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
+        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
+        const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
+        openScanOTA([].concat(normalObj, importObj, rawKeyObj));
+      });
     } else {
       stopScanOTA();
     }
