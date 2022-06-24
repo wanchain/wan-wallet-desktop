@@ -51,7 +51,6 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('settings', this.props.settings, this.state.scanOtaList)
   }
 
   // switchNode = (record) => {
@@ -266,8 +265,7 @@ class WanAccount extends Component {
   expandContent = record => {
     const privateAddress = record.waddress;
     const checked = this.state.scanOtaList.includes(`${record.wid}_${record.path}`);
-    // const privateBalance = checked ? record.wbalance : 'N/A';
-    const privateBalance = record.wbalance;
+    const privateBalance = checked ? record.wbalance : 'N/A';
     return (
       <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
         <tbody>
@@ -358,7 +356,6 @@ class WanAccount extends Component {
   }
 
   checkPathChecked = path => {
-    console.log('this.props.settings.scan_ota_list', path, Object.hasOwnProperty.call(this.props.settings.scan_ota_list, path))
     return Object.hasOwnProperty.call(this.props.settings.scan_ota_list, path);
   }
 
@@ -381,10 +378,8 @@ class WanAccount extends Component {
           scanOtaList: arr
         });
         if (checked) {
-          console.log('open', item.wid, item.path)
           openScanOTA([[item.wid, item.path]]);
         } else {
-          console.log('stop', item.wid, item.path)
           stopScanSingleOTA([[item.wid, item.path]]);
         }
       }
