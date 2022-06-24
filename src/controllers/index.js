@@ -751,18 +751,36 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             break
 
         case 'stopScanMultiOTA':
-          {
-              try {
-                  ccUtil.stopCheckAcctsScan();
-              } catch (e) {
-                  logger.error('stopScanMultiOTA failed:')
-                  logger.error(e.message || e.stack)
-                  err = e
-              }
-              sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { status: 'Opened' } })
-          }
-          break
+            {
+                try {
+                    ccUtil.stopCheckAcctsScan();
+                } catch (e) {
+                    logger.error('stopScanMultiOTA failed:')
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { status: 'Opened' } })
+            }
+            break
 
+        case 'stopScanSingleOTA':
+            {
+                try {
+                    const { path } = payload;
+                    if (path.length > 0) {
+                        path.forEach((v) => {
+                            ccUtil.stopScanOTA(v[0], v[1]);
+                        });
+                    }
+                } catch (e) {
+                    logger.error('stopScanOTA failed:')
+                    logger.error(e.message || e.stack)
+                    err = e
+                }
+                sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: { status: 'Opened' } })
+            }
+            break
+          
         case 'initScanOTA':
           {
               try {

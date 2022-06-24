@@ -23,6 +23,7 @@ const defaultConfig = {
     staking_advance: false,
     offline_wallet: false,
     scan_ota: false,
+    scan_ota_list: {},
     logout_timeout: '5',
     main: {
       tokens: {

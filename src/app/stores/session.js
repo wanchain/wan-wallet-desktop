@@ -99,6 +99,19 @@ class Session {
     })
   }
 
+  @action updateInsteadSettings(key, value) {
+    return new Promise((resolve, reject) => {
+      wand.request('setting_set', { settings: { [key]: value } }, (err, ret) => {
+        if (err) {
+          reject(err);
+        } else {
+          self.settings[key] = value;
+          resolve(ret);
+        }
+      })
+    })
+  }
+
   @action checkUpdateDB() {
     return new Promise((resolve, reject) => {
       wand.request('wallet_checkUpdateDB', {}, (err, ret) => {

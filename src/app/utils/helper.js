@@ -747,6 +747,19 @@ export const stopScanOTA = function () {
   })
 }
 
+export const stopScanSingleOTA = function (path) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_stopScanSingleOTA', { path }, function (err, res) {
+      if (err) {
+        console.log('Stop OTA scanner failed:', err);
+        return reject(err);
+      } else {
+        return resolve();
+      }
+    });
+  })
+}
+
 export const createFirstAddr = function (walletID, chainType, path, name, scan_ota) {
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
@@ -766,9 +779,9 @@ export const createFirstAddr = function (walletID, chainType, path, name, scan_o
               }
 
               // Scan new account
-              if (scan_ota) {
-                openScanOTA([[1, path]]);
-              }
+              // if (scan_ota) {
+              //   openScanOTA([[1, path]]);
+              // }
             } else {
               addressInfo = {
                 start: 0,

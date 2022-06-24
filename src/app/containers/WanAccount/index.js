@@ -11,7 +11,7 @@ import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
-import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA, openScanOTA, stopScanSingleOTA } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import WarningExistAddress from 'components/WarningExistAddress';
 import arrow from 'static/image/arrow.png';
@@ -30,6 +30,7 @@ const CHAINTYPE = 'WAN';
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateName: (arr, type) => stores.wanAddress.updateName(arr, type),
   updateSettings: newValue => stores.session.updateSettings(newValue),
+  updateInsteadSettings: (key, value) => stores.session.updateInsteadSettings(key, value),
 }))
 
 @observer
@@ -42,10 +43,28 @@ class WanAccount extends Component {
       expandedRows: [],
       isExist: false,
       address: undefined,
+      scanOtaList: this.props.getAddrList.map(item => {
+        if (this.checkPathChecked(`${item.wid}_${item.path}`)) {
+          return `${item.wid}_${item.path}`
+        }
+      }).filter(v => !!v)
     }
     this.canCreate = true;
     this.props.updateTransHistory();
+    console.log('settings', this.props.settings, this.state.scanOtaList)
   }
+
+  // switchNode = (record) => {
+  //   return <div>
+  //     <Switch
+  //       size="small"
+  //       checked={this.state.scanOtaList.includes(`${record.wid}_${record.path}`)}
+  //       className={style.switchBtn}
+  //       defaultChecked
+  //       onChange={(check) => this.handleSingleScanOTA(record, check)}
+  //     />
+  //   </div>
+  // };
 
   columns = [
     {
@@ -58,10 +77,17 @@ class WanAccount extends Component {
       render: (text, record) => <div className="addrText"><p className="address">{text}</p><CopyAndQrcode addr={text} type={CHAINTYPE} path={record.path} wid={record.wid} name={record.name} /></div>,
       width: '42%'
     },
+    // {
+    //   dataIndex: 'livePrivateBalance',
+    //   render: (text, record) => this.switchNode(record),
+    //   width: '17%',
+    //   align: 'center'
+    // },
     {
       dataIndex: 'balance',
       sorter: (a, b) => a.balance - b.balance,
-      width: '20%'
+      width: '20%',
+      align: 'center'
     },
     {
       dataIndex: 'action',
@@ -239,6 +265,8 @@ class WanAccount extends Component {
 
   expandContent = record => {
     const privateAddress = record.waddress;
+    const checked = this.state.scanOtaList.includes(`${record.wid}_${record.path}`);
+    // const privateBalance = checked ? record.wbalance : 'N/A';
     const privateBalance = record.wbalance;
     return (
       <table style={{ width: 'calc(100% + 32px)', position: 'relative', left: '-16px' }}>
@@ -254,8 +282,22 @@ class WanAccount extends Component {
                 {privateAddress && <Tooltip placement="bottom" title={intl.get('WanAccount.privateTxReceiverAddress')}><Icon type="question-circle" style={{ marginLeft: '5px' }} /></Tooltip>}
               </div>
             </td>
-            <td style={{ width: '20%', padding: '0px 16px' }}>{privateBalance}</td>
-            <td style={{ width: '13%', padding: '0px 16px' }}><RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE} /></td>
+            <td style={{ width: '20%', padding: '0px 16px', textAlign: 'center' }}>{privateBalance}</td>
+            <td style={{ width: '13%', padding: '0px 16px', display: 'flex' }}>
+              <RedeemFromPrivate from={record.address} wid={record.wid} path={record.path} chainType={CHAINTYPE} />
+              <Tooltip placement="top" title={() => <>
+              <p>
+              When toggled on, the balance of each corresponding private address will be scanned and kept current. It make take several minutes to complete the scan. Toggle off accounts to optimise wallet performance.
+              </p>
+              <p>
+              Current Status:&nbsp;{intl.get(!checked ? 'Common.off' : 'Common.on')}
+              </p>
+              </>}>
+                <Button type="primary" onClick={() => this.handleSingleScanOTA(record)} style={{ marginLeft: '16px' }}>
+                  {intl.get(checked ? 'Common.disable' : 'Common.enable')}
+                </Button>
+              </Tooltip>
+            </td>
             <td style={{ width: '5%', padding: '0px 16px' }}></td>
           </tr>
         </tbody>
@@ -310,8 +352,42 @@ class WanAccount extends Component {
     }
   }
 
+  checkPathChecked = path => {
+    console.log('this.props.settings.scan_ota_list', path, Object.hasOwnProperty.call(this.props.settings.scan_ota_list, path))
+    return Object.hasOwnProperty.call(this.props.settings.scan_ota_list, path);
+  }
+
+  handleSingleScanOTA = (item) => {
+    let scan_ota_list = Object.assign({}, this.props.settings.scan_ota_list);
+    const path = `${item.wid}_${item.path}`;
+    const checked = !this.checkPathChecked(path)
+    let arr = [].concat(this.state.scanOtaList);
+    if (checked) {
+      scan_ota_list[path] = true;
+      arr.push(path);
+    } else {
+      delete scan_ota_list[path];
+      let i = arr.findIndex(v => v === path);
+      arr.splice(i, 1);
+    }
+    this.props.updateInsteadSettings('scan_ota_list', scan_ota_list).then(res => {
+      if (res) {
+        this.setState({
+          scanOtaList: arr
+        });
+        if (checked) {
+          console.log('open', item.wid, item.path)
+          openScanOTA([[item.wid, item.path]]);
+        } else {
+          console.log('stop', item.wid, item.path)
+          stopScanSingleOTA([[item.wid, item.path]]);
+        }
+      }
+    });
+  }
+
   render() {
-    const { getAllAmount, getAddrList, settings } = this.props;
+    const { getAllAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -340,9 +416,9 @@ class WanAccount extends Component {
             <span className="wanTotal">{getAllAmount}</span>
             <span className="wanTex">{intl.get('WanAccount.wan')}</span>
             <Tag className="symbol">{intl.get('Common.wanchain')}</Tag>
-            <Tooltip placement="top" title="The balances of all your private addresses will be scanned and updated to the latest state when you turn it on. This may take a while."><Icon style={{ marginLeft: '45px', position: 'relative', top: '2px' }} type="question-circle" /></Tooltip>
-            <span style={{ color: '#BCBCC1', display: 'inline-block', marginRight: '5px', marginLeft: '5px' }} className="wanTex">Refresh Private Balances</span>
-            <Switch size="small" checked={settings.scan_ota} className={style.switchBtn} defaultChecked onChange={this.handleScanOTA} />
+            {/* <Tooltip placement="top" title="The balances of all your private addresses will be scanned and updated to the latest state when you turn it on. This may take a while."><Icon style={{ marginLeft: '45px', position: 'relative', top: '2px' }} type="question-circle" /></Tooltip> */}
+            {/* <span style={{ color: '#BCBCC1', display: 'inline-block', marginRight: '5px', marginLeft: '5px' }} className="wanTex">Refresh Private Balances</span>
+            <Switch size="small" checked={settings.scan_ota} className={style.switchBtn} defaultChecked onChange={this.handleScanOTA} /> */}
           </Col>
           <Col span={8} className="col-right">
             <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
