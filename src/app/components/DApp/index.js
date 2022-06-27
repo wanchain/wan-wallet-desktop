@@ -22,6 +22,7 @@ const WAN_PATH = "m/44'/5718350'/0'";
 @inject(stores => ({
   chainId: stores.session.chainId,
   addrSelectedList: stores.wanAddress.addrSelectedList,
+  getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
 }))
 
@@ -448,12 +449,15 @@ class DApp extends Component {
     this.selectAddressModal = confirm({
       title: title,
       content: (
-        <StyledSelect defaultValue={addrAll[0]} onChange={e => {
-          msg.val = [e];
+        <StyledSelect labelInValue defaultValue={{
+          key: addrAll[0],
+          label: <div><span style={{ color: '#2FBDF4' }}>{this.getNameByAddr(addrAll[0])}:&nbsp;</span>{addrAll[0]}</div>
+        }} onChange={e => {
+          msg.val = [e.key];
         }}>
           {
             addrAll.map(v => {
-              return (<Option key={v} value={v}>{v}</Option>);
+              return (<Option key={v} value={v}><span><span style={{ color: '#2FBDF4' }}>{this.getNameByAddr(v)}:&nbsp;</span>{v}</span></Option>);
             })
           }
         </StyledSelect>
@@ -467,6 +471,11 @@ class DApp extends Component {
         await onCancel(msg);
       },
     });
+  }
+
+  getNameByAddr(addr) {
+    const item = this.props.getAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+    return item ? item.name : '';
   }
 
   renderLoadTip = () => {
