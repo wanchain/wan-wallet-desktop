@@ -11,7 +11,7 @@ import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
-import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA, openScanOTA, stopScanSingleOTA } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA, openScanOTA, stopSingleScan } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import WarningExistAddress from 'components/WarningExistAddress';
 import arrow from 'static/image/arrow.png';
@@ -51,6 +51,7 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
+    console.log('this.props.settings', this.props.settings)
   }
 
   // switchNode = (record) => {
@@ -140,13 +141,13 @@ class WanAccount extends Component {
         createWANAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
           this.canCreate = true;
-          if (settings.scan_ota) {
-            wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
-              if (err) {
-                console.log('Open OTA scanner failed:', err);
-              }
-            });
-          }
+          // if (settings.scan_ota) {
+          //   wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
+          //     if (err) {
+          //       console.log('Open OTA scanner failed:', err);
+          //     }
+          //   });
+          // }
           message.success(intl.get('WanAccount.createAccountSuccess'));
         }).catch((e) => {
           this.canCreate = true;
@@ -378,9 +379,15 @@ class WanAccount extends Component {
           scanOtaList: arr
         });
         if (checked) {
-          openScanOTA([[item.wid, item.path]]);
+          if (Object.keys(scan_ota_list).length) {
+            openScanOTA([[item.wid, item.path]]);
+          } else {
+            initScanOTA().then(() => {
+              openScanOTA([[item.wid, item.path]]);
+            })
+          }
         } else {
-          stopScanSingleOTA([[item.wid, item.path]]);
+          stopSingleScan([[item.wid, item.path]]);
         }
       }
     });

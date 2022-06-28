@@ -24,6 +24,7 @@ class Session {
     offline_wallet: false,
     scan_ota: false,
     logout_timeout: '5',
+    scan_ota_list: {},
   };
 
   @observable needFirstDBUpdate = false;

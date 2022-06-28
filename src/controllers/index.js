@@ -445,9 +445,9 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                             if (type === 'BTC') {
                                 ccUtil.btcImportAddress(addr.address);
                             }
-                            if (type === 'WAN' && setting.get('settings').scan_ota) {
-                                ccUtil.scanOTA(wid, newPath);
-                            }
+                            // if (type === 'WAN' && setting.get('settings').scan_ota) {
+                            //     ccUtil.scanOTA(wid, newPath);
+                            // }
                             ret = {
                                 status: true,
                                 data: addr.address
@@ -763,17 +763,17 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             }
             break
 
-        case 'stopScanSingleOTA':
+        case 'stopSingleScan':
             {
                 try {
                     const { path } = payload;
                     if (path.length > 0) {
                         path.forEach((v) => {
-                            ccUtil.stopScanOTA(v[0], v[1]);
+                            ccUtil.stopSingleScan(v[0], v[1]);
                         });
                     }
                 } catch (e) {
-                    logger.error('stopScanOTA failed:')
+                    logger.error('stopSingleScan failed:')
                     logger.error(e.message || e.stack)
                     err = e
                 }
@@ -889,9 +889,9 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                 hdUtil.importKeyStore(`${WANBIP44Path}0`, keyFileContent, keyFilePwd, hdWalletPwd, checkDuplicate);
                 hdUtil.createUserAccount(5, `${WANBIP44Path}${path}`, { name: accountName, addr, waddr });
                 Windows.broadcast('notification', 'keyfilepath', { path, name: accountName, addr: wanUtil.toChecksumAddress(addr), waddr: wanUtil.toChecksumOTAddress(waddr) });
-                if (setting.get('settings').scan_ota) {
-                  ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
-                }
+                // if (setting.get('settings').scan_ota) {
+                //   ccUtil.scanOTA(5, `${WANBIP44Path}${path}`);
+                // }
                 sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: true })
             } catch (e) {
                 console.log('e:', e);

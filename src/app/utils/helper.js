@@ -747,9 +747,9 @@ export const stopScanOTA = function () {
   })
 }
 
-export const stopScanSingleOTA = function (path) {
+export const stopSingleScan = function (path) {
   return new Promise((resolve, reject) => {
-    wand.request('address_stopScanSingleOTA', { path }, function (err, res) {
+    wand.request('address_stopSingleScan', { path }, function (err, res) {
       if (err) {
         console.log('Stop single OTA scanner failed:', err);
         return reject(err);

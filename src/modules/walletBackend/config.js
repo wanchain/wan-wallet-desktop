@@ -8,6 +8,7 @@ class ConfigFactoryService {
         this.config = {}
         this.config.network = setting.network
         this.config.scan_ota = setting.settings.scan_ota
+        this.config.scan_ota_list = setting.settings.scan_ota_list
         this.dataPathPrex = path.join(setting.userDataPath, `Db${[undefined, '0'].includes(setting.mnemonic) ? '' : setting.mnemonic}`)
 
         if (this.config.network.includes('main')) {
