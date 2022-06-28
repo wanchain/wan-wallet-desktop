@@ -51,7 +51,6 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('this.props.settings', this.props.settings)
   }
 
   // switchNode = (record) => {
