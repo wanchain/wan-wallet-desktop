@@ -51,6 +51,7 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
+    console.log('new scan version 0.0.1')
   }
 
   // switchNode = (record) => {
@@ -123,6 +124,23 @@ class WanAccount extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (Object.keys(prevProps.settings.scan_ota_list).length !== this.state.scanOtaList.length) {
+      this.setState({
+        scanOtaList: prevProps.getAddrList.map(item => {
+          if (Object.hasOwnProperty.call(prevProps.settings.scan_ota_list, `${item.wid}_${item.path}`)) {
+            return `${item.wid}_${item.path}`
+          }
+        }).filter(v => !!v),
+        expandedRows: this.state.expandedRows.map(r => {
+          if (prevProps.getAddrList.find(v => v.key === r)) {
+            return r
+          }
+        }).filter(v => !!v)
+      })
+    }
   }
 
   createAccount = () => {
@@ -367,29 +385,25 @@ class WanAccount extends Component {
     if (checked) {
       scan_ota_list[path] = true;
       arr.push(path);
+      openScanOTA([[item.wid, item.path]]).then(res => {
+        this.setScanOtaListType(arr, scan_ota_list);
+      });
     } else {
       delete scan_ota_list[path];
       let i = arr.findIndex(v => v === path);
       arr.splice(i, 1);
+      stopSingleScan([[item.wid, item.path]]).then(res => {
+        this.setScanOtaListType(arr, scan_ota_list);
+      });
     }
-    this.props.updateInsteadSettings('scan_ota_list', scan_ota_list).then(res => {
-      if (res) {
-        this.setState({
-          scanOtaList: arr
-        });
-        if (checked) {
-          if (Object.keys(scan_ota_list).length) {
-            openScanOTA([[item.wid, item.path]]);
-          } else {
-            initScanOTA().then(() => {
-              openScanOTA([[item.wid, item.path]]);
-            })
-          }
-        } else {
-          stopSingleScan([[item.wid, item.path]]);
-        }
-      }
-    });
+  }
+
+  setScanOtaListType(arr, list) {
+    this.props.updateInsteadSettings('scan_ota_list', list).then(res => {
+      this.setState({
+        scanOtaList: arr
+      });
+    })
   }
 
   render() {
