@@ -1,4 +1,5 @@
 import { configure } from 'mobx';
+import contacts from './contacts';
 import session from './session';
 import mnemonic from './mnemonic';
 import portfolio from './portfolio';
@@ -20,6 +21,7 @@ import openstoreman from './openstoreman';
 configure({ enforceActions: 'never' });
 
 export default {
+  contacts,
   session,
   mnemonic,
   portfolio,

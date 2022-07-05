@@ -13,6 +13,7 @@ import { hdUtil, ccUtil, btcUtil } from 'wanchain-js-sdk';
 import sleep from 'ko-sleep';
 import Logger from '~/src/utils/Logger';
 import setting from '~/src/utils/Settings';
+import contacts from '~/src/utils/Contacts';
 import { dateFormat } from '~/src/app/utils/support';
 import { Windows, walletBackend } from '~/src/modules';
 import menuFactoryService from '~/src/services/menuFactory';
@@ -33,6 +34,7 @@ const ROUTE_STAKING = 'staking';
 const ROUTE_CROSSCHAIN = 'crossChain';
 const ROUTE_DAPPSTORE = 'dappStore';
 const ROUTE_SETTING = 'setting';
+const ROUTE_CONTACTS = 'contact';
 const ROUTE_STOREMAN = 'storeman';
 
 // db collection consts
@@ -2454,6 +2456,55 @@ ipc.on(ROUTE_SETTING, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_SETTING, [action, id].join('#')].join('_'), event, { err: err })
             break;
+
+    }
+})
+
+ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
+    let ret, err, keys, vals = []
+    let [chain, addr, obj] = payload;
+    const [action, id] = actionUni.split('#')
+
+    switch (action) {
+        case 'addAddress':
+            
+            try {
+                contacts.addAddress(chain, addr, obj);
+                ret = true
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                ret = false
+            }
+
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+        case 'delAddress':
+            
+            try {
+                contacts.delAddress(chain, addr);
+                ret = true
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+
+                ret = false
+            }
+
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
+        case 'get':
+            keys = payload[0];
+            try {
+                vals = contacts.get(keys);
+            } catch (e) {
+                logger.error(e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals })
+            break
 
     }
 })

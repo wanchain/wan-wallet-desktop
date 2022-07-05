@@ -1,0 +1,50 @@
+@Transaction-click-color: #40DABF;
+
+.copyBtn {
+  color: @Transaction-click-color;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+}
+
+.delModal {
+  :global(.ant-modal) {
+    color: #d62323;
+  }
+
+  :global(.ant-input) {
+    color: #101010;
+  }
+
+  :global(.ant-btn.ant-btn-primary) {
+    margin: 20px 0 0 0;
+  }
+
+  :global(.ant-input-affix-wrapper .ant-input) {
+    padding-left: 24px;
+  }
+}
+
+.deleteMsg {
+  font-size: 18px;
+}
+
+.deleteConfirmMsg {
+  opacity: 0.6;
+}
+
+.symbolSty {
+  text-align: center;
+  font-size: 18px;
+  color: goldenrod
+}
+
+
+
+.delete {
+  color: #1890ff;
+
+  &:hover {
+    color: blue;
+  }
+}

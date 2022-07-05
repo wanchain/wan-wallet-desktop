@@ -301,6 +301,10 @@ class NormalTransForm extends Component {
     }
   }
 
+  // addNewAddress = e => {
+
+  // }
+
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
     const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
@@ -339,6 +343,9 @@ class NormalTransForm extends Component {
               <Form.Item label={intl.get('NormalTransForm.to')}>
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkAddr }] })
                   (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+              </Form.Item>
+              <Form.Item>
+                <Button onClick={this.addNewAddress}>add new address</Button>
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.mode')}>
                 {getFieldDecorator('mode', { initialValue: !this.props.disablePrivateTx && isPrivate ? 'private' : 'normal' })
