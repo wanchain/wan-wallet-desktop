@@ -25,7 +25,7 @@ class Contacts {
     return new Promise((resolve, reject) => {
       wand.request('contact_addAddress', [chain, addr, obj], (err, ret) => {
         if (err) {
-          console.log(`Init contacts failed: ${JSON.stringify(err)}`);
+          console.log(`Add normal contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
@@ -36,15 +36,45 @@ class Contacts {
     })
   }
 
+  @action addPrivateAddress(chain, addr, obj) {
+    return new Promise((resolve, reject) => {
+      wand.request('contact_addPrivateAddress', [chain, addr, obj], (err, ret) => {
+        if (err) {
+          console.log(`Add private contacts failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        };
+        if (ret) {
+          Object.assign(self.contacts.private[chain].address, { [addr]: obj });
+          return resolve();
+        }
+      })
+    })
+  }
+
   @action delAddress(chain, addr) {
     return new Promise((resolve, reject) => {
       wand.request('contact_delAddress', [chain, addr], (err, ret) => {
         if (err) {
-          console.log(`Init contacts failed: ${JSON.stringify(err)}`);
+          console.log(`Delete normal contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
           delete self.contacts.normal[chain].address[addr];
+          return resolve();
+        }
+      })
+    })
+  }
+
+  @action delPrivateAddress(chain, addr) {
+    return new Promise((resolve, reject) => {
+      wand.request('contact_delPrivateAddress', [chain, addr], (err, ret) => {
+        if (err) {
+          console.log(`Delete private contacts failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        };
+        if (ret) {
+          delete self.contacts.private[chain].address[addr];
           return resolve();
         }
       })

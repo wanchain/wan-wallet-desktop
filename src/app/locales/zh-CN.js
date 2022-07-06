@@ -147,6 +147,8 @@ const zh_CN = {
     'Settings.application': '应用',
 
     'AddressBook.title': '地址簿',
+    'AddressBook.normalAddrTab': '普通地址',
+    'AddressBook.privateAddrTab': '隐私地址',
     'AddressBook.addContact': '添加地址簿',
     'AddressBook.addContactTitle': '新地址',
     'AddressBook.username': '昵称',

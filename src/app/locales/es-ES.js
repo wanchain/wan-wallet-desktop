@@ -146,6 +146,8 @@ const es_ES = {
     'Settings.application': 'DApps',
 
     'AddressBook.title': 'Contacts',
+    'AddressBook.normalAddrTab': 'Normal Address',
+    'AddressBook.privateAddrTab': 'Private Address',
     'AddressBook.addContact': 'Add contact',
     'AddressBook.addContactTitle': 'New Contact',
     'AddressBook.username': 'Username',

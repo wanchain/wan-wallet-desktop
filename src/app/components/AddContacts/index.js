@@ -7,7 +7,7 @@ import AddContactsForm from './AddContactsForm';
 const ContactsCreateForm = Form.create({ name: 'AddContactsForm' })(AddContactsForm);
 
 @inject(stores => ({
-  chainId: stores.session.chainId,
+  normalContacts: stores.contacts.contacts.normal,
 }))
 
 @observer
@@ -15,8 +15,8 @@ class AddContacts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      spin: true,
       visible: false,
+      chainList: Object.keys(this.props.normalContacts)
     }
   }
 
@@ -29,21 +29,26 @@ class AddContacts extends Component {
   }
 
   handleCancel = () => {
-    this.setState({ visible: false, spin: true });
+    this.setState({ visible: false });
   }
 
-  saveFormRef = formRef => {
-    this.formRef = formRef;
+  handleSave = (chainSymbol, address, name) => {
+    this.props.handleSave(chainSymbol, address, name);
   }
 
   render() {
-    const { visible, spin } = this.state;
-    const { balance, walletID } = this.props;
+    const { visible, chainList } = this.state;
 
     return (
       <div>
         <Button className="createBtn" type="primary" shape="round" onClick={this.showModal}>{intl.get('AddressBook.addContact')}</Button>
-        { visible && <ContactsCreateForm balance={balance} walletID={walletID} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} spin={spin} disablePrivateTx={this.props.disablePrivateTx} />}
+        {
+          visible &&
+          <ContactsCreateForm
+            chainList={chainList}
+            handleSave={this.handleSave}
+            onCancel={this.handleCancel}
+          />}
       </div>
     );
   }

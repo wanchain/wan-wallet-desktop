@@ -146,6 +146,8 @@ const en_US = {
     'Settings.application': 'ÐApps',
 
     'AddressBook.title': 'Contacts',
+    'AddressBook.normalAddrTab': 'Normal Address',
+    'AddressBook.privateAddrTab': 'Private Address',
     'AddressBook.addContact': 'Add contact',
     'AddressBook.addContactTitle': 'New Contact',
     'AddressBook.username': 'Username',

@@ -122,23 +122,31 @@ class Contacts {
     const key = `contacts.normal.${chain}.address`;
     const addrObj = this.get(key);
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
-    this.set(`contacts.normal.${chain}.address`, newAddrObj);
+    this.set(key, newAddrObj);
+  }
+
+  addPrivateAddress(chain, addr, obj) {
+    const key = `contacts.private.${chain}.address`;
+    const addrObj = this.get(key);
+    const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
+    this.set(key, newAddrObj);
   }
 
   delAddress(chain, addr) {
     const key = `contacts.normal.${chain}.address`;
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
-    console.log('addrObj-=-=', addrObj)
-    this.set(`contacts.normal.${chain}.address`, addrObj);
+    this.set(key, addrObj);
   }
 
-  addPrivateAddress(addr, obj) {
-    this.set(`contacts.private.${chain}.address["${addr}"]`, obj);
+  delPrivateAddress(chain, addr) {
+    const key = `contacts.private.${chain}.address`;
+    let addrObj = Object.assign({}, this.get(key));
+    delete addrObj[addr];
+    this.set(key, addrObj);
   }
 
   get contacts() {
-    console.log('dfdfd====get contacts')
     if (_contacts) {
       return _contacts
     }
