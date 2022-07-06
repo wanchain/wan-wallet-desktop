@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Table, message, Form, Tooltip, Icon, Modal } from 'antd';
+import { Button, Card, Table, message, Tabs, Tooltip, Icon, Modal } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { EditableFormRow, EditableCell } from 'components/Rename';
@@ -7,14 +7,18 @@ import AddContacts from 'components/AddContacts';
 
 import style from './index.less';
 
+const { TabPane } = Tabs;
+
 @inject(stores => ({
   language: stores.languageIntl.language,
   settingContactsColumns: stores.languageIntl.settingContactsColumns,
   normalData: stores.contacts.contacts.normal,
   privateData: stores.contacts.contacts.private,
   contacts: stores.contacts.contacts,
-  addAddress: (chain, add, val) => stores.contacts.addAddress(chain, add, val),
-  delAddress: (chain, add) => stores.contacts.delAddress(chain, add),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  addPrivateAddress: (chain, addr, val) => stores.contacts.addPrivateAddress(chain, addr, val),
+  delAddress: (chain, addr) => stores.contacts.delAddress(chain, addr),
+  delPrivateAddress: (chain, addr) => stores.contacts.delPrivateAddress(chain, addr),
 }))
 
 @observer
@@ -23,22 +27,27 @@ class Contacts extends Component {
     super(props);
     this.state = {
       config: [],
-      type: 'address',
+      type: 'normal',
       rows: [],
-      showAddModal: false,
       addInfo: {},
       delInfo: {}
     }
     console.log('this.props', this.props.normalData, this.props.privateData)
   }
 
-  componentDidMount(props) {
+  componentDidMount() {
     this.setState({ rows: this.getRowsData(this.props) });
+  }
+
+  componentDidUpdate(newProps, newState) {
+    if (this.state.type !== newState.type) {
+      this.setState({ rows: this.getRowsData(newProps) });
+    }
   }
 
   getRowsData = (props) => {
     let rows;
-    if (this.state.type === 'privateAddress') {
+    if (this.state.type === 'private') {
       rows = props.privateData;
     } else {
       rows = props.normalData;
@@ -56,20 +65,13 @@ class Contacts extends Component {
     return rowData;
   }
 
-  handleAddModal = () => {
-    this.setState({
-      showAddModal: !this.state.showAddModal
-    })
-  }
-
-  handleCreate = () => {
-    this.props.addAddress('Wanchain', '0xD837BBcd310B2910eA89F2E064Ab4dA91C8357bb', {
-      name: 'clarence4',
-      address: '0xD837BBcd310B2910eA89F2E064Ab4dA91C8357bb',
-      chainSymbol: 'Wanchain'
-    }).then(res => {
+  handleCreate = (chainSymbol, address, name) => {
+    this.props[this.state.type === 'normal' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(() => {
       this.setState({ rows: this.getRowsData(this.props) });
-      this.handleAddModal();
     })
   }
 
@@ -87,10 +89,25 @@ class Contacts extends Component {
 
   handleDelete = () => {
     const { chainSymbol, address } = this.state.delInfo;
-    this.props.delAddress(chainSymbol, address).then(() => {
+    this.props[this.state.type === 'normal' ? 'delAddress' : 'delPrivateAddress'](chainSymbol, address).then(() => {
       this.setState({ rows: this.getRowsData(this.props) });
       this.handelDeleteModal();
     })
+  }
+
+  handleUpdateName = row => {
+    // if (hasSameName('normal', row, this.props.addrInfo)) {
+    //   message.warn(intl.get('WanAccount.notSameName'));
+    // } else {
+    //   this.props.updateName(row, row.wid);
+    // }
+    console.log(row)
+    const { chainSymbol, address, name } = row;
+    this.props[this.state.type === 'normal' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, { chainSymbol, address, name }).then(
+      () => {
+        this.setState({ rows: this.getRowsData(this.props) });
+      }
+    );
   }
 
   colums = [
@@ -104,14 +121,13 @@ class Contacts extends Component {
           children: value,
           props: {}
         };
-        const data = this.state.type === 'address' ? this.props.normalData : this.props.privateData;
+        const data = this.state.type === 'normal' ? this.props.normalData : this.props.privateData;
         const len = Object.keys(data[value].address).length;
         if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
           obj.props.rowSpan = 0;
         } else {
           obj.props.rowSpan = len;
         }
-        console.log('value row index', value, row, index, obj);
         return obj;
       }
     },
@@ -120,7 +136,7 @@ class Contacts extends Component {
       dataIndex: 'name',
       key: 'name',
       editable: true,
-      width: '15%',
+      width: '20%',
     },
     {
       title: intl.get('DApp.addressCol'),
@@ -141,7 +157,7 @@ class Contacts extends Component {
       title: '',
       dataIndex: 'blank',
       key: 'blank',
-      width: '10%',
+      width: '5%',
     },
   ]
 
@@ -156,7 +172,7 @@ class Contacts extends Component {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave: this.handleSave,
+        handleSave: this.handleUpdateName,
       }),
     };
   });
@@ -166,9 +182,14 @@ class Contacts extends Component {
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
   }
 
+  handleChangeTab = e => {
+    this.setState({
+      type: e
+    })
+  }
+
   render() {
     const {
-      showAddModal,
       showDeleteModal,
       delInfo
     } = this.state;
@@ -183,16 +204,37 @@ class Contacts extends Component {
       if (this.colums[i].key !== 'blank') {
         this.colums[i].title = this.props.settingContactsColumns[i].title;
       } else {
-        // this.colums[i].title = <Button className="createBtn" type="primary" shape="round" onClick={this.handleAddModal}>{intl.get('AddressBook.addContact')}</Button>
-        this.colums[i].title = <AddContacts />
+        this.colums[i].title = <AddContacts handleSave={this.handleCreate} />
       }
     }
 
     return (
       <div className={style['settings_network']}>
-        <Card title={intl.get('AddressBook.title')}>
+        <Tabs onChange={this.handleChangeTab}>
+          <TabPane tab={intl.get('AddressBook.normalAddrTab')} key="normal">
+            <Table
+              pagination={false}
+              components={components}
+              columns={this.columsTrees}
+              rowClassName={() => 'editable-row'}
+              rowKey={record => record.address}
+              dataSource={this.state.rows}
+            />
+          </TabPane>
+          <TabPane tab={intl.get('AddressBook.privateAddrTab')} key="private">
+            <Table
+              pagination={false}
+              components={components}
+              columns={this.columsTrees}
+              rowClassName={() => 'editable-row'}
+              rowKey={record => record.address}
+              dataSource={this.state.rows}
+            />
+          </TabPane>
+        </Tabs>
+        {/* <Card title={intl.get('AddressBook.title')}>
           <Table components={components} columns={this.columsTrees} dataSource={this.state.rows} />
-        </Card>
+        </Card> */}
         {
           showDeleteModal &&
           <Modal
