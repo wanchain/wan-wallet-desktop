@@ -15,7 +15,7 @@ const { Option } = Select;
 }))
 
 @observer
-class NormalTransForm extends Component {
+class AddContactsModal extends Component {
   state = {
     isPrivate: false,
     spin: false
@@ -30,15 +30,15 @@ class NormalTransForm extends Component {
   }
 
   handleSave = () => {
-    console.log('save')
-    const { form, handleSave } = this.props;
-    const { chain, address, username } = form.getFieldsValue(['chain', 'address', 'username']);
-    handleSave(chain, address, username);
-    this.onCancel()
+    const { form, handleSave, address } = this.props;
+    console.log('save', address)
+    const nickName = form.getFieldValue('nickName');
+    handleSave(address, nickName);
+    this.onCancel();
   }
 
   render() {
-    const { form, chainList } = this.props;
+    const { form, address } = this.props;
     const { spin } = this.state;
     const { getFieldDecorator } = form;
 
@@ -49,7 +49,7 @@ class NormalTransForm extends Component {
           wrapClassName={style.normalTransFormModal}
           destroyOnClose={true}
           closable={false}
-          title={intl.get('NormalTransForm.transaction')}
+          title={intl.get('AddressBook.saveContact')}
           onCancel={this.onCancel}
           footer={[
             <Button key="back" className="cancel" onClick={this.onCancel}>{intl.get('Common.cancel')}</Button>,
@@ -57,22 +57,13 @@ class NormalTransForm extends Component {
           ]}
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
-            <Form.Item label={intl.get('AddressBook.username')}>
-              {getFieldDecorator('username')
-                (<Input placeholder={intl.get('AddressBook.addUsernamePlaceHolder')} />)}
-            </Form.Item>
             <Form.Item label={intl.get('AddressBook.address')}>
-              {getFieldDecorator('address')
-                (<Input placeholder={intl.get('AddressBook.addAddressPlaceHolder')} />)}
+              {getFieldDecorator('address', { initialValue: address })
+                (<Input disabled={true} />)}
             </Form.Item>
-            <Form.Item label={intl.get('AddressBook.chain')}>
-              {getFieldDecorator('chain', { initialValue: undefined })
-                (<Select
-                  placeholder={intl.get('AddressBook.addChainPlaceHolder')}
-                  dropdownMatchSelectWidth
-                >
-                  {chainList.map(v => <Option value={v} key={v}>{v}</Option>)}
-                </Select>)}
+            <Form.Item label={intl.get('AddressBook.nickname')}>
+              {getFieldDecorator('nickName')
+                (<Input placeholder={intl.get('AddressBook.addNickname')} />)}
             </Form.Item>
           </Form>
         </Modal>
@@ -81,4 +72,4 @@ class NormalTransForm extends Component {
   }
 }
 
-export default NormalTransForm;
+export default AddContactsModal;

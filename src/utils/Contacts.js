@@ -9,7 +9,7 @@ let _contacts = undefined
 
 const defaultConfig = {
   contacts: {
-    normal: {
+    normalAddr: {
       Wanchain: {
         address: {},
         imgUrl: '',
@@ -41,36 +41,11 @@ const defaultConfig = {
         chainSymbol: 'BSC'
       }
     },
-    private: {
+    privateAddr: {
       Wanchain: {
         address: {},
         imgUrl: '',
         chainSymbol: 'Wanchain'
-      },
-      Ethereum: {
-        address: {},
-        imgUrl: '',
-        chainSymbol: 'Ethereum'
-      },
-      Bitcoin: {
-        address: {},
-        imgUrl: '',
-        chainSymbol: 'Bitcoin'
-      },
-      XRPL: {
-        address: {},
-        imgUrl: '',
-        chainSymbol: 'XRPL'
-      },
-      EOS: {
-        address: {},
-        imgUrl: '',
-        chainSymbol: 'EOS'
-      },
-      BSC: {
-        address: {},
-        imgUrl: '',
-        chainSymbol: 'BSC'
       }
     }
   }
@@ -105,45 +80,52 @@ class Contacts {
 
   updateContactsByConfig() {
     let contacts = this.get('contacts');
-    Object.keys(defaultConfig.contacts.normal).forEach(chain => {
-      if (contacts.normal[chain] === undefined) {
-        this.set(`contacts.normal.${chain}`, defaultConfig.contacts.normal[chain])
+    if (!contacts) this.set(`contacts`, defaultConfig.contacts);
+    if (!contacts.normalAddr) this.set(`contacts.normalAddr`, defaultConfig.contacts.normalAddr);
+    if (!contacts.privateAddr) this.set(`contacts.privateAddr`, defaultConfig.contacts.privateAddr);
+    Object.keys(defaultConfig.contacts.normalAddr).forEach(chain => {
+      if (contacts.normalAddr[chain] === undefined) {
+        this.set(`contacts.normalAddr.${chain}`, defaultConfig.contacts.normalAddr[chain])
       }
     })
-    Object.keys(defaultConfig.contacts.private).forEach(chain => {
-      if (contacts.private[chain] === undefined) {
-        this.set(`contacts.private.${chain}`, defaultConfig.contacts.private[chain])
-      }
-    })
+    if (contacts.privateAddr.Wanchain === undefined) {
+      this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr[chain])
+    }
     // this.set(`contacts`, defaultConfig.contacts)
   }
 
   addAddress(chain, addr, obj) {
-    const key = `contacts.normal.${chain}.address`;
+    const key = `contacts.normalAddr.${chain}.address`;
     const addrObj = this.get(key);
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
     this.set(key, newAddrObj);
   }
 
-  addPrivateAddress(chain, addr, obj) {
-    const key = `contacts.private.${chain}.address`;
+  addPrivateAddress(addr, obj) {
+    const key = 'contacts.privateAddr.Wanchain.address';
     const addrObj = this.get(key);
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
     this.set(key, newAddrObj);
   }
 
   delAddress(chain, addr) {
-    const key = `contacts.normal.${chain}.address`;
+    const key = `contacts.normalAddr.${chain}.address`;
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
     this.set(key, addrObj);
   }
 
-  delPrivateAddress(chain, addr) {
-    const key = `contacts.private.${chain}.address`;
+  delPrivateAddress(addr) {
+    const key = 'contacts.privateAddr.Wanchain.address';
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
     this.set(key, addrObj);
+  }
+
+  hasSameContact(addr, chain) {
+    const normalContact = this.get(`contacts.normalAddr.${chain}.address.${addr}`);
+    const privateContact = chain === 'Wanchain' ? this.get('contacts.privateAddr.Wanchain.address.${addr}') : undefined;
+    return Boolean(privateContact || normalContact);
   }
 
   get contacts() {

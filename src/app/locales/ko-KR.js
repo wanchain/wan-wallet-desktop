@@ -156,6 +156,9 @@ const ko_KR = {
     'AddressBook.addAddressPlaceHolder': 'Search , public address(0x) , or ENS',
     'AddressBook.chain': 'Chain',
     'AddressBook.addChainPlaceHolder': 'Please select a chain',
+    'AddressBook.saveContact': 'Save Contact',
+    'AddressBook.nickname': 'Nickname',
+    'AddressBook.addNickname': 'Add a nickname',
 
     'DApp.title': 'DApp 매니지먼트',
     'DApp.addButton': '추가',
@@ -481,6 +484,7 @@ const ko_KR = {
     'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': '자신한테 전송 불가 입니다.',
     'NormalTransForm.inputToAddress': '수신인의 주소를 입력 바랍니다.',
+    'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',

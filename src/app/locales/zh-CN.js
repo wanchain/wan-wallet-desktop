@@ -157,6 +157,9 @@ const zh_CN = {
     'AddressBook.addAddressPlaceHolder': '搜索、公共地址（0x）或 ENS',
     'AddressBook.chain': '链',
     'AddressBook.addChainPlaceHolder': '请选择一条链',
+    'AddressBook.saveContact': '保存地址簿',
+    'AddressBook.nickname': '昵称',
+    'AddressBook.addNickname': '添加昵称',
 
     'DApp.title': '应用管理',
     'DApp.addButton': '添加',
@@ -481,6 +484,7 @@ const zh_CN = {
     'NormalTransForm.destinationTagRule': 'Destination Tag格式不正确',
     'NormalTransForm.isNativeBtcAddress': '不允许发送交易给自己',
     'NormalTransForm.inputToAddress': '请输入接收者地址',
+    'NormalTransForm.addNewContacts': '检测到新地址！ 单击此处添加到您的地址簿。',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',

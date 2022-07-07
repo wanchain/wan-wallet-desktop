@@ -7,6 +7,7 @@ import bech32 from 'bech32';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, BSCPATH_MAIN, BSCPATH_TEST, DECIMALS, MAIN, CHAINID } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
+import { reject } from 'lodash';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
@@ -1339,4 +1340,16 @@ export const converter = function (str, from = 'utf8', to = 'hex') {
       }
     });
   });
+}
+
+export const hasSameContact = function (addr, chain = 'Wanchain') {
+  return new Promise((resolve, reject) => {
+    wand.request('contact_hasSameContact', [chain, addr], (err, ret) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(ret);
+      }
+    })
+  })
 }

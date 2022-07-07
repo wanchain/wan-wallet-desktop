@@ -156,6 +156,9 @@ const pt_PT = {
     'AddressBook.addAddressPlaceHolder': 'Search , public address(0x) , or ENS',
     'AddressBook.chain': 'Chain',
     'AddressBook.addChainPlaceHolder': 'Please select a chain',
+    'AddressBook.saveContact': 'Save Contact',
+    'AddressBook.nickname': 'Nickname',
+    'AddressBook.addNickname': 'Add a nickname',
 
     'DApp.title': 'Gerenciamento de aplicativos descentralizados',
     'DApp.addButton': 'Adicionar',
@@ -481,6 +484,7 @@ const pt_PT = {
     'NormalTransForm.destinationTagRule': 'Destination tag is incorrect',
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
+    'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmar transação cross-chain',
     'CrossChainTransForm.capacity': 'Capacidade',

@@ -469,6 +469,7 @@ const fr_FR = {
     'NormalTransForm.destinationTagRule': 'La balise de destination est incorrecte',
     'NormalTransForm.isNativeBtcAddress': 'Il n\'est pas permis d\' envoyer a soit-meme',
     'NormalTransForm.inputToAddress': 'Veuillez saisir l\'adresse du destinataire',
+    'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',

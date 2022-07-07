@@ -2,8 +2,8 @@ import { observable, action, makeObservable } from 'mobx';
 
 class Contacts {
   @observable contacts = {
-    normal: {},
-    private: {},
+    normalAddr: {},
+    privateAddr: {},
   };
 
   constructor() {
@@ -29,22 +29,22 @@ class Contacts {
           return reject(err);
         };
         if (ret) {
-          Object.assign(self.contacts.normal[chain].address, { [addr]: obj });
+          Object.assign(self.contacts.normalAddr[chain].address, { [addr]: obj });
           return resolve();
         }
       })
     })
   }
 
-  @action addPrivateAddress(chain, addr, obj) {
+  @action addPrivateAddress(addr, obj) {
     return new Promise((resolve, reject) => {
-      wand.request('contact_addPrivateAddress', [chain, addr, obj], (err, ret) => {
+      wand.request('contact_addPrivateAddress', [addr, obj], (err, ret) => {
         if (err) {
           console.log(`Add private contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
-          Object.assign(self.contacts.private[chain].address, { [addr]: obj });
+          Object.assign(self.contacts.privateAddr.Wanchain.address, { [addr]: obj });
           return resolve();
         }
       })
@@ -59,22 +59,22 @@ class Contacts {
           return reject(err);
         };
         if (ret) {
-          delete self.contacts.normal[chain].address[addr];
+          delete self.contacts.normalAddr[chain].address[addr];
           return resolve();
         }
       })
     })
   }
 
-  @action delPrivateAddress(chain, addr) {
+  @action delPrivateAddress(addr) {
     return new Promise((resolve, reject) => {
-      wand.request('contact_delPrivateAddress', [chain, addr], (err, ret) => {
+      wand.request('contact_delPrivateAddress', [addr], (err, ret) => {
         if (err) {
           console.log(`Delete private contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
-          delete self.contacts.private[chain].address[addr];
+          delete self.contacts.privateAddr.Wanchain.address[addr];
           return resolve();
         }
       })

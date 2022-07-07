@@ -12,13 +12,13 @@ const { TabPane } = Tabs;
 @inject(stores => ({
   language: stores.languageIntl.language,
   settingContactsColumns: stores.languageIntl.settingContactsColumns,
-  normalData: stores.contacts.contacts.normal,
-  privateData: stores.contacts.contacts.private,
+  normalData: stores.contacts.contacts.normalAddr,
+  privateData: stores.contacts.contacts.privateAddr,
   contacts: stores.contacts.contacts,
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
-  addPrivateAddress: (chain, addr, val) => stores.contacts.addPrivateAddress(chain, addr, val),
+  addPrivateAddress: (addr, val) => stores.contacts.addPrivateAddress(addr, val),
   delAddress: (chain, addr) => stores.contacts.delAddress(chain, addr),
-  delPrivateAddress: (chain, addr) => stores.contacts.delPrivateAddress(chain, addr),
+  delPrivateAddress: (addr) => stores.contacts.delPrivateAddress(addr),
 }))
 
 @observer
@@ -27,7 +27,7 @@ class Contacts extends Component {
     super(props);
     this.state = {
       config: [],
-      type: 'normal',
+      type: 'normalAddr',
       rows: [],
       addInfo: {},
       delInfo: {}
@@ -47,7 +47,7 @@ class Contacts extends Component {
 
   getRowsData = (props) => {
     let rows;
-    if (this.state.type === 'private') {
+    if (this.state.type === 'privateAddr') {
       rows = props.privateData;
     } else {
       rows = props.normalData;
@@ -66,13 +66,23 @@ class Contacts extends Component {
   }
 
   handleCreate = (chainSymbol, address, name) => {
-    this.props[this.state.type === 'normal' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, {
-      name,
-      address,
-      chainSymbol
-    }).then(() => {
-      this.setState({ rows: this.getRowsData(this.props) });
-    })
+    if (this.state.type === 'normalAddr') {
+      this.props.addAddress(chainSymbol, address, {
+        name,
+        address,
+        chainSymbol
+      }).then(() => {
+        this.setState({ rows: this.getRowsData(this.props) });
+      })
+    } else {
+      this.props.addPrivateAddress(address, {
+        name,
+        address,
+        chainSymbol
+      }).then(() => {
+        this.setState({ rows: this.getRowsData(this.props) });
+      })
+    }
   }
 
   handelDeleteModal = () => {
@@ -89,21 +99,23 @@ class Contacts extends Component {
 
   handleDelete = () => {
     const { chainSymbol, address } = this.state.delInfo;
-    this.props[this.state.type === 'normal' ? 'delAddress' : 'delPrivateAddress'](chainSymbol, address).then(() => {
-      this.setState({ rows: this.getRowsData(this.props) });
-      this.handelDeleteModal();
-    })
+    if (this.state.type === 'normalAddr') {
+      this.props.delAddress(chainSymbol, address).then(() => {
+        this.setState({ rows: this.getRowsData(this.props) });
+        this.handelDeleteModal();
+      })
+    } else {
+      this.props.delPrivateAddress(address).then(() => {
+        this.setState({ rows: this.getRowsData(this.props) });
+        this.handelDeleteModal();
+      })
+    }
   }
 
   handleUpdateName = row => {
-    // if (hasSameName('normal', row, this.props.addrInfo)) {
-    //   message.warn(intl.get('WanAccount.notSameName'));
-    // } else {
-    //   this.props.updateName(row, row.wid);
-    // }
     console.log(row)
     const { chainSymbol, address, name } = row;
-    this.props[this.state.type === 'normal' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, { chainSymbol, address, name }).then(
+    this.props[this.state.type === 'normalAddr' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, { chainSymbol, address, name }).then(
       () => {
         this.setState({ rows: this.getRowsData(this.props) });
       }
@@ -121,7 +133,7 @@ class Contacts extends Component {
           children: value,
           props: {}
         };
-        const data = this.state.type === 'normal' ? this.props.normalData : this.props.privateData;
+        const data = this.state.type === 'normalAddr' ? this.props.normalData : this.props.privateData;
         const len = Object.keys(data[value].address).length;
         if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
           obj.props.rowSpan = 0;
@@ -211,7 +223,7 @@ class Contacts extends Component {
     return (
       <div className={style['settings_network']}>
         <Tabs onChange={this.handleChangeTab}>
-          <TabPane tab={intl.get('AddressBook.normalAddrTab')} key="normal">
+          <TabPane tab={intl.get('AddressBook.normalAddrTab')} key="normalAddr">
             <Table
               pagination={false}
               components={components}
@@ -221,7 +233,7 @@ class Contacts extends Component {
               dataSource={this.state.rows}
             />
           </TabPane>
-          <TabPane tab={intl.get('AddressBook.privateAddrTab')} key="private">
+          <TabPane tab={intl.get('AddressBook.privateAddrTab')} key="privateAddr">
             <Table
               pagination={false}
               components={components}

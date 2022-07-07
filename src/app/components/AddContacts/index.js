@@ -7,7 +7,7 @@ import AddContactsForm from './AddContactsForm';
 const ContactsCreateForm = Form.create({ name: 'AddContactsForm' })(AddContactsForm);
 
 @inject(stores => ({
-  normalContacts: stores.contacts.contacts.normal,
+  normalContacts: stores.contacts.contacts.normalAddr,
 }))
 
 @observer

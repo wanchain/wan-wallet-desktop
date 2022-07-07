@@ -165,6 +165,7 @@ class WanAccount extends Component {
 
   handleSend = (from, splitAmount) => {
     if (splitAmount && splitAmount instanceof Array) {
+      console.log('splitAmount', splitAmount)
       return this.onSendPrivateTransaction(from, splitAmount);
     } else {
       return this.onSendNormalTransaction(from);

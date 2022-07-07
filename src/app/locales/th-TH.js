@@ -156,6 +156,9 @@ const th_TH = {
     'AddressBook.addAddressPlaceHolder': 'Search , public address(0x) , or ENS',
     'AddressBook.chain': 'Chain',
     'AddressBook.addChainPlaceHolder': 'Please select a chain',
+    'AddressBook.saveContact': 'Save Contact',
+    'AddressBook.nickname': 'Nickname',
+    'AddressBook.addNickname': 'Add a nickname',
 
     'DApp.title': 'การจัดการ DApp',
     'DApp.addButton': 'เพิ่ม',
@@ -481,6 +484,7 @@ const th_TH = {
     'NormalTransForm.destinationTagRule': 'Tag ปลายทางไม่ถูกต้อง',
     'NormalTransForm.isNativeBtcAddress': 'ไม่อนุญาตให้ส่งหาตัวเอง',
     'NormalTransForm.inputToAddress': 'กรุณากรอกที่อยู่ปลายทาง',
+    'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',

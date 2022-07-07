@@ -2483,7 +2483,7 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
         case 'addPrivateAddress':
             
             try {
-                contacts.addPrivateAddress(chain, addr, obj);
+                contacts.addPrivateAddress(addr, obj);
                 ret = true
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2513,7 +2513,7 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
         case 'delPrivateAddress':
             
             try {
-                contacts.delPrivateAddress(chain, addr);
+                contacts.delPrivateAddress(addr);
                 ret = true
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2535,7 +2535,16 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
             }
             sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
-
+        
+        case 'hasSameContact':
+            try {
+                vals = contacts.hasSameContact(addr, chain);
+            } catch (e) {
+                logger.error(e.message || e.stack);
+                err = e;
+            }
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals });
+            break
     }
 })
 
