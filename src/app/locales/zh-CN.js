@@ -160,6 +160,7 @@ const zh_CN = {
     'AddressBook.saveContact': '保存地址簿',
     'AddressBook.nickname': '昵称',
     'AddressBook.addNickname': '添加昵称',
+    'AddressBook.nameRepeat': '此昵称已重复',
 
     'DApp.title': '应用管理',
     'DApp.addButton': '添加',

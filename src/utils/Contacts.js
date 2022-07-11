@@ -1,8 +1,8 @@
-import fs from 'fs'
-import low from 'lowdb'
-import FileSync from 'lowdb/adapters/FileSync'
-import { app } from 'electron'
-import Logger from './Logger'
+import fs from 'fs';
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+import { app } from 'electron';
+import Logger from './Logger';
 
 // caches for config
 let _contacts = undefined
@@ -12,7 +12,7 @@ const defaultConfig = {
     normalAddr: {
       Wanchain: {
         address: {},
-        imgUrl: '',
+        imgUrl: 'static/image/wan.png',
         chainSymbol: 'Wanchain'
       },
       Ethereum: {
@@ -84,12 +84,25 @@ class Contacts {
     if (!contacts.normalAddr) this.set(`contacts.normalAddr`, defaultConfig.contacts.normalAddr);
     if (!contacts.privateAddr) this.set(`contacts.privateAddr`, defaultConfig.contacts.privateAddr);
     Object.keys(defaultConfig.contacts.normalAddr).forEach(chain => {
-      if (contacts.normalAddr[chain] === undefined) {
+      const chainObj = contacts.normalAddr[chain]
+      if (chainObj === void 0) {
         this.set(`contacts.normalAddr.${chain}`, defaultConfig.contacts.normalAddr[chain])
+      } else {
+        Object.keys(defaultConfig.contacts.normalAddr[chain]).map(key => {
+          if (!chainObj[key]) {
+            this.set(`contacts.normalAddr.${chain}.${key}`, defaultConfig.contacts.normalAddr[chain][key])
+          }
+        })
       }
     })
-    if (contacts.privateAddr.Wanchain === undefined) {
+    if (contacts.privateAddr.Wanchain === void 0) {
       this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr[chain])
+    } else {
+      Object.keys(defaultConfig.contacts.privateAddr.Wanchain).map(key => {
+        if (!contacts.privateAddr.Wanchain[key]) {
+          this.set(`contacts.privateAddr.Wanchain.${key}`, defaultConfig.contacts.privateAddr.Wanchain[key])
+        }
+      })
     }
     // this.set(`contacts`, defaultConfig.contacts)
   }
@@ -122,9 +135,18 @@ class Contacts {
     this.set(key, addrObj);
   }
 
+  hasSameName(chain, name) {
+    let nameArr = [];
+    if (chain === 'Wanchain') {
+      Object.values(this.get('contacts.privateAddr.Wanchain.address')).map(v => nameArr.push(v.name))
+    }
+    Object.values(this.get(`contacts.normalAddr.${chain}.address`)).map(v => nameArr.push(v.name))
+    return nameArr.includes(name);
+  }
+
   hasSameContact(addr, chain) {
     const normalContact = this.get(`contacts.normalAddr.${chain}.address.${addr}`);
-    const privateContact = chain === 'Wanchain' ? this.get('contacts.privateAddr.Wanchain.address.${addr}') : undefined;
+    const privateContact = chain === 'Wanchain' ? this.get(`contacts.privateAddr.Wanchain.address.${addr}`) : undefined;
     return Boolean(privateContact || normalContact);
   }
 

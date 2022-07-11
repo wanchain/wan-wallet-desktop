@@ -10,8 +10,7 @@ const { Option } = Select;
 // const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 
 @inject(stores => ({
-  normalContacts: stores.contacts.contacts.normalAddr,
-  privateContacts: stores.contacts.contacts.privateAddr,
+  hasSameName: (chain, name) => stores.contacts.hasSameName(chain, name),
 }))
 
 @observer
@@ -29,12 +28,38 @@ class AddContactsModal extends Component {
     this.props.onCancel();
   }
 
+  checkName = (rule, value, callback) => {
+    if (!value) {
+      callback(intl.get(rule.message));
+      return;
+    }
+    const {
+      hasSameName,
+      chain
+    } = this.props;
+    hasSameName(chain, value).then(res => {
+      if (res) {
+        this.setState({
+          spin: true
+        })
+        callback(intl.get('AddressBook.nameRepeat'));
+      } else {
+        this.setState({
+          spin: false
+        })
+        callback();
+      }
+    })
+  }
+
   handleSave = () => {
     const { form, handleSave, address } = this.props;
-    console.log('save', address)
-    const nickName = form.getFieldValue('nickName');
-    handleSave(address, nickName);
-    this.onCancel();
+    form.validateFields(err => {
+      if (err) return;
+      const nickName = form.getFieldValue('nickName');
+      handleSave(address, nickName);
+      this.onCancel();
+    })
   }
 
   render() {
@@ -62,7 +87,7 @@ class AddContactsModal extends Component {
                 (<Input disabled={true} />)}
             </Form.Item>
             <Form.Item label={intl.get('AddressBook.nickname')}>
-              {getFieldDecorator('nickName')
+              {getFieldDecorator('nickName', { rules: [{ required: true, message: intl.get('AddressBook.nameRepeat'), validator: this.checkName }] })
                 (<Input placeholder={intl.get('AddressBook.addNickname')} />)}
             </Form.Item>
           </Form>

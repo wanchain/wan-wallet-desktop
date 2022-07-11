@@ -159,6 +159,7 @@ const en_US = {
     'AddressBook.saveContact': 'Save Contact',
     'AddressBook.nickname': 'Nickname',
     'AddressBook.addNickname': 'Add a nickname',
+    'AddressBook.nameRepeat': 'The name is repeated',
 
     'DApp.title': 'DApp Management',
     'DApp.addButton': 'Add',

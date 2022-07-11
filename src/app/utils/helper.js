@@ -1353,3 +1353,59 @@ export const hasSameContact = function (addr, chain = 'Wanchain') {
     })
   })
 }
+export const checkAddrByCT4Contacts = async (address, chain) => {
+  let valid = false;
+  try {
+    switch (chain) {
+      case 'Wanchain':
+        valid = await checkToWanAddr(address);
+        break;
+      case 'Ethereum':
+        valid = await checkETHAddr(address);
+        break;
+      case 'Bitcoin':
+        valid = await checkBTCAddr(address);
+        break;
+      case 'EOS':
+        valid = await checkEosNameExist(address);
+        break;
+      case 'XRPL':
+        valid = await checkXRPAddr(address);
+        break;
+      case 'BSC':
+        valid = await checkETHAddr(address);
+        break;
+      default:
+        valid = false;
+    }
+  } catch (e) {
+    valid = false;
+  }
+  return valid;
+}
+
+export const checkToWanAddr = (address) => {
+  return new Promise((resolve, reject) => {
+    Promise.all([checkWanAddr(address), checkETHAddr(address)]).then(results => {
+      if (results[0] || results[1]) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    }).catch(() => {
+      resolve(false);
+    });
+  });
+}
+
+export const checkAddrIsRepeat4Contacts = (address, chainType) => {
+  return new Promise((resolve, reject) => {
+    wand.request('contact_hasSameContact', [chainType, address], (err, ret) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(ret);
+      }
+    })
+  })
+}

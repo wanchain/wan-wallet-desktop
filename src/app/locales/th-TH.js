@@ -159,6 +159,7 @@ const th_TH = {
     'AddressBook.saveContact': 'Save Contact',
     'AddressBook.nickname': 'Nickname',
     'AddressBook.addNickname': 'Add a nickname',
+    'AddressBook.nameRepeat': 'The name is repeated',
 
     'DApp.title': 'การจัดการ DApp',
     'DApp.addButton': 'เพิ่ม',

@@ -81,6 +81,19 @@ class Contacts {
     })
   }
 
+  @action hasSameName(chain, name) {
+    return new Promise((resolve, reject) => {
+      wand.request('contact_hasSameName', [chain, name], (err, ret) => {
+        if (err) {
+          console.log(`Check contacts has same name failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        } else {
+          return resolve(ret);
+        }
+      })
+    })
+  }
+
   @action updateNormalContacts(addr, obj) {
     wand.request('contact_setNormal', { [addr]: obj }, (err, ret) => {
       if (err) return;

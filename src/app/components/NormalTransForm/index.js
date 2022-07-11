@@ -52,12 +52,12 @@ class NormalTransForm extends Component {
     showAddContacts: false
   }
 
-  componentDidMount() {
-    this.processContacts();
-  }
-
   componentWillUnmount() {
     this.setState = () => false;
+  }
+
+  componentDidMount() {
+    this.processContacts();
   }
 
   processContacts = () => {
@@ -66,7 +66,6 @@ class NormalTransForm extends Component {
       return a.concat(Object.values(b.address))
     }, []);
     contactsList = contactsList.concat(Object.values(privateAddr.Wanchain.address))
-    console.log('contactsList', contactsList)
     this.setState({
       contactsList
     })
@@ -227,6 +226,9 @@ class NormalTransForm extends Component {
       });
       callback();
     } else if (this.props.disablePrivateTx) {
+      this.setState({
+        isNewContacts: false
+      })
       callback(intl.get('NormalTransForm.invalidAddress'));
     } else {
       let isPrivateAddress = this.checkToWanPrivateAddr(value);
@@ -241,6 +243,9 @@ class NormalTransForm extends Component {
         });
         callback();
       } else {
+        this.setState({
+          isNewContacts: false
+        })
         callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }
@@ -348,10 +353,8 @@ class NormalTransForm extends Component {
         address,
         chainSymbol
       }).then(async () => {
-        const isNewContacts = await hasSameContact(address)
-        console.log('isNewContacts', isNewContacts)
         this.setState({
-          isNewContacts: !isNewContacts
+          isNewContacts: false
         })
       })
     } else {
@@ -360,17 +363,14 @@ class NormalTransForm extends Component {
         address,
         chainSymbol
       }).then(async () => {
-        const isNewContacts = await hasSameContact(address)
-        console.log('isNewContacts-isPrivate', isNewContacts)
         this.setState({
-          isNewContacts: !isNewContacts
+          isNewContacts: false
         })
       })
     }
   }
 
   handleShowAddContactModal = () => {
-    const { form } = this.props
     this.setState({
       showAddContacts: !this.state.showAddContacts
     })
@@ -479,7 +479,7 @@ class NormalTransForm extends Component {
           <Confirm visible={true} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         }
         {
-          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')}></AddContactsModalForm>
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain="Wanchain"></AddContactsModalForm>
         }
       </div>
     );

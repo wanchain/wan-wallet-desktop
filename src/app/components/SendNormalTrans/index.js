@@ -51,6 +51,7 @@ class SendNormalTrans extends Component {
   }
 
   handleCancel = () => {
+    console.log('this.props.disablePrivateTx', this.props, this.props.disablePrivateTx)
     this.setState({ visible: false, spin: true });
   }
 
