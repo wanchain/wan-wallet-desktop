@@ -1,0 +1,82 @@
+@Transaction-click-color: #40DABF;
+
+// .copyBtn {
+//   color: @Transaction-click-color;
+//   cursor: pointer;
+//   text-align: center;
+//   font-size: 16px;
+// }
+
+.contacts {
+  :global(table:hover, tr:hover, thead:hover) {
+    background: #30393c !important;
+  }
+
+  :global(.ant-table-tbody > tr.ant-table-row:hover > td) {
+    background: none !important;
+  }
+
+  .chain-symbol {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .chain-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 8px;
+  }
+
+  .chain-name {
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    color: #BCBDC2;
+  }
+
+  .border-line {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+}
+
+.delModal {
+  :global(.ant-modal) {
+    color: #d62323;
+  }
+
+  :global(.ant-input) {
+    color: #101010;
+  }
+
+  :global(.ant-btn.ant-btn-primary) {
+    margin: 20px 0 0 0;
+  }
+
+  :global(.ant-input-affix-wrapper .ant-input) {
+    padding-left: 24px;
+  }
+}
+
+.deleteMsg {
+  font-size: 18px;
+}
+
+.deleteConfirmMsg {
+  opacity: 0.6;
+}
+
+.symbolSty {
+  text-align: center;
+  font-size: 18px;
+  color: goldenrod
+}
+
+
+
+.delete {
+  color: #1890ff;
+
+  &:hover {
+    color: blue;
+  }
+}

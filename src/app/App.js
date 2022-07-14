@@ -22,6 +22,7 @@ class App extends Component {
         stores.session.initChainId();
         stores.session.initNetwork().then(network => stores.btcAddress.getUserAccountFromDB(network));
         stores.session.initSettings();
+        stores.contacts.initContacts();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
         stores.xrpAddress.getUserAccountFromDB();

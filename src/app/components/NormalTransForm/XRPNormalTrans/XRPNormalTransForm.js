@@ -2,22 +2,30 @@ import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { observer, MobXProviderContext } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin, AutoComplete, Select } from 'antd';
 
 import style from '../index.less';
 import useAsync from 'hooks/useAsync';
-import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
+import { checkAmountUnit, checkXRPAddr, getBalance, hasSameContact } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
+import AddContactsModal from '../../AddContacts/AddContactsModal';
+import { constants } from 'ethers-wan';
 
 const MINBALANCE = '10';
 const DEFAULTFEE = '0.000012'
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
+const { Option } = Select;
+const chainSymbol = 'XRPL';
 
 const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCancel, onSend }) => {
-  const { languageIntl, session: { settings }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
+  const { languageIntl, session: { settings }, contacts: { contacts, addAddress }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [minSendAmount, setMinSendAmount] = useState('0');
+  const [contactsList, setContactsList] = useState([]);
+  const [isNewContacts, setIsNewContacts] = useState(false);
+  const [showAddContacts, setShowAddContacts] = useState(false);
   const [visibleTag, setVisibleTag] = useState(true);
   const { status: estimateSmartFeeStatus, value: estimateSmartFee } = useAsync('transaction_estimateSmartFee', DEFAULTFEE, true, { chainType: 'XRP' });
   const spin = useMemo(() => {
@@ -31,6 +39,44 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       message.warn(intl.get('network.down'));
     }
   }, [estimateSmartFeeStatus])
+
+  useEffect(() => {
+    processContacts();
+  }, [contacts]);
+
+  const processContacts = () => {
+    console.log('contacts', contacts)
+    const { normalAddr } = contacts;
+    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    setContactsList(contactsList);
+  }
+
+  const renderOption = item => {
+    return (
+      <Option key={item.address} text={item.address}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}
+          </span>
+        </div>
+      </Option>
+    )
+  }
+
+  const handleCreate = (address, name) => {
+    console.log(constants)
+    addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      setIsNewContacts(false)
+    })
+  }
+
+  const handleShowAddContactModal = () => {
+    setShowAddContacts(!showAddContacts);
+  }
 
   const handleNext = () => {
     form.validateFields(err => {
@@ -70,11 +116,14 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
 
   const checkToXRPAddr = (rule, value, callback) => {
     if (value) {
-      checkXRPAddr(value).then(ret => {
+      checkXRPAddr(value).then(async ret => {
+        const isNewContacts = await hasSameContact(value);
         if (ret[0] || ret[1]) {
+          setIsNewContacts(!isNewContacts);
           callback()
           setVisibleTag(!ret[1])
         } else {
+          setIsNewContacts(false);
           setVisibleTag(true)
           callback(rule.message)
         }
@@ -87,10 +136,12 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       }).catch(err => {
         console.log('checkToXRPAddrErr:', err);
         setVisibleTag(true)
+        setIsNewContacts(false);
         callback(rule.message);
       })
     } else {
       setVisibleTag(true)
+      setIsNewContacts(false);
       callback(rule.message);
     }
   }
@@ -165,7 +216,28 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
             </Form.Item>
             <Form.Item label={intl.get('NormalTransForm.to')}>
               {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: checkToXRPAddr }] })
-                (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                (
+                  <AutoComplete
+                    className="global-search"
+                    size="large"
+                    style={{ width: '100%' }}
+                    filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                    dataSource={contactsList.map(renderOption)}
+                    placeholder="input here"
+                    optionLabelProp="text"
+                  >
+                    <Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />
+                  </AutoComplete>
+                )}
+                {
+                  isNewContacts
+                  ? <Button className={style.addNewContacts} shape="round" onClick={handleShowAddContactModal}>
+                    <span className={style.magicTxt}>
+                      {intl.get('NormalTransForm.addNewContacts')}
+                    </span>
+                  </Button>
+                  : null
+                }
             </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.fee')}>
                 {getFieldDecorator('fee', { initialValue: estimateSmartFee })
@@ -196,6 +268,9 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       {
         confirmVisible &&
         <Confirm visible={true} onCancel={handleConfirmCancel} sendTrans={onSend} from={from} fee={estimateSmartFee}/>
+      }
+      {
+        showAddContacts && <AddContactsModalForm handleSave={handleCreate} onCancel={handleShowAddContactModal} address={form.getFieldValue('to')} chain={chainSymbol}></AddContactsModalForm>
       }
     </React.Fragment>
   )

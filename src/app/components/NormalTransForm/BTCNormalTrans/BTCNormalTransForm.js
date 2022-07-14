@@ -3,14 +3,18 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, message, Spin, Checkbox } from 'antd';
+import { Button, Modal, Form, Input, Icon, message, Spin, Checkbox, AutoComplete, Select } from 'antd';
 
 import style from '../index.less';
 import { formatNumByDecimals } from 'utils/support';
 import ConfirmForm from 'components/NormalTransForm/BTCNormalTrans/BTCConfirmForm';
-import { checkAmountUnit, formatAmount, btcCoinSelect, btcCoinSelectSplit, getPathFromUtxos, checkAddressByChainType } from 'utils/helper';
+import AddContactsModal from '../../AddContacts/AddContactsModal';
+import { checkAmountUnit, formatAmount, btcCoinSelect, btcCoinSelectSplit, getPathFromUtxos, checkAddressByChainType, hasSameContact } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
+const { Option } = Select;
+const chainSymbol = 'Bitcoin';
 
 @inject(stores => ({
   utxos: stores.btcAddress.utxos,
@@ -20,7 +24,9 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
   language: stores.languageIntl.language,
   getAmount: stores.btcAddress.getAllAmount,
   transParams: stores.sendTransParams.BTCTransParams,
+  contacts: stores.contacts.contacts,
   updateTransParams: paramsObj => stores.sendTransParams.updateBTCTransParams(paramsObj),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
 }))
 
 @observer
@@ -29,12 +35,27 @@ class BTCNormalTransForm extends Component {
     fee: 0,
     confirmVisible: false,
     sendAll: false,
+    contactsList: [],
+    isNewContacts: false,
+    showAddContacts: false
   }
 
   componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
+  }
+
+  componentDidMount() {
+    this.processContacts();
+  }
+
+  processContacts = () => {
+    const { normalAddr } = this.props.contacts;
+    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    this.setState({
+      contactsList
+    })
   }
 
   handleConfirmCancel = () => {
@@ -82,15 +103,25 @@ class BTCNormalTransForm extends Component {
   checkBTCAddress = async (rule, value, callback) => {
     let isValid = await checkAddressByChainType(value, 'BTC');
     if (isValid) {
+      const isNewContacts = await hasSameContact(value);
       if (this.isNotNativeAddress(value)) {
         if (this.state.sendAll) {
           this.props.form.validateFields(['amount']);
         }
+        this.setState({
+          isNewContacts: !isNewContacts
+        })
         callback();
       } else {
+        this.setState({
+          isNewContacts: false
+        })
         callback(intl.get('NormalTransForm.isNativeBtcAddress'));
       }
     } else {
+      this.setState({
+        isNewContacts: false
+      })
       callback(intl.get('NormalTransForm.invalidAddress'));
     }
   }
@@ -165,9 +196,39 @@ class BTCNormalTransForm extends Component {
     }
   }
 
+  renderOption = item => {
+    return (
+      <Option key={item.address} text={item.address}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}
+          </span>
+        </div>
+      </Option>
+    )
+  }
+
+  handleCreate = (address, name) => {
+    this.props.addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      this.setState({
+        isNewContacts: false
+      })
+    })
+  }
+
+  handleShowAddContactModal = () => {
+    this.setState({
+      showAddContacts: !this.state.showAddContacts
+    })
+  }
+
   render() {
     const { loading, form, settings, getAmount } = this.props;
-    const { confirmVisible } = this.state;
+    const { confirmVisible, contactsList, isNewContacts, showAddContacts } = this.state;
     const { getFieldDecorator } = form;
 
     return (
@@ -192,7 +253,28 @@ class BTCNormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
                 {getFieldDecorator('to', { rules: [{ required: true, validator: this.checkBTCAddress }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  (
+                    <AutoComplete
+                      className="global-search"
+                      size="large"
+                      style={{ width: '100%' }}
+                      filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                      dataSource={contactsList.map(this.renderOption)}
+                      placeholder="input here"
+                      optionLabelProp="text"
+                    >
+                      <Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />
+                    </AutoComplete>
+                  )}
+                  {
+                    isNewContacts
+                    ? <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                      <span className={style.magicTxt}>
+                        {intl.get('NormalTransForm.addNewContacts')}
+                      </span>
+                    </Button>
+                    : null
+                  }
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, validator: this.checkAmount }] })
@@ -214,6 +296,9 @@ class BTCNormalTransForm extends Component {
           </Spin>
         </Modal>
         <Confirm visible={confirmVisible} onCancel={this.handleConfirmCancel} fee={this.state.fee} sendTrans={this.props.onSend} loading={loading} />
+        {
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={chainSymbol}></AddContactsModalForm>
+        }
       </div>
     );
   }

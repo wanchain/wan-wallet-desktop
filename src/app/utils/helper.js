@@ -7,6 +7,7 @@ import bech32 from 'bech32';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, BSCPATH_MAIN, BSCPATH_TEST, DECIMALS, MAIN, CHAINID } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
+import { reject } from 'lodash';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
@@ -1339,4 +1340,73 @@ export const converter = function (str, from = 'utf8', to = 'hex') {
       }
     });
   });
+}
+
+export const hasSameContact = function (addr, chain = 'Wanchain') {
+  return new Promise((resolve, reject) => {
+    console.log('helper', addr, chain)
+    wand.request('contact_hasSameContact', [chain, addr], (err, ret) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(ret);
+      }
+    })
+  })
+}
+export const checkAddrByCT4Contacts = async (address, chain) => {
+  let valid = false;
+  try {
+    switch (chain) {
+      case 'Wanchain':
+        valid = await checkToWanAddr(address);
+        break;
+      case 'Ethereum':
+        valid = await checkETHAddr(address);
+        break;
+      case 'Bitcoin':
+        valid = await checkBTCAddr(address);
+        break;
+      case 'EOS':
+        valid = await checkEosNameExist(address);
+        break;
+      case 'XRPL':
+        valid = await checkXRPAddr(address);
+        break;
+      case 'BSC':
+        valid = await checkETHAddr(address);
+        break;
+      default:
+        valid = false;
+    }
+  } catch (e) {
+    valid = false;
+  }
+  return valid;
+}
+
+export const checkToWanAddr = (address) => {
+  return new Promise((resolve, reject) => {
+    Promise.all([checkWanAddr(address), checkETHAddr(address)]).then(results => {
+      if (results[0] || results[1]) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    }).catch(() => {
+      resolve(false);
+    });
+  });
+}
+
+export const checkAddrIsRepeat4Contacts = (address, chainType) => {
+  return new Promise((resolve, reject) => {
+    wand.request('contact_hasSameContact', [chainType, address], (err, ret) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(ret);
+      }
+    })
+  })
 }
