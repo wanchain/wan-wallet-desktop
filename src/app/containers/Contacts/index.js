@@ -310,9 +310,9 @@ class Contacts extends Component {
 
   getRowClassName = (record, index, list) => {
     let className = 'editable-row';
-    if (list.length > 1 && index < list.length - 1 && list[index].chainSymbol === list[index + 1].chainSymbol) {
-      className += ' border-line';
-    }
+    // if (list.length > 1 && index < list.length - 1 && list[index].chainSymbol === list[index + 1].chainSymbol) {
+    // }
+    className = `${className} ${style['border-line']}`;
     return className
   }
 
