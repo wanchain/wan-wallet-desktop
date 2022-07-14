@@ -1344,6 +1344,7 @@ export const converter = function (str, from = 'utf8', to = 'hex') {
 
 export const hasSameContact = function (addr, chain = 'Wanchain') {
   return new Promise((resolve, reject) => {
+    console.log('helper', addr, chain)
     wand.request('contact_hasSameContact', [chain, addr], (err, ret) => {
       if (err) {
         reject(err);

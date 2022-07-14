@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { Button, Card, Table, message, Tabs, Tooltip, Icon, Modal } from 'antd';
+import { Table, message, Tabs, Tooltip, Icon, Modal } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import AddContacts from 'components/AddContacts';
-
 import style from './index.less';
+
+import wan from 'static/image/wan.png';
+import eth from 'static/image/eth.png';
+import btc from 'static/image/btc.png';
+import xrp from 'static/image/xrp.png';
+import eos from 'static/image/eos.png';
+import bsc from 'static/image/bnb.png';
 
 const { TabPane } = Tabs;
 
@@ -29,6 +35,7 @@ class Contacts extends Component {
       config: [],
       type: 'normalAddr',
       rows: [],
+      privateRows: [],
       addInfo: {},
       delInfo: {}
     }
@@ -36,24 +43,37 @@ class Contacts extends Component {
   }
 
   componentDidMount() {
-    this.setState({ rows: this.getRowsData(this.props) });
+    this.setState({
+      rows: this.getRowsData(this.props),
+      privateRows: this.getPrivateRowsData(this.props)
+    });
   }
 
-  componentDidUpdate(newProps, newState) {
-    if (this.state.type !== newState.type) {
-      this.setState({ rows: this.getRowsData(newProps) });
+  getImg = chain => {
+    switch (chain) {
+      case 'Wanchain':
+        return wan;
+      case 'Ethereum':
+        return eth;
+      case 'Bitcoin':
+        return btc;
+      case 'XRPL':
+        return xrp;
+      case 'EOS':
+        return eos;
+      case 'BSC':
+        return bsc;
+      default:
+        return wan;
     }
   }
 
   getRowsData = (props) => {
-    let rows;
-    if (this.state.type === 'privateAddr') {
-      rows = props.privateData;
-    } else {
-      rows = props.normalData;
-    }
-    rows = this.processRowData(rows);
-    return rows;
+    return this.processRowData(props.normalData);
+  }
+
+  getPrivateRowsData = props => {
+    return this.processRowData(props.privateData);
   }
 
   processRowData = rows => {
@@ -80,7 +100,7 @@ class Contacts extends Component {
         address,
         chainSymbol
       }).then(() => {
-        this.setState({ rows: this.getRowsData(this.props) });
+        this.setState({ privateRows: this.getPrivateRowsData(this.props) });
       })
     }
   }
@@ -106,20 +126,31 @@ class Contacts extends Component {
       })
     } else {
       this.props.delPrivateAddress(address).then(() => {
-        this.setState({ rows: this.getRowsData(this.props) });
+        this.setState({ privateRows: this.getPrivateRowsData(this.props) });
         this.handelDeleteModal();
       })
     }
   }
 
   handleUpdateName = row => {
-    console.log(row)
     const { chainSymbol, address, name } = row;
-    this.props[this.state.type === 'normalAddr' ? 'addAddress' : 'addPrivateAddress'](chainSymbol, address, { chainSymbol, address, name }).then(
-      () => {
+    if (this.state.type === 'normalAddr') {
+      this.props.addAddress(chainSymbol, address, {
+        chainSymbol,
+        address,
+        name
+      }).then(() => {
         this.setState({ rows: this.getRowsData(this.props) });
-      }
-    );
+      })
+    } else {
+      this.props.addPrivateAddress(address, {
+        chainSymbol,
+        address,
+        name
+      }).then(() => {
+        this.setState({ privateRows: this.getPrivateRowsData(this.props) });
+      })
+    }
   }
 
   colums = [
@@ -130,10 +161,15 @@ class Contacts extends Component {
       width: '20%',
       render: (value, row, index) => {
         const obj = {
-          children: value,
+          children: (
+            <div className={style['chain-symbol']}>
+              <img className={style['chain-icon']} src={this.getImg(value)} />
+              <p className={style['chain-name']}>{value}</p>
+            </div>
+          ),
           props: {}
         };
-        const data = this.state.type === 'normalAddr' ? this.props.normalData : this.props.privateData;
+        const data = this.props.normalData;
         const len = Object.keys(data[value].address).length;
         if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
           obj.props.rowSpan = 0;
@@ -189,6 +225,78 @@ class Contacts extends Component {
     };
   });
 
+  privateColums = [
+    {
+      title: intl.get('DApp.chainCol'),
+      dataIndex: 'chainSymbol',
+      key: 'chainSymbol',
+      width: '20%',
+      render: (value, row, index) => {
+        const obj = {
+          children: (
+            <div className={style['chain-symbol']}>
+              <img className={style['chain-icon']} src={this.getImg(value)} />
+              <p className={style['chain-name']}>{value}</p>
+            </div>
+          ),
+          props: {}
+        };
+        const data = this.props.privateData;
+        const len = Object.keys(data[value].address).length;
+        if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
+          obj.props.rowSpan = 0;
+        } else {
+          obj.props.rowSpan = len;
+        }
+        return obj;
+      }
+    },
+    {
+      title: intl.get('DApp.nameCol'),
+      dataIndex: 'name',
+      key: 'name',
+      editable: true,
+      width: '20%',
+    },
+    {
+      title: intl.get('DApp.addressCol'),
+      dataIndex: 'address',
+      key: 'address',
+      width: '55%',
+      render: (text, record) =>
+        <div className="addrText">
+          <p className="address" style={{ marginRight: '10px' }}>{text}</p>
+          <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(record.address, e)} /></Tooltip>
+          <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => {
+            this.handelDeleteModal();
+            this.handelDelInfo(record);
+          }} /></Tooltip>
+        </div>
+    },
+    {
+      title: '',
+      dataIndex: 'blank',
+      key: 'blank',
+      width: '5%',
+    },
+  ]
+
+  privateColumsTrees = this.privateColums.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: this.handleUpdateName,
+      }),
+    };
+  });
+
   copy2Clipboard = addr => {
     wand.writeText(addr);
     message.success(intl.get('CopyAndQrcode.copySuccessfully'));
@@ -200,10 +308,20 @@ class Contacts extends Component {
     })
   }
 
+  getRowClassName = (record, index, list) => {
+    let className = 'editable-row';
+    if (list.length > 1 && index < list.length - 1 && list[index].chainSymbol === list[index + 1].chainSymbol) {
+      className += ' border-line';
+    }
+    return className
+  }
+
   render() {
     const {
       showDeleteModal,
-      delInfo
+      delInfo,
+      rows,
+      privateRows
     } = this.state;
     const components = {
       body: {
@@ -221,32 +339,29 @@ class Contacts extends Component {
     }
 
     return (
-      <div className={style['settings_network']}>
+      <div className={`${style['settings_network']} ${style['contacts']}`}>
         <Tabs onChange={this.handleChangeTab}>
           <TabPane tab={intl.get('AddressBook.normalAddrTab')} key="normalAddr">
             <Table
               pagination={false}
               components={components}
               columns={this.columsTrees}
-              rowClassName={() => 'editable-row'}
-              rowKey={record => record.address}
-              dataSource={this.state.rows}
+              rowClassName={(record, index) => this.getRowClassName(record, index, rows)}
+              rowKey={record => record.chainSymbol + record.name + record.address}
+              dataSource={rows}
             />
           </TabPane>
           <TabPane tab={intl.get('AddressBook.privateAddrTab')} key="privateAddr">
             <Table
               pagination={false}
               components={components}
-              columns={this.columsTrees}
-              rowClassName={() => 'editable-row'}
-              rowKey={record => record.address}
-              dataSource={this.state.rows}
+              columns={this.privateColumsTrees}
+              rowClassName={(record, index) => this.getRowClassName(record, index, privateRows)}
+              rowKey={record => record.chainSymbol + record.name + record.address}
+              dataSource={privateRows}
             />
           </TabPane>
         </Tabs>
-        {/* <Card title={intl.get('AddressBook.title')}>
-          <Table components={components} columns={this.columsTrees} dataSource={this.state.rows} />
-        </Card> */}
         {
           showDeleteModal &&
           <Modal

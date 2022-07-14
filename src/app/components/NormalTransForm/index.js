@@ -17,6 +17,7 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
 const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
 const { Option } = Select;
 const PrivateTxGasLimit = 100000;
+const chainSymbol = 'Wanchain';
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -62,10 +63,8 @@ class NormalTransForm extends Component {
 
   processContacts = () => {
     const { normalAddr, privateAddr } = this.props.contacts;
-    let contactsList = Object.values(normalAddr).reduce((a, b) => {
-      return a.concat(Object.values(b.address))
-    }, []);
-    contactsList = contactsList.concat(Object.values(privateAddr.Wanchain.address))
+    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol].address))
     this.setState({
       contactsList
     })
@@ -346,7 +345,6 @@ class NormalTransForm extends Component {
   }
 
   handleCreate = (address, name) => {
-    const chainSymbol = 'Wanchain';
     if (!this.state.isPrivate) {
       this.props.addAddress(chainSymbol, address, {
         name,
@@ -362,7 +360,7 @@ class NormalTransForm extends Component {
         name,
         address,
         chainSymbol
-      }).then(async () => {
+      }).then(() => {
         this.setState({
           isNewContacts: false
         })
@@ -418,9 +416,8 @@ class NormalTransForm extends Component {
                       className="global-search"
                       size="large"
                       style={{ width: '100%' }}
-                      filterOption={(inputValue, option) => option.props.text.indexOf(inputValue) > -1}
+                      filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
                       dataSource={contactsList.map(this.renderOption)}
-                      onSearch={this.handleSearch}
                       placeholder="input here"
                       optionLabelProp="text"
                     >
@@ -428,12 +425,13 @@ class NormalTransForm extends Component {
                     </AutoComplete>
                   )}
                   {
-                    isNewContacts &&
-                    <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                    isNewContacts
+                    ? <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
                       <span className={style.magicTxt}>
                         {intl.get('NormalTransForm.addNewContacts')}
                       </span>
                     </Button>
+                    : null
                   }
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.mode')}>
@@ -479,7 +477,7 @@ class NormalTransForm extends Component {
           <Confirm visible={true} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         }
         {
-          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain="Wanchain"></AddContactsModalForm>
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={chainSymbol}></AddContactsModalForm>
         }
       </div>
     );

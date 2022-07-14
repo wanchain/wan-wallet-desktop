@@ -16,3 +16,32 @@
     }
   }
 }
+
+.magicTxt {
+  background: linear-gradient(90deg, #01ECF7 0%, #007AFC 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.chooseIcon {
+  width: 1em;
+  height: 1em;
+}
+
+.cross-chain-modal {
+  padding-bottom: 30px;
+
+  :global(.ant-modal-content) {
+    width: 700px;
+  }
+
+  :global(.ant-modal-body) {
+    width: 640px;
+  }
+
+  .con {
+    max-height: 340px;
+    min-height: 140px;
+    overflow-y: auto;
+  }
+}

@@ -2,22 +2,27 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComplete, Input, Row, Col } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal, hexCharCodeToStr } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+import AddContactsModal from '../../AddContacts/AddContactsModal';
+import ChooseContactsModal from '../../AddContacts/ChooseContactsModal';
 import { INBOUND, OUTBOUND, WALLETID } from 'utils/settings';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import OptionForm from 'components/AdvancedCrossChainOptionForm/AdvancedBTCCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress, hasSameContact } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 const AdvancedOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(OptionForm);
 const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(outboundOptionForm);
+const { Option } = AutoComplete;
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
+const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(ChooseContactsModal);
 
 @inject(stores => ({
   utxos: stores.btcAddress.utxos,
@@ -31,10 +36,12 @@ const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOpt
   transParams: stores.sendCrossChainParams.transParams,
   BTCCrossTransParams: stores.sendCrossChainParams.BTCCrossTransParams,
   currTokenPairId: stores.crossChain.currTokenPairId,
+  contacts: stores.contacts.contacts,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   updateBTCTransParams: paramsObj => stores.sendCrossChainParams.updateBTCTransParams(paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getPathPrefix: chain => stores.tokens.getPathPrefix(chain),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
 }))
 
 @observer
@@ -45,6 +52,14 @@ class CrossBTCForm extends Component {
     let addressInfo = props.getChainAddressInfoByChain(props.direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol);
     this.addressSelections = Object.keys({ ...addressInfo.normal, ...addressInfo.ledger, ...addressInfo.trezor });
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', addressInfo));
+    this.accountDataSelections = this.addressSelections.map(val => {
+      const name = getValueByAddrInfo(val, 'name', addressInfo);
+      return {
+        address: val,
+        name: name,
+        text: `${name}-${val}`
+      }
+    })
     this.state = {
       fee: 0,
       crossChainNetworkFee: 0,
@@ -55,6 +70,10 @@ class CrossBTCForm extends Component {
       maxQuota: 0,
       receive: 0,
       sendAll: false,
+      contactsList: [],
+      isNewContacts: false,
+      showAddContacts: false,
+      showChooseContacts: false,
     }
   }
 
@@ -82,6 +101,23 @@ class CrossBTCForm extends Component {
     this.setState = () => {
       return false;
     };
+  }
+
+  componentDidMount() {
+    this.processContacts();
+  }
+
+  processContacts = () => {
+    const { contacts, currentTokenPairInfo: info } = this.props;
+    const { normalAddr, privateAddr } = contacts;
+    const chainSymbol = getFullChainName(info.toChainSymbol);
+    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    if (chainSymbol === 'Wanchain') {
+      contactsList = [].concat(Object.values(privateAddr[chainSymbol].address), contactsList);
+    }
+    this.setState({
+      contactsList
+    })
   }
 
   handleConfirmCancel = () => {
@@ -121,6 +157,9 @@ class CrossBTCForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
         addrType = getInfoByAddress(to, [], toAddrInfo).type;
+      } else if (this.contactsList.find(v => v.name === to || v.address === to)) {
+        const contactItem = this.contactsList.find(v => v.name === to || v.address === to);
+        to = contactItem.address;
       }
 
       if (direction === INBOUND) {
@@ -308,7 +347,11 @@ class CrossBTCForm extends Component {
   checkTo = async (rule, value, callback) => {
     const { currentTokenPairInfo: info, direction } = this.props;
     let toChain = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+    const isNewContacts = await hasSameContact(value);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
+      this.setState({
+        isNewContacts: false
+      })
       callback();
     } else {
       let isValid;
@@ -318,8 +361,23 @@ class CrossBTCForm extends Component {
       } else {
         isValid = await checkAddressByChainType(value, toChain);
       }
-      isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
+      if (isValid) {
+        this.setState({
+          isNewContacts: !isNewContacts
+        })
+        callback();
+      } else {
+        this.setState({
+          isNewContacts: false
+        })
+        callback(intl.get('NormalTransForm.invalidAddress'));
+      }
     }
+  }
+
+  filterToOption = (inputValue, option) => {
+    const value = option.props.name;
+    return value.toLowerCase().indexOf(inputValue.toLowerCase()) > -1;
   }
 
   updateLockAccounts = async (storeman) => {
@@ -392,9 +450,57 @@ class CrossBTCForm extends Component {
     });
   }
 
+  renderOption = item => {
+    return (
+      <Option key={item.address} text={item.name} name={item.name + '-' + item.address}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}-{item.address}
+          </span>
+        </div>
+      </Option>
+    )
+  }
+
+  handleShowAddContactModal = () => {
+    this.setState({ showAddContacts: !this.state.showAddContacts });
+  }
+
+  handleCreate = (address, name) => {
+    const { currentTokenPairInfo: info, addAddress } = this.props;
+    const chainSymbol = getFullChainName(info.toChainSymbol);
+    console.log('chainSymbol', chainSymbol, 'currentTokenPairInfo', info, address, name)
+    addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      this.setState({
+        isNewContacts: false
+      })
+    })
+  }
+
+  handleChoose = address => {
+    const { form } = this.props;
+    form.setFieldsValue({
+      to: address
+    });
+  }
+
+  getChooseToAdd = () => {
+    const { form } = this.props;
+    let to = form.getFieldValue('to');
+    if (this.accountSelections.includes(to)) {
+      to = this.accountDataSelections.find(val => val.name === to).address;
+    }
+    return to;
+  }
+
   render() {
     const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
-    const { advancedVisible, feeRate, receive, crossChainNetworkFee, sendAll } = this.state;
+    const { advancedVisible, feeRate, receive, crossChainNetworkFee, sendAll, isNewContacts, showAddContacts, showChooseContacts, contactsList } = this.state;
+    const { getFieldDecorator } = form;
     let gasFee, totalFee, desChain, defaultSelectStoreman, title, unit, toUnit;
     let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
@@ -492,14 +598,65 @@ class CrossBTCForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
-              <AutoCompleteForm
+              {/* <AutoCompleteForm
                 form={form}
                 colSpan={6}
                 formName='to'
                 dataSource={this.accountSelections}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
                 options={{ rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountSelections[0] }}
-              />
+                filterOption={this.filterToOption}
+              /> */}
+              <div className="validator-line">
+                <Row type="flex" justify="space-around" align="top">
+                  <Col span={6}><span className="stakein-name">{intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}</span></Col>
+                  <Col span={18}>
+                    <Form layout="inline" id="selectForm">
+                      <Form.Item>
+                        {getFieldDecorator('to', { rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountDataSelections[0].name })
+                          (
+                            <AutoComplete
+                              dataSource={this.accountDataSelections.map(this.renderOption)}
+                              filterOption={this.filterToOption}
+                              optionLabelProp="text"
+                              autoFocus
+                            >
+                              <Input suffix={
+                                <Icon
+                                  type="idcard"
+                                  onClick={() => {
+                                    this.setState({
+                                      showChooseContacts: !showChooseContacts
+                                    })
+                                  }}
+                                  className="colorInput"
+                                />
+                              } />
+                            </AutoComplete>
+                          )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+              {
+                isNewContacts
+                  ? (
+                      <div className="validator-line" style={{ margin: '0px 0px 10px', padding: '0 10px', height: 'auto' }}>
+                        <Row type="flex" justify="space-around" align="top">
+                          <Col span={6}></Col>
+                          <Col span={18}>
+                            <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                              <span className={style.magicTxt}>
+                                {intl.get('NormalTransForm.addNewContacts')}
+                              </span>
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                  )
+                : null
+              }
               <CommonFormItem
                 form={form}
                 colSpan={6}
@@ -550,6 +707,12 @@ class CrossBTCForm extends Component {
         <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         { advancedVisible && direction === INBOUND && <AdvancedOptionForm chainType={'BTC'} value={feeRate || this.props.BTCCrossTransParams.feeRate} onCancel={this.handleAdvancedCancel} onSave={this.handleInBoundSaveOption} from={from} />}
         { advancedVisible && direction === OUTBOUND && <AdvancedOutboundOptionForm chainType={info.toChainSymbol} onCancel={this.handleAdvancedCancel} onSave={this.handleOutBoundSaveOption} from={from} />}
+        {
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>
+        }
+        {
+          showChooseContacts && <ChooseContactsModalForm list={contactsList} to={this.getChooseToAdd()} handleChoose={this.handleChoose} onCancel={() => this.setState({ showChooseContacts: !showChooseContacts })}></ChooseContactsModalForm>
+        }
       </div>
     );
   }

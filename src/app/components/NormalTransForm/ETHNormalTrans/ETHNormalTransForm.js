@@ -13,6 +13,7 @@ const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
 const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
 const { Option } = Select;
+const chainSymbol = 'Ethereum';
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -61,9 +62,7 @@ class ETHNormalTransForm extends Component {
 
   processContacts = () => {
     const { normalAddr } = this.props.contacts;
-    let contactsList = Object.values(normalAddr).reduce((a, b) => {
-      return a.concat(Object.values(b.address))
-    }, []);
+    let contactsList = Object.values(normalAddr[chainSymbol].address);
     this.setState({
       contactsList
     })
@@ -204,6 +203,9 @@ class ETHNormalTransForm extends Component {
 
   checkToETHAddr = (rule, value, callback) => {
     if (value === undefined) {
+      this.setState({
+        isNewContacts: false
+      })
       callback(rule.message);
       return;
     }
@@ -280,28 +282,15 @@ class ETHNormalTransForm extends Component {
   }
 
   handleCreate = (address, name) => {
-    const chainSymbol = 'Ethereum';
-    if (!this.state.isPrivate) {
-      this.props.addAddress(chainSymbol, address, {
-        name,
-        address,
-        chainSymbol
-      }).then(async () => {
-        this.setState({
-          isNewContacts: false
-        })
+    this.props.addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      this.setState({
+        isNewContacts: false
       })
-    } else {
-      this.props.addPrivateAddress(address, {
-        name,
-        address,
-        chainSymbol
-      }).then(async () => {
-        this.setState({
-          isNewContacts: false
-        })
-      })
-    }
+    })
   }
 
   handleShowAddContactModal = () => {
@@ -348,9 +337,8 @@ class ETHNormalTransForm extends Component {
                     className="global-search"
                     size="large"
                     style={{ width: '100%' }}
-                    filterOption={(inputValue, option) => option.props.text.indexOf(inputValue) > -1}
+                    filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
                     dataSource={contactsList.map(this.renderOption)}
-                    onSearch={this.handleSearch}
                     placeholder="input here"
                     optionLabelProp="text"
                   >
@@ -358,12 +346,13 @@ class ETHNormalTransForm extends Component {
                   </AutoComplete>
                 )}
                 {
-                  isNewContacts &&
-                  <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                  isNewContacts
+                  ? <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
                     <span className={style.magicTxt}>
                       {intl.get('NormalTransForm.addNewContacts')}
                     </span>
                   </Button>
+                  : null
                 }
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
@@ -405,7 +394,7 @@ class ETHNormalTransForm extends Component {
           <Confirm chain='ETH' visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         }
         {
-          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain="Ethereum"></AddContactsModalForm>
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={chainSymbol}></AddContactsModalForm>
         }
       </div>
     );

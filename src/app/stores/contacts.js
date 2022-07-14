@@ -37,6 +37,7 @@ class Contacts {
   }
 
   @action addPrivateAddress(addr, obj) {
+    console.log('addr, obj', addr, obj)
     return new Promise((resolve, reject) => {
       wand.request('contact_addPrivateAddress', [addr, obj], (err, ret) => {
         if (err) {

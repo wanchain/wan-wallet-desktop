@@ -2,26 +2,31 @@ import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { observer, MobXProviderContext } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComplete, Input, Row, Col } from 'antd';
 
 import style from './index.less';
 import useAsync from 'hooks/useAsync';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+import AddContactsModal from '../../AddContacts/AddContactsModal';
+import ChooseContactsModal from '../../AddContacts/ChooseContactsModal';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH, WALLETID } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum, fromWei } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType } from 'utils/helper';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType, hasSameContact } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
 const AdvancedOutboundOptionForm = Form.create({ name: 'AdvancedXRPCrossChainOptionForm' })(outboundOptionForm);
+const { Option } = AutoComplete;
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
+const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(ChooseContactsModal);
 
 const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
-  const { languageIntl, crossChain, tokens, session: { settings }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
+  const { languageIntl, crossChain, tokens, session: { settings }, contacts: { contacts, addAddress }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
   const { toChainSymbol, fromTokenSymbol, fromChainName, toTokenSymbol, toChainName, fromChainSymbol, ancestorDecimals, fromChainID, toChainID } = crossChain.currentTokenPairInfo
   const { type, name, balance, address } = record;
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -29,6 +34,9 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [advancedVisible, setAdvancedVisible] = useState(false);
   const [sendAll, setSendAll] = useState(false);
   const [handleNextStatus, setHandleNextStatus] = useState(false);
+  const [isNewContacts, setIsNewContacts] = useState(false);
+  const [showAddContacts, setShowAddContacts] = useState(false);
+  const [showChooseContacts, setShowChooseContacts] = useState(false);
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
   const { status: fetchNetworkFeeStatus, value: networkFee } = useAsync('crossChain_getCrossChainFees', '0', true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, chainIds: [fromChainID, toChainID] });
@@ -65,6 +73,16 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const minQuota = useMemo(() => {
     return formatNumByDecimals(quotaList[0].minQuota, ancestorDecimals)
   }, [quotaList])
+
+  const contactsList = useMemo(() => {
+    const { normalAddr, privateAddr } = contacts;
+    const chainSymbol = getFullChainName(toChainSymbol);
+    let contactsArr = Object.values(normalAddr[chainSymbol].address);
+    if (chainSymbol === 'Wanchain') {
+      contactsArr = [].concat(Object.values(privateAddr[chainSymbol].address), contactsArr);
+    }
+    return contactsArr;
+  }, [quotaList]);
 
   const fee = useMemo(() => {
     let tmp;
@@ -136,6 +154,14 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
   const addressSelections = Object.keys({ ...info.toAccountList.normal, ...info.toAccountList.ledger, ...info.toAccountList.trezor });
   const accountSelections = addressSelections.map(val => getValueByAddrInfo(val, 'name', info.toAccountList));
+  const accountDataSelections = addressSelections.map(val => {
+    const name = getValueByAddrInfo(val, 'name', info.toAccountList);
+    return {
+      address: val,
+      name: name,
+      text: `${name}-${val}`
+    }
+  });
 
   const checkXRPBalance = (addr, type) => {
     return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('11')).catch(() => false) : Promise.resolve(true)
@@ -173,6 +199,9 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
                                     : toValue
           toAddr = toValue;
         }
+      } else if (contactsList.find(v => v.name === to || v.address === to)) {
+        const contactItem = contactsList.find(v => v.name === to || v.address === to);
+        to = contactItem.address;
       } else {
         to = toAddr = toValue;
       }
@@ -277,22 +306,42 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }
 
-  const checkToAddr = (rule, value, callback) => {
+  const checkToAddr = async (rule, value, callback) => {
     try {
       const isNativeAddress = addressSelections.includes(value);
       const isNativeAccount = accountSelections.includes(value);
+      const isNewContactsState = await hasSameContact(value);
       if (!(isNativeAddress || isNativeAccount)) {
         if (type === INBOUND) {
           pu.promisefy(wand.request, ['address_isEthAddress', { address: value }], this).then(ret => {
-            ret ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
+            if (ret) {
+              setIsNewContacts(!isNewContactsState);
+              callback();
+            } else {
+              setIsNewContacts(false);
+              callback(intl.get('NormalTransForm.invalidAddress'));
+            }
+          }).catch(() => {
+            setIsNewContacts(false);
+            callback(intl.get('NormalTransForm.invalidAddress'));
+          })
         } else {
           pu.promisefy(wand.request, ['address_isXrpAddress', { address: value }], this).then(ret => {
-            (ret[0] || ret[1]) ? callback() : callback(intl.get('NormalTransForm.invalidAddress'))
-          }).catch(() => callback(intl.get('NormalTransForm.invalidAddress')))
+            if (ret[0] || ret[1]) {
+              setIsNewContacts(!isNewContactsState);
+              callback();
+            } else {
+              setIsNewContacts(false);
+              callback(intl.get('NormalTransForm.invalidAddress'));
+            }
+          }).catch(() => {
+            setIsNewContacts(false);
+            callback(intl.get('NormalTransForm.invalidAddress'));
+          })
         }
       } else {
-        callback()
+        setIsNewContacts(false);
+        callback();
       }
     } catch (err) {
       callback(intl.get('NormalTransForm.invalidAddress'))
@@ -315,6 +364,52 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const handleOutBoundSaveOption = (gasPrice, gasLimit) => {
     updateXRPTransParams({ gasPrice, gasLimit });
     setAdvancedVisible(false);
+  }
+
+  const filterToOption = (inputValue, option) => {
+    const value = option.props.name;
+    return value.toLowerCase().indexOf(inputValue.toLowerCase()) > -1;
+  }
+
+  const renderOption = item => {
+    return (
+      <Option key={item.address} text={item.name} name={item.name + '-' + item.address}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}-{item.address}
+          </span>
+        </div>
+      </Option>
+    )
+  }
+
+  const handleShowAddContactModal = () => {
+    setShowAddContacts(!showAddContacts);
+  }
+
+  const handleCreate = (address, name) => {
+    const chainSymbol = getFullChainName(info.toChainSymbol);
+    addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      setIsNewContacts(false);
+    })
+  }
+
+  const handleChoose = address => {
+    form.setFieldsValue({
+      to: address
+    });
+  }
+
+  const getChooseToAdd = () => {
+    let to = form.getFieldValue('to');
+    if (accountSelections.includes(to)) {
+      to = accountDataSelections.find(val => val.name === to).address;
+    }
+    return to;
   }
 
   return (
@@ -370,14 +465,62 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('CrossChainTransForm.quota')}
             />
-            <AutoCompleteForm
+            {/* <AutoCompleteForm
               form={form}
               colSpan={6}
               formName='to'
               dataSource={accountSelections}
               formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(info.desChain) + ')'}
               options={{ rules: [{ required: true, validator: checkToAddr }], initialValue: accountSelections[0] }}
-            />
+            /> */}
+              <div className="validator-line">
+                <Row type="flex" justify="space-around" align="top">
+                  <Col span={6}><span className="stakein-name">{intl.get('NormalTransForm.to') + ' (' + getFullChainName(info.desChain) + ')'}</span></Col>
+                  <Col span={18}>
+                    <Form layout="inline" id="selectForm">
+                      <Form.Item>
+                        {form.getFieldDecorator('to', { rules: [{ required: true }, { validator: checkToAddr }], initialValue: accountDataSelections[0].name })
+                          (
+                            <AutoComplete
+                              dataSource={accountDataSelections.map(renderOption)}
+                              filterOption={filterToOption}
+                              optionLabelProp="text"
+                              autoFocus
+                            >
+                              <Input suffix={
+                                <Icon
+                                  type="idcard"
+                                  onClick={() => {
+                                    setShowChooseContacts(!showChooseContacts);
+                                  }}
+                                  className="colorInput"
+                                />
+                              } />
+                            </AutoComplete>
+                          )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+              {
+                isNewContacts
+                  ? (
+                      <div className="validator-line" style={{ margin: '0px 0px 10px', padding: '0 10px', height: 'auto' }}>
+                        <Row type="flex" justify="space-around" align="top">
+                          <Col span={6}></Col>
+                          <Col span={18}>
+                            <Button className={style.addNewContacts} shape="round" onClick={handleShowAddContactModal}>
+                              <span className={style.magicTxt}>
+                                {intl.get('NormalTransForm.addNewContacts')}
+                              </span>
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                  )
+                : null
+              }
             <CommonFormItem
               form={form}
               colSpan={6}
@@ -427,6 +570,12 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       </Modal>
       { confirmVisible && <Confirm visible={true} userNetWorkFee={userNetWorkFee} crosschainNetWorkFee={crosschainNetWorkFee} onCancel={() => setConfirmVisible(false)} sendTrans={onSend} toName={form.getFieldValue('to')}/> }
       { advancedVisible && type === OUTBOUND && <AdvancedOutboundOptionForm symbol={'XRP'} chainType={toChainSymbol} onCancel={() => setAdvancedVisible(false)} onSave={handleOutBoundSaveOption} from={address} />}
+      {
+        showAddContacts && <AddContactsModalForm handleSave={handleCreate} onCancel={handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(info.desChain)}></AddContactsModalForm>
+      }
+      {
+        showChooseContacts && <ChooseContactsModalForm list={contactsList} to={getChooseToAdd()} handleChoose={handleChoose} onCancel={() => setShowChooseContacts(!showChooseContacts)}></ChooseContactsModalForm>
+      }
     </React.Fragment>
   )
 });

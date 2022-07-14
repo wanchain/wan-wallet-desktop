@@ -72,7 +72,6 @@ class NormalTransForm extends Component {
   }
 
   handleSave = () => {
-    console.log('save')
     const { form, handleSave } = this.props;
     form.validateFields(err => {
       if (err) return;

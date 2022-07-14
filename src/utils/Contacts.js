@@ -12,39 +12,32 @@ const defaultConfig = {
     normalAddr: {
       Wanchain: {
         address: {},
-        imgUrl: 'static/image/wan.png',
         chainSymbol: 'Wanchain'
       },
       Ethereum: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'Ethereum'
       },
       Bitcoin: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'Bitcoin'
       },
       XRPL: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'XRPL'
       },
       EOS: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'EOS'
       },
       BSC: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'BSC'
       }
     },
     privateAddr: {
       Wanchain: {
         address: {},
-        imgUrl: '',
         chainSymbol: 'Wanchain'
       }
     }
@@ -96,7 +89,7 @@ class Contacts {
       }
     })
     if (contacts.privateAddr.Wanchain === void 0) {
-      this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr[chain])
+      this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr.Wanchain)
     } else {
       Object.keys(defaultConfig.contacts.privateAddr.Wanchain).map(key => {
         if (!contacts.privateAddr.Wanchain[key]) {
@@ -117,8 +110,10 @@ class Contacts {
   addPrivateAddress(addr, obj) {
     const key = 'contacts.privateAddr.Wanchain.address';
     const addrObj = this.get(key);
+    console.log('addrObj-=-=pri-=-', addrObj, addr, obj)
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
     this.set(key, newAddrObj);
+    console.log('addrObj-=-=pri-=new-', this.get(key))
   }
 
   delAddress(chain, addr) {
@@ -133,6 +128,7 @@ class Contacts {
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
     this.set(key, addrObj);
+    console.log('delPrivateAddress', addr, addrObj, this.get(key))
   }
 
   hasSameName(chain, name) {
@@ -147,6 +143,7 @@ class Contacts {
   hasSameContact(addr, chain) {
     const normalContact = this.get(`contacts.normalAddr.${chain}.address.${addr}`);
     const privateContact = chain === 'Wanchain' ? this.get(`contacts.privateAddr.Wanchain.address.${addr}`) : undefined;
+    console.log('hasSameContact', addr, chain, Boolean(privateContact || normalContact))
     return Boolean(privateContact || normalContact);
   }
 
