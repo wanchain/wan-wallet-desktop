@@ -117,7 +117,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const checkToXRPAddr = (rule, value, callback) => {
     if (value) {
       checkXRPAddr(value).then(async ret => {
-        const isNewContacts = await hasSameContact(value);
+        const isNewContacts = await hasSameContact(value, chainSymbol);
         if (ret[0] || ret[1]) {
           setIsNewContacts(!isNewContacts);
           callback()
@@ -218,7 +218,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
               {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: checkToXRPAddr }] })
                 (
                   <AutoComplete
-                    className="global-search"
+                    getPopupContainer={node => node.parentNode}
                     size="large"
                     style={{ width: '100%' }}
                     filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

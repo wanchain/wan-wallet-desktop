@@ -151,7 +151,7 @@ const ko_KR = {
     'AddressBook.addContact': 'Add contact',
     'AddressBook.addContactTitle': 'New Contact',
     'AddressBook.username': 'Username',
-    'AddressBook.addUsernamePlaceHolder': 'Add a username',
+    'AddressBook.addNicknamePlaceHolder': 'Add a nickname',
     'AddressBook.address': 'Address',
     'AddressBook.addAddressPlaceHolder': 'Search , public address(0x) , or ENS',
     'AddressBook.chain': 'Chain',

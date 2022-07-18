@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import AddContacts from 'components/AddContacts';
+import AddPrivateContacts from 'components/AddContacts/AddPrivateContacts';
 import style from './index.less';
 
 import wan from 'static/image/wan.png';
@@ -159,6 +160,7 @@ class Contacts extends Component {
       dataIndex: 'chainSymbol',
       key: 'chainSymbol',
       width: '20%',
+      align: 'center',
       render: (value, row, index) => {
         const obj = {
           children: (
@@ -193,7 +195,7 @@ class Contacts extends Component {
       width: '55%',
       render: (text, record) =>
         <div className="addrText">
-          <p className="address" style={{ marginRight: '10px' }}>{text}</p>
+          <p className={style['address']}>{text}</p>
           <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(record.address, e)} /></Tooltip>
           <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => {
             this.handelDeleteModal();
@@ -231,6 +233,7 @@ class Contacts extends Component {
       dataIndex: 'chainSymbol',
       key: 'chainSymbol',
       width: '20%',
+      align: 'center',
       render: (value, row, index) => {
         const obj = {
           children: (
@@ -265,7 +268,7 @@ class Contacts extends Component {
       width: '55%',
       render: (text, record) =>
         <div className="addrText">
-          <p className="address" style={{ marginRight: '10px' }}>{text}</p>
+          <p className={style['address']}>{text}</p>
           <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(record.address, e)} /></Tooltip>
           <Tooltip placement="bottom" title={intl.get('Common.delete')}><Icon type="delete" onClick={e => {
             this.handelDeleteModal();
@@ -321,7 +324,8 @@ class Contacts extends Component {
       showDeleteModal,
       delInfo,
       rows,
-      privateRows
+      privateRows,
+      type
     } = this.state;
     const components = {
       body: {
@@ -333,8 +337,10 @@ class Contacts extends Component {
     for (let i = 0; i < this.colums.length; i++) {
       if (this.colums[i].key !== 'blank') {
         this.colums[i].title = this.props.settingContactsColumns[i].title;
+        this.privateColums[i].title = this.props.settingContactsColumns[i].title;
       } else {
         this.colums[i].title = <AddContacts handleSave={this.handleCreate} />
+        this.privateColums[i].title = <AddPrivateContacts handleSave={this.handleCreate} />
       }
     }
 

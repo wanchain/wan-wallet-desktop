@@ -137,7 +137,7 @@ class EOSNormalTransForm extends Component {
   checkToAccount = async (rule, value, callback) => {
     let reg = /^[a-z][1-5a-z\.]{11}$/g;
     if (reg.test(value)) {
-      const isNewContacts = await hasSameContact(value);
+      const isNewContacts = await hasSameContact(value, chainSymbol);
       this.setState({
         isNewContacts: !isNewContacts
       })
@@ -239,7 +239,7 @@ class EOSNormalTransForm extends Component {
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('EOSNormalTransForm.invalidAccountName'), validator: this.checkToAccount }] })
                   (
                     <AutoComplete
-                      className="global-search"
+                      getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
                       filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

@@ -103,7 +103,7 @@ class BTCNormalTransForm extends Component {
   checkBTCAddress = async (rule, value, callback) => {
     let isValid = await checkAddressByChainType(value, 'BTC');
     if (isValid) {
-      const isNewContacts = await hasSameContact(value);
+      const isNewContacts = await hasSameContact(value, chainSymbol);
       if (this.isNotNativeAddress(value)) {
         if (this.state.sendAll) {
           this.props.form.validateFields(['amount']);
@@ -255,7 +255,7 @@ class BTCNormalTransForm extends Component {
                 {getFieldDecorator('to', { rules: [{ required: true, validator: this.checkBTCAddress }] })
                   (
                     <AutoComplete
-                      className="global-search"
+                      getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
                       filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

@@ -334,13 +334,13 @@ class NormalTransForm extends Component {
 
   renderOption = item => {
     return (
-      <Option key={item.address} text={item.address}>
+      <AutoComplete.Option key={item.address} text={item.address}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
             {item.name}
           </span>
         </div>
-      </Option>
+      </AutoComplete.Option>
     )
   }
 
@@ -413,7 +413,7 @@ class NormalTransForm extends Component {
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkAddr }] })
                   (
                     <AutoComplete
-                      className="global-search"
+                      getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
                       filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

@@ -211,7 +211,8 @@ class ETHNormalTransForm extends Component {
     }
     checkETHAddr(value).then(async ret => {
       if (ret) {
-        const isNewContacts = await hasSameContact(value);
+        const isNewContacts = await hasSameContact(value, chainSymbol);
+        console.log('isNewContacts', isNewContacts)
         if (!this.state.advanced) {
           this.updateGasLimit();
         }
@@ -220,6 +221,7 @@ class ETHNormalTransForm extends Component {
         })
         callback();
       } else {
+        console.log('check false')
         this.setState({
           isNewContacts: false
         })
@@ -334,7 +336,7 @@ class ETHNormalTransForm extends Component {
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToETHAddr }] })
                 (
                   <AutoComplete
-                    className="global-search"
+                    getPopupContainer={node => node.parentNode}
                     size="large"
                     style={{ width: '100%' }}
                     filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

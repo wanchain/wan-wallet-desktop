@@ -210,7 +210,7 @@ class BNBNormalTransForm extends Component {
       return;
     }
     checkETHAddr(value).then(async ret => {
-      const isNewContacts = await hasSameContact(value);
+      const isNewContacts = await hasSameContact(value, chainSymbol);
       if (ret) {
         if (!this.state.advanced) {
           this.updateGasLimit();
@@ -334,7 +334,7 @@ class BNBNormalTransForm extends Component {
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToAddr }] })
                   (
                     <AutoComplete
-                      className="global-search"
+                      getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
                       filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}

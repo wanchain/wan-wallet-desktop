@@ -152,7 +152,7 @@ const zh_CN = {
     'AddressBook.addContact': '添加地址簿',
     'AddressBook.addContactTitle': '新地址',
     'AddressBook.username': '昵称',
-    'AddressBook.addUsernamePlaceHolder': '填加昵称',
+    'AddressBook.addNicknamePlaceHolder': '填加昵称',
     'AddressBook.address': '地址',
     'AddressBook.addAddressPlaceHolder': '搜索、公共地址（0x）或 ENS',
     'AddressBook.chain': '链',

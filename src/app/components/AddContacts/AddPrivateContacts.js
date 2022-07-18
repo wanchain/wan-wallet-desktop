@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { Button, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
-import AddContactsForm from './AddContactsForm';
+import AddPrivateContactsForm from './AddPrivateContactsForm';
 
-const ContactsCreateForm = Form.create({ name: 'AddContactsForm' })(AddContactsForm);
+const ContactsCreateForm = Form.create({ name: 'AddContactsForm' })(AddPrivateContactsForm);
 
 @inject(stores => ({
   normalContacts: stores.contacts.contacts.normalAddr,
 }))
 
 @observer
-class AddContacts extends Component {
+class AddPrivateContacts extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,4 +54,4 @@ class AddContacts extends Component {
   }
 }
 
-export default AddContacts;
+export default AddPrivateContacts;
