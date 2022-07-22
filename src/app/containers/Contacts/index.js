@@ -40,7 +40,6 @@ class Contacts extends Component {
       addInfo: {},
       delInfo: {}
     }
-    console.log('this.props', this.props.normalData, this.props.privateData)
   }
 
   componentDidMount() {
@@ -78,10 +77,10 @@ class Contacts extends Component {
   }
 
   processRowData = rows => {
-    rows = Object.values(rows).filter(v => Object.keys(v.address).length);
+    rows = Object.values(rows).filter(v => Object.keys(v).length);
     let rowData = [];
     rows.map(v => {
-      rowData = [].concat(rowData, Object.values(v.address));
+      rowData = [].concat(rowData, Object.values(v));
     });
     return rowData;
   }
@@ -172,7 +171,7 @@ class Contacts extends Component {
           props: {}
         };
         const data = this.props.normalData;
-        const len = Object.keys(data[value].address).length;
+        const len = Object.keys(data[value]).length;
         if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
           obj.props.rowSpan = 0;
         } else {
@@ -245,7 +244,7 @@ class Contacts extends Component {
           props: {}
         };
         const data = this.props.privateData;
-        const len = Object.keys(data[value].address).length;
+        const len = Object.keys(data[value]).length;
         if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
           obj.props.rowSpan = 0;
         } else {
@@ -313,8 +312,6 @@ class Contacts extends Component {
 
   getRowClassName = (record, index, list) => {
     let className = 'editable-row';
-    // if (list.length > 1 && index < list.length - 1 && list[index].chainSymbol === list[index + 1].chainSymbol) {
-    // }
     className = `${className} ${style['border-line']}`;
     return className
   }

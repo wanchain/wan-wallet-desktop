@@ -1342,18 +1342,6 @@ export const converter = function (str, from = 'utf8', to = 'hex') {
   });
 }
 
-export const hasSameContact = function (addr, chain = 'Wanchain') {
-  return new Promise((resolve, reject) => {
-    console.log('helper', addr, chain)
-    wand.request('contact_hasSameContact', [chain, addr], (err, ret) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(ret);
-      }
-    })
-  })
-}
 export const checkAddrByCT4Contacts = async (address, chain) => {
   let valid = false;
   try {
@@ -1399,14 +1387,10 @@ export const checkToWanAddr = (address) => {
   });
 }
 
-export const checkAddrIsRepeat4Contacts = (address, chainType) => {
-  return new Promise((resolve, reject) => {
-    wand.request('contact_hasSameContact', [chainType, address], (err, ret) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(ret);
-      }
-    })
-  })
+export const getHashKey = (key) => {
+  let kBuf = Buffer.from(key, 'utf8');
+  let h = keccak('keccak256');
+  h.update(kBuf);
+  let hashKey = h.digest('hex');
+  return hashKey;
 }

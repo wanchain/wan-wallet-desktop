@@ -8,7 +8,7 @@ import { DEFAULT_GAS, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import AddContactsModal from '../AddContacts/AddContactsModal';
-import { checkWanAddr, checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, estimateGasForNormalTrans, hasSameContact } from 'utils/helper';
+import { checkWanAddr, checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, estimateGasForNormalTrans } from 'utils/helper';
 import { isValidChecksumOTAddress } from 'wanchain-util';
 import style from './index.less';
 
@@ -36,6 +36,7 @@ const chainSymbol = 'Wanchain';
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
   addPrivateAddress: (addr, val) => stores.contacts.addPrivateAddress(addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -63,8 +64,8 @@ class NormalTransForm extends Component {
 
   processContacts = () => {
     const { normalAddr, privateAddr } = this.props.contacts;
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
-    contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol].address))
+    let contactsList = Object.values(normalAddr[chainSymbol]);
+    contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol]))
     this.setState({
       contactsList
     })
@@ -213,7 +214,7 @@ class NormalTransForm extends Component {
   checkAddr = async (rule, value, callback) => {
     let isNormalAddress = await this.checkToWanAddr(value);
     let isPrivate = this.state.isPrivate;
-    const isNewContacts = await hasSameContact(value);
+    const isNewContacts = this.props.hasSameContact(value, chainSymbol);
     if (isNormalAddress) {
       this.setState({
         isPrivate: false,
@@ -334,10 +335,10 @@ class NormalTransForm extends Component {
 
   renderOption = item => {
     return (
-      <AutoComplete.Option key={item.address} text={item.address}>
+      <AutoComplete.Option key={item.address} text={item.address} name={item.name}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}
+            {item.name}-{item.address}
           </span>
         </div>
       </AutoComplete.Option>
@@ -354,6 +355,7 @@ class NormalTransForm extends Component {
         this.setState({
           isNewContacts: false
         })
+        this.processContacts();
       })
     } else {
       this.props.addPrivateAddress(address, {
@@ -364,6 +366,7 @@ class NormalTransForm extends Component {
         this.setState({
           isNewContacts: false
         })
+        this.processContacts();
       })
     }
   }
@@ -372,6 +375,13 @@ class NormalTransForm extends Component {
     this.setState({
       showAddContacts: !this.state.showAddContacts
     })
+  }
+
+  filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
   }
 
   render() {
@@ -416,7 +426,7 @@ class NormalTransForm extends Component {
                       getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
-                      filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                      filterOption={this.filterContactList}
                       dataSource={contactsList.map(this.renderOption)}
                       placeholder="input here"
                       optionLabelProp="text"

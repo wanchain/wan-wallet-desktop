@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
-import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, estimateGasForNormalTrans, hasSameContact } from 'utils/helper';
+import { checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, estimateGasForNormalTrans } from 'utils/helper';
 import style from '../index.less';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
@@ -30,6 +30,7 @@ const chainSymbol = 'BSC';
   updateGasLimit: gasLimit => stores.sendTransParams.updateGasLimit(gasLimit),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -62,7 +63,7 @@ class BNBNormalTransForm extends Component {
 
   processContacts = () => {
     const { normalAddr } = this.props.contacts;
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
     this.setState({
       contactsList
     })
@@ -210,7 +211,7 @@ class BNBNormalTransForm extends Component {
       return;
     }
     checkETHAddr(value).then(async ret => {
-      const isNewContacts = await hasSameContact(value, chainSymbol);
+      const isNewContacts = this.props.hasSameContact(value, chainSymbol);
       if (ret) {
         if (!this.state.advanced) {
           this.updateGasLimit();
@@ -271,10 +272,10 @@ class BNBNormalTransForm extends Component {
 
   renderOption = item => {
     return (
-      <Option key={item.address} text={item.address}>
+      <Option key={item.address} text={item.address} name={item.name}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}
+            {item.name}-{item.address}
           </span>
         </div>
       </Option>
@@ -289,7 +290,8 @@ class BNBNormalTransForm extends Component {
     }).then(async () => {
       this.setState({
         isNewContacts: false
-      })
+      });
+      this.processContacts();
     })
   }
 
@@ -297,6 +299,13 @@ class BNBNormalTransForm extends Component {
     this.setState({
       showAddContacts: !this.state.showAddContacts
     })
+  }
+
+  filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
   }
 
   render() {
@@ -337,7 +346,7 @@ class BNBNormalTransForm extends Component {
                       getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
-                      filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                      filterOption={this.filterContactList}
                       dataSource={contactsList.map(this.renderOption)}
                       placeholder="input here"
                       optionLabelProp="text"

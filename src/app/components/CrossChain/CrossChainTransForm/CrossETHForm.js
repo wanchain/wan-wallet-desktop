@@ -14,7 +14,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress, hasSameContact } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -36,6 +36,7 @@ const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(Choose
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -102,9 +103,9 @@ class CrossETHForm extends Component {
     const { contacts, currentTokenPairInfo: info } = this.props;
     const { normalAddr, privateAddr } = contacts;
     const chainSymbol = getFullChainName(info.toChainSymbol);
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
     if (chainSymbol === 'Wanchain') {
-      contactsList = [].concat(Object.values(privateAddr[chainSymbol].address), contactsList);
+      contactsList = [].concat(Object.values(privateAddr[chainSymbol]), contactsList);
     }
     this.setState({
       contactsList
@@ -274,9 +275,10 @@ class CrossETHForm extends Component {
   }
 
   checkTo = async (rule, value, callback) => {
-    const { currentTokenPairInfo: info, type } = this.props;
+    const { currentTokenPairInfo: info, type, hasSameContact } = this.props;
     let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
-    const isNewContacts = await hasSameContact(value);
+    const chainSymbol = getFullChainName(chain);
+    const isNewContacts = hasSameContact(value, chainSymbol);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       this.setState({
         isNewContacts: false

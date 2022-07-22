@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 import style from '../index.less';
 import EOSConfirmForm from './EOSConfirmForm';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
-import { getWalletIdByType, hasSameContact } from 'utils/helper';
+import { getWalletIdByType } from 'utils/helper';
 
 const { TextArea } = Input;
 const Confirm = Form.create({ name: 'EOSConfirmForm' })(EOSConfirmForm);
@@ -23,6 +23,7 @@ const chainSymbol = 'EOS';
   contacts: stores.contacts.contacts,
   updateTransHistory: () => stores.eosAddress.updateTransHistory(),
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -42,7 +43,7 @@ class EOSNormalTransForm extends Component {
 
   processContacts = () => {
     const { normalAddr } = this.props.contacts;
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
     this.setState({
       contactsList
     })
@@ -134,10 +135,10 @@ class EOSNormalTransForm extends Component {
     });
   }
 
-  checkToAccount = async (rule, value, callback) => {
+  checkToAccount = (rule, value, callback) => {
     let reg = /^[a-z][1-5a-z\.]{11}$/g;
     if (reg.test(value)) {
-      const isNewContacts = await hasSameContact(value, chainSymbol);
+      const isNewContacts = this.props.hasSameContact(value, chainSymbol);
       this.setState({
         isNewContacts: !isNewContacts
       })
@@ -182,10 +183,10 @@ class EOSNormalTransForm extends Component {
 
   renderOption = item => {
     return (
-      <Option key={item.address} text={item.address}>
+      <Option key={item.address} text={item.address} name={item.name}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}
+            {item.name}-{item.address}
           </span>
         </div>
       </Option>
@@ -200,7 +201,8 @@ class EOSNormalTransForm extends Component {
     }).then(async () => {
       this.setState({
         isNewContacts: false
-      })
+      });
+      this.processContacts();
     })
   }
 
@@ -208,6 +210,13 @@ class EOSNormalTransForm extends Component {
     this.setState({
       showAddContacts: !this.state.showAddContacts
     })
+  }
+
+  filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
   }
 
   render() {
@@ -242,7 +251,7 @@ class EOSNormalTransForm extends Component {
                       getPopupContainer={node => node.parentNode}
                       size="large"
                       style={{ width: '100%' }}
-                      filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                      filterOption={this.filterContactList}
                       dataSource={contactsList.map(this.renderOption)}
                       placeholder="input here"
                       optionLabelProp="text"

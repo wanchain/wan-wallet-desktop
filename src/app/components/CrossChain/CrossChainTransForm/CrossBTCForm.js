@@ -15,7 +15,7 @@ import { INBOUND, OUTBOUND, WALLETID } from 'utils/settings';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import OptionForm from 'components/AdvancedCrossChainOptionForm/AdvancedBTCCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress, hasSameContact } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 const AdvancedOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(OptionForm);
@@ -42,6 +42,7 @@ const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(Choose
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
   getPathPrefix: chain => stores.tokens.getPathPrefix(chain),
   addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -111,9 +112,9 @@ class CrossBTCForm extends Component {
     const { contacts, currentTokenPairInfo: info } = this.props;
     const { normalAddr, privateAddr } = contacts;
     const chainSymbol = getFullChainName(info.toChainSymbol);
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
     if (chainSymbol === 'Wanchain') {
-      contactsList = [].concat(Object.values(privateAddr[chainSymbol].address), contactsList);
+      contactsList = [].concat(Object.values(privateAddr[chainSymbol]), contactsList);
     }
     this.setState({
       contactsList
@@ -345,9 +346,10 @@ class CrossBTCForm extends Component {
   }
 
   checkTo = async (rule, value, callback) => {
-    const { currentTokenPairInfo: info, direction } = this.props;
+    const { currentTokenPairInfo: info, direction, hasSameContact } = this.props;
     let toChain = direction === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
-    const isNewContacts = await hasSameContact(value);
+    const chainSymbol = getFullChainName(toChain);
+    const isNewContacts = hasSameContact(value, chainSymbol);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       this.setState({
         isNewContacts: false

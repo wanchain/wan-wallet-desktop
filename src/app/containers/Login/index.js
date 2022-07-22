@@ -28,7 +28,8 @@ message.config({
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
-  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
+  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args),
+  revealContacts: pwd => stores.contacts.revealContacts(pwd)
 }))
 
 @observer
@@ -90,6 +91,7 @@ class Login extends Component {
             console.log(err);
           })
         }
+        this.props.revealContacts(pwd);
       })
     })
   }

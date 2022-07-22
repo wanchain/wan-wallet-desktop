@@ -33,23 +33,19 @@ class AddContactsModal extends Component {
       callback(intl.get(rule.message));
       return;
     }
-    const {
-      hasSameName,
-      chain
-    } = this.props;
-    hasSameName(chain, value).then(res => {
-      if (res) {
-        this.setState({
-          spin: true
-        })
-        callback(intl.get('AddressBook.nameRepeat'));
-      } else {
-        this.setState({
-          spin: false
-        })
-        callback();
-      }
-    })
+    const { hasSameName, chain } = this.props;
+    const res = hasSameName(chain, value);
+    if (res) {
+      this.setState({
+        spin: true
+      })
+      callback(intl.get('AddressBook.nameRepeat'));
+    } else {
+      this.setState({
+        spin: false
+      })
+      callback();
+    }
   }
 
   handleSave = () => {

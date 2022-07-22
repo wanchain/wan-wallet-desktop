@@ -16,7 +16,7 @@ import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossXRPConfirmForm';
 import { WANPATH, INBOUND, XRPPATH, OUTBOUND, MINXRPBALANCE, ETHPATH, WALLETID } from 'utils/settings';
 import { formatNumByDecimals, hexCharCodeToStr, isExceedBalance, formatNum, fromWei } from 'utils/support';
-import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType, hasSameContact } from 'utils/helper';
+import { getFullChainName, getStoremanAddrByGpk1, getValueByAddrInfo, checkAmountUnit, getValueByNameInfo, getBalance, getInfoByAddress, getValueByNameInfoAllType } from 'utils/helper';
 
 const pu = require('promisefy-util');
 const Confirm = Form.create({ name: 'CrossXRPConfirmForm' })(ConfirmForm);
@@ -26,7 +26,7 @@ const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContac
 const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(ChooseContactsModal);
 
 const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
-  const { languageIntl, crossChain, tokens, session: { settings }, contacts: { contacts, addAddress }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
+  const { languageIntl, crossChain, tokens, session: { settings }, contacts: { contacts, addAddress, hasSameContact }, portfolio: { coinPriceObj }, sendCrossChainParams: { record, updateXRPTransParams, XRPCrossTransParams } } = useContext(MobXProviderContext)
   const { toChainSymbol, fromTokenSymbol, fromChainName, toTokenSymbol, toChainName, fromChainSymbol, ancestorDecimals, fromChainID, toChainID } = crossChain.currentTokenPairInfo
   const { type, name, balance, address } = record;
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -77,9 +77,9 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const contactsList = useMemo(() => {
     const { normalAddr, privateAddr } = contacts;
     const chainSymbol = getFullChainName(toChainSymbol);
-    let contactsArr = Object.values(normalAddr[chainSymbol].address);
+    let contactsArr = Object.values(normalAddr[chainSymbol]);
     if (chainSymbol === 'Wanchain') {
-      contactsArr = [].concat(Object.values(privateAddr[chainSymbol].address), contactsArr);
+      contactsArr = [].concat(Object.values(privateAddr[chainSymbol]), contactsArr);
     }
     return contactsArr;
   }, [quotaList]);
@@ -310,7 +310,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     try {
       const isNativeAddress = addressSelections.includes(value);
       const isNativeAccount = accountSelections.includes(value);
-      const isNewContactsState = await hasSameContact(value);
+      const chainSymbol = getFullChainName(info.desChain);
+      const isNewContactsState = hasSameContact(value, chainSymbol);
       if (!(isNativeAddress || isNativeAccount)) {
         if (type === INBOUND) {
           pu.promisefy(wand.request, ['address_isEthAddress', { address: value }], this).then(ret => {

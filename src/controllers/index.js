@@ -2482,7 +2482,6 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
             break
         case 'addPrivateAddress':
             try {
-                console.log('chain, addr', chain, addr)
                 contacts.addPrivateAddress(chain, addr);
                 ret = true
             } catch (e) {
@@ -2533,27 +2532,6 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
                 err = e
             }
             sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals })
-            break
-        
-        case 'hasSameContact':
-            try {
-                vals = contacts.hasSameContact(addr, chain);
-            } catch (e) {
-                logger.error(e.message || e.stack);
-                err = e;
-            }
-            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals });
-            break
-    
-        case 'hasSameName':
-            try {
-                const nickName = payload[1];
-                vals = contacts.hasSameName(chain, nickName);
-            } catch (e) {
-                logger.error(e.message || e.stack);
-                err = e;
-            }
-            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals });
             break
             
     }

@@ -10,36 +10,15 @@ let _contacts = undefined
 const defaultConfig = {
   contacts: {
     normalAddr: {
-      Wanchain: {
-        address: {},
-        chainSymbol: 'Wanchain'
-      },
-      Ethereum: {
-        address: {},
-        chainSymbol: 'Ethereum'
-      },
-      Bitcoin: {
-        address: {},
-        chainSymbol: 'Bitcoin'
-      },
-      XRPL: {
-        address: {},
-        chainSymbol: 'XRPL'
-      },
-      EOS: {
-        address: {},
-        chainSymbol: 'EOS'
-      },
-      BSC: {
-        address: {},
-        chainSymbol: 'BSC'
-      }
+      Wanchain: {},
+      Ethereum: {},
+      Bitcoin: {},
+      XRPL: {},
+      EOS: {},
+      BSC: {}
     },
     privateAddr: {
-      Wanchain: {
-        address: {},
-        chainSymbol: 'Wanchain'
-      }
+      Wanchain: {}
     }
   }
 }
@@ -77,74 +56,42 @@ class Contacts {
     if (!contacts.normalAddr) this.set(`contacts.normalAddr`, defaultConfig.contacts.normalAddr);
     if (!contacts.privateAddr) this.set(`contacts.privateAddr`, defaultConfig.contacts.privateAddr);
     Object.keys(defaultConfig.contacts.normalAddr).forEach(chain => {
-      const chainObj = contacts.normalAddr[chain]
-      if (chainObj === void 0) {
+      if (!contacts.normalAddr[chain]) {
         this.set(`contacts.normalAddr.${chain}`, defaultConfig.contacts.normalAddr[chain])
-      } else {
-        Object.keys(defaultConfig.contacts.normalAddr[chain]).map(key => {
-          if (!chainObj[key]) {
-            this.set(`contacts.normalAddr.${chain}.${key}`, defaultConfig.contacts.normalAddr[chain][key])
-          }
-        })
       }
     })
-    if (contacts.privateAddr.Wanchain === void 0) {
+    if (!contacts.privateAddr.Wanchain) {
       this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr.Wanchain)
-    } else {
-      Object.keys(defaultConfig.contacts.privateAddr.Wanchain).map(key => {
-        if (!contacts.privateAddr.Wanchain[key]) {
-          this.set(`contacts.privateAddr.Wanchain.${key}`, defaultConfig.contacts.privateAddr.Wanchain[key])
-        }
-      })
     }
-    // this.set(`contacts`, defaultConfig.contacts)
+    this.set(`contacts`, defaultConfig.contacts)
   }
 
   addAddress(chain, addr, obj) {
-    const key = `contacts.normalAddr.${chain}.address`;
+    const key = `contacts.normalAddr.${chain}`;
     const addrObj = this.get(key);
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
     this.set(key, newAddrObj);
   }
 
   addPrivateAddress(addr, obj) {
-    const key = 'contacts.privateAddr.Wanchain.address';
+    const key = 'contacts.privateAddr.Wanchain';
     const addrObj = this.get(key);
-    console.log('addrObj-=-=pri-=-', addrObj, addr, obj)
     const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
     this.set(key, newAddrObj);
-    console.log('addrObj-=-=pri-=new-', this.get(key))
   }
 
   delAddress(chain, addr) {
-    const key = `contacts.normalAddr.${chain}.address`;
+    const key = `contacts.normalAddr.${chain}`;
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
     this.set(key, addrObj);
   }
 
   delPrivateAddress(addr) {
-    const key = 'contacts.privateAddr.Wanchain.address';
+    const key = 'contacts.privateAddr.Wanchain';
     let addrObj = Object.assign({}, this.get(key));
     delete addrObj[addr];
     this.set(key, addrObj);
-    console.log('delPrivateAddress', addr, addrObj, this.get(key))
-  }
-
-  hasSameName(chain, name) {
-    let nameArr = [];
-    if (chain === 'Wanchain') {
-      Object.values(this.get('contacts.privateAddr.Wanchain.address')).map(v => nameArr.push(v.name))
-    }
-    Object.values(this.get(`contacts.normalAddr.${chain}.address`)).map(v => nameArr.push(v.name))
-    return nameArr.includes(name);
-  }
-
-  hasSameContact(addr, chain) {
-    const normalContact = this.get(`contacts.normalAddr.${chain}.address.${addr}`);
-    const privateContact = chain === 'Wanchain' ? this.get(`contacts.privateAddr.Wanchain.address.${addr}`) : undefined;
-    console.log('hasSameContact', addr, chain, Boolean(privateContact || normalContact))
-    return Boolean(privateContact || normalContact);
   }
 
   get contacts() {

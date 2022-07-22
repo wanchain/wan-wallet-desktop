@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Select } from 'antd';
 import intl from 'react-intl-universal';
-import { checkAddrByCT4Contacts, checkAddrIsRepeat4Contacts } from '../../utils/helper';
+import { checkAddrByCT4Contacts } from '../../utils/helper';
 import { isValidChecksumOTAddress } from 'wanchain-util';
 import style from './index.less';
 
@@ -10,16 +10,13 @@ const { Option } = Select;
 
 @inject(stores => ({
   hasSameName: (chain, name) => stores.contacts.hasSameName(chain, name),
+  hasSameContact: (addr) => stores.contacts.hasSameContact(addr)
 }))
 
 @observer
 class AddContactsForm extends Component {
-  componentWillUnmount() {
-    this.setState = () => true;
-  }
-
   checkAddr = async (rule, value, callback) => {
-    const { form } = this.props;
+    const { form, hasSameContact } = this.props;
     const chainType = form.getFieldValue('chain');
     if (!chainType || !value) {
       callback(rule.message);
@@ -31,21 +28,21 @@ class AddContactsForm extends Component {
       callback(rule.message);
       return;
     }
-    const isReapeat = await checkAddrIsRepeat4Contacts(value);
+    const isReapeat = hasSameContact(value);
     valid = !isReapeat;
     valid && callback();
     // repeat addresss
     !valid && callback(rule.message);
   }
 
-  checkName = async (rule, value, callback) => {
+  checkName = (rule, value, callback) => {
     const { hasSameName, form } = this.props;
     const chainType = form.getFieldValue('chain');
     if (!chainType || !value) {
       callback(rule.message);
       return;
     }
-    const res = await hasSameName(chainType, value)
+    const res = hasSameName(chainType, value);
     res && callback(intl.get('AddressBook.nameRepeat'));
     !res && callback();
   }

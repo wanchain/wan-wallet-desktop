@@ -1,9 +1,15 @@
 import { observable, action, makeObservable } from 'mobx';
+import { getHashKey } from '../utils/helper';
+// import AES from 'crypto-js/aes';
+// import Utf8 from 'crypto-js/enc-utf8';
+const AES = require('crypto-js/aes');
+const Utf8 = require('crypto-js/enc-utf8');
 
 class Contacts {
   @observable contacts = {
     normalAddr: {},
     privateAddr: {},
+    pwdhash: ''
   };
 
   constructor() {
@@ -16,20 +22,63 @@ class Contacts {
         console.log(`Init contacts failed: ${JSON.stringify(err)}`);
         return;
       };
-      console.log('contacts-=-=', ret)
       self.contacts = ret;
     })
   }
 
+  @action revealContacts(pwd) {
+    const pwdhash = getHashKey(pwd + 'contact');
+    self.contacts.pwdhash = pwdhash;
+    const { normalAddr, privateAddr } = self.contacts;
+    Object.values(normalAddr).map(chainObj => {
+      for (let key in chainObj) {
+        const addressItem = chainObj[key];
+        const bytes = AES.decrypt(addressItem, pwdhash);
+        const originalText = bytes.toString(Utf8);
+        const addressObj = JSON.parse(originalText);
+        const {
+          chainSymbol,
+          address
+        } = addressObj;
+        const addr = String(address).toLocaleLowerCase();
+        if (key.toLocaleLowerCase() === addr) {
+          self.contacts.normalAddr[chainSymbol][key] = addressObj;
+        } else {
+          self.delAddress(chainSymbol, key);
+          self.addAddress(chainSymbol, addr, addressObj);
+          self.contacts.normalAddr[chainSymbol][addr] = addressObj;
+        }
+      }
+    })
+    for (let key in privateAddr.Wanchain) {
+      const addressItem = privateAddr.Wanchain[key];
+      const bytes = AES.decrypt(addressItem, pwdhash);
+      const originalText = bytes.toString(Utf8);
+      const addressObj = JSON.parse(originalText);
+      const { address } = addressObj;
+      const addr = String(address).toLocaleLowerCase();
+      if (key.toLocaleLowerCase() === addr) {
+        self.contacts.privateAddr.Wanchain[address] = addressObj;
+      } else {
+        self.delPrivateAddress(key);
+        self.addPrivateAddress(addr, addressObj);
+        self.contacts.privateAddr.Wanchain[addr] = addressObj;
+      }
+    }
+  }
+
   @action addAddress(chain, addr, obj) {
+    const objStr = JSON.stringify(obj);
+    addr = String(addr).toLocaleLowerCase();
+    const ciphertext = AES.encrypt(objStr, self.contacts.pwdhash).toString();
     return new Promise((resolve, reject) => {
-      wand.request('contact_addAddress', [chain, addr, obj], (err, ret) => {
+      wand.request('contact_addAddress', [chain, addr, ciphertext], (err, ret) => {
         if (err) {
           console.log(`Add normal contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
-          Object.assign(self.contacts.normalAddr[chain].address, { [addr]: obj });
+          Object.assign(self.contacts.normalAddr[chain], { [addr]: obj });
           return resolve();
         }
       })
@@ -37,15 +86,17 @@ class Contacts {
   }
 
   @action addPrivateAddress(addr, obj) {
-    console.log('addr, obj', addr, obj)
+    const objStr = JSON.stringify(obj);
+    addr = String(addr).toLocaleLowerCase();
+    const ciphertext = AES.encrypt(objStr, self.contacts.pwdhash).toString();
     return new Promise((resolve, reject) => {
-      wand.request('contact_addPrivateAddress', [addr, obj], (err, ret) => {
+      wand.request('contact_addPrivateAddress', [addr, ciphertext], (err, ret) => {
         if (err) {
           console.log(`Add private contacts failed: ${JSON.stringify(err)}`);
           return reject(err);
         };
         if (ret) {
-          Object.assign(self.contacts.privateAddr.Wanchain.address, { [addr]: obj });
+          Object.assign(self.contacts.privateAddr.Wanchain, { [addr]: obj });
           return resolve();
         }
       })
@@ -53,6 +104,7 @@ class Contacts {
   }
 
   @action delAddress(chain, addr) {
+    addr = String(addr).toLocaleLowerCase();
     return new Promise((resolve, reject) => {
       wand.request('contact_delAddress', [chain, addr], (err, ret) => {
         if (err) {
@@ -60,7 +112,7 @@ class Contacts {
           return reject(err);
         };
         if (ret) {
-          delete self.contacts.normalAddr[chain].address[addr];
+          delete self.contacts.normalAddr[chain][addr];
           return resolve();
         }
       })
@@ -68,6 +120,7 @@ class Contacts {
   }
 
   @action delPrivateAddress(addr) {
+    addr = String(addr).toLocaleLowerCase();
     return new Promise((resolve, reject) => {
       wand.request('contact_delPrivateAddress', [addr], (err, ret) => {
         if (err) {
@@ -75,7 +128,7 @@ class Contacts {
           return reject(err);
         };
         if (ret) {
-          delete self.contacts.privateAddr.Wanchain.address[addr];
+          delete self.contacts.privateAddr.Wanchain[addr];
           return resolve();
         }
       })
@@ -83,25 +136,19 @@ class Contacts {
   }
 
   @action hasSameName(chain, name) {
-    return new Promise((resolve, reject) => {
-      wand.request('contact_hasSameName', [chain, name], (err, ret) => {
-        if (err) {
-          console.log(`Check contacts has same name failed: ${JSON.stringify(err)}`);
-          return reject(err);
-        } else {
-          return resolve(ret);
-        }
-      })
-    })
+    let nameArr = [];
+    if (chain === 'Wanchain') {
+      Object.values(self.contacts.privateAddr.Wanchain).map(v => nameArr.push(v.name))
+    }
+    Object.values(self.contacts.normalAddr[chain]).map(v => nameArr.push(v.name))
+    return nameArr.includes(name);
   }
 
-  @action updateNormalContacts(addr, obj) {
-    wand.request('contact_setNormal', { [addr]: obj }, (err, ret) => {
-      if (err) return;
-      if (ret) {
-        Object.assign(self.contacts, obj);
-      }
-    })
+  @action hasSameContact(addr, chain = 'Wanchain') {
+    addr = String(addr).toLocaleLowerCase();
+    const normalContact = self.contacts.normalAddr[chain][addr];
+    const privateContact = chain === 'Wanchain' ? self.contacts.privateAddr.Wanchain[addr] : undefined;
+    return Boolean(privateContact || normalContact);
   }
 }
 

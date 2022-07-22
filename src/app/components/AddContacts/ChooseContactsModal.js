@@ -33,7 +33,7 @@ class ChooseContactsModal extends Component {
                       handleChoose(item.address);
                       this.onCancel();
                     }}>
-                      <Col span={22}><span className={to === item.address ? style['magicTxt'] : ''}>{item.address}</span></Col>
+                      <Col span={22}><span className={to === item.address ? style['magicTxt'] : ''}>{item.name}-{item.address}</span></Col>
                       <Col span={2}>
                         {
                           to === item.address

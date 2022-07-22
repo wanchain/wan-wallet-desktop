@@ -6,7 +6,7 @@ import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin, AutoComplete
 
 import style from '../index.less';
 import useAsync from 'hooks/useAsync';
-import { checkAmountUnit, checkXRPAddr, getBalance, hasSameContact } from 'utils/helper';
+import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
 import { constants } from 'ethers-wan';
@@ -19,7 +19,7 @@ const { Option } = Select;
 const chainSymbol = 'XRPL';
 
 const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCancel, onSend }) => {
-  const { languageIntl, session: { settings }, contacts: { contacts, addAddress }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
+  const { languageIntl, session: { settings }, contacts: { contacts, addAddress, hasSameContact }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [minSendAmount, setMinSendAmount] = useState('0');
@@ -45,18 +45,17 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   }, [contacts]);
 
   const processContacts = () => {
-    console.log('contacts', contacts)
     const { normalAddr } = contacts;
-    let contactsList = Object.values(normalAddr[chainSymbol].address);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
     setContactsList(contactsList);
   }
 
   const renderOption = item => {
     return (
-      <Option key={item.address} text={item.address}>
+      <Option key={item.address} text={item.address} name={item.name}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}
+            {item.name}-{item.address}
           </span>
         </div>
       </Option>
@@ -70,7 +69,8 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       address,
       chainSymbol
     }).then(async () => {
-      setIsNewContacts(false)
+      setIsNewContacts(false);
+      processContacts();
     })
   }
 
@@ -117,7 +117,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const checkToXRPAddr = (rule, value, callback) => {
     if (value) {
       checkXRPAddr(value).then(async ret => {
-        const isNewContacts = await hasSameContact(value, chainSymbol);
+        const isNewContacts = hasSameContact(value, chainSymbol);
         if (ret[0] || ret[1]) {
           setIsNewContacts(!isNewContacts);
           callback()
@@ -190,6 +190,13 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
     setConfirmVisible(false);
   }
 
+  const filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
+  }
+
   return (
     <React.Fragment>
       <Modal
@@ -221,7 +228,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
                     getPopupContainer={node => node.parentNode}
                     size="large"
                     style={{ width: '100%' }}
-                    filterOption={(inputValue, option) => option.props.text.toLowerCase().indexOf(inputValue.toLowerCase()) > -1}
+                    filterOption={filterContactList}
                     dataSource={contactsList.map(renderOption)}
                     placeholder="input here"
                     optionLabelProp="text"

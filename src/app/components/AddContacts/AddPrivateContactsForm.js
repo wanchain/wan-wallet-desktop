@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input } from 'antd';
 import intl from 'react-intl-universal';
-import { checkAddrIsRepeat4Contacts } from '../../utils/helper';
 import { isValidChecksumOTAddress } from 'wanchain-util';
 import style from './index.less';
 
@@ -10,6 +9,7 @@ const chainSymbol = 'Wanchain';
 
 @inject(stores => ({
   hasSameName: (chain, name) => stores.contacts.hasSameName(chain, name),
+  hasSameContact: (addr) => stores.contacts.hasSameContact(addr)
 }))
 
 @observer
@@ -29,20 +29,20 @@ class AddPrivateContactsForm extends Component {
       callback(rule.message);
       return;
     }
-    const isReapeat = await checkAddrIsRepeat4Contacts(value);
+    const isReapeat = this.props.hasSameContact(value);
     valid = !isReapeat;
     valid && callback();
     // repeat addresss
     !valid && callback(rule.message);
   }
 
-  checkName = async (rule, value, callback) => {
+  checkName = (rule, value, callback) => {
     const { hasSameName } = this.props;
     if (!chainSymbol || !value) {
       callback(rule.message);
       return;
     }
-    const res = await hasSameName(chainSymbol, value)
+    const res = hasSameName(chainSymbol, value)
     res && callback(intl.get('AddressBook.nameRepeat'));
     !res && callback();
   }
