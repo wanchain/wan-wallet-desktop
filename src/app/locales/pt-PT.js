@@ -159,7 +159,10 @@ const pt_PT = {
     'AddressBook.saveContact': 'Save Contact',
     'AddressBook.nickname': 'Nickname',
     'AddressBook.addNickname': 'Add a nickname',
-    'AddressBook.nameRepeat': 'The name is repeated',
+    'AddressBook.wanNameRepeat': 'Nickname occupied',
+    'AddressBook.wanChooseChain': 'Please select the chain first',
+    'AddressBook.wanAddrEmpty': 'The address cannot be empty',
+    'AddressBook.wanAddrAdded': 'Address added',
 
     'DApp.title': 'Gerenciamento de aplicativos descentralizados',
     'DApp.addButton': 'Adicionar',

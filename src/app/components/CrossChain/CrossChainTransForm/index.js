@@ -277,7 +277,7 @@ class CrossChainTransForm extends Component {
     const { currentTokenPairInfo: info, type, hasSameContact } = this.props;
     let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
     const chainSymbol = getFullChainName(chain);
-    const isNewContacts = hasSameContact(value);
+    const isNewContacts = hasSameContact(value, chainSymbol);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       this.setState({
         isNewContacts: false

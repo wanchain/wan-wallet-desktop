@@ -19,8 +19,8 @@ class AddPrivateContactsForm extends Component {
   }
 
   checkAddr = async (rule, value, callback) => {
-    if (!chainSymbol || !value) {
-      callback(rule.message);
+    if (!value) {
+      callback(intl.get('AddressBook.wanAddrEmpty'));
       return;
     }
     let valid = false;
@@ -33,17 +33,17 @@ class AddPrivateContactsForm extends Component {
     valid = !isReapeat;
     valid && callback();
     // repeat addresss
-    !valid && callback(rule.message);
+    !valid && callback(intl.get('AddressBook.wanAddrAdded'));
   }
 
   checkName = (rule, value, callback) => {
     const { hasSameName } = this.props;
-    if (!chainSymbol || !value) {
-      callback(rule.message);
+    if (!value) {
+      callback(intl.get('AddressBook.addNicknamePlaceHolder'));
       return;
     }
     const res = hasSameName(chainSymbol, value)
-    res && callback(intl.get('AddressBook.nameRepeat'));
+    res && callback(rule.message);
     !res && callback();
   }
 
@@ -94,7 +94,7 @@ class AddPrivateContactsForm extends Component {
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
             <Form.Item label={intl.get('AddressBook.nickname')}>
-              {getFieldDecorator('nickname', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkName }] })
+              {getFieldDecorator('nickname', { rules: [{ required: true, message: intl.get('AddressBook.wanNameRepeat'), validator: this.checkName }] })
                 (<Input placeholder={intl.get('AddressBook.addNicknamePlaceHolder')} />)}
             </Form.Item>
             <Form.Item label={intl.get('AddressBook.address')}>

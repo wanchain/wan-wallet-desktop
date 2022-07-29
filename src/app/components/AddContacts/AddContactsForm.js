@@ -3,14 +3,13 @@ import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Input, Select } from 'antd';
 import intl from 'react-intl-universal';
 import { checkAddrByCT4Contacts } from '../../utils/helper';
-import { isValidChecksumOTAddress } from 'wanchain-util';
 import style from './index.less';
 
 const { Option } = Select;
 
 @inject(stores => ({
   hasSameName: (chain, name) => stores.contacts.hasSameName(chain, name),
-  hasSameContact: (addr) => stores.contacts.hasSameContact(addr)
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain)
 }))
 
 @observer
@@ -18,8 +17,14 @@ class AddContactsForm extends Component {
   checkAddr = async (rule, value, callback) => {
     const { form, hasSameContact } = this.props;
     const chainType = form.getFieldValue('chain');
-    if (!chainType || !value) {
-      callback(rule.message);
+    if (!chainType) {
+      console.log('no chain')
+      callback(intl.get('AddressBook.wanChooseChain'));
+      return;
+    }
+    if (!value) {
+      console.log('no value')
+      callback(intl.get('AddressBook.wanAddrEmpty'));
       return;
     }
     let valid = false;
@@ -28,31 +33,27 @@ class AddContactsForm extends Component {
       callback(rule.message);
       return;
     }
-    const isReapeat = hasSameContact(value);
+    const isReapeat = hasSameContact(value, chainType);
     valid = !isReapeat;
     valid && callback();
     // repeat addresss
-    !valid && callback(rule.message);
+    !valid && callback(intl.get('AddressBook.wanAddrAdded'));
   }
 
   checkName = (rule, value, callback) => {
     const { hasSameName, form } = this.props;
     const chainType = form.getFieldValue('chain');
-    if (!chainType || !value) {
-      callback(rule.message);
+    if (!chainType) {
+      callback(intl.get('AddressBook.wanChooseChain'));
+      return;
+    }
+    if (!value) {
+      callback(intl.get('AddressBook.addNicknamePlaceHolder'));
       return;
     }
     const res = hasSameName(chainType, value);
-    res && callback(intl.get('AddressBook.nameRepeat'));
+    res && callback(rule.message);
     !res && callback();
-  }
-
-  checkToWanPrivateAddr = (value) => {
-    if (isValidChecksumOTAddress(value) || /^0x[0-9a-f]{132}$/i.test(value) || /^0x[0-9A-F]{132}$/i.test(value)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   checkChain = (rule, value, callback) => {
@@ -94,7 +95,7 @@ class AddContactsForm extends Component {
         >
           <Form labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} className={style.transForm}>
             <Form.Item label={intl.get('AddressBook.chain')}>
-              {getFieldDecorator('chain', { initialValue: undefined, rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkChain }] })
+              {getFieldDecorator('chain', { initialValue: undefined, rules: [{ required: true, message: intl.get('AddressBook.wanChooseChain'), validator: this.checkChain }] })
                 (<Select
                   getPopupContainer={node => node.parentNode}
                   placeholder={intl.get('AddressBook.addChainPlaceHolder')}
@@ -105,7 +106,7 @@ class AddContactsForm extends Component {
                 </Select>)}
             </Form.Item>
             <Form.Item label={intl.get('AddressBook.nickname')}>
-              {getFieldDecorator('nickname', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkName }] })
+              {getFieldDecorator('nickname', { rules: [{ required: true, message: intl.get('AddressBook.wanNameRepeat'), validator: this.checkName }] })
                 (<Input disabled={!form.getFieldValue('chain')} placeholder={intl.get('AddressBook.addNicknamePlaceHolder')} />)}
             </Form.Item>
             <Form.Item label={intl.get('AddressBook.address')}>

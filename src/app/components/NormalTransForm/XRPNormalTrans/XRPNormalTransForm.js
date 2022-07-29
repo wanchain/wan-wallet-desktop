@@ -19,7 +19,7 @@ const { Option } = Select;
 const chainSymbol = 'XRPL';
 
 const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCancel, onSend }) => {
-  const { languageIntl, session: { settings }, contacts: { contacts, addAddress, hasSameContact }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
+  const { session: { settings }, contacts: { contacts, addAddress, hasSameContact }, sendTransParams: { updateXRPTransParams } } = useContext(MobXProviderContext)
   const [disabledAmount, setDisabledAmount] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [minSendAmount, setMinSendAmount] = useState('0');

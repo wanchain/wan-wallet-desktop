@@ -30,7 +30,7 @@ class AddContactsModal extends Component {
 
   checkName = (rule, value, callback) => {
     if (!value) {
-      callback(intl.get(rule.message));
+      callback(intl.get('AddressBook.addNickname'));
       return;
     }
     const { hasSameName, chain } = this.props;
@@ -39,7 +39,7 @@ class AddContactsModal extends Component {
       this.setState({
         spin: true
       })
-      callback(intl.get('AddressBook.nameRepeat'));
+      callback(rule.message);
     } else {
       this.setState({
         spin: false
@@ -83,7 +83,7 @@ class AddContactsModal extends Component {
                 (<Input disabled={true} />)}
             </Form.Item>
             <Form.Item label={intl.get('AddressBook.nickname')}>
-              {getFieldDecorator('nickName', { rules: [{ required: true, message: intl.get('AddressBook.nameRepeat'), validator: this.checkName }] })
+              {getFieldDecorator('nickName', { rules: [{ required: true, message: intl.get('AddressBook.wanNameRepeat'), validator: this.checkName }] })
                 (<Input placeholder={intl.get('AddressBook.addNickname')} />)}
             </Form.Item>
           </Form>
