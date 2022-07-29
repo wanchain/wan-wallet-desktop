@@ -167,13 +167,15 @@ class Sidebar extends Component {
       if (index !== -1) {
         crossChainList[index].children = crossChainList[index].children.concat(arr);
       } else {
-        crossChainList.push({
-          title: symbol,
-          key: symbol,
-          icon: 'block',
-          mode: 'vertical',
-          children: arr,
-        });
+        if (symbol !== 'EOS') {
+          crossChainList.push({
+            title: symbol,
+            key: symbol,
+            icon: 'block',
+            mode: 'vertical',
+            children: arr,
+          });
+        }
       }
     });
     crossChainChildren.splice(0, crossChainChildren.length, ...crossChainList);
