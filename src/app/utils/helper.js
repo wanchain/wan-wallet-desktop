@@ -761,7 +761,7 @@ export const stopSingleScan = function (path) {
   })
 }
 
-export const createFirstAddr = function (walletID, chainType, path, name, scan_ota) {
+export const createFirstAddr = function (walletID, chainType, path, name) {
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
       if (!err) {

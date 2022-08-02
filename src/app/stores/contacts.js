@@ -1,3 +1,4 @@
+import { reject } from 'lodash';
 import { observable, action, makeObservable } from 'mobx';
 import { getHashKey } from '../utils/helper';
 // import AES from 'crypto-js/aes';
@@ -30,39 +31,46 @@ class Contacts {
     const pwdhash = getHashKey(pwd + 'contact');
     self.contacts.pwdhash = pwdhash;
     const { normalAddr, privateAddr } = self.contacts;
-    Object.values(normalAddr).map(chainObj => {
+    Object.keys(normalAddr).map(chainName => {
+      const chainObj = normalAddr[chainName];
       for (let key in chainObj) {
-        const addressItem = chainObj[key];
-        const bytes = AES.decrypt(addressItem, pwdhash);
-        const originalText = bytes.toString(Utf8);
-        const addressObj = JSON.parse(originalText);
-        const {
-          chainSymbol,
-          address
-        } = addressObj;
-        const addr = String(address).toLocaleLowerCase();
-        if (key.toLocaleLowerCase() === addr) {
-          self.contacts.normalAddr[chainSymbol][key] = addressObj;
-        } else {
-          self.delAddress(chainSymbol, key);
-          self.addAddress(chainSymbol, addr, addressObj);
-          self.contacts.normalAddr[chainSymbol][addr] = addressObj;
+        try {
+          const addressItem = chainObj[key];
+          const bytes = AES.decrypt(addressItem, pwdhash);
+          const originalText = bytes.toString(Utf8);
+          const addressObj = JSON.parse(originalText);
+          const {
+            chainSymbol,
+            address
+          } = addressObj;
+          const addr = String(address).toLocaleLowerCase();
+          if (key.toLocaleLowerCase() === addr) {
+            self.contacts.normalAddr[chainSymbol][key] = addressObj;
+          } else {
+            self.delAddress(chainSymbol, key);
+            self.addAddress(chainSymbol, addr, addressObj);
+          }
+        } catch (e) {
+          self.delAddress(chainName, key);
         }
       }
     })
     for (let key in privateAddr.Wanchain) {
-      const addressItem = privateAddr.Wanchain[key];
-      const bytes = AES.decrypt(addressItem, pwdhash);
-      const originalText = bytes.toString(Utf8);
-      const addressObj = JSON.parse(originalText);
-      const { address } = addressObj;
-      const addr = String(address).toLocaleLowerCase();
-      if (key.toLocaleLowerCase() === addr) {
-        self.contacts.privateAddr.Wanchain[address] = addressObj;
-      } else {
+      try {
+        const addressItem = privateAddr.Wanchain[key];
+        const bytes = AES.decrypt(addressItem, pwdhash);
+        const originalText = bytes.toString(Utf8);
+        const addressObj = JSON.parse(originalText);
+        const { address } = addressObj;
+        const addr = String(address).toLocaleLowerCase();
+        if (key.toLocaleLowerCase() === addr) {
+          self.contacts.privateAddr.Wanchain[address] = addressObj;
+        } else {
+          self.delPrivateAddress(key);
+          self.addPrivateAddress(addr, addressObj);
+        }
+      } catch (e) {
         self.delPrivateAddress(key);
-        self.addPrivateAddress(addr, addressObj);
-        self.contacts.privateAddr.Wanchain[addr] = addressObj;
       }
     }
   }
@@ -130,6 +138,21 @@ class Contacts {
         if (ret) {
           delete self.contacts.privateAddr.Wanchain[addr];
           return resolve();
+        }
+      })
+    })
+  }
+
+  @action reset() {
+    return new Promise((resolve, reject) => {
+      wand.request('contact_reset', [''], (err, ret) => {
+        if (err) {
+          console.log(`Reset contacts failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        }
+        if (ret) {
+          self.contacts = ret;
+          return resolve(ret);
         }
       })
     })

@@ -63,7 +63,11 @@ class Contacts {
     if (!contacts.privateAddr.Wanchain) {
       this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr.Wanchain);
     }
-    // this.set(`contacts`, defaultConfig.contacts)
+  }
+
+  async reset() {
+    await this._db.set('contacts', defaultConfig.contacts).write();
+    return this.get('contacts');
   }
 
   addAddress(chain, addr, obj) {
@@ -81,17 +85,13 @@ class Contacts {
   }
 
   delAddress(chain, addr) {
-    const key = `contacts.normalAddr.${chain}`;
-    let addrObj = Object.assign({}, this.get(key));
-    delete addrObj[addr];
-    this.set(key, addrObj);
+    const key = `contacts.normalAddr.${chain}.${addr}`;
+    this.remove(key);
   }
 
   delPrivateAddress(addr) {
-    const key = 'contacts.privateAddr.Wanchain';
-    let addrObj = Object.assign({}, this.get(key));
-    delete addrObj[addr];
-    this.set(key, addrObj);
+    const key = `contacts.privateAddr.Wanchain.${addr}`;
+    this.remove(key);
   }
 
   get contacts() {

@@ -51,7 +51,6 @@ class CrossChain {
           let tokenPairs = {};
           let ccSelected = {};
           let CcSelectionsFromDB = await this.getCcTokenSelections();
-
           // Preload tokens' icon which is got from DB file.
           let gotData = data.map(v => [v.fromAccount, v.toAccount]).flat();
           Object.values(tokens.tokensList).forEach(v => {

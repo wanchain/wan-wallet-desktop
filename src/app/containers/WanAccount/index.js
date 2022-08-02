@@ -51,7 +51,6 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('new scan version 0.0.1')
   }
 
   // switchNode = (record) => {
@@ -360,19 +359,19 @@ class WanAccount extends Component {
     this.setState({ isExist: false })
   }
 
-  handleScanOTA = checked => {
-    this.props.updateSettings({ scan_ota: checked });
-    if (checked) {
-      initScanOTA().then(() => {
-        const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
-        const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
-        const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
-        openScanOTA([].concat(normalObj, importObj, rawKeyObj));
-      });
-    } else {
-      stopScanOTA();
-    }
-  }
+  // handleScanOTA = checked => {
+  //   this.props.updateSettings({ scan_ota: checked });
+  //   if (checked) {
+  //     initScanOTA().then(() => {
+  //       const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
+  //       const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
+  //       const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
+  //       openScanOTA([].concat(normalObj, importObj, rawKeyObj));
+  //     });
+  //   } else {
+  //     stopScanOTA();
+  //   }
+  // }
 
   checkPathChecked = path => {
     return Object.hasOwnProperty.call(this.props.settings.scan_ota_list, path);

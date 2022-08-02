@@ -7,7 +7,7 @@ module.exports = {
     query: [ 'config', 'getGasPrice' ],
     staking: [ 'getContractAddr', 'info', 'delegateIn', 'delegateOut', 'getContractData', 'insertTransToDB', 'posInfo', 'registerValidator', 'insertRegisterValidatorToDB', 'validatorInfo', 'validatorAppend', 'validatorUpdate', 'getValidatorsInfo', 'getCurrentEpochInfo', 'PosStakeUpdateFeeRate' ],
     setting: ['switchNetwork', 'set', 'get', 'updateDapps', 'getDapps', 'getDAppInjectFile', 'rpcDelay', 'wanNodeDelay', 'ethNodeDelay', 'btcNodeDelay', 'eosNodeDelay', 'resetSettingsByOptions'],
-    contact: ['get', 'addAddress', 'addPrivateAddress', 'delAddress', 'delPrivateAddress'],
+    contact: ['get', 'addAddress', 'addPrivateAddress', 'delAddress', 'delPrivateAddress', 'reset'],
     crossChain: ['getTokensInfo', 'getTokenPairs', 'getChainInfoByChainId', 'getCcTokenSelections', 'setCcTokenSelectStatus', 'updateTokensInfo', 'updateTokensBalance', 'getTokenInfo', 'addCustomToken', 'deleteCustomToken', 'getSmgList', 'getStoremanGroupList', 'getHtmlAddr', 'getCrossChainContractData', 'crossChain', 'crossBTC', 'crossETH', 'crossEOS', 'crossEOS2WAN', 'getAllUndoneCrossTrans', 'increaseFailedRetryCount', 'getAllCrossTrans', 'getRegisteredOrigToken', 'getMintQuota', 'getBurnQuota', 'getQuota', 'getFastMinCount', 'getFees', 'estimatedXrpFee', 'getCrossChainFees', 'insertCrossChainTransToDB'],
     dappStore: ['getRegisteredDapp', 'getRegisteredAds'],
     upgrade: ['start'],

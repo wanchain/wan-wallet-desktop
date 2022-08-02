@@ -7,6 +7,7 @@ import style from './index.less';
 
 @inject(stores => ({
   language: stores.languageIntl.language,
+  resetContacts: () => stores.contacts.reset(),
 }))
 
 @observer
@@ -26,7 +27,11 @@ class Restore extends Component {
   }
 
   handleOk = () => {
-    wand.request('phrase_reset', null, () => {});
+    this.props.resetContacts().then(res => {
+      if (res) {
+        wand.request('phrase_reset', null, () => {});
+      }
+    });
   }
 
   render () {
