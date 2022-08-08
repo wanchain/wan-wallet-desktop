@@ -11,10 +11,11 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
+import trxAddress from './trxAddress';
 import session from './session';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
-import { WANPATH, ETHPATH, EOSPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY } from 'utils/settings';
+import { WANPATH, ETHPATH, EOSPATH, TRXPATH, BTCPATH_MAIN, BTCPATH_TEST, COIN_ACCOUNT, COIN_ACCOUNT_EOS, TOKEN_PRIORITY } from 'utils/settings';
 
 class Tokens {
   @observable currTokenAddr = '';
@@ -75,6 +76,9 @@ class Tokens {
       case 'XRP':
         self.tokenIconList[scAddr] = xrpImg;
         break;
+      case 'TRX':
+        self.tokenIconList[scAddr] = ethImg;
+        break;
       default:
         if (obj.ancestor === 'WAN' && obj.chainSymbol === 'WAN' && obj.symbol === 'WAN') {
           self.tokenIconList[scAddr] = wanImg;
@@ -132,6 +136,9 @@ class Tokens {
         break;
       case 'EOS':
         img = eosImg;
+        break;
+      case 'TRX':
+        img = ethImg;
         break;
       default:
         if (addr) {
@@ -302,6 +309,11 @@ class Tokens {
         case 'XRP':
           normalArr = Object.keys(xrpAddress.keyInfo.normal);
           rawKeyArr = Object.keys(xrpAddress.keyInfo.rawKey);
+          break;
+        case 'TRX':
+          normalArr = Object.keys(trxAddress.addrInfo['normal'] || {});
+          importArr = Object.keys(trxAddress.addrInfo['import'] || {});
+          rawKeyArr = Object.keys(trxAddress.addrInfo['rawKey'] || {});
           break;
         default:
         // console.log('Default.....');
@@ -499,7 +511,7 @@ class Tokens {
   }
 
   getChainAddressInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress, trxAddress };
     if (chain === undefined) {
       return undefined;
     }
@@ -514,7 +526,7 @@ class Tokens {
   }
 
   getChainStoreInfoByChain(chain) {
-    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress };
+    const ADDRESSES = { wanAddress, ethAddress, btcAddress, eosAddress, xrpAddress, trxAddress };
     if (ADDRESSES[`${chain.toLowerCase()}Address`] === undefined) {
       return undefined;
     } else {
@@ -540,6 +552,9 @@ class Tokens {
         } else {
           pathPrefix = BTCPATH_TEST;
         }
+        break;
+      case 'TRX':
+        pathPrefix = TRXPATH;
         break;
       default:
         pathPrefix = WANPATH;

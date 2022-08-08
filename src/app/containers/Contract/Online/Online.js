@@ -40,6 +40,7 @@ export default function Online(props) {
   const [gasPrice, setGasPrice] = useState(1);
   const wanAddresses = props.wanAddresses;
   const ethAddresses = props.ethAddresses;
+  const trxAddresses = props.trxAddresses;
   const [fromAddress, setFromAddress] = useState();
   const [offlineJson, setOfflineJson] = useState();
   const [showModal, setShowModal] = useState(false);
@@ -148,17 +149,18 @@ export default function Online(props) {
       <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
       <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
       <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
+      <Select.Option value={'Tron'} key={'Tron'}>Tron</Select.Option>
     </StyledSelect>
     <Title>{intl.get('contract.selectAccount')}</Title>
     <StyledSelect value={fromAddress} showSearch onChange={(v) => { setFromAddress(v) }} onSearch={(v) => { setFromAddress(v) }} onBlur={(v) => { console.log('blur', v); setFromAddress(v) }}>
       {
-        chainType === 'WAN'
-          ? wanAddresses.map(v => {
+        chainType === 'WAN' ? wanAddresses.map(v => {
             return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
-          })
-          : ethAddresses.map(v => {
+          }) : (chainType === 'Tron' ? trxAddresses.map(v => {
             return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
-          })
+          }) : ethAddresses.map(v => {
+            return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' ) '}</Select.Option>
+          }))
       }
       {
         fromAddress && fromAddress.length > 0

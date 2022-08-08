@@ -1,6 +1,4 @@
-import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import { Button, Row, Col, Form } from 'antd';
 import { observer, inject } from 'mobx-react';
 import Offline from './Offline';
 
@@ -9,6 +7,7 @@ import Offline from './Offline';
   language: stores.languageIntl.language,
   wanAddresses: stores.wanAddress.getAddrList,
   ethAddresses: stores.ethAddress.getAddrList,
+  trxAddresses: stores.trxAddress.getAddrList,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
@@ -29,7 +28,7 @@ class ContractOffline extends Component {
 
   render() {
     return (
-      <Offline wanAddresses={this.props.wanAddresses} ethAddresses={this.props.ethAddresses} />
+      <Offline wanAddresses={this.props.wanAddresses} ethAddresses={this.props.ethAddresses} trxAddresses={this.props.trxAddresses} />
     );
   }
 }

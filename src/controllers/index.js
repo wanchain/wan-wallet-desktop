@@ -554,8 +554,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     balance = { [address]: balance }
                 }
             } catch (e) {
-                logger.error('Get balance failed:');
-                logger.error(e.message || e.stack)
+                logger.error('Get %s %s balance failed: %O', chainType, addr, e.message || e.stack);
                 err = e
             }
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })

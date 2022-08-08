@@ -14,6 +14,7 @@ import { getTypeByWalletId } from 'utils/helper';
   deleteBTCAccount: (type, addr) => stores.btcAddress.deleteAddress(type, addr),
   deleteETHAccount: (type, addr) => stores.ethAddress.deleteAddress(type, addr),
   deleteXRPAccount: (type, addr) => stores.xrpAddress.deleteAddress(type, addr),
+  deleteTRXAccount: (type, addr) => stores.trxAddress.deleteAddress(type, addr),
   deleteEOSAccount: (type, addr) => stores.eosAddress.deleteKeyAndAccount(type, addr),
 }))
 

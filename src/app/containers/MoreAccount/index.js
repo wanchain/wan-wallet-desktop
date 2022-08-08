@@ -46,7 +46,7 @@ class MoreAccount extends Component {
       render: (text, record) => {
         let filtered = record.children.filter(v => v.account !== COIN_ACCOUNT && v.account !== COIN_ACCOUNT_EOS);
         return (<div className={style.tokenGrid}>
-          <div><img className={style.totalImg} src={this.props.getCoinImage(filtered.length === 0 ? '' : record.ancestor, filtered[0].account)} /></div>
+          <div><img className={style.totalImg} src={this.props.getCoinImage(record.ancestor, filtered.length === 0 ? false : filtered[0].account)} /></div>
           <div className={style.coinText}>{text}</div>
         </div>)
       }

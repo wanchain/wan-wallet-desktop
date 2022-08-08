@@ -13,11 +13,20 @@ export default function Offline(props) {
   const [chainId, setChainId] = useState();
   const wanAddresses = props.wanAddresses;
   const ethAddresses = props.ethAddresses;
+  const trxAddresses = props.trxAddresses;
   const [fromAddress, setFromAddress] = useState();
   const [step, setStep] = useState('build');
   const [chainType, setChainType] = useState('WAN');
 
-  const addresses = chainType === 'WAN' ? wanAddresses : ethAddresses;
+  let addresses;
+  if (chainType === 'WAN') {
+    addresses = wanAddresses;
+  } else if (chainType === 'Tron') {
+    console.log({ trxAddresses })
+    addresses = trxAddresses;
+  } else {
+    addresses = ethAddresses;
+  }
 
   useEffect(() => {
     if (!chainType) {
@@ -138,6 +147,7 @@ export default function Offline(props) {
       <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
       <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
       <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
+      <Select.Option value={'Tron'} key={'Tron'}>Tron</Select.Option>
       <Select.Option value={'Custom'} key={'Custom'}>Custom</Select.Option>
     </StyledSelect>
     <Title>{intl.get('contract.selectAccount2')}</Title>
@@ -337,6 +347,7 @@ const StyledSelect = styled(Select)`
   .ant-select-selection {
     border: 0px;
     border-radius: 20px;
+    width: 450px!important;
   }
 `;
 

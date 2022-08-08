@@ -3,7 +3,7 @@ import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
-import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, DECIMALS } from 'utils/settings';
+import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, TRXPATH, DECIMALS } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
 
@@ -421,6 +421,16 @@ export const getChainInfo = (chainType, network) => {
       testnet: {
         rpcUrl: 'https://rpc-mumbai.maticvigil.com',
         chainId: 80001,
+      },
+    },
+    Tron: {
+      mainnet: {
+        rpcUrl: 'https://api.nileex.io',
+        chainId: 0,
+      },
+      testnet: {
+        rpcUrl: 'https://api.nileex.io',
+        chainId: 0,
       },
     },
     Custom: {
@@ -1144,6 +1154,37 @@ export const createEOSAddr = async function (checkDuplicate) {
   })
 }
 
+export const createTRXAddr = async function (checkDuplicate) {
+  let CHAINID = 195;
+  let index = await getNewPathIndex(CHAINID, TRXPATH, WALLETID.NATIVE);
+  let path = `${TRXPATH}${index}`;
+  console.log('createTRXAddr path: %s', path)
+  return new Promise((resolve, reject) => {
+    wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'TRX', path }, async (err, data) => {
+      if (!err) {
+        if (checkDuplicate instanceof Function && checkDuplicate(data.address)) {
+          return reject(new Error('exist'));
+        }
+        let name = await getNewAccountName(CHAINID, 'TRX-Account');
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: data.address } }, (err, val_account_create) => {
+          if (!err && val_account_create) {
+            let addressInfo = {
+              start: index.toString(),
+              name,
+              address: data.address
+            }
+            resolve(addressInfo);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
 export const btcCoinSelect = function (utxos, value, feeRate) {
   return new Promise((resolve, reject) => {
     wand.request('address_btcCoinSelect', { utxos, value, feeRate }, (err, data) => {
@@ -1193,6 +1234,8 @@ export const getFullChainName = function (chainType = '') {
       return intl.get('Common.bitcoin');
     case 'EOS':
       return intl.get('Common.eos');
+    case 'TRX':
+      return intl.get('Common.tron');
   }
 }
 
@@ -1399,6 +1442,10 @@ export const checkAddressByChainType = async (address, chain) => {
       } catch (e) {
         valid = false;
       }
+      break;
+    case 'TRX':
+      valid = true;
+      console.log('checkAddressByChainType: %s', valid)
       break;
     default:
       valid = false;

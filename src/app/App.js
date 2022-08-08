@@ -25,6 +25,7 @@ class App extends Component {
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
         stores.xrpAddress.getUserAccountFromDB();
+        stores.trxAddress.getUserAccountFromDB();
         stores.eosAddress.getUserKeyFromDB();
         stores.dapps.updateLocalDApps();
         clearInterval(id);

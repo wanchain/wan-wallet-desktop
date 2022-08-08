@@ -100,7 +100,7 @@ const XrpAccount = observer(() => {
           <img className="totalImg" src={totalImg} alt={intl.get('WanAccount.wanchain')} />
           <span className="wanTotal">{getAllAmount}</span>
           <span className="wanTex">{'XRP'}</span>
-          <Tag className="symbol">{intl.get('Common.ripple')}</Tag>
+          <Tag className="symbol">{intl.get('Common.xrpl')}</Tag>
         </Col>
         <Col span={12} className="col-right">
           <Button className="createBtn" type="primary" shape="round" size="large" onClick={createAccount}>{intl.get('Common.create')}</Button>

@@ -7,6 +7,7 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
+import trxAddress from './trxAddress';
 import tokens from './tokens';
 
 import { formatNum, formatNumByDecimals } from 'utils/support';
@@ -40,7 +41,12 @@ class Portfolio {
     XRP: {
       ancestor: false,
       balance: 0,
-      chain: intl.get('Common.ripple'),
+      chain: intl.get('Common.xrpl'),
+    },
+    TRX: {
+      ancestor: false,
+      balance: 0,
+      chain: intl.get('Common.tron'),
     }
   };
 
@@ -172,6 +178,9 @@ class Portfolio {
               break;
             case 'XRP':
               val.balance = xrpAddress.getAllAmount;
+              break;
+            case 'TRX':
+              val.balance = trxAddress.getAllAmount;
               break;
           }
         } else {

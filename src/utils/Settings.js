@@ -43,23 +43,14 @@ const defaultConfig = {
           "select": true,
           "symbol": "ETH"
         },
-        "2153201998-0xc6f4465a6a521124c8e3096b62575c157999d361": {
-          "account": "0xc6f4465a6a521124c8e3096b62575c157999d361",
-          "ancestor": "FNX",
-          "chain": "Wanchain",
-          "chainSymbol": "WAN",
-          "decimals": "18",
-          "select": false,
-          "symbol": "FNX"
-        },
-        "2153201998-0xcb72ef349870780fdc4786e8c86aab5b4fa36b73": {
-          "account": "0xcb72ef349870780fdc4786e8c86aab5b4fa36b73",
-          "ancestor": "RVX",
-          "chain": "Wanchain",
-          "chainSymbol": "WAN",
-          "decimals": "18",
-          "select": false,
-          "symbol": "RVX"
+        "2147483843-0x0000000000000000000000000000000000000000": {
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "TRX",
+          "chain": "Tron",
+          "chainSymbol": "TRX",
+          "decimals": "6",
+          "select": true,
+          "symbol": "TRX"
         }
       },
       cc_selected: {
@@ -70,10 +61,31 @@ const defaultConfig = {
     testnet: {
       tokens: {
         "2153201998-0x0000000000000000000000000000000000000000": {
-          "select": true
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "WAN",
+          "chain": "Wanchain",
+          "chainSymbol": "WAN",
+          "decimals": "18",
+          "select": true,
+          "symbol": "WAN"
         },
         "2147483708-0x0000000000000000000000000000000000000000": {
-          "select": true
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "ETH",
+          "chain": "Ethereum",
+          "chainSymbol": "ETH",
+          "decimals": "18",
+          "select": true,
+          "symbol": "ETH"
+        },
+        "2147483843-0x0000000000000000000000000000000000000000": {
+          "account": "0x0000000000000000000000000000000000000000",
+          "ancestor": "TRX",
+          "chain": "Tron",
+          "chainSymbol": "TRX",
+          "decimals": "6",
+          "select": true,
+          "symbol": "TRX"
         }
       },
       cc_selected: {
