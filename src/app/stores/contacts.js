@@ -1,8 +1,5 @@
-import { reject } from 'lodash';
 import { observable, action, makeObservable } from 'mobx';
 import { getHashKey } from '../utils/helper';
-// import AES from 'crypto-js/aes';
-// import Utf8 from 'crypto-js/enc-utf8';
 const AES = require('crypto-js/aes');
 const Utf8 = require('crypto-js/enc-utf8');
 
@@ -27,16 +24,20 @@ class Contacts {
     })
   }
 
-  @action revealContacts(pwd) {
+  @action savePwdhash(pwd) {
     const pwdhash = getHashKey(pwd + 'contact');
     self.contacts.pwdhash = pwdhash;
+  }
+
+  @action revealContacts(pwd) {
+    self.savePwdhash(pwd)
     const { normalAddr, privateAddr } = self.contacts;
     Object.keys(normalAddr).map(chainName => {
       const chainObj = normalAddr[chainName];
       for (let key in chainObj) {
         try {
           const addressItem = chainObj[key];
-          const bytes = AES.decrypt(addressItem, pwdhash);
+          const bytes = AES.decrypt(addressItem, self.contacts.pwdhash);
           const originalText = bytes.toString(Utf8);
           const addressObj = JSON.parse(originalText);
           const {
@@ -44,33 +45,33 @@ class Contacts {
             address
           } = addressObj;
           const addr = String(address).toLocaleLowerCase();
-          if (key.toLocaleLowerCase() === addr) {
+          if (key === addr) {
             self.contacts.normalAddr[chainSymbol][key] = addressObj;
           } else {
-            self.delAddress(chainSymbol, key);
+            self.delExclusiveAddress(chainSymbol, key);
             self.addAddress(chainSymbol, addr, addressObj);
           }
         } catch (e) {
-          self.delAddress(chainName, key);
+          self.delExclusiveAddress(chainName, key);
         }
       }
     })
     for (let key in privateAddr.Wanchain) {
       try {
         const addressItem = privateAddr.Wanchain[key];
-        const bytes = AES.decrypt(addressItem, pwdhash);
+        const bytes = AES.decrypt(addressItem, self.contacts.pwdhash);
         const originalText = bytes.toString(Utf8);
         const addressObj = JSON.parse(originalText);
         const { address } = addressObj;
         const addr = String(address).toLocaleLowerCase();
-        if (key.toLocaleLowerCase() === addr) {
-          self.contacts.privateAddr.Wanchain[address] = addressObj;
+        if (key === addr) {
+          self.contacts.privateAddr.Wanchain[addr] = addressObj;
         } else {
-          self.delPrivateAddress(key);
+          self.delExclusivePrivateAddress(key);
           self.addPrivateAddress(addr, addressObj);
         }
       } catch (e) {
-        self.delPrivateAddress(key);
+        self.delExclusivePrivateAddress(key);
       }
     }
   }
@@ -112,7 +113,24 @@ class Contacts {
   }
 
   @action delAddress(chain, addr) {
+    console.log('chain', chain, addr)
     addr = String(addr).toLocaleLowerCase();
+    console.log('chain2', chain, addr)
+    return new Promise((resolve, reject) => {
+      wand.request('contact_delAddress', [chain, addr], (err, ret) => {
+        if (err) {
+          console.log(`Delete normal contacts failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        };
+        if (ret) {
+          delete self.contacts.normalAddr[chain][addr];
+          return resolve();
+        }
+      })
+    })
+  }
+
+  @action delExclusiveAddress(chain, addr) {
     return new Promise((resolve, reject) => {
       wand.request('contact_delAddress', [chain, addr], (err, ret) => {
         if (err) {
@@ -129,6 +147,21 @@ class Contacts {
 
   @action delPrivateAddress(addr) {
     addr = String(addr).toLocaleLowerCase();
+    return new Promise((resolve, reject) => {
+      wand.request('contact_delPrivateAddress', [addr], (err, ret) => {
+        if (err) {
+          console.log(`Delete private contacts failed: ${JSON.stringify(err)}`);
+          return reject(err);
+        };
+        if (ret) {
+          delete self.contacts.privateAddr.Wanchain[addr];
+          return resolve();
+        }
+      })
+    })
+  }
+
+  @action delExclusivePrivateAddress(addr) {
     return new Promise((resolve, reject) => {
       wand.request('contact_delPrivateAddress', [addr], (err, ret) => {
         if (err) {

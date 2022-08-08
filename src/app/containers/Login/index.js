@@ -29,7 +29,8 @@ message.config({
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
   updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args),
-  revealContacts: pwd => stores.contacts.revealContacts(pwd)
+  revealContacts: pwd => stores.contacts.revealContacts(pwd),
+  resetContacts: () => stores.contacts.reset(),
 }))
 
 @observer
@@ -52,6 +53,7 @@ class Login extends Component {
           return;
         }
         if (this.props.isFirstLogin) {
+          this.props.revealContacts(pwd);
           this.props.setIsFirstLogin(false);
         }
         this.props.setAuth(true);
@@ -91,7 +93,6 @@ class Login extends Component {
             console.log(err);
           })
         }
-        this.props.revealContacts(pwd);
       })
     })
   }
@@ -115,7 +116,11 @@ class Login extends Component {
   }
 
   handleOk = () => {
-    wand.request('phrase_reset', null, () => {});
+    this.props.resetContacts().then(res => {
+      if (res) {
+        wand.request('phrase_reset', null, () => {});
+      }
+    });
   }
 
   render () {

@@ -3,22 +3,39 @@ import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import { app } from 'electron';
 import Logger from './Logger';
+import Setting from './Settings';
 
 // caches for config
 let _contacts = undefined;
+let _network = undefined;
 
 const defaultConfig = {
   contacts: {
-    normalAddr: {
-      Wanchain: {},
-      Ethereum: {},
-      Bitcoin: {},
-      XRPL: {},
-      EOS: {},
-      BSC: {}
+    main: {
+      normalAddr: {
+        Wanchain: {},
+        Ethereum: {},
+        Bitcoin: {},
+        XRPL: {},
+        EOS: {},
+        BSC: {}
+      },
+      privateAddr: {
+        Wanchain: {}
+      }
     },
-    privateAddr: {
-      Wanchain: {}
+    testnet: {
+      normalAddr: {
+        Wanchain: {},
+        Ethereum: {},
+        Bitcoin: {},
+        XRPL: {},
+        EOS: {},
+        BSC: {}
+      },
+      privateAddr: {
+        Wanchain: {}
+      }
     }
   }
 }
@@ -29,6 +46,7 @@ class Contacts {
    * Create an instance of Contacts with a logger appended
    */
   constructor() {
+    console.log('network', this.network)
     this._logger = Logger.getLogger('contacts');
     this._logger.info('contacts initialized');
     this.userPath = app.getPath('userData') + '/Contacts';
@@ -51,47 +69,48 @@ class Contacts {
   }
 
   updateContactsByConfig() {
-    let contacts = this.get('contacts');
-    if (!contacts) this.set(`contacts`, defaultConfig.contacts);
-    if (!contacts.normalAddr) this.set(`contacts.normalAddr`, defaultConfig.contacts.normalAddr);
-    if (!contacts.privateAddr) this.set(`contacts.privateAddr`, defaultConfig.contacts.privateAddr);
-    Object.keys(defaultConfig.contacts.normalAddr).forEach(chain => {
+    let contacts = this.contacts[this.network];
+    const defaultContacts = defaultConfig.contacts[this.network];
+    if (!contacts.normalAddr) this.set('normalAddr', defaultContacts.normalAddr);
+    if (!contacts.privateAddr) this.set('privateAddr', defaultContacts.privateAddr);
+    Object.keys(defaultContacts.normalAddr).forEach(chain => {
       if (!contacts.normalAddr[chain]) {
-        this.set(`contacts.normalAddr.${chain}`, defaultConfig.contacts.normalAddr[chain]);
+        this.set(`normalAddr.${chain}`, defaultContacts.normalAddr[chain]);
       }
     })
     if (!contacts.privateAddr.Wanchain) {
-      this.set(`contacts.privateAddr.Wanchain`, defaultConfig.contacts.privateAddr.Wanchain);
+      this.set(`privateAddr.Wanchain`, defaultContacts.privateAddr.Wanchain);
     }
   }
 
   async reset() {
-    await this._db.set('contacts', defaultConfig.contacts).write();
-    return this.get('contacts');
+    try {
+      await this.setSync('contacts', defaultConfig.contacts);
+      return true;
+    } catch (e) {
+      console.error(e)
+      return false;
+    }
   }
 
   addAddress(chain, addr, obj) {
-    const key = `contacts.normalAddr.${chain}`;
-    const addrObj = this.get(key);
-    const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
-    this.set(key, newAddrObj);
+    const key = `normalAddr.${chain}.${addr}`;
+    this.set(key, obj);
   }
 
   addPrivateAddress(addr, obj) {
-    const key = 'contacts.privateAddr.Wanchain';
-    const addrObj = this.get(key);
-    const newAddrObj = Object.assign({}, addrObj, {[addr]: obj});
-    this.set(key, newAddrObj);
+    const key = `privateAddr.Wanchain.${addr}`;
+    this.set(key, obj);
   }
 
-  delAddress(chain, addr) {
-    const key = `contacts.normalAddr.${chain}.${addr}`;
-    this.remove(key);
+  async delAddress(chain, addr) {
+    const key = `normalAddr.${chain}.${addr}`;
+    await this.remove(key);
   }
 
-  delPrivateAddress(addr) {
-    const key = `contacts.privateAddr.Wanchain.${addr}`;
-    this.remove(key);
+  async delPrivateAddress(addr) {
+    const key = `privateAddr.Wanchain.${addr}`;
+    await this.remove(key);
   }
 
   get contacts() {
@@ -99,17 +118,32 @@ class Contacts {
       return _contacts;
     }
 
-    return _contacts = this._get('contacts') || defaultConfig.contacts;
+    return _contacts = this.get();
+  }
+
+  get network() {
+    if (_network) {
+      return _network;
+    }
+
+    return _network = Setting.get('network');
   }
 
   get(key) {
+    if (!key) {
+      key = `contacts`;
+    } else if (key === 'contacts') {
+      key = `contacts.${this.network}`;
+    } else {
+      key = `contacts.${this.network}.${key}`;
+    }
     return this._get(key);
   }
 
   _get(key) {
     let val = this._db.get(key).value();
     if (!val) {
-      if (key in defaultConfig) {
+      if (defaultConfig[key]) {
         val = defaultConfig[key];
         this._set(key, defaultConfig[key]);
       }
@@ -118,6 +152,7 @@ class Contacts {
   }
 
   set(key, value) {
+    key = `contacts.${this.network}.${key}`;
     this._set(key, value);
   }
 
@@ -125,12 +160,21 @@ class Contacts {
     this._db.set(key, value).write();
   }
 
-  remove(key) {
-    this._remove(key);
+  async setSync(key, value) {
+    return await this._setSync(key, value);
   }
 
-  _remove(key) {
-    this._db.unset(key).write();
+  async _setSync(key, value) {
+    return await this._db.set(key, value).write();
+  }
+
+  async remove(key) {
+    key = `contacts.${this.network}.${key}`;
+    await this._remove(key);
+  }
+
+  async _remove(key) {
+    await this._db.unset(key).write();
   }
 }
 

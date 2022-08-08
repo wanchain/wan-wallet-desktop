@@ -2482,7 +2482,8 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
             break
         case 'addPrivateAddress':
             try {
-                contacts.addPrivateAddress(chain, addr);
+                const [privateAddr, privateObj] = payload;
+                contacts.addPrivateAddress(privateAddr, privateObj);
                 ret = true
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2497,8 +2498,8 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
         case 'delAddress':
             
             try {
-                contacts.delAddress(chain, addr);
-                ret = true
+                await contacts.delAddress(chain, addr);
+                ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2537,11 +2538,12 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
         case 'reset':
             try {
                 vals = await contacts.reset();
+                ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals })
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
             
     }

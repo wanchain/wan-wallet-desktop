@@ -153,7 +153,7 @@ const th_TH = {
     'AddressBook.username': 'Username',
     'AddressBook.addNicknamePlaceHolder': 'Add a nickname',
     'AddressBook.address': 'Address',
-    'AddressBook.addAddressPlaceHolder': 'Search , public address(0x) , or ENS',
+    'AddressBook.addAddressPlaceHolder': 'Type your address',
     'AddressBook.chain': 'Chain',
     'AddressBook.addChainPlaceHolder': 'Please select a chain',
     'AddressBook.saveContact': 'Save Contact',

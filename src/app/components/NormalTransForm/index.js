@@ -59,6 +59,7 @@ class NormalTransForm extends Component {
   }
 
   componentDidMount() {
+    console.log('contacts', JSON.parse(JSON.stringify(this.props.contacts)))
     this.processContacts();
   }
 

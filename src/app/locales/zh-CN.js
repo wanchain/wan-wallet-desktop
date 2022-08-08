@@ -154,7 +154,7 @@ const zh_CN = {
     'AddressBook.username': '昵称',
     'AddressBook.addNicknamePlaceHolder': '填加昵称',
     'AddressBook.address': '地址',
-    'AddressBook.addAddressPlaceHolder': '搜索、公共地址（0x）或 ENS',
+    'AddressBook.addAddressPlaceHolder': '请输入地址',
     'AddressBook.chain': '链',
     'AddressBook.addChainPlaceHolder': '请选择一条链',
     'AddressBook.saveContact': '保存地址簿',

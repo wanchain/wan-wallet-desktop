@@ -33,7 +33,8 @@ const Step = Steps.Step;
   addBTCAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
   addBNBAddress: newAddr => stores.bnbAddress.addAddress(newAddr),
-  setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
+  setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret),
+  savePwdhash: pwd => stores.contacts.savePwdhash(pwd)
 }))
 
 @observer
@@ -129,6 +130,7 @@ class Register extends Component {
               addBNBAddress(ethAddrInfo);
               addBTCAddress(btcMainAddInfo);
               addXRPAddress(xrpAddrInfo);
+              this.props.savePwdhash(pwd);
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });
