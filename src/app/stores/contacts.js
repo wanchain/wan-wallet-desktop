@@ -7,7 +7,8 @@ class Contacts {
   @observable contacts = {
     normalAddr: {},
     privateAddr: {},
-    pwdhash: ''
+    pwdhash: '',
+    isReveal: false
   };
 
   constructor() {
@@ -20,7 +21,8 @@ class Contacts {
         console.log(`Init contacts failed: ${JSON.stringify(err)}`);
         return;
       };
-      self.contacts = ret;
+      self.contacts.normalAddr = ret.normalAddr;
+      self.contacts.privateAddr = ret.privateAddr;
     })
   }
 
@@ -30,7 +32,8 @@ class Contacts {
   }
 
   @action revealContacts(pwd) {
-    self.savePwdhash(pwd)
+    self.savePwdhash(pwd);
+    if (self.contacts.isReveal) return
     const { normalAddr, privateAddr } = self.contacts;
     Object.keys(normalAddr).map(chainName => {
       const chainObj = normalAddr[chainName];
@@ -74,6 +77,7 @@ class Contacts {
         self.delExclusivePrivateAddress(key);
       }
     }
+    self.contacts.isReveal = true;
   }
 
   @action addAddress(chain, addr, obj) {
@@ -184,7 +188,7 @@ class Contacts {
           return reject(err);
         }
         if (ret) {
-          self.contacts = ret;
+          // self.contacts = ret;
           return resolve(ret);
         }
       })

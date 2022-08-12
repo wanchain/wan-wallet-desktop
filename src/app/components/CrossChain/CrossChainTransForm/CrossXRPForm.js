@@ -75,12 +75,9 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [quotaList])
 
   const contactsList = useMemo(() => {
-    const { normalAddr, privateAddr } = contacts;
-    const chainSymbol = getFullChainName(toChainSymbol);
+    const { normalAddr } = contacts;
+    const chainSymbol = getFullChainName(type === INBOUND ? toChainSymbol : fromChainSymbol);
     let contactsArr = Object.values(normalAddr[chainSymbol]);
-    if (chainSymbol === 'Wanchain') {
-      contactsArr = [].concat(Object.values(privateAddr[chainSymbol]), contactsArr);
-    }
     return contactsArr;
   }, [quotaList]);
 

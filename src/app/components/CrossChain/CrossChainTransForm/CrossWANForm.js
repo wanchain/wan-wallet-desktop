@@ -97,13 +97,10 @@ class CrossWANForm extends Component {
   }
 
   processContacts = () => {
-    const { contacts, currentTokenPairInfo: info } = this.props;
-    const { normalAddr, privateAddr } = contacts;
-    const chainSymbol = getFullChainName(info.toChainSymbol);
+    const { contacts, currentTokenPairInfo: info, type } = this.props;
+    const { normalAddr } = contacts;
+    const chainSymbol = getFullChainName(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let contactsList = Object.values(normalAddr[chainSymbol]);
-    if (chainSymbol === 'Wanchain') {
-      contactsList = [].concat(Object.values(privateAddr[chainSymbol]), contactsList);
-    }
     this.setState({
       contactsList
     })

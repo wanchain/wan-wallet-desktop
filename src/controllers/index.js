@@ -2538,12 +2538,11 @@ ipc.on(ROUTE_CONTACTS, async (event, actionUni, payload) => {
         case 'reset':
             try {
                 vals = await contacts.reset();
-                ret = true;
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
             }
-            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            sendResponse([ROUTE_CONTACTS, [action, id].join('#')].join('_'), event, { err: err, data: vals })
             break
             
     }

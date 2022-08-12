@@ -46,7 +46,6 @@ class Contacts {
    * Create an instance of Contacts with a logger appended
    */
   constructor() {
-    console.log('network', this.network)
     this._logger = Logger.getLogger('contacts');
     this._logger.info('contacts initialized');
     this.userPath = app.getPath('userData') + '/Contacts';

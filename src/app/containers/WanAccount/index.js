@@ -51,7 +51,7 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('version 0.0.1, description: change txt & fix destroy config & distinguish testnet')
+    console.log('version 0.0.2, description: not reset config when restore & cross chain & del private address at add modal')
   }
 
   // switchNode = (record) => {
