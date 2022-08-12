@@ -76,6 +76,7 @@ class CrossBTCForm extends Component {
       showAddContacts: false,
       showChooseContacts: false,
     }
+    console.log('btc')
   }
 
   async componentDidUpdate(prevProps) {
@@ -109,9 +110,9 @@ class CrossBTCForm extends Component {
   }
 
   processContacts = () => {
-    const { contacts, currentTokenPairInfo: info, type } = this.props;
+    const { contacts, currentTokenPairInfo: info, direction } = this.props;
     const { normalAddr } = contacts;
-    const chainSymbol = getFullChainName(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
+    const chainSymbol = getFullChainName(info[direction === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let contactsList = Object.values(normalAddr[chainSymbol]);
     this.setState({
       contactsList

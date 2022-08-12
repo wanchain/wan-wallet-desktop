@@ -7,8 +7,7 @@ class Contacts {
   @observable contacts = {
     normalAddr: {},
     privateAddr: {},
-    pwdhash: '',
-    isReveal: false
+    pwdhash: ''
   };
 
   constructor() {
@@ -33,13 +32,13 @@ class Contacts {
 
   @action revealContacts(pwd) {
     self.savePwdhash(pwd);
-    if (self.contacts.isReveal) return
     const { normalAddr, privateAddr } = self.contacts;
     Object.keys(normalAddr).map(chainName => {
       const chainObj = normalAddr[chainName];
       for (let key in chainObj) {
         try {
           const addressItem = chainObj[key];
+          if (typeof addressItem === 'object') return;
           const bytes = AES.decrypt(addressItem, self.contacts.pwdhash);
           const originalText = bytes.toString(Utf8);
           const addressObj = JSON.parse(originalText);
@@ -62,6 +61,7 @@ class Contacts {
     for (let key in privateAddr.Wanchain) {
       try {
         const addressItem = privateAddr.Wanchain[key];
+        if (typeof addressItem === 'object') return;
         const bytes = AES.decrypt(addressItem, self.contacts.pwdhash);
         const originalText = bytes.toString(Utf8);
         const addressObj = JSON.parse(originalText);
@@ -77,7 +77,6 @@ class Contacts {
         self.delExclusivePrivateAddress(key);
       }
     }
-    self.contacts.isReveal = true;
   }
 
   @action addAddress(chain, addr, obj) {
