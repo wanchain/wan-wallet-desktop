@@ -554,7 +554,7 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     balance = { [address]: balance }
                 }
             } catch (e) {
-                logger.error('Get %s %s balance failed: %O', chainType, addr, e.message || e.stack);
+                console.error('Get %s %s balance failed: %O',  chainType, addr, e.message || e.stack || e);
                 err = e
             }
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
@@ -680,10 +680,10 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
                     //normal balance
                     if (addr) {
                         if (_.isArray(addr) && addr.length > 1) {
-                            const addresses = addr.map(item => `0x${item}`)
+                            const addresses = addr.map(item => `0x${item}`.toLowerCase())
                             balance = await ccUtil.getMultiBalances(addresses, 'WAN')
                         } else {
-                            balance = await ccUtil.getBalance(`0x${addr}`, 'WAN')
+                            balance = await ccUtil.getBalance(`0x${addr}`.toLowerCase(), 'WAN')
                             balance = { [`0x${addr}`]: balance }
                         }
                     } else {
