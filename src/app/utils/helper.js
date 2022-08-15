@@ -1361,7 +1361,6 @@ export const checkAddrByCT4Contacts = async (address, chain) => {
       case 'XRPL':
         valid = await checkXRPAddr(address);
         valid = valid[0] || valid[1];
-        console.log('xrpl-=-=-', valid)
         break;
       case 'BSC':
         valid = await checkETHAddr(address);
