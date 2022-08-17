@@ -37,7 +37,7 @@ class Accounts extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} walletID={record.wid} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
+      render: (text, record) => <div><SendNormalTrans isHardwareWallet={true} path={record.path} from={record.address} walletID={record.wid} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
     }
   ];
 
@@ -121,7 +121,7 @@ class Accounts extends Component {
     });
 
     return (
-      <div className="account">
+      <div className="account">==
         <Row className="mainBody">
           <Col>
             <Table components={components} rowClassName={() => 'editable-row'} pagination={false} columns={this.columnsTree} dataSource={addresses}></Table>

@@ -65,7 +65,9 @@ class NormalTransForm extends Component {
   processContacts = () => {
     const { normalAddr, privateAddr } = this.props.contacts;
     let contactsList = Object.values(normalAddr[chainSymbol]);
-    contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol]))
+    if (!this.props.isHardwareWallet) {
+      contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol]))
+    }
     this.setState({
       contactsList
     })

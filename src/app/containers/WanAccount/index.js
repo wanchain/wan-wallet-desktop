@@ -51,7 +51,7 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('version 0.0.3, description: fix send token normal trans does not have contacts')
+    console.log('version 0.0.4, description: hide hardware wallet private address')
   }
 
   // switchNode = (record) => {
