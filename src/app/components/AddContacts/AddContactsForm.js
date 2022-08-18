@@ -18,12 +18,10 @@ class AddContactsForm extends Component {
     const { form, hasSameContact } = this.props;
     const chainType = form.getFieldValue('chain');
     if (!chainType) {
-      console.log('no chain')
       callback(intl.get('AddressBook.wanChooseChain'));
       return;
     }
     if (!value) {
-      console.log('no value')
       callback(intl.get('AddressBook.wanAddrEmpty'));
       return;
     }

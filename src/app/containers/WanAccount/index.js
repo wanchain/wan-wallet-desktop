@@ -51,7 +51,6 @@ class WanAccount extends Component {
     }
     this.canCreate = true;
     this.props.updateTransHistory();
-    console.log('version 0.0.4, description: hide hardware wallet private address')
   }
 
   // switchNode = (record) => {
@@ -183,7 +182,6 @@ class WanAccount extends Component {
 
   handleSend = (from, splitAmount) => {
     if (splitAmount && splitAmount instanceof Array) {
-      console.log('splitAmount', splitAmount)
       return this.onSendPrivateTransaction(from, splitAmount);
     } else {
       return this.onSendNormalTransaction(from);

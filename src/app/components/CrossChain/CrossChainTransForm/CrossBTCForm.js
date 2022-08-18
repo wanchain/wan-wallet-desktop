@@ -76,7 +76,6 @@ class CrossBTCForm extends Component {
       showAddContacts: false,
       showChooseContacts: false,
     }
-    console.log('btc')
   }
 
   async componentDidUpdate(prevProps) {
@@ -469,7 +468,6 @@ class CrossBTCForm extends Component {
   handleCreate = (address, name) => {
     const { currentTokenPairInfo: info, addAddress } = this.props;
     const chainSymbol = getFullChainName(info.toChainSymbol);
-    console.log('chainSymbol', chainSymbol, 'currentTokenPairInfo', info, address, name)
     addAddress(chainSymbol, address, {
       name,
       address,

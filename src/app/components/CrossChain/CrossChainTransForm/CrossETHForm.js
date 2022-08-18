@@ -347,7 +347,6 @@ class CrossETHForm extends Component {
   handleCreate = (address, name) => {
     const { currentTokenPairInfo: info, addAddress } = this.props;
     const chainSymbol = getFullChainName(info.toChainSymbol);
-    console.log('chainSymbol', chainSymbol, 'currentTokenPairInfo', info, address, name)
     addAddress(chainSymbol, address, {
       name,
       address,

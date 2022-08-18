@@ -213,7 +213,6 @@ class ETHNormalTransForm extends Component {
     checkETHAddr(value).then(ret => {
       if (ret) {
         const isNewContacts = this.props.hasSameContact(value, chainSymbol);
-        console.log('isNewContacts', isNewContacts)
         if (!this.state.advanced) {
           this.updateGasLimit();
         }
@@ -222,7 +221,6 @@ class ETHNormalTransForm extends Component {
         })
         callback();
       } else {
-        console.log('check false')
         this.setState({
           isNewContacts: false
         })

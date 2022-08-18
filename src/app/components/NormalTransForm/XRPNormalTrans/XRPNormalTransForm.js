@@ -63,7 +63,6 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   }
 
   const handleCreate = (address, name) => {
-    console.log(constants)
     addAddress(chainSymbol, address, {
       name,
       address,

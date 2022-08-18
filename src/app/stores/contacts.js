@@ -116,9 +116,7 @@ class Contacts {
   }
 
   @action delAddress(chain, addr) {
-    console.log('chain', chain, addr)
     addr = String(addr).toLocaleLowerCase();
-    console.log('chain2', chain, addr)
     return new Promise((resolve, reject) => {
       wand.request('contact_delAddress', [chain, addr], (err, ret) => {
         if (err) {
