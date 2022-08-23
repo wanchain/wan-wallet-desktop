@@ -121,7 +121,7 @@ class Accounts extends Component {
     });
 
     return (
-      <div className="account">==
+      <div className="account">
         <Row className="mainBody">
           <Col>
             <Table components={components} rowClassName={() => 'editable-row'} pagination={false} columns={this.columnsTree} dataSource={addresses}></Table>
