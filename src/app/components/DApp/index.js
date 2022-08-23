@@ -24,6 +24,8 @@ const WAN_PATH = "m/44'/5718350'/0'";
   addrSelectedList: stores.wanAddress.addrSelectedList,
   getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
+  ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  trezorAddrList: stores.wanAddress.trezorAddrList,
 }))
 
 @observer
@@ -474,7 +476,15 @@ class DApp extends Component {
   }
 
   getNameByAddr(addr) {
-    const item = this.props.getAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+    console.log(addr)
+    let item;
+    if (this.addresses[addr].walletID === WALLETID.LEDGER) {
+      item = this.props.ledgerAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+    } else if (this.addresses[addr].walletID === WALLETID.TREZOR) {
+      item = this.props.trezorAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+    } else {
+      item = this.props.getAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+    }
     return item ? item.name : '';
   }
 
