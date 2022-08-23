@@ -8,6 +8,7 @@ import Config from 'containers/Config';
 import Network from 'containers/Network';
 import ImportPrivateKey from 'containers/ImportPrivateKey';
 import DAppManage from 'containers/DAppManage';
+import Contacts from 'containers/Contacts';
 import style from './index.less';
 
 const { TabPane } = Tabs;
@@ -30,6 +31,7 @@ class Settings extends Component {
     network: <Network />,
     importPrivateKey: <ImportPrivateKey />,
     application: <DAppManage />,
+    addressBook: <Contacts />,
   }
 
   renderTab = data => data.map(item => <TabPane tab={item.title} key={item.key}>{item.content}</TabPane>);

@@ -37,7 +37,7 @@ class Accounts extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans path={record.path} from={record.address} walletID={record.wid} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
+      render: (text, record) => <div><SendNormalTrans isHardwareWallet={true} path={record.path} from={record.address} walletID={record.wid} balance={record.balance} handleSend={this.handleSend} chainType={this.props.chainType} disablePrivateTx = {true} /></div>
     }
   ];
 

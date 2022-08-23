@@ -5,7 +5,7 @@ import { Button, Input, message, Modal } from 'antd';
 
 import style from './index.less';
 import { WANPATH } from 'utils/settings';
-import { openScanOTA, createBTCAddr, createETHAddr, createXRPAddr } from 'utils/helper';
+import { initScanOTA, openScanOTA, createBTCAddr, createETHAddr, createXRPAddr } from 'utils/helper';
 
 message.config({
   duration: 2,
@@ -28,7 +28,9 @@ message.config({
   addAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addETHAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
-  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args)
+  updateUserAccountDB: (...args) => stores.wanAddress.updateUserAccountDB(...args),
+  revealContacts: pwd => stores.contacts.revealContacts(pwd),
+  resetContacts: () => stores.contacts.reset(),
 }))
 
 @observer
@@ -51,6 +53,7 @@ class Login extends Component {
           return;
         }
         if (this.props.isFirstLogin) {
+          this.props.revealContacts(pwd);
           this.props.setIsFirstLogin(false);
         }
         this.props.setAuth(true);
@@ -59,11 +62,12 @@ class Login extends Component {
           await this.props.updateUserAccountDB('1.0.0', true);
         }
         // Open scanner to scan the smart contract to get private tx balance.
-        if (this.props.settings.scan_ota) {
-          const normalObj = Object.values(this.props.addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`]);
-          const importObj = Object.values(this.props.addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`]);
-          const rawKeyObj = Object.values(this.props.addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`]);
-          openScanOTA([].concat(normalObj, importObj, rawKeyObj));
+        let scanOtaKeyList = Object.keys(this.props.settings.scan_ota_list);
+        if (scanOtaKeyList.length) {
+          openScanOTA(scanOtaKeyList.map(v => {
+            let item = v.split('_');
+            return [Number(item[0]), item[1]];
+          }));
         }
 
         if (!Object.keys(this.props.btcAddrInfo.normal).length) {
@@ -112,7 +116,11 @@ class Login extends Component {
   }
 
   handleOk = () => {
-    wand.request('phrase_reset', null, () => {});
+    this.props.resetContacts().then(res => {
+      if (res) {
+        wand.request('phrase_reset', null, () => {});
+      }
+    });
   }
 
   render () {

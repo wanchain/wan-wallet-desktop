@@ -10,6 +10,8 @@ import { getTypeByWalletId } from 'utils/helper';
 @inject(stores => ({
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
+  settings: stores.session.settings,
+  updateInsteadSettings: (key, value) => stores.session.updateInsteadSettings(key, value),
   deleteWANAccount: (type, addr) => stores.wanAddress.deleteAddress(type, addr),
   deleteBTCAccount: (type, addr) => stores.btcAddress.deleteAddress(type, addr),
   deleteETHAccount: (type, addr) => stores.ethAddress.deleteAddress(type, addr),
@@ -120,6 +122,13 @@ class CopyAndQrcode extends Component {
     this.handleDeleteCancel();
   }
 
+  delScanSingleOta = (wid, accountPath) => {
+    let scan_ota_list = Object.assign({}, this.props.settings.scan_ota_list);
+    const path = `${wid}_${accountPath}`;
+    delete scan_ota_list[path];
+    this.props.updateInsteadSettings('scan_ota_list', scan_ota_list);
+  }
+
   deleteAccount = () => {
     const { addr, type, path, wid } = this.props;
     wand.request('account_delete', { walletID: wid, path, chainType: type, address: addr }, async (err, ret) => {
@@ -129,6 +138,7 @@ class CopyAndQrcode extends Component {
         if (ret) {
           message.success(intl.get('CopyAndQrcode.deleteSuccessfulText'));
           this.props[`delete${type}Account`](getTypeByWalletId(wid), addr); // Delete in view
+          this.delScanSingleOta(wid, path);
         } else {
           message.warn(intl.get('CopyAndQrcode.deleteFailedText'));
         }

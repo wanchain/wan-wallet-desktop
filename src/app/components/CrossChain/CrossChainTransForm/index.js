@@ -2,12 +2,14 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip } from 'antd';
+import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComplete, Input, Row, Col } from 'antd';
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
+import AddContactsModal from '../../AddContacts/AddContactsModal';
+import ChooseContactsModal from '../../AddContacts/ChooseContactsModal';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
 import { INBOUND, CROSS_TYPE, FAST_GAS, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm';
@@ -16,6 +18,9 @@ import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getV
 
 const Confirm = Form.create({ name: 'CrossChainConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
+const { Option } = AutoComplete;
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
+const ChooseContactsModalForm = Form.create({ name: 'AddContactsModal' })(ChooseContactsModal);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -25,8 +30,11 @@ const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionFor
   currentTokenPairInfo: stores.crossChain.currentTokenPairInfo,
   transParams: stores.sendCrossChainParams.transParams,
   coinPriceObj: stores.portfolio.coinPriceObj,
+  contacts: stores.contacts.contacts,
   updateTransParams: (addr, paramsObj) => stores.sendCrossChainParams.updateTransParams(addr, paramsObj),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -45,6 +53,10 @@ class CrossChainTransForm extends Component {
       operationFee: 0,
       minQuota: 0,
       maxQuota: 0,
+      contactsList: [],
+      isNewContacts: false,
+      showAddContacts: false,
+      showChooseContacts: false,
     }
   }
 
@@ -69,6 +81,7 @@ class CrossChainTransForm extends Component {
 
   componentDidMount() {
     const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
+    this.processContacts();
     getFees(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
       this.setState({ operationFee: fromWei(res[0]) });
     }).catch(err => {
@@ -81,6 +94,16 @@ class CrossChainTransForm extends Component {
     this.setState = (state, callback) => {
       return false;
     };
+  }
+
+  processContacts = () => {
+    const { contacts, currentTokenPairInfo: info, type } = this.props;
+    const { normalAddr } = contacts;
+    const chainSymbol = getFullChainName(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
+    let contactsList = Object.values(normalAddr[chainSymbol]);
+    this.setState({
+      contactsList
+    })
   }
 
   handleConfirmCancel = () => {
@@ -122,6 +145,9 @@ class CrossChainTransForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
         addrType = getInfoByAddress(to, [], toAddrInfo).type;
+      } else if (this.contactsList.find(v => v.name === to || v.address === to)) {
+        const contactItem = this.contactsList.find(v => v.name === to || v.address === to);
+        to = contactItem.address;
       }
 
       let toPath;
@@ -245,9 +271,14 @@ class CrossChainTransForm extends Component {
   }
 
   checkTo = async (rule, value, callback) => {
-    const { currentTokenPairInfo: info, type } = this.props;
+    const { currentTokenPairInfo: info, type, hasSameContact } = this.props;
     let chain = type === INBOUND ? info.toChainSymbol : info.fromChainSymbol;
+    const chainSymbol = getFullChainName(chain);
+    const isNewContacts = hasSameContact(value, chainSymbol);
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
+      this.setState({
+        isNewContacts: false
+      })
       callback();
     } else {
       let isValid;
@@ -257,7 +288,17 @@ class CrossChainTransForm extends Component {
       } else {
         isValid = await checkAddressByChainType(value, chain);
       }
-      isValid ? callback() : callback(intl.get('NormalTransForm.invalidAddress'));
+      if (isValid) {
+        this.setState({
+          isNewContacts: !isNewContacts
+        })
+        callback();
+      } else {
+        this.setState({
+          isNewContacts: false
+        })
+        callback(intl.get('NormalTransForm.invalidAddress'));
+      }
     }
   }
 
@@ -281,9 +322,61 @@ class CrossChainTransForm extends Component {
     });
   }
 
+  filterToOption = (inputValue, option) => {
+    const value = option.props.name;
+    return value.toLowerCase().indexOf(inputValue.toLowerCase()) > -1;
+  }
+
+  renderOption = item => {
+    return (
+      <Option key={item.address} text={item.name} name={item.name + '-' + item.address}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}-{item.address}
+          </span>
+        </div>
+      </Option>
+    )
+  }
+
+  handleShowAddContactModal = () => {
+    this.setState({ showAddContacts: !this.state.showAddContacts });
+  }
+
+  handleCreate = (address, name) => {
+    const { currentTokenPairInfo: info, addAddress } = this.props;
+    const chainSymbol = getFullChainName(info.toChainSymbol);
+    addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      this.setState({
+        isNewContacts: false
+      })
+    })
+  }
+
+  handleChoose = address => {
+    const { form } = this.props;
+    form.setFieldsValue({
+      to: address
+    });
+  }
+
+  getChooseToAdd = () => {
+    const { form } = this.props;
+    let to = form.getFieldValue('to');
+    if (this.accountSelections.includes(to)) {
+      to = this.accountDataSelections.find(val => val.name === to).address;
+    }
+    return to;
+  }
+
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee } = this.state;
+    const { getFieldDecorator } = form;
+    const { advancedVisible, advanced, advancedFee, operationFee, showChooseContacts, isNewContacts, showAddContacts, contactsList } = this.state;
     let gasFee, totalFee, desChain, title, tokenSymbol, toAccountList, quotaUnit, canAdvance, feeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
@@ -303,6 +396,14 @@ class CrossChainTransForm extends Component {
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
     }
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
+    this.accountDataSelections = this.addressSelections.map(val => {
+      const name = getValueByAddrInfo(val, 'name', toAccountList);
+      return {
+        address: val,
+        name: name,
+        text: `${name}-${val}`
+      }
+    })
     gasFee = advanced ? advancedFee : new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
@@ -370,14 +471,64 @@ class CrossChainTransForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.quota')}
               />
-              <AutoCompleteForm
+              {/* <AutoCompleteForm
                 form={form}
                 colSpan={6}
                 formName='to'
                 dataSource={this.accountSelections}
                 formMessage={intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}
                 options={{ rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountSelections[0] }}
-              />
+              /> */}
+              <div className="validator-line">
+                <Row type="flex" justify="space-around" align="top">
+                  <Col span={6}><span className="stakein-name">{intl.get('NormalTransForm.to') + ' (' + getFullChainName(desChain) + ')'}</span></Col>
+                  <Col span={18}>
+                    <Form layout="inline" id="selectForm">
+                      <Form.Item>
+                        {getFieldDecorator('to', { rules: [{ required: true }, { validator: this.checkTo }], initialValue: this.accountDataSelections[0].name })
+                          (
+                            <AutoComplete
+                              dataSource={this.accountDataSelections.map(this.renderOption)}
+                              filterOption={this.filterToOption}
+                              optionLabelProp="text"
+                              autoFocus
+                            >
+                              <Input suffix={
+                                <Icon
+                                  type="idcard"
+                                  onClick={() => {
+                                    this.setState({
+                                      showChooseContacts: !showChooseContacts
+                                    })
+                                  }}
+                                  className="colorInput"
+                                />
+                              } />
+                            </AutoComplete>
+                          )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+              {
+                isNewContacts
+                  ? (
+                      <div className="validator-line" style={{ margin: '0px 0px 10px', padding: '0 10px', height: 'auto' }}>
+                        <Row type="flex" justify="space-around" align="top">
+                          <Col span={6}></Col>
+                          <Col span={18}>
+                            <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                              <span className={style.magicTxt}>
+                                {intl.get('NormalTransForm.addNewContacts')}
+                              </span>
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                  )
+                : null
+              }
               <CommonFormItem
                 form={form}
                 colSpan={6}
@@ -412,6 +563,12 @@ class CrossChainTransForm extends Component {
         </Modal>
         <Confirm tokenSymbol={tokenSymbol} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
+        {
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>
+        }
+        {
+          showChooseContacts && <ChooseContactsModalForm list={contactsList} to={this.getChooseToAdd()} handleChoose={this.handleChoose} onCancel={() => this.setState({ showChooseContacts: !showChooseContacts })}></ChooseContactsModalForm>
+        }
       </div>
     );
   }

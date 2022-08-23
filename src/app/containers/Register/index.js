@@ -33,7 +33,8 @@ const Step = Steps.Step;
   addBTCAddress: newAddr => stores.btcAddress.addAddress(newAddr),
   addXRPAddress: newAddr => stores.xrpAddress.addAddress(newAddr),
   addBNBAddress: newAddr => stores.bnbAddress.addAddress(newAddr),
-  setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret)
+  setMnemonicStatus: ret => stores.session.setMnemonicStatus(ret),
+  savePwdhash: pwd => stores.contacts.savePwdhash(pwd)
 }))
 
 @observer
@@ -119,7 +120,7 @@ class Register extends Component {
           } else {
             try {
               let [wanAddrInfo, ethAddrInfo, btcMainAddInfo, xrpAddrInfo] = await Promise.all([
-                createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1', settings.scan_ota),
+                createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
                 createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
                 createBTCAddr(isMainNetwork ? BTCPATH_MAIN : BTCPATH_TEST, 0),
                 createXRPAddr(),
@@ -129,6 +130,7 @@ class Register extends Component {
               addBNBAddress(ethAddrInfo);
               addBTCAddress(btcMainAddInfo);
               addXRPAddress(xrpAddrInfo);
+              this.props.savePwdhash(pwd);
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });

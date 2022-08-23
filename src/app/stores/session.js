@@ -22,8 +22,9 @@ class Session {
     reinput_pwd: false,
     staking_advance: false,
     offline_wallet: false,
-    scan_ota: false,
+    // scan_ota: false,
     logout_timeout: '5',
+    scan_ota_list: {},
   };
 
   @observable needFirstDBUpdate = false;
@@ -96,6 +97,19 @@ class Session {
       if (ret) {
         Object.assign(self.settings, newValue);
       }
+    })
+  }
+
+  @action updateInsteadSettings(key, value) {
+    return new Promise((resolve, reject) => {
+      wand.request('setting_set', { settings: { [key]: value } }, (err, ret) => {
+        if (err) {
+          reject(err);
+        } else {
+          self.settings[key] = value;
+          resolve(ret);
+        }
+      })
     })
   }
 

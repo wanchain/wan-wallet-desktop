@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { BigNumber } from 'bignumber.js';
-import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Select, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin, AutoComplete } from 'antd';
 import intl from 'react-intl-universal';
 import { toWei } from 'utils/support';
 import { DEFAULT_GAS, PRIVATE_TX_AMOUNT_SELECTION } from 'utils/settings';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
+import AddContactsModal from '../AddContacts/AddContactsModal';
 import { checkWanAddr, checkETHAddr, getBalanceByAddr, checkAmountUnit, formatAmount, estimateGasForNormalTrans } from 'utils/helper';
 import { isValidChecksumOTAddress } from 'wanchain-util';
 import style from './index.less';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
 const { Option } = Select;
 const PrivateTxGasLimit = 100000;
+const chainSymbol = 'Wanchain';
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -28,8 +31,12 @@ const PrivateTxGasLimit = 100000;
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
+  contacts: stores.contacts.contacts,
   updateGasLimit: gasLimit => stores.sendTransParams.updateGasLimit(gasLimit),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  addPrivateAddress: (addr, val) => stores.contacts.addPrivateAddress(addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -42,10 +49,28 @@ class NormalTransForm extends Component {
     advancedVisible: false,
     isPrivate: false,
     needSplitAmount: false,
+    contactsList: [],
+    isNewContacts: false,
+    showAddContacts: false
   }
 
   componentWillUnmount() {
     this.setState = () => false;
+  }
+
+  componentDidMount() {
+    this.processContacts();
+  }
+
+  processContacts = () => {
+    const { normalAddr, privateAddr } = this.props.contacts;
+    let contactsList = Object.values(normalAddr[chainSymbol]);
+    if (!this.props.isHardwareWallet) {
+      contactsList = contactsList.concat(Object.values(privateAddr[chainSymbol]))
+    }
+    this.setState({
+      contactsList
+    })
   }
 
   onAdvanced = () => {
@@ -191,9 +216,11 @@ class NormalTransForm extends Component {
   checkAddr = async (rule, value, callback) => {
     let isNormalAddress = await this.checkToWanAddr(value);
     let isPrivate = this.state.isPrivate;
+    const isNewContacts = this.props.hasSameContact(value, chainSymbol);
     if (isNormalAddress) {
       this.setState({
-        isPrivate: false
+        isPrivate: false,
+        isNewContacts: !isNewContacts
       }, () => {
         if (isPrivate) {
           this.props.form.validateFields(['amount']);
@@ -201,12 +228,16 @@ class NormalTransForm extends Component {
       });
       callback();
     } else if (this.props.disablePrivateTx) {
+      this.setState({
+        isNewContacts: false
+      })
       callback(intl.get('NormalTransForm.invalidAddress'));
     } else {
       let isPrivateAddress = this.checkToWanPrivateAddr(value);
       if (isPrivateAddress) {
         this.setState({
-          isPrivate: true
+          isPrivate: true,
+          isNewContacts: !isNewContacts
         }, () => {
           if (!isPrivate) {
             this.props.form.validateFields(['amount']);
@@ -214,6 +245,9 @@ class NormalTransForm extends Component {
         });
         callback();
       } else {
+        this.setState({
+          isNewContacts: false
+        })
         callback(intl.get('NormalTransForm.invalidAddress'));
       }
     }
@@ -301,9 +335,60 @@ class NormalTransForm extends Component {
     }
   }
 
+  renderOption = item => {
+    return (
+      <AutoComplete.Option key={item.address} text={item.address} name={item.name}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}-{item.address}
+          </span>
+        </div>
+      </AutoComplete.Option>
+    )
+  }
+
+  handleCreate = (address, name) => {
+    if (!this.state.isPrivate) {
+      this.props.addAddress(chainSymbol, address, {
+        name,
+        address,
+        chainSymbol
+      }).then(async () => {
+        this.setState({
+          isNewContacts: false
+        })
+        this.processContacts();
+      })
+    } else {
+      this.props.addPrivateAddress(address, {
+        name,
+        address,
+        chainSymbol
+      }).then(() => {
+        this.setState({
+          isNewContacts: false
+        })
+        this.processContacts();
+      })
+    }
+  }
+
+  handleShowAddContactModal = () => {
+    this.setState({
+      showAddContacts: !this.state.showAddContacts
+    })
+  }
+
+  filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
+  }
+
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance } = this.props;
-    const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate } = this.state;
+    const { advancedVisible, confirmVisible, advanced, disabledAmount, isPrivate, contactsList, isNewContacts, showAddContacts } = this.state;
     if (!this.props.transParams[from]) {
       return false;
     }
@@ -338,7 +423,28 @@ class NormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
                 {getFieldDecorator('to', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  (
+                    <AutoComplete
+                      getPopupContainer={node => node.parentNode}
+                      size="large"
+                      style={{ width: '100%' }}
+                      filterOption={this.filterContactList}
+                      dataSource={contactsList.map(this.renderOption)}
+                      placeholder="input here"
+                      optionLabelProp="text"
+                    >
+                      <Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />
+                    </AutoComplete>
+                  )}
+                  {
+                    isNewContacts
+                    ? <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                      <span className={style.magicTxt}>
+                        {intl.get('NormalTransForm.addNewContacts')}
+                      </span>
+                    </Button>
+                    : null
+                  }
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.mode')}>
                 {getFieldDecorator('mode', { initialValue: !this.props.disablePrivateTx && isPrivate ? 'private' : 'normal' })
@@ -381,6 +487,9 @@ class NormalTransForm extends Component {
         {
           confirmVisible &&
           <Confirm visible={true} isPrivate={isPrivate} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        }
+        {
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={chainSymbol}></AddContactsModalForm>
         }
       </div>
     );

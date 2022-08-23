@@ -70,12 +70,12 @@ class SendNormalTrans extends Component {
 
   render() {
     const { visible, loading, spin } = this.state;
-    const { balance, walletID } = this.props;
+    const { balance, walletID, isHardwareWallet } = this.props;
 
     return (
       <div>
         <Button type="primary" className={this.props.buttonClassName ? this.props.buttonClassName : ''} onClick={this.showModal}>{intl.get('Common.send')}</Button>
-        { visible && <CollectionCreateForm balance={balance} walletID={walletID} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx} />}
+        { visible && <CollectionCreateForm isHardwareWallet={isHardwareWallet} balance={balance} walletID={walletID} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} disablePrivateTx={this.props.disablePrivateTx} />}
       </div>
     );
   }

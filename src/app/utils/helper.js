@@ -7,6 +7,7 @@ import bech32 from 'bech32';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, BSCPATH_MAIN, BSCPATH_TEST, DECIMALS, MAIN, CHAINID } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
+import { reject } from 'lodash';
 
 const web3 = new Web3();
 const wanUtil = require('wanchain-util');
@@ -747,7 +748,20 @@ export const stopScanOTA = function () {
   })
 }
 
-export const createFirstAddr = function (walletID, chainType, path, name, scan_ota) {
+export const stopSingleScan = function (path) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_stopSingleScan', { path }, function (err, res) {
+      if (err) {
+        console.log('Stop single OTA scanner failed:', err);
+        return reject(err);
+      } else {
+        return resolve();
+      }
+    });
+  })
+}
+
+export const createFirstAddr = function (walletID, chainType, path, name) {
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
       if (!err) {
@@ -766,9 +780,9 @@ export const createFirstAddr = function (walletID, chainType, path, name, scan_o
               }
 
               // Scan new account
-              if (scan_ota) {
-                openScanOTA([[1, path]]);
-              }
+              // if (scan_ota) {
+              //   openScanOTA([[1, path]]);
+              // }
             } else {
               addressInfo = {
                 start: 0,
@@ -1326,4 +1340,58 @@ export const converter = function (str, from = 'utf8', to = 'hex') {
       }
     });
   });
+}
+
+export const checkAddrByCT4Contacts = async (address, chain) => {
+  let valid = false;
+  try {
+    switch (chain) {
+      case 'Wanchain':
+        valid = await checkToWanAddr(address);
+        break;
+      case 'Ethereum':
+        valid = await checkETHAddr(address);
+        break;
+      case 'Bitcoin':
+        valid = await checkBTCAddr(address);
+        break;
+      case 'EOS':
+        valid = await checkEosNameExist(address);
+        break;
+      case 'XRPL':
+        valid = await checkXRPAddr(address);
+        valid = valid[0] || valid[1];
+        break;
+      case 'BSC':
+        valid = await checkETHAddr(address);
+        break;
+      default:
+        valid = false;
+    }
+  } catch (e) {
+    valid = false;
+  }
+  return valid;
+}
+
+export const checkToWanAddr = (address) => {
+  return new Promise((resolve, reject) => {
+    Promise.all([checkWanAddr(address), checkETHAddr(address)]).then(results => {
+      if (results[0] || results[1]) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    }).catch(() => {
+      resolve(false);
+    });
+  });
+}
+
+export const getHashKey = (key) => {
+  let kBuf = Buffer.from(key, 'utf8');
+  let h = keccak('keccak256');
+  h.update(kBuf);
+  let hashKey = h.digest('hex');
+  return hashKey;
 }

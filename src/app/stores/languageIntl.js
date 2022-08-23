@@ -517,6 +517,9 @@ class LanguageIntl {
       }, {
         title: intl.get('Settings.network'),
         key: 'network',
+      }, {
+        title: intl.get('Settings.addressBook'),
+        key: 'addressBook',
       }
     ];
   }
@@ -537,6 +540,26 @@ class LanguageIntl {
       },
       {
         title: intl.get('DApp.operation'),
+      },
+      {
+        title: intl.get('DApp.addressBook'),
+      }
+    ];
+  }
+
+  @computed get settingContactsColumns() {
+    return self.language && [
+      {
+        title: intl.get('DApp.chainCol'),
+      },
+      {
+        title: intl.get('DApp.nameCol'),
+      },
+      {
+        title: intl.get('DApp.addressCol'),
+      },
+      {
+        title: '',
       }
     ];
   }

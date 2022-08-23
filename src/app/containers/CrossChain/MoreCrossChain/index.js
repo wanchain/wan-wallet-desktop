@@ -68,8 +68,8 @@ class MoreCrossChain extends Component {
 
   getCCTokenList = () => {
     let { getCrossChainTokenList } = this.props;
-    // TODO: Remove XRP tokenPairID
-    let getCrossChainTokenListWithFilter = getCrossChainTokenList // .filter(v => v.chain !== 'XRP')
+    // TODO: Remove EOS tokenPairID
+    let getCrossChainTokenListWithFilter = getCrossChainTokenList.filter(v => v.chain !== 'EOS')
     let text = this.state.filterText.trim().toLowerCase();
     let lists = [];
     if (text.length === 0) {

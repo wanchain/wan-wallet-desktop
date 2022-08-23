@@ -2,14 +2,16 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
-import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, Icon, Radio, Checkbox, message, Spin, AutoComplete } from 'antd';
 import AdvancedOptionForm from 'components/AdvancedOptionForm';
+import AddContactsModal from '../AddContacts/AddContactsModal';
 import ConfirmForm from 'components/NormalTransForm/ConfirmForm';
-import { checkWanAddr, checkETHAddr, checkBTCAddr, getBalanceByAddr, checkAmountUnit, encodeTransferInput } from 'utils/helper';
+import { checkWanAddr, checkETHAddr, checkBTCAddr, getBalanceByAddr, checkAmountUnit, encodeTransferInput, getFullChainName } from 'utils/helper';
 import style from './index.less';
 
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionForm);
+const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
 
 @inject(stores => ({
   settings: stores.session.settings,
@@ -24,10 +26,13 @@ const AdvancedOption = Form.create({ name: 'NormalTransForm' })(AdvancedOptionFo
   minGasPrice: stores.sendTransParams.minGasPrice,
   maxGasPrice: stores.sendTransParams.maxGasPrice,
   averageGasPrice: stores.sendTransParams.averageGasPrice,
+  contacts: stores.contacts.contacts,
   updateGasLimit: gasLimit => stores.sendTransParams.updateGasLimit(gasLimit),
   updateTransParams: (addr, paramsObj) => stores.sendTransParams.updateTransParams(addr, paramsObj),
   getTokenInfoFromTokensListByAddr: addr => stores.tokens.getTokenInfoFromTokensListByAddr(addr),
   getChainAddressInfoByChain: chain => stores.tokens.getChainAddressInfoByChain(chain),
+  addAddress: (chain, addr, val) => stores.contacts.addAddress(chain, addr, val),
+  hasSameContact: (addr, chain) => stores.contacts.hasSameContact(addr, chain),
 }))
 
 @observer
@@ -38,12 +43,33 @@ class TokenNormalTransForm extends Component {
     confirmVisible: false,
     disableAmount: false,
     advancedVisible: false,
+    contactsList: [],
+    isNewContacts: false,
+    showAddContacts: false,
+    chainSymbol: '',
   }
 
   componentWillUnmount() {
     this.setState = (state, callback) => {
       return false;
     };
+  }
+
+  componentDidMount() {
+    this.setState({
+      chainSymbol: getFullChainName(this.props.currTokenChain)
+    }, () => {
+      this.processContacts();
+    })
+  }
+
+  processContacts = () => {
+    const { chainSymbol } = this.state;
+    const { normalAddr } = this.props.contacts;
+    let contactsList = Object.values(normalAddr[chainSymbol]);
+    this.setState({
+      contactsList
+    })
   }
 
   onAdvanced = () => {
@@ -174,12 +200,15 @@ class TokenNormalTransForm extends Component {
 
   checkToWANAddr = (rule, value, callback) => {
     let { tokenAddr, currTokenChain } = this.props;
+    const { chainSymbol } = this.state;
     if (value === undefined) {
+      this.setState({ isNewContacts: false });
       callback(rule.message);
       return;
     }
 
     if (value.toLowerCase() === tokenAddr.toLowerCase()) {
+      this.setState({ isNewContacts: false });
       callback(rule.message);
     }
 
@@ -201,17 +230,21 @@ class TokenNormalTransForm extends Component {
         callback(rule.message);
         return;
     }
+    const isNewContacts = this.props.hasSameContact(value, chainSymbol);
     checkFunc(value).then(ret => {
       if (ret) {
         if (!this.state.advanced) {
           this.updateGasLimit();
         }
+        this.setState({ isNewContacts: !isNewContacts });
         callback();
       } else {
+        this.setState({ isNewContacts: false });
         callback(rule.message);
       }
     }).catch(err => {
       console.log('checkToWANAddr:', err)
+      this.setState({ isNewContacts: false });
       callback(intl.get('network.down'));
     })
   }
@@ -260,9 +293,48 @@ class TokenNormalTransForm extends Component {
     }
   }
 
+  renderOption = item => {
+    return (
+      <AutoComplete.Option key={item.address} text={item.address} name={item.name}>
+        <div className="global-search-item">
+          <span className="global-search-item-desc">
+            {item.name}-{item.address}
+          </span>
+        </div>
+      </AutoComplete.Option>
+    )
+  }
+
+  handleCreate = (address, name) => {
+    const { chainSymbol } = this.state;
+    this.props.addAddress(chainSymbol, address, {
+      name,
+      address,
+      chainSymbol
+    }).then(async () => {
+      this.setState({
+        isNewContacts: false
+      })
+      this.processContacts();
+    })
+  }
+
+  handleShowAddContactModal = () => {
+    this.setState({
+      showAddContacts: !this.state.showAddContacts
+    })
+  }
+
+  filterContactList = (inputValue, option) => {
+    const text = option.props.text.toLowerCase();
+    const name = option.props.name.toLowerCase();
+    const inp = inputValue.toLowerCase();
+    return text.includes(inp) || name.includes(inp);
+  }
+
   render() {
     const { loading, form, from, minGasPrice, maxGasPrice, averageGasPrice, gasFeeArr, settings, balance, currTokenChain, symbol } = this.props;
-    const { advancedVisible, confirmVisible, advanced, disableAmount } = this.state;
+    const { advancedVisible, confirmVisible, advanced, disableAmount, contactsList, isNewContacts, showAddContacts, chainSymbol } = this.state;
     const { gasLimit, nonce } = this.props.transParams[from];
     const { minFee, averageFee, maxFee } = gasFeeArr;
     const { getFieldDecorator } = form;
@@ -292,7 +364,28 @@ class TokenNormalTransForm extends Component {
               </Form.Item>
               <Form.Item label={intl.get('NormalTransForm.to')}>
                 {getFieldDecorator('transferTo', { rules: [{ required: true, message: intl.get('NormalTransForm.addressIsIncorrect'), validator: this.checkToWANAddr }] })
-                  (<Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />)}
+                  (
+                    <AutoComplete
+                      getPopupContainer={node => node.parentNode}
+                      size="large"
+                      style={{ width: '100%' }}
+                      filterOption={this.filterContactList}
+                      dataSource={contactsList.map(this.renderOption)}
+                      placeholder="input here"
+                      optionLabelProp="text"
+                    >
+                      <Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />
+                    </AutoComplete>
+                  )}
+                  {
+                    isNewContacts
+                    ? <Button className={style.addNewContacts} shape="round" onClick={this.handleShowAddContactModal}>
+                      <span className={style.magicTxt}>
+                        {intl.get('NormalTransForm.addNewContacts')}
+                      </span>
+                    </Button>
+                    : null
+                  }
               </Form.Item>
               <Form.Item label={intl.get('Common.amount')}>
                 {getFieldDecorator('amount', { rules: [{ required: true, message: intl.get('NormalTransForm.amountIsIncorrect'), validator: this.checkTokenAmount }] })
@@ -332,6 +425,9 @@ class TokenNormalTransForm extends Component {
         {
           confirmVisible &&
           <Confirm tokenAddr={this.props.tokenAddr} transType={this.props.transType} chain={currTokenChain} visible={true} onCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        }
+        {
+          showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('transferTo')} chain={chainSymbol}></AddContactsModalForm>
         }
       </div>
     );
