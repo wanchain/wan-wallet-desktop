@@ -245,7 +245,7 @@ class Contacts extends Component {
         };
         const data = this.props.privateData;
         const len = Object.keys(data[value]).length;
-        if (index > 0 && this.state.rows[index - 1].chainSymbol === this.state.rows[index].chainSymbol) {
+        if (index > 0 && this.state.privateRows[index - 1].chainSymbol === this.state.privateRows[index].chainSymbol) {
           obj.props.rowSpan = 0;
         } else {
           obj.props.rowSpan = len;
