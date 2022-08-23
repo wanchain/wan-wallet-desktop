@@ -31,7 +31,6 @@ class DAppMarket extends Component {
       selectType: ALLCATEGORIES,
       dAppDetail: null,
       showDetail: false,
-      currentPage: 1,
       searchbarWords: '',
       search: '',
     };
@@ -51,11 +50,11 @@ class DAppMarket extends Component {
   }
 
   handleTypeChange = value => {
-    this.setState({ selectType: value, currentPage: 1 })
+    this.setState({ selectType: value })
   }
 
   handleSortChange = value => {
-    this.setState({ sortBy: value, currentPage: 1 });
+    this.setState({ sortBy: value });
   }
 
   handleJumpToWebsite = url => {
@@ -84,12 +83,6 @@ class DAppMarket extends Component {
     this.setState({ dAppDetail: null, showDetail: false })
   }
 
-  onPageChange = page => {
-    this.setState({
-      currentPage: page,
-    });
-  }
-
   handleSearch = e => {
     if (e.target.value === '') {
       this.setState({
@@ -111,9 +104,9 @@ class DAppMarket extends Component {
   }
 
   render() {
-    const { currentPage, searchbarWords } = this.state;
+    const { searchbarWords } = this.state;
     const { formatedDApp, dAppTypes, dAppsOnSideBar } = this.props;
-    let dAppsList, dAppsListPagination;
+    let dAppsList;
 
     // Filter By Search
     dAppsList = this.state.search === '' ? formatedDApp : formatedDApp.filter(item => item.name.search(this.state.search) !== -1);
@@ -121,8 +114,6 @@ class DAppMarket extends Component {
     dAppsList = ALLCATEGORIES === this.state.selectType ? dAppsList : dAppsList.filter(item => item.type === this.state.selectType.split('.')[1]);
     // Sort By Ordering
     dAppsList = dAppSort(dAppsList, this.state.sortBy, DAPPORDERING);
-    // Divided By Pagination
-    dAppsListPagination = dAppsList.filter((item, index) => index >= pageNum * (currentPage - 1) && index <= currentPage * pageNum - 1)
 
     return (
       <div className="account dappStyle">
@@ -163,7 +154,7 @@ class DAppMarket extends Component {
               : <div className={style.rowContent}>
                 <Row className={style.Row2 + ' title'} type="flex">
                   {
-                    dAppsListPagination.map((item, index) =>
+                    dAppsList.map((item, index) =>
                       <Col span={7} className={style.cardDApp + ' col-left'} key={index}>
                         <Row type="flex" justify="center" align="middle">
                           <Col span={5} style={{ textAlign: 'center' }}><Avatar size="large" className={style.dappIcon} src={`data:image/${item.iconType};base64,${item.iconData}`} /></Col>
@@ -193,7 +184,6 @@ class DAppMarket extends Component {
               </div>
           }
         </Spin>
-        <Pagination className={style.pagination} defaultPageSize={pageNum} current={this.state.currentPage} onChange={this.onPageChange} total={dAppsList.length || 1} />
         {this.state.showDetail && <DAppInfo info={this.state.dAppDetail} handleClose={this.closeDetail} />}
       </div>
     );
