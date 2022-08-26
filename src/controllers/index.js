@@ -2551,9 +2551,8 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             break;
         case 'buildTx':
             try {
-                let { walletId, path, txs, chainType } = payload;
-                console.log('buildTx', walletId, path, txs);
-                ret = await offlineDeployer.buildTx(chainType, walletId, path, txs);
+                let { transactions } = payload;
+                ret = await offlineDeployer.buildTx(transactions);
                 console.log('buildTx', ret);
             } catch (e) {
                 logger.error(e.message || e.stack)
@@ -2563,9 +2562,9 @@ ipc.on(ROUTE_CONTRACT, async (event, actionUni, payload) => {
             break;
         case 'getOutputPath':
             try {
-                let { address, chainType } = payload;
-                console.log('getOutputPath', address);
-                ret = await offlineDeployer.getOutputPath(chainType, 'sendTx', address);
+                // let { address, chainType } = payload;
+                // console.log('getOutputPath', address);
+                ret = await offlineDeployer.getOutputPath('sendTx');
                 ret = fs.readFileSync(ret, { encoding: 'utf8'});
             } catch (e) {
                 logger.error(e.message || e.stack)

@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import intl from 'react-intl-universal';
-import { Select, Input, Button, Row, Col, Tooltip, message, Icon } from 'antd';
+import { Select, Input, Button, Row, Col, Tooltip, message, Icon, Table } from 'antd';
 import { wandWrapper } from '../../../utils/support';
 import FileSelection from 'componentUtils/FileSelection';
 import styled, { keyframes } from 'styled-components';
 import { getChainId, getChainInfo } from '../../../utils/helper';
+import { observer, MobXProviderContext } from 'mobx-react';
+import { EditableFormRow, EditableCell } from 'components/Rename';
+
+message.config({
+  duration: 0,
+});
 
 export default function Offline(props) {
   const [transactions, setTransactions] = useState([]);
@@ -17,12 +23,16 @@ export default function Offline(props) {
   const [fromAddress, setFromAddress] = useState();
   const [step, setStep] = useState('build');
   const [chainType, setChainType] = useState('WAN');
+  const [offlinePath, setOfflinePath] = useState();
+  const [abiFile, setAbiFile] = useState();
+  const [offlineJson, setOfflineJson] = useState();
+  const [trxInfo, setTrxInfo] = useState([]);
+  const [inputTrx, setInputTrx] = useState('')
 
   let addresses;
   if (chainType === 'WAN') {
     addresses = wanAddresses;
   } else if (chainType === 'Tron') {
-    console.log({ trxAddresses })
     addresses = trxAddresses;
   } else {
     addresses = ethAddresses;
@@ -35,8 +45,7 @@ export default function Offline(props) {
     getChainId().then(ret => {
       let info = getChainInfo(chainType, Number(ret) === 1 ? 'mainnet' : 'testnet')
       setChainId(info.chainId);
-    }).catch((err) => {
-      console.log('err', err);
+    }).catch(() => {
       message.error('get getChainId failed');
     });
   }, [chainType])
@@ -58,72 +67,80 @@ export default function Offline(props) {
   }, [setTransactions, nonce]);
 
   const buildTransaction = useCallback(() => {
-    const wallet = addresses.filter(v => v.address === fromAddress);
-    console.log('transactions', transactions);
-    const txs = transactions.map(v => {
-      let param;
-      if (v.parameters) {
-        if (v.parameters.includes('{') || v.parameters.includes('}') || v.parameters.includes('[') || v.parameters.includes(']')) {
-          // param = '[' + v.parameters + ']';
-          param = JSON.parse(v.parameters);
-        } else {
-          param = v.parameters.split(',');
-        }
+    if (trxInfo.length !== 0 && !checkTrxInfo()) return;
+    const allAddress = [...wanAddresses, ...trxAddresses, ...ethAddresses];
+    const newTrans = transactions.map(i => {
+      let addrInfo = allAddress.find(j => j.address.toLowerCase() === i.from.toLowerCase())
+      if (addrInfo) {
+        return Object.assign({}, i, { _wallet: { id: addrInfo.wid, path: addrInfo.path } })
+      } else {
+        message.warn('请确认From地址存在于钱包中')
+        return null;
       }
+    }).filter(v => v !== null);
 
-      console.log('param', param);
-      return {
-        toAddress: v.contractAddress ? v.contractAddress.toLowerCase() : undefined,
-        abi: v.abiJson,
-        method: v.method,
-        paras: v.parameters ? param : [],
-        gasPrice: gasPrice * 1e9,
-        gasLimit: v.gasLimit,
-        value: v.value,
-        chainId: chainId,
+    wandWrapper('contract_buildTx', { transactions: newTrans }).then((ret) => {
+      if (ret === true) {
+        message.success('Success');
+        setStep('save');
+        saveToFile();
+      } else {
+        message.error('Build Failed please check SDK log 1');
       }
-    });
-    console.log('txs', txs);
-    const walletId = wallet[0].wid;
-    const path = wallet[0].path;
-    const address = wallet[0].address;
-
-    wandWrapper('contract_updateNonce', { address, nonce, chainType }).then((ret) => {
-      console.log('ret', ret);
-      wandWrapper('contract_buildTx', { walletId, path, txs, chainType }).then((ret) => {
-        console.log('ret', ret);
-        if (ret === true) {
-          message.success('Success');
-          setStep('save');
-        } else {
-          message.error('Build Failed please check SDK log 1');
-        }
-      }).catch(() => {
-        message.error('Failed, please check sdk log 2');
-      });
     }).catch(() => {
-      message.error('Failed, please check sdk log 3');
+      message.error('Failed, please check sdk log 2');
     });
-  }, [nonce, transactions, fromAddress, addresses, chainType, gasPrice, chainId]);
+  }, [trxInfo, nonce, transactions, fromAddress, addresses, chainType, gasPrice, chainId]);
 
   const saveToFile = useCallback(() => {
-    const wallet = addresses.filter(v => v.address === fromAddress);
-    const address = wallet[0].address;
-    wandWrapper('contract_getOutputPath', { address, chainType }).then((ret) => {
+    // const wallet = addresses.filter(v => v.address === fromAddress);
+    // const address = wallet[0].address;
+    wandWrapper('contract_getOutputPath', {}).then((ret) => {
       console.log('2', ret);
-      downloadFile(ret, address, nonce, chainType);
-    }).catch(() => {
+      downloadFile(ret);
+    }).catch((e) => {
       message.error('Failed, please check sdk log 4');
     });
     setStep('build');
   }, [transactions, fromAddress, addresses, nonce]);
 
-  // first empty tx
-  // useEffect(() => {
-  //   if (transactions && transactions.length === 0) {
-  //     modify(0, { nonce: nonce, time: Date.now() });
-  //   }
-  // }, []);
+  const onUploadCheck = (value, files) => {
+    if (value) {
+      var reader = new FileReader();
+      reader.readAsText(files[0], 'UTF-8');
+      reader.onload = (evt) => {
+        var fileString = evt.target.result;
+        let obj = JSON.parse(fileString);
+        obj.some(i => {
+          if (i.chain === 'TRX' && !!i.refBlock) {
+            setTrxInfo([i.refBlock]);
+            return true;
+          }
+          return false;
+        })
+        setOfflineJson(obj);
+        setTransactions(obj)
+      }
+    }
+  }
+
+  const checkTrxInfo = useCallback(() => {
+    const info = trxInfo[0];
+    if (Date.now() - info.timestamp > 2 * 3600 * 1000) {
+      message.warn('TRX交易中的确认块信息已经过期请重新填写');
+      return false;
+    }
+    return true;
+  }, [trxInfo])
+
+  const handleUpdateTrxInfo = () => {
+    try {
+      const infoArr = JSON.parse(inputTrx)
+      setTrxInfo([infoArr])
+    } catch (error) {
+      message.warn('Trx信息有误，请重新填写')
+    }
+  }
 
   // flush new nonce
   useEffect(() => {
@@ -136,32 +153,7 @@ export default function Offline(props) {
     });
   }, [nonce]);
 
-  // console.log('addresses', addresses);
-
   return (<Body>
-    <Title>{intl.get('contract.selectChain')}</Title>
-    <StyledSelect value={chainType} onChange={(v) => { setChainType(v); setFromAddress(undefined) }}>
-      <Select.Option value={'WAN'} key={'WAN'}>WAN</Select.Option>
-      <Select.Option value={'ETH'} key={'ETH'}>ETH</Select.Option>
-      <Select.Option value={'BSC'} key={'BSC'}>BSC</Select.Option>
-      <Select.Option value={'Avalanche'} key={'Avalanche'}>Avalanche</Select.Option>
-      <Select.Option value={'Matic'} key={'Matic'}>Matic</Select.Option>
-      <Select.Option value={'Moonbeam'} key={'Moonbeam'}>Moonbeam</Select.Option>
-      <Select.Option value={'Tron'} key={'Tron'}>Tron</Select.Option>
-      <Select.Option value={'Custom'} key={'Custom'}>Custom</Select.Option>
-    </StyledSelect>
-    <Title>{intl.get('contract.selectAccount2')}</Title>
-    <StyledSelect onChange={(v) => { setFromAddress(v) }} value={fromAddress}>
-      {
-        addresses.map(v => {
-          return <Select.Option value={v.address} key={v.address}>{v.address + ' ( ' + v.name + ' )'}</Select.Option>
-        })
-      }
-    </StyledSelect>
-    <Title>{intl.get('NormalTransForm.ConfirmForm.nonce')}</Title>
-    <StyledInput value={nonce} onChange={(e) => { setNonce(e.target.value) }} />
-    <Title>{intl.get('AdvancedOptionForm.gasPrice')}</Title>
-    <StyledInput value={gasPrice} onChange={(e) => { setGasPrice(e.target.value) }} suffix={chainType === 'WAN' ? 'Gwin' : 'Gwei'} />
     {
       chainType === 'Custom' && <>
         <Title>Chain ID</Title>
@@ -169,16 +161,12 @@ export default function Offline(props) {
       </>
     }
     <InALine>
-      {
-        fromAddress && fromAddress.length && chainId > 0
-          ? <StyledButton type="primary" onClick={() => {
-            modify(transactions.length, {
-              nonce: Number(nonce) + transactions.length,
-              time: Date.now()
-            });
-          }}>{intl.get('contract.addTransaction')}</StyledButton>
-          : <Title>{intl.get('contract.first')}</Title>
-      }
+      <FileSelection placeholder={intl.get('contract.loadOfflineData2')} value={offlinePath} id="upLoad" style={{ border: '10px solid red' }} buttonStyle={{ float: 'left', width: '400px' }} onChange={e => {
+        let value = e.target.value;
+        let files = e.target.files;
+        setOfflinePath(value);
+        setTimeout(() => { onUploadCheck(value, files) }, 1000);
+      }} />
       {
         step === 'build' && transactions && transactions.length > 0
           ? <StyledButton type="primary" onClick={() => {
@@ -195,10 +183,22 @@ export default function Offline(props) {
       }
     </InALine>
     {
+      trxInfo && trxInfo.length > 0
+      ? <div>
+          <TrxTitle>TRX Block Information</TrxTitle>
+          <StyledInput.TextArea autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} onChange={e => setInputTrx(e.target.value)}/>
+          <StyledButton type="primary" onClick={handleUpdateTrxInfo}>Update</StyledButton>
+        </div>
+      : null
+    }
+    {
+      trxInfo && trxInfo.length > 0
+        ? <TrxInfo info={trxInfo} setInfo={setTrxInfo} trans={transactions} setTrans={setTransactions} />
+        : null
+    }
+    {
       transactions && transactions.length > 0
-        ? transactions.map((v, i) => {
-          return <Transaction onModify={modify} tx={v} i={i} key={v.time} chainType={chainType} />
-        })
+        ? <RawTransaction trans={transactions} />
         : null
     }
   </Body>);
@@ -318,11 +318,108 @@ const Transaction = (props) => {
   </TxBody>);
 };
 
-function downloadFile(dataJson, address, nonce, chainType) {
+const RawTransaction = observer(({ trans }) => {
+  const { languageIntl: { offlineTransColumns } } = useContext(MobXProviderContext)
+
+  const transList = useMemo(() => {
+    return trans.map((i, j) => ({
+      key: j,
+      chain: i.chain,
+      from: i.from,
+      to: i.to,
+      action: i.abi && i.abi.name ? i.abi.name : 'normal tx',
+      value: i.value || '0'
+    }))
+  }, [trans])
+
+  return (
+    <div className="historyRow">
+      <Table columns={offlineTransColumns} dataSource={transList} pagination={{ pageSize: 5, hideOnSinglePage: true }} />
+    </div>
+  )
+})
+
+const TrxInfo = props => {
+  const { info, setInfo, trans, setTrans } = props;
+
+  const trxInfoColumns = [
+    {
+      title: 'Block Number',
+      dataIndex: 'number',
+      key: 'number',
+    },
+    {
+      title: 'Hash',
+      dataIndex: 'hash',
+      key: 'hash',
+    },
+    {
+      title: 'Timestamp',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+    }
+  ];
+
+  const handleSave = (row) => {
+    const newData = [...info];
+    const index = newData.findIndex((item) => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, { ...item, ...row });
+    setInfo(newData);
+    newData.splice(index, 1, { ...item, ...row });
+    const newTrans = trans.map((i, v) => {
+      if (i.chain === 'TRX' && !!i.refBlock) {
+        let { key, ...data } = row;
+        i.refBlock = data;
+      }
+      return i;
+    })
+    setTrans(newTrans);
+  };
+
+  const components = {
+    body: {
+      cell: EditableCell,
+      row: EditableFormRow,
+    },
+  };
+
+  const columns = trxInfoColumns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave,
+      }),
+    };
+  });
+
+  const source = useMemo(() => {
+    return info.map((i, j) => Object.assign(i, { key: j }))
+  }, [info]);
+
+  return (
+    <div className="historyRow">
+      <br />
+      <Table components={components} rowClassName={() => 'editable-row'} columns={columns} dataSource={source} pagination={false} />
+      <br />
+      <br />
+    </div>
+  )
+}
+
+function downloadFile(dataJson) {
   var downloadAnchorNode = document.createElement('a');
   var datastr = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataJson);
   downloadAnchorNode.setAttribute('href', datastr);
-  downloadAnchorNode.setAttribute('download', chainType + '_' + address + '_' + nonce + '.json');
+  downloadAnchorNode.setAttribute('download', 'txs' + '.json');
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 };
@@ -339,6 +436,11 @@ const Body = styled.div`
 const Title = styled.div`
   font-size: 20px;
   color: #fff;
+`;
+
+const TrxTitle = styled(Title)`
+  margin: 20px;
+  display: inline-block
 `;
 
 const StyledSelect = styled(Select)`
@@ -368,11 +470,12 @@ const StyledInput = styled(Input)`
 
 const InALine = styled.div`
   display: flex;
+  margin-left: 16px;
   justify-content: start;
 `;
 
 const StyledButton = styled(Button)`
-  margin: 10px 20px 10px 0px!important;
+  margin-left: 20px!important;
   height: 40px;
   padding: 0 20px;
   font-size: 18px;

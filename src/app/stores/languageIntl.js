@@ -50,6 +50,32 @@ class LanguageIntl {
     ]
   }
 
+  @computed get offlineTransColumns() {
+    return self.language && [
+      {
+        title: intl.get('Common.chain'),
+        dataIndex: 'chain',
+        key: 'chain',
+      }, {
+        title: intl.get('Common.From'),
+        dataIndex: 'from',
+        key: 'from',
+      }, {
+        title: intl.get('NormalTransForm.to'),
+        dataIndex: 'to',
+        key: 'to',
+      }, {
+        title: intl.get('Common.action'),
+        dataIndex: 'action',
+        key: 'action'
+      }, {
+        title: intl.get('TransHistory.value'),
+        dataIndex: 'value',
+        key: 'value'
+      }
+    ]
+  }
+
   @computed get transBTCColumns() {
     return self.language && [
       {

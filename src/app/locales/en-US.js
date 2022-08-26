@@ -783,7 +783,7 @@ const en_US = {
     'contract.onlineTitle': 'Interact with Contract Online',
     'contract.selectAccount': 'Select / Input Address:',
     'contract.selectAccount2': 'Select Address',
-    'contract.addTransaction': '+ Add Transaction',
+    'contract.addTransaction': 'Import Json File',
     'contract.buildTransaction': 'Build Transaction',
     'contract.saveToFile': 'Save To File...',
     'contract.contractAddress': 'Contract / To Address:',
