@@ -35,7 +35,9 @@ class WalletHelper {
                 throw new Error(`user data dir: ${logPath} does not exist`)
             }
         } else {
-            logPath = app.getPath('logs')
+            // logPath = app.getPath('logs')
+            const userDataPath = app.getPath('userData')
+            logPath = path.join(userDataPath, 'logs')
         }
 
         return logPath

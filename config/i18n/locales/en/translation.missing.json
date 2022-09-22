@@ -2,7 +2,68 @@
   "main": {
     "applicationMenu": {
       "window": {
-        "toggle": "main.applicationMenu.window.toggle"
+        "toggle": "main.applicationMenu.window.toggle",
+        "label": "main.applicationMenu.window.label",
+        "fullscreen": "main.applicationMenu.window.fullscreen",
+        "minimize": "main.applicationMenu.window.minimize",
+        "close": "main.applicationMenu.window.close",
+        "front": "main.applicationMenu.window.front"
+      },
+      "app": {
+        "label": "main.applicationMenu.app.label",
+        "about": "main.applicationMenu.app.about",
+        "developer": {
+          "label": "main.applicationMenu.app.developer.label",
+          "assets": {
+            "label": "main.applicationMenu.app.developer.assets.label",
+            "wan": {
+              "label": "main.applicationMenu.app.developer.assets.wan.label",
+              "import": "main.applicationMenu.app.developer.assets.wan.import"
+            }
+          },
+          "data": {
+            "label": "main.applicationMenu.app.developer.data.label",
+            "db": "main.applicationMenu.app.developer.data.db",
+            "log": "main.applicationMenu.app.developer.data.log"
+          }
+        },
+        "services": "main.applicationMenu.app.services",
+        "hide": "main.applicationMenu.app.hide",
+        "hideOthers": "main.applicationMenu.app.hideOthers",
+        "showAll": "main.applicationMenu.app.showAll",
+        "quit": "main.applicationMenu.app.quit"
+      },
+      "help": {
+        "toggle": "main.applicationMenu.help.toggle",
+        "label": "main.applicationMenu.help.label",
+        "web": "main.applicationMenu.help.web",
+        "explorer": "main.applicationMenu.help.explorer"
+      },
+      "edit": {
+        "label": "main.applicationMenu.edit.label",
+        "copy": "main.applicationMenu.edit.copy",
+        "paste": "main.applicationMenu.edit.paste",
+        "selectAll": "main.applicationMenu.edit.selectAll"
+      },
+      "setting": {
+        "label": "main.applicationMenu.setting.label",
+        "network": {
+          "label": "main.applicationMenu.setting.network.label",
+          "main": "main.applicationMenu.setting.network.main",
+          "test": "main.applicationMenu.setting.network.test"
+        },
+        "lang": {
+          "code": {
+            "en": "main.applicationMenu.setting.lang.code.en",
+            "zh": "main.applicationMenu.setting.lang.code.zh",
+            "th-TH": "main.applicationMenu.setting.lang.code.th-TH",
+            "ko-KR": "main.applicationMenu.setting.lang.code.ko-KR",
+            "fr-FR": "main.applicationMenu.setting.lang.code.fr-FR",
+            "es-ES": "main.applicationMenu.setting.lang.code.es-ES",
+            "pt-PT": "main.applicationMenu.setting.lang.code.pt-PT"
+          },
+          "label": "main.applicationMenu.setting.lang.label"
+        }
       }
     }
   }

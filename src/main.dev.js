@@ -6,7 +6,7 @@
 
 import env from 'dotenv'
 import path from 'path'
-import { app, dialog, shell } from 'electron'
+import { app, shell, webContents } from 'electron'
 import setting from '~/src/utils/Settings'
 import menuFactoryService from '~/src/services/menuFactory'
 import i18n, { i18nOptions } from '~/config/i18n'
@@ -56,7 +56,8 @@ async function createMain() {
       y: mainWindowState.y,
       webPreferences: {
         nodeIntegration: setting.isDev ? true : false,
-        nativeWindowOpen: false,
+        contextIsolation: false,
+        enableRemoteModule: true,
         preload: setting.isDev ? path.join(__dirname, 'modules', 'preload', 'index.js') : path.join(__dirname, 'preload.js')
       }
     }
@@ -73,18 +74,24 @@ async function createMain() {
   mainWindowState.manage(mainWindow.window)
 
   if (setting.isDev) {
-    mainWindow.load('http://localhost:7000/dist/index.html')
+    mainWindow.load('http://127.0.0.1:7000/dist/index.html')
   } else {
     mainWindow.load(`file://${__dirname}/index.html`)
   }
 
   // Open the DevTools under development.
-  if (setting.isDev) {
-    mainWindow.webContents.openDevTools()
-  }
+  // if (setting.isDev) {
+  //   mainWindow.webContents.openDevTools()
+  // }
 
   mainWindow.on('ready', () => {
     logger.info('ready to show main window')
+
+    // Open the DevTools under development.
+    if (setting.isDev) {
+      const guest = webContents.fromId(mainWindow.id)
+      guest.openDevTools();
+    }
 
     mainWindow.show()
     Windows.broadcast('notification', 'language', setting.language)
@@ -121,7 +128,7 @@ async function onReady() {
   })
 
   if (process.env.NODE_ENV !== 'production') {
-    Windows.addDevToolsExtension()
+    // Windows.addDevToolsExtension()
   }
 
   // 3. create main window for frontend renderering, hide this window in the first place

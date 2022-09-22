@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 const { ipcRenderer, remote: { Menu }, clipboard, shell } = require('electron')
 const routes = require('./routes')
 const { postMessage } = require('./util')
-const { btcUtil, ccUtil } = require('wanchain-js-sdk');
+// const { btcUtil, ccUtil } = require('wanchain-js-sdk');
 
 module.exports = (function() {
     let instance
@@ -127,9 +127,9 @@ module.exports = (function() {
 
             shell: shell,
 
-            btcUtil: btcUtil,
+            // btcUtil: btcUtil,
 
-            ccUtil: ccUtil,
+            // ccUtil: ccUtil,
 
             isDev: process.env.NODE_ENV === 'development'
         }

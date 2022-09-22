@@ -5,7 +5,7 @@ import merge from 'webpack-merge';
 import common from './webpack.config.renderer.common.babel'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-const publicPath = `http://localhost:${WDS_PORT}/dist/`;
+const publicPath = `http://127.0.0.1:${WDS_PORT}/dist/`;
 
 common.entry.unshift('react-hot-loader/patch');
 
@@ -34,6 +34,7 @@ export default merge(common, {
     headers: { 'Access-Control-Allow-Origin': '*' },
     disableHostCheck: true,
     publicPath: publicPath,
+    host: "127.0.0.1"
     /** TODO */
     // after: function () {
     //   if (process.env.NODE_ENV === 'development') {

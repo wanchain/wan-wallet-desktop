@@ -86,7 +86,7 @@ class Layout extends Component {
       console.log('global.offlineMode', !net);
       global.offlineMode = true // !net;
 
-      if (ready && net) {
+      if (ready && !net) {
         this.setState({
           initializeStep: 'Layout.initSuccess',
           loading: false
