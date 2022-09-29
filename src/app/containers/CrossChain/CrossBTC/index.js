@@ -46,6 +46,7 @@ class CrossBTC extends Component {
     this.props.changeTitle('Common.crossChain');
     this.props.setCurrSymbol(CHAINTYPE);
     this.props.updateChainBalanceList(CHAINTYPE);
+    this.props.updateChainBalanceList(this.info.toChainSymbol);
     this.props.setCurrTokenPairId(this.props.match.params.tokenPairId);
     this.props.setCurrToken(this.info.toAccount);
     this.props.setCurrTokenChain(this.info.toChainSymbol);

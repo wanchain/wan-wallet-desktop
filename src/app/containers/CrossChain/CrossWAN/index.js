@@ -172,7 +172,7 @@ class CrossWAN extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><WANTrans record={record} balance={record.balance} from={record.address} record={record} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
+      render: (text, record) => <div><WANTrans record={record} balance={record.balance} from={record.address} chainPairId={this.props.match.params.tokenPairId} path={record.path} handleSend={this.inboundHandleSend} chainType={this.info.fromChainSymbol} type={INBOUND}/></div>
     }
   ];
 
