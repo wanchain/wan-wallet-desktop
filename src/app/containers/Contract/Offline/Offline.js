@@ -68,9 +68,15 @@ export default function Offline(props) {
 
   const buildTransaction = useCallback(() => {
     if (trxInfo.length !== 0 && !checkTrxInfo()) return;
-    const allAddress = [...wanAddresses, ...trxAddresses, ...ethAddresses];
+    const exceptWanAddress = [...trxAddresses, ...ethAddresses];
+
     const newTrans = transactions.map(i => {
-      let addrInfo = allAddress.find(j => j.address.toLowerCase() === i.from.toLowerCase())
+      let addrInfo;
+      if (i.chain === 'WAN') {
+        addrInfo = wanAddresses.find(j => j.address.toLowerCase() === i.from.toLowerCase())
+      } else {
+        addrInfo = exceptWanAddress.find(j => j.address.toLowerCase() === i.from.toLowerCase())
+      }
       if (addrInfo) {
         return Object.assign({}, i, { _wallet: { id: addrInfo.wid, path: addrInfo.path } })
       } else {
@@ -418,8 +424,9 @@ const TrxInfo = props => {
 function downloadFile(dataJson) {
   var downloadAnchorNode = document.createElement('a');
   var datastr = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataJson);
+  const now = new Date().toString().split(' ');
   downloadAnchorNode.setAttribute('href', datastr);
-  downloadAnchorNode.setAttribute('download', 'txs' + '.json');
+  downloadAnchorNode.setAttribute('download', `txs-${now[1]}-${now[2]}-${now[3]}` + '.json');
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 };
