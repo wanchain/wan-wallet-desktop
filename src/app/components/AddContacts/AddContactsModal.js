@@ -49,17 +49,30 @@ class AddContactsModal extends Component {
   }
 
   handleSave = () => {
-    const { form, handleSave, address } = this.props;
+    const { form, handleSave, address, chain } = this.props;
     form.validateFields(err => {
       if (err) return;
       const nickName = form.getFieldValue('nickName');
-      handleSave(address, nickName);
+      if (chain === 'XRPL') {
+        const tag = form.getFieldValue('tag');
+        handleSave(address, nickName, tag);
+      } else {
+        handleSave(address, nickName);
+      }
       this.onCancel();
     })
   }
 
+  checkDestinationTag = (rule, value, callback) => {
+    if (value && !Number.isInteger(Number(value))) {
+      callback(rule.message);
+      return;
+    }
+    callback();
+  }
+
   render() {
-    const { form, address } = this.props;
+    const { form, address, chain } = this.props;
     const { spin } = this.state;
     const { getFieldDecorator } = form;
 
@@ -82,6 +95,13 @@ class AddContactsModal extends Component {
               {getFieldDecorator('address', { initialValue: address })
                 (<Input disabled={true} />)}
             </Form.Item>
+            {
+              chain === 'XRPL' &&
+              <Form.Item label={intl.get('Xrp.destinationTag')}>
+                {getFieldDecorator('tag', { rules: [{ required: true, message: intl.get('NormalTransForm.destinationTagRule'), validator: this.checkDestinationTag }] })
+                  (<Input placeholder={'Tag'} />)}
+              </Form.Item>
+            }
             <Form.Item label={intl.get('AddressBook.nickname')}>
               {getFieldDecorator('nickName', { rules: [{ required: true, message: intl.get('AddressBook.wanNameRepeat'), validator: this.checkName }] })
                 (<Input placeholder={intl.get('AddressBook.addNickname')} />)}

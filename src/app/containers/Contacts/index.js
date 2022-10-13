@@ -200,6 +200,10 @@ class Contacts extends Component {
             this.handelDeleteModal();
             this.handelDelInfo(record);
           }} /></Tooltip>
+          {
+            record.chainSymbol === 'XRPL' && record.tag &&
+            <p><span style={{ color: '#01ECF7' }}>Tag </span>： { record.tag }</p>
+          }
         </div>
     },
     {

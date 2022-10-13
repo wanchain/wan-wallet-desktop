@@ -62,14 +62,18 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
     )
   }
 
-  const handleCreate = (address, name) => {
+  const handleCreate = (address, name, tag) => {
     addAddress(chainSymbol, address, {
       name,
       address,
-      chainSymbol
+      chainSymbol,
+      tag
     }).then(async () => {
       setIsNewContacts(false);
       processContacts();
+      if (tag) {
+        form.setFieldsValue({ tag });
+      }
     })
   }
 

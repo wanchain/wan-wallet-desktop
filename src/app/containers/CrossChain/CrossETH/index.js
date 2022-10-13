@@ -113,6 +113,7 @@ class CrossETH extends Component {
       crossType: transParams.crossType,
       amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
+
     return new Promise((resolve, reject) => {
       if (input.from.walletID === 2) {
         message.info(intl.get('Ledger.signTransactionInLedger'))
