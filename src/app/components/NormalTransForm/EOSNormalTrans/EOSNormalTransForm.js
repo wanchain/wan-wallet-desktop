@@ -183,26 +183,30 @@ class EOSNormalTransForm extends Component {
 
   renderOption = item => {
     return (
-      <Option key={item.address} text={item.address} name={item.name}>
+      <Option key={item.address} text={item.address} name={item.name} memo={item.memo}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}-{item.address}
+            {item.name}-{item.address}  { item.memo ? <span>Memo: {item.memo}</span> : ''}
           </span>
         </div>
       </Option>
     )
   }
 
-  handleCreate = (address, name) => {
+  handleCreate = (address, name, memo) => {
     this.props.addAddress(chainSymbol, address, {
       name,
       address,
-      chainSymbol
+      chainSymbol,
+      memo
     }).then(async () => {
       this.setState({
         isNewContacts: false
       });
       this.processContacts();
+      if (memo) {
+        this.props.form.setFieldsValue({ memo });
+      }
     })
   }
 
@@ -217,6 +221,12 @@ class EOSNormalTransForm extends Component {
     const name = option.props.name.toLowerCase();
     const inp = inputValue.toLowerCase();
     return text.includes(inp) || name.includes(inp);
+  }
+
+  handleChange = (value, option) => {
+    if (option.props.memo) {
+      this.props.form.setFieldsValue({ memo: option.props.memo })
+    }
   }
 
   render() {
@@ -255,6 +265,7 @@ class EOSNormalTransForm extends Component {
                       dataSource={contactsList.map(this.renderOption)}
                       placeholder="input here"
                       optionLabelProp="text"
+                      onSelect={this.handleChange}
                     >
                      <Input placeholder={intl.get('EOSNormalTransForm.recipientAccount')} prefix={<Icon type="wallet" className="colorInput" />} />
                     </AutoComplete>

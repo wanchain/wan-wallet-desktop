@@ -13,6 +13,7 @@ import btc from 'static/image/btc.png';
 import xrp from 'static/image/xrp.png';
 import eos from 'static/image/eos.png';
 import bsc from 'static/image/bnb.png';
+import { chain } from 'lodash';
 
 const { TabPane } = Tabs;
 
@@ -85,13 +86,19 @@ class Contacts extends Component {
     return rowData;
   }
 
-  handleCreate = (chainSymbol, address, name) => {
+  handleCreate = (chainSymbol, address, name, opts) => {
     if (this.state.type === 'normalAddr') {
-      this.props.addAddress(chainSymbol, address, {
+      const obj = {
         name,
         address,
         chainSymbol
-      }).then(() => {
+      };
+      if (chainSymbol === 'XRPL') {
+        Object.assign(obj, { tag: opts })
+      } else if (chainSymbol === 'EOS') {
+        Object.assign(obj, { memo: opts })
+      }
+      this.props.addAddress(chainSymbol, address, obj).then(() => {
         this.setState({ rows: this.getRowsData(this.props) });
       })
     } else {
@@ -203,6 +210,10 @@ class Contacts extends Component {
           {
             record.chainSymbol === 'XRPL' && record.tag &&
             <p><span style={{ color: '#01ECF7' }}>Tag </span>： { record.tag }</p>
+          }
+          {
+            record.chainSymbol === 'EOS' && record.memo &&
+            <p><span style={{ color: '#01ECF7' }}>Memo </span>： { record.memo }</p>
           }
         </div>
     },

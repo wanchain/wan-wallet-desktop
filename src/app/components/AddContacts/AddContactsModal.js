@@ -56,6 +56,9 @@ class AddContactsModal extends Component {
       if (chain === 'XRPL') {
         const tag = form.getFieldValue('tag');
         handleSave(address, nickName, tag);
+      } else if (chain === 'EOS') {
+        const memo = form.getFieldValue('memo');
+        handleSave(address, nickName, memo);
       } else {
         handleSave(address, nickName);
       }
@@ -69,6 +72,28 @@ class AddContactsModal extends Component {
       return;
     }
     callback();
+  }
+
+  checkMemo = (rule, value, callback) => {
+    if (value.length === 0) {
+      callback();
+    } else if (typeof value === 'string') {
+      let strlen = 0;
+      for (let i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 255) {
+          strlen += 3;
+        } else {
+          strlen++;
+        }
+      }
+      if (strlen <= 256) {
+        callback();
+      } else {
+        callback(intl.get('EOSNormalTransForm.invalidMemo'));
+      }
+    } else {
+      callback(intl.get('EOSNormalTransForm.invalidMemo'));
+    }
   }
 
   render() {
@@ -98,8 +123,15 @@ class AddContactsModal extends Component {
             {
               chain === 'XRPL' &&
               <Form.Item label={intl.get('Xrp.destinationTag')}>
-                {getFieldDecorator('tag', { rules: [{ required: true, message: intl.get('NormalTransForm.destinationTagRule'), validator: this.checkDestinationTag }] })
+                {getFieldDecorator('tag', { rules: [{ message: intl.get('NormalTransForm.destinationTagRule'), validator: this.checkDestinationTag }] })
                   (<Input placeholder={'Tag'} />)}
+              </Form.Item>
+            }
+            {
+              chain === 'EOS' &&
+              <Form.Item label={intl.get('EOSNormalTransForm.memo')}>
+                {getFieldDecorator('memo', { rules: [{ message: intl.get('EOSNormalTransForm.invalid'), validator: this.checkMemo }] })
+                  (<Input placeholder={intl.get('EOSNormalTransForm.memo')} />)}
               </Form.Item>
             }
             <Form.Item label={intl.get('AddressBook.nickname')}>

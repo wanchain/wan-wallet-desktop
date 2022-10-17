@@ -52,10 +52,10 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
 
   const renderOption = item => {
     return (
-      <Option key={item.address} text={item.address} name={item.name}>
+      <Option key={item.address} text={item.address} name={item.name} tag={item.tag}>
         <div className="global-search-item">
           <span className="global-search-item-desc">
-            {item.name}-{item.address}
+            {item.name}-{item.address}  { item.tag ? <span>Tag: {item.tag}</span> : ''}
           </span>
         </div>
       </Option>
@@ -200,6 +200,12 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
     return text.includes(inp) || name.includes(inp);
   }
 
+  const handleChange = (value, option) => {
+    if (option.props.tag) {
+      form.setFieldsValue({ tag: option.props.tag })
+    }
+  }
+
   return (
     <React.Fragment>
       <Modal
@@ -235,6 +241,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
                     dataSource={contactsList.map(renderOption)}
                     placeholder="input here"
                     optionLabelProp="text"
+                    onSelect={handleChange}
                   >
                     <Input placeholder={intl.get('NormalTransForm.recipientAddress')} prefix={<Icon type="wallet" className="colorInput" />} />
                   </AutoComplete>

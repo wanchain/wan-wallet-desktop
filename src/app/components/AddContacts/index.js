@@ -32,8 +32,8 @@ class AddContacts extends Component {
     this.setState({ visible: false });
   }
 
-  handleSave = (chainSymbol, address, name) => {
-    this.props.handleSave(chainSymbol, address, name);
+  handleSave = (chainSymbol, address, name, opts) => {
+    this.props.handleSave(chainSymbol, address, name, opts);
   }
 
   render() {
