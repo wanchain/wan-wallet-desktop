@@ -480,11 +480,11 @@ class LanguageIntl {
             key: '/contract_offline',
             icon: 'block'
           },
-          {
-            title: intl.get('contract.menuOnline'),
-            key: '/contract_online',
-            icon: 'block'
-          }
+          // {
+          //   title: intl.get('contract.menuOnline'),
+          //   key: '/contract_online',
+          //   icon: 'block'
+          // }
         ]
       },
       {
