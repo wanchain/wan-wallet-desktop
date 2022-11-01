@@ -1730,7 +1730,7 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             try {
                 ret = await ccUtil.getTokenPairs();
             } catch (e) {
-                logger.error('getTokenPairs failed:')
+                logger.error('getTokenPairs failed:', e)
                 logger.error(e, e.message || e.stack)
                 err = e
             }
@@ -2166,6 +2166,30 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
               ret = await ccUtil.getCrossChainFees(chainType, chainIds);
           } catch (e) {
               logger.error('estimateNetworkFee failed:')
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
+        case 'estimateCrossChainNetworkFee':
+          try {
+              let { chainType, dstChainType, options } = payload
+              ret = await ccUtil.estimateCrossChainNetworkFee(chainType, dstChainType, options);
+          } catch (e) {
+              logger.error('estimateCrossChainNetworkFee failed:', e)
+              logger.error(e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
+        case 'estimateCrossChainOperationFee':
+          try {
+              let { chainType, dstChainType, options } = payload
+              ret = await ccUtil.estimateCrossChainOperationFee(chainType, dstChainType, options);
+          } catch (e) {
+              logger.error('estimateCrossChainOperationFee failed:', e)
               logger.error(e.message || e.stack)
               err = e
           }

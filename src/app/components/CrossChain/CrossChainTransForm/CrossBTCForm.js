@@ -6,7 +6,7 @@ import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComple
 import style from './index.less';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
-import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal, hexCharCodeToStr } from 'utils/support';
+import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal, hexCharCodeToStr, fromWei } from 'utils/support';
 import CommonFormItem from 'componentUtils/CommonFormItem';
 // import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
@@ -15,7 +15,7 @@ import { INBOUND, OUTBOUND, WALLETID } from 'utils/settings';
 import outboundOptionForm from 'components/AdvancedCrossChainOptionForm';
 import OptionForm from 'components/AdvancedCrossChainOptionForm/AdvancedBTCCrossChainOptionForm';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossBTCConfirmForm';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getCrossChainContractData, getQuota, checkAddressByChainType, getValueByNameInfoAllType, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossBTCConfirmForm' })(ConfirmForm);
 const AdvancedOptionForm = Form.create({ name: 'AdvancedBTCCrossChainOptionForm' })(OptionForm);
@@ -75,6 +75,12 @@ class CrossBTCForm extends Component {
       isNewContacts: false,
       showAddContacts: false,
       showChooseContacts: false,
+      operationFee: 0,
+      networkFee: 0,
+      isPercentOperationFee: false,
+      isPercentNetworkFee: false,
+      percentOperationFee: 0,
+      percentNetworkFee: 0,
     }
   }
 
@@ -105,7 +111,29 @@ class CrossBTCForm extends Component {
   }
 
   componentDidMount() {
+    const { direction, currentTokenPairInfo: info } = this.props;
+    const { toChainSymbol, ancestorDecimals } = info;
     this.processContacts();
+    estimateCrossChainNetworkFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC').then(res => {
+      this.setState({
+        networkFee: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
+        isPercentNetworkFee: res.isPercent,
+        percentNetworkFee: res.isPercent ? res.value : 0
+      });
+    }).catch(err => {
+      console.log('err:', err);
+      message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
+    });
+    estimateCrossChainOperationFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC').then(res => {
+      this.setState({
+        operationFee: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
+        isPercentOperationFee: res.isPercent,
+        percentOperationFee: res.isPercent ? res.value : 0
+      });
+    }).catch(err => {
+      console.log('err:', err);
+      message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
+    });
   }
 
   processContacts = () => {
@@ -125,8 +153,8 @@ class CrossBTCForm extends Component {
   }
 
   handleNext = () => {
-    const { updateBTCTransParams, updateTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix } = this.props;
-    const { sendAll } = this.state;
+    const { updateBTCTransParams, updateTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix, name } = this.props;
+    const { sendAll, networkFee } = this.state;
     let otherAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields((err, { pwd, amount: sendAmount, to }) => {
@@ -144,6 +172,19 @@ class CrossBTCForm extends Component {
       if (new BigNumber(sendAmount).gt(maxQuota)) {
         message.warn(intl.get('CrossChainTransForm.overQuota'));
         return;
+      }
+
+      if (direction === INBOUND) {
+        if (new BigNumber(balance).minus(sendAmount).lt(fee)) {
+          message.warn(intl.get('NormalTransForm.insufficientFee'))
+          return;
+        }
+      } else {
+        const fromAddrBalance = getValueByNameInfoAllType(name, 'balance', getChainAddressInfoByChain(info.toChainSymbol))
+        if (new BigNumber(fromAddrBalance).minus(networkFee).lt(estimateFee)) {
+          message.warn(intl.get('NormalTransForm.insufficientFee'))
+          return;
+        }
       }
 
       let addrType = 'normal';
@@ -208,72 +249,82 @@ class CrossBTCForm extends Component {
 
   checkAmount = async (rule, value, callback) => {
     const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams, currentTokenPairInfo: info } = this.props;
-    if (new BigNumber(value).gte(minCrossBTC)) {
-      if (checkAmountUnit(8, value)) {
-        const { minQuota, maxQuota, sendAll } = this.state;
-        if (new BigNumber(value).lt(minQuota)) {
-          let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[direction === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`;
-          callback(errText);
-          return;
-        }
+    const { minQuota, maxQuota, sendAll, isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFee, operationFee } = this.state;
+    const message = intl.get('NormalTransForm.amountIsIncorrect');
 
-        if (new BigNumber(value).gt(maxQuota)) {
-          callback(intl.get('CrossChainTransForm.overQuota'));
-          return;
-        }
+    try {
+      if (new BigNumber(value).lte(0) || !checkAmountUnit(8, value)) {
+        callback(message);
+        return;
+      }
+      if (new BigNumber(value).lt(minQuota) || new BigNumber(value).lt(minCrossBTC)) {
+        const min = Math.max(minQuota, minCrossBTC);
+        let errText = `${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(min, 2)} ${info[direction === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`;
+        callback(errText);
+        return;
+      }
+      if (new BigNumber(value).gt(maxQuota)) {
+        callback(intl.get('CrossChainTransForm.overQuota'))
+        return;
+      }
 
-        if (direction === INBOUND) {
-          let from = Object.keys(addrInfo.normal).map(key => ({
-            path: `${btcPath}${addrInfo.normal[key].path}`,
-            walletID: 1
-          }));
-          updateBTCTransParams({ from });
-          try {
-            let getFee = await this.getFee(from, value);
-            if (getFee === false) {
-              callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
-              return;
-            }
-            let fee = formatNumByDecimals(getFee.result.fee, 8); // user network fee
-            let crossChainNetworkFee = formatNumByDecimals(getFee.result.networkFee || 0, 8); // cross-chain network fee
-            this.setState({ fee, crossChainNetworkFee });
-            if (!this.state.sendAll && isExceedBalance(balance, fee, value)) {
-              callback(intl.get('CrossChainTransForm.overBalance'));
-              return;
-            }
-            this.setState({ receive: new BigNumber(value).minus(crossChainNetworkFee).minus(sendAll ? fee : 0).toString() });
-            callback();
-          } catch (e) {
-            console.log('get Fee error:', e);
+      const finnalNetworkFee =
+        isPercentNetworkFee
+          ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
+          : networkFee;
+      const finnalOperationFee =
+        isPercentOperationFee
+          ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
+          : operationFee;
+
+      this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+
+      if (direction === INBOUND) {
+        const from = Object.keys(addrInfo.normal).map(key => ({
+          path: `${btcPath}${addrInfo.normal[key].path}`,
+          walletID: 1
+        }));
+        updateBTCTransParams({ from });
+        try {
+          const getFee = await this.getFee(from, value);
+          if (getFee === false) {
             callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
+            return;
           }
-        } else {
-          if (isExceedBalance(balance, value)) {
+          const fee = formatNumByDecimals(getFee.result.fee, 8); // user network fee
+          this.setState({ fee });
+          if (new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).lte(0)) {
+            callback(message);
+            return;
+          }
+          if (new BigNumber(balance).lte(value)) {
+            callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+            return;
+          }
+          if (!sendAll && isExceedBalance(balance, fee, value)) {
             callback(intl.get('CrossChainTransForm.overBalance'));
             return;
           }
-
-          try {
-            let from = transParams[this.props.from].from;
-            let getFee = await this.getFee(Object.assign({}, from), value);
-            if (getFee === false) {
-              callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
-              return;
-            }
-
-            let crossChainNetworkFee = formatNumByDecimals(getFee.result.networkFee || 0, 8); // cross-chain network fee
-            this.setState({ receive: new BigNumber(value).minus(crossChainNetworkFee).toString(), crossChainNetworkFee });
-            callback();
-          } catch (e) {
-            console.log('get Fee error:', e);
-            callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
-          }
+          this.setState({ fee, receive: new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).toString(10) });
+        } catch (e) {
+          console.log('get Fee error:', e);
+          callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
         }
       } else {
-        callback(intl.get('Common.invalidAmount'));
+        if (isExceedBalance(balance, value)) {
+          callback(intl.get('CrossChainTransForm.overBalance'));
+          return;
+        }
+
+        if (new BigNumber(value).minus(finnalOperationFee).lte(0)) {
+          callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+          return;
+        }
+        this.setState({ receive: new BigNumber(value).minus(finnalOperationFee).toString(10) });
       }
-    } else {
-      let message = intl.get('CrossChainTransForm.invalidAmount') + minCrossBTC;
+
+      callback();
+    } catch (error) {
       callback(message);
     }
   }
@@ -391,7 +442,7 @@ class CrossBTCForm extends Component {
         maxQuota: formatNumByDecimals(maxQuota, decimals)
       });
     } catch (e) {
-      console.log('e:', e);
+      console.log('updateLockAccounts:', e);
       message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
       this.props.onCancel();
     }
@@ -496,31 +547,37 @@ class CrossBTCForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj } = this.props;
-    const { advancedVisible, feeRate, receive, crossChainNetworkFee, sendAll, isNewContacts, showAddContacts, showChooseContacts, contactsList } = this.state;
+    const { loading, form, from, settings, smgList, estimateFee, direction, addrInfo, balance, currentTokenPairInfo: info, getChainAddressInfoByChain, coinPriceObj, name } = this.props;
+    const { advancedVisible, feeRate, receive, crossChainNetworkFee, sendAll, isNewContacts, showAddContacts, showChooseContacts, contactsList, operationFee, networkFee } = this.state;
     const { getFieldDecorator } = form;
-    let gasFee, totalFee, desChain, defaultSelectStoreman, title, unit, toUnit;
+    let gasFee, gasFeeWithUnit, totalFee, desChain, defaultSelectStoreman, title, unit, toUnit, feeUnit, operationFeeUnit, networkFeeUnit, operationFeeWithUnit, networkFeeWithUnit;
     let otherAddrInfo = getChainAddressInfoByChain(info.toChainSymbol);
     if (direction === INBOUND) {
       desChain = info.toChainSymbol;
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
       // Convert the value of fee to USD
-      if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj) {
-        totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).toString()} USD`;
-      } else {
-        totalFee = `${this.state.fee} ${info.fromChainSymbol}`;
-      }
-      gasFee = `${this.state.fee} ${info.fromChainSymbol}`;
+      // if ((typeof coinPriceObj === 'object') && info.fromChainSymbol in coinPriceObj) {
+      //   totalFee = `${new BigNumber(this.state.fee).times(coinPriceObj[info.fromChainSymbol]).toString()} USD`;
+      // } else {
+      //   totalFee = `${this.state.fee} ${info.fromChainSymbol}`;
+      // }
+      gasFeeWithUnit = `${this.state.fee} ${info.fromChainSymbol}`;
+      feeUnit = info.fromChainSymbol;
+      operationFeeUnit = 'BTC';
+      networkFeeUnit = 'BTC';
     } else {
       desChain = info.fromChainSymbol;
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
       // Convert the value of fee to USD
-      if ((typeof coinPriceObj === 'object') && info.toChainSymbol in coinPriceObj) {
-        totalFee = `${new BigNumber(estimateFee).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
-      } else {
-        totalFee = `${estimateFee} ${info.toChainSymbol}`;
-      }
-      gasFee = `${removeRedundantDecimal(estimateFee)} ${info.toChainSymbol}`;
+      // if ((typeof coinPriceObj === 'object') && info.toChainSymbol in coinPriceObj) {
+      //   totalFee = `${new BigNumber(estimateFee).times(coinPriceObj[info.toChainSymbol]).toString()} USD`;
+      // } else {
+      //   totalFee = `${estimateFee} ${info.toChainSymbol}`;
+      // }
+      gasFeeWithUnit = `${removeRedundantDecimal(estimateFee)} ${info.toChainSymbol}`;
+      feeUnit = info.toChainSymbol;
+      operationFeeUnit = 'BTC';
+      networkFeeUnit = info.toChainSymbol;
     }
 
     if (smgList.length === 0) {
@@ -534,6 +591,19 @@ class CrossBTCForm extends Component {
         toUnit = info.fromTokenSymbol;
       }
       defaultSelectStoreman = smgList[0].groupId;
+    }
+
+    totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+
+    // Swap NetworkFee and OperationFee display positions
+    if (new BigNumber(networkFee).isEqualTo(0) && new BigNumber(operationFee).gt('0')) {
+      operationFeeWithUnit = `${(networkFee)} ${networkFeeUnit}`;
+      networkFeeWithUnit = `${(operationFee)} ${operationFeeUnit}`;
+      totalFee = `${new BigNumber(operationFee).toString()} ${operationFeeUnit} + ${new BigNumber(networkFee).toString()} ${networkFeeUnit}`;
+    } else {
+      operationFeeWithUnit = `${(operationFee)} ${operationFeeUnit}`;
+      networkFeeWithUnit = `${(networkFee)} ${networkFeeUnit}`;
+      totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
     }
 
     return (
@@ -658,6 +728,15 @@ class CrossBTCForm extends Component {
               <CommonFormItem
                 form={form}
                 colSpan={6}
+                formName='txFee'
+                disabled={true}
+                options={{ initialValue: gasFeeWithUnit }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.transactionFee')}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
                 formName='totalFee'
                 disabled={true}
                 options={{ initialValue: totalFee }}
@@ -666,7 +745,8 @@ class CrossBTCForm extends Component {
                 suffix={<Tooltip title={
                   <table className={style['suffix_table']}>
                     <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.userNetworkFee')}:</td><td>{gasFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
                     </tbody>
                   </table>
                 }><Icon type="exclamation-circle" /></Tooltip>}
@@ -702,7 +782,7 @@ class CrossBTCForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm chainType="BTC" direction={direction} totalFeeTitle={totalFee} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
+        <Confirm chainType="BTC" direction={direction} name={name} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} />
         { advancedVisible && direction === INBOUND && <AdvancedOptionForm chainType={'BTC'} value={feeRate || this.props.BTCCrossTransParams.feeRate} onCancel={this.handleAdvancedCancel} onSave={this.handleInBoundSaveOption} from={from} />}
         { advancedVisible && direction === OUTBOUND && <AdvancedOutboundOptionForm chainType={info.toChainSymbol} onCancel={this.handleAdvancedCancel} onSave={this.handleOutBoundSaveOption} from={from} />}
         {

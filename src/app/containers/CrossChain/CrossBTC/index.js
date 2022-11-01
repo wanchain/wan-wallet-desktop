@@ -197,7 +197,7 @@ class CrossBTC extends Component {
     {
       dataIndex: 'action',
       width: '10%',
-      render: (text, record) => <div><BTCTrans record={record} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} direction={OUTBOUND} /></div>
+      render: (text, record) => <div><BTCTrans record={record} name={record.name} from={record.address} path={record.path} handleSend={this.outboundHandleSend} chainType={this.info.toChainSymbol} direction={OUTBOUND} /></div>
     }
   ];
 

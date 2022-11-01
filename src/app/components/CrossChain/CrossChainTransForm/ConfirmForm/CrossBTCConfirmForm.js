@@ -17,7 +17,7 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossBTCConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, totalFeeTitle, handleCancel, direction, currentTokenPairInfo: info } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, handleCancel, direction, currentTokenPairInfo: info, userNetWorkFee, crosschainFee, name } = this.props;
     let desChain, storemanAccount, sendValue, symbol, toAddr;
     if (direction === INBOUND) {
       const { value, storeman } = this.props.BTCCrossTransParams;
@@ -51,7 +51,7 @@ class CrossBTCConfirmForm extends Component {
           {
             direction !== INBOUND &&
             <Form.Item label={intl.get('Common.from') + ' (' + info.toChainName + ')'}>
-              {getFieldDecorator('from', { initialValue: from })(inputCom)}
+              {getFieldDecorator('from', { initialValue: name })(inputCom)}
             </Form.Item>
           }
           <Form.Item label={intl.get('Common.storemanGroup')}>
@@ -60,11 +60,16 @@ class CrossBTCConfirmForm extends Component {
           <Form.Item label={intl.get('NormalTransForm.to') + ' (' + desChain + ')'}>
             {getFieldDecorator('to', { initialValue: toAddr })(inputCom)}
           </Form.Item>
-          <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
-            {getFieldDecorator('fee', { initialValue: totalFeeTitle })(inputCom)}
-          </Form.Item>
           <Form.Item label={intl.get('Common.amount') + ` (${symbol})`}>
             {getFieldDecorator('amount', { initialValue: sendValue })(inputCom)}
+          </Form.Item>
+          <Form.Item label={intl.get('CrossChainTransForm.transactionFee')}>
+            {getFieldDecorator('transactionFee', { initialValue: userNetWorkFee })
+              (<Input disabled={true} />)}
+          </Form.Item>
+          <Form.Item label={intl.get('CrossChainTransForm.crosschainFee')}>
+            {getFieldDecorator('crosschainFee', { initialValue: crosschainFee })
+              (<Input disabled={true} />)}
           </Form.Item>
         </Form>
       </Modal>

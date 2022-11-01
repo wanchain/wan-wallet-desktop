@@ -489,6 +489,7 @@ const th_TH = {
     'NormalTransForm.isNativeBtcAddress': 'ไม่อนุญาตให้ส่งหาตัวเอง',
     'NormalTransForm.inputToAddress': 'กรุณากรอกที่อยู่ปลายทาง',
     'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
+    'NormalTransForm.insufficientFee': 'Insufficient transaction fees, please check balance',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'ยืนยันการทำธุรกรรมชนิด Cross Chain',
     'CrossChainTransForm.capacity': 'ความจุ',
@@ -499,6 +500,9 @@ const th_TH = {
     'CrossChainTransForm.userNetworkFee': 'User Network Fee',
     'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'ค่าธรรมเนียมการจัดการ',
+    'CrossChainTransForm.networkFee': 'Network Fee',
+    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
     'CrossChainTransForm.overOriginalBalance': 'ยอดบัญชีไม่พอค่าใช้จ่าย กรุณาตรวจสอบยอดบัญชีจากเชนต้นทาง',
     'CrossChainTransForm.originNoBalance': 'ไม่มียอดบัญชีจากเชนต้นทาง',

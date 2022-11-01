@@ -5,7 +5,7 @@ import { observer, MobXProviderContext } from 'mobx-react';
 
 import style from '../index.less';
 
-const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, userNetWorkFee, toName, crosschainNetWorkFee }) => {
+const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, userNetWorkFee, toName, crosschainFee }) => {
   const { languageIntl, sendCrossChainParams: { XRPCrossTransParams, record } } = useContext(MobXProviderContext)
   const { getFieldDecorator } = form;
   const [loading, setLoading] = useState(false);
@@ -43,12 +43,12 @@ const CrossXRPConfirmForm = observer(({ visible, onCancel, sendTrans, form, user
           {getFieldDecorator('amount', { initialValue: XRPCrossTransParams.value })
             (<Input disabled={true} />)}
         </Form.Item>
-        <Form.Item label={intl.get('CrossChainTransForm.userNetworkFee')}>
-          {getFieldDecorator('userNetWorkFee', { initialValue: userNetWorkFee })
+        <Form.Item label={intl.get('CrossChainTransForm.transactionFee')}>
+          {getFieldDecorator('transactionFee', { initialValue: userNetWorkFee })
             (<Input disabled={true} />)}
         </Form.Item>
-        <Form.Item label={intl.get('CrossChainTransForm.operationFee')}>
-          {getFieldDecorator('crosschainNetWorkFee', { initialValue: crosschainNetWorkFee })
+        <Form.Item label={intl.get('CrossChainTransForm.crosschainFee')}>
+          {getFieldDecorator('crosschainFee', { initialValue: crosschainFee })
             (<Input disabled={true} />)}
         </Form.Item>
       </Form>

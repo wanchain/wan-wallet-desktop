@@ -1239,6 +1239,30 @@ export const getFastMinCount = (chainType, tokenPairID) => {
   });
 }
 
+export const estimateCrossChainNetworkFee = (chainType, dstChainType, options) => {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_estimateCrossChainNetworkFee', { chainType, dstChainType, options }, (err, res) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}
+
+export const estimateCrossChainOperationFee = (chainType, dstChainType, options) => {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_estimateCrossChainOperationFee', { chainType, dstChainType, options }, (err, res) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(res);
+      }
+    })
+  });
+}
+
 export const getFees = (chainType, chainID1, chainID2) => {
   return new Promise((resolve, reject) => {
     wand.request('crossChain_getFees', { chainType, chainID1, chainID2 }, (err, res) => {

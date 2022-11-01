@@ -470,6 +470,7 @@ const fr_FR = {
     'NormalTransForm.isNativeBtcAddress': 'Il n\'est pas permis d\' envoyer a soit-meme',
     'NormalTransForm.inputToAddress': 'Veuillez saisir l\'adresse du destinataire',
     'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
+    'NormalTransForm.insufficientFee': 'Insufficient transaction fees, please check balance',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirmer transaction Cross Chain',
     'CrossChainTransForm.capacity': 'Capacités',
@@ -480,6 +481,9 @@ const fr_FR = {
     'CrossChainTransForm.userNetworkFee': 'Frais de réseau utilisateur',
     'CrossChainTransForm.crossChainNetworkFee': 'Frais de réseau inter-chaînes',
     'CrossChainTransForm.operationFee': 'Frais d\'opération',
+    'CrossChainTransForm.networkFee': 'Network Fee',
+    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.overOriginalBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale',
     'CrossChainTransForm.originNoBalance': 'Il n\'y a pas de solde disponible sur la chaîne d\'origine',

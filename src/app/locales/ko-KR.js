@@ -489,6 +489,7 @@ const ko_KR = {
     'NormalTransForm.isNativeBtcAddress': '자신한테 전송 불가 입니다.',
     'NormalTransForm.inputToAddress': '수신인의 주소를 입력 바랍니다.',
     'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
+    'NormalTransForm.insufficientFee': 'Insufficient transaction fees, please check balance',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '크로스체인 거래 확인',
     'CrossChainTransForm.capacity': '용량',
@@ -499,6 +500,9 @@ const ko_KR = {
     'CrossChainTransForm.userNetworkFee': '사용자 네트워크 수수료',
     'CrossChainTransForm.crossChainNetworkFee': '크로스체인 네트워크 수수료',
     'CrossChainTransForm.operationFee': '운영 비용',
+    'CrossChainTransForm.networkFee': 'Network Fee',
+    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.overOriginalBalance': '비용이 잔액을 초과합니다. 기존 체인의 잔액을 확인 바랍니다.',
     'CrossChainTransForm.originNoBalance': '기존 체인상에 존재하는 잔액이 없습니다.',

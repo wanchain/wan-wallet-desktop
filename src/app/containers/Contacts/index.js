@@ -140,13 +140,19 @@ class Contacts extends Component {
   }
 
   handleUpdateName = row => {
-    const { chainSymbol, address, name } = row;
+    const { chainSymbol, address, name, tag, memo } = row;
     if (this.state.type === 'normalAddr') {
-      this.props.addAddress(chainSymbol, address, {
-        chainSymbol,
+      const obj = {
+        name,
         address,
-        name
-      }).then(() => {
+        chainSymbol
+      };
+      if (chainSymbol === 'XRPL') {
+        Object.assign(obj, { tag })
+      } else if (chainSymbol === 'EOS') {
+        Object.assign(obj, { memo })
+      }
+      this.props.addAddress(chainSymbol, address, obj).then(() => {
         this.setState({ rows: this.getRowsData(this.props) });
       })
     } else {

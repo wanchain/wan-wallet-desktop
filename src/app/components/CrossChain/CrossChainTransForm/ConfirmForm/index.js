@@ -17,7 +17,7 @@ const inputCom = <Input disabled={true} />
 @observer
 class ConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, currTokenPairId, type } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, currTokenPairId, type, userNetWorkFee, crosschainFee } = this.props;
     const { amount, toAddr, storeman, crossType } = transParams[from];
     const info = Object.assign({}, tokenPairs[currTokenPairId]);
     let fromChain = type === INBOUND ? info.fromChainName : info.toChainName;
@@ -48,11 +48,14 @@ class ConfirmForm extends Component {
           {/* <Form.Item label={intl.get('CrossChainTransForm.crossType')}>
             {getFieldDecorator('crossType', { initialValue: intl.get(`CrossChainTransForm.${crossType}`) })(inputCom)}
           </Form.Item> */}
-          <Form.Item label={intl.get('CrossChainTransForm.estimateFee')}>
-            {getFieldDecorator('fee', { initialValue: estimateFee })(inputCom)}
-          </Form.Item>
           <Form.Item label={intl.get('Common.amount') + ` (${tokenSymbol})`}>
             {getFieldDecorator('amount', { initialValue: amount })(inputCom)}
+          </Form.Item>
+          <Form.Item label={intl.get('CrossChainTransForm.transactionFee')}>
+            {getFieldDecorator('transactionFee', { initialValue: userNetWorkFee })(inputCom)}
+          </Form.Item>
+          <Form.Item label={intl.get('CrossChainTransForm.crosschainFee')}>
+            {getFieldDecorator('crosschainFee', { initialValue: crosschainFee })(inputCom)}
           </Form.Item>
         </Form>
       </Modal>

@@ -14,7 +14,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress } from 'utils/helper';
+import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -53,6 +53,11 @@ class CrossETHForm extends Component {
       advanced: false,
       advancedFee: 0,
       operationFee: 0,
+      networkFee: 0,
+      isPercentOperationFee: false,
+      isPercentNetworkFee: false,
+      percentOperationFee: 0,
+      percentNetworkFee: 0,
       minQuota: 0,
       maxQuota: 0,
       contactsList: [],
@@ -83,10 +88,16 @@ class CrossETHForm extends Component {
   }
 
   componentDidMount() {
-    const { currentTokenPairInfo: info, type } = this.props;
+    const { type } = this.props;
     this.processContacts();
-    getFees(info[type === INBOUND ? 'fromChainSymbol' : 'toChainSymbol'], info.fromChainID, info.toChainID).then(res => {
-      this.setState({ operationFee: fromWei(res[0]) });
+    estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH').then(res => {
+      this.setState({ networkFee: res.isPercent ? '0' : fromWei(res.value), isPercentNetworkFee: res.isPercent, percentNetworkFee: res.isPercent ? res.value : 0 });
+    }).catch(err => {
+      console.log('err:', err);
+      message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
+    });
+    estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH').then(res => {
+      this.setState({ operationFee: res.isPercent ? '0' : fromWei(res.value), isPercentOperationFee: res.isPercent, percentOperationFee: res.isPercent ? res.value : 0 });
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -129,17 +140,7 @@ class CrossETHForm extends Component {
         return;
       };
 
-      const { minQuota, maxQuota } = this.state;
       let { pwd, amount: sendAmount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      if (new BigNumber(sendAmount).lt(minQuota)) {
-        message.warn(`${intl.get('CrossChainTransForm.UnderFastMinimum')}: ${removeRedundantDecimal(minQuota, 2)} ${info[type === INBOUND ? 'fromTokenSymbol' : 'toTokenSymbol']}`);
-        return;
-      }
-
-      if (new BigNumber(sendAmount).gt(maxQuota)) {
-        message.warn(intl.get('CrossChainTransForm.overQuota'));
-        return;
-      }
 
       let addrType = 'normal'
       if (this.accountSelections.includes(to)) {
@@ -185,31 +186,69 @@ class CrossETHForm extends Component {
   }
 
   checkAmount = (rule, value, callback) => {
-    const { balance, estimateFee, from, type, currentTokenPairInfo: info, getChainAddressInfoByChain } = this.props;
-    const { advanced, advancedFee, operationFee } = this.state;
-    const decimals = info.ancestorDecimals;
-    if (new BigNumber(value).gte('0') && checkAmountUnit(decimals || 18, value)) {
+    const { balance, estimateFee, from, type, currentTokenPairInfo: info, getChainAddressInfoByChain, form, account } = this.props;
+    const { advanced, advancedFee, maxQuota, minQuota, isPercentNetworkFee, isPercentOperationFee, networkFee, operationFee, percentNetworkFee, percentOperationFee } = this.state;
+    const unit = type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol;
+    const { txFee } = form.getFieldsValue(['txFee']);
+    const txFeeWithoutUnit = txFee.split(' ')[0];
+    const message = intl.get('NormalTransForm.amountIsIncorrect');
+
+    try {
+      if (new BigNumber(value).lte(0) || !checkAmountUnit(18, value)) {
+        callback(message);
+        return;
+      }
+      if (new BigNumber(value).lt(minQuota)) {
+        let errText = `${intl.get('CrossChainTransForm.invalidAmount1')}: ${minQuota} ${unit}`;
+        callback(errText);
+        return;
+      }
+      if (new BigNumber(value).gt(maxQuota)) {
+        callback(intl.get('CrossChainTransForm.overQuota'))
+        return;
+      }
+      const finnalNetworkFee =
+        isPercentNetworkFee
+          ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
+          : networkFee;
+      const finnalOperationFee =
+        isPercentOperationFee
+          ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
+          : operationFee;
+
+      this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+
       if (type === INBOUND) {
-        if (new BigNumber(value).plus(advanced ? advancedFee : estimateFee).plus(operationFee).gt(balance)) {
-          callback(intl.get('CrossChainTransForm.overTransBalance'));
-        } else {
-          callback();
+        if (new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).lte(0)) {
+          callback(message);
+          return;
         }
-      } else if (type === OUTBOUND) {
-        let fromAddrInfo = getChainAddressInfoByChain(info['toChainSymbol']);
-        let origAddrAmount = getBalanceByAddr(from, fromAddrInfo);
-        if (new BigNumber(value).gt(balance)) {
-          callback(intl.get('CrossChainTransForm.overTransBalance'));
-        } else if (isExceedBalance(origAddrAmount, advanced ? advancedFee : estimateFee, operationFee)) {
+        if (new BigNumber(balance).lte(value)) {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
-        } else {
-          callback();
+          return;
+        }
+        if (new BigNumber(balance).minus(value).minus(txFeeWithoutUnit).lt('0')) {
+          callback(intl.get('NormalTransForm.insufficientFee'));
+          return;
         }
       } else {
-        callback();
+        const fromAddrBalance = getValueByNameInfoAllType(account, 'balance', getChainAddressInfoByChain(info.toChainSymbol))
+        if (new BigNumber(fromAddrBalance).minus(finnalNetworkFee).minus(txFeeWithoutUnit).lt(0)) {
+          message.warn(intl.get('NormalTransForm.insufficientFee'))
+          return;
+        }
+        if (new BigNumber(balance).lt(value)) {
+          callback(message);
+          return;
+        }
+        if (new BigNumber(value).lte(finnalOperationFee)) {
+          callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+          return;
+        }
       }
-    } else {
-      callback(intl.get('Common.invalidAmount'));
+      callback();
+    } catch (error) {
+      callback(message);
     }
   }
 
@@ -242,7 +281,7 @@ class CrossETHForm extends Component {
         })
       });
     } catch (e) {
-      console.log('e:', e);
+      console.log('updateLockAccounts:', e);
       message.warn(intl.get('CrossChainTransForm.getQuotaFailed'));
       this.props.onCancel();
     }
@@ -261,13 +300,11 @@ class CrossETHForm extends Component {
     let { form, balance } = this.props;
     if (e.target.checked) {
       balance = typeof (balance) === 'string' ? balance.replace(/,/g, '') : balance;
-      form.setFieldsValue({
-        amount: new BigNumber(balance).toString(10)
+      form.setFieldsValue({ amount: new BigNumber(balance).toString(10) }, () => {
+        form.validateFields(['amount'], { force: true });
       });
     } else {
-      form.setFieldsValue({
-        amount: 0
-      });
+      form.setFieldsValue({ amount: 0 });
     }
   }
 
@@ -376,9 +413,9 @@ class CrossETHForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, showChooseContacts, isNewContacts, showAddContacts, contactsList } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList } = this.state;
     const { getFieldDecorator } = form;
-    let gasFee, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit;
+    let gasFee, gasFeeWithUnit, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
@@ -387,6 +424,8 @@ class CrossETHForm extends Component {
       unit = info.fromTokenSymbol;
       feeUnit = info.fromChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
+      operationFeeUnit = 'ETH';
+      networkFeeUnit = 'ETH';
     } else {
       desChain = info.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
@@ -395,6 +434,8 @@ class CrossETHForm extends Component {
       unit = info.toTokenSymbol;
       feeUnit = info.toChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
+      operationFeeUnit = 'ETH';
+      networkFeeUnit = 'WAN';
     }
     gasFee = advanced ? advancedFee : new BigNumber(gasPrice).times(FAST_GAS).div(BigNumber(10).pow(9)).toString(10);
     this.accountSelections = this.addressSelections.map(val => getValueByAddrInfo(val, 'name', toAccountList));
@@ -409,13 +450,18 @@ class CrossETHForm extends Component {
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
     // Convert the value of fee to USD
-    if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
-      totalFee = `${new BigNumber(gasFee).plus(operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
-    } else {
-      totalFee = `${new BigNumber(gasFee).plus(operationFee).toString()} ${feeUnit}`;
-    }
-    gasFee = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
-    let operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${feeUnit}`;
+    // if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
+    //   totalFee = `${new BigNumber(gasFee).plus(networkFee).times(coinPriceObj[feeUnit]).toString()} USD`;
+    // } else {
+    //   totalFee = `${new BigNumber(gasFee).plus(networkFee).toString()} ${feeUnit}`;
+    // }
+    totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+
+    gasFeeWithUnit = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
+
+    const operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${operationFeeUnit}`;
+
+    const networkFeeWithUnit = `${removeRedundantDecimal(networkFee)} ${networkFeeUnit}`;
 
     return (
       <div>
@@ -534,15 +580,24 @@ class CrossETHForm extends Component {
               <CommonFormItem
                 form={form}
                 colSpan={6}
+                formName='txFee'
+                disabled={true}
+                options={{ initialValue: gasFeeWithUnit }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.transactionFee')}
+              />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
                 formName='totalFee'
                 disabled={true}
                 options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
-                title={intl.get('CrossChainTransForm.estimateFee')}
+                title={intl.get('CrossChainTransForm.crosschainFee')}
                 suffix={<Tooltip title={
                   <table className={style['suffix_table']}>
                     <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.gasFee')}:</td><td>{gasFee}</td></tr>
+                      <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
                       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
                     </tbody>
                   </table>
@@ -563,7 +618,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        { this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} estimateFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
+        { this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
         {
           showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>

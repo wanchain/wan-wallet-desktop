@@ -489,6 +489,7 @@ const en_US = {
     'NormalTransForm.isNativeBtcAddress': 'It is not allowed to send to yourself.',
     'NormalTransForm.inputToAddress': 'Please enter recipient address',
     'NormalTransForm.addNewContacts': 'New address detected! Click here to add to your address book.',
+    'NormalTransForm.insufficientFee': 'Insufficient transaction fees, please check balance',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': 'Confirm Cross Chain Transaction',
     'CrossChainTransForm.capacity': 'Capacity',
@@ -499,6 +500,9 @@ const en_US = {
     'CrossChainTransForm.userNetworkFee': 'User Network Fee',
     'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
+    'CrossChainTransForm.networkFee': 'Network Fee',
+    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
     'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
     'CrossChainTransForm.originNoBalance': 'There is no balance on original chain',

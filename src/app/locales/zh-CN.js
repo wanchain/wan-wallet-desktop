@@ -489,6 +489,7 @@ const zh_CN = {
     'NormalTransForm.isNativeBtcAddress': '不允许发送交易给自己',
     'NormalTransForm.inputToAddress': '请输入接收者地址',
     'NormalTransForm.addNewContacts': '检测到新地址！ 单击此处添加到您的地址簿。',
+    'NormalTransForm.insufficientFee': '交易手续费不足，请检查账户余额',
 
     'CrossChainTransForm.ConfirmForm.transactionConfirm': '跨链交易确认',
     'CrossChainTransForm.capacity': '最大配额',
@@ -499,6 +500,9 @@ const zh_CN = {
     'CrossChainTransForm.userNetworkFee': '用户网络费用',
     'CrossChainTransForm.crossChainNetworkFee': '跨链网络费用',
     'CrossChainTransForm.operationFee': '手续费用',
+    'CrossChainTransForm.networkFee': '网络费用',
+    'CrossChainTransForm.crosschainFee': '跨链费用',
+    'CrossChainTransForm.transactionFee': '交易手续费',
     'CrossChainTransForm.overBalance': '费用超出了余额, 请确保原始链和目标链余额充足',
     'CrossChainTransForm.overOriginalBalance': '费用超出了余额, 请确保余额充足',
     'CrossChainTransForm.originNoBalance': '原始链余额不足',

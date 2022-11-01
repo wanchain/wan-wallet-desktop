@@ -96,7 +96,7 @@ class BTCTrans extends Component {
 
   render() {
     const { visible, loading, spin, smgList, estimateFee } = this.state;
-    const { from, getAmount, direction, getTokensListInfo } = this.props;
+    const { from, getAmount, direction, getTokensListInfo, name } = this.props;
     let balance;
     if (direction === INBOUND) {
       balance = getAmount;
@@ -108,7 +108,7 @@ class BTCTrans extends Component {
       <div>
         <Button type="primary" onClick={this.showModal} >{intl.get('Common.convert')}</Button>
         { visible &&
-          <CollectionCreateForm from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
+          <CollectionCreateForm name={name} from={this.props.from} balance={balance} direction={this.props.direction} estimateFee={estimateFee} smgList={smgList} wrappedComponentRef={this.saveFormRef} onCancel={this.handleCancel} onSend={this.handleSend} loading={loading} spin={spin} />
         }
       </div>
     );
