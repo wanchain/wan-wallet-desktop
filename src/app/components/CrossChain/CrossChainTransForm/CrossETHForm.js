@@ -58,6 +58,7 @@ class CrossETHForm extends Component {
       isPercentNetworkFee: false,
       percentOperationFee: 0,
       percentNetworkFee: 0,
+      receivedAmount: '0',
       minQuota: 0,
       maxQuota: 0,
       contactsList: [],
@@ -196,15 +197,18 @@ class CrossETHForm extends Component {
     try {
       if (new BigNumber(value).lte(0) || !checkAmountUnit(18, value)) {
         callback(message);
+        this.setState({ receivedAmount: '0' });
         return;
       }
       if (new BigNumber(value).lt(minQuota)) {
         let errText = `${intl.get('CrossChainTransForm.invalidAmount1')}: ${minQuota} ${unit}`;
+        this.setState({ receivedAmount: '0' });
         callback(errText);
         return;
       }
       if (new BigNumber(value).gt(maxQuota)) {
         callback(intl.get('CrossChainTransForm.overQuota'))
+        this.setState({ receivedAmount: '0' });
         return;
       }
       const finnalNetworkFee =
@@ -231,6 +235,7 @@ class CrossETHForm extends Component {
           callback(intl.get('NormalTransForm.insufficientFee'));
           return;
         }
+        this.setState({ receivedAmount: new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).toString(10) })
       } else {
         const fromAddrBalance = getValueByNameInfoAllType(account, 'balance', getChainAddressInfoByChain(info.toChainSymbol))
         if (new BigNumber(fromAddrBalance).minus(finnalNetworkFee).minus(txFeeWithoutUnit).lt(0)) {
@@ -245,6 +250,7 @@ class CrossETHForm extends Component {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
+        this.setState({ receivedAmount: new BigNumber(value).minus(finnalOperationFee).toString(10) })
       }
       callback();
     } catch (error) {
@@ -413,7 +419,7 @@ class CrossETHForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount } = this.state;
     const { getFieldDecorator } = form;
     let gasFee, gasFeeWithUnit, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
@@ -612,13 +618,22 @@ class CrossETHForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
               />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='receive'
+                disabled={true}
+                options={{ initialValue: `${receivedAmount} ${unit}` }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.youWillReceive')}
+              />
               {type === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
               <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
           </Spin>
         </Modal>
-        { this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
+        { this.state.confirmVisible && <Confirm received={form.getFieldValue('receive')} tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
         {
           showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>

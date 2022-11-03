@@ -14,7 +14,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { INBOUND, OUTBOUND, CROSS_TYPE, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossWANConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
+import { getFullChainName, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getQuota, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossWANConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -56,6 +56,7 @@ class CrossWANForm extends Component {
       isPercentNetworkFee: false,
       percentOperationFee: 0,
       percentNetworkFee: 0,
+      receivedAmount: '0',
       minQuota: 0,
       maxQuota: 0,
       contactsList: [],
@@ -129,6 +130,7 @@ class CrossWANForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { networkFee } = this.state;
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(['from', 'balance', 'storemanAccount', 'quota', 'to', 'totalFee', 'amount'], { force: true }, (err, { pwd, amount: sendAmount, to }) => {
@@ -168,6 +170,8 @@ class CrossWANForm extends Component {
                               : undefined;
       let walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()];
       let toValue = isNativeAccount && addrType !== 'trezor';
+      let sendValue = new BigNumber(sendAmount).minus(networkFee).toString(10);
+
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -177,12 +181,12 @@ class CrossWANForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+            updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue) });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendAmount) });
+        updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue) });
         this.setState({ confirmVisible: true });
       }
     });
@@ -203,15 +207,18 @@ class CrossWANForm extends Component {
     try {
       if (new BigNumber(value).lte(0) || !checkAmountUnit(18, value)) {
         callback(message);
+        this.setState({ receivedAmount: '0' });
         return;
       }
       if (new BigNumber(value).lt(minQuota)) {
         let errText = `${intl.get('CrossChainTransForm.invalidAmount1')}: ${minQuota} ${unit}`;
+        this.setState({ receivedAmount: '0' });
         callback(errText);
         return;
       }
       if (new BigNumber(value).gt(maxQuota)) {
         callback(intl.get('CrossChainTransForm.overQuota'))
+        this.setState({ receivedAmount: '0' });
         return;
       }
 
@@ -239,6 +246,7 @@ class CrossWANForm extends Component {
           callback(intl.get('NormalTransForm.insufficientFee'));
           return;
         }
+        this.setState({ receivedAmount: new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).toString(10) })
       } else {
         const fromAddrBalance = getValueByNameInfoAllType(account, 'balance', getChainAddressInfoByChain(info.toChainSymbol))
         if (new BigNumber(fromAddrBalance).minus(finnalNetworkFee).minus(txFeeWithoutUnit).lt(0)) {
@@ -253,6 +261,7 @@ class CrossWANForm extends Component {
           callback(intl.get('CrossChainTransForm.overOriginalBalance'));
           return;
         }
+        this.setState({ receivedAmount: new BigNumber(value).minus(finnalOperationFee).toString(10) })
       }
       callback();
     } catch (error) {
@@ -423,7 +432,7 @@ class CrossWANForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, estimateFee, balance, getChainAddressInfoByChain, record, currentTokenPairInfo: info, coinPriceObj, contacts } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount } = this.state;
     const { getFieldDecorator } = form;
     let gasFee, gasFeeWithUnit, totalFee, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
@@ -624,13 +633,22 @@ class CrossWANForm extends Component {
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('Common.amount')}
               />
+              <CommonFormItem
+                form={form}
+                colSpan={6}
+                formName='receive'
+                disabled={true}
+                options={{ initialValue: `${receivedAmount} ${unit}` }}
+                prefix={<Icon type="credit-card" className="colorInput" />}
+                title={intl.get('CrossChainTransForm.youWillReceive')}
+              />
               {type === OUTBOUND && (<Checkbox onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>)}
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}
               <p className="onAdvancedT"><span onClick={this.onAdvanced}>{intl.get('NormalTransForm.advancedOptions')}</span></p>
             </div>
           </Spin>
         </Modal>
-        {this.state.confirmVisible && <Confirm tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
+        {this.state.confirmVisible && <Confirm tokenSymbol={unit} amount={form.getFieldValue('amount')} received={form.getFieldValue('receive')} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
         {
           showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>

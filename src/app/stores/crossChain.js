@@ -242,6 +242,7 @@ class CrossChain {
           to: getInfoByAddress(item.toAddr, ['name'], tokens.getChainAddressInfoByChain(toChainType)).name || item.toAddr,
           toAddr: item.toAddr,
           value: formatNum(formatNumByDecimals(item.contractValue, decimals)),
+          crossValue: formatNum(formatNumByDecimals(item.crossValue || '0', decimals)),
           status: item.status,
           sendTime: item.sendTime,
           approveTxHash: item.approveTxHash,

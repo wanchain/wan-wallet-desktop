@@ -217,7 +217,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       } else {
         to = toAddr = toValue;
       }
-      const params = { value: amount, to, toAddr, estimateCrossChainNetworkFee: estimateCrossChainNetworkFee.value, receivedAmount }
+      const params = { value: amount, to, toAddr, estimateCrossChainNetworkFee: estimateCrossChainNetworkFee.value, receivedAmount, networkFee }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
@@ -617,7 +617,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           </div>
         </Spin>
       </Modal>
-      { confirmVisible && <Confirm visible={true} userNetWorkFee={userNetWorkFee} crosschainFee={crosschainFee} onCancel={() => setConfirmVisible(false)} sendTrans={onSend} toName={form.getFieldValue('to')}/> }
+      { confirmVisible && <Confirm visible={true} received={form.getFieldValue('receive')} userNetWorkFee={userNetWorkFee} crosschainFee={crosschainFee} onCancel={() => setConfirmVisible(false)} sendTrans={onSend} toName={form.getFieldValue('to')}/> }
       { advancedVisible && type === OUTBOUND && <AdvancedOutboundOptionForm symbol={'XRP'} chainType={toChainSymbol} onCancel={() => setAdvancedVisible(false)} onSave={handleOutBoundSaveOption} from={address} />}
       {
         showAddContacts && <AddContactsModalForm handleSave={handleCreate} onCancel={handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(info.desChain)}></AddContactsModalForm>

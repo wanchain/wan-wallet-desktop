@@ -49,7 +49,7 @@ class TransInfo extends Component {
 
   render() {
     const { convertStoreman } = this.props;
-    const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, value, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
+    const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, crossValue, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
     return (
       <Modal
         className={style.transModal}
@@ -138,7 +138,7 @@ class TransInfo extends Component {
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Value')}</Col>
-            <Col span={COLRIGHT}><Input disabled={true} placeholder={value} /></Col>
+            <Col span={COLRIGHT}><Input disabled={true} placeholder={crossValue} /></Col>
           </Row>
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Secret')}</Col>

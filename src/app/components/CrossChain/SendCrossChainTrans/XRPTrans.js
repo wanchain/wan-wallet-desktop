@@ -37,7 +37,7 @@ const XRPTrans = observer(({ record, type }) => {
     if (type === INBOUND) {
       input.value = XRPCrossTransParams.value;
       input.smgXrpAddr = XRPCrossTransParams.groupAddr;
-      input.networkFee = XRPCrossTransParams.networkFee;
+      input.networkFee = new BigNumber(XRPCrossTransParams.networkFee).multipliedBy(Math.pow(10, 6));
     } else {
       input.amount = XRPCrossTransParams.value;
       input.gasPrice = XRPCrossTransParams.gasPrice;
