@@ -9,7 +9,6 @@ import useAsync from 'hooks/useAsync';
 import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
-import { constants } from 'ethers-wan';
 
 const MINBALANCE = '10';
 const DEFAULTFEE = '0.000012'
@@ -149,7 +148,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
     }
   }
 
-  const checkAmount = (rule, value, callback) => {
+  const checkAmount = async (rule, value, callback) => {
     if (value === undefined) {
       callback(intl.get('NormalTransForm.amountIsIncorrect'));
       return;
@@ -162,9 +161,14 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       callback(intl.get('Xrp.minAmount'));
       return;
     }
-    if (form.getFieldValue('to') && new BigNumber(value).lt(minSendAmount)) {
-      callback(intl.get('Xrp.notExistAccount'))
-      return;
+
+    if (form.getFieldValue('to')) {
+      const val = await getBalance([form.getFieldValue('to')], 'XRP');
+      let toBalance = new BigNumber(Object.values(val)[0]);
+      if (toBalance.lt(MINBALANCE) && new BigNumber(value).lt(MINBALANCE)) {
+        callback(intl.get('Xrp.notExistAccount'));
+        return;
+      }
     }
     callback();
   }
