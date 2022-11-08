@@ -120,7 +120,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const useAvailableBalance = useMemo(() => {
     let tmp = new BigNumber(orignBalance).minus(estimateSmartFee.toString()).minus(minReserveXrp);
     return tmp.lt(0) ? '0' : tmp.toString(10);
-  }, [orignBalance, estimateSmartFee])
+  }, [orignBalance, estimateSmartFee, minReserveXrp])
 
   const checkToXRPAddr = (rule, value, callback) => {
     if (value) {
