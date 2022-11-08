@@ -49,8 +49,8 @@ const es_ES = {
     'Common.availableBalance': 'El saldo disponible es {availableBalance}',
 
     'Xrp.destinationTag': 'Etiqueta de destino',
-    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of 11 XRP',
-    'Xrp.minAmount': 'You must keep at least 10 XRP in this address to meet the mininum reserve requirement.',
+    'Xrp.notExistAccount': 'The destination account does not exist so you must send a minimum of { minReserveXrp } XRP',
+    'Xrp.minAmount': 'You must keep at least { minReserveXrp } XRP in this address to meet the mininum reserve requirement.',
 
     'Layout.connecting': 'conectando al servidor',
     'Layout.connected': 'conectado al servidor',

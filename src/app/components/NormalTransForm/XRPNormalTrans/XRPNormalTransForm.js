@@ -10,7 +10,7 @@ import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
 
-const MINBALANCE = '10';
+const MINBALANCE = 10;
 const DEFAULTFEE = '0.000012'
 const Confirm = Form.create({ name: 'NormalTransForm' })(ConfirmForm);
 const AddContactsModalForm = Form.create({ name: 'AddContactsModal' })(AddContactsModal);
@@ -27,17 +27,19 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   const [showAddContacts, setShowAddContacts] = useState(false);
   const [visibleTag, setVisibleTag] = useState(true);
   const { status: estimateSmartFeeStatus, value: estimateSmartFee } = useAsync('transaction_estimateSmartFee', DEFAULTFEE, true, { chainType: 'XRP' });
+  const { status: getAllBalancesStatus, value: getAllBalances } = useAsync('address_getAllBalances', [{ currency: 'XRP', value: '0' }], true, { chainType: 'XRP', address: from });
+
   const spin = useMemo(() => {
-    return estimateSmartFeeStatus === 'pending';
-  }, [estimateSmartFeeStatus])
+    return [estimateSmartFeeStatus, getAllBalancesStatus].includes('pending');
+  }, [estimateSmartFeeStatus, getAllBalancesStatus])
 
   const { getFieldDecorator } = form;
 
   useEffect(() => {
-    if (estimateSmartFeeStatus === 'error') {
+    if ([estimateSmartFeeStatus, getAllBalancesStatus].includes('error')) {
       message.warn(intl.get('network.down'));
     }
-  }, [estimateSmartFeeStatus])
+  }, [estimateSmartFeeStatus, getAllBalancesStatus])
 
   useEffect(() => {
     processContacts();
@@ -48,6 +50,10 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
     let contactsList = Object.values(normalAddr[chainSymbol]);
     setContactsList(contactsList);
   }
+
+  const minReserveXrp = useMemo(() => {
+    return (getAllBalances.length - 1) * 2 + MINBALANCE;
+  }, [getAllBalances])
 
   const renderOption = item => {
     return (
@@ -87,7 +93,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
         return;
       };
       let { pwd, amount, to, tag } = form.getFieldsValue(['pwd', 'amount', 'to', 'tag']);
-      if (new BigNumber(orignBalance).lt(MINBALANCE)) {
+      if (new BigNumber(orignBalance).lt(minReserveXrp)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;
       }
@@ -112,7 +118,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   }
 
   const useAvailableBalance = useMemo(() => {
-    let tmp = new BigNumber(orignBalance).minus(estimateSmartFee.toString()).minus(MINBALANCE);
+    let tmp = new BigNumber(orignBalance).minus(estimateSmartFee.toString()).minus(minReserveXrp);
     return tmp.lt(0) ? '0' : tmp.toString(10);
   }, [orignBalance, estimateSmartFee])
 
@@ -158,15 +164,15 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       return;
     }
     if (new BigNumber(useAvailableBalance).minus(value).lt(0)) {
-      callback(intl.get('Xrp.minAmount'));
+      callback(intl.get('Xrp.minAmount', { minReserveXrp }));
       return;
     }
 
     if (form.getFieldValue('to')) {
       const val = await getBalance([form.getFieldValue('to')], 'XRP');
       let toBalance = new BigNumber(Object.values(val)[0]);
-      if (toBalance.lt(MINBALANCE) && new BigNumber(value).lt(MINBALANCE)) {
-        callback(intl.get('Xrp.notExistAccount'));
+      if (toBalance.lt(minReserveXrp) && new BigNumber(value).lt(minReserveXrp)) {
+        callback(intl.get('Xrp.notExistAccount', { minReserveXrp }));
         return;
       }
     }

@@ -46,6 +46,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
   const { status: fetchGasPrice, value: gasPrice } = useAsync('query_getGasPrice', '0', type === OUTBOUND, { chainType: toChainSymbol });
+  const { status: getAllBalancesStatus, value: getAllBalances } = useAsync('address_getAllBalances', [{ currency: 'XRP', value: '0' }], true, { chainType: 'XRP', address });
 
   const info = type === INBOUND ? {
     feeSymbol: fromChainSymbol,
@@ -80,6 +81,10 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const minQuota = useMemo(() => {
     return formatNumByDecimals(quotaList[0].minQuota, ancestorDecimals)
   }, [quotaList])
+
+  const minReserveXrp = useMemo(() => {
+    return (getAllBalances.length - 1) * 2 + MINXRPBALANCE;
+  }, [getAllBalances])
 
   const contactsList = useMemo(() => {
     const { normalAddr } = contacts;
@@ -164,7 +169,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   });
 
   const checkXRPBalance = (addr, type) => {
-    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte('11')).catch(() => false) : Promise.resolve(true)
+    return type === OUTBOUND ? getBalance([addr], 'XRP').then(val => new BigNumber(val[addr]).plus(receivedAmount).gte(minReserveXrp)).catch(() => false) : Promise.resolve(true)
   }
 
   const handleNext = () => {
@@ -184,7 +189,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       let addrType = 'normal';
       let toValue = form.getFieldValue('to')
       if (type === INBOUND) {
-        if (new BigNumber(balance).minus(amount).minus(fee).lt(MINXRPBALANCE)) {
+        if (new BigNumber(balance).minus(amount).minus(fee).lt(minReserveXrp)) {
           message.warn(intl.get('NormalTransForm.insufficientFee'))
           return;
         }
@@ -233,7 +238,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
                 updateXRPTransParams(params);
                 setConfirmVisible(true);
               } else {
-                message.warn(intl.get('Xrp.notExistAccount'))
+                message.warn(intl.get('Xrp.notExistAccount', { minReserveXrp }))
               }
             })
           }
@@ -245,7 +250,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
             updateXRPTransParams(params);
             setConfirmVisible(true);
           } else {
-            message.warn(intl.get('Xrp.notExistAccount'))
+            message.warn(intl.get('Xrp.notExistAccount', { minReserveXrp }))
           }
         })
       }
@@ -311,8 +316,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
           setReceivedAmount('0');
           return;
         }
-        if (new BigNumber(balance).minus(value).lte(MINXRPBALANCE)) {
-          callback(intl.get('Xrp.minAmount'));
+        if (new BigNumber(balance).minus(value).lte(minReserveXrp)) {
+          callback(intl.get('Xrp.minAmount', { minReserveXrp }));
           setReceivedAmount('0');
           return;
         }

@@ -117,7 +117,7 @@ export const DECIMALS = {
   XRP: 6
 }
 
-export const MINXRPBALANCE = '10';
+export const MINXRPBALANCE = 10;
 export const DEBOUNCE_DURATION = 600;
 
 export const FNX_POOL_TESTNET = '0xcbf7eab1639c175545a0d8b24ac47ea36a2720ed';

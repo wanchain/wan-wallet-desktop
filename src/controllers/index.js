@@ -562,6 +562,19 @@ ipc.on(ROUTE_ADDRESS, async (event, actionUni, payload) => {
             sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: balance })
             break
 
+        case 'getAllBalances':
+          try {
+              const { chainType, address, options } = payload;
+              ret = await ccUtil.getAllBalances(chainType, address, options);
+          } catch (e) {
+              logger.error('Get getAllBalances failed');
+              logger.error(e.message || e.stack)
+              err = e
+          }
+
+          sendResponse([ROUTE_ADDRESS, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
         case 'btcImportAddress':
             try {
                 ret = await ccUtil.btcImportAddress(payload.address);
