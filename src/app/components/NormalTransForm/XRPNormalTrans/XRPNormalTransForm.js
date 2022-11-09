@@ -6,7 +6,7 @@ import { Button, Modal, Form, Input, Icon, Checkbox, message, Spin, AutoComplete
 
 import style from '../index.less';
 import useAsync from 'hooks/useAsync';
-import { checkAmountUnit, checkXRPAddr, getBalance } from 'utils/helper';
+import { checkAmountUnit, checkXRPAddr, getBalance, getAllBalancesFunc } from 'utils/helper';
 import ConfirmForm from 'components/NormalTransForm/XRPNormalTrans/XRPConfirmForm.js';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
 
@@ -52,7 +52,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
   }
 
   const minReserveXrp = useMemo(() => {
-    return (getAllBalances.length - 1) * 2 + MINBALANCE;
+    return (getAllBalances.length > 0 ? getAllBalances.length - 1 : 0) * 2 + MINBALANCE;
   }, [getAllBalances])
 
   const renderOption = item => {
@@ -170,9 +170,11 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
 
     if (form.getFieldValue('to')) {
       const val = await getBalance([form.getFieldValue('to')], 'XRP');
+      const addrBalances = await getAllBalancesFunc('XRP', form.getFieldValue('to'));
       let toBalance = new BigNumber(Object.values(val)[0]);
-      if (toBalance.lt(minReserveXrp) && new BigNumber(value).lt(minReserveXrp)) {
-        callback(intl.get('Xrp.notExistAccount', { minReserveXrp }));
+      const minReserveXrp_to = (addrBalances.length > 0 ? addrBalances.length - 1 : 0) * 2 + MINBALANCE;
+      if (toBalance.lt(minReserveXrp) && new BigNumber(value).lt(minReserveXrp_to)) {
+        callback(intl.get('Xrp.notExistAccount', { minReserveXrp: minReserveXrp_to }));
         return;
       }
     }

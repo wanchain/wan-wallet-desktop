@@ -80,6 +80,19 @@ export const getBalance = function (arr, chainType = 'WAN') {
   })
 };
 
+export const getAllBalancesFunc = function(chainType, address, options) {
+  return new Promise((resolve, reject) => {
+    wand.request('address_getAllBalances', { chainType, address, options }, (err, val) => {
+      if (err) {
+        console.log(`Get ${chainType} getAllBalances failed`, err)
+        return reject(err)
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+}
+
 export const getBTCMultiBalances = function (addresses) {
   return new Promise((resolve, reject) => {
     wand.request('address_getBtcMultiBalances', { minconf: MIN_CONFIRM_BLKS, maxconf: MAX_CONFIRM_BLKS, addresses }, (err, data) => {

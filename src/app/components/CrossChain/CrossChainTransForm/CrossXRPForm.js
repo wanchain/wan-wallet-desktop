@@ -83,7 +83,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [quotaList])
 
   const minReserveXrp = useMemo(() => {
-    return (getAllBalances.length - 1) * 2 + MINXRPBALANCE;
+    return (getAllBalances.length > 0 ? getAllBalances.length - 1 : 0) * 2 + MINXRPBALANCE;
   }, [getAllBalances])
 
   const contactsList = useMemo(() => {
@@ -190,13 +190,15 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       let toValue = form.getFieldValue('to')
       if (type === INBOUND) {
         if (new BigNumber(balance).minus(amount).minus(fee).lt(minReserveXrp)) {
-          message.warn(intl.get('NormalTransForm.insufficientFee'))
+          message.warn(intl.get('NormalTransForm.insufficientFee'));
+          setHandleNextStatus(false);
           return;
         }
       } else {
         const fromAddrBalance = getValueByNameInfoAllType(name, 'balance', tokens.getChainAddressInfoByChain(toChainSymbol))
         if (new BigNumber(fromAddrBalance).minus(networkFee).minus(fee).lt(0)) {
-          message.warn(intl.get('NormalTransForm.insufficientFee'))
+          message.warn(intl.get('NormalTransForm.insufficientFee'));
+          setHandleNextStatus(false);
           return;
         }
       }
@@ -209,7 +211,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
                                     : getValueByNameInfoAllType(toValue, 'address', info.toAccountList)
           toAddr = getValueByNameInfoAllType(toValue, 'address', info.toAccountList);
         } else {
-          addrType = getInfoByAddress(to, [], info.toAccountList).type
+          addrType = getInfoByAddress(toValue, [], info.toAccountList).type
           walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()]
           to = addrType !== 'trezor'
                                     ? { walletID, path: addrType === 'normal' ? `${toPathPrefix}${(getInfoByAddress(toValue, ['path'], info.toAccountList)).path}` : info.toAccountList[addrType][toValue].path }
