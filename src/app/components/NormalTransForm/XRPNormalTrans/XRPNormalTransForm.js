@@ -173,7 +173,7 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       const addrBalances = await getAllBalancesFunc('XRP', form.getFieldValue('to'));
       let toBalance = new BigNumber(Object.values(val)[0]);
       const minReserveXrp_to = (addrBalances.length > 0 ? addrBalances.length - 1 : 0) * 2 + MINBALANCE;
-      if (toBalance.lt(minReserveXrp) && new BigNumber(value).lt(minReserveXrp_to)) {
+      if (toBalance.lt(minReserveXrp_to) && new BigNumber(value).lt(minReserveXrp_to)) {
         callback(intl.get('Xrp.notExistAccount', { minReserveXrp: minReserveXrp_to }));
         return;
       }
