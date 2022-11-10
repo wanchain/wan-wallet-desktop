@@ -170,8 +170,13 @@ class CrossWANForm extends Component {
                               : undefined;
       let walletID = addrType === 'normal' ? 1 : WALLETID[addrType.toUpperCase()];
       let toValue = isNativeAccount && addrType !== 'trezor';
-      let sendValue = new BigNumber(sendAmount).minus(networkFee).toString(10);
 
+      let sendValue;
+      if (type === INBOUND) {
+        sendValue = new BigNumber(sendAmount).minus(networkFee).toString(10);
+      } else {
+        sendValue = new BigNumber(sendAmount).toString(10);
+      }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));
