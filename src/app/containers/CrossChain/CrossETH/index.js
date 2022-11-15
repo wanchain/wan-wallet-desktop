@@ -72,8 +72,10 @@ class CrossETH extends Component {
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
-      crossType: transParams.crossType
+      crossType: transParams.crossType,
+      networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
+
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log('ETH inbound result:', err, ret);
@@ -111,7 +113,8 @@ class CrossETH extends Component {
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
       crossType: transParams.crossType,
-      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10),
+      networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
 
     return new Promise((resolve, reject) => {

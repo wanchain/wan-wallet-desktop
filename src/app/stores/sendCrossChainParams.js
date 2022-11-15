@@ -89,6 +89,7 @@ class SendCrossChainParams {
       txFeeRatio: 0,
       gasLimit: GASLIMIT,
       crossType: params.crossType ? params.crossType : CROSS_TYPE[0],
+      networkFee: '0'
     };
   }
 

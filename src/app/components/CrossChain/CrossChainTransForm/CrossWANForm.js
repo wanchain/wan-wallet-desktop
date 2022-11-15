@@ -186,12 +186,12 @@ class CrossWANForm extends Component {
           if (err) {
             message.warn(intl.get('Backup.invalidPassword'));
           } else {
-            updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue) });
+            updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue), networkFee });
             this.setState({ confirmVisible: true });
           }
         })
       } else {
-        updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue) });
+        updateTransParams(from, { to: toValue ? { walletID, path: toPath } : to, toAddr: to, amount: formatAmount(sendValue), networkFee });
         this.setState({ confirmVisible: true });
       }
     });

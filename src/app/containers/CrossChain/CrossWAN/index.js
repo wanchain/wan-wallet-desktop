@@ -75,7 +75,8 @@ class CrossWAN extends Component {
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
       crossType: transParams.crossType,
-      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10),
+      networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
     return new Promise((resolve, reject) => {
       if (input.from.walletID === 2) {
@@ -126,7 +127,8 @@ class CrossWAN extends Component {
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
-      crossType: transParams.crossType
+      crossType: transParams.crossType,
+      networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
