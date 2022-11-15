@@ -439,6 +439,11 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
                                 paramsObj1 = { name: accountName, addr: addr.address }
                                 paramsObj2 = { type, path: newPath, name: accountName, addr: addr.address }
                                 break;
+                            case 'TRX':
+                                isValidAddress = await ccUtil.isTrxAddress(addr.address);
+                                paramsObj1 = { name: accountName, addr: addr.address }
+                                paramsObj2 = { type, path: index, name: accountName, addr: addr.address }
+                                break;
                         }
                         if (isValidAddress) {
                             hdUtil.createUserAccount(wid, newPath, paramsObj1);
@@ -2832,6 +2837,9 @@ const getChainIdByType = function (type, isTestNet = false) {
             break;
         case 'XRP':
             ID = 144;
+            break;
+        case 'TRX':
+            ID = 195;
             break;
     }
     return ID;

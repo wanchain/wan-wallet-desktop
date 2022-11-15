@@ -106,6 +106,9 @@ class App extends Component {
         case 'XRP':
           stores.xrpAddress.addRawKey(data);
             break;
+        case 'TRX':
+          stores.trxAddress.addRawKey(data);
+            break;
       }
     })
 

@@ -144,9 +144,7 @@ class ImportPrivateKeyForm extends Component {
               <Select defaultValue="WAN" onChange={this.typeChange}>
                 <Option value="WAN" selected="selected">WAN</Option>
                 <Option value="ETH">ETH</Option>
-                <Option value="BTC">BTC</Option>
-                <Option value="EOS">EOS</Option>
-                <Option value="XRP">XRP</Option>
+                <Option value="TRX">TRX</Option>
               </Select>
               <Form.Item>
                 {getFieldDecorator('privateKey1', { rules: [{ required: true, message: intl.get('ImportPrivateKeyForm.isInvalid'), validator: this.checkPrivateKey }] })

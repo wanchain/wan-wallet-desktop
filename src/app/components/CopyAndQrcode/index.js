@@ -144,7 +144,7 @@ class CopyAndQrcode extends Component {
         <Tooltip placement="bottom" title={intl.get('Common.copy')}><Icon type="copy" onClick={e => this.copy2Clipboard(addr, e)} /></Tooltip>
         <Tooltip placement="bottom" title={intl.get('Common.QRCode')}><Icon type="qrcode" onClick={e => this.createQrCode(addr, e)} /></Tooltip>
         {
-          ['WAN', 'ETH', 'BTC', 'EOS', 'XRP'].includes(type) &&
+          ['WAN', 'ETH', 'BTC', 'EOS', 'XRP', 'TRX'].includes(type) &&
           <React.Fragment>
             <Tooltip placement="bottom" title={intl.get('Common.exportKey')}><Icon type="export" onClick={e => this.showModal()} /></Tooltip>
             <Modal
