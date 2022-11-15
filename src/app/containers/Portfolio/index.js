@@ -7,6 +7,7 @@ import ethLogo from 'static/image/eth.png';
 import btcLogo from 'static/image/btc.png';
 import eosLogo from 'static/image/eos.png';
 import xrpLogo from 'static/image/xrp.png';
+import trxLogo from 'static/image/trx.png';
 
 @inject(stores => ({
   portfolioList: stores.portfolio.portfolioList,
@@ -53,6 +54,9 @@ class Portfolio extends Component {
         break;
       case 'XRP':
         img = xrpLogo;
+        break;
+      case 'TRX':
+        img = trxLogo;
         break;
       default:
         let scAddr = record.scAddr.replace(/^.*-/, '');

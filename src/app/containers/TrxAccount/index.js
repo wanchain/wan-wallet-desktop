@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tag } from 'antd';
-import totalImg from 'static/image/eth.png';
+import totalImg from 'static/image/trx.png';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import { hasSameName, createTRXAddr } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
