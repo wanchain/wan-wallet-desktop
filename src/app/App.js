@@ -21,13 +21,13 @@ class App extends Component {
       if (ready) {
         stores.session.initChainId().then(chainId => stores.btcAddress.getUserAccountFromDB(chainId));
         stores.session.initSettings();
-        stores.portfolio.updateCoinsList_from_CoinGeckoAPI();
+        // stores.portfolio.updateCoinsList_from_CoinGeckoAPI();
         stores.wanAddress.getUserAccountFromDB();
         stores.ethAddress.getUserAccountFromDB();
         stores.xrpAddress.getUserAccountFromDB();
         stores.trxAddress.getUserAccountFromDB();
         stores.eosAddress.getUserKeyFromDB();
-        stores.dapps.updateLocalDApps();
+        // stores.dapps.updateLocalDApps();
         clearInterval(id);
       }
     }, 1000);

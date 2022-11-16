@@ -119,13 +119,13 @@ class Register extends Component {
               let [wanAddrInfo, ethAddrInfo, btcMainAddInfo, xrpAddrInfo] = await Promise.all([
                 createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
                 createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
-                createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
-                createXRPAddr(),
+                // createBTCAddr(chainId === 1 ? BTCPATH_MAIN : BTCPATH_TEST, 0),
+                // createXRPAddr(),
               ]);
               addWANAddress(wanAddrInfo);
               addETHAddress(ethAddrInfo);
-              addBTCAddress(btcMainAddInfo);
-              addXRPAddress(xrpAddrInfo);
+              // addBTCAddress(btcMainAddInfo);
+              // addXRPAddress(xrpAddrInfo);
               this.props.setMnemonicStatus(true);
               this.props.setAuth(true);
               this.setState({ loading: false });
