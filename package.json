@@ -1,7 +1,7 @@
 {
   "name": "wanwallet",
   "productName": "Wan Wallet",
-  "version": "1.4.8-offline-build20221116",
+  "version": "1.4.8-offline-build20221121",
   "description": "Wanchain's new multicoin wallet",
   "main": "./build/main.js",
   "author": {
