@@ -132,8 +132,8 @@ export default function Offline(props) {
 
   const checkTrxInfo = useCallback(() => {
     const info = trxInfo[0];
-    if (Date.now() - info.timestamp > 2 * 3600 * 1000) {
-      message.warn('TRX交易中的确认块信息已经过期请重新填写');
+    if (Date.now() - info.timestamp > 24 * 3600 * 1000) {
+      message.warn('TRX交易中的确认块信息已经过期，请更新文件！');
       return false;
     }
     return true;
@@ -188,15 +188,6 @@ export default function Offline(props) {
           : null
       }
     </InALine>
-    {
-      trxInfo && trxInfo.length > 0
-      ? <div>
-          <TrxTitle>TRX Block Information</TrxTitle>
-          <StyledInput.TextArea autosize={{ minColumns: 15, minRows: 4, maxRows: 10 }} onChange={e => setInputTrx(e.target.value)}/>
-          <StyledButton type="primary" onClick={handleUpdateTrxInfo}>Update</StyledButton>
-        </div>
-      : null
-    }
     {
       trxInfo && trxInfo.length > 0
         ? <TrxInfo info={trxInfo} setInfo={setTrxInfo} trans={transactions} setTrans={setTransactions} />
