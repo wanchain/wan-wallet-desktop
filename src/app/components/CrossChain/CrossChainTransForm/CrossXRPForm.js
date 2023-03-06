@@ -40,8 +40,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [networkFee, setNetworkFee] = useState('0')
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
-  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP' });
-  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP' });
+  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false, minNetworkFeeLimit: '0', maxNetworkFeeLimit: '0' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
+  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false, minOperationFeeLimit: '0', maxOperationFeeLimit: '0' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
 
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
@@ -104,7 +104,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   }, [estimatedFee, gasPrice, XRPCrossTransParams.gasLimit])
 
   const crosschainFee = useMemo(() => {
-    return `${new BigNumber(networkFee).toString()} ${info.networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${info.operationFeeUnit}`;
+    if (info.networkFeeUnit === info.operationFeeUnit) {
+      return `${new BigNumber(networkFee).plus(operationFee).toString()} ${info.networkFeeUnit}`;
+    } else {
+      return `${new BigNumber(networkFee).toString()} ${info.networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${info.operationFeeUnit}`;
+    }
   }, [fee, coinPriceObj, operationFee, networkFee]);
 
   const userNetWorkFee = useMemo(() => {
@@ -300,14 +304,33 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         return;
       }
 
-      const finnalNetworkFee =
-        estimateCrossChainNetworkFee.isPercent
-          ? new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).toString()
-          : type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value);
-      const finnalOperationFee =
-        estimateCrossChainOperationFee.isPercent
-        ? new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value).toString()
-        : formatNumByDecimals(estimateCrossChainOperationFee.value, ancestorDecimals);
+      // const finnalNetworkFee =
+      //   estimateCrossChainNetworkFee.isPercent
+      //     ? new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).toString()
+      //     : type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value);
+      // const finnalOperationFee =
+      //   estimateCrossChainOperationFee.isPercent
+      //   ? new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value).toString()
+      //   : formatNumByDecimals(estimateCrossChainOperationFee.value, ancestorDecimals);
+
+      let finnalNetworkFee, finnalOperationFee;
+      if (estimateCrossChainNetworkFee.isPercent) {
+        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
+        finnalNetworkFee = tmp.lt(estimateCrossChainNetworkFee.minNetworkFeeLimit)
+                                ? estimateCrossChainNetworkFee.minNetworkFeeLimit
+                                : tmp.gt(estimateCrossChainNetworkFee.maxNetworkFeeLimit) ? estimateCrossChainNetworkFee.maxNetworkFeeLimit : tmp.toString();
+      } else {
+        finnalNetworkFee = type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value);
+      }
+
+      if (estimateCrossChainOperationFee.isPercent) {
+        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value);
+        finnalOperationFee = tmp.lt(estimateCrossChainOperationFee.minOperationFeeLimit)
+                                ? estimateCrossChainOperationFee.minOperationFeeLimit
+                                : tmp.gt(estimateCrossChainOperationFee.maxOperationFeeLimit) ? estimateCrossChainOperationFee.maxOperationFeeLimit : tmp.toString();
+      } else {
+        finnalOperationFee = formatNumByDecimals(estimateCrossChainOperationFee.value, ancestorDecimals);
+      }
 
       setNetworkFee(finnalNetworkFee);
       setOperationFee(finnalOperationFee);
@@ -591,14 +614,14 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               options={{ initialValue: crosschainFee }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('CrossChainTransForm.crosschainFee')}
-              suffix={<Tooltip title={
-                <table className={style['suffix_table']}>
-                  <tbody>
-                    <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
-                    <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
-                  </tbody>
-                </table>
-              }><Icon type="exclamation-circle" /></Tooltip>}
+              // suffix={<Tooltip title={
+              //   <table className={style['suffix_table']}>
+              //     <tbody>
+              //       <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
+              //       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
+              //     </tbody>
+              //   </table>
+              // }><Icon type="exclamation-circle" /></Tooltip>}
             />
             <CommonFormItem
               form={form}

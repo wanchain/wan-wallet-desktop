@@ -35,6 +35,7 @@ const XRPTrans = observer(({ record, type }) => {
       amountUnit: new BigNumber(XRPCrossTransParams.receivedAmount).multipliedBy(Math.pow(10, tokenPairsInfo.ancestorDecimals)).toString(10)
     }
     if (type === INBOUND) {
+      input.tag = '0';
       input.value = XRPCrossTransParams.value;
       input.smgXrpAddr = XRPCrossTransParams.groupAddr;
       input.networkFee = new BigNumber(XRPCrossTransParams.networkFee).multipliedBy(Math.pow(10, 6));

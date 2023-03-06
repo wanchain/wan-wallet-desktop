@@ -501,7 +501,7 @@ const pt_PT = {
     'CrossChainTransForm.crossChainNetworkFee': 'Taxa de rede cruzada',
     'CrossChainTransForm.operationFee': 'Taxa de operação',
     'CrossChainTransForm.networkFee': 'Network Fee',
-    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.crosschainFee': 'Bridge Fee',
     'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'O custo excede o saldo. Verifique o saldo na blockchain original e na de destino',
     'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',

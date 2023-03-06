@@ -482,7 +482,7 @@ const fr_FR = {
     'CrossChainTransForm.crossChainNetworkFee': 'Frais de réseau inter-chaînes',
     'CrossChainTransForm.operationFee': 'Frais d\'opération',
     'CrossChainTransForm.networkFee': 'Network Fee',
-    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.crosschainFee': 'Bridge Fee',
     'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale et du destinataire.',
     'CrossChainTransForm.overOriginalBalance': 'Le coût dépasse le solde. Veuillez vérifier le solde du compte sur la blockchain originale',

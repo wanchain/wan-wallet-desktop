@@ -501,7 +501,7 @@ const th_TH = {
     'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'ค่าธรรมเนียมการจัดการ',
     'CrossChainTransForm.networkFee': 'Network Fee',
-    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.crosschainFee': 'Bridge Fee',
     'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'ค่าใช้จ่ายเกินยอดคงเหลือ กรุณาตรวจสอบยอดคงเหลือทั้งเชนต้นทางและปลายทาง',
     'CrossChainTransForm.overOriginalBalance': 'ยอดบัญชีไม่พอค่าใช้จ่าย กรุณาตรวจสอบยอดบัญชีจากเชนต้นทาง',

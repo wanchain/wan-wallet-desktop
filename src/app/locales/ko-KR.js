@@ -501,7 +501,7 @@ const ko_KR = {
     'CrossChainTransForm.crossChainNetworkFee': '크로스체인 네트워크 수수료',
     'CrossChainTransForm.operationFee': '운영 비용',
     'CrossChainTransForm.networkFee': 'Network Fee',
-    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.crosschainFee': 'Bridge Fee',
     'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': '비용이 잔액을 초과합니다. 원래 체인과 대상 체인 모두에서 잔액을 확인하십시오',
     'CrossChainTransForm.overOriginalBalance': '비용이 잔액을 초과합니다. 기존 체인의 잔액을 확인 바랍니다.',

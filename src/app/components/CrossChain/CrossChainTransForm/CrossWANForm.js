@@ -53,7 +53,11 @@ class CrossWANForm extends Component {
       operationFee: 0,
       networkFee: 0,
       isPercentOperationFee: false,
+      minOperationFeeLimit: '0',
+      maxOperationFeeLimit: '0',
       isPercentNetworkFee: false,
+      minNetworkFeeLimit: '0',
+      maxNetworkFeeLimit: '0',
       percentOperationFee: 0,
       percentNetworkFee: 0,
       receivedAmount: '0',
@@ -86,16 +90,30 @@ class CrossWANForm extends Component {
   }
 
   componentDidMount() {
-    const { type } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const { ancestorDecimals } = info;
+
     this.processContacts();
-    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN').then(res => {
-      this.setState({ networkFee: res.isPercent ? '0' : fromWei(res.value), isPercentNetworkFee: res.isPercent, percentNetworkFee: res.isPercent ? res.value : 0 });
+    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId }).then(res => {
+      this.setState({
+        networkFee: res.isPercent ? '0' : fromWei(res.value),
+        isPercentNetworkFee: res.isPercent,
+        percentNetworkFee: res.isPercent ? res.value : 0,
+        minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+      });
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
     });
-    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN').then(res => {
-      this.setState({ operationFee: res.isPercent ? '0' : fromWei(res.value), isPercentOperationFee: res.isPercent, percentOperationFee: res.isPercent ? res.value : 0 });
+    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId }).then(res => {
+      this.setState({
+        operationFee: res.isPercent ? '0' : fromWei(res.value),
+        isPercentOperationFee: res.isPercent,
+        percentOperationFee: res.isPercent ? res.value : 0,
+        minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+      });
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -203,7 +221,7 @@ class CrossWANForm extends Component {
 
   checkAmount = (rule, value, callback) => {
     const { balance, from, estimateFee, type, currentTokenPairInfo: info, getChainAddressInfoByChain, form, account } = this.props;
-    const { advanced, advancedFee, maxQuota, minQuota, isPercentNetworkFee, isPercentOperationFee, networkFee, operationFee, percentNetworkFee, percentOperationFee } = this.state;
+    const { advanced, advancedFee, maxQuota, minQuota, isPercentNetworkFee, isPercentOperationFee, networkFee, operationFee, percentNetworkFee, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit } = this.state;
     const unit = type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol;
     const { txFee } = form.getFieldsValue(['txFee']);
     const txFeeWithoutUnit = txFee.split(' ')[0];
@@ -227,14 +245,32 @@ class CrossWANForm extends Component {
         return;
       }
 
-      const finnalNetworkFee =
-        isPercentNetworkFee
-          ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
-          : networkFee;
-      const finnalOperationFee =
-        isPercentOperationFee
-          ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
-          : operationFee;
+      // const finnalNetworkFee =
+      //   isPercentNetworkFee
+      //     ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
+      //     : networkFee;
+      // const finnalOperationFee =
+      //   isPercentOperationFee
+      //     ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
+      //     : operationFee;
+      let finnalNetworkFee, finnalOperationFee;
+      if (isPercentNetworkFee) {
+        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
+        finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
+                                ? minNetworkFeeLimit
+                                : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+      } else {
+        finnalNetworkFee = networkFee;
+      }
+
+      if (isPercentOperationFee) {
+        let tmp = new BigNumber(value).multipliedBy(percentOperationFee);
+        finnalOperationFee = tmp.lt(minOperationFeeLimit)
+                                ? minOperationFeeLimit
+                                : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+      } else {
+        finnalOperationFee = operationFee;
+      }
 
       this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
 
@@ -475,14 +511,12 @@ class CrossWANForm extends Component {
     })
     let defaultSelectStoreman = smgList.length === 0 ? '' : smgList[0].groupId;
 
-    // Convert the value of fee to USD
-    // if ((typeof coinPriceObj === 'object') && feeUnit in coinPriceObj) {
-    //   totalFee = `${new BigNumber(gasFee).plus(operationFee).times(coinPriceObj[feeUnit]).toString()} USD`;
-    // } else {
-    //   totalFee = `${new BigNumber(gasFee).plus(operationFee).toString()} ${feeUnit}`;
-    // }
-    totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
-
+    // totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+    if (networkFeeUnit === operationFeeUnit) {
+      totalFee = `${new BigNumber(networkFee).plus(operationFee).toString()} ${networkFeeUnit}`;
+    } else {
+      totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+    }
     gasFeeWithUnit = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
 
     const operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${operationFeeUnit}`;
@@ -620,14 +654,14 @@ class CrossWANForm extends Component {
                 options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.crosschainFee')}
-                suffix={<Tooltip title={
-                  <table className={style['suffix_table']}>
-                    <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
-                      <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
-                    </tbody>
-                  </table>
-                }><Icon type="exclamation-circle" /></Tooltip>}
+                // suffix={<Tooltip title={
+                //   <table className={style['suffix_table']}>
+                //     <tbody>
+                //       <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
+                //       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
+                //     </tbody>
+                //   </table>
+                // }><Icon type="exclamation-circle" /></Tooltip>}
               />
               <CommonFormItem
                 form={form}

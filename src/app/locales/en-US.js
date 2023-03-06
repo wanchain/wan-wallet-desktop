@@ -501,7 +501,7 @@ const en_US = {
     'CrossChainTransForm.crossChainNetworkFee': 'Cross-chain Network Fee',
     'CrossChainTransForm.operationFee': 'Operation Fee',
     'CrossChainTransForm.networkFee': 'Network Fee',
-    'CrossChainTransForm.crosschainFee': 'Crosschain Fee',
+    'CrossChainTransForm.crosschainFee': 'Bridge Fee',
     'CrossChainTransForm.transactionFee': 'Transaction Fee',
     'CrossChainTransForm.overBalance': 'The cost exceeds the balance. Please check the balance on both original and destination chain',
     'CrossChainTransForm.overOriginalBalance': 'The cost exceeds the balance. Please check the balance',
