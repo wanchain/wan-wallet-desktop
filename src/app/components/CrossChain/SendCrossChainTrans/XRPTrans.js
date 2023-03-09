@@ -43,6 +43,7 @@ const XRPTrans = observer(({ record, type }) => {
       input.amount = XRPCrossTransParams.value;
       input.gasPrice = XRPCrossTransParams.gasPrice;
       input.gasLimit = XRPCrossTransParams.gasLimit;
+      input.networkFee = new BigNumber(XRPCrossTransParams.networkFee).multipliedBy(Math.pow(10, 18));
     }
     const info = type === INBOUND ? {
       sourceSymbol: tokenPairsInfo.fromChainSymbol,
