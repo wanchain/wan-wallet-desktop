@@ -118,7 +118,8 @@ class CrossBTC extends Component {
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
       crossType: CROSS_TYPE[0],
-      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10),
+      networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, 18)).toString(10)
     };
 
     return new Promise((resolve, reject) => {

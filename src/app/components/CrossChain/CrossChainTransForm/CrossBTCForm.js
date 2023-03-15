@@ -235,7 +235,7 @@ class CrossBTCForm extends Component {
             if (direction === INBOUND) {
               updateBTCTransParams({ to: toValue ? { walletID, path: addrType === 'normal' ? getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[to].path : otherAddrInfo[addrType][to].path } : to, toAddr: to, value: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
             } else {
-              updateTransParams(from, { to: toValue ? { walletID, path: btcPath + addrInfo.normal[to].path } : to, toAddr: to, amount: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
+              updateTransParams(from, { networkFee, to: toValue ? { walletID, path: btcPath + addrInfo.normal[to].path } : to, toAddr: to, amount: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
             }
             this.setState({ confirmVisible: true });
           }
@@ -244,7 +244,7 @@ class CrossBTCForm extends Component {
         if (direction === INBOUND) {
           updateBTCTransParams({ to: toValue ? { walletID, path: addrType === 'normal' ? getPathPrefix(info.toChainSymbol) + otherAddrInfo.normal[to].path : otherAddrInfo[addrType][to].path } : to, toAddr: to, value: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
         } else {
-          updateTransParams(from, { to: toValue ? { walletID, path: btcPath + addrInfo.normal[to].path } : to, toAddr: to, amount: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
+          updateTransParams(from, { networkFee, to: toValue ? { walletID, path: btcPath + addrInfo.normal[to].path } : to, toAddr: to, amount: formatAmount(sendAmount), crosschainFee: form.getFieldValue('totalFee'), receivedAmount: form.getFieldValue('receive') });
         }
         this.setState({ confirmVisible: true });
       }
