@@ -71,6 +71,8 @@ class CrossETH extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
+      crosschainFee: transParams.crosschainFee,
+      receivedAmount: transParams.receivedAmount,
       tokenPairID: tokenPairID,
       crossType: transParams.crossType,
       networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
@@ -111,6 +113,8 @@ class CrossETH extends Component {
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
       storeman: transParams.storeman,
+      crosschainFee: transParams.crosschainFee,
+      receivedAmount: transParams.receivedAmount,
       tokenPairID: tokenPairID,
       crossType: transParams.crossType,
       amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10),

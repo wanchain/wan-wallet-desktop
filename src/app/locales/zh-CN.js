@@ -530,6 +530,7 @@ const zh_CN = {
     'CrossChainTransForm.getQuotaFailed': '获取剩余配额数据失败',
     'CrossChainTransForm.getNetworkFeeFailed': '获取网络费用数据失败',
     'CrossChainTransForm.youWillReceive': '您将收到',
+    'CrossChainTransForm.received': '收到',
 
     'CrossChain.selectFailed': '修改选择状态失败',
 

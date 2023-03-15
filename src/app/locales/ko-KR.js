@@ -539,6 +539,7 @@ const ko_KR = {
     'RedeemFromPrivateForm.PrivateAddresses': '프라이빗 주소',
     'RedeemFromPrivateForm.PrivateAddress': '프라이빗 주소',
     'RedeemFromPrivateForm.Required': '적어도 하나의 프라이빗 주소를 선택하세요.',
+    'CrossChainTransForm.received': 'Received',
 
     'Rename.name': '잘못된 이름',
     'Rename.edit': '수정',

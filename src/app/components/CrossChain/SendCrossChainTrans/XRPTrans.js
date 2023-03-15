@@ -32,6 +32,7 @@ const XRPTrans = observer(({ record, type }) => {
       from: XRPCrossTransParams.from,
       storeman: XRPCrossTransParams.groupId,
       receivedAmount: XRPCrossTransParams.receivedAmount,
+      crosschainFee: XRPCrossTransParams.crosschainFee,
       amountUnit: new BigNumber(XRPCrossTransParams.receivedAmount).multipliedBy(Math.pow(10, tokenPairsInfo.ancestorDecimals)).toString(10)
     }
     if (type === INBOUND) {

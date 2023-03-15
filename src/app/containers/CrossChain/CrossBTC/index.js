@@ -74,6 +74,8 @@ class CrossBTC extends Component {
       feeRate: transParams.feeRate,
       changeAddress: transParams.changeAddress,
       storeman: transParams.storeman,
+      crosschainFee: transParams.crosschainFee,
+      receivedAmount: transParams.receivedAmount,
       to: transParams.to,
       crossType: CROSS_TYPE[0]
     };
@@ -111,6 +113,8 @@ class CrossBTC extends Component {
       amount: transParams.amount,
       gasPrice: transParams.gasPrice,
       gasLimit: transParams.gasLimit,
+      crosschainFee: transParams.crosschainFee,
+      receivedAmount: transParams.receivedAmount,
       storeman: transParams.storeman,
       tokenPairID: tokenPairID,
       crossType: CROSS_TYPE[0],

@@ -530,6 +530,7 @@ const th_TH = {
     'CrossChainTransForm.getQuotaFailed': 'ไม่สามารถดึงข้อมูลโควต้าได้',
     'CrossChainTransForm.getNetworkFeeFailed': 'ไม่สามารถดึงข้อมูลค่าธรรมเนียมได้',
     'CrossChainTransForm.youWillReceive': 'คุณจะได้รับ',
+    'CrossChainTransForm.received': 'Received',
 
     'CrossChain.selectFailed': 'ไม่สามารถอัพเดทการเลือกได้.',
 

@@ -530,6 +530,7 @@ const pt_PT = {
     'CrossChainTransForm.getQuotaFailed': 'Falha ao obter cota',
     'CrossChainTransForm.getNetworkFeeFailed': 'Falha ao obter taxa de rede',
     'CrossChainTransForm.youWillReceive': 'Você receberá',
+    'CrossChainTransForm.received': 'Received',
 
     'CrossChain.selectFailed': 'Falha na atualização do status de seleção.',
 

@@ -530,6 +530,7 @@ const en_US = {
     'CrossChainTransForm.getQuotaFailed': 'Failed to get quota',
     'CrossChainTransForm.getNetworkFeeFailed': 'Failed to get network fee',
     'CrossChainTransForm.youWillReceive': 'You will receive',
+    'CrossChainTransForm.received': 'Received',
 
     'CrossChain.selectFailed': 'Failed to update selection status',
 

@@ -49,7 +49,7 @@ class TransInfo extends Component {
 
   render() {
     const { convertStoreman } = this.props;
-    const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, crossValue, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType } = this.props.record;
+    const { hashX, srcChainAddr, from, to, lockTxHash, redeemTxHash, storeman, crossValue, secret, status, time, noticeTxHash, tokenStand, approveTxHash, revokeTxHash, srcChainType, crosschainFee, receivedAmount } = this.props.record;
     return (
       <Modal
         className={style.transModal}
@@ -140,6 +140,20 @@ class TransInfo extends Component {
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Value')}</Col>
             <Col span={COLRIGHT}><Input disabled={true} placeholder={crossValue} /></Col>
           </Row>
+          {
+            crosschainFee &&
+            <Row className={style.tableRow}>
+              <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.crosschainFee')}</Col>
+              <Col span={COLRIGHT}><Input disabled={true} placeholder={crosschainFee} /></Col>
+            </Row>
+          }
+          {
+            receivedAmount &&
+            <Row className={style.tableRow}>
+              <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.received')}</Col>
+              <Col span={COLRIGHT}><Input disabled={true} placeholder={receivedAmount} /></Col>
+            </Row>
+          }
           <Row className={style.tableRow}>
             <Col span={COLLEFT} className={style.colLeft}>{intl.get('CrossChainTransForm.Secret')}</Col>
             <Col span={COLRIGHT}>

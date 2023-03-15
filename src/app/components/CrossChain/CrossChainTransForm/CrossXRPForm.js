@@ -228,7 +228,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       } else {
         to = toAddr = toValue;
       }
-      const params = { value: amount, to, toAddr, estimateCrossChainNetworkFee: estimateCrossChainNetworkFee.value, receivedAmount, networkFee }
+      const params = { value: amount, to, toAddr, estimateCrossChainNetworkFee: estimateCrossChainNetworkFee.value, receivedAmount, networkFee, crosschainFee }
       if (settings.reinput_pwd) {
         if (!pwd) {
           message.warn(intl.get('Backup.invalidPassword'));

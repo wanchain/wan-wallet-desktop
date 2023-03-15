@@ -511,6 +511,7 @@ const fr_FR = {
     'CrossChainTransForm.getQuotaFailed': 'Échec de l\'obtention du quota',
     'CrossChainTransForm.getNetworkFeeFailed': 'Échec de l\'obtention des frais de réseau',
     'CrossChainTransForm.youWillReceive': 'Vous allez recevoir',
+    'CrossChainTransForm.received': 'Received',
 
     'CrossChain.selectFailed': 'Échec de la mise à jour de l\'état de la sélection.',
 

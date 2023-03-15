@@ -530,6 +530,7 @@ const es_ES = {
     'CrossChainTransForm.getQuotaFailed': 'Error al obtener la cuota',
     'CrossChainTransForm.getNetworkFeeFailed': 'Error al obtener la tarifa de Red',
     'CrossChainTransForm.youWillReceive': 'Usted recibirá',
+    'CrossChainTransForm.received': 'Received',
 
     'CrossChain.selectFailed': 'Error al actualizar el estado de selección.',
 
