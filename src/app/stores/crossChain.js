@@ -244,7 +244,7 @@ class CrossChain {
           value: item.srcChainType === 'WAN' && item.tokenSymbol === 'WAN' ? formatNum(formatNumByDecimals(item.value || '0', decimals)) : formatNum(formatNumByDecimals(item.contractValue, decimals)),
           crossValue: item.srcChainType === 'WAN' && item.tokenSymbol === 'WAN' ? formatNum(formatNumByDecimals(item.value || '0', decimals)) : formatNum(formatNumByDecimals(item.contractValue || '0', decimals)),
           crosschainFee: item.crosschainFee,
-          receivedAmount: item.status === 'Redeemed' ? item.receivedAmount : '0',
+          receivedAmount: item.receivedAmount ? item.status === 'Redeemed' ? item.receivedAmount : '0' : '',
           status: item.status,
           sendTime: item.sendTime,
           approveTxHash: item.approveTxHash,
