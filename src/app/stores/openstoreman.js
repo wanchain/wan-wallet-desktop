@@ -320,7 +320,10 @@ class OpenStoreman {
       runInAction(() => {
         // Re-Duplicates by wkAddr
         let temp = _.unionBy(ret.flat(), 'wkAddr');
-        temp = temp.filter(v => !v.isWhite);
+        temp = temp.filter(v => {
+          let ret = this.storemanGroupList.find(j => [v.groupId, v.nextGroupId].includes(j.groupId));
+          return !v.isWhite && !!ret
+        });
         temp.forEach(item => {
           let temp = this.storemanGroupList.find(v => [item.groupId, item.nextGroupId].includes(v.groupId));
           item.chain1 = temp.chain1;
