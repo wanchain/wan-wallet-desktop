@@ -3,7 +3,7 @@ import keccak from 'keccak';
 import intl from 'react-intl-universal';
 import { BigNumber } from 'bignumber.js';
 import bs58check from 'bs58check';
-import bech32 from 'bech32';
+import { bech32, bech32m } from 'bech32';
 import { WANPATH, DEFAULT_GAS, HASHX, FAKEADDR, FAKESTOREMAN, X, FAKEVAL, MIN_CONFIRM_BLKS, MAX_CONFIRM_BLKS, WALLETID, PRIVATE_TX_AMOUNT_SELECTION, BTCPATH_MAIN, BTCCHAINID, ETHPATH, EOSPATH, XRPPATH, BSCPATH_MAIN, BSCPATH_TEST, DECIMALS, MAIN, CHAINID } from 'utils/settings';
 
 import { fromWei, isNumber, formatNumByDecimals } from 'utils/support';
@@ -340,8 +340,8 @@ export const checkXRPAddr = function (address) {
 };
 
 export const checkBTCAddr = async function (address) {
-  const [valid1, valid2] = await Promise.all([checkBase58(address), checkBech32(address)]);
-  return valid1 || valid2;
+  const [valid1, valid2, valid3] = await Promise.all([checkBase58(address), checkBech32(address), checkBech32m(address)]);
+  return valid1 || valid2 || valid3;
 };
 
 export const checkBase58 = function (address) {
@@ -359,6 +359,17 @@ export const checkBech32 = function (address) {
   return new Promise((resolve, reject) => {
     try {
       bech32.decode(address);
+      resolve(true);
+    } catch (error) {
+      resolve(false);
+    }
+  });
+}
+
+export const checkBech32m = function (address) {
+  return new Promise((resolve, reject) => {
+    try {
+      bech32m.decode(address);
       resolve(true);
     } catch (error) {
       resolve(false);

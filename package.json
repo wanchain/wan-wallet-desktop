@@ -49,7 +49,7 @@
     "antd": "3.19.8",
     "autoprefixer": "^9.5.0",
     "axios": "0.21.1",
-    "bech32": "^1.1.4",
+    "bech32": "^2.0.0",
     "bignumber.js": "^8.1.1",
     "bs58check": "^2.1.2",
     "compare-versions": "^3.6.0",
