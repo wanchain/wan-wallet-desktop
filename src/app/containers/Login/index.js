@@ -95,7 +95,7 @@ class Login extends Component {
           })
         }
 
-        axios.post('https://wan-wallet-analytics.wanpos.xyz/api/login', { name: 'Wan Wallet Desktop', version: '1.5.11' }).then(res => { console.log(res.data) }).catch(err => { console.log(err) });
+        axios.post('https://wan-wallet-analytics.wanpos.xyz/api/login', { name: 'Wan Wallet Desktop', version: '1.6.0' }).then(res => { console.log(res.data) }).catch(err => { console.log(err) });
       })
     })
   }

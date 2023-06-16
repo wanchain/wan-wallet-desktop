@@ -19,7 +19,9 @@ class ConfigFactoryService {
                 "wallet": {
                     "apikey": process.env.API_KEY,
                     "secret": process.env.SECRET_KEY
-                }
+                },
+                "clientVersion":"1.6.0",
+                "clientType": "WanWallet",
             }
 
         } else {
