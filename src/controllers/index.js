@@ -1750,6 +1750,17 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getRegisteredTokenList':
+            try {
+                ret = await ccUtil.getRegisteredTokenList();
+            } catch (e) {
+                logger.error('getRegisteredTokenList failed:', e)
+                logger.error(e, e.message || e.stack)
+                err = e
+            }
+            sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+            break
+
         case 'getChainInfoByChainId':
             try {
                 let { chainId } = payload;

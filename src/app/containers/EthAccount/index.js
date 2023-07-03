@@ -20,6 +20,7 @@ const CHAINTYPE = 'ETH';
   transParams: stores.sendTransParams.transParams,
   addAddress: newAddr => stores.ethAddress.addAddress(newAddr),
   updateTransHistory: () => stores.ethAddress.updateTransHistory(),
+  getUserBNBAccountFromDB: () => stores.bnbAddress.getUserAccountFromDB(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   updateName: (arr, type) => stores.ethAddress.updateName(arr, type),
   updateChainBalanceList: chain => stores.tokens.updateChainBalanceList(chain),
@@ -122,7 +123,7 @@ class EthAccount extends Component {
   }
 
   createAccount = () => {
-    const { addAddress, getAddrList } = this.props;
+    const { addAddress, getAddrList, getUserBNBAccountFromDB } = this.props;
 
     if (this.canCreate) {
       try {
@@ -136,6 +137,7 @@ class EthAccount extends Component {
         }
         createETHAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
+          getUserBNBAccountFromDB();
           this.canCreate = true;
           message.success(intl.get('WanAccount.createAccountSuccess'));
         }).catch((e) => {
