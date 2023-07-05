@@ -47,11 +47,13 @@ const XRPTrans = observer(({ record, type }) => {
       input.networkFee = new BigNumber(XRPCrossTransParams.networkFee).multipliedBy(Math.pow(10, 18));
     }
     const info = type === INBOUND ? {
+      toChainSymbol: tokenPairsInfo.toChainSymbol,
       sourceSymbol: tokenPairsInfo.fromChainSymbol,
       sourceAccount: tokenPairsInfo.fromAccount,
       destinationSymbol: tokenPairsInfo.toChainSymbol,
       destinationAccount: tokenPairsInfo.toAccount,
     } : {
+      toChainSymbol: tokenPairsInfo.toChainSymbol,
       sourceSymbol: tokenPairsInfo.toChainSymbol,
       sourceAccount: tokenPairsInfo.toAccount,
       destinationSymbol: tokenPairsInfo.fromChainSymbol,

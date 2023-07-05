@@ -1750,6 +1750,18 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
             sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 
+        case 'getBlockNumber':
+          try {
+            let { chainType } = payload;
+            ret = await ccUtil.getBlockNumber(chainType);
+          } catch (e) {
+              logger.error('getBlockNumber failed:', e)
+              logger.error(e, e.message || e.stack)
+              err = e
+          }
+          sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err, data: ret })
+          break
+
         case 'getRegisteredTokenList':
             try {
                 ret = await ccUtil.getRegisteredTokenList();
@@ -1969,11 +1981,14 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
 
         case 'crossChain':
             try {
-                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID } = payload;
+                const { sourceAccount, sourceSymbol, destinationAccount, destinationSymbol, type, input, tokenPairID, toChainSymbol } = payload;
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(sourceAccount, sourceSymbol, tokenPairID);
                 let dstChain = global.crossInvoker.getSrcChainNameByContractAddr(destinationAccount, destinationSymbol, tokenPairID);
                 if (destinationSymbol === 'XRP') {
                   input.LedgerVersion = await ccUtil.getLedgerVersion(destinationSymbol);
+                }
+                if (['WAN', 'ETH', "BTC"].includes(toChainSymbol)) {
+                  input.dstLockedBlockNumber = await ccUtil.getBlockNumber(toChainSymbol)
                 }
                 if (payload.type === 'REDEEM') {
                     payload.input.x = ccUtil.hexAdd0x(payload.input.x);

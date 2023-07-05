@@ -115,12 +115,12 @@ class CrossChain extends Component {
         input.BIP44Path = input.from.path;
         input.from = from;
         input.toAddr = transParams.toAddr;
-        crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK', tokenSymbol: info.fromTokenSymbol, tokenStand: 'TOKEN' }).then(() => {
+        crossChainTrezorTrans({ input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK', tokenSymbol: info.fromTokenSymbol, tokenStand: 'TOKEN' }).then(() => {
           message.success(intl.get('Send.transSuccess'));
           resolve();
         }).catch(reject)
       } else {
-        wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
+        wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
           console.log(err, ret);
           if (err) {
             if (err instanceof Object && err.desc && err.desc.includes('ready')) {
@@ -171,12 +171,12 @@ class CrossChain extends Component {
         input.BIP44Path = input.from.path;
         input.from = from;
         input.toAddr = transParams.toAddr;
-        crossChainTrezorTrans({ input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK', tokenSymbol: info.fromTokenSymbol, tokenStand: 'TOKEN' }).then(() => {
+        crossChainTrezorTrans({ input, tokenPairID, toChainSymbol: info.fromChainSymbol, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK', tokenSymbol: info.fromTokenSymbol, tokenStand: 'TOKEN' }).then(() => {
           message.success(intl.get('Send.transSuccess'));
           resolve();
         }).catch(reject)
       } else {
-        wand.request('crossChain_crossChain', { input, tokenPairID, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
+        wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.fromChainSymbol, sourceSymbol: info.toChainSymbol, sourceAccount: info.toAccount, destinationSymbol: info.fromChainSymbol, destinationAccount: info.fromAccount, type: 'LOCK' }, (err, ret) => {
           console.log(err, ret);
           if (err) {
             if (err instanceof Object && err.desc && err.desc.includes('ready')) {

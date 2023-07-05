@@ -164,6 +164,10 @@ export const crossChainTrezorTrans = async param => {
       console.log('approveTx:', approveTxHash)
     }
     let { raw, rawTx } = await trezorRawTx(crossChainData, BIP44Path)
+    let dstLockedBlockNumber = '';
+    if (['WAN', 'ETH', 'BTC'].includes(param.toChainSymbol)) {
+      dstLockedBlockNumber = await wandWrapper('crossChain_getBlockNumber', { chainType: param.toChainSymbol })
+    };
     // Send register validator
     let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
     let params = {
@@ -173,6 +177,7 @@ export const crossChainTrezorTrans = async param => {
       to,
       toAddr,
       storeman,
+      dstLockedBlockNumber,
       tokenPairID: tokenPairID,
       value: crossChainData.value,
       contractValue: '0x' + Number(amountUnit).toString(16),

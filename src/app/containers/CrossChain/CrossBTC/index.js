@@ -80,7 +80,7 @@ class CrossBTC extends Component {
       crossType: CROSS_TYPE[0]
     };
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { sourceAccount: info.fromAccount, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+      wand.request('crossChain_crossChain', { sourceAccount: info.fromAccount, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, destinationAccount: info.toAccount, destinationSymbol: info.toChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
         console.log(err, ret);
         this.props.updateTransHistory();
         if (err) {
@@ -130,14 +130,14 @@ class CrossBTC extends Component {
         input.BIP44Path = input.from.path;
         input.from = from;
         input.toAddr = transParams.toAddr;
-        crossChainTrezorTrans({ sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID, tokenSymbol: 'BTC', tokenStand: 'BTC' }).then(() => {
+        crossChainTrezorTrans({ sourceAccount: info.toAccount, toChainSymbol: info.fromChainSymbol, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID, tokenSymbol: 'BTC', tokenStand: 'BTC' }).then(() => {
           message.success(intl.get('Send.transSuccess'));
           resolve();
         }).catch(err => {
           reject(err);
         })
       } else {
-        wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
+        wand.request('crossChain_crossChain', { sourceAccount: info.toAccount, toChainSymbol: info.fromChainSymbol, sourceSymbol: info.toChainSymbol, destinationAccount: info.fromAccount, destinationSymbol: info.fromChainSymbol, type: 'LOCK', input, tokenPairID }, (err, ret) => {
           console.log(err, ret);
           this.props.updateTransHistory();
           if (err) {
