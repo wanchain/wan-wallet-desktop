@@ -29,6 +29,7 @@ const ko_KR = {
     'Common.bitcoin': '비트코인',
     'Common.eos': '이오스',
     'Common.xrpl': 'XRPL',
+    'Common.xrp ledger': 'XRPL',
     'Common.bsc': 'BSC',
     'Common.options': '옵션',
     'Common.ok': '확인',

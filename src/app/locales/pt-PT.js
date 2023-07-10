@@ -29,6 +29,7 @@ const pt_PT = {
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
     'Common.xrpl': 'XRPL',
+    'Common.xrp ledger': 'XRPL',
     'Common.bsc': 'BSC',
     'Common.options': 'Opções',
     'Common.ok': 'OK',

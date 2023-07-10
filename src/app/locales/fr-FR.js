@@ -29,6 +29,7 @@ const fr_FR = {
     'Common.bitcoin': 'Bitcoin',
     'Common.eos': 'EOS',
     'Common.xrpl': 'XRPL',
+    'Common.xrp ledger': 'XRPL',
     'Common.bsc': 'BSC',
     'Common.options': 'Options',
     'Common.ok': 'OK',
