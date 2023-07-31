@@ -167,17 +167,21 @@ const XRPNormalTransForm = observer(({ from, form, balance, orignBalance, onCanc
       callback(intl.get('Xrp.minAmount', { minReserveXrp }));
       return;
     }
-
-    if (form.getFieldValue('to')) {
-      const val = await getBalance([form.getFieldValue('to')], 'XRP');
-      const addrBalances = await getAllBalancesFunc('XRP', form.getFieldValue('to'));
-      let toBalance = new BigNumber(Object.values(val)[0]);
-      const minReserveXrp_to = (addrBalances.length > 0 ? addrBalances.length - 1 : 0) * 2 + MINBALANCE;
-      if (toBalance.lt(minReserveXrp_to) && new BigNumber(value).lt(minReserveXrp_to)) {
-        callback(intl.get('Xrp.notExistAccount', { minReserveXrp: minReserveXrp_to }));
-        return;
+    try {
+      if (form.getFieldValue('to')) {
+        const val = await getBalance([form.getFieldValue('to')], 'XRP');
+        const addrBalances = await getAllBalancesFunc('XRP', form.getFieldValue('to'));
+        let toBalance = new BigNumber(Object.values(val)[0]);
+        const minReserveXrp_to = (addrBalances.length > 0 ? addrBalances.length - 1 : 0) * 2 + MINBALANCE;
+        if (toBalance.lt(minReserveXrp_to) && new BigNumber(value).lt(minReserveXrp_to)) {
+          callback(intl.get('Xrp.notExistAccount', { minReserveXrp: minReserveXrp_to }));
+          return;
+        }
       }
+    } catch (error) {
+      console.log('checkAmount', error)
     }
+
     callback();
   }
 

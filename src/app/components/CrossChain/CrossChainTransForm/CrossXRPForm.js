@@ -40,8 +40,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [networkFee, setNetworkFee] = useState('0')
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
-  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false, minNetworkFeeLimit: '0', maxNetworkFeeLimit: '0' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
-  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false, minOperationFeeLimit: '0', maxOperationFeeLimit: '0' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
+  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false, minNetworkFeeLimit: '0', maxNetworkFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
+  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false, minOperationFeeLimit: '0', maxOperationFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
 
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
@@ -117,13 +117,15 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
   useEffect(() => {
     if (!estimateCrossChainNetworkFee.isPercent) {
-      setNetworkFee(type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee?.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value));
+      let amount = new BigNumber(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString(10);
+      setNetworkFee(type === INBOUND ? formatNumByDecimals(amount, ancestorDecimals) : fromWei(amount));
     }
   }, [estimateCrossChainNetworkFee])
 
   useEffect(() => {
     if (!estimateCrossChainOperationFee.isPercent) {
-      setOperationFee(formatNumByDecimals(estimateCrossChainOperationFee?.value, ancestorDecimals));
+      const amount = new BigNumber(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString(10);
+      setOperationFee(formatNumByDecimals(amount, ancestorDecimals));
     }
   }, [estimateCrossChainOperationFee])
 
@@ -315,23 +317,24 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
-        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
+        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent);
         finnalNetworkFee = tmp.lt(estimateCrossChainNetworkFee.minNetworkFeeLimit)
                                 ? estimateCrossChainNetworkFee.minNetworkFeeLimit
                                 : tmp.gt(estimateCrossChainNetworkFee.maxNetworkFeeLimit) ? estimateCrossChainNetworkFee.maxNetworkFeeLimit : tmp.toString();
       } else {
-        finnalNetworkFee = type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value);
+        const amount = new BigNumber(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString(10);
+        finnalNetworkFee = type === INBOUND ? formatNumByDecimals(amount, ancestorDecimals) : fromWei(amount);
       }
 
       if (estimateCrossChainOperationFee.isPercent) {
-        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value);
+        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent);
         finnalOperationFee = tmp.lt(estimateCrossChainOperationFee.minOperationFeeLimit)
                                 ? estimateCrossChainOperationFee.minOperationFeeLimit
                                 : tmp.gt(estimateCrossChainOperationFee.maxOperationFeeLimit) ? estimateCrossChainOperationFee.maxOperationFeeLimit : tmp.toString();
       } else {
-        finnalOperationFee = formatNumByDecimals(estimateCrossChainOperationFee.value, ancestorDecimals);
+        const amount = new BigNumber(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString(10)
+        finnalOperationFee = formatNumByDecimals(amount, ancestorDecimals);
       }
-
       setNetworkFee(finnalNetworkFee);
       setOperationFee(finnalOperationFee);
 

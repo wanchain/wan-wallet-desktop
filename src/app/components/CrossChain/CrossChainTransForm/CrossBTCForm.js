@@ -85,6 +85,8 @@ class CrossBTCForm extends Component {
       maxNetworkFeeLimit: '0',
       percentOperationFee: 0,
       percentNetworkFee: 0,
+      discountPercentNetworkFee: '1',
+      discountPercentOperationFee: '1'
     }
   }
 
@@ -122,6 +124,7 @@ class CrossBTCForm extends Component {
       this.setState({
         networkFee: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
+        discountPercentNetworkFee: res.discountPercent,
         percentNetworkFee: res.isPercent ? res.value : 0,
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -134,6 +137,7 @@ class CrossBTCForm extends Component {
       this.setState({
         operationFee: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
         isPercentOperationFee: res.isPercent,
+        discountPercentOperationFee: res.discountPercent,
         percentOperationFee: res.isPercent ? res.value : 0,
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -257,7 +261,7 @@ class CrossBTCForm extends Component {
 
   checkAmount = async (rule, value, callback) => {
     const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams, currentTokenPairInfo: info } = this.props;
-    const { minQuota, maxQuota, sendAll, isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFee, operationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit } = this.state;
+    const { minQuota, maxQuota, sendAll, isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFee, operationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
     const message = intl.get('NormalTransForm.amountIsIncorrect');
 
     try {
@@ -287,21 +291,21 @@ class CrossBTCForm extends Component {
 
       let finnalNetworkFee, finnalOperationFee;
       if (isPercentNetworkFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
+        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
         finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
                                 ? minNetworkFeeLimit
                                 : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
       } else {
-        finnalNetworkFee = networkFee;
+        finnalNetworkFee = new BigNumber(networkFee).multipliedBy(discountPercentNetworkFee).toString(10);
       }
 
       if (isPercentOperationFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentOperationFee);
+        let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
         finnalOperationFee = tmp.lt(minOperationFeeLimit)
                                 ? minOperationFeeLimit
                                 : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
       } else {
-        finnalOperationFee = operationFee;
+        finnalOperationFee = new BigNumber(operationFee).multipliedBy(discountPercentOperationFee).toString(10);
       }
 
       this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
