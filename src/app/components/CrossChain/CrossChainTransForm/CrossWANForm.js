@@ -69,6 +69,8 @@ class CrossWANForm extends Component {
       showChooseContacts: false,
       discountPercentNetworkFee: '1',
       discountPercentOperationFee: '1',
+      networkFeeRaw: {},
+      operationFeeRaw: {}
     }
   }
 
@@ -92,12 +94,35 @@ class CrossWANForm extends Component {
   }
 
   componentDidMount() {
+    const { type, currentTokenPairInfo: info, getChainAddressInfoByChain } = this.props;
+
+    let toAccountList;
+    if (type === INBOUND) {
+      toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
+    } else {
+      toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
+    }
+    const accountDataSelections = this.addressSelections.map(val => {
+      const name = getValueByAddrInfo(val, 'name', toAccountList);
+      return {
+        address: val,
+        name: name,
+        text: `${name}-${val}`
+      }
+    })
+
+    this.processContacts();
+    this.estimateNetworkFee(accountDataSelections[0].address);
+    this.estimateOperationFee(accountDataSelections[0].address);
+  }
+
+  estimateNetworkFee = (address = '') => {
     const { type, currTokenPairId, currentTokenPairInfo: info } = this.props;
     const { ancestorDecimals } = info;
 
-    this.processContacts();
-    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address }).then(res => {
       this.setState({
+        networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
         discountPercentNetworkFee: res.discountPercent,
@@ -105,12 +130,20 @@ class CrossWANForm extends Component {
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
       });
+      this.updateCrosschainFee();
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
     });
-    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId }).then(res => {
+  }
+
+  estimateOperationFee = (address = '') => {
+    const { type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const { ancestorDecimals } = info;
+
+    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address }).then(res => {
       this.setState({
+        operationFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         operationFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentOperationFee: res.isPercent,
         discountPercentOperationFee: res.discountPercent,
@@ -118,6 +151,7 @@ class CrossWANForm extends Component {
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
       });
+      this.updateCrosschainFee();
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -223,9 +257,37 @@ class CrossWANForm extends Component {
     this.props.onSend(this.props.from);
   }
 
+  updateCrosschainFee = (value = '0') => {
+    const { isPercentNetworkFee, isPercentOperationFee, networkFeeRaw, operationFeeRaw, percentNetworkFee, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+    if (!value) {
+      value = this.props.form.getFieldValue('amount')
+    }
+    let finnalNetworkFee, finnalOperationFee;
+    if (isPercentNetworkFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
+      finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
+                              ? minNetworkFeeLimit
+                              : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+    } else {
+      finnalNetworkFee = new BigNumber(networkFeeRaw).multipliedBy(discountPercentNetworkFee).toString(10);
+    }
+    if (isPercentOperationFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
+      finnalOperationFee = tmp.lt(minOperationFeeLimit)
+                              ? minOperationFeeLimit
+                              : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+    } else {
+      finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
+    }
+
+    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+
+    return [finnalNetworkFee, finnalOperationFee];
+  }
+
   checkAmount = (rule, value, callback) => {
-    const { balance, from, estimateFee, type, currentTokenPairInfo: info, getChainAddressInfoByChain, form, account } = this.props;
-    const { advanced, advancedFee, maxQuota, minQuota, isPercentNetworkFee, isPercentOperationFee, networkFee, operationFee, percentNetworkFee, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+    const { balance, type, currentTokenPairInfo: info, getChainAddressInfoByChain, form, account } = this.props;
+    const { maxQuota, minQuota } = this.state;
     const unit = type === INBOUND ? info.fromTokenSymbol : info.toTokenSymbol;
     const { txFee } = form.getFieldsValue(['txFee']);
     const txFeeWithoutUnit = txFee.split(' ')[0];
@@ -249,34 +311,7 @@ class CrossWANForm extends Component {
         return;
       }
 
-      // const finnalNetworkFee =
-      //   isPercentNetworkFee
-      //     ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
-      //     : networkFee;
-      // const finnalOperationFee =
-      //   isPercentOperationFee
-      //     ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
-      //     : operationFee;
-      let finnalNetworkFee, finnalOperationFee;
-      if (isPercentNetworkFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
-        finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
-                                ? minNetworkFeeLimit
-                                : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
-      } else {
-        finnalNetworkFee = new BigNumber(networkFee).multipliedBy(discountPercentNetworkFee).toString(10);
-      }
-
-      if (isPercentOperationFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
-        finnalOperationFee = tmp.lt(minOperationFeeLimit)
-                                ? minOperationFeeLimit
-                                : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
-      } else {
-        finnalOperationFee = new BigNumber(operationFee).multipliedBy(discountPercentOperationFee).toString(10);
-      }
-
-      this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+      const [finnalNetworkFee, finnalOperationFee] = this.updateCrosschainFee(value)
 
       if (type === INBOUND) {
         if (new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).lte(0)) {
@@ -381,6 +416,8 @@ class CrossWANForm extends Component {
       this.setState({
         isNewContacts: false
       })
+      this.estimateNetworkFee(value);
+      this.estimateOperationFee(value);
       callback();
     } else {
       let isValid;
@@ -394,6 +431,8 @@ class CrossWANForm extends Component {
         this.setState({
           isNewContacts: !isNewContacts
         })
+        this.estimateNetworkFee(value);
+        this.estimateOperationFee(value);
         callback();
       } else {
         this.setState({

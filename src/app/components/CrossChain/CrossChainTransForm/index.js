@@ -69,6 +69,8 @@ class CrossChainTransForm extends Component {
       showChooseContacts: false,
       discountPercentNetworkFee: '1',
       discountPercentOperationFee: '1',
+      networkFeeRaw: {},
+      operationFeeRaw: {}
     }
   }
 
@@ -92,12 +94,34 @@ class CrossChainTransForm extends Component {
   }
 
   componentDidMount() {
+    const { currentTokenPairInfo: info, type, getChainAddressInfoByChain } = this.props;
+
+    let toAccountList;
+    if (type === INBOUND) {
+      toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
+    } else {
+      toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
+    }
+    const accountDataSelections = this.addressSelections.map(val => {
+      const name = getValueByAddrInfo(val, 'name', toAccountList);
+      return {
+        address: val,
+        name: name,
+        text: `${name}-${val}`
+      }
+    })
+    this.processContacts();
+    this.estimateNetworkFee(accountDataSelections[0].address);
+    this.estimateOperationFee(accountDataSelections[0].address);
+  }
+
+  estimateNetworkFee = (address = '') => {
     const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
     const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
 
-    this.processContacts();
-    estimateCrossChainNetworkFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
       this.setState({
+        networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
         discountPercentNetworkFee: res.discountPercent,
@@ -105,19 +129,28 @@ class CrossChainTransForm extends Component {
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
+      this.updateCrosschainFee();
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
     });
-    estimateCrossChainOperationFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId }).then(res => {
+  }
+
+  estimateOperationFee = (address = '') => {
+    const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
+    const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
+
+    estimateCrossChainOperationFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
       this.setState({
-        operationFee: res.isPercent ? '0' : fromWei(res.value),
+        operationFeeRaw: res.isPercent ? '0' : new BigNumber(res.value).dividedBy(Math.pow(10, ancestorDecimals)).toString(),
+        operationFee: res.isPercent ? '0' : new BigNumber(res.value).dividedBy(Math.pow(10, ancestorDecimals)).toString(),
         isPercentOperationFee: res.isPercent,
         discountPercentOperationFee: res.discountPercent,
         percentOperationFee: res.isPercent ? res.value : 0,
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
+      this.updateCrosschainFee();
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -217,6 +250,35 @@ class CrossChainTransForm extends Component {
     this.props.onSend(this.props.from);
   }
 
+  updateCrosschainFee = (value = '0') => {
+    const { isPercentNetworkFee, isPercentOperationFee, networkFeeRaw, operationFeeRaw, percentNetworkFee, minOperationFeeLimit, maxOperationFeeLimit, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+    if (!value) {
+      value = this.props.form.getFieldValue('amount')
+    }
+
+    let finnalNetworkFee, finnalOperationFee;
+    if (isPercentNetworkFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
+      finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
+                              ? minNetworkFeeLimit
+                              : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+    } else {
+      finnalNetworkFee = new BigNumber(networkFeeRaw).multipliedBy(discountPercentNetworkFee).toString(10);
+    }
+
+    if (isPercentOperationFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
+      finnalOperationFee = tmp.lt(minOperationFeeLimit)
+                              ? minOperationFeeLimit
+                              : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+    } else {
+      finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
+    }
+
+    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+    return [finnalNetworkFee, finnalOperationFee];
+  }
+
   checkAmount = (rule, value, callback) => {
     const { balance, estimateFee, from, type, currentTokenPairInfo: info, getChainAddressInfoByChain, form, account } = this.props;
     const decimals = info.ancestorDecimals;
@@ -246,34 +308,7 @@ class CrossChainTransForm extends Component {
         return;
       }
 
-      // const finnalNetworkFee =
-      //   isPercentNetworkFee
-      //     ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
-      //     : networkFee;
-      // const finnalOperationFee =
-      //   isPercentOperationFee
-      //     ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
-      //     : operationFee;
-      let finnalNetworkFee, finnalOperationFee;
-      if (isPercentNetworkFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
-        finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
-                                ? minNetworkFeeLimit
-                                : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
-      } else {
-        finnalNetworkFee = new BigNumber(networkFee).multipliedBy(discountPercentNetworkFee).toString(10);
-      }
-
-      if (isPercentOperationFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
-        finnalOperationFee = tmp.lt(minOperationFeeLimit)
-                                ? minOperationFeeLimit
-                                : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
-      } else {
-        finnalOperationFee = new BigNumber(operationFee).multipliedBy(discountPercentOperationFee).toString(10);
-      }
-
-      this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+      const [finnalNetworkFee, finnalOperationFee] = this.updateCrosschainFee(value)
 
       if (type === INBOUND) {
         const fromAddrBalance = getValueByNameInfoAllType(account, 'balance', getChainAddressInfoByChain(info.fromChainSymbol))
@@ -376,6 +411,8 @@ class CrossChainTransForm extends Component {
       this.setState({
         isNewContacts: false
       })
+      this.estimateNetworkFee(value);
+      this.estimateOperationFee(value);
       callback();
     } else {
       let isValid;
@@ -389,6 +426,8 @@ class CrossChainTransForm extends Component {
         this.setState({
           isNewContacts: !isNewContacts
         })
+        this.estimateNetworkFee(value);
+        this.estimateOperationFee(value);
         callback();
       } else {
         this.setState({

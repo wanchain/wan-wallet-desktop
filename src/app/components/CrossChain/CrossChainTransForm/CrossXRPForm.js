@@ -306,15 +306,6 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
         return;
       }
 
-      // const finnalNetworkFee =
-      //   estimateCrossChainNetworkFee.isPercent
-      //     ? new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).toString()
-      //     : type === INBOUND ? formatNumByDecimals(estimateCrossChainNetworkFee.value, ancestorDecimals) : fromWei(estimateCrossChainNetworkFee.value);
-      // const finnalOperationFee =
-      //   estimateCrossChainOperationFee.isPercent
-      //   ? new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value).toString()
-      //   : formatNumByDecimals(estimateCrossChainOperationFee.value, ancestorDecimals);
-
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
         let tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent);

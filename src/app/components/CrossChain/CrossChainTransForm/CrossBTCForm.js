@@ -86,7 +86,9 @@ class CrossBTCForm extends Component {
       percentOperationFee: 0,
       percentNetworkFee: 0,
       discountPercentNetworkFee: '1',
-      discountPercentOperationFee: '1'
+      discountPercentOperationFee: '1',
+      networkFeeRaw: {},
+      operationFeeRaw: {}
     }
   }
 
@@ -117,11 +119,18 @@ class CrossBTCForm extends Component {
   }
 
   componentDidMount() {
+    this.processContacts();
+    this.estimateNetworkFee();
+    this.estimateOperationFee();
+  }
+
+  estimateNetworkFee = () => {
     const { direction, currentTokenPairInfo: info, currTokenPairId } = this.props;
     const { toChainSymbol, ancestorDecimals } = info;
-    this.processContacts();
+
     estimateCrossChainNetworkFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId }).then(res => {
       this.setState({
+        networkFeeRaw: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
         networkFee: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
         discountPercentNetworkFee: res.discountPercent,
@@ -133,8 +142,15 @@ class CrossBTCForm extends Component {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
     });
+  }
+
+  estimateOperationFee = () => {
+    const { direction, currentTokenPairInfo: info, currTokenPairId } = this.props;
+    const { toChainSymbol, ancestorDecimals } = info;
+
     estimateCrossChainOperationFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId }).then(res => {
       this.setState({
+        operationFeeRaw: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
         operationFee: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
         isPercentOperationFee: res.isPercent,
         discountPercentOperationFee: res.discountPercent,
@@ -259,9 +275,34 @@ class CrossBTCForm extends Component {
     this.props.onSend(this.props.from);
   }
 
+  updateCrosschainFee = (value = '0') => {
+    const { isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFeeRaw, operationFeeRaw, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+
+    let finnalNetworkFee, finnalOperationFee;
+    if (isPercentNetworkFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
+      finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
+                              ? minNetworkFeeLimit
+                              : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+    } else {
+      finnalNetworkFee = new BigNumber(networkFeeRaw).multipliedBy(discountPercentNetworkFee).toString(10);
+    }
+
+    if (isPercentOperationFee) {
+      let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
+      finnalOperationFee = tmp.lt(minOperationFeeLimit)
+                              ? minOperationFeeLimit
+                              : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+    } else {
+      finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
+    }
+
+    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+  }
+
   checkAmount = async (rule, value, callback) => {
-    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, transParams, currentTokenPairInfo: info } = this.props;
-    const { minQuota, maxQuota, sendAll, isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFee, operationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+    const { addrInfo, btcPath, updateBTCTransParams, minCrossBTC, direction, balance, currentTokenPairInfo: info } = this.props;
+    const { minQuota, maxQuota, sendAll } = this.state;
     const message = intl.get('NormalTransForm.amountIsIncorrect');
 
     try {
@@ -280,35 +321,7 @@ class CrossBTCForm extends Component {
         return;
       }
 
-      // const finnalNetworkFee =
-      //   isPercentNetworkFee
-      //     ? new BigNumber(value).multipliedBy(percentNetworkFee).toString()
-      //     : networkFee;
-      // const finnalOperationFee =
-      //   isPercentOperationFee
-      //     ? new BigNumber(value).multipliedBy(percentOperationFee).toString()
-      //     : operationFee;
-
-      let finnalNetworkFee, finnalOperationFee;
-      if (isPercentNetworkFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
-        finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
-                                ? minNetworkFeeLimit
-                                : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
-      } else {
-        finnalNetworkFee = new BigNumber(networkFee).multipliedBy(discountPercentNetworkFee).toString(10);
-      }
-
-      if (isPercentOperationFee) {
-        let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
-        finnalOperationFee = tmp.lt(minOperationFeeLimit)
-                                ? minOperationFeeLimit
-                                : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
-      } else {
-        finnalOperationFee = new BigNumber(operationFee).multipliedBy(discountPercentOperationFee).toString(10);
-      }
-
-      this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+      const [finnalNetworkFee, finnalOperationFee] = this.updateCrosschainFee(value)
 
       if (direction === INBOUND) {
         const from = Object.keys(addrInfo.normal).map(key => ({
