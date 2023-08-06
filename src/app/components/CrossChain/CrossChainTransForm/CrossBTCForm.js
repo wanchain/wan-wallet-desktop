@@ -4,6 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComplete, Input, Row, Col } from 'antd';
 import style from './index.less';
+import ToolTipCus from 'components/Tooltips';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import { isExceedBalance, formatNumByDecimals, removeRedundantDecimal, hexCharCodeToStr, fromWei } from 'utils/support';
@@ -280,19 +281,21 @@ class CrossBTCForm extends Component {
 
     let finnalNetworkFee, finnalOperationFee;
     if (isPercentNetworkFee) {
-      let tmp = new BigNumber(value).multipliedBy(percentNetworkFee).multipliedBy(discountPercentNetworkFee);
-      finnalNetworkFee = tmp.lt(minNetworkFeeLimit)
+      const tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
+      const tmp1 = tmp.lt(minNetworkFeeLimit)
                               ? minNetworkFeeLimit
                               : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+      finnalNetworkFee = new BigNumber(tmp1).multipliedBy(discountPercentNetworkFee).toString()
     } else {
       finnalNetworkFee = new BigNumber(networkFeeRaw).multipliedBy(discountPercentNetworkFee).toString(10);
     }
 
     if (isPercentOperationFee) {
-      let tmp = new BigNumber(value).multipliedBy(percentOperationFee).multipliedBy(discountPercentOperationFee);
-      finnalOperationFee = tmp.lt(minOperationFeeLimit)
+      const tmp = new BigNumber(value).multipliedBy(percentOperationFee);
+      const tmp1 = tmp.lt(minOperationFeeLimit)
                               ? minOperationFeeLimit
                               : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+      finnalOperationFee = new BigNumber(tmp1).multipliedBy(discountPercentOperationFee).toString();
     } else {
       finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
     }
@@ -792,6 +795,7 @@ class CrossBTCForm extends Component {
                 options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.crosschainFee')}
+                tooltips={<ToolTipCus />}
                 // suffix={<Tooltip title={
                 //   <table className={style['suffix_table']}>
                 //     <tbody>

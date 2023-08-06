@@ -6,6 +6,7 @@ import { Button, Modal, Form, Icon, message, Spin, Checkbox, Tooltip, AutoComple
 
 import style from './index.less';
 import useAsync from 'hooks/useAsync';
+import ToolTipCus from 'components/Tooltips';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
@@ -308,20 +309,22 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
-        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent);
-        finnalNetworkFee = tmp.lt(estimateCrossChainNetworkFee.minNetworkFeeLimit)
+        const tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
+        const tmp1 = tmp.lt(estimateCrossChainNetworkFee.minNetworkFeeLimit)
                                 ? estimateCrossChainNetworkFee.minNetworkFeeLimit
                                 : tmp.gt(estimateCrossChainNetworkFee.maxNetworkFeeLimit) ? estimateCrossChainNetworkFee.maxNetworkFeeLimit : tmp.toString();
+        finnalNetworkFee = new BigNumber(tmp1).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString();
       } else {
         const amount = new BigNumber(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString(10);
         finnalNetworkFee = type === INBOUND ? formatNumByDecimals(amount, ancestorDecimals) : fromWei(amount);
       }
 
       if (estimateCrossChainOperationFee.isPercent) {
-        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent);
-        finnalOperationFee = tmp.lt(estimateCrossChainOperationFee.minOperationFeeLimit)
+        let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value);
+        const tmp1 = tmp.lt(estimateCrossChainOperationFee.minOperationFeeLimit)
                                 ? estimateCrossChainOperationFee.minOperationFeeLimit
                                 : tmp.gt(estimateCrossChainOperationFee.maxOperationFeeLimit) ? estimateCrossChainOperationFee.maxOperationFeeLimit : tmp.toString();
+        finnalOperationFee = new BigNumber(tmp1).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString();
       } else {
         const amount = new BigNumber(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString(10)
         finnalOperationFee = formatNumByDecimals(amount, ancestorDecimals);
@@ -608,6 +611,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               options={{ initialValue: crosschainFee }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('CrossChainTransForm.crosschainFee')}
+              tooltips={<ToolTipCus />}
               // suffix={<Tooltip title={
               //   <table className={style['suffix_table']}>
               //     <tbody>
