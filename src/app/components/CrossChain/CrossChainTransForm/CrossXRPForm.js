@@ -467,6 +467,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     form.setFieldsValue({
       to: address
     });
+    form.validateFields(['to'], (errors, values) => {
+      if (errors) {
+        console.log('handleChoose:', errors);
+      }
+    })
   }
 
   const getChooseToAdd = () => {

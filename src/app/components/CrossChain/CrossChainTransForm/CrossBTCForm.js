@@ -183,7 +183,7 @@ class CrossBTCForm extends Component {
 
   handleNext = () => {
     const { updateBTCTransParams, updateTransParams, addrInfo, settings, estimateFee, form, direction, balance, from, btcPath, currentTokenPairInfo: info, getChainAddressInfoByChain, getPathPrefix, name } = this.props;
-    const { sendAll, networkFee } = this.state;
+    const { sendAll, networkFee, contactsList } = this.state;
     let otherAddrInfo = Object.assign({}, getChainAddressInfoByChain(info.toChainSymbol));
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields((err, { pwd, amount: sendAmount, to }) => {
@@ -225,8 +225,8 @@ class CrossBTCForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
         addrType = getInfoByAddress(to, [], toAddrInfo).type;
-      } else if (this.contactsList.find(v => v.name === to || v.address === to)) {
-        const contactItem = this.contactsList.find(v => v.name === to || v.address === to);
+      } else if (contactsList.find(v => v.name === to || v.address === to)) {
+        const contactItem = contactsList.find(v => v.name === to || v.address === to);
         to = contactItem.address;
       }
 
@@ -582,6 +582,11 @@ class CrossBTCForm extends Component {
     form.setFieldsValue({
       to: address
     });
+    form.validateFields(['to'], (errors, values) => {
+      if (errors) {
+        console.log('handleChoose:', errors);
+      }
+    })
   }
 
   getChooseToAdd = () => {

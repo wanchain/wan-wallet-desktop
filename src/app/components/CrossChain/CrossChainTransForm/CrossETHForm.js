@@ -190,7 +190,7 @@ class CrossETHForm extends Component {
 
   handleNext = () => {
     const { updateTransParams, settings, form, from, type, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { networkFee } = this.state
+    const { networkFee, contactsList } = this.state
     let toAddrInfo = getChainAddressInfoByChain(info[type === INBOUND ? 'toChainSymbol' : 'fromChainSymbol']);
     let isNativeAccount = false; // Figure out if the to value is contained in my wallet.
     form.validateFields(['from', 'balance', 'storemanAccount', 'quota', 'to', 'totalFee', 'amount'], { force: true }, (err, values) => {
@@ -209,8 +209,8 @@ class CrossETHForm extends Component {
       } else if (this.addressSelections.includes(to)) {
         isNativeAccount = true;
         addrType = getInfoByAddress(to, [], toAddrInfo).type;
-      } else if (this.contactsList.find(v => v.name === to || v.address === to)) {
-        const contactItem = this.contactsList.find(v => v.name === to || v.address === to);
+      } else if (contactsList.find(v => v.name === to || v.address === to)) {
+        const contactItem = contactsList.find(v => v.name === to || v.address === to);
         to = contactItem.address;
       }
       let toPath = (type === INBOUND ? info.toChainID : info.fromChainID) - Number('0x80000000'.toString(10));
@@ -491,6 +491,11 @@ class CrossETHForm extends Component {
     form.setFieldsValue({
       to: address
     });
+    form.validateFields(['to'], (errors, values) => {
+      if (errors) {
+        console.log('handleChoose:', errors);
+      }
+    })
   }
 
   getChooseToAdd = () => {
