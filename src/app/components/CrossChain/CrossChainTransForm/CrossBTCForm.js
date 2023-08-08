@@ -301,6 +301,8 @@ class CrossBTCForm extends Component {
     }
 
     this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+
+    return [finnalNetworkFee, finnalOperationFee];
   }
 
   checkAmount = async (rule, value, callback) => {

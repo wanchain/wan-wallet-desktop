@@ -93,6 +93,19 @@ export const getAllBalancesFunc = function(chainType, address, options) {
   })
 }
 
+export const getRegisteredTokenList = function() {
+  return new Promise((resolve, reject) => {
+    wand.request('crossChain_getRegisteredTokenList', {}, (err, val) => {
+      if (err) {
+        console.log(`Get getRegisteredTokenList failed`, err)
+        return reject(err)
+      } else {
+        return resolve(val);
+      }
+    })
+  })
+}
+
 export const getBTCMultiBalances = function (addresses) {
   return new Promise((resolve, reject) => {
     wand.request('address_getBtcMultiBalances', { minconf: MIN_CONFIRM_BLKS, maxconf: MAX_CONFIRM_BLKS, addresses }, (err, data) => {

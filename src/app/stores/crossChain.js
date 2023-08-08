@@ -8,6 +8,16 @@ import { TOKEN_PRIORITY } from 'utils/settings';
 import { message } from 'antd';
 import { FNX_POOL_TESTNET } from '../utils/settings';
 
+const FULLNAME = {
+  WAN: 'Wanchain',
+  ETH: 'Ethereum',
+  BTC: 'Bitcoin',
+  XRP: 'XRP Ledger'
+}
+
+const WASPV2_MAINNET = '0x924fd608bf30db9b099927492fda5997d7cfcb02'
+const WASPV2_TESTNET = '0x54a20457a1b1f926c7779245c7f15a9c567ffe01'
+
 class CrossChain {
   @observable currSymbol = '';
 
@@ -110,39 +120,96 @@ class CrossChain {
             this.crossChainSelections = ccSelected;
 
             // From token
-            let obj = {
-              account: v.fromAccount,
-              chain: v.fromChainName,
-              chainSymbol: v.fromChainSymbol,
-              decimals: v.decimals,
-              symbol: v.fromTokenSymbol,
-              ancestor: v.ancestorSymbol,
+            // let obj = {
+            //   account: v.fromAccount,
+            //   chain: v.fromChainName,
+            //   chainSymbol: v.fromChainSymbol,
+            //   decimals: v.decimals,
+            //   symbol: v.fromTokenSymbol,
+            //   ancestor: v.ancestorSymbol,
+            // }
+            // let key = `${v.fromChainID}-${v.fromAccount}`;
+            // if (!(key in tokens.tokensList)) {
+            //   obj.select = false;
+            // } else {
+            //   obj.select = tokens.tokensList[key].select;
+            // }
+            // tokens.updateTokensList(key, obj);
+            // tokens.initTokenIcon(obj);
+
+            // // To token
+            // let key2 = `${v.toChainID}-${v.toAccount}`;
+            // obj = {
+            //   account: v.toAccount,
+            //   chain: v.toChainName,
+            //   chainSymbol: v.toChainSymbol,
+            //   decimals: v.decimals,
+            //   symbol: v.toTokenSymbol,
+            //   ancestor: v.ancestorSymbol,
+            // }
+            // if (!(key2 in tokens.tokensList)) {
+            //   obj.select = false;
+            // } else {
+            //   obj.select = tokens.tokensList[key2].select;
+            // }
+            // tokens.updateTokensList(key2, obj);
+            // tokens.initTokenIcon(obj);
+          }
+          resolve();
+        }
+      })
+    })
+  }
+
+  @action getRegisteredTokenList() {
+    return new Promise((resolve, reject) => {
+      wand.request('crossChain_getRegisteredTokenList', {}, async (err, data) => {
+        if (err) {
+          console.log('getRegisteredTokenList failed: ', err);
+          reject(err)
+        } else {
+          let gotData = data.map(v => [v.address]).flat();
+          Object.values(tokens.tokensList).forEach(v => {
+            if (!gotData.includes(v.account)) {
+              tokens.initTokenIcon(toJS(v));
             }
-            let key = `${v.fromChainID}-${v.fromAccount}`;
+          });
+          Object.keys(tokens.tokensList).forEach(i => {
+            const val = tokens.tokensList[i]
+            let tmp = data.find(v => `${v.chainID}-${v.address}` === i);
+            if (!tmp && !val.isCustomToken) {
+              tokens.removeTokenItem(i);
+            }
+          })
+          for (let i = 0; i < data.length; i++) {
+            const v = data[i];
+            let obj;
+            if ([WASPV2_MAINNET, WASPV2_TESTNET].includes(v.address.toLowerCase())) {
+              obj = {
+                account: v.address,
+                chain: FULLNAME[v.chainType] || v.chainType,
+                chainSymbol: v.chainType,
+                decimals: 'WASPv2',
+                symbol: 'WASPv2',
+                ancestor: 'WASPv2',
+              }
+            } else {
+              obj = {
+                account: v.address,
+                chain: FULLNAME[v.chainType] || v.chainType,
+                chainSymbol: v.chainType,
+                decimals: v.decimals,
+                symbol: v.symbol,
+                ancestor: v.groupTag,
+              }
+            }
+            const key = `${v.chainID}-${v.address}`;
             if (!(key in tokens.tokensList)) {
               obj.select = false;
             } else {
               obj.select = tokens.tokensList[key].select;
             }
             tokens.updateTokensList(key, obj);
-            tokens.initTokenIcon(obj);
-
-            // To token
-            let key2 = `${v.toChainID}-${v.toAccount}`;
-            obj = {
-              account: v.toAccount,
-              chain: v.toChainName,
-              chainSymbol: v.toChainSymbol,
-              decimals: v.decimals,
-              symbol: v.toTokenSymbol,
-              ancestor: v.ancestorSymbol,
-            }
-            if (!(key2 in tokens.tokensList)) {
-              obj.select = false;
-            } else {
-              obj.select = tokens.tokensList[key2].select;
-            }
-            tokens.updateTokensList(key2, obj);
             tokens.initTokenIcon(obj);
           }
           resolve();

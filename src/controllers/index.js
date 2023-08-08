@@ -1828,6 +1828,20 @@ ipc.on(ROUTE_CROSSCHAIN, async (event, actionUni, payload) => {
                 break
             }
 
+        case 'removeTokenItem':
+          {
+              let { addr } = payload;
+              try {
+                  setting.removeTokenItem(addr);
+              } catch (e) {
+                  logger.error('removeTokenItem failed:')
+                  logger.error(e.message || e.stack)
+                  err = e
+              }
+              sendResponse([ROUTE_CROSSCHAIN, [action, id].join('#')].join('_'), event, { err: err })
+              break
+          }
+
         case 'addCustomToken':
             try {
                 let { key, account, ancestor, chain, chainSymbol, decimals, select, symbol, isCustomToken } = payload;

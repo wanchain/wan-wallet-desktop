@@ -359,6 +359,18 @@ class Tokens {
     });
   }
 
+  @action removeTokenItem(addr) {
+    wand.request('crossChain_removeTokenItem', { addr }, (err) => {
+      if (err) {
+        console.log('crossChain_removeTokenItem: ', err);
+      } else {
+        if (this.tokensList[addr]) {
+          delete this.tokensList[addr];
+        }
+      }
+    });
+  }
+
   @action updateChainBalanceList(chain) {
     if (typeof chain === 'string' && chain !== '') {
       self.chainBalanceList = [chain]

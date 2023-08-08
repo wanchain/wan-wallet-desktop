@@ -174,6 +174,15 @@ class Settings {
     }
   }
 
+  removeTokenItem(addr) {
+    let network = this.get('network');
+    if (this.get(`settings.${network}.tokens`)) {
+      if (this.get(`settings.${network}.tokens["${addr}"]`)) {
+        this.remove(`settings.${network}.tokens["${addr}"]`);
+      }
+    }
+  }
+
   updateTokenKeyValue(addr, key, value) {
     let network = this.get('network');
     if (this.get(`settings.${network}.tokens["${addr}"]`)) {

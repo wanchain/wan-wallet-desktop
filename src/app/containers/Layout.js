@@ -26,6 +26,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   checkUpdateDB: () => stores.session.checkUpdateDB(),
   getTokensInfo: () => stores.tokens.getTokensInfo(),
   getTokenPairs: () => stores.crossChain.getTokenPairs(),
+  getRegisteredTokenList: () => stores.crossChain.getRegisteredTokenList(),
   updateTokenIDs: () => stores.portfolio.updateTokenIDs(),
   updateUtxos: newUtxos => stores.btcAddress.updateUtxos(newUtxos),
   updateWANBalance: newBalanceArr => stores.wanAddress.updateWANBalance(newBalanceArr),
@@ -99,6 +100,7 @@ class Layout extends Component {
           }
           await this.props.getTokensInfo();
           await this.props.getTokenPairs();
+          await this.props.getRegisteredTokenList();
           this.props.updateTokenIDs();
 
           this.setState({
