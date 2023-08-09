@@ -284,7 +284,7 @@ class CrossBTCForm extends Component {
       const tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
       const tmp1 = tmp.lt(minNetworkFeeLimit)
                               ? minNetworkFeeLimit
-                              : tmp.gt(maxNetworkFeeLimit) ? maxNetworkFeeLimit : tmp.toString();
+                              : (!new BigNumber(maxNetworkFeeLimit).eq('0') && tmp.gt(maxNetworkFeeLimit)) ? maxNetworkFeeLimit : tmp.toString();
       finnalNetworkFee = new BigNumber(tmp1).multipliedBy(discountPercentNetworkFee).toString()
     } else {
       finnalNetworkFee = new BigNumber(networkFeeRaw).multipliedBy(discountPercentNetworkFee).toString(10);
@@ -294,7 +294,7 @@ class CrossBTCForm extends Component {
       const tmp = new BigNumber(value).multipliedBy(percentOperationFee);
       const tmp1 = tmp.lt(minOperationFeeLimit)
                               ? minOperationFeeLimit
-                              : tmp.gt(maxOperationFeeLimit) ? maxOperationFeeLimit : tmp.toString();
+                              : (!new BigNumber(maxOperationFeeLimit).eq('0') && tmp.gt(maxOperationFeeLimit)) ? maxOperationFeeLimit : tmp.toString();
       finnalOperationFee = new BigNumber(tmp1).multipliedBy(discountPercentOperationFee).toString();
     } else {
       finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
