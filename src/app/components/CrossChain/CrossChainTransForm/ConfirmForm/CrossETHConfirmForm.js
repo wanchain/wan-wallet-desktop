@@ -16,8 +16,8 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossETHConfirmForm extends Component {
   render() {
-    const { form: { getFieldDecorator }, from, loading, sendTrans, userNetWorkFee, handleCancel, tokenSymbol, transParams, tokenPairs, type, crosschainFee, received } = this.props;
-    const { amount, toAddr, storeman } = this.props.transParams[from];
+    const { form: { getFieldDecorator }, from, loading, sendTrans, userNetWorkFee, handleCancel, tokenSymbol, transParams, tokenPairs, type, received } = this.props;
+    const { amount, toAddr, storeman, crosschainFee } = this.props.transParams[from];
     const chainPairId = transParams[from].chainPairId;
     const info = Object.assign({}, tokenPairs[chainPairId]);
     let fromChain = type === INBOUND ? info.fromChainName : info.toChainName;

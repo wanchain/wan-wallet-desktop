@@ -41,8 +41,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
   const [networkFee, setNetworkFee] = useState('0')
 
   const { status: fetchGroupListStatus, value: smgList } = useAsync('storeman_getReadyOpenStoremanGroupList', [], true);
-  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false, minNetworkFeeLimit: '0', maxNetworkFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
-  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false, minOperationFeeLimit: '0', maxOperationFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
+  const { status: estimateCrossChainNetworkFeeStatus, value: estimateCrossChainNetworkFee } = useAsync('crossChain_estimateCrossChainNetworkFee', { value: '0', isPercent: false, minFeeLimit: '0', maxFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
+  const { status: estimateCrossChainOperationFeeStatus, value: estimateCrossChainOperationFee } = useAsync('crossChain_estimateCrossChainOperationFee', { value: '0', isPercent: false, minFeeLimit: '0', maxFeeLimit: '0', discountPercent: '1' }, true, { chainType: type === INBOUND ? 'XRP' : toChainSymbol, dstChainType: type === INBOUND ? toChainSymbol : 'XRP', options: { tokenPairID: crossChain.currTokenPairId } });
 
   const { status: fetchQuotaStatus, value: quotaList, execute: executeGetQuota } = useAsync('crossChain_getQuota', [{}], false);
   const { status: fetchFeeStatus, value: estimatedFee, execute: executeEstimatedFee } = useAsync('crossChain_estimatedXrpFee', '0', false);
@@ -310,9 +310,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
         const tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
-        const tmp1 = tmp.lt(estimateCrossChainNetworkFee.minNetworkFeeLimit)
-                                ? estimateCrossChainNetworkFee.minNetworkFeeLimit
-                                : (!new BigNumber(estimateCrossChainNetworkFee.maxNetworkFeeLimit).eq('0') && tmp.gt(estimateCrossChainNetworkFee.maxNetworkFeeLimit)) ? estimateCrossChainNetworkFee.maxNetworkFeeLimit : tmp.toString();
+        const minFeeLimit = new BigNumber(estimateCrossChainNetworkFee.minFeeLimit).dividedBy(Math.pow(10, 18)).toString();
+        const maxFeeLimit = new BigNumber(estimateCrossChainNetworkFee.maxFeeLimit).dividedBy(Math.pow(10, 18)).toString();
+        const tmp1 = tmp.lt(minFeeLimit)
+                                ? minFeeLimit
+                                : (!new BigNumber(maxFeeLimit).eq('0') && tmp.gt(maxFeeLimit)) ? maxFeeLimit : tmp.toString();
         finnalNetworkFee = new BigNumber(tmp1).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString();
       } else {
         const amount = new BigNumber(estimateCrossChainNetworkFee.value).multipliedBy(estimateCrossChainNetworkFee.discountPercent).toString(10);
@@ -321,9 +323,11 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
       if (estimateCrossChainOperationFee.isPercent) {
         let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value);
-        const tmp1 = tmp.lt(estimateCrossChainOperationFee.minOperationFeeLimit)
-                                ? estimateCrossChainOperationFee.minOperationFeeLimit
-                                : (!new BigNumber(estimateCrossChainNetworkFee.maxOperationFeeLimit).eq('0') && tmp.gt(estimateCrossChainOperationFee.maxOperationFeeLimit)) ? estimateCrossChainOperationFee.maxOperationFeeLimit : tmp.toString();
+        const minFeeLimit = new BigNumber(estimateCrossChainOperationFee.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const maxFeeLimit = new BigNumber(estimateCrossChainOperationFee.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const tmp1 = tmp.lt(minFeeLimit)
+                                ? minFeeLimit
+                                : (!new BigNumber(maxFeeLimit).eq('0') && tmp.gt(maxFeeLimit)) ? maxFeeLimit : tmp.toString();
         finnalOperationFee = new BigNumber(tmp1).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString();
       } else {
         const amount = new BigNumber(estimateCrossChainOperationFee.value).multipliedBy(estimateCrossChainOperationFee.discountPercent).toString(10)

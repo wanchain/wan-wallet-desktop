@@ -71,7 +71,8 @@ class CrossChainTransForm extends Component {
       discountPercentNetworkFee: '1',
       discountPercentOperationFee: '1',
       networkFeeRaw: {},
-      operationFeeRaw: {}
+      operationFeeRaw: {},
+      totalFee: '0'
     }
   }
 
@@ -117,7 +118,7 @@ class CrossChainTransForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
+    const { currentTokenPairInfo: info, currTokenPairId, type, form } = this.props;
     const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
 
     estimateCrossChainNetworkFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
@@ -130,7 +131,7 @@ class CrossChainTransForm extends Component {
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
-      this.updateCrosschainFee();
+      this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
@@ -138,7 +139,7 @@ class CrossChainTransForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { currentTokenPairInfo: info, currTokenPairId, type } = this.props;
+    const { currentTokenPairInfo: info, currTokenPairId, type, form } = this.props;
     const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
 
     estimateCrossChainOperationFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
@@ -151,7 +152,7 @@ class CrossChainTransForm extends Component {
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
-      this.updateCrosschainFee();
+      this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -252,11 +253,12 @@ class CrossChainTransForm extends Component {
 
   updateCrosschainFee = (value = '0') => {
     const { isPercentNetworkFee, isPercentOperationFee, networkFeeRaw, operationFeeRaw, percentNetworkFee, minOperationFeeLimit, maxOperationFeeLimit, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
+    const { type, currentTokenPairInfo: info } = this.props;
     if (!value) {
       value = this.props.form.getFieldValue('amount')
     }
 
-    let finnalNetworkFee, finnalOperationFee;
+    let finnalNetworkFee, finnalOperationFee, totalFee, networkFeeUnit, operationFeeUnit;
     if (isPercentNetworkFee) {
       const tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
       const tmp1 = tmp.lt(minNetworkFeeLimit)
@@ -277,7 +279,21 @@ class CrossChainTransForm extends Component {
       finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
     }
 
-    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+    if (type === INBOUND) {
+      operationFeeUnit = info.ancestorSymbol;
+      networkFeeUnit = info.fromChainSymbol;
+    } else {
+      operationFeeUnit = info.ancestorSymbol;
+      networkFeeUnit = info.toChainSymbol;
+    }
+
+    if (networkFeeUnit === operationFeeUnit) {
+      totalFee = `${new BigNumber(finnalNetworkFee).plus(finnalOperationFee).toString()} ${networkFeeUnit}`;
+    } else {
+      totalFee = `${new BigNumber(finnalNetworkFee).toString()} ${networkFeeUnit} + ${new BigNumber(finnalOperationFee).toString()} ${operationFeeUnit}`;
+    }
+
+    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee, totalFee });
     return [finnalNetworkFee, finnalOperationFee];
   }
 
@@ -519,8 +535,8 @@ class CrossChainTransForm extends Component {
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
     const { getFieldDecorator } = form;
-    const { advancedVisible, advanced, advancedFee, operationFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, networkFee, receivedAmount } = this.state;
-    let gasFee, gasFeeWithUnit, totalFee, desChain, title, tokenSymbol, toAccountList, quotaUnit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
+    const { advancedVisible, advanced, advancedFee, operationFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, networkFee, receivedAmount, totalFee } = this.state;
+    let gasFee, gasFeeWithUnit, desChain, title, tokenSymbol, toAccountList, quotaUnit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
@@ -564,11 +580,11 @@ class CrossChainTransForm extends Component {
     // let operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${feeUnit}`;
 
     // totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
-    if (networkFeeUnit === operationFeeUnit) {
-      totalFee = `${new BigNumber(networkFee).plus(operationFee).toString()} ${networkFeeUnit}`;
-    } else {
-      totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
-    }
+    // if (networkFeeUnit === operationFeeUnit) {
+    //   totalFee = `${new BigNumber(networkFee).plus(operationFee).toString()} ${networkFeeUnit}`;
+    // } else {
+    //   totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+    // }
 
     gasFeeWithUnit = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
 
@@ -741,7 +757,7 @@ class CrossChainTransForm extends Component {
             </div>
           </Spin>
         </Modal>
-        <Confirm tokenSymbol={tokenSymbol} received={form.getFieldValue('receive')} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
+        <Confirm tokenSymbol={tokenSymbol} received={form.getFieldValue('receive')} chainType={chainType} userNetWorkFee={gasFeeWithUnit} visible={this.state.confirmVisible} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} type={type} loading={loading} />
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
         {
           showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>

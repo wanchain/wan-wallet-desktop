@@ -17,8 +17,8 @@ const inputCom = <Input disabled={true} />
 @observer
 class ConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, currTokenPairId, type, userNetWorkFee, crosschainFee, received } = this.props;
-    const { amount, toAddr, storeman, crossType } = transParams[from];
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, estimateFee, handleCancel, tokenSymbol, transParams, tokenPairs, currTokenPairId, type, userNetWorkFee, received } = this.props;
+    const { amount, toAddr, storeman, crossType, crosschainFee } = transParams[from];
     const info = Object.assign({}, tokenPairs[currTokenPairId]);
     let fromChain = type === INBOUND ? info.fromChainName : info.toChainName;
     let desChain = type === INBOUND ? info.toChainName : info.fromChainName;

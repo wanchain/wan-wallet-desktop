@@ -73,7 +73,8 @@ class CrossETHForm extends Component {
       showAddContacts: false,
       showChooseContacts: false,
       networkFeeRaw: {},
-      operationFeeRaw: {}
+      operationFeeRaw: {},
+      totalFee: '0'
     }
   }
 
@@ -121,7 +122,7 @@ class CrossETHForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
     const { ancestorDecimals } = info;
 
     estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
@@ -134,7 +135,7 @@ class CrossETHForm extends Component {
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
-      this.updateCrosschainFee();
+      this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
@@ -142,7 +143,7 @@ class CrossETHForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
     const { ancestorDecimals } = info;
 
     estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
@@ -155,7 +156,7 @@ class CrossETHForm extends Component {
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
-      this.updateCrosschainFee();
+      this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
       console.log('err:', err);
       message.warn(intl.get('CrossChainTransForm.getOperationFeeFailed'));
@@ -246,10 +247,11 @@ class CrossETHForm extends Component {
 
   updateCrosschainFee = (value = '0') => {
     const { isPercentNetworkFee, isPercentOperationFee, networkFeeRaw, operationFeeRaw, percentNetworkFee, percentOperationFee, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentOperationFee, discountPercentNetworkFee } = this.state;
+    const { type } = this.props;
     if (!value) {
       value = this.props.form.getFieldValue('amount')
     }
-    let finnalNetworkFee, finnalOperationFee;
+    let finnalNetworkFee, finnalOperationFee, totalFee;
     if (isPercentNetworkFee) {
       const tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
       const tmp1 = tmp.lt(minNetworkFeeLimit)
@@ -269,8 +271,13 @@ class CrossETHForm extends Component {
     } else {
       finnalOperationFee = new BigNumber(operationFeeRaw).multipliedBy(discountPercentOperationFee).toString(10);
     }
+    if (type === INBOUND) {
+      totalFee = `${new BigNumber(finnalNetworkFee).plus(finnalOperationFee).toString()} ETH`;
+    } else {
+      totalFee = `${new BigNumber(finnalNetworkFee).toString()} WAN + ${new BigNumber(finnalOperationFee).toString()} ETH`;
+    }
 
-    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee });
+    this.setState({ networkFee: finnalNetworkFee, operationFee: finnalOperationFee, totalFee });
 
     return [finnalNetworkFee, finnalOperationFee];
   }
@@ -508,10 +515,10 @@ class CrossETHForm extends Component {
   }
 
   render() {
-    const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info, coinPriceObj } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount } = this.state;
+    const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount, totalFee } = this.state;
     const { getFieldDecorator } = form;
-    let gasFee, gasFeeWithUnit, totalFee, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
+    let gasFee, gasFeeWithUnit, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
@@ -551,11 +558,11 @@ class CrossETHForm extends Component {
     // } else {
     //   totalFee = `${new BigNumber(gasFee).plus(networkFee).toString()} ${feeUnit}`;
     // }
-    if (networkFeeUnit === operationFeeUnit) {
-      totalFee = `${new BigNumber(networkFee).plus(operationFee).toString()} ${networkFeeUnit}`;
-    } else {
-      totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
-    }
+    // if (networkFeeUnit === operationFeeUnit) {
+    //   totalFee = `${new BigNumber(networkFee).plus(operationFee).toString()} ${networkFeeUnit}`;
+    // } else {
+    //   totalFee = `${new BigNumber(networkFee).toString()} ${networkFeeUnit} + ${new BigNumber(operationFee).toString()} ${operationFeeUnit}`;
+    // }
 
     gasFeeWithUnit = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
 
@@ -720,7 +727,7 @@ class CrossETHForm extends Component {
             </div>
           </Spin>
         </Modal>
-        { this.state.confirmVisible && <Confirm received={form.getFieldValue('receive')} tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} crosschainFee={form.getFieldValue('totalFee')} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
+        { this.state.confirmVisible && <Confirm received={form.getFieldValue('receive')} tokenSymbol={unit} chainType={chainType} userNetWorkFee={gasFeeWithUnit} handleCancel={this.handleConfirmCancel} sendTrans={this.sendTrans} from={from} loading={loading} type={type} />}
         {advancedVisible && <AdvancedCrossChainModal chainType={chainType} onCancel={this.handleAdvancedCancel} onSave={this.handleSaveOption} from={from} />}
         {
           showAddContacts && <AddContactsModalForm handleSave={this.handleCreate} onCancel={this.handleShowAddContactModal} address={form.getFieldValue('to')} chain={getFullChainName(desChain)}></AddContactsModalForm>
