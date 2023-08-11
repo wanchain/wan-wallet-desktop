@@ -186,8 +186,9 @@ class WalletUpdater {
     this.updater.on('update-downloaded', (info) => {
       this._logger.info('======= update-downloaded =======:');
       if (process.platform !== 'darwin') updateModal.webContents.send('updateInfo', 'upgradeProgress', 'done');
+      const self = this;
       setTimeout(() => {
-        this.updater.quitAndInstall();
+        self.updater.quitAndInstall();
       }, 3 * 1000);
     });
     this.updater.checkForUpdates()
