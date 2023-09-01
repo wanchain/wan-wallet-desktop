@@ -61,7 +61,7 @@ class DApp extends Component {
 
     webview.addEventListener('dom-ready', function (e) {
       this.setState({ loading: false });
-      // webview.openDevTools();
+      webview.openDevTools();
     }.bind(this));
 
     webview.addEventListener('ipc-message', function (event) {
@@ -128,7 +128,7 @@ class DApp extends Component {
 
   loadNetworkId(msg) {
     msg.err = null;
-    msg.val = 3;
+    msg.val = 999;
     wand.request('query_config', {
       param: 'network'
     },
@@ -138,9 +138,9 @@ class DApp extends Component {
           msg.err = err;
         } else {
           if (val.network === 'testnet') {
-            msg.val = 3;
+            msg.val = 999;
           } else {
-            msg.val = 1;
+            msg.val = 888;
           }
           this.sendToDApp(msg);
         }
