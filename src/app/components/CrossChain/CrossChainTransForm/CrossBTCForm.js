@@ -829,13 +829,6 @@ class CrossBTCForm extends Component {
                 options={{ initialValue: `${receive} ${toUnit}` }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.youWillReceive')}
-                suffix={<Tooltip title={
-                  <table className={style['suffix_table']}>
-                    <tbody>
-                      <tr><td>{intl.get('CrossChainTransForm.crossChainNetworkFee')}:</td><td>{`${crossChainNetworkFee} ${toUnit}`}</td></tr>
-                    </tbody>
-                  </table>
-                }><Icon type="exclamation-circle" /></Tooltip>}
               />
               <Checkbox checked={sendAll} onChange={this.sendAllAmount} style={{ padding: '0px 20px' }}>{intl.get('NormalTransForm.sendAll')}</Checkbox>
               {settings.reinput_pwd && <PwdForm form={form} colSpan={6} />}

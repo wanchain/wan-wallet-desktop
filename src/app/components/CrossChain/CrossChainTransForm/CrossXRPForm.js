@@ -310,8 +310,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
         const tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
-        const minFeeLimit = new BigNumber(estimateCrossChainNetworkFee.minFeeLimit).dividedBy(Math.pow(10, 18)).toString();
-        const maxFeeLimit = new BigNumber(estimateCrossChainNetworkFee.maxFeeLimit).dividedBy(Math.pow(10, 18)).toString();
+        const minFeeLimit = new BigNumber(estimateCrossChainNetworkFee.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const maxFeeLimit = new BigNumber(estimateCrossChainNetworkFee.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
         const tmp1 = tmp.lt(minFeeLimit)
                                 ? minFeeLimit
                                 : (!new BigNumber(maxFeeLimit).eq('0') && tmp.gt(maxFeeLimit)) ? maxFeeLimit : tmp.toString();

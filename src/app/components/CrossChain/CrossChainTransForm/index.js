@@ -541,7 +541,7 @@ class CrossChainTransForm extends Component {
       desChain = info.toChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.toChainSymbol);
       title = `${info.fromTokenSymbol}@${info.fromChainName} -> ${info.toTokenSymbol}@${info.toChainName}`;
-      tokenSymbol = info.fromTokenSymbol;
+      tokenSymbol = info.toTokenSymbol;
       quotaUnit = info.fromTokenSymbol;
       feeUnit = info.fromChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.fromChainSymbol);
@@ -551,7 +551,7 @@ class CrossChainTransForm extends Component {
       desChain = info.fromChainSymbol;
       toAccountList = getChainAddressInfoByChain(info.fromChainSymbol);
       title = `${info.toTokenSymbol}@${info.toChainName} -> ${info.fromTokenSymbol}@${info.fromChainName}`;
-      tokenSymbol = info.toTokenSymbol;
+      tokenSymbol = info.fromTokenSymbol;
       quotaUnit = info.toTokenSymbol;
       feeUnit = info.toChainSymbol;
       canAdvance = ['WAN', 'ETH'].includes(info.toChainSymbol);
