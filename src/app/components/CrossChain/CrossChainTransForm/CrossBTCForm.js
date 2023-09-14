@@ -335,6 +335,10 @@ class CrossBTCForm extends Component {
         }));
         updateBTCTransParams({ from });
         try {
+          if (new BigNumber(balance).lte(value)) {
+            callback(intl.get('CrossChainTransForm.overOriginalBalance'));
+            return;
+          }
           const getFee = await this.getFee(from, value);
           if (getFee === false) {
             callback(intl.get('CrossChainTransForm.getNetworkFeeFailed'));
@@ -344,10 +348,6 @@ class CrossBTCForm extends Component {
           this.setState({ fee });
           if (new BigNumber(value).minus(finnalNetworkFee).minus(finnalOperationFee).lte(0)) {
             callback(message);
-            return;
-          }
-          if (new BigNumber(balance).lte(value)) {
-            callback(intl.get('CrossChainTransForm.overOriginalBalance'));
             return;
           }
           if (!sendAll && isExceedBalance(balance, fee, value)) {
