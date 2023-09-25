@@ -270,7 +270,8 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 logger.info('Sign transaction:');
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-                const chain = hdUtil.getChain('WAN');
+                let chainType = (path === "m/44'/60'/0'/0/0")? "ETH" : "WAN";
+                const chain = hdUtil.getChain(chainType);
                 let ret = await chain.signTransaction(walletID, rawTx, path);
                 sig = '0x' + ret.toString('hex');
                 console.log('sig', sig);
@@ -2275,7 +2276,11 @@ ipc.on(ROUTE_DAPPSTORE, async (event, actionUni, payload) => {
                 logger.error(e.message || e.stack)
                 err = e
             }
-
+            ret.forEach(v => {
+              if (v.langInfo[0].name === 'WAN Bridge') {
+                v.url = 'https://wan-bridge-frontend-9i3.pages.dev';
+              }
+            });
             sendResponse([ROUTE_DAPPSTORE, [action, id].join('#')].join('_'), event, { err: err, data: ret })
             break
 

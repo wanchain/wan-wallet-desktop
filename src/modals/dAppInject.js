@@ -68,6 +68,17 @@ class Web3Eth {
     this.saveCb(msg);
     this.sendToHost([msg.method, msg.id]);
   }
+
+  switchEthereumChain(chainInfo, cb) {
+    const msg = {
+      method: "switchEthereumChain",
+      id: uuid(),
+      cb: cb,
+      message: chainInfo,
+    };
+    this.saveCb(msg);
+    this.sendToHost([msg.method, msg.id, msg.message]);
+  }
   // -------------------------------
 
   // -------------------------------

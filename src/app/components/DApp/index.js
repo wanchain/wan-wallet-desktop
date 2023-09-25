@@ -19,13 +19,20 @@ const { Option } = Select;
 
 const pu = require('promisefy-util');
 const WAN_PATH = "m/44'/5718350'/0'";
+const ETH_PATH = "m/44'/60'/0'";
+
 @inject(stores => ({
-  chainId: stores.session.chainId,
   addrSelectedList: stores.wanAddress.addrSelectedList,
   getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
+  // ethereum address
+  addrSelectedListEth: stores.ethAddress.addrSelectedList,
+  getAddrListEth: stores.ethAddress.getAddrList,
+  addrInfoEth: stores.ethAddress.addrInfo,
+  ledgerAddrListEth: stores.ethAddress.ledgerAddrList,
+  trezorAddrListEth: stores.ethAddress.trezorAddrList,
 }))
 
 @observer
@@ -39,6 +46,7 @@ class DApp extends Component {
       this.dAppUrl = props.dAppUrl;
     }
     this.addresses = {};
+    this.isEth = true;
   }
 
   async componentDidMount() {
@@ -46,6 +54,9 @@ class DApp extends Component {
     const preload = await this.getPreloadFile()
     this.setState({ preload: preload });
     this.addEventListeners();
+    this.chainType = 'WAN';
+    this.chainId = await getChainId();
+    console.log('default chain type: %s, id: %d', this.chainType, this.chainId);
   }
 
   addEventListeners = () => {
@@ -105,6 +116,10 @@ class DApp extends Component {
         msg.message = args[2];
         this.signTransaction(msg);
         break;
+      case 'switchEthereumChain':
+        msg.message = args[2];
+        this.switchEthereumChain(msg);
+        break;
       default:
         console.log('unknown method.');
         break;
@@ -127,24 +142,11 @@ class DApp extends Component {
   }
 
   loadNetworkId(msg) {
+    console.log('DApp loadNetworkId: %O', msg)
     msg.err = null;
-    msg.val = 999;
-    wand.request('query_config', {
-      param: 'network'
-    },
-      function (err, val) {
-        if (err) {
-          console.log('error printed inside callback: ', err);
-          msg.err = err;
-        } else {
-          if (val.network === 'testnet') {
-            msg.val = 999;
-          } else {
-            msg.val = 888;
-          }
-          this.sendToDApp(msg);
-        }
-      }.bind(this));
+    msg.val = this.chainId;
+    console.log('Dapp loadNetworkId: %d', msg.val)
+    this.sendToDApp(msg);
   }
 
   async getWalletFromAddress(address) {
@@ -152,7 +154,7 @@ class DApp extends Component {
       if (!this.addresses[address]) {
         return '';
       }
-      const { addrInfo } = this.props;
+      let addrInfo = this.isEth ? this.props.addrInfoEth : this.props.addrInfo;
 
       let addrType = '';
       switch (this.addresses[address].walletID) {
@@ -173,7 +175,7 @@ class DApp extends Component {
       }
       let path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
       if (path.indexOf('m') === -1) {
-        path = WAN_PATH + '/0/' + path;
+        path = ETH_PATH + '/0/' + path;
       }
       return {
         id: this.addresses[address].walletID,
@@ -226,12 +228,14 @@ class DApp extends Component {
   }
 
   async nativeSendTransaction(msg, wallet) {
-    let gasPrice = await getGasPrice('wan');
+    let nonce = await getNonce(msg.message.from, this.chainType);
+    let gasPrice = await getGasPrice(this.chainType);
+    console.log('nativeSendTransaction chain %s nonce: %s, gasPrice: %s', this.chainType, nonce, gasPrice);
     let amountInWei = new BigNumber(msg.message.value)
     let trans = {
       walletID: wallet.id,
-      chainType: 'WAN',
-      symbol: 'WAN',
+      chainType: this.chainType,
+      symbol: this.chainType,
       path: wallet.path,
       to: msg.message.to,
       amount: amountInWei.div(1e18),
@@ -285,9 +289,9 @@ class DApp extends Component {
   }
 
   async nativeSignTransaction(msg, wallet) {
-    let chainId = await getChainId();
-    let nonce = await getNonce(msg.message.from, 'wan');
-    let gasPrice = await getGasPrice('wan');
+    let nonce = await getNonce(msg.message.from, this.chainType);
+    let gasPrice = await getGasPrice(this.chainType);
+    console.log('nativeSignTransaction chain %s nonce: %s, gasPrice: %s', this.chainType, nonce, gasPrice);
     let data = msg.message.data;
     let amountWei = msg.message.value;
     let rawTx = {};
@@ -298,8 +302,8 @@ class DApp extends Component {
     rawTx.nonce = '0x' + nonce.toString(16);
     rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
     rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
-    rawTx.Txtype = Number(1);
-    rawTx.chainId = chainId;
+    rawTx.type = Number(1);
+    rawTx.chainId = this.chainId;
     console.log('wallet_signTx input', { walletID: wallet.id, path: wallet.path, rawTx });
     wand.request('wallet_signTx', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
       console.log('wallet_signTx return', 'err', err, 'ret', tx);
@@ -387,6 +391,24 @@ class DApp extends Component {
     });
   }
 
+  async switchEthereumChain(msg) {
+    await this.showConfirm('send', msg, async (msg) => {
+      msg.err = null;
+      msg.val = null;
+      if (isNaN(msg.message.chainId)) {
+        msg.err = 'invalid chainId.';
+        this.sendToDApp(msg);
+        return;
+      }
+      this.chainType = msg.message.chainType;
+      this.chainId = parseInt(msg.message.chainId);
+      console.log('Dapp switchEthereumChain, chainType: %s, chainId: %s', this.chainType, this.chainId)
+    }, async (msg) => {
+      msg.err = 'The user rejects in the wallet.';
+      this.sendToDApp(msg);
+    });
+  }
+
   async getPreloadFile() {
     return pu.promisefy(wand.request, ['setting_getDAppInjectFile']);
   }
@@ -418,16 +440,17 @@ class DApp extends Component {
     let addrAll = [];
     msg.err = null;
     msg.val = [];
+    let { addrSelectedList, addrSelectedListEth } = this.props;
     try {
-      let chainID = 5718350;
-      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: chainID }]);
+      let val = await pu.promisefy(wand.request, ['account_getAll', { chainID: this.chainId }]);
       let addrs = [];
       for (var account in val.accounts) {
         if (Object.prototype.hasOwnProperty.call(val.accounts[account], '1')) {
           addrs.push(val.accounts[account]['1'].addr);
         }
       }
-      addrAll = this.props.addrSelectedList.slice();
+      let addrSelected = this.isEth ? addrSelectedListEth : addrSelectedList;
+      addrAll = addrSelected.slice();
       for (var i = 0, len = addrAll.length; i < len; i++) {
         const addr = addrAll[i];
         addrAll[i] = addrAll[i].replace(/^Ledger: /, '').toLowerCase();
@@ -477,13 +500,17 @@ class DApp extends Component {
 
   getNameByAddr(addr) {
     console.log(addr)
+    let { ledgerAddrList, ledgerAddrListEth, trezorAddrList, trezorAddrListEth, getAddrList, getAddrListEth } = this.props;
+    let ledgerAddr = this.isEth ? ledgerAddrListEth : ledgerAddrList;
+    let trezorAddr = this.isEth ? trezorAddrListEth : trezorAddrList;
+    let getAddr = this.isEth ? getAddrListEth : getAddrList;
     let item;
     if (this.addresses[addr].walletID === WALLETID.LEDGER) {
-      item = this.props.ledgerAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+      item = ledgerAddr.find(v => v.address.toLowerCase() === addr.toLowerCase());
     } else if (this.addresses[addr].walletID === WALLETID.TREZOR) {
-      item = this.props.trezorAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+      item = trezorAddr.find(v => v.address.toLowerCase() === addr.toLowerCase());
     } else {
-      item = this.props.getAddrList.find(v => v.address.toLowerCase() === addr.toLowerCase());
+      item = getAddr.find(v => v.address.toLowerCase() === addr.toLowerCase());
     }
     return item ? item.name : '';
   }
