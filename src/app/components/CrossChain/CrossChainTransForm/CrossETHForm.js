@@ -122,15 +122,15 @@ class CrossETHForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, from } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
-        discountPercentNetworkFee: res.discountPercent,
+        discountPercentNetworkFee: res.discountPercent || 1,
         percentNetworkFee: res.isPercent ? res.value : 0,
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -143,15 +143,15 @@ class CrossETHForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, from } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         operationFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         operationFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentOperationFee: res.isPercent,
-        discountPercentOperationFee: res.discountPercent,
+        discountPercentOperationFee: res.discountPercent || 1,
         percentOperationFee: res.isPercent ? res.value : 0,
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,

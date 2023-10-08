@@ -125,16 +125,16 @@ class CrossBTCForm extends Component {
     this.estimateOperationFee();
   }
 
-  estimateNetworkFee = () => {
-    const { direction, currentTokenPairInfo: info, currTokenPairId } = this.props;
+  estimateNetworkFee = (toAddrsss = '') => {
+    const { direction, currentTokenPairInfo: info, currTokenPairId, from } = this.props;
     const { toChainSymbol, ancestorDecimals } = info;
 
-    estimateCrossChainNetworkFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId }).then(res => {
+    estimateCrossChainNetworkFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId, address: [from, toAddrsss] }).then(res => {
       this.setState({
         networkFeeRaw: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
         networkFee: res.isPercent ? '0' : direction === INBOUND ? formatNumByDecimals(res?.value, ancestorDecimals) : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
-        discountPercentNetworkFee: res.discountPercent,
+        discountPercentNetworkFee: res.discountPercent || 1,
         percentNetworkFee: res.isPercent ? res.value : 0,
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -145,16 +145,16 @@ class CrossBTCForm extends Component {
     });
   }
 
-  estimateOperationFee = () => {
-    const { direction, currentTokenPairInfo: info, currTokenPairId } = this.props;
+  estimateOperationFee = (toAddrsss = '') => {
+    const { direction, currentTokenPairInfo: info, currTokenPairId, from } = this.props;
     const { toChainSymbol, ancestorDecimals } = info;
 
-    estimateCrossChainOperationFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId }).then(res => {
+    estimateCrossChainOperationFee(direction === INBOUND ? 'BTC' : toChainSymbol, direction === INBOUND ? toChainSymbol : 'BTC', { tokenPairID: currTokenPairId, address: [from, toAddrsss] }).then(res => {
       this.setState({
         operationFeeRaw: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
         operationFee: res.isPercent ? '0' : formatNumByDecimals(res.value, ancestorDecimals),
         isPercentOperationFee: res.isPercent,
-        discountPercentOperationFee: res.discountPercent,
+        discountPercentOperationFee: res.discountPercent || 1,
         percentOperationFee: res.isPercent ? res.value : 0,
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -278,7 +278,9 @@ class CrossBTCForm extends Component {
 
   updateCrosschainFee = (value = '0') => {
     const { isPercentNetworkFee, isPercentOperationFee, percentNetworkFee, percentOperationFee, networkFeeRaw, operationFeeRaw, minNetworkFeeLimit, maxNetworkFeeLimit, minOperationFeeLimit, maxOperationFeeLimit, discountPercentNetworkFee, discountPercentOperationFee } = this.state;
-
+    if (!value) {
+      value = this.props.form.getFieldValue('amount')
+    }
     let finnalNetworkFee, finnalOperationFee;
     if (isPercentNetworkFee) {
       const tmp = new BigNumber(value).multipliedBy(percentNetworkFee);
@@ -450,7 +452,9 @@ class CrossBTCForm extends Component {
     if (this.accountSelections.includes(value) || this.addressSelections.includes(value)) {
       this.setState({
         isNewContacts: false
-      })
+      });
+      this.estimateNetworkFee(value);
+      this.estimateOperationFee(value);
       callback();
     } else {
       let isValid;
@@ -463,7 +467,9 @@ class CrossBTCForm extends Component {
       if (isValid) {
         this.setState({
           isNewContacts: !isNewContacts
-        })
+        });
+        this.estimateNetworkFee(value);
+        this.estimateOperationFee(value);
         callback();
       } else {
         this.setState({

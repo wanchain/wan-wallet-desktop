@@ -118,15 +118,15 @@ class CrossChainTransForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { currentTokenPairInfo: info, currTokenPairId, type, form } = this.props;
+    const { currentTokenPairInfo: info, currTokenPairId, type, form, from } = this.props;
     const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
 
-    estimateCrossChainNetworkFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
-        discountPercentNetworkFee: res.discountPercent,
+        discountPercentNetworkFee: res.discountPercent || 1,
         percentNetworkFee: res.isPercent ? res.value : 0,
         minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
@@ -139,15 +139,15 @@ class CrossChainTransForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { currentTokenPairInfo: info, currTokenPairId, type, form } = this.props;
+    const { currentTokenPairInfo: info, currTokenPairId, type, form, from } = this.props;
     const { fromChainSymbol, toChainSymbol, ancestorDecimals } = info;
 
-    estimateCrossChainOperationFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainOperationFee(type === INBOUND ? fromChainSymbol : toChainSymbol, type === INBOUND ? toChainSymbol : fromChainSymbol, { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         operationFeeRaw: res.isPercent ? '0' : new BigNumber(res.value).dividedBy(Math.pow(10, ancestorDecimals)).toString(),
         operationFee: res.isPercent ? '0' : new BigNumber(res.value).dividedBy(Math.pow(10, ancestorDecimals)).toString(),
         isPercentOperationFee: res.isPercent,
-        discountPercentOperationFee: res.discountPercent,
+        discountPercentOperationFee: res.discountPercent || 1,
         percentOperationFee: res.isPercent ? res.value : 0,
         minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
         maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
