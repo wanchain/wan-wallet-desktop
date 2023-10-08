@@ -25,6 +25,7 @@ class Session {
     // scan_ota: false,
     logout_timeout: '5',
     scan_ota_list: {},
+    wan_path: "m/44'/5718350'/0'",
   };
 
   @observable needFirstDBUpdate = false;

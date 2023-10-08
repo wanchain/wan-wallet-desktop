@@ -3,7 +3,7 @@ import { Checkbox, Card, Select, Form, message, Icon } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import style from './index.less';
-import { defaultTimeout } from 'utils/settings';
+import { defaultTimeout, defaultWanPath } from 'utils/settings';
 import PasswordConfirmForm from 'components/PasswordConfirmForm';
 import ConfirmDeleteToken from './ConfirmDeleteToken';
 const { Option } = Select;
@@ -42,6 +42,10 @@ class Config extends Component {
     this.props.updateSettings({ logout_timeout: e });
   }
 
+  handleWanPathChange = e => {
+    this.props.updateSettings({ wan_path: e });
+  }
+
   handleOk = pwd => {
     if (!pwd) {
       message.warn(intl.get('Config.invalidPassword'));
@@ -66,7 +70,7 @@ class Config extends Component {
   }
 
   render() {
-    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet } = this.props.settings;
+    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet, wan_path } = this.props.settings;
 
     const options = [{
       value: '0',
@@ -90,6 +94,15 @@ class Config extends Component {
       value: '120',
       text: intl.get('Config.twoHours'),
     }];
+
+    const wanPathOptions = [{
+      value: "m/44'/5718350'/0'",
+      text: intl.get('Config.legacyWanPath'),
+    }, {
+      value: "m/44'/60'/0'",
+      text: intl.get('Config.ethPath'),
+    }]
+
     return (
       <div className={style['settings_config']}>
         <Card title={intl.get('Config.option')}>
@@ -112,6 +125,12 @@ class Config extends Component {
         <Card title={intl.get('Config.others')}>
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
+          <div className={style.timeout}>
+            <p className={style['set_title']}>{intl.get('Config.wanPath')}</p>
+            <Select className={style.timeoutSelect} value={wan_path === undefined ? defaultWanPath : wan_path} placeholder={intl.get('Config.selectWanPath')} onChange={this.handleWanPathChange}>
+              {wanPathOptions.map(item => <Option key={item.value} value={item.value}>{item.text}</Option>)}
+            </Select>
+          </div>
         </Card>
       </div>
     );

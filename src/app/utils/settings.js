@@ -36,6 +36,8 @@ export const MAXDAYS = 90;
 
 export const defaultTimeout = '5';
 
+export const defaultWanPath = "m/44'/5718350'/0'"; // "m/44'/60'/0'"
+
 export const DEFAULT_GASPRICE = 180000000000;
 export const DEFAULT_GAS = 4700000;
 

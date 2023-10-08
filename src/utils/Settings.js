@@ -25,6 +25,7 @@ const defaultConfig = {
     // scan_ota: false,
     scan_ota_list: {},
     logout_timeout: '5',
+    wan_path: "m/44'/5718350'/0'",
     main: {
       tokens: {
         "2153201998-0x0000000000000000000000000000000000000000": {
@@ -286,6 +287,11 @@ class Settings {
     }
 
     return _network = this._get('network') || defaultConfig.network
+  }
+
+  get wanPath() {
+    let settings = this._get('settings') || defaultConfig.settings;
+    return settings.wan_path;
   }
 
   get language() {

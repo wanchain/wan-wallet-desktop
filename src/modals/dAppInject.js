@@ -58,6 +58,18 @@ class Web3Eth {
     this.sendToHost([msg.method, msg.id, msg.message]);
   }
 
+  sendRawTransaction(tx, cb) {
+    const msg = {
+      method: "sendRawTransaction",
+      id: uuid(),
+      cb: cb,
+      message: tx,
+    };
+
+    this.saveCb(msg);
+    this.sendToHost([msg.method, msg.id, msg.message]);
+  }
+
   getChainId(cb) {
     const msg = {
       method: "loadNetworkId",

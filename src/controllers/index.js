@@ -270,8 +270,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
 
                 logger.info('Sign transaction:');
                 logger.info('wallet ID:' + walletID + ', path:' + path + ', raw:' + rawTx);
-                let chainType = (path === "m/44'/60'/0'/0/0")? "ETH" : "WAN";
-                const chain = hdUtil.getChain(chainType);
+                const chain = hdUtil.getChain('WAN');
                 let ret = await chain.signTransaction(walletID, rawTx, path);
                 sig = '0x' + ret.toString('hex');
                 console.log('sig', sig);
