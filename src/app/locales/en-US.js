@@ -237,8 +237,8 @@ const en_US = {
     'Config.confirmText': 'Confirm to delete: ',
     'Config.enableEosToken': 'Enable EOS tokens',
     'Config.selectWanPath': 'Set wanchain address path',
-    'Config.legacyWanPath': 'Wanchain legacy path',
-    'Config.ethPath': 'Ethereum path',
+    'Config.wanLegacyPath': 'Wanchain legacy path',
+    'Config.ethCompatiblePath': 'Ethereum compatible path',
 
     'PasswordConfirmForm.password': 'Password',
     'PasswordConfirmForm.inputPwd': 'Input password',
@@ -695,7 +695,7 @@ const en_US = {
     'Config.offlineWallet': 'Show offline wallet in the sidebar',
     'Config.enableScanOTA': 'Enable Scan OTA',
     'Config.scanOTA': 'Scan OTA Address',
-    'Config.wanPath': 'Wanchain address path',
+    'Config.wanPath': 'Wanchain Address Path',
 
     'staking.validatorRegister': 'Validator Register',
     'staking.validatorUpdate': 'Validator Update',
