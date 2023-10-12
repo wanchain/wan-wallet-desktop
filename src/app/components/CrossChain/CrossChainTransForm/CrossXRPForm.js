@@ -293,6 +293,14 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
     }
   }
 
+  const minOperationFeeLimit = useMemo(() => {
+    return estimateCrossChainOperationFee.isPercent ? new BigNumber(estimateCrossChainOperationFee.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+  }, [estimateCrossChainOperationFee])
+
+  const maxOperationFeeLimit = useMemo(() => {
+    return estimateCrossChainOperationFee.isPercent ? new BigNumber(estimateCrossChainOperationFee.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+  }, [estimateCrossChainOperationFee])
+
   const checkAmount = useCallback((rule, value, callback) => {
     const message = intl.get('NormalTransForm.amountIsIncorrect');
 
@@ -317,8 +325,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
       let finnalNetworkFee, finnalOperationFee;
       if (estimateCrossChainNetworkFee.isPercent) {
         const tmp = new BigNumber(value).multipliedBy(estimateCrossChainNetworkFee.value);
-        const minFeeLimit = new BigNumber(estimateCrossChainNetworkFee.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
-        const maxFeeLimit = new BigNumber(estimateCrossChainNetworkFee.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const minFeeLimit = new BigNumber(estimateCrossChainNetworkFee.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const maxFeeLimit = new BigNumber(estimateCrossChainNetworkFee.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString();
         const tmp1 = tmp.lt(minFeeLimit)
                                 ? minFeeLimit
                                 : (!new BigNumber(maxFeeLimit).eq('0') && tmp.gt(maxFeeLimit)) ? maxFeeLimit : tmp.toString();
@@ -330,8 +338,8 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
 
       if (estimateCrossChainOperationFee.isPercent) {
         let tmp = new BigNumber(value).multipliedBy(estimateCrossChainOperationFee.value);
-        const minFeeLimit = new BigNumber(estimateCrossChainOperationFee.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
-        const maxFeeLimit = new BigNumber(estimateCrossChainOperationFee.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const minFeeLimit = new BigNumber(estimateCrossChainOperationFee.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString();
+        const maxFeeLimit = new BigNumber(estimateCrossChainOperationFee.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString();
         const tmp1 = tmp.lt(minFeeLimit)
                                 ? minFeeLimit
                                 : (!new BigNumber(maxFeeLimit).eq('0') && tmp.gt(maxFeeLimit)) ? maxFeeLimit : tmp.toString();
@@ -622,15 +630,7 @@ const CrossXRPForm = observer(({ form, toggleVisible, onSend }) => {
               options={{ initialValue: crosschainFee }}
               prefix={<Icon type="credit-card" className="colorInput" />}
               title={intl.get('CrossChainTransForm.crosschainFee')}
-              tooltips={<ToolTipCus />}
-              // suffix={<Tooltip title={
-              //   <table className={style['suffix_table']}>
-              //     <tbody>
-              //       <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
-              //       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
-              //     </tbody>
-              //   </table>
-              // }><Icon type="exclamation-circle" /></Tooltip>}
+              tooltips={<ToolTipCus minOperationFeeLimit={minOperationFeeLimit} maxOperationFeeLimit={maxOperationFeeLimit} percentOperationFee={estimateCrossChainOperationFee.isPercent ? estimateCrossChainOperationFee.value : 0} isPercentOperationFee={estimateCrossChainOperationFee.isPercent} symbol='XRP'/>}
             />
             <CommonFormItem
               form={form}
