@@ -238,7 +238,7 @@ const en_US = {
     'Config.enableEosToken': 'Enable EOS tokens',
     'Config.selectWanPath': 'Set wanchain address path',
     'Config.wanLegacyPath': 'Wanchain legacy path',
-    'Config.ethCompatiblePath': 'Ethereum compatible path',
+    'Config.ethStandardPath': 'Ethereum standard path',
 
     'PasswordConfirmForm.password': 'Password',
     'PasswordConfirmForm.inputPwd': 'Input password',

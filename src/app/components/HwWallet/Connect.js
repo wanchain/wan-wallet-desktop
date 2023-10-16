@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Modal, Table, message } from 'antd';
+import { Button, Card, Select, Modal, Table, message } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import wanUtil from 'wanchain-util';
@@ -9,6 +9,7 @@ import { getBalance } from 'utils/helper';
 import { toChecksumAddress } from 'utils/support';
 
 @inject(stores => ({
+  settings: stores.session.settings,
   language: stores.languageIntl.language,
   selectAddrColumns: stores.languageIntl.selectAddrColumns,
 }))
@@ -17,9 +18,26 @@ import { toChecksumAddress } from 'utils/support';
 class Connect extends Component {
   constructor (props) {
     super(props);
+
+    const { wan_path } = this.props.settings;
+    console.log('HwWallet Connect wan_pash: %s', wan_path);
+
+    let hwAppOptions = [{
+      value: "m/44'/60'/0'/0",
+      text: 'Ethereum App' + " (path: m/44'/60'/0'/0/*)",
+    }];
+    if ((!wan_path) || wan_path.indexOf("m/44'/5718350'/0'") >= 0) {
+      hwAppOptions.unshift({
+        value: "m/44'/5718350'/0'",
+        text: 'Wanchain App' + " (path: m/44'/5718350'/0'/*)",
+      });
+    }
+
     this.state = {
       visible: false,
       addresses: [],
+      hwAppOptions,
+      path: hwAppOptions[0].value
     };
     this.page = 0;
     this.pageSize = 5;
@@ -53,6 +71,7 @@ class Connect extends Component {
   }
 
   showDefaultPageAddrsFromHd = () => {
+    this.props.setPath(this.state.path);
     this.props.getPublicKey((err, result) => {
       if (err) {
         message.warn(intl.get('HwWallet.Connect.connectFailed'));
@@ -78,7 +97,7 @@ class Connect extends Component {
   }
 
   deriveAddresses = (start, limit, visible = false) => {
-    let wallet = new HwWallet(this.publicKey, this.chainCode, this.props.dPath);
+    let wallet = new HwWallet(this.publicKey, this.chainCode, this.state.path);
     let hdKeys = wallet.getHdKeys(start, limit);
     let addresses = [];
     hdKeys.forEach(hdKey => {
@@ -127,13 +146,21 @@ class Connect extends Component {
     },
   };
 
+  handleWanPathChange = e => {
+    this.setState({ path: e });
+    console.log('HwWallet Connect change path: %s', e)
+  }
+
   render () {
-    const { visible, addresses } = this.state;
+    const { visible, addresses, hwAppOptions, path } = this.state;
 
     return (
       <div>
         <Card title={intl.get('HwWallet.Connect.connectAHardwareWallet')} bordered={false}>
           <this.props.Instruction />
+          <Select className={style.timeoutSelect} value={path} placeholder={intl.get('Config.selectWanPath')} onChange={this.handleWanPathChange}>
+              {hwAppOptions.map(item => <Select.Option key={item.value} value={item.value}>{item.text}</Select.Option>)}
+          </Select>
           <Button type="primary" onClick={this.showDefaultPageAddrsFromHd}>{intl.get('HwWallet.Connect.continue')}</Button>
           <Modal wrapClassName={style.connectModal} destroyOnClose={true} title={intl.get('HwWallet.Connect.selectAddress')} visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} okText={intl.get('Common.ok')} cancelText={intl.get('Common.cancel')} className={style.popTable}>
             <div>

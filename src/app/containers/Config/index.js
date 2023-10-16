@@ -97,10 +97,10 @@ class Config extends Component {
 
     const wanPathOptions = [{
       value: "m/44'/5718350'/0'",
-      text: intl.get('Config.wanLegacyPath') + " (m/44'/5718350'/0')",
+      text: intl.get('Config.wanLegacyPath') + " (m/44'/5718350'/0'/0/*)",
     }, {
       value: "m/44'/60'/0'",
-      text: intl.get('Config.ethCompatiblePath') + " (m/44'/60'/0')",
+      text: intl.get('Config.ethStandardPath') + " (m/44'/60'/0'/0/*)",
     }]
 
     return (
