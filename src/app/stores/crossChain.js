@@ -189,7 +189,7 @@ class CrossChain {
                 account: v.address,
                 chain: FULLNAME[v.chainType] || v.chainType,
                 chainSymbol: v.chainType,
-                decimals: 'WASPv2',
+                decimals: '18',
                 symbol: 'WASPv2',
                 ancestor: 'WASPv2',
               }

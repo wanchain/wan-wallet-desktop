@@ -47,12 +47,6 @@ const Content = ({
       <p style={{ marginBottom: '15px' }}>The Bridge Fee consists of <span style={{ color: '#2FBDF4' }}>"Network Fee + Service Fee"</span>.</p>
       <p style={{ marginBottom: '15px' }}>If either your sending or receiving address on the Wanchain network holds 50,000 WAN or more, inclusive of WAN staked on Bridge node, you will enjoy a 50% discount on the Service Fee.</p>
       <p style={{ marginTop: '10px' }}>
-        <span style={{ display: 'block' }}>Applicable Service Fee Rules for your WAN:</span>
-        <span style={{ display: 'block' }}>- Service fee rate : <span style={{ color: '#2fbdf4' }}>{rate}</span></span>
-        <span style={{ display: 'block' }}>- Minimum charge : <span style={{ color: '#2fbdf4' }}>{minOperationFeeLimit} {symbol}</span></span>
-        <span style={{ display: 'block' }}>- Maximum charge : <span style={{ color: '#2fbdf4' }}>{new BigNumber(maxOperationFeeLimit).eq('0') ? 'Unlimited' : `${maxOperationFeeLimit} ${symbol}`} </span></span>
-      </p>
-      <p style={{ marginTop: '10px' }}>
         <span style={{ color: '#F1754B', display: 'block' }}>Note: </span>
         Maintain a consistent WAN balance on your Wanchain address until your cross-chain assets are received to guarantee the discount is applied and avoid extra charges.
       </p>
