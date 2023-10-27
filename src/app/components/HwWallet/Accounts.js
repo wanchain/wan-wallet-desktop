@@ -71,6 +71,7 @@ class Accounts extends Component {
     let { to, amount, data, chainId, nonce, gasLimit, gasPrice, txType } = params;
 
     let rawTx = {
+      from,
       to,
       value: '0x' + new BigNumber(amount).times(BigNumber(10).pow(18)).toString(16),
       data,

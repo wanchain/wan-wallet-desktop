@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { message } from 'antd';
 import intl from 'react-intl-universal';
-
-import style from './index.less';
 import { WALLETID } from 'utils/settings';
-import { WanTx, EthTx, WanRawTx } from 'utils/hardwareUtils'
+import { WanTx, WanRawTx } from 'utils/hardwareUtils';
+import * as ethUtil from 'ethereumjs-util';
+import Common from '@ethereumjs/common';
+import { TransactionFactory } from '@ethereumjs/tx';
 import Accounts from 'components/HwWallet/Accounts';
 import ConnectHwWallet from 'components/HwWallet/Connect';
 
@@ -81,23 +82,22 @@ class Ledger extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
-    tx.from = '0x5AD80336b72719684558767431549eF8008AB6A6';
-    let rawTx = new WanRawTx(tx).serialize();
+    const common = Common.custom({ chainId: tx.chainId });
+    const ethTx = TransactionFactory.fromTxData(tx, { common });
 
     message.info(intl.get('Ledger.signTransactionInLedger'));
-    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx: rawTx }, (err, sig) => {
+    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx: ethUtil.rlp.encode(ethTx.getMessageToSign(false)).toString('hex') }, (err, sig) => {
       if (err) {
         message.warn(intl.get('Ledger.signTransactionFailed'));
         callback(err, null);
 
         console.log('Sign Failed, path: %s, error: %O', path, err);
       } else {
-        console.log('ledger signTransaction %s: %O, %O', path, tx, sig)
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;
-        let wTx = new EthTx(tx);
-        let signedTx = '0x' + wTx.serialize().toString('hex');
+        let newTx = TransactionFactory.fromTxData(tx, { common });
+        let signedTx = '0x' + newTx.serialize().toString('hex');
         console.log('Signed tx: ', signedTx);
         callback(null, signedTx);
       }
@@ -114,7 +114,7 @@ class Ledger extends Component {
         }
       })
       newAddr.forEach(item => {
-        console.log('ledger setAddresses: %O', item);
+        console.log('Ledger setAddresses: %O', item);
         let matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
         if (matchValue) {
           item.name = matchValue.name;
@@ -126,7 +126,7 @@ class Ledger extends Component {
 
   setPath = (path) => {
     this.path = path;
-    console.log('set ledger path: %s', path);
+    console.log('Ledger setPath: %s', path);
   }
 
   render () {

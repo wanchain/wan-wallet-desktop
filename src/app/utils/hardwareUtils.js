@@ -3,8 +3,6 @@ const ethUtil = require('ethereumjs-util');
 
 export const WanTx = require('wanchainjs-tx');
 
-export const EthTx = require('ethereumjs-tx');
-
 export class WanRawTx {
   constructor (data) {
     const fields = [{
