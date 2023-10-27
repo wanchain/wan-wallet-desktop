@@ -34,6 +34,10 @@ class Config extends Component {
     this.props.updateSettings({ staking_advance: e.target.checked });
   }
 
+  handleCurrencyunit = unit => {
+    this.props.updateSettings({ currency_unit: unit })
+  }
+
   handleOffline = e => {
     this.props.updateSettings({ offline_wallet: e.target.checked });
   }
@@ -66,7 +70,7 @@ class Config extends Component {
   }
 
   render() {
-    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet } = this.props.settings;
+    const { reinput_pwd, staking_advance, logout_timeout, offline_wallet, currency_unit } = this.props.settings;
 
     const options = [{
       value: '0',
@@ -112,6 +116,10 @@ class Config extends Component {
         <Card title={intl.get('Config.others')}>
           <p className={style['set_title']}>{intl.get('Config.enableOfflineWallet')}</p>
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
+          <div className={style['set_gap']}></div>
+          <p className={style['set_title']}>Currency Unit</p>
+          <Checkbox checked={currency_unit === 'USD'} onChange={() => this.handleCurrencyunit('USD')}>USD ($)</Checkbox>
+          <Checkbox checked={currency_unit === 'TRY'} onChange={() => this.handleCurrencyunit('TRY')}>TRY (₺)</Checkbox>
         </Card>
       </div>
     );

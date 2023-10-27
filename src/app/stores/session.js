@@ -25,6 +25,7 @@ class Session {
     // scan_ota: false,
     logout_timeout: '5',
     scan_ota_list: {},
+    currency_unit: 'USD'
   };
 
   @observable needFirstDBUpdate = false;

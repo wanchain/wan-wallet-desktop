@@ -6,10 +6,11 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
+import session from './session';
 import tokens from './tokens';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
+import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS, CURRENCY_SYMBOL } from 'utils/settings';
 
 class Portfolio {
   @observable coinPriceObj;
@@ -86,6 +87,7 @@ class Portfolio {
   }
 
   @action updateCoinPrice() {
+    const currency = session.settings.currency_unit.toLowerCase();
     let param = Object.keys(self.coinList).map(key => {
       let item = self.coinList[key];
       return item.ancestor ? item.ancestor : item.symbol;
@@ -104,7 +106,7 @@ class Portfolio {
       url: 'https://api.coingecko.com/api/v3/simple/price',
       params: {
         ids: ID_arr.join(),
-        vs_currencies: 'usd',
+        vs_currencies: currency,
       }
     })
       .then((res) => {
@@ -112,7 +114,7 @@ class Portfolio {
           runInAction(() => {
             self.coinPriceObj = {};
             for (let i in res.data) {
-              self.coinPriceObj[reconvertIds[i]] = res.data[i].usd;
+              self.coinPriceObj[reconvertIds[i]] = res.data[i][currency];
             }
           })
         } else {
@@ -167,13 +169,14 @@ class Portfolio {
   }
 
   @computed get portfolioList() {
+    const currency_symbol = CURRENCY_SYMBOL[session.settings.currency_unit.toLowerCase()]
     let list = Object.keys(self.coinList).map((key, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: key, writable: true },
       chain: { value: self.coinList[key].chain, writable: true },
-      price: { value: '$0', writable: true },
+      price: { value: `${currency_symbol}0`, writable: true },
       balance: { value: self.coinList[key].balance ? self.coinList[key].balance : '0', writable: true }, // To do
-      value: { value: '$0', writable: true },
+      value: { value: `${currency_symbol}0`, writable: true },
       portfolio: { value: '0%', writable: true },
       scAddr: { value: self.coinList[key].scAddr, writable: true },
     }));
@@ -190,8 +193,8 @@ class Portfolio {
           }
         }
         if (key in self.coinPriceObj) {
-          val.price = `$${self.coinPriceObj[key]}`;
-          val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
+          val.price = `${currency_symbol}${self.coinPriceObj[key]}`;
+          val.value = `${currency_symbol}` + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
           amountValue = new BigNumber(amountValue).plus(new BigNumber(val.value.substr(1))).toString(10);
         }
       });
@@ -221,9 +224,9 @@ class Portfolio {
     });
     list.forEach(item => {
       item.name = self.coinList[item.name].symbol;
-      item.price = `$${formatNum(item.price.substr(1))}`;
+      item.price = `${currency_symbol}${formatNum(item.price.substr(1))}`;
       item.balance = formatNum(item.balance);
-      item.value = `$${formatNum(item.value.substr(1))}`;
+      item.value = `${currency_symbol}${formatNum(item.value.substr(1))}`;
     });
     return list;
   }

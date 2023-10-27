@@ -25,6 +25,7 @@ const defaultConfig = {
     // scan_ota: false,
     scan_ota_list: {},
     logout_timeout: '5',
+    currency_unit: 'USD',
     main: {
       tokens: {
         "2153201998-0x0000000000000000000000000000000000000000": {
