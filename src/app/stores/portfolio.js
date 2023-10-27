@@ -192,9 +192,10 @@ class Portfolio {
             key = self.coinList[key].ancestor ? self.coinList[key].ancestor : self.coinList[key].symbol;
           }
         }
-        if (key in self.coinPriceObj) {
-          val.price = `${currency_symbol}${self.coinPriceObj[key]}`;
-          val.value = `${currency_symbol}` + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
+        if (key in self.coinPriceObj || ['WASPv2'].includes(key)) {
+          const tmpKey = ['WASPv2'].includes(key) ? 'WASP' : key;
+          val.price = `${currency_symbol}${self.coinPriceObj[tmpKey]}`;
+          val.value = `${currency_symbol}` + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(3).toString(10);
           amountValue = new BigNumber(amountValue).plus(new BigNumber(val.value.substr(1))).toString(10);
         }
       });
