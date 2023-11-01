@@ -98,6 +98,9 @@ class Portfolio {
       if (v.toLowerCase() in self.tokenIds_CoinGecko) {
         reconvertIds[self.tokenIds_CoinGecko[v.toLowerCase()]] = v;
       }
+      if (v === 'WASPv2' && self.tokenIds_CoinGecko.wasp) {
+        reconvertIds[self.tokenIds_CoinGecko.wasp] = 'WASP';
+      }
     }
     let ID_arr = Object.keys(reconvertIds);
     if (ID_arr.length === 0) return;
@@ -224,10 +227,14 @@ class Portfolio {
       }
     });
     list.forEach(item => {
-      item.name = self.coinList[item.name].symbol;
-      item.price = `${currency_symbol}${formatNum(item.price.substr(1))}`;
-      item.balance = formatNum(item.balance);
-      item.value = `${currency_symbol}${formatNum(item.value.substr(1))}`;
+      try {
+        item.name = self.coinList[item.name].symbol;
+        item.price = `${currency_symbol}${formatNum(item.price.substr(1))}`;
+        item.balance = formatNum(item.balance);
+        item.value = `${currency_symbol}${formatNum(item.value.substr(1))}`;
+      } catch (error) {
+        console.log(error)
+      }
     });
     return list;
   }
