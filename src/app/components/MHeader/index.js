@@ -10,11 +10,15 @@ import style from './index.less';
   language: stores.languageIntl.language,
   pageTitle: stores.languageIntl.pageTitle,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  ledgerAddrListEth: stores.ethAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
   setAuth: val => stores.session.setAuth(val),
   getMnemonic: ret => stores.session.getMnemonic(ret),
   setIsFirstLogin: val => stores.session.setIsFirstLogin(val),
-  updateAddress: (type, newAddress) => stores.wanAddress.updateAddress(type, newAddress),
+  updateAddress: (type, newAddress) => {
+    stores.wanAddress.updateAddress(type, newAddress);
+    stores.ethAddress.updateAddress(type, newAddress);
+  }
 }))
 
 @observer
@@ -38,14 +42,15 @@ class MHeader extends Component {
   }
 
   render () {
-    const { pageTitle, ledgerAddrList, trezorAddrList } = this.props;
+    const { pageTitle, ledgerAddrList, ledgerAddrListEth, trezorAddrList } = this.props;
+    let addrList = ledgerAddrList.concat(ledgerAddrListEth);
 
     return (
       <div className={style.header}>
         <Row className={style['header-top']}>
             <Col span={12} className="title">
               <em className = {style.comLine}></em><span>{ pageTitle }</span>
-              { (pageTitle === 'Ledger' && ledgerAddrList.length !== 0) || (pageTitle === 'Trezor' && trezorAddrList.length !== 0)
+              { (pageTitle === 'Ledger' && addrList.length !== 0) || (pageTitle === 'Trezor' && trezorAddrList.length !== 0)
                   ? <Button className={style.createBtnHead} type="primary" shape="round" size="large" onClick={this.handleDisconnect}><Icon type="usb" theme="filled" />{intl.get('MHeader.disconnect')}</Button>
                   : ''
               }

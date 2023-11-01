@@ -22,12 +22,13 @@ const WAN_PATH = "m/44'/5718350'/0'";
 const ETH_PATH = "m/44'/60'/0'";
 
 @inject(stores => ({
+  // wanchain legacy path address
   addrSelectedList: stores.wanAddress.addrSelectedList,
   getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
   trezorAddrList: stores.wanAddress.trezorAddrList,
-  // ethereum address
+  // ethereum path address
   addrSelectedListEth: stores.ethAddress.addrSelectedList,
   getAddrListEth: stores.ethAddress.getAddrList,
   addrInfoEth: stores.ethAddress.addrInfo,

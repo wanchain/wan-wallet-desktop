@@ -26,7 +26,7 @@ class Connect extends Component {
       value: "m/44'/60'/0'/0",
       text: 'Ethereum App' + " (path: m/44'/60'/0'/0/*)",
     }];
-    if ((!wan_path) || wan_path.indexOf("m/44'/5718350'/0'") >= 0) {
+    if ((!wan_path) || wan_path.indexOf("44'/5718350'") >= 0) {
       hwAppOptions.unshift({
         value: "m/44'/5718350'/0'",
         text: 'Wanchain App' + " (path: m/44'/5718350'/0'/*)",

@@ -11,6 +11,9 @@ import { timeFormat, fromWei, formatNum, toChecksumAddress } from 'utils/support
 class EthAddress {
   @observable addrInfo = {
     normal: {},
+    ledger: {},
+    trezor: {},
+    import: {},
     rawKey: {}
   };
 
@@ -49,6 +52,12 @@ class EthAddress {
   @action addAddresses(type, addrArr) {
     addrArr.forEach(addr => {
       if (!Object.keys(self.addrInfo[type] || []).includes(addr.address)) {
+        if (addr.name === undefined && type === 'ledger') {
+          addr.name = `Ledger${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
+        }
+        if (addr.name === undefined && type === 'trezor') {
+          addr.name = `Trezor${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
+        }
         if (addr.name === undefined) {
           addr.name = `ETH-Account${parseInt(((/[0-9]+$/)).exec(addr.path)[0]) + 1}`;
         }
@@ -203,6 +212,40 @@ class EthAddress {
         path: `${ETHPATH}${self.addrInfo[type][item].path}`,
         action: 'send',
         wid: WALLETID.NATIVE
+      });
+    });
+    return addrList;
+  }
+
+  @computed get ledgerAddrList() {
+    let addrList = [];
+    let type = 'ledger';
+    Object.keys(self.addrInfo[type]).forEach((item, index) => {
+      addrList.push({
+        key: item,
+        name: self.addrInfo[type][item].name,
+        address: toChecksumAddress(item),
+        balance: self.addrInfo[type][item].balance,
+        path: self.addrInfo[type][item].path,
+        action: 'send',
+        wid: WALLETID.LEDGER
+      });
+    });
+    return addrList;
+  }
+
+  @computed get trezorAddrList() {
+    let addrList = [];
+    let type = 'trezor';
+    Object.keys(self.addrInfo[type]).forEach((item, index) => {
+      addrList.push({
+        key: item,
+        name: self.addrInfo[type][item].name,
+        address: toChecksumAddress(item),
+        balance: self.addrInfo[type][item].balance,
+        path: self.addrInfo[type][item].path,
+        action: 'send',
+        wid: WALLETID.TREZOR
       });
     });
     return addrList;

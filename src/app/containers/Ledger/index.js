@@ -17,6 +17,7 @@ const LEDGER = 'ledger';
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   ledgerAddrList: stores.wanAddress.ledgerAddrList,
+  ledgerAddrListEth: stores.ethAddress.ledgerAddrList,
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addLedgerAddr: newAddr => stores.wanAddress.addAddresses(LEDGER, newAddr),
@@ -37,7 +38,7 @@ class Ledger extends Component {
   }
 
   componentDidUpdate () {
-    if (this.props.ledgerAddrList.length !== 0 && !this.timer) {
+    if (((this.props.ledgerAddrList.length !== 0) || (this.props.ledgerAddrListEth.length !== 0)) && !this.timer) {
       this.timer = setInterval(() => this.props.updateTransHistory(), 5000);
     }
   }
@@ -82,21 +83,28 @@ class Ledger extends Component {
   }
 
   signTransaction = (path, tx, callback) => {
+    let rawTx;
+    let isWanApp = (path.indexOf("44'/5718350'") >= 0);
     const common = Common.custom({ chainId: tx.chainId });
-    const ethTx = TransactionFactory.fromTxData(tx, { common });
-
+    if (isWanApp) {
+      tx.chainId = (tx.chainId === 888) ? 1 : 3;
+      tx.data = tx.data || '0x';
+      rawTx = new WanRawTx(tx).serialize().toString('hex');
+    } else {
+      const ethTx = TransactionFactory.fromTxData(tx, { common });
+      rawTx = ethUtil.rlp.encode(ethTx.getMessageToSign(false)).toString('hex');
+    }
     message.info(intl.get('Ledger.signTransactionInLedger'));
-    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx: ethUtil.rlp.encode(ethTx.getMessageToSign(false)).toString('hex') }, (err, sig) => {
+    wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path: path, rawTx }, (err, sig) => {
       if (err) {
         message.warn(intl.get('Ledger.signTransactionFailed'));
         callback(err, null);
-
         console.log('Sign Failed, path: %s, error: %O', path, err);
       } else {
         tx.v = sig.v;
         tx.r = sig.r;
         tx.s = sig.s;
-        let newTx = TransactionFactory.fromTxData(tx, { common });
+        let newTx = isWanApp ? new WanTx(tx) : TransactionFactory.fromTxData(tx, { common });
         let signedTx = '0x' + newTx.serialize().toString('hex');
         console.log('Signed tx: ', signedTx);
         callback(null, signedTx);
@@ -105,7 +113,9 @@ class Ledger extends Component {
   }
 
   setAddresses = newAddr => {
-    wand.request('account_getAll', { chainID: 60 }, (err, ret) => {
+    let isWanApp = (this.path.indexOf("44'/5718350'") >= 0);
+    let chainID = isWanApp ? 5718350 : 60;
+    wand.request('account_getAll', { chainID }, (err, ret) => {
       if (err) return;
       let hdInfoFromDb = [];
       Object.values(ret.accounts).forEach(item => {
@@ -114,13 +124,16 @@ class Ledger extends Component {
         }
       })
       newAddr.forEach(item => {
-        console.log('Ledger setAddresses: %O', item);
         let matchValue = hdInfoFromDb.find(val => val.addr === item.address.toLowerCase())
         if (matchValue) {
           item.name = matchValue.name;
         }
       });
-      this.props.addLedgerAddr(newAddr)
+      if (isWanApp) {
+        this.props.addLedgerAddr(newAddr);
+      } else {
+        this.props.addLedgerAddrEth(newAddr);
+      }
     })
   }
 
@@ -130,13 +143,14 @@ class Ledger extends Component {
   }
 
   render () {
-    const { ledgerAddrList } = this.props;
+    const { ledgerAddrList, ledgerAddrListEth } = this.props;
+    let addrList = ledgerAddrList.concat(ledgerAddrListEth);
     return (
       <div>
         {
-          ledgerAddrList.length === 0
+          addrList.length === 0
             ? <ConnectHwWallet onCancel={this.handleCancel} setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} setPath={this.setPath} />
-            : <Accounts name={['ledger']} addresses={ledgerAddrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} />
+            : <Accounts name={['ledger']} addresses={addrList} signTransaction={this.signTransaction} chainType={CHAIN_TYPE} path={this.path} />
         }
       </div>
     );
