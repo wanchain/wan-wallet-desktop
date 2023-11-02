@@ -213,7 +213,7 @@ class Portfolio {
         });
       }
     }
-    const reg = new RegExp(currency_symbol, 'g');
+    const reg = new RegExp(`\\${currency_symbol}`, 'g');
     list.sort((m, n) => {
       if (new BigNumber(m.value.replace(reg, '')).lt(n.value.replace(reg, ''))) {
         return 1;
