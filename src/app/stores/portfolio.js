@@ -213,10 +213,11 @@ class Portfolio {
         });
       }
     }
+    const reg = new RegExp(currency_symbol, 'g');
     list.sort((m, n) => {
-      if (new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, ''))) {
+      if (new BigNumber(m.value.replace(reg, '')).lt(n.value.replace(reg, ''))) {
         return 1;
-      } else if (new BigNumber(m.value.replace(/\$/g, '')).eq(n.value.replace(/\$/g, ''))) {
+      } else if (new BigNumber(m.value.replace(reg, '')).eq(n.value.replace(reg, ''))) {
         if (new BigNumber(m.balance).lt(n.balance)) {
           return 1;
         } else {
