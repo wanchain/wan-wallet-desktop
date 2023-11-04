@@ -11,7 +11,7 @@ import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
 import RedeemFromPrivate from 'components/RedeemFromPrivate';
-import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, initScanOTA, stopScanOTA, openScanOTA, stopSingleScan } from 'utils/helper';
+import { hasSameName, checkAddrType, getWalletIdByType, createWANAddr, createETHAddr, initScanOTA, stopScanOTA, openScanOTA, stopSingleScan } from 'utils/helper';
 import { EditableFormRow, EditableCell } from 'components/Rename';
 import WarningExistAddress from 'components/WarningExistAddress';
 import arrow from 'static/image/arrow.png';
@@ -90,7 +90,7 @@ class WanAccount extends Component {
     },
     {
       dataIndex: 'action',
-      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} walletID={record.wid} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
+      render: (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} walletID={record.wid} path={this.props.settings.wan_path} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>,
       width: '13%'
     },
     {
@@ -100,21 +100,26 @@ class WanAccount extends Component {
     }
   ];
 
-  columnsTree = this.columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: record => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave: this.handleSave,
-      }),
-    };
-  });
+  buildColumnsTree() {
+    const { wan_path } = this.props.settings;
+    console.log('buildColumnsTree wan_path: %s', wan_path);
+    this.columns[3].render = (text, record) => <div><SendNormalTrans balance={record.balance} buttonClassName={style.actionButton} walletID={record.wid} from={record.address} path={record.path} handleSend={this.handleSend} chainType={CHAINTYPE} /></div>;
+    return this.columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+      return {
+        ...col,
+        onCell: record => ({
+          record,
+          editable: col.editable,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          handleSave: this.handleSave,
+        }),
+      };
+   });
+  }
 
   componentDidMount() {
     this.props.changeTitle('WanAccount.wallet');
@@ -142,7 +147,7 @@ class WanAccount extends Component {
     }
   }
 
-  createAccount = () => {
+  createAccount = async () => {
     const { addAddress, getAddrList, settings } = this.props;
     if (this.canCreate) {
       try {
@@ -154,28 +159,31 @@ class WanAccount extends Component {
           }
           return false;
         }
-        createWANAddr(checkDuplicate).then(addressInfo => {
-          addAddress(addressInfo);
-          this.canCreate = true;
-          // if (settings.scan_ota) {
-          //   wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
-          //     if (err) {
-          //       console.log('Open OTA scanner failed:', err);
-          //     }
-          //   });
-          // }
-          message.success(intl.get('WanAccount.createAccountSuccess'));
-        }).catch((e) => {
-          this.canCreate = true;
-          if (e.message === 'exist') {
-            return;
-          }
-          message.warn(intl.get('WanAccount.createAccountFailed'));
-        });
-      } catch (e) {
-        console.log('err:', e);
+        let wanPath = settings.wan_path;
+        console.log('WanAccount createAccount for %s', wanPath);
+        let isLegacy = (wanPath.indexOf("44'/5718350'") >= 0);
+        let addressInfo;
+        if (isLegacy) {
+          addressInfo = await createWANAddr(checkDuplicate);
+        } else {
+          addressInfo = await createETHAddr(checkDuplicate);
+        }
+        addAddress(addressInfo);
         this.canCreate = true;
-        message.warn(intl.get('WanAccount.createAccountFailed'));
+        // if (settings.scan_ota) {
+        //   wand.request('address_scanMultiOTA', { path: [[WALLETID.NATIVE, addressInfo.path]] }, function (err, res) {
+        //     if (err) {
+        //       console.log('Open OTA scanner failed:', err);
+        //     }
+        //   });
+        // }
+        message.success(intl.get('WanAccount.createAccountSuccess'));
+      } catch (e) {
+        this.canCreate = true;
+        if (e.message !== 'exist') {
+          console.error('createAccount path %s error:', settings.wan_path, e);
+          message.warn(intl.get('WanAccount.createAccountFailed'));
+        }
       };
     }
   }
@@ -204,7 +212,7 @@ class WanAccount extends Component {
       nonce: params.nonce,
       data: params.data,
     };
-
+    console.log('WanAccount onSendNormalTransaction: %O', trans);
     return new Promise((resolve, reject) => {
       wand.request('transaction_normal', trans, (err, txHash) => {
         if (err) {
@@ -406,7 +414,8 @@ class WanAccount extends Component {
   }
 
   render() {
-    const { getAllAmount, getAddrList } = this.props;
+    const { getAllAmount, getAddrList, settings } = this.props;
+    console.log('wanAccount wan_path: %s', settings.wan_path)
     const components = {
       body: {
         cell: EditableCell,
@@ -414,7 +423,8 @@ class WanAccount extends Component {
       },
     };
 
-    this.props.language && this.columnsTree.forEach(col => {
+    let columnsTree = this.buildColumnsTree();
+    this.props.language && columnsTree.forEach(col => {
       if (col.dataIndex !== 'blank') {
         col.title = intl.get(`WanAccount.${col.dataIndex}`);
       } else {
@@ -440,12 +450,12 @@ class WanAccount extends Component {
             <Switch size="small" checked={settings.scan_ota} className={style.switchBtn} defaultChecked onChange={this.handleScanOTA} /> */}
           </Col>
           <Col span={8} className="col-right">
-            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
+          { (settings.wan_path.indexOf("44'/5718350'") >= 0) ? <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button> : '' }
           </Col>
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table components={components} expandedRowKeys={this.state.expandedRows} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={this.columnsTree} dataSource={getAddrList}
+            <Table components={components} expandedRowKeys={this.state.expandedRows} rowClassName={() => 'editable-row'} className="content-wrap" pagination={false} columns={columnsTree} dataSource={getAddrList}
               expandedRowRender={this.expandContent} onExpand={this.onExpand} expandIconAsCell={false} expandIconColumnIndex={4} expandIcon={this.customExpandIcon} />
           </Col>
         </Row>

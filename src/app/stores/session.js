@@ -83,12 +83,15 @@ class Session {
   }
 
   @action initSettings() {
-    wand.request('setting_get', [{ keys: ['settings'] }], (err, ret) => {
-      if (err) {
-        console.log(`Init setting failed: ${JSON.stringify(err)}`);
-        return;
-      };
-      self.settings = ret[0];
+    return new Promise((resolve, reject) => {
+      wand.request('setting_get', [{ keys: ['settings'] }], (err, ret) => {
+        if (err) {
+          console.log(`Init setting failed: ${JSON.stringify(err)}`);
+          reject(err);
+        };
+        self.settings = ret[0];
+        resolve();
+      })
     })
   }
 

@@ -173,7 +173,10 @@ class WanAddress {
   }
 
   @action getUserAccountFromDB() {
-    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+    let wanPath = session.settings.wan_path;
+    let chainID = parseInt(wanPath.split('/')[2]);
+    console.log('WAN getUserAccountFromDB chainID: %s', chainID)
+    wand.request('account_getAll', { chainID }, (err, ret) => {
       if (err) {
         console.log('Get user from DB failed ', err);
         return false;
@@ -263,12 +266,13 @@ class WanAddress {
             let setWaddress = obj => {
               self.addrInfo[typeFunc(obj.id)][toChecksumAddress(obj.address)].waddress = wanUtil.toChecksumOTAddress(obj.waddress); // error
             };
+            let wanPath = session.settings.wan_path;
             let filterData = function (data, type) {
               Object.keys(data).forEach(item => {
                 let waddress = data[item]['waddress'];
                 let name = data[item]['name'];
                 let id = getWalletIdByType(type);
-                let path = WAN + data[item]['path'];
+                let path = wanPath + '/0/' + data[item]['path'];
                 // If can not get the waddress, call a request to 'address_getOne' to get the waddress
                 if (typeof waddress === 'undefined') {
                   noWaddressArr.push({ id, name, chainType: 'WAN', path });
@@ -387,17 +391,18 @@ class WanAddress {
     let normalArr = self.addrInfo['normal'];
     let importArr = self.addrInfo['import'];
     let rawKeyArr = self.addrInfo['rawKey'];
+    let wanPath = session.settings.wan_path + '/0/';
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
       Object.keys(obj).forEach((item) => {
         addrList.push({
-          key: `${WAN}${obj[item].path}-${item}`,
+          key: `${wanPath}${obj[item].path}-${item}`,
           name: obj[item].name,
           address: toChecksumAddress(item),
           waddress: obj[item].waddress,
           balance: obj[item].balance,
           wbalance: obj[item].wbalance,
-          path: `${WAN}${obj[item].path}`,
+          path: `${wanPath}${obj[item].path}`,
           action: 'send',
           wid: walletID
         });
@@ -415,14 +420,16 @@ class WanAddress {
   @computed get getNormalAddrList() {
     let addrList = [];
     let normalArr = Object.keys(self.addrInfo['normal']);
+    let wanPath = session.settings.wan_path;
     normalArr.forEach((item, index) => {
       let type = 'normal';
+      console.log('wanAddress getNormalAddrList item %d: %O, %O', index, item, self.addrInfo[type][item]);
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
         address: toChecksumAddress(item),
         balance: self.addrInfo[type][item].balance,
-        path: `${WANPATH}${self.addrInfo[type][item].path}`,
+        path: `${wanPath}${self.addrInfo[type][item].path}`,
         action: 'send',
         wid: WALLETID.NATIVE
       });
@@ -434,6 +441,7 @@ class WanAddress {
     let addrList = [];
     let type = 'ledger';
     Object.keys(self.addrInfo[type]).forEach((item, index) => {
+      console.log('wanAddress ledgerAddrList item %d: %O', index, item);
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,

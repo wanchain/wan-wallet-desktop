@@ -126,7 +126,7 @@ class NormalTransForm extends Component {
     const { form, from, updateTransParams, addrInfo, addrInfoEth, settings, path } = this.props;
     console.log('NormalTransForm handleNext path: %s', path);
     let isLegacy = (path.indexOf("44'/5718350'") >= 0);
-    let addrs = isLegacy ? addrInfo : addrInfoEth;
+    let addrs = (this.props.isHardwareWallet && !isLegacy) ? addrInfoEth : addrInfo;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext', err);

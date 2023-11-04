@@ -9,7 +9,7 @@ import {
   signTransaction as trezorSignTransaction
 } from 'componentUtils/trezor'
 import { toWei, fromWei } from 'utils/support.js';
-import { getNonce, getGasPrice, getChainId, getWanPath } from 'utils/helper';
+import { getNonce, getGasPrice, getChainId } from 'utils/helper';
 import intl from 'react-intl-universal';
 import styled from 'styled-components';
 
@@ -23,6 +23,7 @@ const ETH_PATH = "m/44'/60'/0'";
 
 @inject(stores => ({
   // wanchain legacy path address
+  settings: stores.session.settings,
   addrSelectedList: stores.wanAddress.addrSelectedList,
   getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
@@ -56,8 +57,7 @@ class DApp extends Component {
     this.addEventListeners();
     this.chainType = 'WAN';
     this.chainId = await getChainId();
-    this.wanPath = await getWanPath();
-    console.log('Dapp init chain: %s(%d), wanPath: %s', this.chainType, this.chainId, this.wanPath);
+    console.log('Dapp init chain: %s(%d), wanPath: %s', this.chainType, this.chainId, this.props.settings.wan_path);
   }
 
   addEventListeners = () => {
@@ -157,8 +157,8 @@ class DApp extends Component {
       if (!this.addresses[address]) {
         return '';
       }
-      let addrPath = [888, 999].includes(this.chainId) ? this.wanPath : ETH_PATH;
-      let addrInfo = (addrPath === ETH_PATH) ? this.props.addrInfoEth : this.props.addrInfo;
+      let addrInfo = [888, 999].includes(this.chainId) ? this.props.addrInfo : this.props.addrInfoEth;
+      let addrPath = [888, 999].includes(this.chainId) ? this.props.settings.wan_path : ETH_PATH;
 
       let addrType = '';
       switch (this.addresses[address].walletID) {
@@ -304,7 +304,6 @@ class DApp extends Component {
     rawTx.nonce = '0x' + nonce.toString(16);
     rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
     rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
-    rawTx.type = Number(1);
     rawTx.chainId = this.chainId;
     console.log('wallet_signTx input: %O', { chainType: this.chainType, walletID: wallet.id, path: wallet.path, rawTx });
     wand.request('wallet_signTx', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
@@ -470,8 +469,7 @@ class DApp extends Component {
           addrs.push(val.accounts[account]['1'].addr);
         }
       }
-      let addrPath = [888, 999].includes(this.chainId) ? this.wanPath : ETH_PATH;
-      let addrSelected = (addrPath === ETH_PATH) ? addrSelectedListEth : addrSelectedList;
+      let addrSelected = [888, 999].includes(this.chainId) ? addrSelectedList : addrSelectedListEth;
       addrAll = addrSelected.slice();
       for (var i = 0, len = addrAll.length; i < len; i++) {
         const addr = addrAll[i];
@@ -521,12 +519,11 @@ class DApp extends Component {
   }
 
   getNameByAddr(addr) {
-    let addrPath = [888, 999].includes(this.chainId) ? this.wanPath : ETH_PATH;
-    let isEthPath = (addrPath === ETH_PATH);
+    let isWan = [888, 999].includes(this.chainId);
     let { ledgerAddrList, ledgerAddrListEth, trezorAddrList, trezorAddrListEth, getAddrList, getAddrListEth } = this.props;
-    let ledgerAddr = isEthPath ? ledgerAddrListEth : ledgerAddrList;
-    let trezorAddr = isEthPath ? trezorAddrListEth : trezorAddrList;
-    let getAddr = isEthPath ? getAddrListEth : getAddrList;
+    let ledgerAddr = isWan ? ledgerAddrList : ledgerAddrListEth;
+    let trezorAddr = isWan ? trezorAddrList : trezorAddrListEth;
+    let getAddr = isWan ? getAddrList : getAddrListEth;
     let item;
     if (this.addresses[addr].walletID === WALLETID.LEDGER) {
       item = ledgerAddr.find(v => v.address.toLowerCase() === addr.toLowerCase());

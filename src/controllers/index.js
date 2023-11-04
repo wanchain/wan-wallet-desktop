@@ -1144,6 +1144,7 @@ ipc.on(ROUTE_TX, async (event, actionUni, payload) => {
                 }
                 logger.info('Normal transaction: ' + JSON.stringify(input));
                 let srcChain = global.crossInvoker.getSrcChainNameByContractAddr(COIN_ACCOUNT, chainType);
+                console.log('%s tx normal: %O, srcChain: %O', chainType, input, srcChain);
                 ret = await global.crossInvoker.invokeNormalTrans(srcChain, input, isSend);
                 logger.info('Transaction hash: ' + JSON.stringify(ret));
             } catch (e) {

@@ -81,9 +81,9 @@ class Accounts extends Component {
       gasPrice: '0x' + new BigNumber(gasPrice).times(BigNumber(10).pow(9)).toString(16),
       Txtype: txType
     }
-    console.log('handleSend rawTx: %O', rawTx);
     return new Promise((resolve, reject) => {
       this.props.signTransaction(params.path, rawTx, (_err, raw) => {
+        console.log('handleSend rawTx: %O, %O', rawTx, raw);
         wand.request('transaction_raw', { raw, chainType: 'WAN' }, (err, txHash) => {
           if (err) {
             message.warn(intl.get('HwWallet.Accounts.sendTransactionFailed'));
