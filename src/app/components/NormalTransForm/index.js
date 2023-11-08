@@ -23,7 +23,6 @@ const chainSymbol = 'Wanchain';
   settings: stores.session.settings,
   tokensList: stores.tokens.tokensList,
   addrInfo: stores.wanAddress.addrInfo,
-  addrInfoEth: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   from: stores.sendTransParams.currentFrom,
   tokensBalance: stores.tokens.tokensBalance,
@@ -123,17 +122,14 @@ class NormalTransForm extends Component {
   }
 
   handleNext = () => {
-    const { form, from, updateTransParams, addrInfo, addrInfoEth, settings, path } = this.props;
-    console.log('NormalTransForm handleNext path: %s', path);
-    let isLegacy = (path.indexOf("44'/5718350'") >= 0);
-    let addrs = (this.props.isHardwareWallet && !isLegacy) ? addrInfoEth : addrInfo;
+    const { form, from, updateTransParams, addrInfo, settings } = this.props;
     form.validateFields(err => {
       if (err) {
         console.log('handleNext', err);
         return;
       };
       let { pwd, amount, to } = form.getFieldsValue(['pwd', 'amount', 'to']);
-      let addrAmount = getBalanceByAddr(from, addrs);
+      let addrAmount = getBalanceByAddr(from, addrInfo);
       if (new BigNumber(addrAmount).minus(this.state.gasFee).lt(amount)) {
         message.warn(intl.get('NormalTransForm.overBalance'));
         return;

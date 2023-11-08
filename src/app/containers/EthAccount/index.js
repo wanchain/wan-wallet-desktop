@@ -124,7 +124,7 @@ class EthAccount extends Component {
   }
 
   createAccount = () => {
-    const { addAddress, getAddrList, getUserBNBAccountFromDB } = this.props;
+    const { addAddress, getAddrList, getUserBNBAccountFromDB, getUserWANAccountFromDB } = this.props;
 
     if (this.canCreate) {
       try {
@@ -139,6 +139,7 @@ class EthAccount extends Component {
         createETHAddr(checkDuplicate).then(addressInfo => {
           addAddress(addressInfo);
           getUserBNBAccountFromDB();
+          getUserWANAccountFromDB();
           this.canCreate = true;
           message.success(intl.get('WanAccount.createAccountSuccess'));
         }).catch((e) => {

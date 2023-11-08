@@ -3,7 +3,7 @@ import { Checkbox, Card, Select, Form, message, Icon } from 'antd';
 import { observer, inject } from 'mobx-react';
 import intl from 'react-intl-universal';
 import style from './index.less';
-import { defaultTimeout, defaultWanPath } from 'utils/settings';
+import { defaultTimeout, WANPATH, ETHPATH } from 'utils/settings';
 import PasswordConfirmForm from 'components/PasswordConfirmForm';
 import ConfirmDeleteToken from './ConfirmDeleteToken';
 const { Option } = Select;
@@ -96,11 +96,11 @@ class Config extends Component {
     }];
 
     const wanPathOptions = [{
-      value: "m/44'/5718350'/0'",
-      text: intl.get('Config.wanLegacyPath') + " (m/44'/5718350'/0'/0/*)",
+      value: WANPATH,
+      text: intl.get('Config.wanLegacyPath') + ' (' + WANPATH + '*',
     }, {
-      value: "m/44'/60'/0'",
-      text: intl.get('Config.ethStandardPath') + " (m/44'/60'/0'/0/*)",
+      value: ETHPATH,
+      text: intl.get('Config.ethStandardPath') + ' (' + ETHPATH + '*',
     }]
 
     return (
@@ -127,7 +127,7 @@ class Config extends Component {
           <Checkbox checked={offline_wallet} onChange={this.handleOffline}>{intl.get('Config.offlineWallet')}</Checkbox>
           <div className={style.timeout}>
             <p className={style['set_title']}>{intl.get('Config.wanPath')}</p>
-            <Select className={style.timeoutSelect} value={wan_path === undefined ? defaultWanPath : wan_path} placeholder={intl.get('Config.selectWanPath')} onChange={this.handleWanPathChange}>
+            <Select className={style.timeoutSelect} value={wan_path || WANPATH} placeholder={intl.get('Config.selectWanPath')} onChange={this.handleWanPathChange}>
               {wanPathOptions.map(item => <Option key={item.value} value={item.value}>{item.text}</Option>)}
             </Select>
           </div>

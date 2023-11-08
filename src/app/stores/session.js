@@ -1,5 +1,5 @@
 import { observable, action, computed, makeObservable } from 'mobx';
-import { MAIN, TESTNET } from 'utils/settings';
+import { MAIN, WANPATH } from 'utils/settings';
 import { getChainId, getNetwork } from 'utils/helper';
 
 class Session {
@@ -25,8 +25,12 @@ class Session {
     // scan_ota: false,
     logout_timeout: '5',
     scan_ota_list: {},
-    wan_path: "m/44'/5718350'/0'",
+    wan_path: WANPATH,
   };
+
+  @computed get isLegacyWanPath() {
+    return (this.settings.wan_path === WANPATH);
+  }
 
   @observable needFirstDBUpdate = false;
 

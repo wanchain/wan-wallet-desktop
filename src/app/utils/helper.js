@@ -434,21 +434,6 @@ export const getChainId = function () {
   });
 };
 
-export const getWanPath = function () {
-  return new Promise((resolve, reject) => {
-    wand.request('query_config', {
-      param: 'wanPath'
-    }, function (err, val) {
-      if (err) {
-        err = 'Failed to get wanPath:' + err;
-        reject(err);
-      } else {
-        resolve(val['wanPath']);
-      }
-    });
-  });
-};
-
 export const isSdkReady = function () {
   return new Promise((resolve, reject) => {
     wand.request('query_config', {

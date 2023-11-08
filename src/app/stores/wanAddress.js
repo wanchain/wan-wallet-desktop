@@ -10,11 +10,9 @@ import staking from './staking';
 import session from './session';
 import languageIntl from './languageIntl';
 import { checkAddrType, getWalletIdByType, getTypeByWalletId, resetSettingsByOptions } from 'utils/helper';
-import { WANPATH, WALLETID } from 'utils/settings';
+import { WALLETID } from 'utils/settings';
 import { timeFormat, fromWei, formatNum, toChecksumAddress } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-
-const WAN = "m/44'/5718350'/0'/0/";
 
 class WanAddress {
   @observable addrInfo = {
@@ -221,6 +219,7 @@ class WanAddress {
                   path: path.substr(path.lastIndexOf('\/') + 1),
                   address: address
                 };
+                console.log('getUserAccountFromDB: %O', obj)
                 if (waddress) {
                   obj.waddress = wanUtil.toChecksumOTAddress(waddress);
                 }
@@ -272,7 +271,7 @@ class WanAddress {
                 let waddress = data[item]['waddress'];
                 let name = data[item]['name'];
                 let id = getWalletIdByType(type);
-                let path = wanPath + '/0/' + data[item]['path'];
+                let path = wanPath + data[item]['path'];
                 // If can not get the waddress, call a request to 'address_getOne' to get the waddress
                 if (typeof waddress === 'undefined') {
                   noWaddressArr.push({ id, name, chainType: 'WAN', path });
@@ -391,7 +390,7 @@ class WanAddress {
     let normalArr = self.addrInfo['normal'];
     let importArr = self.addrInfo['import'];
     let rawKeyArr = self.addrInfo['rawKey'];
-    let wanPath = session.settings.wan_path + '/0/';
+    let wanPath = session.settings.wan_path;
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
       Object.keys(obj).forEach((item) => {
@@ -423,7 +422,6 @@ class WanAddress {
     let wanPath = session.settings.wan_path;
     normalArr.forEach((item, index) => {
       let type = 'normal';
-      console.log('wanAddress getNormalAddrList item %d: %O, %O', index, item, self.addrInfo[type][item]);
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,
@@ -441,7 +439,6 @@ class WanAddress {
     let addrList = [];
     let type = 'ledger';
     Object.keys(self.addrInfo[type]).forEach((item, index) => {
-      console.log('wanAddress ledgerAddrList item %d: %O', index, item);
       addrList.push({
         key: item,
         name: self.addrInfo[type][item].name,

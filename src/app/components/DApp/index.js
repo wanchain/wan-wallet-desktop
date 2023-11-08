@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Spin, Modal, Select } from 'antd';
 import style from './index.less';
-import { WALLETID } from 'utils/settings'
+import { WALLETID, ETHPATH } from 'utils/settings'
 import { BigNumber } from 'bignumber.js';
 import { observer, inject } from 'mobx-react';
 import {
@@ -18,12 +18,10 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const pu = require('promisefy-util');
-const WAN_PATH = "m/44'/5718350'/0'";
-const ETH_PATH = "m/44'/60'/0'";
 
 @inject(stores => ({
-  // wanchain legacy path address
   settings: stores.session.settings,
+  // wanchain legacy path address
   addrSelectedList: stores.wanAddress.addrSelectedList,
   getAddrList: stores.wanAddress.getAddrList,
   addrInfo: stores.wanAddress.addrInfo,
@@ -158,7 +156,7 @@ class DApp extends Component {
         return '';
       }
       let addrInfo = [888, 999].includes(this.chainId) ? this.props.addrInfo : this.props.addrInfoEth;
-      let addrPath = [888, 999].includes(this.chainId) ? this.props.settings.wan_path : ETH_PATH;
+      let addrPath = [888, 999].includes(this.chainId) ? this.props.settings.wan_path : ETHPATH;
 
       let addrType = '';
       switch (this.addresses[address].walletID) {
@@ -179,7 +177,7 @@ class DApp extends Component {
       }
       let path = addrInfo[addrType][addr] && addrInfo[addrType][addr]['path'];
       if (path.indexOf('m') === -1) {
-        path = addrPath + '/0/' + path;
+        path = addrPath + path;
       }
       return {
         id: this.addresses[address].walletID,
@@ -293,7 +291,6 @@ class DApp extends Component {
   async nativeSignTransaction(msg, wallet) {
     let nonce = await getNonce(msg.message.from, this.chainType);
     let gasPrice = await getGasPrice(this.chainType);
-    console.log('nativeSignTransaction chain %s nonce: %s, gasPrice: %s', this.chainType, nonce, gasPrice);
     let data = msg.message.data;
     let amountWei = msg.message.value;
     let rawTx = {};
@@ -305,7 +302,7 @@ class DApp extends Component {
     rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
     rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
     rawTx.chainId = this.chainId;
-    console.log('wallet_signTx input: %O', { chainType: this.chainType, walletID: wallet.id, path: wallet.path, rawTx });
+    console.log('DApp wallet_signTx input: %O', { chainType: this.chainType, walletID: wallet.id, path: wallet.path, rawTx });
     wand.request('wallet_signTx', { walletID: wallet.id, path: wallet.path, rawTx }, function (err, tx) {
       console.log('wallet_signTx return %O', err || tx);
       if (err) {

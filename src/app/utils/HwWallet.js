@@ -6,6 +6,7 @@ class HwWallet {
     this.hdk = new HDKey();
     this.hdk.publicKey = Buffer.from(publicKey, 'hex');
     this.hdk.chainCode = Buffer.from(chainCode, 'hex');
+    console.log('HwWallet path: %s', path)
     this.dPath = path;
   }
 
