@@ -17,7 +17,7 @@ const inputCom = <Input disabled={true} />
 @observer
 class CrossBTCConfirmForm extends Component {
   render() {
-    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, handleCancel, direction, currentTokenPairInfo: info, userNetWorkFee, crosschainFee, name } = this.props;
+    const { visible, form: { getFieldDecorator }, from, loading, sendTrans, handleCancel, direction, currentTokenPairInfo: info, userNetWorkFee, crosschainFee, name, received } = this.props;
     let desChain, storemanAccount, sendValue, symbol, toAddr;
     if (direction === INBOUND) {
       const { value, storeman } = this.props.BTCCrossTransParams;
@@ -69,6 +69,10 @@ class CrossBTCConfirmForm extends Component {
           </Form.Item>
           <Form.Item label={intl.get('CrossChainTransForm.crosschainFee')}>
             {getFieldDecorator('crosschainFee', { initialValue: crosschainFee })
+              (<Input disabled={true} />)}
+          </Form.Item>
+          <Form.Item label={intl.get('CrossChainTransForm.youWillReceive')}>
+            {getFieldDecorator('received', { initialValue: received })
               (<Input disabled={true} />)}
           </Form.Item>
         </Form>
