@@ -53,7 +53,8 @@ class OsmDelegateInForm extends Component {
   }
 
   getValueByAddrInfoArgs = (...args) => {
-    return getValueByAddrInfo(...args, this.props.addrInfo);
+    let { settings } = this.props;
+    return getValueByAddrInfo(...args, this.props.addrInfo, settings.wan_path);
   }
 
   onChangeAddrSelect = value => {

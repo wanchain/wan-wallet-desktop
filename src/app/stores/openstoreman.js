@@ -7,8 +7,9 @@ import { observable, action, computed, runInAction, toJS, makeObservable } from 
 import wanAddress from './wanAddress';
 import { getInfoByAddress, checkAddrType, getValueByAddrInfo } from 'utils/helper';
 import { hexCharCodeToStr, fromWei, timeFormat, formatNum, floorFun, wandWrapper, toWeiData } from 'utils/support';
-import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID } from 'utils/settings'
+import { OSMSTAKEACT, WANPATH, OSMDELEGATIONACT, WALLETID, ETHPATH } from 'utils/settings'
 import languageIntl from './languageIntl';
+import session from './session';
 
 const INIT_GROUPID = '0x0000000000000000000000000000000000000000000000000000000000000000';
 const storemanGroupStatus = ['None', 'Initializing', 'Selecting', 'Failed', 'Selected', 'Ready', 'Quitting', 'Quitted'];
@@ -76,7 +77,8 @@ class OpenStoreman {
       }
       let nextGroupInfo = this.storemanGroupList.find(v => v.groupId === item.nextGroupId)
       if (accountInfo && groupInfo && accountInfo.type) {
-        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
+        let wanPath = session.isLegacyWanPath ? WANPATH : ETHPATH;
+        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo, wanPath) : `${wanPath}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         let rank;
         let status = storemanGroupStatus[groupInfo.status];
@@ -127,7 +129,8 @@ class OpenStoreman {
       let groupInfo = this.storemanGroupList.find(i => i.groupId === item.groupId);
       if (accountInfo && accountInfo.type) {
         let minDelegateIn = groupInfo ? groupInfo.minDelegateIn : '0';
-        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo) : `${WANPATH}${accountInfo.path}`;
+        let wanPath = session.isLegacyWanPath ? WANPATH : ETHPATH;
+        accountInfo.path = accountInfo.type !== 'normal' ? getValueByAddrInfo(accountInfo.addr, 'path', wanAddress.addrInfo, wanPath) : `${wanPath}${accountInfo.path}`;
         accountInfo.walletID = accountInfo.type !== 'normal' ? WALLETID[accountInfo.type.toUpperCase()] : WALLETID.NATIVE;
         let unclaimedData = item.canDelegateClaim ? new BigNumber(fromWei(item.incentive)).plus(fromWei(item.deposit)).toString(10) : fromWei(item.incentive);
         data.push({

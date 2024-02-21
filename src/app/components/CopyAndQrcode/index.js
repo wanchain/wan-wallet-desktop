@@ -131,7 +131,8 @@ class CopyAndQrcode extends Component {
 
   deleteAccount = () => {
     const { addr, type, path, wid } = this.props;
-    wand.request('account_delete', { walletID: wid, path, chainType: type, address: addr }, async (err, ret) => {
+    let chainId = (type === 'WAN') ? 5718350 : undefined;
+    wand.request('account_delete', { walletID: wid, path, chainType: type, address: addr, chainId }, async (err, ret) => {
       if (err) {
         message.warn(intl.get('CopyAndQrcode.deleteFailedText'));
       } else {

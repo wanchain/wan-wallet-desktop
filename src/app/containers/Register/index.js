@@ -120,7 +120,7 @@ class Register extends Component {
           } else {
             try {
               let [wanAddrInfo, ethAddrInfo, btcMainAddInfo, xrpAddrInfo] = await Promise.all([
-                createFirstAddr(WALLETID.NATIVE, 'WAN', `${WANPATH}0`, 'WAN-Account1'),
+                createFirstAddr(WALLETID.NATIVE, 'WAN', `${settings.wan_path}0`, 'WAN-Account1'),
                 createFirstAddr(WALLETID.NATIVE, 'ETH', `${ETHPATH}0`, 'ETH-Account1'),
                 createBTCAddr(isMainNetwork ? BTCPATH_MAIN : BTCPATH_TEST, 0),
                 createXRPAddr(),

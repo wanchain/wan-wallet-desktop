@@ -163,7 +163,7 @@ class WanAddress {
       let index = arr.path.lastIndexOf('\/') + 1
       arr.path = `${arr.path.slice(0, index)}0/${arr.path.slice(index)}`;
     }
-    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' } }, (err, val) => {
+    wand.request('account_update', { walletID: wid, path: arr.path, meta: { name: arr.name, addr: arr.address.toLowerCase(), waddr: arr.waddress ? arr.waddress.toLowerCase() : '' }, chainId: 5718350 }, (err, val) => {
       if (!err && val) {
         self.addrInfo[type][arr['address']]['name'] = arr.name;
       }
@@ -172,9 +172,8 @@ class WanAddress {
 
   @action getUserAccountFromDB() {
     let wanPath = session.settings.wan_path;
-    let chainID = parseInt(wanPath.split('/')[2]);
-    console.log('WAN getUserAccountFromDB chainID: %s', chainID)
-    wand.request('account_getAll', { chainID }, (err, ret) => {
+    console.log('getUserAccountFromDB wanPath: %s', wanPath)
+    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
       if (err) {
         console.log('Get user from DB failed ', err);
         return false;
@@ -202,11 +201,11 @@ class WanAddress {
         };
         Object.keys(info).forEach(path => {
           Object.keys(info[path]).forEach(id => {
-            if (['1', '5', '6'].includes(id)) {
+            if (((id === '1') && (path.indexOf(wanPath) >= 0)) || ['5', '6'].includes(id)) { // only normal address distiguash path
               let address = toChecksumAddress(info[path][id]['addr']);
               if (checkExist(address)) {
                 // Delete the duplicate account info from DB file.
-                wand.request('account_delete', { walletID: parseInt(id), path }, async (err, ret) => {
+                wand.request('account_delete', { walletID: parseInt(id), path, chainId: 5718350 }, async (err, ret) => {
                   if (err) console.log('Delete user from DB failed ', err);
                 });
                 return false;
@@ -290,7 +289,7 @@ class WanAddress {
                     wand.request('address_getOne', { walletID: item.id, chainType: item.chainType, path: item.path }, (err, val) => {
                       if (!err) {
                         // Update the account waddress after obtaining waddress.
-                        wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` } }, (err, res) => {
+                        wand.request('account_update', { walletID: item.id, path: item.path, meta: { name: item.name, addr: `0x${val.address.toLowerCase()}`, waddr: `0x${val.waddress}` }, chainId: 5718350 }, (err, res) => {
                           if (!err && res) {
                             setWaddress({
                               id: item.id,
@@ -393,15 +392,16 @@ class WanAddress {
     let wanPath = session.settings.wan_path;
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
+      const path = (obj === normalArr) ? wanPath : "m/44'/5718350'/0'/0/";
       Object.keys(obj).forEach((item) => {
         addrList.push({
-          key: `${wanPath}${obj[item].path}-${item}`,
+          key: `${path}${obj[item].path}-${item}`,
           name: obj[item].name,
           address: toChecksumAddress(item),
           waddress: obj[item].waddress,
           balance: obj[item].balance,
           wbalance: obj[item].wbalance,
-          path: `${wanPath}${obj[item].path}`,
+          path: `${path}${obj[item].path}`,
           action: 'send',
           wid: walletID
         });

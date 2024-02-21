@@ -973,7 +973,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
     switch (action) {
         case 'create':
             try {
-                ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta)
+                ret = hdUtil.createUserAccount(payload.walletID, payload.path, payload.meta, payload.chainId)
             } catch (e) {
                 logger.error('Create account failed: ' + e.message || e.stack)
                 err = e
@@ -984,7 +984,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'get':
             try {
-                ret = hdUtil.getUserAccount(payload.walletID, payload.path)
+                ret = hdUtil.getUserAccount(payload.walletID, payload.path, payload.chainId)
             } catch (e) {
                 logger.error('Get account failed: ' + e.message || e.stack)
                 err = e
@@ -1040,7 +1040,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'update':
             try {
-                ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta)
+                ret = hdUtil.updateUserAccount(payload.walletID, payload.path, payload.meta, payload.chainId)
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -1063,11 +1063,11 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
 
         case 'delete':
             try {
-                const { walletID, path, chainType = false, address } = payload;
-                hdUtil.deleteUserAccount(walletID, path);
+                const { walletID, path, address, chainId } = payload;
+                hdUtil.deleteUserAccount(walletID, path, chainId);
                 if (walletID === WALLET_ID_RAWKEY) {
                     hdUtil.deleteRawKey(path);
-                    if (chainType === 'WAN') { // Delete WAN private address's raw key
+                    if (chainId === WAN_ID) { // Delete WAN private address's raw key
                         let privatePath = path.split('');
                         privatePath.splice(privatePath.lastIndexOf('/') - 1, 1, '1');
                         hdUtil.deleteRawKey(privatePath.join(''));
@@ -1075,7 +1075,7 @@ ipc.on(ROUTE_ACCOUNT, async (event, actionUni, payload) => {
                 } else if (walletID === WALLET_ID_KEYSTORE) {
                     hdUtil.deleteKeyStore(path, address.toLowerCase());
                 }
-                if (chainType === 'WAN') {
+                if (chainId === WAN_ID) {
                     ccUtil.stopScanOTA(walletID, path);
                 }
 
@@ -2691,7 +2691,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}`);
                 ret = await ccUtil.getOpenStoremanGroupList();
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret.map(v => v.groupId), null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2703,7 +2703,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}`);
                 ret = await ccUtil.getReadyOpenStoremanGroupList();
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret.map(v => v.groupId), null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2727,7 +2727,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanDelegatorInfo(payload.sender);
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret.map(v => v.wkAddr), null, 4) : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e
@@ -2739,7 +2739,7 @@ ipc.on(ROUTE_STOREMAN, async (event, actionUni, payload) => {
             try {
                 logger.debug(`Try ${action}: ${JSON.stringify(payload, null, 4)}`);
                 ret = await ccUtil.getStoremanGroupMember(payload.groupId);
-                logger.debug(`Return ${action}: ${ret.length ? JSON.stringify(ret, null, 4) : null}`);
+                logger.debug(`Return ${action}: ${ret.length ? ret.length : null}`);
             } catch (e) {
                 logger.error(e.message || e.stack)
                 err = e

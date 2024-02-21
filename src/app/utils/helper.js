@@ -155,7 +155,7 @@ export const getBalanceWithPrivateBalance = function (arr, path) {
   });
 };
 
-export const getValueByAddrInfo = function (value, type, addrInfo) {
+export const getValueByAddrInfo = function (value, type, addrInfo, wanPath) {
   if (value === undefined) {
     return undefined;
   }
@@ -168,7 +168,7 @@ export const getValueByAddrInfo = function (value, type, addrInfo) {
     if (addrInfo['normal'][value]) {
       switch (type) {
         case 'path':
-          return `${WANPATH}${addrInfo['normal'][value][type]}`
+          return `${wanPath || WANPATH}${addrInfo['normal'][value][type]}`
         default:
           return addrInfo['normal'][value][type];
       }
@@ -803,10 +803,12 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
     wand.request('address_getOne', { walletID, chainType, path }, (err, val_address_get) => {
       if (!err) {
         let meta = { name, addr: `0x${val_address_get.address}` };
+        let chainId;
         if (chainType === 'WAN') {
           meta.waddr = `0x${val_address_get.waddress}`.toLowerCase();
+          chainId = 5718350;
         }
-        wand.request('account_create', { walletID, path, meta }, (err, val_account_create) => {
+        wand.request('account_create', { walletID, path, meta, chainId }, (err, val_account_create) => {
           if (!err && val_account_create) {
             let addressInfo;
             if (chainType === 'WAN') {
@@ -836,9 +838,9 @@ export const createFirstAddr = function (walletID, chainType, path, name) {
   })
 }
 
-export const createWANAddr = async function (checkDuplicate) {
-  let index = await getNewPathIndex(5718350, WANPATH, WALLETID.NATIVE);
-  let path = `${WANPATH}${index}`;
+export const createWANAddr = async function (checkDuplicate, wanPath) {
+  let index = await getNewPathIndex(5718350, wanPath, WALLETID.NATIVE);
+  let path = `${wanPath}${index}`;
   return new Promise((resolve, reject) => {
     wand.request('address_getOne', { walletID: WALLETID.NATIVE, chainType: 'WAN', path: path }, async (err, data) => {
       if (!err) {
@@ -846,7 +848,7 @@ export const createWANAddr = async function (checkDuplicate) {
           return reject(new Error('exist'));
         }
         let name = await getNewAccountName(5718350, 'WAN-Account');
-        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${data.address}`.toLowerCase(), waddr: `0x${data.waddress}`.toLowerCase() } }, (err, val_account_create) => {
+        wand.request('account_create', { walletID: WALLETID.NATIVE, path: path, meta: { name, addr: `0x${data.address}`.toLowerCase(), waddr: `0x${data.waddress}`.toLowerCase() }, chainId: 5718350 }, (err, val_account_create) => {
           if (!err && val_account_create) {
             let addressInfo = {
               start: index.toString(),

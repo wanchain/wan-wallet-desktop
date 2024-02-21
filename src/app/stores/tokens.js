@@ -269,12 +269,13 @@ class Tokens {
         } else {
           balance = 0;
         }
+        let pathPrefix = this.getPathPrefix(chain);
         addrList.push({
           key: item,
           name: obj[item].name,
           address: item,
           balance,
-          path: String(obj[item].path).startsWith('m/') ? obj[item].path : `m/44'/${chain === 'BNB' ? 60 : (Number(chainID) - Number('0x80000000'.toString(10)))}'/0'/0/${obj[item].path}`,
+          path: String(obj[item].path).startsWith('m/') ? obj[item].path : `${pathPrefix}${obj[item].path}`,
           action: 'send',
           amount: balance,
           walletID
@@ -445,7 +446,7 @@ class Tokens {
     [addrInfo.normal, addrInfo.ledger || {}, addrInfo.trezor || {}, addrInfo.import || {}, addrInfo.rawKey || {}].forEach(obj => {
       Object.keys(obj).forEach(item => {
         let balance;
-        let pathPrefix = this.getPathPrefix(chain);
+        let pathPrefix = ((chain === 'WAN') && ((obj === addrInfo.import) || (obj === addrInfo.rawKey))) ? WANPATH : this.getPathPrefix(chain);
         if (this.tokensBalance && this.tokensBalance[this.currTokenAddr]) {
           let token = this.getTokenInfoFromTokensListByAddr(this.currTokenAddr);
           if (this.tokensList && token !== undefined) {
@@ -617,7 +618,11 @@ class Tokens {
     let pathPrefix;
     switch (chain) {
       case 'WAN':
-        pathPrefix = WANPATH;
+        if (session.isLegacyWanPath) {
+          pathPrefix = WANPATH;
+        } else {
+          pathPrefix = ETHPATH;
+        }
         break;
       case 'ETH':
         pathPrefix = ETHPATH;

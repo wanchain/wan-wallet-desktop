@@ -6,7 +6,7 @@ import { observer, inject } from 'mobx-react';
 import { Button, Table, Row, Col, message, Tooltip, Icon, Tag, Switch } from 'antd';
 import style from './index.less';
 import totalImg from 'static/image/wan.png';
-import { WALLETID, WANPATH } from 'utils/settings';
+import { WALLETID, WANPATH, ETHPATH } from 'utils/settings';
 import WANTransHistory from 'components/WANTransHistory';
 import CopyAndQrcode from 'components/CopyAndQrcode';
 import SendNormalTrans from 'components/SendNormalTrans';
@@ -127,24 +127,31 @@ class WanAccount extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (Object.keys(prevProps.settings.scan_ota_list).length !== this.state.scanOtaList.length) {
+    let scanList = Object.keys(prevProps.settings.scan_ota_list).filter(v => {
+      let [wid, path] = v.split('_');
+      let pathKey = (wid === '1') ? prevProps.settings.wan_path : WANPATH;
+      return (path.indexOf(pathKey) >= 0);
+    });
+    if (scanList.length !== this.state.scanOtaList.length) {
       this.setState({
         scanOtaList: prevProps.getAddrList.map(item => {
           if (Object.hasOwnProperty.call(prevProps.settings.scan_ota_list, `${item.wid}_${item.path}`)) {
             return `${item.wid}_${item.path}`
           }
+          console.log('scanOtaList: %O', item)
         }).filter(v => !!v),
         expandedRows: this.state.expandedRows.map(r => {
           if (prevProps.getAddrList.find(v => v.key === r)) {
             return r
           }
+          console.log('expandedRows: %O', r)
         }).filter(v => !!v)
       })
     }
   }
 
   createAccount = () => {
-    const { addAddress, getAddrList, settings } = this.props;
+    const { addAddress, getAddrList, settings, isLegacyWanPath } = this.props;
     if (this.canCreate) {
       try {
         this.canCreate = false;
@@ -155,7 +162,8 @@ class WanAccount extends Component {
           }
           return false;
         }
-        createWANAddr(checkDuplicate).then(addressInfo => {
+        let wanPath = isLegacyWanPath ? WANPATH : ETHPATH;
+        createWANAddr(checkDuplicate, wanPath).then(addressInfo => {
           addAddress(addressInfo);
           this.canCreate = true;
           // if (settings.scan_ota) {
@@ -407,7 +415,7 @@ class WanAccount extends Component {
   }
 
   render() {
-    const { getAllAmount, getAddrList, isLegacyWanPath } = this.props;
+    const { getAllAmount, getAddrList } = this.props;
     const components = {
       body: {
         cell: EditableCell,
@@ -441,7 +449,7 @@ class WanAccount extends Component {
             <Switch size="small" checked={settings.scan_ota} className={style.switchBtn} defaultChecked onChange={this.handleScanOTA} /> */}
           </Col>
           <Col span={8} className="col-right">
-          { isLegacyWanPath ? <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button> : '' }
+            <Button className="createBtn" type="primary" shape="round" size="large" onClick={this.createAccount}>{intl.get('Common.create')}</Button>
           </Col>
         </Row>
         <Row className="mainBody">

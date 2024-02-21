@@ -121,7 +121,7 @@ class CrossChain extends Component {
         }).catch(reject)
       } else {
         wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
-          console.log(err, ret);
+          console.log({ err, ret });
           if (err) {
             if (err instanceof Object && err.desc && err.desc.includes('ready')) {
               message.warn(intl.get('Common.networkError'));
