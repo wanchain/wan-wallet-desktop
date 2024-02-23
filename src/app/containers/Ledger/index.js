@@ -98,8 +98,8 @@ class Ledger extends Component {
     wand.request('wallet_signTransaction', { walletID: WALLETID.LEDGER, path, rawTx }, (err, sig) => {
       if (err) {
         message.warn(intl.get('Ledger.signTransactionFailed'));
+        console.error('Sign Failed, path: %s, error: %O', path, err);
         callback(err, null);
-        console.log('Sign Failed, path: %s, error: %O', path, err);
       } else {
         tx.v = sig.v;
         tx.r = sig.r;
