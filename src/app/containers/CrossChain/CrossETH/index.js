@@ -19,6 +19,8 @@ const CHAINTYPE = 'ETH';
   addrInfo: stores.ethAddress.addrInfo,
   language: stores.languageIntl.language,
   getNormalAddrList: stores.ethAddress.getNormalAddrList,
+  ledgerAddrList: stores.ethAddress.ledgerAddrList,
+  trezorAddrList: stores.ethAddress.trezorAddrList,
   getAmount: stores.ethAddress.getNormalAmount,
   getCCTokensListInfo: stores.tokens.getCCTokensListInfo,
   transParams: stores.sendCrossChainParams.transParams,
@@ -77,7 +79,9 @@ class CrossETH extends Component {
       crossType: transParams.crossType,
       networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
-
+    if (input.from.walletID === 2) {
+      message.info(intl.get('Ledger.signTransactionInLedger'))
+    }
     return new Promise((resolve, reject) => {
       wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
         console.log('ETH inbound result:', err, ret);
@@ -208,7 +212,7 @@ class CrossETH extends Component {
   ];
 
   render () {
-    const { getNormalAddrList, getCCTokensListInfo } = this.props;
+    const { getNormalAddrList, getCCTokensListInfo, ledgerAddrList, trezorAddrList } = this.props;
 
     this.props.language && this.inboundColumns.forEach(col => {
       col.title = intl.get(`WanAccount.${col.dataIndex}`)
@@ -225,7 +229,7 @@ class CrossETH extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList} />
+            <Table className="content-wrap" pagination={false} columns={this.inboundColumns} dataSource={getNormalAddrList.concat(ledgerAddrList).concat(trezorAddrList)} />
           </Col>
         </Row>
         <Row className="title">

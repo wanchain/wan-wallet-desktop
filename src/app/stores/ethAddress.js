@@ -104,11 +104,19 @@ class EthAddress {
   @action updateETHBalance(arr) {
     let keys = Object.keys(arr);
     let normal = Object.keys(self.addrInfo['normal']);
+    let ledger = Object.keys(self.addrInfo['ledger']);
+    let trezor = Object.keys(self.addrInfo['trezor']);
     let rawKey = Object.keys(self.addrInfo['rawKey']);
     keys.forEach(item => {
       let ethAddress = toChecksumAddress(item);
       if (normal.includes(ethAddress) && self.addrInfo['normal'][ethAddress].balance !== arr[item]) {
         self.addrInfo['normal'][ethAddress].balance = arr[item];
+      }
+      if (ledger.includes(ethAddress) && self.addrInfo['ledger'][ethAddress].balance !== arr[item]) {
+        self.addrInfo['ledger'][ethAddress].balance = arr[item];
+      }
+      if (trezor.includes(ethAddress) && self.addrInfo['trezor'][ethAddress].balance !== arr[item]) {
+        self.addrInfo['trezor'][ethAddress].balance = arr[item];
       }
       if (rawKey.includes(ethAddress) && self.addrInfo['rawKey'][ethAddress].balance !== arr[item]) {
         self.addrInfo['rawKey'][ethAddress].balance = arr[item];
@@ -319,6 +327,16 @@ class EthAddress {
     let addrList = []
     Object.keys(self.addrInfo['normal']).forEach(addr => {
       addrList.push(addr);
+    });
+    self.ledgerAddrList.forEach(addr => {
+      addrList.push(
+        'Ledger: ' + addr.address
+      )
+    });
+    self.trezorAddrList.forEach(addr => {
+      addrList.push(
+        'Trezor: ' + addr.address
+      )
     });
     return addrList;
   }
