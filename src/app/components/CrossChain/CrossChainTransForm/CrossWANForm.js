@@ -8,7 +8,6 @@ import ToolTipCus from 'components/Tooltips';
 import PwdForm from 'componentUtils/PwdForm';
 import SelectForm from 'componentUtils/SelectForm';
 import CommonFormItem from 'componentUtils/CommonFormItem';
-// import AutoCompleteForm from 'componentUtils/AutoCompleteForm';
 import AddContactsModal from '../../AddContacts/AddContactsModal';
 import ChooseContactsModal from '../../AddContacts/ChooseContactsModal';
 import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionForm';
@@ -119,18 +118,18 @@ class CrossWANForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, record } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address: [address, record.address] }).then(res => {
       this.setState({
         networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
-        discountPercentNetworkFee: res.discountPercent,
+        discountPercentNetworkFee: res.discountPercent || 1,
         percentNetworkFee: res.isPercent ? res.value : 0,
-        minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
-        maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+        minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
       });
       this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
@@ -140,18 +139,18 @@ class CrossWANForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, record } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainOperationFee(type === INBOUND ? 'WAN' : 'ETH', type === INBOUND ? 'ETH' : 'WAN', { tokenPairID: currTokenPairId, address: [address, record.address] }).then(res => {
       this.setState({
         operationFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         operationFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentOperationFee: res.isPercent,
-        discountPercentOperationFee: res.discountPercent,
+        discountPercentOperationFee: res.discountPercent || 1,
         percentOperationFee: res.isPercent ? res.value : 0,
-        minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
-        maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
+        minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0
       });
       this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
@@ -532,7 +531,7 @@ class CrossWANForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, chainType, symbol, gasPrice, type, estimateFee, balance, getChainAddressInfoByChain, record, currentTokenPairInfo: info, coinPriceObj, contacts } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount, totalFee } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount, totalFee, minOperationFeeLimit, maxOperationFeeLimit, percentOperationFee, isPercentOperationFee } = this.state;
     const { getFieldDecorator } = form;
     let gasFee, gasFeeWithUnit, desChain, selectedList, title, fromAccount, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
@@ -713,15 +712,7 @@ class CrossWANForm extends Component {
                 options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.crosschainFee')}
-                tooltips={<ToolTipCus />}
-                // suffix={<Tooltip title={
-                //   <table className={style['suffix_table']}>
-                //     <tbody>
-                //       <tr><td>{intl.get('CrossChainTransForm.networkFee')}:</td><td>{networkFeeWithUnit}</td></tr>
-                //       <tr><td>{intl.get('CrossChainTransForm.operationFee')}:</td><td>{operationFeeWithUnit}</td></tr>
-                //     </tbody>
-                //   </table>
-                // }><Icon type="exclamation-circle" /></Tooltip>}
+                tooltips={<ToolTipCus minOperationFeeLimit={minOperationFeeLimit} maxOperationFeeLimit={maxOperationFeeLimit} percentOperationFee={percentOperationFee} isPercentOperationFee={isPercentOperationFee} symbol='WAN'/>}
               />
               <CommonFormItem
                 form={form}

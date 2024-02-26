@@ -10,7 +10,7 @@ import { Octokit } from '@octokit/rest';
 import { version } from '~/package.json';
 import compareVersions from 'compare-versions';
 const resolve = dir => path.join(__dirname, '../../../', dir);
-const octokit = new Octokit();
+const octokit = new Octokit({ auth: process.env.GH_TOKEN });
 const assetName = 'upgrade.json';
 
 class WalletUpdater {

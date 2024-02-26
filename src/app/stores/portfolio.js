@@ -6,10 +6,11 @@ import ethAddress from './ethAddress';
 import btcAddress from './btcAddress';
 import eosAddress from './eosAddress';
 import xrpAddress from './xrpAddress';
+import session from './session';
 import tokens from './tokens';
 import { formatNum, formatNumByDecimals } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
-import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS } from 'utils/settings';
+import { COIN_ACCOUNT, WALLET_CHAIN, COIN_ACCOUNT_EOS, CURRENCY_SYMBOL } from 'utils/settings';
 
 class Portfolio {
   @observable coinPriceObj;
@@ -86,6 +87,7 @@ class Portfolio {
   }
 
   @action updateCoinPrice() {
+    const currency = session.settings.currency_unit.toLowerCase();
     let param = Object.keys(self.coinList).map(key => {
       let item = self.coinList[key];
       return item.ancestor ? item.ancestor : item.symbol;
@@ -96,6 +98,9 @@ class Portfolio {
       if (v.toLowerCase() in self.tokenIds_CoinGecko) {
         reconvertIds[self.tokenIds_CoinGecko[v.toLowerCase()]] = v;
       }
+      if (v === 'WASPv2' && self.tokenIds_CoinGecko.wasp) {
+        reconvertIds[self.tokenIds_CoinGecko.wasp] = 'WASP';
+      }
     }
     let ID_arr = Object.keys(reconvertIds);
     if (ID_arr.length === 0) return;
@@ -104,7 +109,7 @@ class Portfolio {
       url: 'https://api.coingecko.com/api/v3/simple/price',
       params: {
         ids: ID_arr.join(),
-        vs_currencies: 'usd',
+        vs_currencies: currency,
       }
     })
       .then((res) => {
@@ -112,7 +117,7 @@ class Portfolio {
           runInAction(() => {
             self.coinPriceObj = {};
             for (let i in res.data) {
-              self.coinPriceObj[reconvertIds[i]] = res.data[i].usd;
+              self.coinPriceObj[reconvertIds[i]] = res.data[i][currency];
             }
           })
         } else {
@@ -167,13 +172,14 @@ class Portfolio {
   }
 
   @computed get portfolioList() {
+    const currency_symbol = CURRENCY_SYMBOL[session.settings.currency_unit.toLowerCase()]
     let list = Object.keys(self.coinList).map((key, index) => Object.defineProperties({}, {
       key: { value: `${index + 1}` },
       name: { value: key, writable: true },
       chain: { value: self.coinList[key].chain, writable: true },
-      price: { value: '$0', writable: true },
+      price: { value: `${currency_symbol}0`, writable: true },
       balance: { value: self.coinList[key].balance ? self.coinList[key].balance : '0', writable: true }, // To do
-      value: { value: '$0', writable: true },
+      value: { value: `${currency_symbol}0`, writable: true },
       portfolio: { value: '0%', writable: true },
       scAddr: { value: self.coinList[key].scAddr, writable: true },
     }));
@@ -189,9 +195,10 @@ class Portfolio {
             key = self.coinList[key].ancestor ? self.coinList[key].ancestor : self.coinList[key].symbol;
           }
         }
-        if (key in self.coinPriceObj) {
-          val.price = `$${self.coinPriceObj[key]}`;
-          val.value = '$' + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(2).toString(10);
+        if (key in self.coinPriceObj || ['WASPv2'].includes(key)) {
+          const tmpKey = ['WASPv2'].includes(key) ? 'WASP' : key;
+          val.price = `${currency_symbol}${self.coinPriceObj[tmpKey]}`;
+          val.value = `${currency_symbol}` + (new BigNumber(val.price.substr(1)).times(new BigNumber(val.balance))).toFixed(3).toString(10);
           amountValue = new BigNumber(amountValue).plus(new BigNumber(val.value.substr(1))).toString(10);
         }
       });
@@ -206,10 +213,11 @@ class Portfolio {
         });
       }
     }
+    const reg = new RegExp(`\\${currency_symbol}`, 'g');
     list.sort((m, n) => {
-      if (new BigNumber(m.value.replace(/\$/g, '')).lt(n.value.replace(/\$/g, ''))) {
+      if (new BigNumber(m.value.replace(reg, '')).lt(n.value.replace(reg, ''))) {
         return 1;
-      } else if (new BigNumber(m.value.replace(/\$/g, '')).eq(n.value.replace(/\$/g, ''))) {
+      } else if (new BigNumber(m.value.replace(reg, '')).eq(n.value.replace(reg, ''))) {
         if (new BigNumber(m.balance).lt(n.balance)) {
           return 1;
         } else {
@@ -220,10 +228,14 @@ class Portfolio {
       }
     });
     list.forEach(item => {
-      item.name = self.coinList[item.name].symbol;
-      item.price = `$${formatNum(item.price.substr(1))}`;
-      item.balance = formatNum(item.balance);
-      item.value = `$${formatNum(item.value.substr(1))}`;
+      try {
+        item.name = self.coinList[item.name].symbol;
+        item.price = `${currency_symbol}${formatNum(item.price.substr(1))}`;
+        item.balance = formatNum(item.balance);
+        item.value = `${currency_symbol}${formatNum(item.value.substr(1))}`;
+      } catch (error) {
+        console.log(error)
+      }
     });
     return list;
   }

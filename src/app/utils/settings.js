@@ -130,3 +130,8 @@ export const FNX_POOL_MAINNET = '0xdab498c11f19b25611331cebffd840576d1dc86d';
 
 export const FNX_TOKEN_TESTNET = '0x0664b5e161a741bcdec503211beeec1e8d0edb37';
 export const FNX_TOKEN_MAINNET = '0xc6f4465a6a521124c8e3096b62575c157999d361';
+
+export const CURRENCY_SYMBOL = {
+  usd: '$',
+  try: '₺'
+}

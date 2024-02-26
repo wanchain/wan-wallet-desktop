@@ -15,7 +15,7 @@ import AdvancedCrossChainOptionForm from 'components/AdvancedCrossChainOptionFor
 import { CROSS_TYPE, INBOUND, FAST_GAS, OUTBOUND, WAN_ETH_DECIMAL, WALLETID } from 'utils/settings';
 import ConfirmForm from 'components/CrossChain/CrossChainTransForm/ConfirmForm/CrossETHConfirmForm';
 import { isExceedBalance, formatNumByDecimals, hexCharCodeToStr, removeRedundantDecimal, fromWei } from 'utils/support';
-import { getFullChainName, getBalanceByAddr, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
+import { getFullChainName, checkAmountUnit, formatAmount, getValueByAddrInfo, getValueByNameInfoAllType, checkAddressByChainType, getFees, getQuota, getInfoByAddress, estimateCrossChainNetworkFee, estimateCrossChainOperationFee } from 'utils/helper';
 
 const Confirm = Form.create({ name: 'CrossETHConfirmForm' })(ConfirmForm);
 const AdvancedCrossChainModal = Form.create({ name: 'AdvancedCrossChainOptionForm' })(AdvancedCrossChainOptionForm);
@@ -122,18 +122,18 @@ class CrossETHForm extends Component {
   }
 
   estimateNetworkFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, from } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainNetworkFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         networkFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         networkFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentNetworkFee: res.isPercent,
-        discountPercentNetworkFee: res.discountPercent,
+        discountPercentNetworkFee: res.discountPercent || 1,
         percentNetworkFee: res.isPercent ? res.value : 0,
-        minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
-        maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        minNetworkFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxNetworkFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
       this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
@@ -143,18 +143,18 @@ class CrossETHForm extends Component {
   }
 
   estimateOperationFee = (address = '') => {
-    const { type, currTokenPairId, currentTokenPairInfo: info, form } = this.props;
+    const { type, currTokenPairId, currentTokenPairInfo: info, form, from } = this.props;
     const { ancestorDecimals } = info;
 
-    estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address }).then(res => {
+    estimateCrossChainOperationFee(type === INBOUND ? 'ETH' : 'WAN', type === INBOUND ? 'WAN' : 'ETH', { tokenPairID: currTokenPairId, address: [address, from] }).then(res => {
       this.setState({
         operationFeeRaw: res.isPercent ? '0' : fromWei(res.value),
         operationFee: res.isPercent ? '0' : fromWei(res.value),
         isPercentOperationFee: res.isPercent,
-        discountPercentOperationFee: res.discountPercent,
+        discountPercentOperationFee: res.discountPercent || 1,
         percentOperationFee: res.isPercent ? res.value : 0,
-        minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
-        maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit).dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        minOperationFeeLimit: res.isPercent ? new BigNumber(res.minFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
+        maxOperationFeeLimit: res.isPercent ? new BigNumber(res.maxFeeLimit || '0').dividedBy(Math.pow(10, ancestorDecimals)).toString() : 0,
       });
       this.updateCrosschainFee(form.getFieldValue('amount'));
     }).catch(err => {
@@ -516,7 +516,7 @@ class CrossETHForm extends Component {
 
   render() {
     const { loading, form, from, settings, smgList, gasPrice, chainType, balance, type, account, getChainAddressInfoByChain, currentTokenPairInfo: info } = this.props;
-    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount, totalFee } = this.state;
+    const { advancedVisible, advanced, advancedFee, operationFee, networkFee, showChooseContacts, isNewContacts, showAddContacts, contactsList, receivedAmount, totalFee, isPercentOperationFee, percentOperationFee, minOperationFeeLimit, maxOperationFeeLimit } = this.state;
     const { getFieldDecorator } = form;
     let gasFee, gasFeeWithUnit, desChain, selectedList, title, toAccountList, unit, canAdvance, feeUnit, networkFeeUnit, operationFeeUnit;
     if (type === INBOUND) {
@@ -566,9 +566,9 @@ class CrossETHForm extends Component {
 
     gasFeeWithUnit = `${removeRedundantDecimal(gasFee)} ${feeUnit}`;
 
-    const operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${operationFeeUnit}`;
+    // const operationFeeWithUnit = `${removeRedundantDecimal(operationFee)} ${operationFeeUnit}`;
 
-    const networkFeeWithUnit = `${removeRedundantDecimal(networkFee)} ${networkFeeUnit}`;
+    // const networkFeeWithUnit = `${removeRedundantDecimal(networkFee)} ${networkFeeUnit}`;
 
     return (
       <div>
@@ -701,7 +701,7 @@ class CrossETHForm extends Component {
                 options={{ initialValue: totalFee }}
                 prefix={<Icon type="credit-card" className="colorInput" />}
                 title={intl.get('CrossChainTransForm.crosschainFee')}
-                tooltips={<ToolTipCus />}
+                tooltips={<ToolTipCus minOperationFeeLimit={minOperationFeeLimit} maxOperationFeeLimit={maxOperationFeeLimit} percentOperationFee={percentOperationFee} isPercentOperationFee={isPercentOperationFee} symbol='ETH' />}
               />
               <CommonFormItem
                 form={form}

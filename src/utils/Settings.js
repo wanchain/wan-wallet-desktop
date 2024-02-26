@@ -25,6 +25,7 @@ const defaultConfig = {
     // scan_ota: false,
     scan_ota_list: {},
     logout_timeout: '5',
+    currency_unit: 'USD',
     wan_path: "m/44'/5718350'/0'/0/",
     main: {
       tokens: {
