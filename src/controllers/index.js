@@ -351,7 +351,7 @@ ipc.on(ROUTE_WALLET, async (event, actionUni, payload) => {
         case 'exportPrivateKeys':
             let privateKeys;
             try {
-                privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path, payload.opt )
+                privateKeys = await hdUtil.exportPrivateKeys(payload.wid, payload.chainType, payload.path)
                 privateKeys.forEach((item, index) => {
                     switch (payload.chainType) {
                         case 'EOS':
