@@ -10,7 +10,7 @@ import staking from './staking';
 import session from './session';
 import languageIntl from './languageIntl';
 import { checkAddrType, getWalletIdByType, getTypeByWalletId, resetSettingsByOptions } from 'utils/helper';
-import { WALLETID } from 'utils/settings';
+import { WALLETID, WANPATH } from 'utils/settings';
 import { timeFormat, fromWei, formatNum, toChecksumAddress } from 'utils/support';
 import { BigNumber } from 'bignumber.js';
 
@@ -392,7 +392,7 @@ class WanAddress {
     let wanPath = session.settings.wan_path;
     [normalArr, importArr, rawKeyArr].forEach((obj, index) => {
       const walletID = obj === normalArr ? WALLETID.NATIVE : (obj === importArr ? WALLETID.KEYSTOREID : WALLETID.RAWKEY);
-      const path = (obj === normalArr) ? wanPath : "m/44'/5718350'/0'/0/";
+      const path = (obj === normalArr) ? wanPath : WANPATH;
       Object.keys(obj).forEach((item) => {
         addrList.push({
           key: `${path}${obj[item].path}-${item}`,

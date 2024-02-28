@@ -3036,7 +3036,7 @@ const getPathIdByType = function (type, isTestNet = false) {
     let ID
     switch (type) {
         case 'WAN':
-            ID = 5718350;
+            ID = WAN_ID;
             break;
         case 'BTC':
             ID = isTestNet ? 1 : 0;
