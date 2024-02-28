@@ -2,7 +2,7 @@ import React, { Component, Suspense } from 'react';
 import { observer, inject } from 'mobx-react';
 import { isSdkReady, getBalanceWithPrivateBalance, getBalance, getBTCMultiBalances, getEosAccountInfo } from 'utils/helper';
 import Loading from 'components/Loading';
-import { WANPATH } from 'utils/settings';
+import { WANPATH, ETHPATH } from 'utils/settings';
 import Transition from 'components/Transition';
 
 const Login = React.lazy(() => import(/* webpackChunkName:'LoginPage' */'containers/Login'));
@@ -18,6 +18,7 @@ const Main = React.lazy(() => import(/* webpackChunkName:'MainPage' */'container
   bnbAddrInfo: stores.bnbAddress.addrInfo,
   accountInfo: stores.eosAddress.accountInfo,
   hasMnemonicOrNot: stores.session.hasMnemonicOrNot,
+  isLegacyWanPath: stores.session.isLegacyWanPath,
   tokensList: stores.tokens.tokensList,
   chainBalanceList: stores.tokens.chainBalanceList,
   getWalletSelections: stores.tokens.getWalletSelections,
@@ -121,9 +122,10 @@ class Layout extends Component {
   }
 
   updateWANBalanceForInter = () => {
-    const { addrInfo } = this.props;
+    const { addrInfo, isLegacyWanPath } = this.props;
+    const wanPath = isLegacyWanPath ? WANPATH : ETHPATH;
     const allAddr = (Object.values(addrInfo).map(item => Object.keys(item))).flat();
-    const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${WANPATH}${item.path}`, `${item.address}`]);
+    const normalObj = Object.values(addrInfo['normal']).map(item => [1, `${wanPath}${item.path}`, `${item.address}`]);
     const importObj = Object.values(addrInfo['import']).map(item => [5, `${WANPATH}${item.path}`, `${item.address}`]);
     const rawKeyObj = Object.values(addrInfo['rawKey']).map(item => [6, `${WANPATH}${item.path}`, `${item.address}`]);
     let allPrivatePath = normalObj.concat(importObj).concat(rawKeyObj);
