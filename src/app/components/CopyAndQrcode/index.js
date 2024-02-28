@@ -92,7 +92,11 @@ class CopyAndQrcode extends Component {
   }
 
   exportPrivateKeys = (path, chainType, wid) => {
-    wand.request('wallet_exportPrivateKeys', { wid, path, chainType }, (err, data) => {
+    let opt = {};
+    if ((chainType === 'WAN') && (wid === WALLETID.NATIVE)) {
+      opt.chainId = this.props.settings.isLegacyWanPath ? 5718350 : 60;
+    }
+    wand.request('wallet_exportPrivateKeys', { wid, path, chainType, opt }, (err, data) => {
       if (err) {
         console.log('wallet_exportPrivateKeys:', err)
       } else {
