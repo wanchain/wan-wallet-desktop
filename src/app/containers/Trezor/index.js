@@ -1,6 +1,6 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import TrezorConnect, { DEVICE_EVENT, DEVICE } from 'trezor-connect';
+import TrezorConnect, { DEVICE_EVENT, DEVICE } from '@trezor/connect-web';
 import { observer, inject } from 'mobx-react';
 import { Icon } from 'antd';
 import { signTransaction, getPublicKey, WAN_PATH } from 'componentUtils/trezor'
@@ -16,7 +16,7 @@ const CHAIN_TYPE = 'WAN';
 TrezorConnect.init({
   // connectSrc: 'file://' + __dirname + '/trezor-connect/', // for trezor-connect hosted locally set endpoint to application files (ignore this field for connect hosted online, connect.trezor.io will be used by default)
   // connectSrc: 'https://sisyfos.trezor.io/connect-electron/',
-  connectSrc: 'https://connect.trezor.io/8/',
+  connectSrc: 'https://connect.trezor.io/9/',
   popup: true, // use trezor-connect UI, set it to "false" to get "trusted" mode and get more UI_EVENTs to render your own UI
   webusb: false, // webusb is not supported in electron
   debug: false, // see whats going on inside iframe
@@ -36,6 +36,7 @@ TrezorConnect.init({
   });
 
 @inject(stores => ({
+  isLegacyWanPath: stores.session.isLegacyWanPath,
   addrInfo: stores.wanAddress.addrInfo,
   language: stores.languageIntl.language,
   trezorAddrList: stores.wanAddress.trezorAddrList,
@@ -43,6 +44,7 @@ TrezorConnect.init({
   updateTransHistory: () => stores.wanAddress.updateTransHistory(),
   changeTitle: newTitle => stores.languageIntl.changeTitle(newTitle),
   addTrezorAddr: newAddr => stores.wanAddress.addAddresses(TREZOR, newAddr),
+  addTrezorAddrEth: newAddr => stores.ethAddress.addAddresses(TREZOR, newAddr),
   setCurrTokenChain: chain => stores.tokens.setCurrTokenChain(chain),
 }))
 
@@ -51,6 +53,7 @@ class Trezor extends Component {
   constructor (props) {
     super(props);
     this.props.setCurrTokenChain('WAN');
+    this.path = this.props.isLegacyWanPath ? WAN_PATH : "m/44'/60'/0'/0";
     // Declare trezor event
     TrezorConnect.on(DEVICE_EVENT, (event) => {
       if (event.type === DEVICE.CONNECT) {
@@ -91,7 +94,8 @@ class Trezor extends Component {
   }
 
   setAddresses = newAddr => {
-    wand.request('account_getAll', { chainID: 5718350 }, (err, ret) => {
+    let chainID = this.props.isLegacyWanPath ? 5718350 : 60;
+    wand.request('account_getAll', { chainID }, (err, ret) => {
       if (err) return;
       const hdInfoFromDb = [];
       Object.values(ret.accounts).forEach(item => {
@@ -105,8 +109,17 @@ class Trezor extends Component {
           item.name = matchValue.name;
         }
       });
-      this.props.addTrezorAddr(newAddr)
+      if (this.props.isLegacyWanPath) {
+        this.props.addTrezorAddr(newAddr);
+      } else {
+        this.props.addTrezorAddr(newAddr);
+        this.props.addTrezorAddrEth(newAddr);
+      }
     })
+  }
+
+  connectAndGetPublicKey = callback => {
+    getPublicKey(this.path, callback);
   }
 
   render () {
@@ -115,7 +128,7 @@ class Trezor extends Component {
       <div>
         {
           trezorAddrList.length === 0
-            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={getPublicKey} dPath={WAN_PATH} />
+            ? <ConnectHwWallet setAddresses={this.setAddresses} Instruction={this.instruction} getPublicKey={this.connectAndGetPublicKey} dPath={this.path} />
             : <Accounts name={['trezor']} addresses={trezorAddrList} signTransaction={signTransaction} chainType={CHAIN_TYPE} />
         }
       </div>

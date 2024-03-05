@@ -36,7 +36,9 @@ class Window extends EventEmitter {
                 webgl: false,
                 webSecurity: true,
                 textAreasAreResizable: true,
-                webviewTag: true
+                webviewTag: true,
+                nodeIntegration: true,
+                nativeWindowOpen: true
             }
         }
         electronOptions = _.merge(electronOptions, opts.electronOptions);

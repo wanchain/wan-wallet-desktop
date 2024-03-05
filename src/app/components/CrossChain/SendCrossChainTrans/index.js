@@ -44,7 +44,7 @@ class Trans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ chainType, tokenAddr });
     this.setState({ visible: true, spin: true, loading: true });
-    addCrossTransTemplate(from, { chainType, path, walletID: record.walletID });
+    addCrossTransTemplate(from, { chainType, path, walletID: record.walletID || record.wid });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {

@@ -1,10 +1,10 @@
 import { message } from 'antd';
 import intl from 'react-intl-universal';
-import TrezorConnect from 'trezor-connect';
+import TrezorConnect from '@trezor/connect-web';
 import { wandWrapper } from 'utils/support.js';
-
+import Common from '@ethereumjs/common';
+import { TransactionFactory } from '@ethereumjs/tx';
 const pu = require('promisefy-util');
-const WanTx = require('wanchainjs-tx');
 
 export const WAN_PATH = "m/44'/5718350'/0'/0";
 
@@ -31,7 +31,7 @@ export const trezorRawTx = async (param, BIP44Path) => {
 
 export const signTransaction = (path, tx, callback) => {
   TrezorConnect.ethereumSignTransaction({
-    path: path,
+    path,
     transaction: {
       to: tx.to,
       value: tx.value,
@@ -39,8 +39,7 @@ export const signTransaction = (path, tx, callback) => {
       chainId: tx.chainId,
       nonce: tx.nonce,
       gasLimit: tx.gasLimit,
-      gasPrice: tx.gasPrice,
-      txType: tx.Txtype
+      gasPrice: tx.gasPrice
     }
   }).then((result) => {
     if (!result.success) {
@@ -52,16 +51,17 @@ export const signTransaction = (path, tx, callback) => {
     tx.v = result.payload.v;
     tx.r = result.payload.r;
     tx.s = result.payload.s;
-    let eTx = new WanTx(tx);
-    let signedTx = '0x' + eTx.serialize().toString('hex');
-    console.log('Signed transaction: ', signedTx);
+    const common = Common.custom({ chainId: tx.chainId });
+    let newTx = TransactionFactory.fromTxData(tx, { common });
+    let signedTx = '0x' + newTx.serialize().toString('hex');
+    console.log('Signed tx: ', signedTx);
     callback(null, signedTx);
   }).catch(err => callback(err));
 }
 
-export const getPublicKey = callback => {
+export const getPublicKey = (path, callback) => {
   TrezorConnect.getPublicKey({
-    path: WAN_PATH
+    path
   }).then(result => {
     if (result.success) {
       callback(null, result.payload);
@@ -155,12 +155,12 @@ export const crossChainTrezorTrans = async param => {
 
     if (approveZeroTx) {
       let { raw } = await trezorRawTx(approveZeroTx, BIP44Path)
-      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
       console.log('approveZeroTx:', approveZeroTxHash)
     }
     if (approveTx) {
       let { raw } = await trezorRawTx(approveTx, BIP44Path)
-      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
       console.log('approveTx:', approveTxHash)
     }
     let { raw, rawTx } = await trezorRawTx(crossChainData, BIP44Path)
@@ -169,7 +169,7 @@ export const crossChainTrezorTrans = async param => {
       dstLockedBlockNumber = await wandWrapper('crossChain_getBlockNumber', { chainType: param.toChainSymbol })
     };
     // Send register validator
-    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }], this);
+    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
     let params = {
       txHash,
       from: from.toLowerCase(),

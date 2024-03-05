@@ -38,7 +38,7 @@ class WANTrans extends Component {
     let tokenAddr = info.toAccount;
     this.setState({ tokenAddr });
     this.setState({ visible: true, loading: true, spin: true });
-    addCrossTransTemplate(from, { chainType, path, walletID: record.wid });
+    addCrossTransTemplate(from, { chainType, path, walletID: record.walletID || record.wid });
     try {
       let [gasPrice, smgList] = await Promise.all([getGasPrice(chainType), getReadyOpenStoremanGroupList()]);
       if (smgList.length === 0) {

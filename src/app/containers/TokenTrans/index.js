@@ -78,7 +78,7 @@ class TokenTrans extends Component {
     let chainId;
     if (chain === 'WAN') {
       chainId = isMainNetwork ? CHAINID.MAIN : CHAINID.TEST;
-    } else {
+    } else { // TODO: suuport other EVMs
       chainId = isMainNetwork ? ETHCHAINID.MAIN : ETHCHAINID.TEST;
     }
     let formatTx = {
@@ -207,10 +207,16 @@ class TokenTrans extends Component {
           }).catch(() => { reject(false) }); // eslint-disable-line prefer-promise-reject-errors
           break;
         case 'trezor':
+          const { chain, isMainNetwork } = this.props;
+          let chainId;
+          if (chain === 'WAN') {
+            chainId = isMainNetwork ? CHAINID.MAIN : CHAINID.TEST;
+          } else { // TODO: suuport other EVMs
+            chainId = isMainNetwork ? ETHCHAINID.MAIN : ETHCHAINID.TEST;
+          }
           signTransaction(params.path, {
-            Txtype: 1,
             value: '0x',
-            chainId: this.props.chainId,
+            chainId,
             to: trans.to,
             data: trans.data,
             nonce: '0x' + trans.nonce.toString(16),

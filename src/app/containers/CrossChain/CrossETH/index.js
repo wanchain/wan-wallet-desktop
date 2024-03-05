@@ -77,31 +77,42 @@ class CrossETH extends Component {
       receivedAmount: transParams.receivedAmount,
       tokenPairID: tokenPairID,
       crossType: transParams.crossType,
+      amountUnit: new BigNumber(transParams.amount).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10),
       networkFee: new BigNumber(transParams.networkFee).multipliedBy(Math.pow(10, info.ancestorDecimals)).toString(10)
     };
     if (input.from.walletID === 2) {
       message.info(intl.get('Ledger.signTransactionInLedger'))
     }
     return new Promise((resolve, reject) => {
-      wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
-        console.log('ETH inbound result:', err, ret);
-        if (err) {
-          if (err instanceof Object && err.desc && err.desc.includes('ready')) {
-            message.warn(intl.get('Common.networkError'));
+      if (input.from.walletID === 3) {
+        input.BIP44Path = input.from.path;
+        input.from = from;
+        input.toAddr = transParams.toAddr;
+        crossChainTrezorTrans({ input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK', tokenSymbol: 'ETH', tokenStand: 'ETH', chainType: 'ETH' }).then(() => {
+          message.success(intl.get('Send.transSuccess'));
+          resolve();
+        }).catch(reject)
+      } else {
+        wand.request('crossChain_crossChain', { input, tokenPairID, toChainSymbol: info.toChainSymbol, sourceSymbol: info.fromChainSymbol, sourceAccount: info.fromAccount, destinationSymbol: info.toChainSymbol, destinationAccount: info.toAccount, type: 'LOCK' }, (err, ret) => {
+          console.log('ETH inbound result:', err, ret);
+          if (err) {
+            if (err instanceof Object && err.desc && err.desc.includes('ready')) {
+              message.warn(intl.get('Common.networkError'));
+            } else {
+              message.warn(err.desc);
+            }
+            reject(err);
           } else {
-            message.warn(err.desc);
+            if (ret.code) {
+              message.success(intl.get('Send.transSuccess'));
+              resolve(ret);
+            } else {
+              message.warn(convertCrossChainTxErrorText(ret.result));
+              reject(ret);
+            }
           }
-          reject(err);
-        } else {
-          if (ret.code) {
-            message.success(intl.get('Send.transSuccess'));
-            resolve(ret);
-          } else {
-            message.warn(convertCrossChainTxErrorText(ret.result));
-            reject(ret);
-          }
-        }
-      })
+        })
+      }
     });
   }
 

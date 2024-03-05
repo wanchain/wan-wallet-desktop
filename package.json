@@ -81,7 +81,7 @@
     "react-router-dom": "^5.0.0",
     "ripple-keypairs": "^1.0.2",
     "styled-components": "^5.2.1",
-    "trezor-connect": "8.0.12",
+    "@trezor/connect-web": "9.1.12",
     "uuid": "^3.3.2",
     "wanchain-js-sdk": "git+https://github.com/wanchain/wanchain-js-sdk.git#bridge",
     "wanchain-util": "git+https://github.com/wanchain/wanchain-util.git#v1.2.1",

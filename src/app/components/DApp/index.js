@@ -230,7 +230,7 @@ class DApp extends Component {
   }
 
   async nativeSendTransaction(msg, wallet) {
-    let gasPrice = await getGasPrice('wan');
+    let gasPrice = await getGasPrice(this.chainType);
     let amountInWei = new BigNumber(msg.message.value)
     let trans = {
       walletID: wallet.id,
@@ -261,10 +261,9 @@ class DApp extends Component {
   }
 
   async trezorSendTransaction(msg, wallet) {
-    let chainId = await getChainId();
     try {
-      let nonce = await getNonce(msg.message.from, 'wan');
-      let gasPrice = await getGasPrice('wan');
+      let nonce = await getNonce(msg.message.from, this.chainType);
+      let gasPrice = await getGasPrice(this.chainType);
       let data = msg.message.data;
       let amountWei = msg.message.value;
       let rawTx = {};
@@ -275,10 +274,9 @@ class DApp extends Component {
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
       rawTx.gasPrice = msg.message.gasPrice ? msg.message.gasPrice : toWei(gasPrice, 'gwei');
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
+      rawTx.chainId = this.chainId;
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
-      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: 'WAN' }]);
+      let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: this.chainType }]);
       msg.val = txHash;
     } catch (error) {
       console.log(error)
@@ -317,10 +315,9 @@ class DApp extends Component {
   }
 
   async trezorSignTransaction(msg, wallet) {
-    let chainId = await getChainId();
     try {
-      let nonce = await getNonce(msg.message.from, 'wan');
-      let gasPrice = await getGasPrice('wan');
+      let nonce = await getNonce(msg.message.from, this.chainType);
+      let gasPrice = await getGasPrice(this.chainType);
       let data = msg.message.data;
       let amountWei = msg.message.value;
       let rawTx = {};
@@ -331,8 +328,7 @@ class DApp extends Component {
       rawTx.nonce = '0x' + nonce.toString(16);
       rawTx.gasLimit = msg.message.gasLimit ? this.toHexString(msg.message.gasLimit) : `0x${(2000000).toString(16)}`;
       rawTx.gasPrice = `0x${(gasPrice * (10 ** 9)).toString(16).split('.')[0]}`;
-      rawTx.Txtype = Number(1);
-      rawTx.chainId = chainId;
+      rawTx.chainId = this.chainId;
       let raw = await pu.promisefy(trezorSignTransaction, [wallet.path, rawTx]);
       msg.val = raw;
     } catch (error) {
