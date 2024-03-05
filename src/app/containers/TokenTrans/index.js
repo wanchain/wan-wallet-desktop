@@ -148,7 +148,7 @@ class TokenTrans extends Component {
 
   handleSend = from => {
     let params = this.props.transParams[from];
-    const { chain, symbol, getChainAddressInfoByChain } = this.props;
+    const { chain, symbol, getChainAddressInfoByChain, isMainNetwork } = this.props;
     let addrInfo = getChainAddressInfoByChain(chain);
 
     if (addrInfo === undefined) {
@@ -190,9 +190,9 @@ class TokenTrans extends Component {
                     txHash,
                     value: '0x0',
                     from: from.toLowerCase(),
-                    srcSCAddrKey: 'WAN',
+                    srcSCAddrKey: params.to,
                     srcChainType: chain,
-                    tokenSymbol: 'WAN',
+                    tokenSymbol: symbol,
                     ...trans
                   },
                   satellite: trans.satellite
@@ -207,7 +207,6 @@ class TokenTrans extends Component {
           }).catch(() => { reject(false) }); // eslint-disable-line prefer-promise-reject-errors
           break;
         case 'trezor':
-          const { chain, isMainNetwork } = this.props;
           let chainId;
           if (chain === 'WAN') {
             chainId = isMainNetwork ? CHAINID.MAIN : CHAINID.TEST;
@@ -237,9 +236,9 @@ class TokenTrans extends Component {
                     txHash,
                     value: '0x0',
                     from: from.toLowerCase(),
-                    srcSCAddrKey: 'WAN',
+                    srcSCAddrKey: params.to,
                     srcChainType: chain,
-                    tokenSymbol: 'WAN',
+                    tokenSymbol: symbol,
                     ...trans
                   },
                   satellite: trans.satellite
@@ -324,7 +323,7 @@ class TokenTrans extends Component {
         </Row>
         <Row className="mainBody">
           <Col>
-            <TokenTransHistory name={chain === 'WAN' ? ['normal', 'import', 'ledger', 'trezor', 'rawKey'] : ['normal', 'rawKey']} />
+            <TokenTransHistory name={chain === 'WAN' ? ['normal', 'import', 'ledger', 'trezor', 'rawKey'] : ['normal', 'ledger', 'trezor', 'rawKey']} />
           </Col>
         </Row>
       </div>
