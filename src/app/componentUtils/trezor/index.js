@@ -153,14 +153,15 @@ export const crossChainTrezorTrans = async param => {
     let { result: crossChainData, approveZeroTx, approveTx, smgCrossMode, crossMode } = ret;
     console.log('crossChainData, approveZeroTx, approveTx:', crossChainData, approveZeroTx, approveTx)
 
+    let txChainType = param.chainType || param.sourceSymbol || 'WAN';
     if (approveZeroTx) {
       let { raw } = await trezorRawTx(approveZeroTx, BIP44Path)
-      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
+      approveZeroTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: txChainType }], this);
       console.log('approveZeroTx:', approveZeroTxHash)
     }
     if (approveTx) {
       let { raw } = await trezorRawTx(approveTx, BIP44Path)
-      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
+      approveTxHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: txChainType }], this);
       console.log('approveTx:', approveTxHash)
     }
     let { raw, rawTx } = await trezorRawTx(crossChainData, BIP44Path)
@@ -169,7 +170,7 @@ export const crossChainTrezorTrans = async param => {
       dstLockedBlockNumber = await wandWrapper('crossChain_getBlockNumber', { chainType: param.toChainSymbol })
     };
     // Send register validator
-    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: param.chainType || 'WAN' }], this);
+    let txHash = await pu.promisefy(wand.request, ['transaction_raw', { raw, chainType: txChainType }], this);
     let params = {
       txHash,
       from: from.toLowerCase(),
